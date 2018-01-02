@@ -3,7 +3,8 @@
 namespace Api\Controller;
 
 use Api\Controller\AppController;
-
+use Cake\Mailer\MailerAwareTrait;
+use Cake\Utility\Security;
 /**
  * Users Controller
  *
@@ -11,7 +12,8 @@ use Api\Controller\AppController;
  * @method \Api\Model\Entity\User[] paginate($object = null, array $settings = [])
  */
 class UsersController extends AppController {
-
+    use MailerAwareTrait;
+    
     /**
      * Index method
      *
@@ -46,8 +48,11 @@ class UsersController extends AppController {
     public function add() {
         $entity = $this->Users->newEntity();
         if ($this->request->is('post')) {
-            $items = $this->Users->patchEntity($entity,  $this->request->getData());
-            if ($this->Users->save($items)) {
+            $data = $this->request->getData();
+            $data['token_verification'] = Security::hash($data['email'], 'sha1', true);
+            $items = $this->Users->patchEntity($entity, $data);
+            if ($this->Users->save($items)) {                
+                 $this->getMailer('Api.User')->send('signup', [$items]);
                 $response = ['status' => "success", 'message' => 'Saved successfully.', 'data' => ['ones', $this->request->data]];
             } else {
                 $response = ['status' => "failed", 'message' => 'Failed to saved data.', 'data' => $this->request->data,'errors'=>$this->mapErrors($items->errors())];
@@ -71,7 +76,6 @@ class UsersController extends AppController {
             $user = $this->Users->patchEntity($user, $this->request->getData());
             if ($this->Users->save($user)) {
                 $this->Flash->success(__('The user has been saved.'));
-
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The user could not be saved. Please, try again.'));

@@ -131,9 +131,4 @@ class UsersTable extends Table {
         $rules->add($rules->isUnique(['user_name'],'User name is not free.'));
         return $rules;
     }
-    
-    public function beforeMarshal(Event $event, \ArrayObject $data, \ArrayObject $options) {
-        $data['token_verification'] = (new DefaultPasswordHasher())->hash($data['user_name']);        
-    }
-
 }

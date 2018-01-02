@@ -215,4 +215,4 @@ if (Configure::read('debug')) {
     Plugin::load('DebugKit', ['bootstrap' => true]);
 }
 
-Plugin::load('Api', ['bootstrap' => false, 'routes' => true]);
+Plugin::load('Api', ['bootstrap' => true, 'routes' => true]);
