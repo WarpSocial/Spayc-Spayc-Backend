@@ -60,6 +60,36 @@ class UsersController extends AppController {
         }
         $this->set($response);
     }
+    
+    /**
+     * facebook signup
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+    */
+    public function facebookSignup() {
+        if ($this->request->is('post')) {
+            $data = $this->request->getData();
+            $alreadyExist = $this->Users->getAlreadyExistsUser($data);
+            if(!empty($alreadyExist['id'])) {
+                $data['id'] = $alreadyExist['id'];
+                $data['fb_id'] = !empty($alreadyExist['fb_id'])?$alreadyExist['fb_id']:$data['fb_id'];
+                //$data['user_name'] = !empty($alreadyExist['user_name'])?$alreadyExist['user_name']:$data['user_name'];
+                $data['email'] = !empty($alreadyExist['email'])?$alreadyExist['email']:$data['email'];
+                $entity = $this->Users->get($data['id']);
+            } else {
+                $data['token_verification'] = Security::hash($data['email'], 'sha1', true);
+                $entity = $this->Users->newEntity($data, ['validate' => 'FacebookSignup']);
+            }
+            $items = $this->Users->patchEntity($entity, $data, ['validate' => 'FacebookSignup']);
+            if ($this->Users->save($items)) {      
+                //$this->getMailer('Api.User')->send('signup', [$items]);
+                $response = ['status' => "success", 'message' => 'Saved successfully.', 'data' => ['ones', $this->request->data]];
+            } else {
+                $response = ['status' => "failed", 'message' => 'Failed to saved data.', 'data' => $this->request->data,'errors'=>$this->mapErrors($items->errors())];
+            }
+        }
+        $this->set($response);
+    }
 
     /**
      * Edit method

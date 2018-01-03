@@ -49,7 +49,8 @@ class User extends Entity {
         'token_verification' => true,
         'created' => true,
         'modified' => true,
-        'users_logs' => true
+        'users_logs' => true,
+        'fb_id'=>true
     ];
 
     /**
