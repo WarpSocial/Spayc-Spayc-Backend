@@ -68,8 +68,8 @@ class UsersTable extends Table {
 
         $validator
                 ->requirePresence('user_name', 'create','Username is required fielda.')
-                ->notEmpty('user_name','Username  is required fieldd.')                
-                ->add('user_name', 'unique', ['rule' => 'validateUnique','message'=>'User name has been used.', 'provider' => 'table'])                
+                ->notEmpty('user_name','Username  is required field.')                
+                ->add('user_name', 'unique', ['rule' => 'validateUnique','message'=>'Username has been used.', 'provider' => 'table'])                
                 ->add('user_name', [
                     'lengthBetween' => [
                         'rule' => ['lengthBetween', 3, 30],
@@ -164,7 +164,7 @@ class UsersTable extends Table {
             ->allowEmpty('last_name')
             ->add('last_name', 'length', ['rule' => ['maxLength', 30], 'message' => 'Last name should be less than 30 chars.']);
         $validator
-                ->requirePresence('user_name', 'create','Username is required fieldd.')
+                ->requirePresence('user_name', 'create','Username is required field.')
                 ->allowEmpty('user_name');
         $validator
             ->allowEmpty('email')
@@ -190,6 +190,11 @@ class UsersTable extends Table {
                     },
                 'message'=>'Date of birth must be below the current date.',
             ]);
+                    
+        $validator
+            ->requirePresence('device_id', 'create','Device id is required field.')
+            ->notEmpty('device_id','Device id is required field.')                
+            ->add('device_id', 'unique', ['rule' => 'validateUnique','message'=>'Device id has been used.', 'provider' => 'table']);
         return $validator;
     }
 

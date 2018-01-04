@@ -143,6 +143,28 @@ class UsersController extends AppController {
         }
         $this->set($response);
     }
+    
+    /**
+     * forgot password api
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+    */
+    public function forgotPassword() {
+        if ($this->request->is('post')) {
+            $data = $this->request->getData();
+            if(!empty($data['email'])) {
+                $isExists = $this->Users->exists(['email' => $data['email']]);
+                if($isExists) {
+                    $data['token_verification'] = Security::hash($data['email'], 'sha1', true);
+                    $this->getMailer('Api.User')->send('signup', [$items]);
+                }
+            } else {
+                $response = ['status' => "failed", 'message' => 'Failed to saved data.', 'data' => $this->request->data,'errors'=>'email:Email is required field.'];
+            }
+            
+        }
+        $this->set($response);
+    }
 
     /**
      * Edit method

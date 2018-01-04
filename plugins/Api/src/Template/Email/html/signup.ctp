@@ -55,7 +55,7 @@ use Cake\Routing\Router;
                                                 <tr>
                                                     <td align="left" style="height:21px">
                                                         <span>
-                                                            <strong>User name</strong>
+                                                            <strong>Username</strong>
                                                         </span>
                                                     </td>
                                                     <td align="left" style="height:21px"><?= $user->user_name; ?></td>
