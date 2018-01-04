@@ -48,17 +48,60 @@ class UsersController extends AppController {
     public function add() {
         $entity = $this->Users->newEntity();
         if ($this->request->is('post')) {
-            $data = $this->request->getData();
-            $data['token_verification'] = Security::hash($data['email'], 'sha1', true);
+            $data = $this->request->getData();            
             $items = $this->Users->patchEntity($entity, $data);
-            if ($this->Users->save($items)) {                
+            if($items->errors()){
+                $this->restException($this->mapErrors($items->errors()));
+            }
+            $items->set('token_verification', Security::hash($data['email'], 'sha1', true));
+            #echo $data['token_verification'];die;
+            if ($this->Users->save($items)) {
                  $this->getMailer('Api.User')->send('signup', [$items]);
-                $response = ['status' => "success", 'message' => 'Saved successfully.', 'data' => ['ones', $this->request->data]];
+                $response = ['status' => "success", 'message' => 'Saved successfully.', 'data' => $this->request->data];
             } else {
                 $response = ['status' => "failed", 'message' => 'Failed to saved data.', 'data' => $this->request->data,'errors'=>$this->mapErrors($items->errors())];
             }
         }
         $this->set($response);
+    }
+    
+    /**
+     * verifyAccount to verify the email account
+     * 
+     * @param string $token token id attached with url
+     * @param string $email email id which have to verify
+     * 
+     * @return success message
+     * 
+     */
+    
+    public function verifyAccount($token = null, $email = null) {
+        
+        if (!$token || !$email) {
+            throw new NotFoundException(__('Missing required information. Please read email carefully and try again.'));
+        }
+        $user = $this->Users->findByEmail($email)->first();
+        if (!$user) {
+            throw new RecordNotFoundException(__('Account not found or already activated. Please read email carefully and try again.'));
+        }
+        if ($user->status == 'active') {
+            $this->Flash->success(__('Your Account has been already activated. You can now log in using the username and password you chose during the registration'));
+            //return $this->redirect('/');
+        } else {
+            if ($token != Security::hash($user->email, 'sha1', true)) {
+                throw new ForbiddenException(__('Invalid token. Please read email carefully and try again.'));
+            }
+            $user->status = 'active';
+            if ($this->Users->save($user)) {
+                $this->Flash->success(__('Your Account has been successfully activated. You can now log in using the username and password you chose during the registration.'));
+                //return $this->redirect(['action' => 'login']);    
+            } else {
+                $this->Flash->success(__('This link has no longer existing.'));
+                //return $this->redirect(['action' => 'login']);    
+            }
+            $this->set(compact('user'));
+            $this->render('Users/verify_account',false);
+        }
     }
     
     /**

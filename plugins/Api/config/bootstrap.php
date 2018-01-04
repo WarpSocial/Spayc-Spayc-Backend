@@ -1,3 +1,8 @@
 <?php
 use Cake\Core\Configure;
-Configure::load('Api.api', 'default', false);
+
+try {
+    Configure::load('Api.api', 'default', false);
+} catch (Exception $e) {
+    exit($e->getMessage() . "\n");
+}

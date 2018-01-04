@@ -67,9 +67,8 @@ class UsersTable extends Table {
                 ->add('last_name', 'length', ['rule' => ['maxLength', 30], 'message' => 'Last name should be less than 30 chars.']);
 
         $validator
-                ->requirePresence('user_name', 'create','Username is required field.')
-                ->notEmpty('user_name','Username  is required field.')
-                //->alphaNumeric('user_name','Username must be alpha numeric only.')
+                ->requirePresence('user_name', 'create','Username is required fielda.')
+                ->notEmpty('user_name','Username  is required fieldd.')                
                 ->add('user_name', 'unique', ['rule' => 'validateUnique','message'=>'User name has been used.', 'provider' => 'table'])                
                 ->add('user_name', [
                     'lengthBetween' => [
@@ -77,11 +76,16 @@ class UsersTable extends Table {
                         'message' => 'Username length must be between 3-30 alphanumeric.'
                     ]
                 ]);
+        $validator
+                ->requirePresence('device_id', 'create','Device id is required field.')
+                ->notEmpty('device_id','Device id is required field.')                
+                ->add('device_id', 'unique', ['rule' => 'validateUnique','message'=>'Device id has been used.', 'provider' => 'table']);
+                
 
         $validator
                 ->requirePresence('password', 'create','Password is required field.')
                 ->notEmpty('password','Password is required field.')
-                ->add("user_name",'custom',[
+                ->add("password",'custom',[
                     'rule'=>function($value,$context){
                         if(preg_match('/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}/', $value)){
                             return false;
@@ -89,7 +93,7 @@ class UsersTable extends Table {
                             return true;
                         }
                     },
-                    'message'=>'Username length must be between 6-25 alphanumeric.',
+                    'message'=>'Password must be between 4-8 charecters length.',
                 ]);
 
         $validator
@@ -97,6 +101,23 @@ class UsersTable extends Table {
                 ->requirePresence('email', 'create','Email is required field.')
                 ->add('email', 'unique', ['rule' => 'validateUnique','message'=>'Email has been used.', 'provider' => 'table']) 
                 ->notEmpty('email','Email is required field.');
+        
+        $validator
+                ->allowEmpty('phone')
+                ->requirePresence('phone', 'create','Phone must exist.')
+                ->add('phone', 'valid', [
+                    'rule' => function($value,$context){
+                        if(preg_match('/[\d]{10}$/m/',$value)){
+                            return false;
+                        }else{
+                            return true;
+                        }
+                    },
+                    'message'=>'Phone no is not valid'
+                    ]);
+        
+                
+                
 
         $validator
                 ->allowEmpty('dob')
@@ -143,7 +164,7 @@ class UsersTable extends Table {
             ->allowEmpty('last_name')
             ->add('last_name', 'length', ['rule' => ['maxLength', 30], 'message' => 'Last name should be less than 30 chars.']);
         $validator
-                ->requirePresence('user_name', 'create','Username is required field.')
+                ->requirePresence('user_name', 'create','Username is required fieldd.')
                 ->allowEmpty('user_name');
         $validator
             ->allowEmpty('email')

@@ -16,7 +16,7 @@ class UserMailer extends Mailer {
     public function signup($items) {
         $this->viewVars(['user' => $items])
                 ->to($items->email)
-                ->subject(Configure::read('Api.signup_welcome_msg'))
+                ->subject(Configure::read('signup_welcome_msg'))
                 ->emailFormat('html')
                 ->template('Api.signup'); // By default template with same name as method name is used.                
     }

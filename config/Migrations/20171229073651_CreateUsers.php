@@ -69,6 +69,21 @@ class CreateUsers extends AbstractMigration {
             'default' => null,
             'null'=>true,
         ]);
+        $table->addColumn('device_id', 'string', [
+            'default' => null,
+            'limit' => 100,
+            'null' => false,
+        ]); 
+        $table->addColumn('device_display', 'string', [
+            'default' => null,
+            'limit' => 100,
+            'null' => false,
+        ]); 
+        $table->addColumn('matrix_id', 'string', [
+            'default' => null,
+            'limit' => 100,
+            'null' => false,
+        ]); 
         $table->addColumn('timezone', 'string', [
             'default' => null,
             'limit' =>100,

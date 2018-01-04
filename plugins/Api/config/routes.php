@@ -7,8 +7,10 @@ Router::plugin(
     'Api',
     ['path' => '/api'],
     function (RouteBuilder $routes) {
-        $routes->setExtensions(['json']);
+        $routes->setExtensions(['json','html']);
         $routes->resources('Users');
+        $routes->connect('/verify/:token/:email', ['controller' => 'Users', 'action' => 'verifyAccount','ext'=>'html'], ['pass' => ['token', 'email']]);
+      
         $routes->fallbacks(DashedRoute::class);
     }
 );

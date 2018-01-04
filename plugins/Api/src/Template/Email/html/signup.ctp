@@ -32,7 +32,7 @@ use Cake\Routing\Router;
                         
                         <hr>
                         <p><br>
-                            <a href="<?php echo $this->Url->build('/verification/'.$user->email_verification.'/'. urlencode($user->email),true); ?>" style="color:#ffffff;text-decoration:none;background-color:#02ADC6;border-top:15px solid #02ADC6;border-bottom:15px solid #02ADC6;border-left:15px solid #02ADC6;border-right:15px solid #02ADC6;display:inline-block" target="_blank" ><font style="font-size:18px;line-height:20px" color="#ffffff" face="'Walsheim-Medium', Arial, sans-serif">VERIFY YOUR EMAIL ADDRESS</font></a>
+                            <a href="<?php echo $this->Url->build('/api/verify/'.$user->token_verification.'/'. urlencode($user->email).'.html',true); ?>" style="color:#ffffff;text-decoration:none;background-color:#02ADC6;border-top:15px solid #02ADC6;border-bottom:15px solid #02ADC6;border-left:15px solid #02ADC6;border-right:15px solid #02ADC6;display:inline-block" target="_blank" ><font style="font-size:18px;line-height:20px" color="#ffffff" face="'Walsheim-Medium', Arial, sans-serif">VERIFY YOUR EMAIL ADDRESS</font></a>
                             <br><br>
                         </p>
                         <hr>
