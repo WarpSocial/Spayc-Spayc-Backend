@@ -1,0 +1,202 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/nodejs', '/usr/bin/npm', 'install', 'apidoc', '-g' ]
+2 info using npm@1.3.10
+3 info using node@v0.10.25
+4 verbose cache add [ 'apidoc', null ]
+5 verbose cache add name=undefined spec="apidoc" args=["apidoc",null]
+6 verbose parsed url { protocol: null,
+6 verbose parsed url   slashes: null,
+6 verbose parsed url   auth: null,
+6 verbose parsed url   host: null,
+6 verbose parsed url   port: null,
+6 verbose parsed url   hostname: null,
+6 verbose parsed url   hash: null,
+6 verbose parsed url   search: null,
+6 verbose parsed url   query: null,
+6 verbose parsed url   pathname: 'apidoc',
+6 verbose parsed url   path: 'apidoc',
+6 verbose parsed url   href: 'apidoc' }
+7 silly lockFile b7224f5a-apidoc apidoc
+8 verbose lock apidoc /home/kiwitech/.npm/b7224f5a-apidoc.lock
+9 silly lockFile b7224f5a-apidoc apidoc
+10 silly lockFile b7224f5a-apidoc apidoc
+11 verbose addNamed [ 'apidoc', '' ]
+12 verbose addNamed [ null, '*' ]
+13 silly lockFile a3b73c7a-apidoc apidoc@
+14 verbose lock apidoc@ /home/kiwitech/.npm/a3b73c7a-apidoc.lock
+15 silly addNameRange { name: 'apidoc', range: '*', hasData: false }
+16 verbose url raw apidoc
+17 verbose url resolving [ 'https://registry.npmjs.org/', './apidoc' ]
+18 verbose url resolved https://registry.npmjs.org/apidoc
+19 info trying registry request attempt 1 at 16:08:16
+20 verbose etag "9C2URGC7GBBWZG0PUSTBSYOK7"
+21 http GET https://registry.npmjs.org/apidoc
+22 http 304 https://registry.npmjs.org/apidoc
+23 silly registry.get cb [ 304,
+23 silly registry.get   { date: 'Tue, 30 Aug 2016 10:38:17 GMT',
+23 silly registry.get     via: '1.1 varnish',
+23 silly registry.get     'cache-control': 'max-age=300',
+23 silly registry.get     etag: '"9C2URGC7GBBWZG0PUSTBSYOK7"',
+23 silly registry.get     age: '0',
+23 silly registry.get     connection: 'keep-alive',
+23 silly registry.get     'x-served-by': 'cache-sin6924-SIN',
+23 silly registry.get     'x-cache': 'HIT',
+23 silly registry.get     'x-cache-hits': '1',
+23 silly registry.get     'x-timer': 'S1472553497.219528,VS0,VE256',
+23 silly registry.get     vary: 'Accept-Encoding' } ]
+24 verbose etag apidoc from cache
+25 silly addNameRange number 2 { name: 'apidoc', range: '*', hasData: true }
+26 silly addNameRange versions [ 'apidoc',
+26 silly addNameRange   [ '0.1.5',
+26 silly addNameRange     '0.1.6',
+26 silly addNameRange     '0.1.7',
+26 silly addNameRange     '0.1.8',
+26 silly addNameRange     '0.1.9',
+26 silly addNameRange     '0.1.10',
+26 silly addNameRange     '0.1.11',
+26 silly addNameRange     '0.2.0',
+26 silly addNameRange     '0.2.1',
+26 silly addNameRange     '0.2.2',
+26 silly addNameRange     '0.2.3',
+26 silly addNameRange     '0.2.4',
+26 silly addNameRange     '0.2.5',
+26 silly addNameRange     '0.2.6',
+26 silly addNameRange     '0.2.7',
+26 silly addNameRange     '0.2.8',
+26 silly addNameRange     '0.3.0',
+26 silly addNameRange     '0.4.0',
+26 silly addNameRange     '0.4.1',
+26 silly addNameRange     '0.4.2',
+26 silly addNameRange     '0.4.3',
+26 silly addNameRange     '0.4.4',
+26 silly addNameRange     '0.5.0',
+26 silly addNameRange     '0.5.1',
+26 silly addNameRange     '0.5.2',
+26 silly addNameRange     '0.6.0',
+26 silly addNameRange     '0.6.1',
+26 silly addNameRange     '0.6.2',
+26 silly addNameRange     '0.6.3',
+26 silly addNameRange     '0.6.4',
+26 silly addNameRange     '0.6.5',
+26 silly addNameRange     '0.7.0',
+26 silly addNameRange     '0.7.1',
+26 silly addNameRange     '0.7.2',
+26 silly addNameRange     '0.8.0',
+26 silly addNameRange     '0.8.1',
+26 silly addNameRange     '0.8.2',
+26 silly addNameRange     '0.9.0',
+26 silly addNameRange     '0.9.1',
+26 silly addNameRange     '0.10.0',
+26 silly addNameRange     '0.10.1',
+26 silly addNameRange     '0.11.0',
+26 silly addNameRange     '0.12.0',
+26 silly addNameRange     '0.12.1',
+26 silly addNameRange     '0.12.2',
+26 silly addNameRange     '0.12.3',
+26 silly addNameRange     '0.13.0',
+26 silly addNameRange     '0.13.1',
+26 silly addNameRange     '0.13.2',
+26 silly addNameRange     '0.14.0',
+26 silly addNameRange     '0.15.0',
+26 silly addNameRange     '0.15.1',
+26 silly addNameRange     '0.16.0',
+26 silly addNameRange     '0.16.1' ] ]
+27 verbose addNamed [ 'apidoc', '0.16.1' ]
+28 verbose addNamed [ '0.16.1', '0.16.1' ]
+29 silly lockFile db2fb1b0-apidoc-0-16-1 apidoc@0.16.1
+30 verbose lock apidoc@0.16.1 /home/kiwitech/.npm/db2fb1b0-apidoc-0-16-1.lock
+31 silly lockFile db2fb1b0-apidoc-0-16-1 apidoc@0.16.1
+32 silly lockFile db2fb1b0-apidoc-0-16-1 apidoc@0.16.1
+33 silly lockFile a3b73c7a-apidoc apidoc@
+34 silly lockFile a3b73c7a-apidoc apidoc@
+35 silly resolved [ { name: 'apidoc',
+35 silly resolved     version: '0.16.1',
+35 silly resolved     description: 'RESTful web API Documentation Generator',
+35 silly resolved     author: { name: 'Peter Rottmann', email: 'rottmann@inveris.de' },
+35 silly resolved     license:
+35 silly resolved      { type: 'MIT',
+35 silly resolved        url: 'https://github.com/apidoc/apidoc/blob/master/LICENSE' },
+35 silly resolved     preferGlobal: true,
+35 silly resolved     bin: { apidoc: 'bin/apidoc' },
+35 silly resolved     main: './lib/index.js',
+35 silly resolved     homepage: 'http://apidocjs.com',
+35 silly resolved     repository: { type: 'git', url: 'https://github.com/apidoc/apidoc.git' },
+35 silly resolved     bugs: { url: 'https://github.com/apidoc/apidoc/issues' },
+35 silly resolved     scripts:
+35 silly resolved      { test: 'npm run jshint && mocha test/',
+35 silly resolved        jshint: 'jshint lib/ test/',
+35 silly resolved        'build-example': 'bin/apidoc -i example/ -o tmp/',
+35 silly resolved        'check-updates': 'npm-check-updates' },
+35 silly resolved     keywords: [ 'api', 'apidoc', 'doc', 'documentation', 'rest', 'restful' ],
+35 silly resolved     engines: { node: '>= 0.10.0' },
+35 silly resolved     dependencies:
+35 silly resolved      { 'apidoc-core': '~0.7.1',
+35 silly resolved        'fs-extra': '~0.28.0',
+35 silly resolved        lodash: '~4.11.1',
+35 silly resolved        'markdown-it': '^6.0.1',
+35 silly resolved        nomnom: '~1.8.1',
+35 silly resolved        winston: '~2.2.0' },
+35 silly resolved     devDependencies:
+35 silly resolved      { 'apidoc-example': '*',
+35 silly resolved        jshint: '^2.9.2',
+35 silly resolved        mocha: '~2.4.5',
+35 silly resolved        'npm-check-updates': '^2.6.3',
+35 silly resolved        'path-to-regexp': '^1.2.1',
+35 silly resolved        semver: '^5.1.0',
+35 silly resolved        should: '~8.3.1',
+35 silly resolved        webfontloader: '^1.6.24' },
+35 silly resolved     jshintConfig:
+35 silly resolved      { camelcase: true,
+35 silly resolved        curly: false,
+35 silly resolved        eqeqeq: true,
+35 silly resolved        forin: true,
+35 silly resolved        latedef: false,
+35 silly resolved        newcap: true,
+35 silly resolved        undef: true,
+35 silly resolved        unused: true,
+35 silly resolved        trailing: true,
+35 silly resolved        node: true,
+35 silly resolved        browser: true,
+35 silly resolved        predef: [Object] },
+35 silly resolved     readme: '# apiDoc\n\nGenerates a RESTful web API Documentation.\n\n[![Build Status](https://travis-ci.org/apidoc/apidoc.svg?branch=master)](https://travis-ci.org/apidoc/apidoc)\n[![Dependency Status](https://david-dm.org/apidoc/apidoc.svg)](https://david-dm.org/apidoc/apidoc)\n[![NPM version](https://badge.fury.io/js/apidoc.svg)](http://badge.fury.io/js/apidoc)\n\n**Changes from previous version visit [CHANGELOG.md](https://github.com/apidoc/apidoc/blob/master/CHANGELOG.md)**\n\napiDoc creates a documentation from API descriptions in your source code.\n\nDocumentation at [apidocjs.com](http://apidocjs.com).\n\n[Example](http://apidocjs.com/example/) output.\n\n\n## Installation\n\n`npm install apidoc -g`\n\n\n## Changelog\n\n[CHANGELOG.md](https://github.com/apidoc/apidoc/blob/master/CHANGELOG.md)\n\n\n## Example\n\n```javascript\n/**\n * @api {get} /user/:id Request User information\n * @apiName GetUser\n * @apiGroup User\n *\n * @apiParam {Number} id Users unique ID.\n *\n * @apiSuccess {String} firstname Firstname of the User.\n * @apiSuccess {String} lastname  Lastname of the User.\n */\n```\n\n`apidoc -i example/ -o doc/`\n\nCreates from input files in `example/` a documentation in path `doc/`.\n\n\nMore examples and best practice hints: [EXAMPLES.md](https://github.com/apidoc/apidoc/blob/master/EXAMPLES.md)\n\n\n## Supported programming languages\n\n * **C#, Go, Dart, Java, JavaScript, PHP, Scala** (all DocStyle capable languages):\n\n   ```javascript\n   /**\n     * This is a comment.\n     */\n   ```\n\n * **Clojure**:\n\n   ```clojure\n   ;;;;\n   ;; This is a comment.\n   ;;;;\n   ```\n\n * **CoffeeScript**:\n\n   ```coffeescript\n   ###\n   This is a comment.\n   ###\n   ```\n\n * **Erlang**:\n\n   ```erlang\n   %{\n   This is a comment.\n   %}\n   ```\n\n * **Perl**\n\n   ```perl\n   #**\n   # This is a comment.\n   #*\n   ```\n\n   ```perl\n   =pod\n   This is a comment.\n   =cut\n   ```\n\n * **Python**\n\n   ```python\n   """\n   This is a comment.\n   """\n   ```\n\n * **Ruby**\n\n   ```ruby\n   =begin\n   This is a comment.\n   =end\n   ```\n\n\n## Build tools\n\n* [flask-apidoc](https://pypi.python.org/pypi/flask-apidoc/) `pip install flask-apidoc`\n* [grunt-apidoc](https://github.com/apidoc/grunt-apidoc) `npm install grunt-apidoc`.\n* [gapidoc (gulp)](https://github.com/techgaun/gulp-apidoc) `npm install gapidoc`.\n* [gulp-apidoc](https://github.com/ayhankuru/gulp-apidoc) `npm install gulp-apidoc`.\n* [gulp-apidocjs](https://github.com/apriendeau/gulp-apidocjs) `npm install gulp-apidocjs`.\n\n\n## Integration\n\n* [Eclipse Java apiDoc editor templates](https://github.com/skhani/eclipse_java_apiDoc_templates)\n* [Eclipse plugin](https://github.com/DWand/eclipse_pdt_apiDoc_editor_templates)\n* [Microsoft WebAPI](https://github.com/chehabz/grunt-edge-apidoc-webapi-generator)\n* [Sublime Text plugin](https://github.com/DWand/ST3_apiDocAutocompletion)\n\n\n## Converter\n\n* [apidoc-swagger](https://github.com/fsbahman/apidoc-swagger)\n* [gulp-apidoc-swagger](https://github.com/fsbahman/gulp-apidoc-swagger)\n\n\n## FAQ\n\n* [Filter for public / private API](https://github.com/apidoc/grunt-apidoc/issues/27#issuecomment-147664797)\n\n\n## Extend apiDoc and write your own Plugin\n\nFor details and an example view [apidoc-plugin-test](https://github.com/apidoc/apidoc-plugin-test)\n\n\n## Help\n\nPlease add [issues](https://github.com/apidoc/apidoc/issues) if you have a question or found a problem.\nPull requests are welcome too!\n\nA chat about apiDoc is on [Gitter](https://gitter.im/apidoc/talk).\n\n[![Gitter chat](https://badges.gitter.im/apidoc/talk.png)](https://gitter.im/apidoc/talk)\n',
+35 silly resolved     readmeFilename: 'README.md',
+35 silly resolved     _id: 'apidoc@0.16.1',
+35 silly resolved     _from: 'apidoc@' } ]
+36 info install apidoc@0.16.1 into /usr/local/lib
+37 info installOne apidoc@0.16.1
+38 info /usr/local/lib/node_modules/apidoc unbuild
+39 verbose tar unpack /home/kiwitech/.npm/apidoc/0.16.1/package.tgz
+40 silly lockFile 6d159cb6-sr-local-lib-node-modules-apidoc tar:///usr/local/lib/node_modules/apidoc
+41 verbose lock tar:///usr/local/lib/node_modules/apidoc /home/kiwitech/.npm/6d159cb6-sr-local-lib-node-modules-apidoc.lock
+42 silly lockFile 1ef3abf7-ch-npm-apidoc-0-16-1-package-tgz tar:///home/kiwitech/.npm/apidoc/0.16.1/package.tgz
+43 verbose lock tar:///home/kiwitech/.npm/apidoc/0.16.1/package.tgz /home/kiwitech/.npm/1ef3abf7-ch-npm-apidoc-0-16-1-package-tgz.lock
+44 silly gunzTarPerm modes [ '755', '644' ]
+45 error Error: EACCES, mkdir '/usr/local/lib/node_modules'
+45 error  { [Error: EACCES, mkdir '/usr/local/lib/node_modules']
+45 error   errno: 3,
+45 error   code: 'EACCES',
+45 error   path: '/usr/local/lib/node_modules',
+45 error   fstream_type: 'Directory',
+45 error   fstream_path: '/usr/local/lib/node_modules/apidoc',
+45 error   fstream_class: 'DirWriter',
+45 error   fstream_stack:
+45 error    [ '/usr/lib/nodejs/fstream/lib/writer.js:171:23',
+45 error      '/usr/lib/nodejs/mkdirp/index.js:37:53',
+45 error      'Object.oncomplete (fs.js:107:15)' ] }
+46 error Please try running this command again as root/Administrator.
+47 error System Linux 3.13.0-92-generic
+48 error command "/usr/bin/nodejs" "/usr/bin/npm" "install" "apidoc" "-g"
+49 error cwd /var/www/html/f2f/webroot/F2F-Api-Doc
+50 error node -v v0.10.25
+51 error npm -v 1.3.10
+52 error path /usr/local/lib/node_modules
+53 error fstream_path /usr/local/lib/node_modules/apidoc
+54 error fstream_type Directory
+55 error fstream_class DirWriter
+56 error code EACCES
+57 error errno 3
+58 error stack Error: EACCES, mkdir '/usr/local/lib/node_modules'
+59 error fstream_stack /usr/lib/nodejs/fstream/lib/writer.js:171:23
+59 error fstream_stack /usr/lib/nodejs/mkdirp/index.js:37:53
+59 error fstream_stack Object.oncomplete (fs.js:107:15)
+60 verbose exit [ 3, true ]

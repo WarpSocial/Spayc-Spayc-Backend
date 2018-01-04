@@ -1,0 +1,11 @@
+{
+  "name": "Spayc Core API",
+  "version": "1.0.0",
+  "description": "This document covers all the request and response of Spayc Core API.",
+  "title": "Spayc Core API",
+  
+  "template": {
+   "withCompare": true,
+   "withGenerator": true
+  }
+}

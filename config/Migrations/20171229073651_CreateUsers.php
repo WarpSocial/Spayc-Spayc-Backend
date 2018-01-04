@@ -93,7 +93,12 @@ class CreateUsers extends AbstractMigration {
             'default' => null,
             'limit' => 255,
             'null' => true,
-        ]);        
+        ]);
+        $table->addColumn('fb_id', 'string', [
+            'default' => null,
+            'limit' => 100,
+            'null' => true,
+        ]);
         $table->addColumn('created', 'datetime', [
             'default' => null,
             'null' => false,
