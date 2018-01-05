@@ -56,7 +56,9 @@ class User extends Entity {
         'created' => true,
         'modified' => true,
         'users_logs' => true,
-        'fb_id'=>true
+        'fb_id'=>true,
+        'matrix_token'=>true,
+        'home_server'=>true,
     ];
 
     /**
