@@ -5,7 +5,7 @@ namespace Api\Controller;
 use Api\Controller\AppController;
 use Cake\Mailer\MailerAwareTrait;
 use Cake\Utility\Security;
-require_once("../vendor/aws/aws-autoloader.php"); 
+//require_once("../vendor/aws/aws-autoloader.php"); 
 /**
  * Users Controller
  *

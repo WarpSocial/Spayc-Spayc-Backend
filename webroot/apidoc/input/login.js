@@ -7,7 +7,7 @@
 *
 * @apiDescription Signin user with Spayc to authenticate.
 * 
-* @apiParam {String} username        * Username registered username|email requried in body
+* @apiParam {String} user_name       * Username registered username|email requried in body
 * @apiParam {String} password        * Password is required in body.
 * @apiParam {String} device_id       * Device id is required in body.
 

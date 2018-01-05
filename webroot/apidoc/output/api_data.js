@@ -181,7 +181,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "username",
+            "field": "user_name",
             "description": "<ul> <li>Username registered username|email requried in body</li> </ul>"
           },
           {

@@ -41,11 +41,11 @@ class UsersTable extends Table {
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
-        $this->addBehavior('ImgUpload', [
+        /*$this->addBehavior('ImgUpload', [
             'field' => ['image'],
             'uploadPath' => 'pages/',
-            'where' => 's3', /* local and s3 */
-        ]);
+            'where' => 's3', // local and s3 
+        ]);*/
 
         $this->hasMany('UsersLogs', [
             'foreignKey' => 'user_id',
