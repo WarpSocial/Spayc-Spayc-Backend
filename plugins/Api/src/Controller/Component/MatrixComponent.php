@@ -33,6 +33,46 @@ class MatrixComponent extends Component {
     }
     
     /**
+     * login to get login to matrix server
+     * 
+     * @param string $username 
+     * @param string $password 
+     * @param String $device_id 
+     * 
+     * @return array [access_token,home_server,user_id,device_id]
+     */
+    
+    public function login($items= []){
+        if(empty($items)){
+            return false;
+        }
+        $validInput = [
+            'type'=>'m.login.password',
+            'user'=>$items['user_name'],
+            'password'=>$items['password']
+        ]; 
+        $url = $this->config('url') . DS.'login';
+        $http = new Client();
+        $httpResponse = $http->post(
+                $url, 
+                json_encode($validInput), 
+                [
+                    'type'=>'json',
+                    'ssl_verify_host' => $this->config('sslverify'), 
+                    'ssl_verify_peer' => $this->config('sslverify'),
+                    'ssl_verify_host' => $this->config('sslverify'),
+                    'ssl_verify_peer_name' => $this->config('sslverify')
+                ]
+            );
+        $response = json_decode($httpResponse->body);
+        if($httpResponse->isOk()){
+            return $response;
+        }else{
+            return false;
+        }
+    }
+    
+    /**
      * register to register new account to matrix chatserver
      */
     public function register($items){
