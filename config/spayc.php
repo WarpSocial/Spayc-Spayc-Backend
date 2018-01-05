@@ -5,5 +5,5 @@ return [
     'MATRIX'=>[
         'url'=>'https://localhost:8448/_matrix/client/r0',
         'sslverify' => false,
-    ]
+    ],
 ];
