@@ -283,168 +283,6 @@ define({ "api": [
   },
   {
     "type": "post",
-    "url": "/users/edit/:id.json",
-    "title": "User signup",
-    "version": "0.0.1",
-    "name": "userAdd",
-    "group": "Authentication",
-    "permission": [
-      {
-        "name": "None"
-      }
-    ],
-    "description": "<p>User singup.</p>",
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "title",
-            "description": "<ul> <li>User title (Mr.|Mrs.) required in body.</li> </ul>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "user_name",
-            "description": "<ul> <li>Username required in body.</li> </ul>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "first_name",
-            "description": "<ul> <li>User first name required in body.</li> </ul>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "last_name",
-            "description": "<ul> <li>User last name required in body.</li> </ul>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "email",
-            "description": "<ul> <li>User email required in body.</li> </ul>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "password",
-            "description": "<ul> <li>Password is optional in body.</li> </ul>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "dob",
-            "description": "<ul> <li>Date of birth optional in body.</li> </ul>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "device_id",
-            "description": "<ul> <li>Device id is required in body.</li> </ul>"
-          },
-          {
-            "group": "Parameter",
-            "type": "File",
-            "optional": false,
-            "field": "images",
-            "description": "<ul> <li>Multiple images upload from users.</li> </ul>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "Boolean",
-            "optional": false,
-            "field": "status",
-            "description": "<p>true.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>The request is OK.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Object",
-            "optional": false,
-            "field": "data",
-            "description": "<p>Consumer Object contain details about user.</p>"
-          }
-        ]
-      },
-      "examples": [
-        {
-          "title": "Success-Response: ",
-          "content": "       HTTP/1.1 success\n{\n    \"status\": \"success\",\n    \"message\": \"Updated successfully.\",\n    \"data\": {\n        \"title\": \"Mr.\",\n        \"fb_id\": \"45545454545\",\n        \"user_name\": \"dhiru.php\",\n        \"first_name\": \"dhiru\",\n        \"last_name\": \"singh2\",\n        \"email\": \"dhiru12.php@gmail.com\",\n        \"password\": \"Dhiru@123\",\n        \"dob\": \"2000-11-12\",\n        \"device_id\":\"DFS455HER45555af55af\",\n        \"images\": [\n            {\n                \"tmp_name\": \"/tmp/phpDch9hZ\",\n                \"error\": 0,\n                \"name\": \"Screenshot from 2017-04-10 17:04:21.png\",\n                \"type\": \"image/png\",\n                \"size\": 172875\n            },\n            {\n                \"tmp_name\": \"/tmp/phpPDCzkV\",\n                \"error\": 0,\n                \"name\": \"Screenshot from 2017-02-28 21:07:31.png\",\n                \"type\": \"image/png\",\n                \"size\": 274141\n            },\n            {\n                \"tmp_name\": \"/tmp/phpnaHfnR\",\n                \"error\": 0,\n                \"name\": \"Screenshot from 2016-12-29 17:10:31.png\",\n                \"type\": \"image/png\",\n                \"size\": 166057\n            },\n            {\n                \"tmp_name\": \"/tmp/phpPbk5pN\",\n                \"error\": 0,\n                \"name\": \"Screenshot from 2016-10-25 17:11:16.png\",\n                \"type\": \"image/png\",\n                \"size\": 231172\n            }\n        ]\n    }\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "examples": [
-      {
-        "title": "Example usage:",
-        "content": "\n{\n   \"title\":\"Mr.\",\n   \"fb_id\":\"8552254552\",\n   \"user_name\":\"dhiru.php\",\n   \"first_name\":\"dhiru\",\n   \"last_name\":\"singh\",\n   \"email\":\"dhiru.php@gmail.com\",\n   \"password\":\"Dhiru@123\",\n   \"dob\":\"2000-11-12\",\n   \"device_id\":\"DFS455HER45555af55af\",\n   \"images\":\"Multiple File Obj\"\n}",
-        "type": "json"
-      }
-    ],
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "Object",
-            "optional": false,
-            "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
-          }
-        ],
-        "Error-Response Object": [
-          {
-            "group": "Error-Response Object",
-            "type": "Boolean",
-            "optional": false,
-            "field": "status",
-            "description": "<p>Status.</p>"
-          },
-          {
-            "group": "Error-Response Object",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>Message.</p>"
-          }
-        ]
-      },
-      "examples": [
-        {
-          "title": "Sample Error-Response:",
-          "content": "  \n {\n    \"status\": false,\n    \"password:Password must be between 4-8 charecters length.\"\n}\n{\n    \"status\": false,\n    \"message\": \"Resource not found.\"\n}\n{\n    \"status\": false,\n    \"message\": \"Requested Parameter is not correct\"\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "filename": "input/edit_profile.js",
-    "groupTitle": "Authentication"
-  },
-  {
-    "type": "post",
     "url": "/users/add",
     "title": "User signup",
     "version": "0.0.1",
@@ -596,6 +434,168 @@ define({ "api": [
       ]
     },
     "filename": "input/signup.js",
+    "groupTitle": "Authentication"
+  },
+  {
+    "type": "post",
+    "url": "/users/edit/:id.json",
+    "title": "Update user details",
+    "version": "0.0.1",
+    "name": "userEdit",
+    "group": "Authentication",
+    "permission": [
+      {
+        "name": "None"
+      }
+    ],
+    "description": "<p>Update user details.</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "title",
+            "description": "<ul> <li>User title (Mr.|Mrs.) required in body.</li> </ul>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "user_name",
+            "description": "<ul> <li>Username required in body.</li> </ul>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "first_name",
+            "description": "<ul> <li>User first name required in body.</li> </ul>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "last_name",
+            "description": "<ul> <li>User last name required in body.</li> </ul>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "email",
+            "description": "<ul> <li>User email required in body.</li> </ul>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "password",
+            "description": "<ul> <li>Password is optional in body.</li> </ul>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "dob",
+            "description": "<ul> <li>Date of birth optional in body.</li> </ul>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "device_id",
+            "description": "<ul> <li>Device id is required in body.</li> </ul>"
+          },
+          {
+            "group": "Parameter",
+            "type": "File",
+            "optional": false,
+            "field": "images",
+            "description": "<ul> <li>Multiple images upload from users.</li> </ul>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>true.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>The request is OK.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>Consumer Object contain details about user.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "       HTTP/1.1 success\n{\n    \"status\": \"success\",\n    \"message\": \"Updated successfully.\",\n    \"data\": {\n        \"title\": \"Mr.\",\n        \"fb_id\": \"45545454545\",\n        \"user_name\": \"dhiru.php\",\n        \"first_name\": \"dhiru\",\n        \"last_name\": \"singh2\",\n        \"email\": \"dhiru12.php@gmail.com\",\n        \"password\": \"Dhiru@123\",\n        \"dob\": \"2000-11-12\",\n        \"device_id\":\"DFS455HER45555af55af\",\n        \"images\": [\n            {\n                \"tmp_name\": \"/tmp/phpDch9hZ\",\n                \"error\": 0,\n                \"name\": \"Screenshot from 2017-04-10 17:04:21.png\",\n                \"type\": \"image/png\",\n                \"size\": 172875\n            },\n            {\n                \"tmp_name\": \"/tmp/phpPDCzkV\",\n                \"error\": 0,\n                \"name\": \"Screenshot from 2017-02-28 21:07:31.png\",\n                \"type\": \"image/png\",\n                \"size\": 274141\n            },\n            {\n                \"tmp_name\": \"/tmp/phpnaHfnR\",\n                \"error\": 0,\n                \"name\": \"Screenshot from 2016-12-29 17:10:31.png\",\n                \"type\": \"image/png\",\n                \"size\": 166057\n            },\n            {\n                \"tmp_name\": \"/tmp/phpPbk5pN\",\n                \"error\": 0,\n                \"name\": \"Screenshot from 2016-10-25 17:11:16.png\",\n                \"type\": \"image/png\",\n                \"size\": 231172\n            }\n        ]\n    }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "\n{\n   \"title\":\"Mr.\",\n   \"fb_id\":\"8552254552\",\n   \"user_name\":\"dhiru.php\",\n   \"first_name\":\"dhiru\",\n   \"last_name\":\"singh\",\n   \"email\":\"dhiru.php@gmail.com\",\n   \"password\":\"Dhiru@123\",\n   \"dob\":\"2000-11-12\",\n   \"device_id\":\"DFS455HER45555af55af\",\n   \"images\":\"Multiple File Obj\"\n}",
+        "type": "json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>Status.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n {\n    \"status\": false,\n    \"password:Password must be between 4-8 charecters length.\"\n}\n{\n    \"status\": false,\n    \"message\": \"Resource not found.\"\n}\n{\n    \"status\": false,\n    \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "input/edit_profile.js",
     "groupTitle": "Authentication"
   }
 ] });

@@ -1,11 +1,11 @@
 /**
-* @api {post} /users/edit/:id.json User signup
+* @api {post} /users/edit/:id.json Update user details
 * @apiVersion 0.0.1
-* @apiName userAdd
+* @apiName userEdit
 * @apiGroup Authentication
 * @apiPermission None
 *
-* @apiDescription User singup.
+* @apiDescription Update user details.
 * 
 * @apiParam {String} title           * User title (Mr.|Mrs.) required in body.
 * @apiParam {String} user_name       * Username required in body.
