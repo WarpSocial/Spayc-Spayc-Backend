@@ -54,10 +54,10 @@ class MatrixComponent extends Component {
                 json_encode($validInput), 
                 [
                     'type'=>'json',
-                    'ssl_verify_host' => false, 
-                    'ssl_verify_peer' => false,
-                    'ssl_verify_host' => false,
-                    'ssl_verify_peer_name' => false
+                    'ssl_verify_host' => $this->config('sslverify'), 
+                    'ssl_verify_peer' => $this->config('sslverify'),
+                    'ssl_verify_host' => $this->config('sslverify'),
+                    'ssl_verify_peer_name' => $this->config('sslverify')
                 ]
             );
         $response = json_decode($httpResponse->body);
