@@ -9,6 +9,7 @@
 * 
 * @apiParam {String} username        * Username registered username|email requried in body
 * @apiParam {String} password        * Password is required in body.
+* @apiParam {String} device_id       * Device id is required in body.
 
 *
 *
@@ -20,7 +21,8 @@
 *
 *{
 *   "username": "username|email",
-*   "password" : "YourP@ssword"
+*   "password" : "YourP@ssword",
+*   "device_id":"DFS455HER45555af55af"
 *}
 *
 *

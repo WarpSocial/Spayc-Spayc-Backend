@@ -59,6 +59,7 @@ class User extends Entity {
         'fb_id'=>true,
         'matrix_token'=>true,
         'home_server'=>true,
+        'image'=>true
     ];
 
     /**

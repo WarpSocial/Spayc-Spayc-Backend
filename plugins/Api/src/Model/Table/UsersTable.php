@@ -9,6 +9,7 @@ use Cake\Validation\Validator;
 use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\Auth\DefaultPasswordHasher;
+use \Cake\ORM\TableRegistry;
 /**
  * Users Model
  *
@@ -40,10 +41,19 @@ class UsersTable extends Table {
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+        $this->addBehavior('ImgUpload', [
+            'field' => ['image'],
+            'uploadPath' => 'pages/',
+            'where' => 's3', /* local and s3 */
+        ]);
 
         $this->hasMany('UsersLogs', [
             'foreignKey' => 'user_id',
             'className' => 'Api.UsersLogs'
+        ]);
+        $this->hasMany('UserImages', [
+            'foreignKey' => 'user_id',
+            'className' => 'Api.UserImages'
         ]);
     }
 
@@ -67,7 +77,7 @@ class UsersTable extends Table {
                 ->add('last_name', 'length', ['rule' => ['maxLength', 30], 'message' => 'Last name should be less than 30 chars.']);
 
         $validator
-                ->requirePresence('user_name', 'create','Username is required fielda.')
+                ->requirePresence('user_name', 'create','Username is required field.')
                 ->notEmpty('user_name','Username  is required field.')                
                 ->add('user_name', 'unique', ['rule' => 'validateUnique','message'=>'Username has been used.', 'provider' => 'table'])                
                 ->add('user_name', [
@@ -81,7 +91,6 @@ class UsersTable extends Table {
                 ->notEmpty('device_id','Device id is required field.')                
                 ->add('device_id', 'unique', ['rule' => 'validateUnique','message'=>'Device id has been used.', 'provider' => 'table']);
                 
-
         $validator
                 ->requirePresence('password', 'create','Password is required field.')
                 ->notEmpty('password','Password is required field.')
@@ -151,11 +160,11 @@ class UsersTable extends Table {
             ->integer('id')
             ->allowEmpty('id', 'create');
 
-         $validator
+        $validator
             ->allowEmpty('fb_id')
             ->requirePresence('fb_id', 'create','Facebook id is required field.')
             ->notEmpty('fb_id','Facebook id is required field.');
-         
+
         $validator
             ->allowEmpty('first_name')
             ->add('first_name', 'length', ['rule' => ['maxLength', 30], 'message' => 'First name should be less than 30 chars.']);
@@ -225,5 +234,41 @@ class UsersTable extends Table {
             }
         }
         return false;
+    }
+    
+    public function uploadImages($oldEntity, $files) {
+        $entity = [];
+        if(!empty($files)) { 
+            $ids = [];
+            if(!empty($oldEntity['user_images'])) {
+                foreach($oldEntity['user_images'] as $profile) {
+                    if(!empty($profile['image_url']) and file_exists(WWW_ROOT.'img/profile/'.$profile['image_url'])) {
+                        chmod(WWW_ROOT.'img/profile/'.$profile['image_url'], 0777);
+                        unlink(WWW_ROOT.'img/profile/'.$profile['image_url']);
+                        $ids[] = $profile['id']; 
+                    }
+                }
+                if(!empty($oldEntity['user_images'][0]['user_id'])) {
+                    TableRegistry::get('UserImages')->deleteAll(['user_id'=>$oldEntity['user_images'][0]['user_id']]);
+                }
+            }
+            $uploadPath = WWW_ROOT.'img/profile/';
+            foreach($files as $key=>$file) {
+                if(!empty($file['tmp_name'])) {
+                    $fileName = time().'-'.str_replace(' ', '-', $file['name']);
+                    $uploadFile = $uploadPath.$fileName;
+                    if(move_uploaded_file($file['tmp_name'], $uploadFile)){
+                        $entity['user_id'] = $oldEntity['id'];
+                        $entity['image_url'] = $fileName;
+                        $entity['created'] = date('Y-m-d');
+                        $entity['modified'] = date('Y-m-d'); //pr($entity);
+                        $newEntity = TableRegistry::get('UserImages')->newEntity();
+                        $item = TableRegistry::get('UserImages')->patchEntity($newEntity, $entity);
+                        TableRegistry::get('UserImages')->save($item);
+                    }
+                }
+            }
+        }
+        return $entity;
     }
 }

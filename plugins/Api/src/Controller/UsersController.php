@@ -5,6 +5,7 @@ namespace Api\Controller;
 use Api\Controller\AppController;
 use Cake\Mailer\MailerAwareTrait;
 use Cake\Utility\Security;
+require_once("../vendor/aws/aws-autoloader.php"); 
 /**
  * Users Controller
  *
@@ -173,18 +174,44 @@ class UsersController extends AppController {
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
     public function edit($id = null) {
-        $user = $this->Users->get($id, [
-            'contain' => []
-        ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $user = $this->Users->patchEntity($user, $this->request->getData());
-            if ($this->Users->save($user)) {
-                $this->Flash->success(__('The user has been saved.'));
-                return $this->redirect(['action' => 'index']);
+        if ($this->request->is(['post','put'])) {
+            $this->loadComponent('Api.Matrix');
+            $data = $this->request->getData();
+            if(!empty($id)) {
+                $entity = $this->Users->get($id, ['contain'=>['UserImages']]); //pr($entity);exit;
+                if(!empty($data['images'])) {
+                    $this->Users->uploadImages($entity, $data['images']);
+                    //$entity->user_images = $this->Users->uploadImages($entity, $data['images']);
+                } 
+                
+                $items = $this->Users->patchEntity($entity, $data);
+                
+               // pr($items); die;
+                
+                if($items->errors()){
+                    $this->restException($this->mapErrors($items->errors()));
+                }
+                
+                /*$matrix = $this->Matrix->register($data);
+                if(!$matrix){     
+                    $this->restException(['status' => "failed", 'message' => 'Matrix registration failed.'],401);
+                }
+                
+                $items->set('matrix_token', $matrix->access_token);
+                $items->set('matrix_id', $matrix->user_id);
+                $items->set('home_server', $matrix->home_server);*/
+                
+                if ($this->Users->save($items)) {
+                    $response = ['status' => "success", 'message' => 'Updated successfully.', 'data' => $this->request->data];
+                } else {
+                    pr($items->errors()); die;
+                    $response = ['status' => "failed", 'message' => 'Failed to update data.', 'data' => $this->request->data, 'errors'=>$this->mapErrors($items->errors())];
+                }
+            } else {
+                $response = ['status' => "failed", 'message' => 'Failed to update data.', 'data' => $this->request->data, 'errors'=>'id:User id is required.'];
             }
-            $this->Flash->error(__('The user could not be saved. Please, try again.'));
         }
-        $this->set(compact('user'));
+        $this->set($response);
     }
 
     /**
