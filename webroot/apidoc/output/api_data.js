@@ -295,14 +295,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "title",
-            "description": "<ul> <li>User title (Mr.|Mrs) required in body.</li> </ul>"
+            "description": "<ul> <li>User title (Mr.|Mrs.) required in body.</li> </ul>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "user_name",
-            "description": "<ul> <li>Username optional in body.</li> </ul>"
+            "description": "<ul> <li>Username required in body.</li> </ul>"
           },
           {
             "group": "Parameter",

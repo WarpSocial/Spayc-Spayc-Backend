@@ -1,6 +1,6 @@
 {
   "name": "Spayc Core API",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "This document covers all the request and response of Spayc Core API.",
   "title": "Spayc Core API",
   "template": {
@@ -11,7 +11,7 @@
   "apidoc": "0.2.0",
   "generator": {
     "name": "apidoc",
-    "time": "2018-01-04T13:29:31.593Z",
+    "time": "2018-01-05T07:18:01.863Z",
     "url": "http://apidocjs.com",
     "version": "0.16.1"
   }

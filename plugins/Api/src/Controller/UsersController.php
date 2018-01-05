@@ -146,12 +146,11 @@ class UsersController extends AppController {
                 $isExists = $this->Users->exists(['email' => $data['email']]);
                 if($isExists) {
                     $data['token_verification'] = Security::hash($data['email'], 'sha1', true);
-                    $this->getMailer('Api.User')->send('signup', [$items]);
+                    $this->getMailer('Api.User')->send('forgotPassword', [$items]);
                 }
             } else {
-                $response = ['status' => "failed", 'message' => 'Failed to saved data.', 'data' => $this->request->data,'errors'=>'email:Email is required field.'];
+                $response = ['status' => "failed", 'message' => 'Failed to send email.', 'data' => $this->request->data,'errors'=>'email:Email is required field.'];
             }
-            
         }
         $this->set($response);
     }

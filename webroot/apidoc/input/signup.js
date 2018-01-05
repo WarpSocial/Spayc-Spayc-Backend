@@ -7,8 +7,8 @@
 *
 * @apiDescription User singup.
 * 
-* @apiParam {String} title           * User title (Mr.|Mrs) required in body.
-* @apiParam {String} user_name       * Username optional in body.
+* @apiParam {String} title           * User title (Mr.|Mrs.) required in body.
+* @apiParam {String} user_name       * Username required in body.
 * @apiParam {String} first_name      * User first name required in body.
 * @apiParam {String} last_name       * User last name required in body.
 * @apiParam {String} email           * User email required in body.

@@ -32,7 +32,7 @@ class UserMailer extends Mailer {
         //pr($user);die;
         $this->viewVars(['user' => $user])
                 ->to($user['user']->email)
-                ->subject('Reset password')
+                ->subject('Forgot password')
                 ->emailFormat('html')
                 ->template('forgotpassword')
                 ->set(['token' => $user['token']]);
