@@ -254,5 +254,11 @@ class Utils {
         }
         return $output;
     }
+    
+    public static function getToken(){
+        $token = sha1(Text::uuid());
+        $hash = (new \Cake\Auth\DefaultPasswordHasher())->hash($token);
+        return $hash;
+    }
 
 }

@@ -6,8 +6,22 @@ use App\Controller\AppController as BaseController;
 use Cake\Event\Event;
 
 class AppController extends BaseController {
+    
     public function beforeFilter(Event $event) {
         parent::beforeFilter($event);
+         $this->loadComponent('Auth', [
+            'authenticate'=>[
+                'Api.Api'=>[
+                    'token'=>'HTTP_TOKEN',
+                    'fields' => ['username' => 'user_name', 'password' => 'password'],
+                    'userModel' => 'Users',
+                    'scope' => ['Users.status' => 'active'],
+                ],
+               
+            ],
+            'unauthorizedRedirect'=>false,
+            'storage' => 'Memory'
+         ]);
     }
     public function beforeRender(Event $event) {
         parent::beforeRender($event);

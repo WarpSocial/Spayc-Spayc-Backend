@@ -15,6 +15,56 @@ class UsersController extends AppController {
     use MailerAwareTrait;
     
     /**
+     * beforeFilter overwrite the default function
+     * 
+     * @param object $event 
+     */
+    
+    public function beforeFilter(\Cake\Event\Event $event) {
+        parent::beforeFilter($event);
+        $this->Auth->allow(['login','add','edit']);
+    }
+    
+    /**
+     * login method to login and generate the token
+     */
+    
+    public function login(){
+        if (!$this->request->is('post')) {
+            $this->restException(['status'=>'failed','message'=>'Invalid request type'],405);
+        }
+        $data_item = \Api\Utils\Utils::escape($this->request->data);             
+        
+        $validator = new \Cake\Validation\Validator();
+        $validator
+                ->requirePresence('user_name')
+                ->notEmpty('user_name')
+                ->requirePresence('password')
+                ->notEmpty('password')
+                ->requirePresence('device_id')
+                ->notEmpty('device_id');
+        $errors = $validator->errors($data_item);
+        if (!empty($errors)) { 
+            $this->restException(['status'=>'failed','message'=>'All fields are required.','errors'=>$this->mapErrors($errors)]);
+        }
+        $user = $this->Auth->identify();
+        if(empty($user)){
+            $this->restException(['status' => "failed", 'message' => 'Invalid login credentials.']);
+        }
+        $this->loadComponent('Api.Matrix');
+        $matrix = (array)$this->Matrix->login($data_item);        
+        if(!empty($matrix)){
+            $user['matrix_token'] = $matrix['access_token'];
+            $user += $matrix;
+            $this->Auth->setUser($user);
+            $response = ['status' => "failed", 'message' => 'Login successfully.','data'=>$user];
+        }else{
+            $response = ['status' => "failed", 'message' => 'Invalid login credential.'];            
+        }
+        $this->set($response);
+    }
+    
+    /**
      * Index method
      *
      * @return \Cake\Http\Response|void
@@ -59,6 +109,7 @@ class UsersController extends AppController {
                 $this->restException(['status' => "failed", 'message' => 'Matrix registration failed.'],401);
             }
             
+            $items->set('status', 'active');
             $items->set('matrix_token', $matrix->access_token);
             $items->set('matrix_id', $matrix->user_id);
             $items->set('home_server', $matrix->home_server);
