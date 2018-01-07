@@ -21,7 +21,7 @@ use Cake\Routing\Router;
                 <tr>
                     <td colspan="2" style="padding-right:10px;padding-left:10px;padding-bottom:10px;padding-top:10px">
                         <p style="line-height:1.7">Dear 
-                            <strong><?= $user->user_name ?></strong>,
+                            <strong><?= $user->username ?></strong>,
                             <br>
                             <br>
                         <p>Thanks for reaching out! <?= Configure::read('title') ?>!.</p>
@@ -58,7 +58,7 @@ use Cake\Routing\Router;
                                                             <strong>Username</strong>
                                                         </span>
                                                     </td>
-                                                    <td align="left" style="height:21px"><?= $user->user_name; ?></td>
+                                                    <td align="left" style="height:21px"><?= $user->username; ?></td>
                                                     <td align="left" style="height:21px">
                                                         <strong>Contact</strong>
                                                     </td>

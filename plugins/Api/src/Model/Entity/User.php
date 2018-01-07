@@ -10,7 +10,7 @@ use Cake\ORM\Entity;
  * @property int $id
  * @property string $first_name
  * @property string $last_name
- * @property string $user_name
+ * @property string $username
  * @property string $email
  * @property string $password
  * @property \Cake\I18n\FrozenDate $dob
@@ -38,7 +38,7 @@ class User extends Entity {
     protected $_accessible = [
         'first_name' => true,
         'last_name' => true,
-        'user_name' => true,
+        'username' => true,
         'email' => true,
         'password' => true,
         'gender' => true,

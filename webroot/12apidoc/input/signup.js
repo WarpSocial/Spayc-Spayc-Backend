@@ -63,7 +63,6 @@
 * @apiError (Error-Response Object){Boolean} status Status.
 * @apiError (Error-Response Object){String} message Message.
 * @apiErrorExample Sample Error-Response:
-
 *   
 *  {
     "status": false,

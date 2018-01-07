@@ -13,7 +13,7 @@ class AppController extends BaseController {
             'authenticate'=>[
                 'Api.Api'=>[
                     'token'=>'HTTP_TOKEN',
-                    'fields' => ['username' => 'user_name', 'password' => 'password'],
+                    'fields' => ['username' => 'username', 'password' => 'password'],
                     'userModel' => 'Users',
                     'scope' => ['Users.status' => 'active'],
                 ],
@@ -48,6 +48,10 @@ class AppController extends BaseController {
         $this->response->body(json_encode($data)); 
         $this->response->send();
         $this->response->stop();
+    }
+    
+    protected function _outputMessage($template){
+        
     }
     
     

@@ -23,7 +23,7 @@ use Cake\Routing\Router;
                                 <tr style="font-size:16px;font-weight:300;color:#404040;font-family:'Open Sans','HelveticaNeue-Light','Helvetica Neue Light','Helvetica Neue',Helvetica,Arial,'Lucida Grande',sans-serif;line-height:26px;text-align:left">
                                     <td>
                                         <br>
-                                        <br><?php echo $user['user']->user_name; ?>,
+                                        <br><?php echo $user['user']->username; ?>,
                                         <br>
                                         <br>Someone recently requested a password change for your RehabNetwork account. If this was you, you can set a new password here: 
                                         <br>

@@ -77,10 +77,10 @@ class UsersTable extends Table {
                 ->add('last_name', 'length', ['rule' => ['maxLength', 30], 'message' => 'Last name should be less than 30 chars.']);
 
         $validator
-                ->requirePresence('user_name', 'create','Username is required field.')
-                ->notEmpty('user_name','Username  is required field.')                
-                ->add('user_name', 'unique', ['rule' => 'validateUnique','message'=>'Username has been used.', 'provider' => 'table'])                
-                ->add('user_name', [
+                ->requirePresence('username', 'create','Username is required field.')
+                ->notEmpty('username','Username  is required field.')                
+                ->add('username', 'unique', ['rule' => 'validateUnique','message'=>'Username has been used.', 'provider' => 'table'])                
+                ->add('username', [
                     'lengthBetween' => [
                         'rule' => ['lengthBetween', 3, 30],
                         'message' => 'Username length must be between 3-30 alphanumeric.'
@@ -88,8 +88,7 @@ class UsersTable extends Table {
                 ]);
         $validator
                 ->requirePresence('device_id', 'create','Device id is required field.')
-                ->notEmpty('device_id','Device id is required field.')                
-                ->add('device_id', 'unique', ['rule' => 'validateUnique','message'=>'Device id has been used.', 'provider' => 'table']);
+                ->notEmpty('device_id','Device id is required field.');
                 
         $validator
                 ->requirePresence('password', 'create','Password is required field.')
@@ -173,8 +172,8 @@ class UsersTable extends Table {
             ->allowEmpty('last_name')
             ->add('last_name', 'length', ['rule' => ['maxLength', 30], 'message' => 'Last name should be less than 30 chars.']);
         $validator
-                ->requirePresence('user_name', 'create','Username is required field.')
-                ->allowEmpty('user_name');
+                ->requirePresence('username', 'create','Username is required field.')
+                ->allowEmpty('username');
         $validator
             ->allowEmpty('email')
             ->email('email',false,'Email is required field.')
@@ -216,7 +215,7 @@ class UsersTable extends Table {
      */
     public function buildRules(RulesChecker $rules) {
         //$rules->add($rules->isUnique(['email'], 'Email has already been used.'));
-        //$rules->add($rules->isUnique(['user_name'], 'Username has already been used.'));
+        //$rules->add($rules->isUnique(['username'], 'Username has already been used.'));
         return $rules;
     }
     

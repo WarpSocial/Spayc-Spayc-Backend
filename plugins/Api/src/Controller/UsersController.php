@@ -38,8 +38,8 @@ class UsersController extends AppController {
         
         $validator = new \Cake\Validation\Validator();
         $validator
-                ->requirePresence('user_name')
-                ->notEmpty('user_name')
+                ->requirePresence('username')
+                ->notEmpty('username')
                 ->requirePresence('password')
                 ->notEmpty('password')
                 ->requirePresence('device_id')
@@ -58,7 +58,7 @@ class UsersController extends AppController {
             $user['matrix_token'] = $matrix['access_token'];
             $user += $matrix;
             $this->Auth->setUser($user);
-            $response = ['status' => "failed", 'message' => 'Login successfully.','data'=>$user];
+            $response = ['status' => "success", 'message' => 'Login done successfully.','data'=>$user];
         }else{
             $response = ['status' => "failed", 'message' => 'Invalid login credential.'];            
         }
@@ -119,9 +119,9 @@ class UsersController extends AppController {
             if ($this->Users->save($items)) {                
                  $this->getMailer('Api.User')->send('signup', [$items]);
                  
-                $response = ['status' => "success", 'message' => 'Saved successfully.', 'data' => $this->request->data];
+                $response = ['status' => "success", 'message' => 'Registration done successfully.', 'data' => $this->request->data];
             } else {
-                $response = ['status' => "failed", 'message' => 'Failed to saved data.', 'data' => $this->request->data,'errors'=>$this->mapErrors($items->errors())];
+                $response = ['status' => "failed", 'message' => 'Failed to saved data.', 'errors'=>$this->mapErrors($items->errors())];
             }
         }
         $this->set($response);
@@ -178,7 +178,7 @@ class UsersController extends AppController {
             if(!empty($alreadyExist['id'])) {
                 $data['id'] = $alreadyExist['id'];
                 $data['fb_id'] = !empty($alreadyExist['fb_id'])?$alreadyExist['fb_id']:$data['fb_id'];
-                //$data['user_name'] = !empty($alreadyExist['user_name'])?$alreadyExist['user_name']:$data['user_name'];
+                //$data['username'] = !empty($alreadyExist['username'])?$alreadyExist['username']:$data['username'];
                 $data['email'] = !empty($alreadyExist['email'])?$alreadyExist['email']:$data['email'];
                 $entity = $this->Users->get($data['id']);
             } else {
@@ -226,6 +226,10 @@ class UsersController extends AppController {
      */
     public function edit($id = null) {
         if ($this->request->is(['post','put'])) {
+            
+            echo "<pre>";
+            pr($this->request->data);
+            print_r($_FILES);die;
             $this->loadComponent('Api.Matrix');
             $data = $this->request->getData();
             if(!empty($id)) {
