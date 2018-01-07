@@ -226,10 +226,6 @@ class UsersController extends AppController {
      */
     public function edit($id = null) {
         if ($this->request->is(['post','put'])) {
-            
-            echo "<pre>";
-            pr($this->request->data);
-            print_r($_FILES);die;
             $this->loadComponent('Api.Matrix');
             $data = $this->request->getData();
             if(!empty($id)) {
