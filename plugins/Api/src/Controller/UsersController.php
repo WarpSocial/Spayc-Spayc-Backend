@@ -186,9 +186,11 @@ class UsersController extends AppController {
                 $entity = $this->Users->newEntity($data, ['validate' => 'FacebookSignup']);
             }
             $items = $this->Users->patchEntity($entity, $data, ['validate' => 'FacebookSignup']);
-            if ($this->Users->save($items)) {      
+            if (!$items->errors()) {
+                $saved = $this->Users->save($items);
+                $data['id'] = $saved['id'];
                 //$this->getMailer('Api.User')->send('signup', [$items]);
-                $response = ['status' => "success", 'message' => 'Saved successfully.', 'data' => ['ones', $this->request->data]];
+                $response = ['status' => "success", 'message' => 'Saved successfully.', 'data' => ['ones', $data]];
             } else {
                 $response = ['status' => "failed", 'message' => 'Failed to saved data.', 'data' => $this->request->data,'errors'=>$this->mapErrors($items->errors())];
             }
