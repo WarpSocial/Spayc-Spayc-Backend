@@ -41,11 +41,6 @@ class UsersTable extends Table {
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
-        /*$this->addBehavior('ImgUpload', [
-            'field' => ['image'],
-            'uploadPath' => 'pages/',
-            'where' => 's3', // local and s3 
-        ]);*/
 
         $this->hasMany('UsersLogs', [
             'foreignKey' => 'user_id',
@@ -211,6 +206,72 @@ class UsersTable extends Table {
             ->add('device_id', 'unique', ['rule' => 'validateUnique','message'=>'Device id has been used.', 'provider' => 'table']);
         return $validator;
     }
+    
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationUpdateUser(Validator $validator) {
+        $validator
+                ->integer('id')
+                ->notEmpty('id', 'User id is required field.');
+
+        $validator
+                ->requirePresence('first_name', 'First name is required field.')
+                ->add('first_name', 'length', ['rule' => ['maxLength', 30], 'message' => 'First name should be less than 30 chars.'])
+                ->notEmpty('first_name', 'First name is required field.');
+
+        $validator
+                ->requirePresence('last_name', 'Last name is required field.')
+                ->add('last_name', 'length', ['rule' => ['maxLength', 30], 'message' => 'Last name should be less than 30 chars.'])
+                ->notEmpty('last_name', 'Last name is required field.');
+                
+        
+        $validator
+                ->allowEmpty('phone')
+                ->requirePresence('phone', 'Phone must exist.')
+                ->add('phone', 'valid', [
+                    'rule' => function($value,$context){
+                        if(preg_match('/[\d]{10}$/m/',$value)){
+                            return false;
+                        }else{
+                            return true;
+                        }
+                    },
+                    'message'=>'Phone no is not valid'
+                    ]);
+
+        $validator
+                ->allowEmpty('dob')
+                ->add('dob',[
+                    'date' => [
+                        'rule'=> ['date',['ymd']],
+                        'last'=>true,
+                        'message'=>'Date of birth is not valid format.'
+                        ]
+                    ])
+                ->add('dob','custom',[
+                    'rule'=>function($value,$context){
+                            $now = new Time('now');
+                            $dob = Time::createFromFormat('Y-m-d',$value);
+                            $age = $now->diff($dob)->format("%Y");
+                            return ($age > 13);
+                        },
+                    'message'=>'Age must be 13 or greater than 13 year\'s old.',
+                ]); 
+        $validator
+            ->allowEmpty('gender')
+            ->add('gender', 'custom', [
+                        'rule' => function ($value, $context){
+                          return in_array($value, \Cake\Core\Configure::read('gender'));
+                        },
+                        'message' => 'Gender value must be any one male,female or other only.'
+                    ]);                
+
+        return $validator;
+    }
 
     /**
      * Returns a rules checker object that will be used for validating
@@ -223,22 +284,6 @@ class UsersTable extends Table {
         //$rules->add($rules->isUnique(['email'], 'Email has already been used.'));
         //$rules->add($rules->isUnique(['username'], 'Username has already been used.'));
         return $rules;
-    }
-    
-    public function getAlreadyExistsUser($data = []) {
-        if(!empty($data['email'])) {
-            $user = $this->find("all", ['conditions'=>['email'=>$data['email']]]);
-            if($user->count()) {
-                return $user->first()->toArray();
-            }
-        }
-        if(!empty($data['fb_id'])) {
-            $user = $this->find("all", ['conditions'=>['fb_id'=>$data['fb_id']]]);
-            if($user->count()) {
-                return $user->first()->toArray();
-            }
-        }
-        return false;
     }
     
     public function uploadImages($oldEntity, $files) {

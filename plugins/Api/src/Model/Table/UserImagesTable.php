@@ -44,6 +44,11 @@ class UserImagesTable extends Table
             'foreignKey' => 'user_id',
             'joinType' => 'INNER'
         ]);
+        /*$this->addBehavior('ImgUpload', [
+            'field' => ['images'],
+            'uploadPath' => 'img/profile/',
+            'where' => 'local', // local and s3
+        ]);*/
     }
 
     /**

@@ -82,7 +82,7 @@ class ImgUploadBehavior extends Behavior {
                     if(!empty($filename)){
                         $this->_deleteFromASW($entity,$filename);
                     }
-                }            
+                }       
             }else{
                 $filename = $entity->get($this->_config['field']);
                 $this->_deleteFromASW($entity,$filename);
