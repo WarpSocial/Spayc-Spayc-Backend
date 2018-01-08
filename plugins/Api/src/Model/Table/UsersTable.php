@@ -123,9 +123,6 @@ class UsersTable extends Table {
                     },
                     'message'=>'Phone no is not valid'
                     ]);
-        
-                
-                
 
         $validator
                 ->allowEmpty('dob')
@@ -138,12 +135,21 @@ class UsersTable extends Table {
                     ])
                 ->add('dob','custom',[
                     'rule'=>function($value,$context){
-                            $today = new Time('now');
-                            $udob = Time::createFromFormat('Y-m-d',$value);
-                            return ($udob<$today);
+                            $now = new Time('now');
+                            $dob = Time::createFromFormat('Y-m-d',$value);
+                            $age = $now->diff($dob)->format("%Y");
+                            return ($age > 13);
                         },
-                    'message'=>'Date of birth must be below the current date.',
+                    'message'=>'Age must be 13 or greater than 13 year\'s old.',
                 ]); 
+        $validator
+            ->allowEmpty('gender')
+            ->add('gender', 'custom', [
+                        'rule' => function ($value, $context){
+                          return in_array($value, \Cake\Core\Configure::read('gender'));
+                        },
+                        'message' => 'Gender value must be any one male,female or other only.'
+                    ]);                
 
         return $validator;
     }
