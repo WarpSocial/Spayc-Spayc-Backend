@@ -36,7 +36,7 @@ class ImgUploadBehavior extends Behavior {
     private $aws3Obj = null;
 
     public function initialize(array $config) {
-        $this->_aws3 = \Cake\Core\Configure::read('AWS3');
+        $this->_aws3 = \Cake\Core\Configure::read('AWS3'); //pr($this->_aws3);exit;
         $this->aws3Obj = S3Client::factory(['base_url' => $this->_aws3['url'],'key' => $this->_aws3['key'],'secret' => $this->_aws3['secret']]);
     }
     
