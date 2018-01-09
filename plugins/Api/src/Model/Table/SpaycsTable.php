@@ -79,30 +79,30 @@ class SpaycsTable extends Table {
         $validator                
                 ->requirePresence('start_date', 'create',__('Start Date key is missing.'))
                 ->dateTime('start_date','ymd',__('Start date is not in format YYYY-MM-DD H:i:s'))
-                ->notEmpty('start_date',__('Start date is required.'),function($context){
-                     return ($context['data']['type'] =='Event');
+                ->notEmpty('start_date',__('Start date is required when type is event.'),function($context){
+                     return (isset($context['data']['type']) && ($context['data']['type'] =='Event'));
                 });
         $validator                
                 ->requirePresence('end_date', 'create',__('End Date key is missing.'))
                 ->dateTime('end_date','ymd',__('End date is not in format YYYY-MM-DD H:i:s'))
-                ->notEmpty('end_date',__('End date is required.'),function($context){
-                     return ($context['data']['type'] =='Event');
+                ->notEmpty('end_date',__('End date is required when type is event.'),function($context){
+                     return (isset($context['data']['type']) && ($context['data']['type'] =='Event'));
                 });
 
         $validator
-                ->maxLength('passcode', 30)
-                ->requirePresence('passcode', 'create')
-                ->notEmpty('passcode');
+                ->requirePresence('passcode', 'create',__('Passcode key is missing.'))
+                ->maxLength('passcode', 30,__('Max 30 character is allowed for passcode.'))
+                //->add('passcode', 'unique', ['rule' => 'validateUnique','message'=>'Username must be unique.', 'provider' => 'table'])
+                ->notEmpty('passcode',__('Passcode is required in case of private group type.'),function($context){                    
+                     return (isset($context['data']['group_type']) && ($context['data']['group_type'] =='Private'));
+                });
 
         $validator
-                ->scalar('description')
-                ->maxLength('description', 250)
+                ->requirePresence('description', 'create',__('Description key is missing.'))
+                ->maxLength('description', 50,__('Description must be less than 50 characters.'))
                 ->allowEmpty('description');
 
-        $validator
-                ->scalar('status')
-                ->allowEmpty('status');
-
+        
         return $validator;
     }
 

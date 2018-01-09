@@ -18,17 +18,17 @@ class SpaycsController extends AppController {
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
-    public function add() { 
+    public function add() {         
         $entity = $this->Spaycs->newEntity();
         if ($this->request->is('post')) {
             $data = $this->request->getData();            
             $items = $this->Spaycs->patchEntity($entity, $data);
             if($items->errors()) {
-                //pr($items->errors());die;
-                $this->restException($this->mapErrors($items->errors()));
+                $this->restException(['status'=>'failed','message'=>'Validation errors','error'=>$this->mapErrors($items->errors())]);
             }
-            if ($this->Spaycs->save($spayc)) {
-                $response = ['status'=>'success','message'=>__('The spayc has been created.'),'data'=>$spayc];
+            $items->set('user_id',$this->Auth->user('id'));
+            if ($this->Spaycs->save($items)) {
+                $response = ['status'=>'success','message'=>__('The spayc has been created.'),'data'=>$items];
             }
             $response = ['status'=>'success','message'=>__('The spayc could not be saved. Please, try again.')];
         }
