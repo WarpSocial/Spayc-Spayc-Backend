@@ -37,7 +37,7 @@ class ImgUploadBehavior extends Behavior {
 
     public function initialize(array $config) {
         $this->_aws3 = \Cake\Core\Configure::read('AWS3');
-        $this->aws3Obj = S3Client::factory(['base_url' => $this->_aws3['url'],'key' => $this->_aws3['key'],'secret' => $this->_aws3['secret']]);
+        $this->aws3Obj = S3Client::factory(['base_url' => $this->_aws3['url'],'key' => $this->_aws3['key'],'secret' => $this->_aws3['secret'], 'version' => $this->_aws3['version'], 'region' => $this->_aws3['region']]);
     }
     
     /**
@@ -82,7 +82,7 @@ class ImgUploadBehavior extends Behavior {
                     if(!empty($filename)){
                         $this->_deleteFromASW($entity,$filename);
                     }
-                }            
+                }       
             }else{
                 $filename = $entity->get($this->_config['field']);
                 $this->_deleteFromASW($entity,$filename);

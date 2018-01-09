@@ -45,6 +45,11 @@ class UserImagesTable extends Table
             'joinType' => 'INNER',
             'className' => 'Api.Users'
         ]);
+        $this->addBehavior('ImgUpload', [
+            'field' => ['images'],
+            'uploadPath' => 'img/profile/',
+            'where' => 's3', // local and s3
+        ]);
     }
 
     /**

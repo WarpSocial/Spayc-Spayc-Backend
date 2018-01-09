@@ -49,7 +49,7 @@ class UsersController extends AppController {
                 ->requirePresence('device_id')
                 ->notEmpty('device_id');
         $errors = $validator->errors($data_item);
-        if (!empty($errors)) { 
+        if (!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>'All fields are required.','errors'=>$this->mapErrors($errors)]);
         }
         $user = $this->Auth->identify();
@@ -106,11 +106,11 @@ class UsersController extends AppController {
             $this->loadComponent('Api.Matrix');
             $data = $this->request->getData();            
             $items = $this->Users->patchEntity($entity, $data);
-            if($items->errors()){
+            if($items->errors()) {
                 $this->restException($this->mapErrors($items->errors()));
             }
             $matrix = $this->Matrix->register($data);
-            if(!$matrix){                
+            if(!$matrix) {       
                 $this->restException(['status' => "failed", 'message' => 'Matrix registration failed.'],401);
             }
             
@@ -178,7 +178,16 @@ class UsersController extends AppController {
     public function facebookSignup() {
         if ($this->request->is('post')) {
             $data = $this->request->getData();
-            $alreadyExist = $this->Users->getAlreadyExistsUser($data);
+            //$alreadyExist = $this->Users->getAlreadyExistsUser($data);
+            $alreadyExist = $this->Users->findByEmail($data['email']);
+            if(!$alreadyExist->count()) {
+                $alreadyExist = $this->Users->findByFbId($data['fb_id']);
+                if($alreadyExist->count()) {
+                    $alreadyExist = $alreadyExist->first()->toArray();
+                }
+            } else {
+                $alreadyExist = $alreadyExist->first()->toArray();
+            }
             if(!empty($alreadyExist['id'])) {
                 $data['id'] = $alreadyExist['id'];
                 $data['fb_id'] = !empty($alreadyExist['fb_id'])?$alreadyExist['fb_id']:$data['fb_id'];
@@ -198,6 +207,8 @@ class UsersController extends AppController {
             } else {
                 $response = ['status' => "failed", 'message' => 'Failed to saved data.', 'data' => $this->request->data,'errors'=>$this->mapErrors($items->errors())];
             }
+        } else {
+            $response = ['status' => "failed", 'message' => 'Request method not supported.', 'data' => 'None'];
         }
         $this->set($response);
     }
@@ -241,7 +252,7 @@ class UsersController extends AppController {
                     //$entity->user_images = $this->Users->uploadImages($entity, $data['images']);
                 } 
                 
-                $items = $this->Users->patchEntity($entity, $data);
+                $items = $this->Users->patchEntity($entity, $data, ['validate' =>'UpdateUser']);
                 
                // pr($items); die;
                 
@@ -261,7 +272,6 @@ class UsersController extends AppController {
                 if ($this->Users->save($items)) {
                     $response = ['status' => "success", 'message' => 'Updated successfully.', 'data' => $this->request->data];
                 } else {
-                    pr($items->errors()); die;
                     $response = ['status' => "failed", 'message' => 'Failed to update data.', 'data' => $this->request->data, 'errors'=>$this->mapErrors($items->errors())];
                 }
             } else {

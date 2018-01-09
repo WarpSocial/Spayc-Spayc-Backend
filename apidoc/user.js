@@ -21,7 +21,7 @@
 */
 
 /**
- * @api {Post} /user/:id.json Update a User
+ * @api {Post} /users/edit/:id.json Update a User
  * @apiVersion 0.1.0
  * @apiName PutUser
  * @apiGroup User
@@ -73,7 +73,7 @@
  */
 function putUser() { return; }
 /**
- * @api {post} /user.json Register a User
+ * @api {post} /users.json Register a User
  * @apiVersion 0.1.0
  * @apiName PostUser
  * @apiGroup User
