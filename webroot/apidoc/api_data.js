@@ -134,7 +134,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/users.json",
-    "title": "Register a User",
+    "title": "Register an User",
     "version": "0.1.0",
     "name": "PostUser",
     "group": "User",

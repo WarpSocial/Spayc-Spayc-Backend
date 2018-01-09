@@ -77,7 +77,7 @@
  */
 function putUser() { return; }
 /**
- * @api {post} /users.json Register a User
+ * @api {post} /users.json Register an User
  * @apiVersion 0.1.0
  * @apiName PostUser
  * @apiGroup User
