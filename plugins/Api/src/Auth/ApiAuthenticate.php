@@ -60,49 +60,38 @@ class ApiAuthenticate extends BaseAuthenticate {
         }
     }
 
-    public function getUser(ServerRequest $request) {
-        if (!$request->query('token'))
+    public function getUser(ServerRequest $request) { 
+        $token = env('HTTP_TOKEN');        
+        if (empty($token)) {
             return false;
-        $table = TableRegistry::get($this->_config['userModel']);
-        $user = $table->findByToken($request->query('token'))->first();
-        if (!$user)
+        }        
+        $table = TableRegistry::get('Api.'.$this->_config['userModel']);
+        $user = $table->find()->matching('UserLogs',function($q)use($token){
+            return $q
+                    ->select('user_id')
+                    ->where(['plain_token'=>$token]);
+            
+        })->where(['Users.status'=>'active'])->first();
+        if (!$user){
             return false;
+        } 
         return $user->toArray();
     }
 
-    public function authenticate(ServerRequest $request, Response $response) {        
+    public function authenticate(ServerRequest $request, Response $response) {
         $fields = $this->_config['fields'];
         $username = $request->getData($fields['username']);
         $password = $request->getData($fields['password']);
-        $token = $request->getData($fields['token']);
-        if(!empty($username) && !empty($password)){ 
-            $user = $this->_findUserByFields($username,$password);
+        $token = $request->env('HTTP_TOKEN');
+        if(!empty($username) && !empty($password)){
+            $user = $this->_findByFields($username,$password);
         }elseif(!empty($token)){
-            $user = $this->_findUserByToken($token);
+            $user = $this->getUser($request);
         }else{
-            return false;
-        }
+            $user = false;
+        }        
         return $user;
-    }
-
-    public function authenticate1(Request $request, Response $response) {
-        $user = parent::authenticate($request, $response);
-        if (!$user) {
-            return $user;
-        }
-        $table = TableRegistry::get($this->_config['userModel']);
-        $entity = $table->get($user[$table->primaryKey()]);
-        $entity->token = $token = sha1(Text::uuid());
-        $entity->token_created = $token_created = Time::now();
-        unset($entity->{$this->_config['fields']['password']});
-        if (!$table->save($entity)) {
-            return false;
-        }
-        $user['token'] = $token;
-        $user['token_created'] = $token_created;
-        return $user;
-    }
-
+    }    
     public function unauthenticated(ServerRequest $request, Response $response) {
         $response->statusCode(403);
         $msgbody = ['status' => 'failed', 'message' => "You're not authorized"];
@@ -111,9 +100,9 @@ class ApiAuthenticate extends BaseAuthenticate {
         return $response;
     }
     
-    protected function _findUserByFields($username,$password){
+    protected function _findByFields($username,$password){
         $fields = $this->_config['fields'];
-        $userModel = $this->_config['userModel'];
+        $userModel = 'Api.'.$this->_config['userModel'];
         list($plugin, $model) = pluginSplit($userModel);
         $fields = $this->_config['fields'];
         $conditions = [$fields['username']=>$username];
@@ -137,35 +126,4 @@ class ApiAuthenticate extends BaseAuthenticate {
         }
         return $result;
     }
-
-    /**
-     * Find a user record.
-     *
-     * @param string $username The token identifier.
-     * @param string $password Unused password.
-     * @return Mixed Either false on failure, or an array of user data.
-     */
-    protected function _findUser($username, $password = null) { //pr($request);die;
-        $userModel = $this->_config['userModel'];
-        list($plugin, $model) = pluginSplit($userModel);
-        $fields = $this->_config['fields'];
-        $conditions = [$model . '.' . $fields['token'] => $username];
-        if (!empty($this->_config['scope'])) {
-            $conditions = array_merge($conditions, $this->_config['scope']);
-        }
-        $table = TableRegistry::get($userModel)->find('all');
-        if ($this->_config['contain']) {
-            $table = $table->contain($this->_config['contain']);
-        }
-        $result = $table
-                ->where($conditions)
-                ->hydrate(false)
-                ->first();
-        if (empty($result)) {
-            return false;
-        }
-        unset($result[$fields['password']]);
-        return $result;
-    }
-
 }

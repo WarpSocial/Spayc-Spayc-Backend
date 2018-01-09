@@ -26,6 +26,10 @@ class UsersController extends AppController {
         $this->Auth->allow(['login','add','edit', 'facebookSignup']);
     }
     
+    public function avatars(){
+        
+    }
+    
     /**
      * login method to login and generate the token
      */
@@ -55,10 +59,25 @@ class UsersController extends AppController {
         $this->loadComponent('Api.Matrix');
         $matrix = (array)$this->Matrix->login($data_item);        
         if(!empty($matrix)){
-            $user['matrix_token'] = $matrix['access_token'];
-            $user += $matrix;
+            $user['matrix_user_id'] = $matrix['user_id'];
+            $user['access_token'] = $matrix['access_token'];
             $this->Auth->setUser($user);
-            $response = ['status' => "success", 'message' => 'Login done successfully.','data'=>$user];
+            $user = $this->Users->usrLog($user);
+            $data = [
+                'username'=>$user['username'],
+                'email'=>$user['email'],
+                'gender'=>$user['gender'],
+                'dob'=>(new \Cake\I18n\Time($user['dob']))->format("Y-m-d"),
+                'phone'=>$user['phone'],
+                'website_url'=>$user['website_url'],
+                'address'=>$user['address'],
+                'bio_data'=>$user['bio_data'],
+                'device_id'=>$user['device_id'],
+                'matrix_user_id'=>$user['matrix_user_id'],
+                'token'=>$user['token'],
+                'matrix_token'=>$user['matrix_token'],
+                ];
+            $response = ['status' => "success", 'message' => 'Login done successfully.','data'=>$data];
         }else{
             $response = ['status' => "failed", 'message' => 'Invalid login credential.'];            
         }
@@ -74,21 +93,6 @@ class UsersController extends AppController {
         $users = $this->paginate($this->Users);
 
         $this->set(compact('users'));
-    }
-
-    /**
-     * View method
-     *
-     * @param string|null $id User id.
-     * @return \Cake\Http\Response|void
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null) {
-        $user = $this->Users->get($id, [
-            'contain' => []
-        ]);
-
-        $this->set('user', $user);
     }
 
     /**

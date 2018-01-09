@@ -8,6 +8,7 @@
 
 namespace Api\Utils;
 
+use Cake\Utility\Text;
 /**
  * Description of Sanatize
  *
@@ -256,8 +257,8 @@ class Utils {
     }
     
     public static function getToken(){
-        $token = sha1(Text::uuid());
-        $hash = (new \Cake\Auth\DefaultPasswordHasher())->hash($token);
+        $token = \Cake\Utility\Security::randomBytes(32);
+        $hash = \Cake\Utility\Security::hash($token,'sha256',false);
         return $hash;
     }
 

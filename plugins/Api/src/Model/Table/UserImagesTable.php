@@ -1,5 +1,5 @@
 <?php
-namespace App\Model\Table;
+namespace Api\Model\Table;
 
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
@@ -9,15 +9,15 @@ use Cake\Validation\Validator;
 /**
  * UserImages Model
  *
- * @property \App\Model\Table\UsersTable|\Cake\ORM\Association\BelongsTo $Users
+ * @property \Api\Model\Table\UsersTable|\Cake\ORM\Association\BelongsTo $Users
  *
- * @method \App\Model\Entity\UserImage get($primaryKey, $options = [])
- * @method \App\Model\Entity\UserImage newEntity($data = null, array $options = [])
- * @method \App\Model\Entity\UserImage[] newEntities(array $data, array $options = [])
- * @method \App\Model\Entity\UserImage|bool save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\UserImage patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \App\Model\Entity\UserImage[] patchEntities($entities, array $data, array $options = [])
- * @method \App\Model\Entity\UserImage findOrCreate($search, callable $callback = null, $options = [])
+ * @method \Api\Model\Entity\UserImage get($primaryKey, $options = [])
+ * @method \Api\Model\Entity\UserImage newEntity($data = null, array $options = [])
+ * @method \Api\Model\Entity\UserImage[] newEntities(array $data, array $options = [])
+ * @method \Api\Model\Entity\UserImage|bool save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \Api\Model\Entity\UserImage patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \Api\Model\Entity\UserImage[] patchEntities($entities, array $data, array $options = [])
+ * @method \Api\Model\Entity\UserImage findOrCreate($search, callable $callback = null, $options = [])
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
@@ -42,7 +42,8 @@ class UserImagesTable extends Table
 
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id',
-            'joinType' => 'INNER'
+            'joinType' => 'INNER',
+            'className' => 'Api.Users'
         ]);
     }
 

@@ -22,6 +22,8 @@ class AppController extends BaseController {
             'unauthorizedRedirect'=>false,
             'storage' => 'Memory'
          ]);
+         $user = $this->Auth->identify();
+         $this->Auth->setUser($user);
     }
     public function beforeRender(Event $event) {
         parent::beforeRender($event);

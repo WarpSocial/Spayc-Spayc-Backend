@@ -4,17 +4,25 @@ namespace Api\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * UserImage Entity
+ * Spayc Entity
  *
  * @property int $id
  * @property int $user_id
- * @property string $image_url
+ * @property string $name
+ * @property string $location
+ * @property string $type
+ * @property string $group_type
+ * @property \Cake\I18n\FrozenTime $start_date
+ * @property \Cake\I18n\FrozenTime $end_date
+ * @property string $passcode
+ * @property string $description
+ * @property string $status
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
  *
  * @property \Api\Model\Entity\User $user
  */
-class UserImage extends Entity
+class Spayc extends Entity
 {
 
     /**
@@ -28,7 +36,15 @@ class UserImage extends Entity
      */
     protected $_accessible = [
         'user_id' => true,
-        'image_url' => true,
+        'name' => true,
+        'location' => true,
+        'type' => true,
+        'group_type' => true,
+        'start_date' => true,
+        'end_date' => true,
+        'passcode' => true,
+        'description' => true,
+        'status' => true,
         'created' => true,
         'modified' => true,
         'user' => true

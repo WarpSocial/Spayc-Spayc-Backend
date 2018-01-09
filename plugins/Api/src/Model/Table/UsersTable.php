@@ -10,6 +10,7 @@ use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\Auth\DefaultPasswordHasher;
 use \Cake\ORM\TableRegistry;
+use Api\Utils;
 /**
  * Users Model
  *
@@ -47,9 +48,9 @@ class UsersTable extends Table {
             'where' => 's3', // local and s3 
         ]);*/
 
-        $this->hasMany('UsersLogs', [
+        $this->hasMany('UserLogs', [
             'foreignKey' => 'user_id',
-            'className' => 'Api.UsersLogs'
+            'className' => 'Api.UserLogs'
         ]);
         $this->hasMany('UserImages', [
             'foreignKey' => 'user_id',
@@ -115,7 +116,7 @@ class UsersTable extends Table {
                 ->requirePresence('phone', 'create','Phone must exist.')
                 ->add('phone', 'valid', [
                     'rule' => function($value,$context){
-                        if(preg_match('/[\d]{10}$/m/',$value)){
+                        if(preg_match('/[\d]{16}$/',$value)){
                             return false;
                         }else{
                             return true;
@@ -223,6 +224,39 @@ class UsersTable extends Table {
         //$rules->add($rules->isUnique(['email'], 'Email has already been used.'));
         //$rules->add($rules->isUnique(['username'], 'Username has already been used.'));
         return $rules;
+    }
+    
+    /**
+     * usrLog to manage user login details from user logs table
+     * 
+     * @param Array $user user details
+     * 
+     * @return Bool 
+     */
+    public function usrLog($user = []){
+        if(empty($user)){
+            return false;
+        }
+        $plain_token = \Api\Utils\Utils::getToken();
+        $hasher = new DefaultPasswordHasher();
+        $userLogs = TableRegistry::get('UserLogs');
+        
+        $logItems = $userLogs->newEntity();        
+        $logItems->user_id = $user['id'];
+        $logItems->last_login = Time::now();
+        $logItems->token = $hasher->hash($plain_token);
+        $logItems->plain_token = $plain_token;
+        $logItems->device_id = $user['device_id'];
+        $logItems->matrix_access_token = $user['access_token'];
+        $logItems->matrix_user_id = $user['matrix_user_id'];
+        $logItems->login_status = 1;
+        $logItems->created = Time::now();
+        $logItems->modified = Time::now();
+        if ($userLogs->save($logItems)) {
+            return $user+['token'=>$plain_token];
+        }else{
+            return false;
+        }
     }
     
     public function getAlreadyExistsUser($data = []) {
