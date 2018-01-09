@@ -203,6 +203,8 @@ class UsersController extends AppController {
             } else {
                 $response = ['status' => "failed", 'message' => 'Failed to saved data.', 'data' => $this->request->data,'errors'=>$this->mapErrors($items->errors())];
             }
+        } else {
+            $response = ['status' => "failed", 'message' => 'Request method not supported.', 'data' => 'None'];
         }
         $this->set($response);
     }
