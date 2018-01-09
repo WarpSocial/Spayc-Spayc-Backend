@@ -10,7 +10,7 @@ Router::plugin(
         $routes->setExtensions(['json','html']);
         $routes->resources('Users');
         $routes->connect('/login',['controller'=>'Users','action'=>'login']);
-        $routes->connect('/facebook-signup',['controller'=>'Users', 'action'=>'facebookSignup']);
+        $routes->connect('/facebook-signup',['controller'=>'Users', 'action'=>'facebook-signup']);
         $routes->connect('/doc',['controller'=>'ApiDoc','action'=>'apiList','ext'=>'html']);
         $routes->connect('/verify/:token/:email', ['controller' => 'Users', 'action' => 'verifyAccount','ext'=>'html'], ['pass' => ['token', 'email']]);
       
