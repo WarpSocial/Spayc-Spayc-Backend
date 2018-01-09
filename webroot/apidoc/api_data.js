@@ -425,7 +425,7 @@ define({ "api": [
   },
   {
     "type": "post",
-    "url": "/facebooksignup.json",
+    "url": "/users/facebooksignup.json",
     "title": "Facebook Sign-up",
     "version": "0.0.1",
     "name": "facebookSignup",
@@ -586,7 +586,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/facebooksignup.json"
+        "url": "http://spayc.com/api/users/facebooksignup.json"
       }
     ]
   }

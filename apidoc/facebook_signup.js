@@ -1,5 +1,5 @@
 /**
-* @api {post} /facebooksignup.json Facebook Sign-up
+* @api {post} /users/facebooksignup.json Facebook Sign-up
 * @apiVersion 0.0.1
 * @apiName facebookSignup
 * @apiGroup User
