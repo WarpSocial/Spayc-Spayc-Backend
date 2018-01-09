@@ -12,13 +12,35 @@ use Api\Controller\AppController;
  * @method \Api\Model\Entity\Spayc[] paginate($object = null, array $settings = [])
  */
 class SpaycsController extends AppController {
+    
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add() { 
+        $entity = $this->Spaycs->newEntity();
+        if ($this->request->is('post')) {
+            $data = $this->request->getData();            
+            $items = $this->Spaycs->patchEntity($entity, $data);
+            if($items->errors()) {
+                //pr($items->errors());die;
+                $this->restException($this->mapErrors($items->errors()));
+            }
+            if ($this->Spaycs->save($spayc)) {
+                $response = ['status'=>'success','message'=>__('The spayc has been created.'),'data'=>$spayc];
+            }
+            $response = ['status'=>'success','message'=>__('The spayc could not be saved. Please, try again.')];
+        }
+        $this->set(compact('response'));
+    }
 
     /**
      * Index method
      *
      * @return \Cake\Http\Response|void
      */
-    public function index() {
+    public function index() { die("dkls");
         $this->paginate = [
             'contain' => ['Users']
         ];
@@ -40,26 +62,6 @@ class SpaycsController extends AppController {
         ]);
 
         $this->set('spayc', $spayc);
-    }
-
-    /**
-     * Add method
-     *
-     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
-     */
-    public function add() {
-        $spayc = $this->Spaycs->newEntity();
-        if ($this->request->is('post')) {
-            $spayc = $this->Spaycs->patchEntity($spayc, $this->request->getData());
-            if ($this->Spaycs->save($spayc)) {
-                $this->Flash->success(__('The spayc has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The spayc could not be saved. Please, try again.'));
-        }
-        $users = $this->Spaycs->Users->find('list', ['limit' => 200]);
-        $this->set(compact('spayc', 'users'));
     }
 
     /**

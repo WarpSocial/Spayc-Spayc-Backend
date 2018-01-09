@@ -9,6 +9,7 @@ Router::plugin(
     function (RouteBuilder $routes) {
         $routes->setExtensions(['json','html']);
         $routes->resources('Users');
+        $routes->resources('Spaycs');
         $routes->connect('/avatars',['controller'=>'Users','action'=>'avatars']);
         $routes->connect('/login',['controller'=>'Users','action'=>'login']);
         $routes->connect('/logout',['controller'=>'Users','action'=>'Logout']);
