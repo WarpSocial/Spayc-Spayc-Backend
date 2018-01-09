@@ -9,6 +9,7 @@ Router::plugin(
     function (RouteBuilder $routes) {
         $routes->setExtensions(['json','html']);
         $routes->resources('Users');
+        $routes->connect('/avatars',['controller'=>'Users','action'=>'avatars']);
         $routes->connect('/login',['controller'=>'Users','action'=>'login']);
         $routes->connect('/facebooksignup',['controller'=>'Users', 'action'=>'facebookSignup']);
         $routes->connect('/doc',['controller'=>'ApiDoc','action'=>'apiList','ext'=>'html']);

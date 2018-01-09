@@ -10,6 +10,7 @@ use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\Auth\DefaultPasswordHasher;
 use \Cake\ORM\TableRegistry;
+use Api\Utils;
 /**
  * Users Model
  *
@@ -42,9 +43,9 @@ class UsersTable extends Table {
 
         $this->addBehavior('Timestamp');
 
-        $this->hasMany('UsersLogs', [
+        $this->hasMany('UserLogs', [
             'foreignKey' => 'user_id',
-            'className' => 'Api.UsersLogs'
+            'className' => 'Api.UserLogs'
         ]);
         $this->hasMany('UserImages', [
             'foreignKey' => 'user_id',
@@ -283,6 +284,22 @@ class UsersTable extends Table {
         //$rules->add($rules->isUnique(['email'], 'Email has already been used.'));
         //$rules->add($rules->isUnique(['username'], 'Username has already been used.'));
         return $rules;
+    }
+    
+    public function getAlreadyExistsUser($data = []) {
+        if(!empty($data['email'])) {
+            $user = $this->find("all", ['conditions'=>['email'=>$data['email']]]);
+            if($user->count()) {
+                return $user->first()->toArray();
+            }
+        }
+        if(!empty($data['fb_id'])) {
+            $user = $this->find("all", ['conditions'=>['fb_id'=>$data['fb_id']]]);
+            if($user->count()) {
+                return $user->first()->toArray();
+            }
+        }
+        return false;
     }
     
     public function uploadImages($oldEntity, $files) {
