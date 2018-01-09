@@ -5,6 +5,7 @@ namespace Api\Controller;
 use Api\Controller\AppController;
 use Cake\Mailer\MailerAwareTrait;
 use Cake\Utility\Security;
+use \Cake\ORM\TableRegistry;
 //require_once("../vendor/aws/aws-autoloader.php"); 
 /**
  * Users Controller
@@ -27,7 +28,26 @@ class UsersController extends AppController {
     }
     
     public function avatars(){
-        
+        if ($this->request->is('post')) {
+            if($this->Auth->user('id')) {
+                $this->Users->uploadProfileImages();
+                $userImg = TableRegistry::get('UserImages');
+                $newEntity = $userImg->newEntity();
+                $data['user_id'] = $this->Auth->user('id');
+                $data['created'] = date('Y-m-d');
+                $data['modified'] = date('Y-m-d');
+                $items = $userImg->patchEntity($newEntity, $data);
+                if(!$items->errors()) {
+                    $userImg->save($items);
+                    $response = $this->restException(['status'=>'success','message'=>'Profile image uploaded successfully.'], 200);
+                } else {
+                    $response = $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())],405);
+                }
+            }
+        } else {
+            $response = $this->restException(['status'=>'failed','message'=>'Invalid request type'],405);
+        }
+        $this->set($response);
     }
     
     /**
@@ -38,7 +58,7 @@ class UsersController extends AppController {
         if (!$this->request->is('post')) {
             $this->restException(['status'=>'failed','message'=>'Invalid request type'],405);
         }
-        $data_item = \Api\Utils\Utils::escape($this->request->data);             
+        $data_item = \Api\Utils\Utils::escape($this->request->data);        
         
         $validator = new \Cake\Validation\Validator();
         $validator
@@ -57,7 +77,7 @@ class UsersController extends AppController {
             $this->restException(['status' => "failed", 'message' => 'Invalid login credentials.']);
         }
         $this->loadComponent('Api.Matrix');
-        $matrix = (array)$this->Matrix->login($data_item);        
+        $matrix = (array)$this->Matrix->login($data_item);    
         if(!empty($matrix)){
             $user['matrix_user_id'] = $matrix['user_id'];
             $user['access_token'] = $matrix['access_token'];
@@ -93,7 +113,8 @@ class UsersController extends AppController {
         $entity = $this->Users->newEntity();
         if ($this->request->is('post')) {
             $this->loadComponent('Api.Matrix');
-            $data = $this->request->getData();            
+            $data = $this->request->getData();   
+            //echo preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,12}$/', $data['password']);exit;
             $items = $this->Users->patchEntity($entity, $data);
             if($items->errors()) {
                 $this->restException($this->mapErrors($items->errors()));
@@ -109,7 +130,7 @@ class UsersController extends AppController {
             $items->set('home_server', $matrix->home_server);
             $items->set('token_verification', Security::hash($data['email'], 'sha1', true));
             #echo $data['token_verification'];die;
-            if ($this->Users->save($items)) {                
+            if ($this->Users->save($items)) {           
                  $this->getMailer('Api.User')->send('signup', [$items]);
                  
                 $response = ['status' => "success", 'message' => 'Registration done successfully.', 'data' => $this->request->data];
@@ -289,7 +310,7 @@ class UsersController extends AppController {
         $this->set($response);
     }
     
-    public function logout(){
+    public function logout() {
         $this->loadModel('UserLogs');
         //$user = $this->Auth->user();
         $token = $this->request->env('HTTP_TOKEN');

@@ -65,12 +65,11 @@ class ImgUploadBehavior extends Behavior {
      */
     
     public function beforeSave(Event $event, $entity, \ArrayObject $options) {        
-        if($this->_config['where']=='s3'){
+        if($this->_config['where']=='s3') {
             $this->uploadToAWS($entity);            
-        }else{
+        } else {
             $this->uploadLocal($entity);
         }
-        
     }
     
     public function beforeDelete(Event $event, $entity, \ArrayObject $options) {

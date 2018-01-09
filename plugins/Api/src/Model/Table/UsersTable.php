@@ -90,14 +90,14 @@ class UsersTable extends Table {
                 ->requirePresence('password', 'create','Password is required field.')
                 ->notEmpty('password','Password is required field.')
                 ->add("password",'custom',[
-                    'rule'=>function($value,$context){
-                        if(preg_match('/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}/', $value)){
+                    'rule'=>function($value,$context) {
+                        if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{4,30}$/', $value)){
                             return false;
                         }else{
                             return true;
                         }
                     },
-                    'message'=>'Password must be between 4-8 charecters length.',
+                    'message'=>'Password must contain 4-30 character length, at least one letter and one number.',
                 ]);
 
         $validator

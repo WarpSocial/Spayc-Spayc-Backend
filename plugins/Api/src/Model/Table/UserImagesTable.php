@@ -46,7 +46,7 @@ class UserImagesTable extends Table
             'className' => 'Api.Users'
         ]);
         $this->addBehavior('ImgUpload', [
-            'field' => ['images'],
+            'field' => ['image_url'],
             'uploadPath' => 'img/profile/',
             'where' => 's3', // local and s3
         ]);
@@ -64,10 +64,10 @@ class UserImagesTable extends Table
             ->integer('id')
             ->allowEmpty('id', 'create');
 
-        $validator
+        /*$validator
             ->scalar('image_url')
             ->maxLength('image_url', 255)
-            ->allowEmpty('image_url');
+            ->allowEmpty('image_url');*/
 
         return $validator;
     }
