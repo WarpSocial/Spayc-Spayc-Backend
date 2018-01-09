@@ -83,17 +83,6 @@ class UsersController extends AppController {
         }
         $this->set($response);
     }
-    
-    /**
-     * Index method
-     *
-     * @return \Cake\Http\Response|void
-     */
-    public function index() {
-        $users = $this->paginate($this->Users);
-
-        $this->set(compact('users'));
-    }
 
     /**
      * Add method
@@ -291,13 +280,26 @@ class UsersController extends AppController {
     public function delete($id = null) {
         $this->request->allowMethod(['post', 'delete']);
         $user = $this->Users->get($id);
-        if ($this->Users->delete($user)) {
-            $this->Flash->success(__('The user has been deleted.'));
+        $user->status= 'trash';
+        if ($this->Users->update($user)) {
+            $response = ['status'=>'success',__('The user has been deleted.')];
         } else {
-            $this->Flash->error(__('The user could not be deleted. Please, try again.'));
+            $response = ['status'=>'success',__('The user could not be deleted. Please, try again.')];
         }
-
-        return $this->redirect(['action' => 'index']);
+        $this->set($response);
+    }
+    
+    public function logout(){
+        $this->loadModel('UserLogs');
+        //$user = $this->Auth->user();
+        $token = $this->request->env('HTTP_TOKEN');
+        $this->UserLogs->query()
+                        ->delete()
+                        //->set(['loginstatus' => 0])
+                        ->where(['plain_token' =>  $token])
+                        ->execute();
+        $response = ['status'=>'success','message'=>'Logout successfully.'];
+        $this->set($response);
     }
 
 }

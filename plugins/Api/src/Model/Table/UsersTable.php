@@ -286,6 +286,39 @@ class UsersTable extends Table {
         return $rules;
     }
     
+    /**
+     * usrLog to manage user login details from user logs table
+     * 
+     * @param Array $user user details
+     * 
+     * @return Bool 
+     */
+    public function usrLog($user = []){
+        if(empty($user)){
+            return false;
+        }
+        $plain_token = \Api\Utils\Utils::getToken();
+        $hasher = new DefaultPasswordHasher();
+        $userLogs = TableRegistry::get('UserLogs');
+        
+        $logItems = $userLogs->newEntity();        
+        $logItems->user_id = $user['id'];
+        $logItems->last_login = Time::now();
+        $logItems->token = $hasher->hash($plain_token);
+        $logItems->plain_token = $plain_token;
+        $logItems->device_id = $user['device_id'];
+        $logItems->matrix_access_token = $user['access_token'];
+        $logItems->matrix_user_id = $user['matrix_user_id'];
+        $logItems->login_status = 1;
+        $logItems->created = Time::now();
+        $logItems->modified = Time::now();
+        if ($userLogs->save($logItems)) {
+            return $user+['token'=>$plain_token];
+        }else{
+            return false;
+        }
+    }
+    
     public function getAlreadyExistsUser($data = []) {
         if(!empty($data['email'])) {
             $user = $this->find("all", ['conditions'=>['email'=>$data['email']]]);
