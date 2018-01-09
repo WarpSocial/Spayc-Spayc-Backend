@@ -134,7 +134,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/users.json",
-    "title": "Register a User",
+    "title": "Register an User",
     "version": "0.1.0",
     "name": "PostUser",
     "group": "User",
@@ -143,7 +143,7 @@ define({ "api": [
         "name": "none"
       }
     ],
-    "description": "<p>Create a new account. Register new user with content-type =&gt; text/html(form-data).</p>",
+    "description": "<p>Create a new account. Register new user with form-data option.</p>",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -285,9 +285,9 @@ define({ "api": [
     }
   },
   {
-    "type": "Post",
-    "url": "/users/edit/:id.json",
-    "title": "Update a User",
+    "type": "Put",
+    "url": "/profile-edit.json",
+    "title": "Update an user",
     "version": "0.1.0",
     "name": "PutUser",
     "group": "User",
@@ -296,7 +296,7 @@ define({ "api": [
         "name": "Private User"
       }
     ],
-    "description": "<p>Update profile of existing user. Update user own profile details with content-type =&gt; text/html(form-data).</p>",
+    "description": "<p>Update profile of existing user. Update user own profile details with form-data option.</p>",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -304,22 +304,15 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "first_name",
-            "description": "<p>User first name (Optional).</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "last_name",
-            "description": "<p>User last name (Optional).</p>"
+            "field": "username",
+            "description": "<p>Username (Required).</p>"
           },
           {
             "group": "Parameter",
             "type": "Date",
             "optional": false,
             "field": "dob",
-            "description": "<p>Date of birth must in in format YYYY-MM-DD (Optional).</p>"
+            "description": "<p>Date of birth must in this format YYYY-MM-DD (Optional).</p>"
           },
           {
             "group": "Parameter",
@@ -333,7 +326,28 @@ define({ "api": [
             "type": "Number",
             "optional": false,
             "field": "phone",
-            "description": "<p>Phone no of user and accept only 10 digits only (Optional).</p>"
+            "description": "<p>Phone no of user and accept upto 16 digits (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "address",
+            "description": "<p>User address (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "website_url",
+            "description": "<p>Website url (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "bio_data",
+            "description": "<p>Bio data of user (Optional).</p>"
           }
         ]
       }
@@ -341,7 +355,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "\n{\n   \"first_name\":\"spayc\",\n   \"last_name\":\"test\",\n   \"gender\": \"male|female|other\",\n   \"phone\": \"7876565434\",\n   \"dob\": \"2000-11-12\",\n   \"images\":{\"image1.jpg\",\"image2.png\"}\n}",
+        "content": "\n{\n   \"username\":\"spayc\",\n   \"dob\": \"2000-11-12\",\n   \"gender\": \"male|female|other\",\n   \"phone\": \"7876565434\",\n   \"address\": \"b-3 noida\",\n   \"website_url\":\"www.spayc.com\",\n   \"bio_data\":\"your bio data\",\n}",
         "type": "json"
       }
     ],
@@ -374,7 +388,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "    HTTP/1.1 200 OK\n{\n  \"status\": \"success\",\n  \"message\": \"Saved successfully.\",\n  \"data\": [\n      {\n         \"first_name\":\"spayc\",\n         \"last_name\":\"test\",\n         \"gender\": \"male|female|other\",\n         \"phone\": \"7876565434\",\n         \"dob\": \"2000-11-12\",\n         \"images\":{\"image1.jpg\",\"image2.png\"}\n      }\n  ]\n}",
+          "content": "    HTTP/1.1 200 OK\n{\n  \"status\": \"success\",\n  \"message\": \"Saved successfully.\",\n  \"data\": [\n      {\n         \"username\":\"spayc\",\n         \"dob\": \"2000-11-12\",\n         \"gender\": \"male|female|other\",\n         \"phone\": \"7876565434\",\n         \"address\": \"b-3 noida\",\n         \"website_url\":\"www.spayc.com\",\n         \"bio_data\":\"your bio data\",\n      }\n  ]\n}",
           "type": "json"
         }
       ]
@@ -383,7 +397,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/users/edit/:id.json"
+        "url": "http://spayc.com/api/profile-edit.json"
       }
     ],
     "error": {
@@ -425,7 +439,7 @@ define({ "api": [
   },
   {
     "type": "post",
-    "url": "/facebooksignup.json",
+    "url": "/facebook-signup.json",
     "title": "Facebook Sign-up",
     "version": "0.0.1",
     "name": "facebookSignup",
@@ -586,8 +600,99 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/facebooksignup.json"
+        "url": "http://spayc.com/api/facebook-signup.json"
       }
     ]
+  },
+  {
+    "type": "get",
+    "url": "/users.json",
+    "title": "View Details",
+    "version": "0.1.0",
+    "name": "getUsers",
+    "group": "User",
+    "permission": [
+      {
+        "name": "Private User"
+      }
+    ],
+    "description": "<p>User login with user name and its password. Need to send token in header</p>",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Login done successfully.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>List of user details.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Profile details\",\n    \"data\": {\n        \"username\": \"dhiruns3\",\n        \"email\": \"dhiru3@gmail.com\",\n        \"gender\": null,\n        \"phone\": 8484839392,\n        \"dob\": \"2000-05-25\",\n        \"status\": \"active\",\n        \"website_url\": null,\n        \"address\": null,\n        \"bio_data\": null,\n        \"created\": \"2018-01-09T11:00:21+00:00\",\n        \"modified\": \"2018-01-09T11:00:21+00:00\"\n    }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/user.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/users.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"errors:{Validation errors}\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
   }
 ] });

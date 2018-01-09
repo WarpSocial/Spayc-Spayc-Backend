@@ -63,15 +63,7 @@ class UsersTable extends Table {
         $validator
                 ->integer('id')
                 ->allowEmpty('id', 'create');
-
-        $validator
-                ->allowEmpty('first_name')
-                ->add('first_name', 'length', ['rule' => ['maxLength', 30], 'message' => 'First name should be less than 30 chars.']);
-
-        $validator
-                ->allowEmpty('last_name')
-                ->add('last_name', 'length', ['rule' => ['maxLength', 30], 'message' => 'Last name should be less than 30 chars.']);
-
+        
         $validator
                 ->requirePresence('username', 'create','Username is required field.')
                 ->notEmpty('username','Username  is required field.')                
@@ -90,14 +82,14 @@ class UsersTable extends Table {
                 ->requirePresence('password', 'create','Password is required field.')
                 ->notEmpty('password','Password is required field.')
                 ->add("password",'custom',[
-                    'rule'=>function($value,$context){
-                        if(preg_match('/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}/', $value)){
+                    'rule'=>function($value,$context) {
+                        if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{4,30}$/', $value)){
                             return false;
                         }else{
                             return true;
                         }
                     },
-                    'message'=>'Password must be between 4-8 charecters length.',
+                    'message'=>'Password must contain 4-30 character length, at least one letter and one number.',
                 ]);
 
         $validator
@@ -165,17 +157,18 @@ class UsersTable extends Table {
             ->allowEmpty('fb_id')
             ->requirePresence('fb_id', 'create','Facebook id is required field.')
             ->notEmpty('fb_id','Facebook id is required field.');
-
-        $validator
-            ->allowEmpty('first_name')
-            ->add('first_name', 'length', ['rule' => ['maxLength', 30], 'message' => 'First name should be less than 30 chars.']);
-
-        $validator
-            ->allowEmpty('last_name')
-            ->add('last_name', 'length', ['rule' => ['maxLength', 30], 'message' => 'Last name should be less than 30 chars.']);
+        
         $validator
                 ->requirePresence('username', 'create','Username is required field.')
-                ->allowEmpty('username');
+                ->notEmpty('username','Username  is required field.')                
+                ->add('username', 'unique', ['rule' => 'validateUnique','message'=>'Username has been used.', 'provider' => 'table'])                
+                ->add('username', [
+                    'lengthBetween' => [
+                        'rule' => ['lengthBetween', 3, 30],
+                        'message' => 'Username length must be between 3-30 alphanumeric.'
+                    ]
+                ]);
+        
         $validator
             ->allowEmpty('email')
             ->email('email',false,'Email is required field.')
@@ -215,20 +208,17 @@ class UsersTable extends Table {
      * @return \Cake\Validation\Validator
      */
     public function validationUpdateUser(Validator $validator) {
+        
         $validator
-                ->integer('id')
-                ->notEmpty('id', 'User id is required field.');
-
-        $validator
-                ->requirePresence('first_name', 'First name is required field.')
-                ->add('first_name', 'length', ['rule' => ['maxLength', 30], 'message' => 'First name should be less than 30 chars.'])
-                ->notEmpty('first_name', 'First name is required field.');
-
-        $validator
-                ->requirePresence('last_name', 'Last name is required field.')
-                ->add('last_name', 'length', ['rule' => ['maxLength', 30], 'message' => 'Last name should be less than 30 chars.'])
-                ->notEmpty('last_name', 'Last name is required field.');
-                
+                ->requirePresence('username', 'Username is required field.')
+                ->notEmpty('username','Username  is required field.')                
+                ->add('username', 'unique', ['rule' => 'validateUnique','message'=>'Username has been used.', 'provider' => 'table'])                
+                ->add('username', [
+                    'lengthBetween' => [
+                        'rule' => ['lengthBetween', 3, 30],
+                        'message' => 'Username length must be between 3-30 alphanumeric.'
+                    ]
+                ]);
         
         $validator
                 ->allowEmpty('phone')
@@ -262,7 +252,7 @@ class UsersTable extends Table {
                     'message'=>'Age must be 13 or greater than 13 year\'s old.',
                 ]); 
         $validator
-            ->allowEmpty('gender')
+            ->notEmpty('gender', "Gender is required field.")
             ->add('gender', 'custom', [
                         'rule' => function ($value, $context){
                           return in_array($value, \Cake\Core\Configure::read('gender'));
