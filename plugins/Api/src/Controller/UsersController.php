@@ -24,7 +24,7 @@ class UsersController extends AppController {
     
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
-        $this->Auth->allow(['login','add','edit', 'facebookSignup']);
+        $this->Auth->allow(['login','add','facebookSignup']);
     }
     
     public function avatars(){
@@ -101,6 +101,21 @@ class UsersController extends AppController {
         }else{
             $response = ['status' => "failed", 'message' => 'Invalid login credential.'];            
         }
+        $this->set($response);
+    }
+
+
+    /**
+     * index method
+     *
+     * @param string|null $id User id.
+     * @return \Cake\Http\Response|void
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function index() {
+        $id = $this->Auth->user("id");
+        $user = $this->Users->get($id, ['fields'=>['username','email','gender','phone','dob','status','website_url','address','bio_data','created','modified']]);
+        $response = ['status' => "success", 'message' => 'Profile details', 'data' => $user];
         $this->set($response);
     }
 
@@ -251,43 +266,42 @@ class UsersController extends AppController {
      * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function edit($id = null) {
-        if ($this->request->is(['post','put'])) {
-            $this->loadComponent('Api.Matrix');
-            $data = $this->request->getData();
-            if(!empty($id)) {
-                $entity = $this->Users->get($id, ['contain'=>['UserImages']]); //pr($entity);exit;
-                if(!empty($data['images'])) {
-                    $this->Users->uploadImages($entity, $data['images']);
-                    //$entity->user_images = $this->Users->uploadImages($entity, $data['images']);
-                } 
-                
-                $items = $this->Users->patchEntity($entity, $data, ['validate' =>'UpdateUser']);
-                
-               // pr($items); die;
-                
-                if($items->errors()){
-                    $this->restException($this->mapErrors($items->errors()));
-                }
-                
-                /*$matrix = $this->Matrix->register($data);
-                if(!$matrix){     
-                    $this->restException(['status' => "failed", 'message' => 'Matrix registration failed.'],401);
-                }
-                
-                $items->set('matrix_token', $matrix->access_token);
-                $items->set('matrix_id', $matrix->user_id);
-                $items->set('home_server', $matrix->home_server);*/
-                
-                if ($this->Users->save($items)) {
-                    $response = ['status' => "success", 'message' => 'Updated successfully.', 'data' => $this->request->data];
-                } else {
-                    $response = ['status' => "failed", 'message' => 'Failed to update data.', 'data' => $this->request->data, 'errors'=>$this->mapErrors($items->errors())];
-                }
-            } else {
-                $response = ['status' => "failed", 'message' => 'Failed to update data.', 'data' => $this->request->data, 'errors'=>'id:User id is required.'];
-            }
+    public function edit() {
+        if (!$this->request->is(['put'])) {
+            $this->restException(['status'=>'failed','message'=>'Method is not allowed.'],405);
         }
+        $id = $this->Auth->user('id');
+        $this->loadComponent('Api.Matrix');
+        $data = $this->request->getData();
+        if(!empty($id)) {
+            $entity = $this->Users->get($id, ['contain'=>['UserImages']]);
+            if(!empty($data['images'])) {
+                //$this->Users->uploadImages($entity, $data['images']);
+                //$entity->user_images = $this->Users->uploadImages($entity, $data['images']);
+            }
+            $items = $this->Users->patchEntity($entity, $data, ['validate' =>'UpdateUser']);
+            if($items->errors()){
+                $this->restException($this->mapErrors($items->errors()));
+            }
+
+            /*$matrix = $this->Matrix->register($data);
+            if(!$matrix){
+                $this->restException(['status' => "failed", 'message' => 'Matrix registration failed.'],401);
+            }
+
+            $items->set('matrix_token', $matrix->access_token);
+            $items->set('matrix_id', $matrix->user_id);
+            $items->set('home_server', $matrix->home_server);*/
+
+            if ($this->Users->save($items)) {
+                $response = ['status' => "success", 'message' => 'Updated successfully.', 'data' => $data];
+            } else {
+                $response = ['status' => "failed", 'message' => 'Failed to update data.', 'data' => $data, 'errors'=>$this->mapErrors($items->errors())];
+            }
+        } else {
+            $response = ['status' => "failed", 'message' => 'Failed to update data.', 'data' => $data, 'errors'=>'id:User id is required.'];
+        }
+
         $this->set($response);
     }
 
