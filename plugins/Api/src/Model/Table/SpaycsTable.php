@@ -54,20 +54,13 @@ class SpaycsTable extends Table {
      */
     public function validationDefault(Validator $validator) {
         $validator
-                ->integer('id')
-                ->allowEmpty('id', 'create');
+                ->requirePresence('name', __('create','Name key is missing.'))
+                ->notEmpty('name',__('Spayc name is required.'));
 
         $validator
-                ->scalar('name')
-                ->maxLength('name', 100)
-                ->requirePresence('name', 'create')
-                ->notEmpty('name');
-
-        $validator
-                ->scalar('location')
-                ->maxLength('location', 255)
-                ->requirePresence('location', 'create')
-                ->notEmpty('location');
+                ->maxLength('location', 255,__('Location test to too long.'))
+                ->requirePresence('location', 'create',__('Location key is missing.'))
+                ->notEmpty('location',__('Location is required field.'));
 
         $validator
                 ->scalar('type')
