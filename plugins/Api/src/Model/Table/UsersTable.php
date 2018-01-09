@@ -83,13 +83,13 @@ class UsersTable extends Table {
                 ->notEmpty('password','Password is required field.')
                 ->add("password",'custom',[
                     'rule'=>function($value,$context) {
-                        if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{4,30}$/', $value)){
+                        if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,30}$/', $value)){
                             return false;
                         }else{
                             return true;
                         }
                     },
-                    'message'=>'Password must contain 4-30 character length, at least one letter and one number.',
+                    'message'=>'Password must contain 8-30 character length, at least one letter and one number.',
                 ]);
 
         $validator
@@ -175,7 +175,18 @@ class UsersTable extends Table {
             ->requirePresence('email', 'create','Email is required field.');
             //->add('email', 'unique', ['rule' => 'validateUnique','message'=>'Email has been used.', 'provider' => 'table']) 
             //->notEmpty('email','Email is required field.');
-
+        $validator
+            ->allowEmpty('password')
+            ->add("password",'custom',[
+                'rule'=>function($value,$context) {
+                    if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,30}$/', $value)){
+                        return false;
+                    }else{
+                        return true;
+                    }
+                },
+                'message'=>'Password must contain 8-30 character length, at least one letter and one number.',
+            ]);
         $validator
             ->allowEmpty('dob')
             ->add('dob',[
