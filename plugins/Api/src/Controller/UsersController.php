@@ -23,7 +23,7 @@ class UsersController extends AppController {
     
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
-        $this->Auth->allow(['login','add','edit', 'facebookSignup']);
+        $this->Auth->allow(['login','add','facebookSignup']);
     }
     
     /**
@@ -64,31 +64,19 @@ class UsersController extends AppController {
         }
         $this->set($response);
     }
-    
-    /**
-     * Index method
-     *
-     * @return \Cake\Http\Response|void
-     */
-    public function index() {
-        $users = $this->paginate($this->Users);
-
-        $this->set(compact('users'));
-    }
 
     /**
-     * View method
+     * index method
      *
      * @param string|null $id User id.
      * @return \Cake\Http\Response|void
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null) {
-        $user = $this->Users->get($id, [
-            'contain' => []
-        ]);
-
-        $this->set('user', $user);
+    public function index() {
+        $id = $this->Auth->user("id");
+        $user = $this->Users->get($id, ['fields'=>['username','email','gender','phone','dob','status','website_url','address','bio_data','created','modified']]);
+        $response = ['status' => "success", 'message' => 'Profile details', 'data' => $user];
+        $this->set($response);
     }
 
     /**

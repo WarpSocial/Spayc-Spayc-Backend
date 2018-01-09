@@ -62,15 +62,7 @@ class UsersTable extends Table {
         $validator
                 ->integer('id')
                 ->allowEmpty('id', 'create');
-
-        $validator
-                ->allowEmpty('first_name')
-                ->add('first_name', 'length', ['rule' => ['maxLength', 30], 'message' => 'First name should be less than 30 chars.']);
-
-        $validator
-                ->allowEmpty('last_name')
-                ->add('last_name', 'length', ['rule' => ['maxLength', 30], 'message' => 'Last name should be less than 30 chars.']);
-
+        
         $validator
                 ->requirePresence('username', 'create','Username is required field.')
                 ->notEmpty('username','Username  is required field.')                
@@ -88,15 +80,15 @@ class UsersTable extends Table {
         $validator
                 ->requirePresence('password', 'create','Password is required field.')
                 ->notEmpty('password','Password is required field.')
-                ->add("password",'custom',[
-                    'rule'=>function($value,$context){
-                        if(preg_match('/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}/', $value)){
+                ->add("password", 'custom', [
+                    'rule'=>function($value,$context) {
+                        if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{4,30}$/', $value)){
                             return false;
                         }else{
                             return true;
                         }
                     },
-                    'message'=>'Password must be between 4-8 charecters length.',
+                    'message'=>'Password must contain 4-30 character length, at least one letter and one number.',
                 ]);
 
         $validator

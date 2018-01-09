@@ -21,7 +21,7 @@
 */
 
 /**
- * @api {Post} /users/edit/:id.json Update a User
+ * @api {Put} /users/:id.json Update an user
  * @apiVersion 0.1.0
  * @apiName PutUser
  * @apiGroup User
@@ -30,21 +30,24 @@
  * @apiDescription Update profile of existing user.
  * Update user own profile details with form-data option.
  *
- * @apiParam {String} first_name User first name (Optional).
- * @apiParam {String} last_name User last name (Optional).
- * @apiParam {Date}   dob Date of birth must in in format YYYY-MM-DD (Optional).
- * @apiParam {String} gender Gender of user like any one (male,femal,other) (Required).
- * @apiParam {Number} phone Phone no of user and accept only 10 digits only (Optional).
+ * @apiParam {String} username     Username (Required).
+ * @apiParam {Date}   dob          Date of birth must in this format YYYY-MM-DD (Optional).
+ * @apiParam {String} gender       Gender of user like any one (male,femal,other) (Required).
+ * @apiParam {Number} phone        Phone no of user and accept upto 16 digits (Optional).
+ * @apiParam {String} address      User address (Optional).
+ * @apiParam {String} website_url  Website url (Optional).
+ * @apiParam {String} bio_data     Bio data of user (Optional).
  *
  * @apiExample Example usage:
  *
  *       {
- *          "first_name":"spayc",
- *          "last_name":"test",
+ *          "username":"spayc",
+ *          "dob": "2000-11-12",
  *          "gender": "male|female|other",
  *          "phone": "7876565434",
- *          "dob": "2000-11-12",
- *          "images":{"image1.jpg","image2.png"}
+ *          "address": "b-3 noida",
+ *          "website_url":"www.spayc.com",
+ *          "bio_data":"your bio data",
  *       }
  *
  *
@@ -59,12 +62,13 @@
  *   "message": "Saved successfully.",
  *   "data": [
  *       {
- *          "first_name":"spayc",
- *          "last_name":"test",
+ *          "username":"spayc",
+ *          "dob": "2000-11-12",
  *          "gender": "male|female|other",
  *          "phone": "7876565434",
- *          "dob": "2000-11-12",
- *          "images":{"image1.jpg","image2.png"}
+ *          "address": "b-3 noida",
+ *          "website_url":"www.spayc.com",
+ *          "bio_data":"your bio data",
  *       }
  *   ]
  * }
@@ -127,6 +131,45 @@ function putUser() { return; }
  * @apiUse UserErrorResponse
  */
 function postUser() { return; }
+/**
+ * @api {get} /users.json Login
+ * @apiVersion 0.1.0
+ * @apiName getUsers
+ * @apiGroup User
+ * @apiPermission Private User
+ *
+ * @apiDescription User login with user name and its password.
+ * Need to send token in header
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Login done successfully.
+ * @apiSuccess {Object} data List of user details.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+ * {
+ *   "status": "success",
+ *   "message": "Login done successfully.",
+ *       "data": {
+ *        "username": "skumar1",
+ *        "email": "subhash.kumar@kiwitech.com",
+ *        "gender": "male",
+ *        "dob": "2017-02-02T00:00:00+00:00",
+ *        "phone": null,
+ *        "status": "active",
+ *        "website_url": null,
+ *        "address": null,
+ *        "bio_data": null,
+ *        "created": "2018-01-07T18:10:23+00:00",
+ *        "modified": "2018-01-07T18:10:23+00:00",
+ *    }
+ *   ]
+ * }
+ *
+ * @apiError {String} Invalid login credentials..
+ * @apiUse UserErrorResponse
+ */
+function getView() { return; }
 /**
  * @api {post} /login.json Login
  * @apiVersion 0.1.0
