@@ -110,7 +110,7 @@ class UsersTable extends Table {
                 ->requirePresence('phone', 'create','Phone must exist.')
                 ->add('phone', 'valid', [
                     'rule' => function($value,$context){
-                        if(preg_match('/[\d]{10}$/m/',$value)){
+                        if(preg_match('/[\d]{16}$/',$value)){
                             return false;
                         }else{
                             return true;
@@ -231,10 +231,9 @@ class UsersTable extends Table {
         
         $validator
                 ->allowEmpty('phone')
-                ->requirePresence('phone', 'Phone must exist.')
                 ->add('phone', 'valid', [
                     'rule' => function($value,$context){
-                        if(preg_match('/[\d]{10}$/m/',$value)){
+                        if(preg_match('/[\d]{16}$/',$value)){
                             return false;
                         }else{
                             return true;

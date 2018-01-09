@@ -12,7 +12,7 @@ return [
         'key' => "AKIAIH4QMAKCPTDCJVOA",
         'secret' => "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",
         'bucket' => "spayc-qa",
-        'region' => 'us-east-2',
-                'version' => 'latest'
+        'region' => 'us-east-1',
+        'version' => '2006-03-01'
     ]
 ];
