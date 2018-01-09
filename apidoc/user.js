@@ -28,7 +28,7 @@
  * @apiPermission Private User
  *
  * @apiDescription Update profile of existing user.
- * Update user own profile details with content-type => text/html(form-data).
+ * Update user own profile details with form-data option.
  *
  * @apiParam {String} first_name User first name (Optional).
  * @apiParam {String} last_name User last name (Optional).
@@ -80,7 +80,7 @@ function putUser() { return; }
  * @apiPermission none
  *
  * @apiDescription Create a new account.
- * Register new user with content-type => text/html(form-data).
+ * Register new user with form-data option.
  *
  * @apiParam {String} username Username must be unique and size between 3-30 charecters (Required).
  * @apiParam {String} email Email of user must be unique (Required).

@@ -143,7 +143,7 @@ define({ "api": [
         "name": "none"
       }
     ],
-    "description": "<p>Create a new account. Register new user with content-type =&gt; text/html(form-data).</p>",
+    "description": "<p>Create a new account. Register new user with form-data option.</p>",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -296,7 +296,7 @@ define({ "api": [
         "name": "Private User"
       }
     ],
-    "description": "<p>Update profile of existing user. Update user own profile details with content-type =&gt; text/html(form-data).</p>",
+    "description": "<p>Update profile of existing user. Update user own profile details with form-data option.</p>",
     "parameter": {
       "fields": {
         "Parameter": [
