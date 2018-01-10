@@ -134,7 +134,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/users.json",
-    "title": "Register an User",
+    "title": "Register User",
     "version": "0.1.0",
     "name": "PostUser",
     "group": "User",
@@ -287,7 +287,7 @@ define({ "api": [
   {
     "type": "Put",
     "url": "/profile-edit.json",
-    "title": "Update an user",
+    "title": "Update User",
     "version": "0.1.0",
     "name": "PutUser",
     "group": "User",
@@ -355,7 +355,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "\n{\n   \"username\":\"spayc\",\n   \"dob\": \"2000-11-12\",\n   \"gender\": \"male|female|other\",\n   \"phone\": \"7876565434\",\n   \"address\": \"b-3 noida\",\n   \"website_url\":\"www.spayc.com\",\n   \"bio_data\":\"your bio data\",\n}",
+        "content": "\n{\n   \"username\":\"spayc\",\n   \"dob\": \"2000-11-12\",\n   \"gender\": \"male|female|other\",\n   \"phone\": \"XXXXXXXXXX\",\n   \"address\": \"b-3 noida\",\n   \"website_url\":\"www.spayc.com\",\n   \"bio_data\":\"your bio data\",\n}",
         "type": "json"
       }
     ],
@@ -388,7 +388,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "    HTTP/1.1 200 OK\n{\n  \"status\": \"success\",\n  \"message\": \"Saved successfully.\",\n  \"data\": [\n      {\n         \"username\":\"spayc\",\n         \"dob\": \"2000-11-12\",\n         \"gender\": \"male|female|other\",\n         \"phone\": \"7876565434\",\n         \"address\": \"b-3 noida\",\n         \"website_url\":\"www.spayc.com\",\n         \"bio_data\":\"your bio data\",\n      }\n  ]\n}",
+          "content": "    HTTP/1.1 200 OK\n{\n  \"status\": \"success\",\n  \"message\": \"Saved successfully.\",\n  \"data\": [\n      {\n         \"username\":\"spayc\",\n         \"dob\": \"2000-11-12\",\n         \"gender\": \"male|female|other\",\n         \"phone\": \"XXXXXXXXXX\",\n         \"address\": \"b-3 noida\",\n         \"website_url\":\"www.spayc.com\",\n         \"bio_data\":\"your bio data\",\n      }\n  ]\n}",
           "type": "json"
         }
       ]
@@ -520,7 +520,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "       HTTP/1.1 success\n{\n    \"status\": \"success\",\n    \"message\": \"Saved successfully.\",\n    \"data\": [\n        \"ones\",\n        {\n            \"fb_id\": \"45545454545\",\n            \"username\": \"dhiru.php\",\n            \"email\": \"dhiru12.php@gmail.com\",\n            \"dob\": \"2000-11-12\",\n            \"device_id\":\"DFS455HER45555af55af\"\n        }\n    ]\n}",
+          "content": "       HTTP/1.1 success\n{\n    \"status\": \"success\",\n    \"message\": \"Saved successfully.\",\n    \"data\": [\n        \"ones\",\n        {\n            \"fb_id\": \"xxxxxxxxxxxx\",\n            \"username\": \"spayc\",\n            \"email\": \"spayc@gmail.com\",\n            \"dob\": \"12-11-2001\",\n            \"device_id\":\"xxxxxxxxxxxxxxxxxx\"\n        }\n    ]\n}",
           "type": "json"
         }
       ]
@@ -528,7 +528,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "\n{\n   \"fb_id\":\"8552254552\",\n   \"username\":\"dhiru.php\",\n   \"email\":\"dhiru.php@gmail.com\",\n   \"dob\":\"2000-11-12\",\n   \"device_id\":\"DFS455HER45555af55af\"\n}",
+        "content": "\n{\n   \"fb_id\":\"xxxxxxxxxxxx\",\n   \"username\":\"spayc\",\n   \"email\":\"spayc@gmail.com\",\n   \"dob\":\"12-11-2001\",\n   \"device_id\":\"xxxxxxxxxxxxxxxxxx\"\n}",
         "type": "json"
       }
     ],

@@ -22,11 +22,11 @@
 * @apiExample Example usage:
 *
 *{
-*    "fb_id":"8552254552",
-*    "username":"dhiru.php",
-*    "email":"dhiru.php@gmail.com",
-*    "dob":"2000-11-12",
-*    "device_id":"DFS455HER45555af55af"
+*    "fb_id":"xxxxxxxxxxxx",
+*    "username":"spayc",
+*    "email":"spayc@gmail.com",
+*    "dob":"12-11-2001",
+*    "device_id":"xxxxxxxxxxxxxxxxxx"
 *}
 *
 *
@@ -39,11 +39,11 @@
     "data": [
         "ones",
         {
-            "fb_id": "45545454545",
-            "username": "dhiru.php",
-            "email": "dhiru12.php@gmail.com",
-            "dob": "2000-11-12",
-            "device_id":"DFS455HER45555af55af"
+            "fb_id": "xxxxxxxxxxxx",
+            "username": "spayc",
+            "email": "spayc@gmail.com",
+            "dob": "12-11-2001",
+            "device_id":"xxxxxxxxxxxxxxxxxx"
         }
     ]
 }
