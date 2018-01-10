@@ -75,7 +75,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n  \"status\": \"success\",\n  \"message\": \"Login done successfully.\",\n      \"data\": {\n      \"id\": 2,\n      \"first_name\": null,\n      \"last_name\": null,\n       \"username\": \"skumar1\",\n       \"email\": \"subhash.kumar@kiwitech.com\",\n       \"password\": \"$2y$10$ifWTI646naw6MlKiYKfgHOWyktbYyiedGE65GUqzUJOZkFStqs/8q\",\n       \"gender\": \"male\",\n       \"dob\": \"2017-02-02T00:00:00+00:00\",\n       \"phone\": null,\n       \"status\": \"active\",\n       \"website_url\": null,\n       \"address\": null,\n       \"bio_data\": null,\n       \"timezone\": null,\n       \"token_verification\": \"fb2aa2326d1d591e4fa9b1e18c9d064a1a5cda5a\",\n       \"created\": \"2018-01-07T18:10:23+00:00\",\n       \"modified\": \"2018-01-07T18:10:23+00:00\",\n       \"matrix_token\": \"MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyYWNpZCB1c2VyX2lkID0gQHNrdW1hcjE6MzUuMTY4LjExOS4yNDcKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSBzRU5DbFBha1M5ODZBcmU3CjAwMmZzaWduYXR1cmUgSEoBVpO2GifQmZV6_miQMI1SmrEAin2GSQ_CO39AOKwK\",\n       \"access_token\": \"MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyYWNpZCB1c2VyX2lkID0gQHNrdW1hcjE6MzUuMTY4LjExOS4yNDcKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSBzRU5DbFBha1M5ODZBcmU3CjAwMmZzaWduYXR1cmUgSEoBVpO2GifQmZV6_miQMI1SmrEAin2GSQ_CO39AOKwK\", * * *\n       \"home_server\": \"35.168.119.247\",\n       \"user_id\": \"@skumar1:35.168.119.247\",\n       \"device_id\": \"XJHZZQIWEV\"\n   }\n  ]\n}",
+          "content": "     HTTP/1.1 200 OK\n {\n    \"status\": \"success\",\n    \"message\": \"Login done successfully.\",\n    \"data\": {\n        \"username\": \"dhiruns1227841\",\n        \"email\": \"dhiru12971341@gmail.com\",\n        \"gender\": \"male\",\n        \"dob\": \"2000-02-05\",\n        \"phone\": 8484839392,\n        \"website_url\": null,\n        \"address\": null,\n        \"bio_data\": null,\n        \"device_id\": \"skdf44838dkkd\",\n        \"matrix_user_id\": \"@dhiruns_______:35.168.119.247\",\n        \"token\": \"40faf755c8e278527aa1e7b7050bf97be3ca550c208bfa7382bbf910660c7c96\"\n    }\n}",
           "type": "json"
         }
       ]
@@ -170,6 +170,13 @@ define({ "api": [
           },
           {
             "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "confirm_password",
+            "description": "<p>secret password (Required).</p>"
+          },
+          {
+            "group": "Parameter",
             "type": "Date",
             "optional": false,
             "field": "dob",
@@ -202,7 +209,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "\n{\n   \"username\": \"spaycdev\",\n   \"email\": \"spaycdev@spayc.com\",\n   \"password\": \"XXXXXXXXX\",\n   \"gender\": \"male|female|other\",\n   \"phone\": \"7876565434\",\n   \"dob\": \"2000-11-12\",\n   \"device_id\":\"DATEOSDEVICEIP\"\n}",
+        "content": "\n{\n   \"username\": \"spaycdev\",\n   \"email\": \"spaycdev@spayc.com\",\n   \"password\": \"XXXXXXXXX\",\n   \"confirm_password\": \"XXXXXXXXX\",\n   \"gender\": \"male|female|other\",\n   \"phone\": \"7876565434\",\n   \"dob\": \"11-12-2000\",\n   \"device_id\":\"DATEOSDEVICEIP\"\n}",
         "type": "json"
       }
     ],
@@ -235,7 +242,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n  \"status\": \"success\",\n  \"message\": \"Saved successfully.\",\n  \"data\": [\n      {\n         \"username\": \"spaycdev\",\n         \"email\": \"spaycdev@spayc.com\",\n         \"password\": \"XXXXXXXXX\",\n         \"gender\": \"male|female|other\",\n         \"phone\": \"7876565434\",\n         \"dob\": \"2000-11-12\",\n         \"device_id\":\"DATEOSDEVICEIP\"\n      }\n  ]\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n  \"status\": \"success\",\n  \"message\": \"Saved successfully.\",\n  \"data\": [\n      {\n         \"username\": \"spaycdev\",\n         \"email\": \"spaycdev@spayc.com\",\n         \"password\": \"XXXXXXXXX\",\n         \"gender\": \"male|female|other\",\n         \"phone\": \"7876565434\",\n         \"dob\": \"11-12-2000\",\n         \"device_id\":\"DATEOSDEVICEIP\"\n      }\n  ]\n}",
           "type": "json"
         }
       ]
@@ -520,7 +527,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "       HTTP/1.1 success\n{\n    \"status\": \"success\",\n    \"message\": \"Saved successfully.\",\n    \"data\": [\n        \"ones\",\n        {\n            \"fb_id\": \"xxxxxxxxxxxx\",\n            \"username\": \"spayc\",\n            \"email\": \"spayc@gmail.com\",\n            \"dob\": \"12-11-2001\",\n            \"device_id\":\"xxxxxxxxxxxxxxxxxx\"\n        }\n    ]\n}",
+          "content": "       HTTP/1.1 success\n{\n    \"status\": \"success\",\n    \"message\": \"Saved successfully.\",\n    \"data\": {\n        \"fb_id\": \"455454254545\",\n        \"username\": \"dhiru.php32\",\n        \"email\": \"sdf12@gmail.com\",\n        \"dob\": \"12-11-2001\",\n        \"device_id\": \"DFS455HER45555adf55af444\",\n        \"id\": 47\n    }\n}",
           "type": "json"
         }
       ]
@@ -618,7 +625,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Profile details\",\n    \"data\": {\n        \"username\": \"dhiruns3\",\n        \"email\": \"dhiru3@gmail.com\",\n        \"gender\": null,\n        \"phone\": 8484839392,\n        \"dob\": \"2000-05-25\",\n        \"status\": \"active\",\n        \"website_url\": null,\n        \"address\": null,\n        \"bio_data\": null,\n        \"created\": \"2018-01-09T11:00:21+00:00\",\n        \"modified\": \"2018-01-09T11:00:21+00:00\"\n    }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Profile details\",\n    \"data\": {\n        \"username\": \"dhiruns3\",\n        \"email\": \"dhiru3@gmail.com\",\n        \"gender\": null,\n        \"phone\": 8484839392,\n        \"dob\": \"02-05-2000\",\n        \"status\": \"active\",\n        \"website_url\": null,\n        \"address\": null,\n        \"bio_data\": null,\n        \"created\": \"2018-01-09T11:00:21+00:00\",\n        \"modified\": \"2018-01-09T11:00:21+00:00\"\n    }\n}",
           "type": "json"
         }
       ]

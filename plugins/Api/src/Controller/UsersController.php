@@ -95,7 +95,7 @@ class UsersController extends AppController {
                 'device_id'=>$user['device_id'],
                 'matrix_user_id'=>$user['matrix_user_id'],
                 'token'=>$user['token'],
-                'matrix_token'=>$user['matrix_token'],
+                //'matrix_token'=>$user['matrix_token'],
                 ];
             $response = ['status' => "success", 'message' => 'Login done successfully.','data'=>$data];
         }else{
@@ -143,7 +143,7 @@ class UsersController extends AppController {
             #echo $data['token_verification'];die;
             if ($this->Users->save($items)) {           
                  $this->getMailer('Api.User')->send('signup', [$items]);
-                 
+                unset($this->request->data['confirm_password']);
                 $response = ['status' => "success", 'message' => 'Registration done successfully.', 'data' => $this->request->data];
             } else {
                 $response = ['status' => "failed", 'message' => 'Failed to saved data.', 'errors'=>$this->mapErrors($items->errors())];
@@ -220,7 +220,7 @@ class UsersController extends AppController {
                 $saved = $this->Users->save($items);
                 $data['id'] = $saved['id'];
                 //$this->getMailer('Api.User')->send('signup', [$items]);
-                $response = ['status' => "success", 'message' => 'Saved successfully.', 'data' => ['ones', $data]];
+                $response = ['status' => "success", 'message' => 'Saved successfully.', 'data' => $data];
             } else {
                 $response = ['status' => "failed", 'message' => 'Failed to saved data.', 'data' => $this->request->data,'errors'=>$this->mapErrors($items->errors())];
             }

@@ -36,16 +36,14 @@
 {
     "status": "success",
     "message": "Saved successfully.",
-    "data": [
-        "ones",
-        {
-            "fb_id": "xxxxxxxxxxxx",
-            "username": "spayc",
-            "email": "spayc@gmail.com",
-            "dob": "12-11-2001",
-            "device_id":"xxxxxxxxxxxxxxxxxx"
-        }
-    ]
+    "data": {
+        "fb_id": "455454254545",
+        "username": "dhiru.php32",
+        "email": "sdf12@gmail.com",
+        "dob": "12-11-2001",
+        "device_id": "DFS455HER45555adf55af444",
+        "id": 47
+    }
 }
 *
 *
