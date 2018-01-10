@@ -106,8 +106,26 @@ class MatrixComponent extends Component {
             return $response;
         }else{
             return false;
+        }        
+    }
+    /**
+     * createRoom method to create room on matrix server
+     * 
+     * @param Array $items array contain required field of matrix fields
+     * @return false|$data return data if created or false
+     */
+    public function createRoom($items=[]){
+        if(!empty($items)){
+            return false;
         }
-        
+        $validInput = [
+            'auth'=>['type'=>'m.login.dummy'],
+            'bind_email'=>false,
+            'device_id'=>$items['device_id'],
+            'initial_device_display_name'=>$items['username'],
+            'username'=>preg_replace('/[\s\.-@#]/','_',$items['username']),
+            'password'=>$items['password']
+        ]; 
     }
 
 }

@@ -17,6 +17,7 @@ use Cake\ORM\Entity;
  * @property string $passcode
  * @property string $description
  * @property string $status
+ * @property string $image
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
  *
@@ -35,18 +36,7 @@ class Spayc extends Entity
      * @var array
      */
     protected $_accessible = [
-        'user_id' => true,
-        'name' => true,
-        'location' => true,
-        'type' => true,
-        'group_type' => true,
-        'start_date' => true,
-        'end_date' => true,
-        'passcode' => true,
-        'description' => true,
-        'status' => true,
-        'created' => true,
-        'modified' => true,
-        'user' => true
-    ];
+        '*' => true,
+        'id' => false
+    ];    
 }
