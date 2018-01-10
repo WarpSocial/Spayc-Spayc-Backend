@@ -66,14 +66,12 @@ class UsersTable extends Table {
         
         $validator
                 ->requirePresence('username', 'create','Username is required field.')
-                ->notEmpty('username','Username  is required field.')                
-                ->add('username', 'unique', ['rule' => 'validateUnique','message'=>'Username has been used.', 'provider' => 'table'])                
-                ->add('username', [
-                    'lengthBetween' => [
-                        'rule' => ['lengthBetween', 3, 30],
-                        'message' => 'Username length must be between 3-30 alphanumeric.'
-                    ]
-                ]);
+                ->notEmpty('username','Username  is required field.')
+                
+                ->add('username', 'unique', ['rule' => 'validateUnique','message'=>'Username has been used.', 'provider' => 'table'])         
+                ->maxLength('username', 30,'Username must be less then 30 characters.')  
+                ->regex('username','/\w/',__('Username must be alpha numeric only.'));
+        
         $validator
                 ->requirePresence('device_id', 'create','Device id is required field.')
                 ->notEmpty('device_id','Device id is required field.');
