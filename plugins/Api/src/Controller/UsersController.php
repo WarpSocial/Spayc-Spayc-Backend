@@ -128,8 +128,7 @@ class UsersController extends AppController {
         $entity = $this->Users->newEntity();
         if ($this->request->is('post')) {
             $this->loadComponent('Api.Matrix');
-            $data = $this->request->getData();   
-            //echo preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,12}$/', $data['password']);exit;
+            $data = $this->request->getData();
             $items = $this->Users->patchEntity($entity, $data);
             if($items->errors()) {
                 $this->restException($this->mapErrors($items->errors()));
@@ -140,10 +139,8 @@ class UsersController extends AppController {
             }            
             $items->set('status', 'active');            
             $items->set('token_verification', Security::hash($data['email'], 'sha1', true));
-            #echo $data['token_verification'];die;
             if ($this->Users->save($items)) {           
-                 $this->getMailer('Api.User')->send('signup', [$items]);
-                 
+                $this->getMailer('Api.User')->send('signup', [$items]);
                 $response = ['status' => "success", 'message' => 'Registration done successfully.', 'data' => $this->request->data];
             } else {
                 $response = ['status' => "failed", 'message' => 'Failed to saved data.', 'errors'=>$this->mapErrors($items->errors())];
@@ -197,36 +194,34 @@ class UsersController extends AppController {
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
     */
     public function facebookSignup() {
-        if ($this->request->is('post')) {
-            $data = $this->request->getData();
-            //$alreadyExist = $this->Users->getAlreadyExistsUser($data);
-            $alreadyExist = $this->Users->findByEmail($data['email']);
-            if(!$alreadyExist->count()) {
-                $alreadyExist = $this->Users->findByFbId($data['fb_id']);
-            }
-            if($alreadyExist->count()) {
-                $alreadyExist = $alreadyExist->first()->toArray();
-                $data['id'] = $alreadyExist['id'];
-                $data['fb_id'] = !empty($alreadyExist['fb_id'])?$alreadyExist['fb_id']:$data['fb_id'];
-                //$data['username'] = !empty($alreadyExist['username'])?$alreadyExist['username']:$data['username'];
-                $data['email'] = !empty($alreadyExist['email'])?$alreadyExist['email']:$data['email'];
-                $entity = $this->Users->get($data['id']);
-            } else {
-                $data['token_verification'] = Security::hash($data['email'], 'sha1', true);
-                $entity = $this->Users->newEntity($data, ['validate' => 'FacebookSignup']);
-            } 
-            $items = $this->Users->patchEntity($entity, $data, ['validate' => 'FacebookSignup']);
-            if (!$items->errors()) {
-                $saved = $this->Users->save($items);
-                $data['id'] = $saved['id'];
-                //$this->getMailer('Api.User')->send('signup', [$items]);
-                $response = ['status' => "success", 'message' => 'Saved successfully.', 'data' => ['ones', $data]];
-            } else {
-                $response = ['status' => "failed", 'message' => 'Failed to saved data.', 'data' => $this->request->data,'errors'=>$this->mapErrors($items->errors())];
-            }
-        } else {
-            $response = ['status' => "failed", 'message' => 'Request method not supported.', 'data' => 'None'];
+        if (!$this->request->is('post')) {
+            $this->restException(['status'=>'failed','message'=>'Invalid request type'],405);
         }
+        $data = $this->request->getData();
+        $alreadyExist = $this->Users->findByEmail($data['email']);
+        if(!$alreadyExist->count()) {
+            $alreadyExist = $this->Users->findByFbId($data['fb_id']);
+        }
+        if($alreadyExist->count()) {
+            $alreadyExist = $alreadyExist->first()->toArray();
+            $data['id'] = $alreadyExist['id'];
+            $data['fb_id'] = !empty($alreadyExist['fb_id'])?$alreadyExist['fb_id']:$data['fb_id'];
+            $data['username'] = !empty($alreadyExist['username'])?$alreadyExist['username']:$data['username'];
+            $data['email'] = !empty($alreadyExist['email'])?$alreadyExist['email']:$data['email'];
+            $entity = $this->Users->get($data['id']);
+        } else {
+            $data['token_verification'] = Security::hash($data['email'], 'sha1', true);
+            $entity = $this->Users->newEntity($data, ['validate' => 'FacebookSignup']);
+        }
+        $items = $this->Users->patchEntity($entity, $data, ['validate' => 'FacebookSignup']);
+        if($items->errors()) {
+            $this->restException($this->mapErrors($items->errors()));
+        }
+        $saved = $this->Users->save($items);
+        $data['id'] = $saved['id'];
+        $this->getMailer('Api.User')->send('signup', [$items]);
+        $response = ['status' => "success", 'message' => 'Saved successfully.', 'data' => ['ones', $data]];
+          
         $this->set($response);
     }
     
