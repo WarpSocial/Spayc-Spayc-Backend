@@ -44,12 +44,17 @@ class SpaycsController extends AppController {
      * @return \Cake\Http\Response|void
      */
     public function index() { die("dkls");
+        
         $this->paginate = [
             'contain' => ['Users']
         ];
         $spaycs = $this->paginate($this->Spaycs);
 
         $this->set(compact('spaycs'));
+        $id = $this->Auth->user("id");
+       // $user = $this->Users->get($id, ['fields'=>['username','email','gender','phone','dob','status','website_url','address','bio_data','created','modified']]);
+        $response = ['status' => "success", 'message' => 'Profile details', 'data' => $spaycs];
+        $this->set($response);
     }
 
     /**

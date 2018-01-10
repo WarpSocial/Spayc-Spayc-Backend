@@ -21,7 +21,7 @@
 */
 
 /**
- * @api {Put} /profile-edit.json Update an user
+ * @api {Put} /profile-edit.json Update User
  * @apiVersion 0.1.0
  * @apiName PutUser
  * @apiGroup User
@@ -44,7 +44,7 @@
  *          "username":"spayc",
  *          "dob": "2000-11-12",
  *          "gender": "male|female|other",
- *          "phone": "7876565434",
+ *          "phone": "XXXXXXXXXX",
  *          "address": "b-3 noida",
  *          "website_url":"www.spayc.com",
  *          "bio_data":"your bio data",
@@ -65,7 +65,7 @@
  *          "username":"spayc",
  *          "dob": "2000-11-12",
  *          "gender": "male|female|other",
- *          "phone": "7876565434",
+ *          "phone": "XXXXXXXXXX",
  *          "address": "b-3 noida",
  *          "website_url":"www.spayc.com",
  *          "bio_data":"your bio data",
@@ -77,7 +77,7 @@
  */
 function putUser() { return; }
 /**
- * @api {post} /users.json Register an User
+ * @api {post} /users.json Register User
  * @apiVersion 0.1.0
  * @apiName PostUser
  * @apiGroup User
