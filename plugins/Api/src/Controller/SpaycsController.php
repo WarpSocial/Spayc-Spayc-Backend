@@ -22,13 +22,20 @@ class SpaycsController extends AppController {
         $entity = $this->Spaycs->newEntity();
         if (!$this->request->is('post')) {
             $this->restException(['status'=>'failed','message'=>'Invalied method.'],405);
-        }            
+        }
         $data = $this->request->getData();
         $items = $this->Spaycs->patchEntity($entity, $data);
         if($items->errors()) {
             $this->restException(['status'=>'failed','message'=>'Validation errors','error'=>$this->mapErrors($items->errors())]);
         }
-
+        $this->loadComponent('Api.Matrix');
+        $data['matrix_token'] = $this->Auth->user('matrix_token');
+        $matrix = $this->Matrix->createRoom($data);
+        if(!$matrix) {       
+            $this->restException(['status' => "failed", 'message' =>__('Matrix failed to create room.')],401);
+        }
+        $items->set('matrix_room_id',$matrix['room_id']);
+        $items->set('matrix_room_alias',$matrix['room_alias']);
         $items->set('user_id',$this->Auth->user('id'));
         if ($this->Spaycs->save($items)) {
             $response = ['status'=>'success','message'=>__('The spayc has been created.'),'data'=>$items];

@@ -115,17 +115,36 @@ class MatrixComponent extends Component {
      * @return false|$data return data if created or false
      */
     public function createRoom($items=[]){
-        if(!empty($items)){
+        if(empty($items)){
             return false;
         }
         $validInput = [
-            'auth'=>['type'=>'m.login.dummy'],
-            'bind_email'=>false,
-            'device_id'=>$items['device_id'],
-            'initial_device_display_name'=>$items['username'],
-            'username'=>preg_replace('/[\s\.-@#]/','_',$items['username']),
-            'password'=>$items['password']
-        ]; 
+            'creation_content'=>['m.federate'=>false],
+            'name'=>$items['name'],
+            'preset'=> strtolower($items['group_type']).'_chat',
+            'room_alias_name'=> \Cake\Utility\Inflector::slug($items['name']),
+            'topic'=>$items['description']
+        ];
+        $url = $this->config('url') . DS.'createRoom';
+        $http = new Client(['headers' => ['Authorization' => 'Bearer ' . $items['matrix_token']]]);
+        $httpResponse = $http->post(
+                $url, 
+                json_encode($validInput), 
+                [
+                    'type'=>'json',
+                    'ssl_verify_host' => $this->config('sslverify'), 
+                    'ssl_verify_peer' => $this->config('sslverify'),
+                    'ssl_verify_host' => $this->config('sslverify'),
+                    'ssl_verify_peer_name' => $this->config('sslverify')
+                ]
+            );
+        $response = json_decode($httpResponse->body,true);
+        //pr($response);die;
+        if($httpResponse->isOk()){
+            return $response;
+        }else{
+            return false;
+        }  
     }
 
 }
