@@ -137,12 +137,8 @@ class UsersController extends AppController {
             $matrix = $this->Matrix->register($data);
             if(!$matrix) {       
                 $this->restException(['status' => "failed", 'message' => 'Matrix registration failed.'],401);
-            }
-            
-            $items->set('status', 'active');
-            $items->set('matrix_token', $matrix->access_token);
-            $items->set('matrix_id', $matrix->user_id);
-            $items->set('home_server', $matrix->home_server);
+            }            
+            $items->set('status', 'active');            
             $items->set('token_verification', Security::hash($data['email'], 'sha1', true));
             #echo $data['token_verification'];die;
             if ($this->Users->save($items)) {           

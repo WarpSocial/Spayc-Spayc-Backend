@@ -48,7 +48,7 @@ class MatrixComponent extends Component {
         }
         $validInput = [
             'type'=>'m.login.password',
-            'user'=>$items['username'],
+            'user'=>preg_replace('/[\s\.-@#]/','_',$items['username']),
             'password'=>$items['password']
         ]; 
         $url = $this->config('url') . DS.'login';
@@ -84,7 +84,7 @@ class MatrixComponent extends Component {
             'bind_email'=>false,
             'device_id'=>$items['device_id'],
             'initial_device_display_name'=>$items['username'],
-            'username'=>$items['username'],
+            'username'=>preg_replace('/[\s\.-@#]/','_',$items['username']),
             'password'=>$items['password']
         ]; 
         $url = $this->config('url') . DS.'register';
