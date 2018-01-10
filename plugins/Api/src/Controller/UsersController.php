@@ -214,7 +214,7 @@ class UsersController extends AppController {
             $entity = $this->Users->newEntity($data, ['validate' => 'FacebookSignup']);
             $mdata = $data;
             $mdata['password'] = base64_encode($data['email']);
-            $matrix = $this->Matrix->register($mdata); pr($matrix);exit;
+            $matrix = $this->Matrix->register($mdata);
             if(!$matrix) {
                 $this->restException(['status' => "failed", 'message' => 'Matrix registration failed.'],401);
             } 
@@ -230,18 +230,18 @@ class UsersController extends AppController {
         if(!$user->count()) {
             $this->restException(['status' => "failed", 'message' => 'Invalid login credentials.'], 401);
         }
-        $user = $user->first();
+        $user = $user->first()->toArray();
         $mdata['username'] = $data['username'];
-        $mdata['password'] = $data['email'];
-        $data_item = \Api\Utils\Utils::escape($mdata);
-        $matrix = (array)$this->Matrix->login($data_item);
-        if(!empty($matrix)) {
+        $mdata['password'] = base64_encode($data['email']);
+        //$data_item = \Api\Utils\Utils::escape($mdata);pr($data_item);exit;
+        $matrix = (array)$this->Matrix->login($mdata);
+        if(empty($matrix)) {
             $this->restException(['status' => "failed", 'message' => 'Invalid login credential for matrix.'], 401);
         }
         $user['matrix_user_id'] = $matrix['user_id'];
         $user['access_token'] = $matrix['access_token'];
         $this->Auth->setUser($user);
-        $user = $this->Users->usrLog($user);pr($user);exit;
+        $user = $this->Users->usrLog($user);
         $data = [
             'username'=>$user['username'],
             'email'=>$user['email'],
@@ -254,13 +254,13 @@ class UsersController extends AppController {
             'device_id'=>$user['device_id'],
             'matrix_user_id'=>$user['matrix_user_id'],
             'token'=>$user['token'],
-            'matrix_token'=>$user['matrix_token'],
+            //'matrix_token'=>$user['matrix_token'],
             ];
         $response = ['status' => "success", 'message' => 'Login successfully.', 'data'=>$data];
         /*---end login authentication---*/
         
         $this->getMailer('Api.User')->send('signup', [$items]);
-        $response = ['status' => "success", 'message' => 'Saved successfully.', 'data' => ['ones', $data]];
+        $response = ['status' => "success", 'message' => 'Saved successfully.', 'data' => $data];
           
         $this->set($response);
     }

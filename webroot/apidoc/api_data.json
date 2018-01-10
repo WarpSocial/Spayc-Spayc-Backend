@@ -483,6 +483,20 @@
           },
           {
             "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "phone",
+            "description": "<ul> <li>Phone no of user and accept upto 16 digits (Optional).</li> </ul>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "gender",
+            "description": "<ul> <li>Gender of user like any one (male,femal,other) (Required).</li> </ul>"
+          },
+          {
+            "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "device_id",
@@ -520,7 +534,7 @@
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "       HTTP/1.1 success\n{\n    \"status\": \"success\",\n    \"message\": \"Saved successfully.\",\n    \"data\": [\n        \"ones\",\n        {\n            \"fb_id\": \"xxxxxxxxxxxx\",\n            \"username\": \"spayc\",\n            \"email\": \"spayc@gmail.com\",\n            \"dob\": \"12-11-2001\",\n            \"device_id\":\"xxxxxxxxxxxxxxxxxx\"\n        }\n    ]\n}",
+          "content": "       HTTP/1.1 success\n{\n    \"status\": \"success\",\n    \"message\": \"Saved successfully.\",\n    \"data\": {\n        \"username\": \"sbsharma\",\n        \"email\": \"sbsharma@gmail.com\",\n        \"gender\": \"male\",\n        \"dob\": \"2001-12-11\",\n        \"phone\": null,\n        \"website_url\": null,\n        \"address\": null,\n        \"bio_data\": null,\n        \"device_id\": \"DFS455HER45555adf55af444\",\n        \"matrix_user_id\": \"@sbsharma:35.168.119.247\",\n        \"token\": \"3511fd4e28134e2c0cc44edf8609c576392a86494b4740783e55901662969d34\"\n    }\n}",
           "type": "json"
         }
       ]
@@ -528,7 +542,7 @@
     "examples": [
       {
         "title": "Example usage:",
-        "content": "\n{\n   \"fb_id\":\"xxxxxxxxxxxx\",\n   \"username\":\"spayc\",\n   \"email\":\"spayc@gmail.com\",\n   \"dob\":\"12-11-2001\",\n   \"device_id\":\"xxxxxxxxxxxxxxxxxx\"\n}",
+        "content": "\n{\n   \"fb_id\":\"xxxxxxxxxxxx\",\n   \"username\":\"spayc\",\n   \"email\":\"spayc@gmail.com\",\n   \"dob\":\"12-11-2001\",\n   \"gender\":\"male|female|other\",\n   \"phone\": \"XXXXXXXXXX\",\n   \"device_id\":\"xxxxxxxxxxxxxxxxxx\"\n}",
         "type": "json"
       }
     ],

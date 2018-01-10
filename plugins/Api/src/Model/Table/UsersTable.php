@@ -192,7 +192,20 @@ class UsersTable extends Table {
                     },
                 'message'=>'Age must be 13 or greater than 13 year\'s old.',
             ]);
-                    
+                
+        $validator
+            ->requirePresence('gender', 'create',__('Gender is required field.'))    
+            ->notEmpty('gender',__('Gender is required field.'))
+            ->inList('gender', Configure::read('gender'),__('Gender must be any one '.implode(',',Configure::read('gender')).'.')           );
+        
+        $validator
+            ->allowEmpty('phone')                
+            ->add('phone', 'valid', [
+                'rule' => function($value,$context){
+                    return (bool)(preg_match('/^[\d\s\+\(\)]{3,15}$/',$value));
+                },
+                'message'=>__('Phone no is not valid.')
+                ]);
         $validator
                 ->requirePresence('device_id', __('create','Device id is required field.'))
                 ->notEmpty('device_id',__('Please enter a device id.'))
