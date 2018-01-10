@@ -207,13 +207,9 @@ class UsersController extends AppController {
             $alreadyExist = $this->Users->findByEmail($data['email']);
             if(!$alreadyExist->count()) {
                 $alreadyExist = $this->Users->findByFbId($data['fb_id']);
-                if($alreadyExist->count()) {
-                    $alreadyExist = $alreadyExist->first()->toArray();
-                }
-            } else {
-                $alreadyExist = $alreadyExist->first()->toArray();
             }
-            if(!empty($alreadyExist['id'])) {
+            if($alreadyExist->count()) {
+                $alreadyExist = $alreadyExist->first()->toArray();
                 $data['id'] = $alreadyExist['id'];
                 $data['fb_id'] = !empty($alreadyExist['fb_id'])?$alreadyExist['fb_id']:$data['fb_id'];
                 //$data['username'] = !empty($alreadyExist['username'])?$alreadyExist['username']:$data['username'];
@@ -222,7 +218,7 @@ class UsersController extends AppController {
             } else {
                 $data['token_verification'] = Security::hash($data['email'], 'sha1', true);
                 $entity = $this->Users->newEntity($data, ['validate' => 'FacebookSignup']);
-            }
+            } 
             $items = $this->Users->patchEntity($entity, $data, ['validate' => 'FacebookSignup']);
             if (!$items->errors()) {
                 $saved = $this->Users->save($items);

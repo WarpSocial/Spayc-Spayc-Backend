@@ -157,34 +157,17 @@ class UsersTable extends Table {
             ->notEmpty('fb_id','Facebook id is required field.');
         
         $validator
-                ->requirePresence('username', 'create','Username is required field.')
-                ->notEmpty('username','Username  is required field.')                
-                ->add('username', 'unique', ['rule' => 'validateUnique','message'=>'Username has been used.', 'provider' => 'table'])                
-                ->add('username', [
-                    'lengthBetween' => [
-                        'rule' => ['lengthBetween', 3, 30],
-                        'message' => 'Username length must be between 3-30 alphanumeric.'
-                    ]
-                ]);
+            ->requirePresence('username', 'create','Username is required field.')
+            ->notEmpty('username','Username  is required field.')                
+            ->add('username', 'unique', ['rule' => 'validateUnique','message'=>'Username has been used.', 'provider' => 'table'])                
+            ->maxLength('username', 30,'Username must be less then 30 characters.');
         
         $validator
-            ->allowEmpty('email')
-            ->email('email',false,'Email is required field.')
-            ->requirePresence('email', 'create','Email is required field.');
-            //->add('email', 'unique', ['rule' => 'validateUnique','message'=>'Email has been used.', 'provider' => 'table']) 
-            //->notEmpty('email','Email is required field.');
-        $validator
-            ->allowEmpty('password')
-            ->add("password",'custom',[
-                'rule'=>function($value,$context) {
-                    if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,30}$/', $value)){
-                        return false;
-                    }else{
-                        return true;
-                    }
-                },
-                'message'=>'Password must contain 8-30 character length, at least one letter and one number.',
-            ]);
+                ->email('email',false,'Email is required field.')
+                ->requirePresence('email', 'create','Email is required field.')
+                //->add('email', 'unique', ['rule' => 'validateUnique','message'=>'Email has been used.', 'provider' => 'table']) 
+                ->notEmpty('email','Email is required field.');
+        
         $validator
             ->allowEmpty('dob')
             ->add('dob',[
@@ -196,16 +179,17 @@ class UsersTable extends Table {
                 ])
             ->add('dob','custom',[
                 'rule'=>function($value,$context){
-                        $today = new Time('now');
-                        $udob = Time::createFromFormat('Y-m-d',$value);
-                        return ($udob<$today);
+                        $now = new Time('now');
+                        $dob = Time::createFromFormat('Y-m-d',$value);
+                        $age = $now->diff($dob)->format("%Y");
+                        return ($age > 13);
                     },
-                'message'=>'Date of birth must be below the current date.',
+                'message'=>'Age must be 13 or greater than 13 year\'s old.',
             ]);
                     
         $validator
             ->requirePresence('device_id', 'create','Device id is required field.')
-            ->notEmpty('device_id','Device id is required field.')                
+            ->notEmpty('device_id','Device id is required field.')         
             ->add('device_id', 'unique', ['rule' => 'validateUnique','message'=>'Device id has been used.', 'provider' => 'table']);
         return $validator;
     }

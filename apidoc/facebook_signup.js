@@ -7,15 +7,11 @@
 *
 * @apiDescription User singup by facebook.
 * 
-* @apiParam {String} title           * User title (Mr.|Mrs) required in body.
-* @apiParam {String} fb_id           * User facebook unique id required in body.
-* @apiParam {String} username       * Username optional in body.
-* @apiParam {String} first_name      * User first name required in body.
-* @apiParam {String} last_name       * User last name required in body.
-* @apiParam {String} email           * User email required in body.
-* @apiParam {String} password        * Password is optional in body.
-* @apiParam {String} dob             * Date of birth optional in body.
-* @apiParam {String} device_id       * Device id is required in body.
+* @apiParam {String} fb_id              * User facebook unique id required in body.
+* @apiParam {String} username           * Username optional in body.
+* @apiParam {String} email              * User email required in body.
+* @apiParam {String} dob                * Date of birth optional in body.
+* @apiParam {String} device_id          * Device id is required in body.
 
 *
 *
@@ -26,13 +22,9 @@
 * @apiExample Example usage:
 *
 *{
-*    "title":"Mr.",
 *    "fb_id":"8552254552",
 *    "username":"dhiru.php",
-*    "first_name":"dhiru",
-*    "last_name":"singh",
 *    "email":"dhiru.php@gmail.com",
-*    "password":"Dhiru@123",
 *    "dob":"2000-11-12",
 *    "device_id":"DFS455HER45555af55af"
 *}
@@ -47,13 +39,9 @@
     "data": [
         "ones",
         {
-            "title": "Mr.",
             "fb_id": "45545454545",
             "username": "dhiru.php",
-            "first_name": "dhiru",
-            "last_name": "singh2",
             "email": "dhiru12.php@gmail.com",
-            "password": "Dhiru@123",
             "dob": "2000-11-12",
             "device_id":"DFS455HER45555af55af"
         }
