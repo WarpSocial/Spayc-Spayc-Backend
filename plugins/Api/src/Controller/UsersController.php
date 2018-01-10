@@ -30,19 +30,32 @@ class UsersController extends AppController {
     public function avatars(){
         if (!$this->request->is('post')) {
             $this->restException(['status'=>'failed','message'=>'Invalid method'],405);
-        }            
+        }
+        $this->loadModel('Api.UserImages');
         #$this->Users->uploadProfileImages();
         $data  = $this->request->getData();
         $data['user_id'] = $this->Auth->user('id');
-        $imgEntity  = TableRegistry::get('UserImages');
-        $entity = $imgEntity->newEntity();
-        $items = $imgEntity->patchEntity($entity, $data);
-        pr($items->errors());die;
-        if(!empty($items->errors())){
-            $this->restException(['status'=>'failed','message'=>'Validataion error.','errors'=>$this->mapErrors($items->errors())]);
+        if(isset($data['image_url'][0])){
+            foreach($data['image_url'] as $img){
+                $imgData = ['user_id'=>$this->Auth->user('id'),'image_url'=>$img];
+                
+                $entity = $this->UserImages->newEntity();
+                $items = $this->UserImages->patchEntity($entity, $imgData);
+                if(!empty($items->errors())){
+                     $this->restException(['status'=>'failed','message'=>__('Validataion error.'),'errors'=>$this->mapErrors($items->errors())],401);
+                }
+                $this->UserImages->save($items);
+            }
+        }else{
+            $entity = $this->UserImages->newEntity();
+            $items = $this->UserImages->patchEntity($entity, $data);
+            if(!empty($items->errors())){
+                 $this->restException(['status'=>'failed','message'=>__('Validataion error.'),'errors'=>$this->mapErrors($items->errors())],401);
+            }
+            $this->UserImages->save($items);
         }
-        $imgEntity->save($items);
-        $response = $this->restException(['status'=>'success','message'=>'Profile image uploaded successfully.'], 200);
+        $response = ['status'=>'success','message'=>__('Profile image uploaded successfully.')];
+        
         $this->set($response);
     }
     
@@ -130,7 +143,7 @@ class UsersController extends AppController {
         //echo preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,12}$/', $data['password']);exit;
         $items = $this->Users->patchEntity($entity, $data);
         if($items->errors()) {
-            $this->restException($this->mapErrors($items->errors()));
+            $this->restException(['status'=>'failed','message'=>__('Validation errors.'),'errors'=>$this->mapErrors($items->errors())],401);
         }
         $matrix = $this->Matrix->register($data);
         if(!$matrix) {       

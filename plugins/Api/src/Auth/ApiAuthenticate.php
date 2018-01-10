@@ -83,7 +83,7 @@ class ApiAuthenticate extends BaseAuthenticate {
         $username = $request->getData($fields['username']);
         $password = $request->getData($fields['password']);
         /* in case of facebook */
-        $fbId = $request->getData($fields['fb_id']);
+        $fbId = $request->getData('fb_id');
         $token = $request->env('HTTP_TOKEN');
         if(!empty($username) && !empty($password)){
             $user = $this->_findByFields($username,$password);
