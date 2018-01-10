@@ -39,7 +39,11 @@ class SpaycsTable extends Table {
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
-
+        $this->addBehavior('ImgUpload', [
+            'field' => 'image',
+            'uploadPath' => 'room/',
+            'where' => 's3', /* local and s3 */
+        ]);
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id',
             'joinType' => 'INNER',
@@ -64,7 +68,7 @@ class SpaycsTable extends Table {
                 ->maxLength('location', 255,'Location test is too long.')
                 ->requirePresence('location', 'create',__('Location key is missing.'))
                 ->notEmpty('location',__('Location is required field.'))
-                ->regex('location','/[\w\s]/',__('Location must be alpha numeric only.'));
+                ->regex('location','/[\w\s]+$/',__('Location must be alpha numeric only.'));
 
         $validator
                 ->requirePresence('type', 'create',__('Type key is missing.'))
@@ -101,8 +105,17 @@ class SpaycsTable extends Table {
                 ->requirePresence('description', 'create',__('Description key is missing.'))
                 ->maxLength('description', 50,__('Description must be less than 50 characters.'))
                 ->allowEmpty('description');
-
         
+        $validator
+                ->allowEmpty('image')
+                ->add('image','extension',[
+                    'rule' => ['extension', ['jpeg', 'png','jpg']],
+                    'message'=>__('Please select only jpg,jpeg,png.')
+                ])
+                ->add('image','size',[
+                    'rule' => ['fileSize', '<=',\Cake\Core\Configure::read('maxupload')],
+                    'message'=>__('Image size must be less than '.\Cake\Core\Configure::read('maxupload').'.')
+                ]);        
         return $validator;
     }
 

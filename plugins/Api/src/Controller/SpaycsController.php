@@ -20,20 +20,20 @@ class SpaycsController extends AppController {
      */
     public function add() {
         $entity = $this->Spaycs->newEntity();
-        if ($this->request->is('post')) {
-            $data = $this->request->getData();            
-            $items = $this->Spaycs->patchEntity($entity, $data);
-            if($items->errors()) {
-                $this->restException(['status'=>'failed','message'=>'Validation errors','error'=>$this->mapErrors($items->errors())]);
-            }
-            
-            $items->set('user_id',$this->Auth->user('id'));
-            if ($this->Spaycs->save($items)) {
-                $response = ['status'=>'success','message'=>__('The spayc has been created.'),'data'=>$items];
-            }else{
-                $response = ['status'=>'success','message'=>__('The spayc could not be saved. Please, try again.')];
-            }
-            
+        if (!$this->request->is('post')) {
+            $this->restException(['status'=>'failed','message'=>'Invalied method.'],405);
+        }            
+        $data = $this->request->getData();
+        $items = $this->Spaycs->patchEntity($entity, $data);
+        if($items->errors()) {
+            $this->restException(['status'=>'failed','message'=>'Validation errors','error'=>$this->mapErrors($items->errors())]);
+        }
+
+        $items->set('user_id',$this->Auth->user('id'));
+        if ($this->Spaycs->save($items)) {
+            $response = ['status'=>'success','message'=>__('The spayc has been created.'),'data'=>$items];
+        }else{
+            $response = ['status'=>'success','message'=>__('The spayc could not be saved. Please, try again.')];
         }
         $this->set(compact('response'));
     }

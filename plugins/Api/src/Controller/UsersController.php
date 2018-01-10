@@ -28,25 +28,21 @@ class UsersController extends AppController {
     }
     
     public function avatars(){
-        if ($this->request->is('post')) {
-            if($this->Auth->user('id')) {
-                $this->Users->uploadProfileImages();
-                $userImg = TableRegistry::get('UserImages');
-                $newEntity = $userImg->newEntity();
-                $data['user_id'] = $this->Auth->user('id');
-                $data['created'] = date('Y-m-d');
-                $data['modified'] = date('Y-m-d');
-                $items = $userImg->patchEntity($newEntity, $data);
-                if(!$items->errors()) {
-                    $userImg->save($items);
-                    $response = $this->restException(['status'=>'success','message'=>'Profile image uploaded successfully.'], 200);
-                } else {
-                    $response = $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())],405);
-                }
-            }
-        } else {
-            $response = $this->restException(['status'=>'failed','message'=>'Invalid request type'],405);
+        if (!$this->request->is('post')) {
+            $this->restException(['status'=>'failed','message'=>'Invalid method'],405);
+        }            
+        #$this->Users->uploadProfileImages();
+        $data  = $this->request->getData();
+        $data['user_id'] = $this->Auth->user('id');
+        $imgEntity  = TableRegistry::get('UserImages');
+        $entity = $imgEntity->newEntity();
+        $items = $imgEntity->patchEntity($entity, $data);
+        pr($items->errors());die;
+        if(!empty($items->errors())){
+            $this->restException(['status'=>'failed','message'=>'Validataion error.','errors'=>$this->mapErrors($items->errors())]);
         }
+        $imgEntity->save($items);
+        $response = $this->restException(['status'=>'success','message'=>'Profile image uploaded successfully.'], 200);
         $this->set($response);
     }
     
@@ -126,25 +122,27 @@ class UsersController extends AppController {
      */
     public function add() {
         $entity = $this->Users->newEntity();
-        if ($this->request->is('post')) {
-            $this->loadComponent('Api.Matrix');
-            $data = $this->request->getData();
-            $items = $this->Users->patchEntity($entity, $data);
-            if($items->errors()) {
-                $this->restException($this->mapErrors($items->errors()));
-            }
-            $matrix = $this->Matrix->register($data);
-            if(!$matrix) {       
-                $this->restException(['status' => "failed", 'message' => 'Matrix registration failed.'],401);
-            }            
-            $items->set('status', 'active');            
-            $items->set('token_verification', Security::hash($data['email'], 'sha1', true));
-            if ($this->Users->save($items)) {           
-                $this->getMailer('Api.User')->send('signup', [$items]);
-                $response = ['status' => "success", 'message' => 'Registration done successfully.', 'data' => $this->request->data];
-            } else {
-                $response = ['status' => "failed", 'message' => 'Failed to saved data.', 'errors'=>$this->mapErrors($items->errors())];
-            }
+        if (!$this->request->is('post')) {
+            $this->restException(['status'=>'failed','message'=>'Invalid method'],405);
+        }
+        $this->loadComponent('Api.Matrix');
+        $data = $this->request->getData(); 
+        $items = $this->Users->patchEntity($entity, $data);
+        if($items->errors()) {
+            $this->restException($this->mapErrors($items->errors()));
+        }
+        $matrix = $this->Matrix->register($data);
+        if(!$matrix) {       
+            $this->restException(['status' => "failed", 'message' => 'Matrix registration failed.'],401);
+        }            
+        $items->set('status', 'active');            
+        $items->set('token_verification', Security::hash($data['email'], 'sha1', true));
+        #echo $data['token_verification'];die;
+        if ($this->Users->save($items)) {           
+             $this->getMailer('Api.User')->send('signup', [$items]);
+            $response = ['status' => "success", 'message' => 'Registration done successfully.', 'data' => $this->request->data];
+        } else {
+            $response = ['status' => "failed", 'message' => 'Failed to saved data.', 'errors'=>$this->mapErrors($items->errors())];
         }
         $this->set($response);
     }
