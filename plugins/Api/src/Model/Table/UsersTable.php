@@ -10,6 +10,7 @@ use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\Auth\DefaultPasswordHasher;
 use \Cake\ORM\TableRegistry;
+use Cake\Core\Configure;
 use Api\Utils;
 /**
  * Users Model
@@ -61,24 +62,26 @@ class UsersTable extends Table {
      */
     public function validationDefault(Validator $validator) {
         $validator
-                ->integer('id')
-                ->allowEmpty('id', 'create');
-        
-        $validator
                 ->requirePresence('username', 'create','Username is required field.')
-                ->notEmpty('username','Username  is required field.')
+                ->notEmpty('username','Please enter a user name')                
+                ->maxLength('username', 30,__('User name cannot exceed to 30 characters.'))
+                ->add('username', 'unique', ['rule' => 'validateUnique','message'=>__('User name already exist.'), 'provider' => 'table'])
+                 ->add("username",'custom',[
+                    'rule'=>function($value,$context){
+                        return (bool)(preg_match('/^[\w\s\.-@#]+$/', $value));
+                    },
+                    'message'=>__('Username is not valid.'),
+                ]);;
                 
-                ->add('username', 'unique', ['rule' => 'validateUnique','message'=>'Username has been used.', 'provider' => 'table'])         
-                ->maxLength('username', 30,'Username must be less then 30 characters.')  
-                ->regex('username','/\w/',__('Username must be alpha numeric only.'));
         
         $validator
-                ->requirePresence('device_id', 'create','Device id is required field.')
-                ->notEmpty('device_id','Device id is required field.');
+                ->requirePresence('device_id', __('create','Device id is required field.'))
+                ->notEmpty('device_id',__('Please enter a device id.'))
+                ->maxLength('username', 30,__('Device id cannot exceed to 30 characters.'));
                 
         $validator
-                ->requirePresence('password', 'create','Password is required field.')
-                ->notEmpty('password','Password is required field.')
+                ->requirePresence('password', 'create',__('Password key is missing.'))
+                ->notEmpty('password',__('Please enter password.'))
                 ->add("password",'custom',[
                     'rule'=>function($value,$context) {
                         if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,30}$/', $value)){
@@ -87,34 +90,35 @@ class UsersTable extends Table {
                             return true;
                         }
                     },
-                    'message'=>'Password must contain 8-30 character length, at least one letter and one number.',
+                    'message'=>__('Password must contain 8-30 character length, at least one letter and one number.'),
                 ]);
-
-        $validator
-                ->email('email',false,'Email is required field.')
-                ->requirePresence('email', 'create','Email is required field.')
-                ->add('email', 'unique', ['rule' => 'validateUnique','message'=>'Email has been used.', 'provider' => 'table']) 
-                ->notEmpty('email','Email is required field.');
         
         $validator
-                ->allowEmpty('phone')
-                ->requirePresence('phone', 'create','Phone must exist.')
+                ->requirePresence('confirm_password', 'create', __('Confirm password key is missing.'))
+                ->notEmpty('confirm_password', __('Please enter confirm password.'))
+                ->sameAs('confirm_password', 'password',__('Passwords don\'t match, try again please!'));
+        
+        $validator
+                ->requirePresence('email', 'create',__('Email key is missing.'))
+                ->notEmpty('email',__('Pease enter a email.'))
+                ->email('email',false,__('Email is not valid.'))                
+                ->add('email', 'unique', ['rule' => 'validateUnique','message'=>__('Email already exist.'), 'provider' => 'table']) ;
+                
+        
+        $validator
+                ->allowEmpty('phone')                
                 ->add('phone', 'valid', [
                     'rule' => function($value,$context){
-                        if(preg_match('/[\d]{16}$/',$value)){
-                            return false;
-                        }else{
-                            return true;
-                        }
+                        return (bool)(preg_match('/^[\d\s\+\(\)]{3,15}$/',$value));
                     },
-                    'message'=>'Phone no is not valid'
+                    'message'=>__('Phone no is not valid.')
                     ]);
 
         $validator
                 ->allowEmpty('dob')
                 ->add('dob',[
                     'date' => [
-                        'rule'=> ['date',['ymd']],
+                        'rule'=> ['date',['mdy']],
                         'last'=>true,
                         'message'=>'Date of birth is not valid format.'
                         ]
@@ -122,20 +126,16 @@ class UsersTable extends Table {
                 ->add('dob','custom',[
                     'rule'=>function($value,$context){
                             $now = new Time('now');
-                            $dob = Time::createFromFormat('Y-m-d',$value);
+                            $dob = Time::createFromFormat('m-d-Y',$value);
                             $age = $now->diff($dob)->format("%Y");
                             return ($age > 13);
                         },
                     'message'=>'Age must be 13 or greater than 13 year\'s old.',
                 ]); 
         $validator
-            ->allowEmpty('gender')
-            ->add('gender', 'custom', [
-                        'rule' => function ($value, $context){
-                          return in_array($value, \Cake\Core\Configure::read('gender'));
-                        },
-                        'message' => 'Gender value must be any one male,female or other only.'
-                    ]);                
+            ->requirePresence('gender', 'create',__('Gender key is missing.'))    
+            ->notEmpty('gender',__('Please enter gender.'))
+            ->inList('gender', Configure::read('gender'),__('Gender must be any one '.implode(',',Configure::read('gender')).'.'));      
 
         return $validator;
     }

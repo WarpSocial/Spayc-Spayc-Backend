@@ -76,8 +76,8 @@ class User extends Entity {
     }
 
     protected function _setDob($dob) {
-        if (!empty($dob)) {
-            return $dob->format("Y-m-d");
+        if (!empty($dob)) {            
+            return (new \Cake\I18n\Time($dob))->format("Y-m-d");
         } else {
             return;
         }
@@ -85,7 +85,7 @@ class User extends Entity {
 
     protected function _getDob($dob) {
         if (!empty($dob)) {
-            return (new \Cake\I18n\Time($dob))->format("Y-m-d");
+            return (new \Cake\I18n\Time($dob))->format("m-d-Y");
         } else {
             return;
         }
