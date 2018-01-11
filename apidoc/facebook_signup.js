@@ -11,6 +11,8 @@
 * @apiParam {String} username           * Username optional in body.
 * @apiParam {String} email              * User email required in body.
 * @apiParam {String} dob                * Date of birth optional in body.
+* @apiParam {Number} phone              * Phone no of user and accept upto 16 digits (Optional).
+* @apiParam {String} gender             * Gender of user like any one (male,femal,other) (Required).
 * @apiParam {String} device_id          * Device id is required in body.
 
 *
@@ -26,6 +28,8 @@
 *    "username":"spayc",
 *    "email":"spayc@gmail.com",
 *    "dob":"12-11-2001",
+*    "gender":"male|female|other",
+*    "phone": "XXXXXXXXXX",
 *    "device_id":"xxxxxxxxxxxxxxxxxx"
 *}
 *
@@ -36,16 +40,19 @@
 {
     "status": "success",
     "message": "Saved successfully.",
-    "data": [
-        "ones",
-        {
-            "fb_id": "xxxxxxxxxxxx",
-            "username": "spayc",
-            "email": "spayc@gmail.com",
-            "dob": "12-11-2001",
-            "device_id":"xxxxxxxxxxxxxxxxxx"
-        }
-    ]
+    "data": {
+        "username": "sbsharma",
+        "email": "sbsharma@gmail.com",
+        "gender": "male",
+        "dob": "2001-12-11",
+        "phone": null,
+        "website_url": null,
+        "address": null,
+        "bio_data": null,
+        "device_id": "DFS455HER45555adf55af444",
+        "matrix_user_id": "@sbsharma:35.168.119.247",
+        "token": "3511fd4e28134e2c0cc44edf8609c576392a86494b4740783e55901662969d34"
+    }
 }
 *
 *

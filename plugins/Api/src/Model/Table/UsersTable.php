@@ -186,7 +186,20 @@ class UsersTable extends Table {
                     },
                 'message'=>'Age must be 13 or greater than 13 year\'s old.',
             ]);
-                    
+                
+        $validator
+            ->requirePresence('gender', 'create',__('Gender is required field.'))    
+            ->notEmpty('gender',__('Gender is required field.'))
+            ->inList('gender', Configure::read('gender'),__('Gender must be any one '.implode(',',Configure::read('gender')).'.')           );
+        
+        $validator
+            ->allowEmpty('phone')                
+            ->add('phone', 'valid', [
+                'rule' => function($value,$context){
+                    return (bool)(preg_match('/^[\d\s\+\(\)]{3,15}$/',$value));
+                },
+                'message'=>__('Phone no is not valid.')
+                ]);
         $validator
                 ->requirePresence('device_id', __('create','Device id is required field.'))
                 ->notEmpty('device_id',__('Please enter a device id.'))
@@ -294,57 +307,5 @@ class UsersTable extends Table {
         }else{
             return false;
         }
-    }
-    
-    public function getAlreadyExistsUser($data = []) {
-        if(!empty($data['email'])) {
-            $user = $this->find("all", ['conditions'=>['email'=>$data['email']]]);
-            if($user->count()) {
-                return $user->first()->toArray();
-            }
-        }
-        if(!empty($data['fb_id'])) {
-            $user = $this->find("all", ['conditions'=>['fb_id'=>$data['fb_id']]]);
-            if($user->count()) {
-                return $user->first()->toArray();
-            }
-        }
-        return false;
-    }
-    
-    public function uploadImages($oldEntity, $files) {
-        $entity = [];
-        if(!empty($files)) { 
-            $ids = [];
-            if(!empty($oldEntity['user_images'])) {
-                foreach($oldEntity['user_images'] as $profile) {
-                    if(!empty($profile['image_url']) and file_exists(WWW_ROOT.'img/profile/'.$profile['image_url'])) {
-                        chmod(WWW_ROOT.'img/profile/'.$profile['image_url'], 0777);
-                        unlink(WWW_ROOT.'img/profile/'.$profile['image_url']);
-                        $ids[] = $profile['id']; 
-                    }
-                }
-                if(!empty($oldEntity['user_images'][0]['user_id'])) {
-                    TableRegistry::get('UserImages')->deleteAll(['user_id'=>$oldEntity['user_images'][0]['user_id']]);
-                }
-            }
-            $uploadPath = WWW_ROOT.'img/profile/';
-            foreach($files as $key=>$file) {
-                if(!empty($file['tmp_name'])) {
-                    $fileName = time().'-'.str_replace(' ', '-', $file['name']);
-                    $uploadFile = $uploadPath.$fileName;
-                    if(move_uploaded_file($file['tmp_name'], $uploadFile)){
-                        $entity['user_id'] = $oldEntity['id'];
-                        $entity['image_url'] = $fileName;
-                        $entity['created'] = date('Y-m-d');
-                        $entity['modified'] = date('Y-m-d'); //pr($entity);
-                        $newEntity = TableRegistry::get('UserImages')->newEntity();
-                        $item = TableRegistry::get('UserImages')->patchEntity($newEntity, $entity);
-                        TableRegistry::get('UserImages')->save($item);
-                    }
-                }
-            }
-        }
-        return $entity;
     }
 }

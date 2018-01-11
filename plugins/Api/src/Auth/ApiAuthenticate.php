@@ -91,7 +91,8 @@ class ApiAuthenticate extends BaseAuthenticate {
         }elseif(!empty($token)){
             $user = $this->getUser($request);
         }elseif(!empty($fbId)){
-            $user = $this->_findByFbidAndStatus($fbId,'active');
+            $userModel = 'Api.'.$this->_config['userModel'];
+            $user = TableRegistry::get($userModel)->findByFbIdAndStatus($fbId, 'active');
         }else{
             $user = false;
         }
