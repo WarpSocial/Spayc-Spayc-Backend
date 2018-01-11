@@ -29,6 +29,8 @@
 
 @apiDescription Create a new SPAYC.
 
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+
 @apiParam {String} name name title of the spayc (Required).
 @apiParam {String} location Location must be alphanumeric with space (Required).
 @apiParam {String} type SPAYC type must be any one from the following Event|Community (Required).
@@ -80,3 +82,80 @@
 @apiUse errorResponse
  */
 function postSpaycs() { return; }
+/**
+ * @api {get} /spaycs.json?page=:page Spayc Lists
+ * @apiVersion 0.1.0
+ * @apiName getSpaycs
+ * @apiGroup Spayc
+ * @apiPermission private
+ *
+ * @apiDescription Filter spayc list.
+ * 
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * 
+    @apiParam {Number}      page        Page number in query string (Required).
+    @apiParam {Date/Time}   start_date  Spayc start date in query string (Optional).
+    @apiParam {Date/Time}   end_date    Spayc end date in query string (Optional).
+    @apiParam {String}      group_type  Group type must be any one from the following Public|Private (Optional).
+    @apiParam {String}      type        Spayc type must be any one from the following Event|Community (Optional).
+    @apiParam {String}      with_friends Allow that spayc list with friends or not (Optional).
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Spayc lists.
+ * @apiSuccess {Object} data List of user details.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Spayc lists.",
+    "data": {
+        "previous": 4,
+        "spaycs": [
+            {
+                "id": 4,
+                "user_id": 51,
+                "name": "Test123",
+                "start_date": "2018-01-10T00:00:00+00:00",
+                "end_date": "2018-01-11T00:00:00+00:00",
+                "image": "img.png",
+                "type": "Community",
+                "group_type": "Public",
+                "status": "Active",
+                "created": "2018-01-10T00:00:00+00:00",
+                "modified": "2018-01-10T00:00:00+00:00",
+                "subscribed_users": [],
+                "joined_spayc": []
+            },
+            {
+                "id": 3,
+                "user_id": 51,
+                "name": "Test12",
+                "start_date": "2018-01-10T00:00:00+00:00",
+                "end_date": "2018-01-11T00:00:00+00:00",
+                "image": "img.png",
+                "type": "Event",
+                "group_type": "Private",
+                "status": "Active",
+                "created": "2018-01-10T00:00:00+00:00",
+                "modified": "2018-01-10T00:00:00+00:00",
+                "subscribed_users": [
+                    {
+                        "spayc_id": 3,
+                        "subscribed_users": 1
+                    }
+                ],
+                "joined_spayc": [
+                    {
+                        "spayc_id": 3,
+                        "joined_users": 3,
+                        "joined_friends": 2
+                    }
+                ]
+            }
+        ]
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function getView() { return; }

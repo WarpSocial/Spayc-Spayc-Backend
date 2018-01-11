@@ -49,6 +49,15 @@ class SpaycsTable extends Table {
             'joinType' => 'INNER',
             'className' => 'Api.Users'
         ]);
+        
+        $this->hasMany('JoinedSpayc', [
+            'foreignKey' => 'spayc_id',
+            'className' => 'Api.JoinedSpayc'
+        ]);
+        $this->hasMany('SubscribedUsers', [
+            'foreignKey' => 'spayc_id',
+            'className' => 'Api.SubscribedUsers'
+        ]);
     }
 
     /**

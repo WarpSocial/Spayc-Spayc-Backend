@@ -29,6 +29,8 @@
  *
  * @apiDescription Update profile of existing user.
  * Update user own profile details with form-data option.
+ * 
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  *
  * @apiParam {String} username     Username (Required).
  * @apiParam {Date}   dob          Date of birth must in this format YYYY-MM-DD (Optional).
@@ -134,12 +136,12 @@ function postUser() { return; }
  * @apiGroup User
  * @apiPermission Private User
  *
- * @apiDescription User login with user name and its password.
- * Need to send token in header
+ * @apiDescription View user details.
  *
- *
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * 
  * @apiSuccess {String} status success.
- * @apiSuccess {String} message Login done successfully.
+ * @apiSuccess {String} message Profile details.
  * @apiSuccess {Object} data List of user details.
  * @apiSuccessExample {json} Success-Response: 
  *      HTTP/1.1 200 OK

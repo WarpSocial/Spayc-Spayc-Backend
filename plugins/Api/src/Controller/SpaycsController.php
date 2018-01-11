@@ -4,6 +4,7 @@ namespace Api\Controller;
 
 use Api\Controller\AppController;
 use Cake\I18n\Time;
+use \Cake\ORM\TableRegistry;
 
 /**
  * Spaycs Controller
@@ -54,14 +55,29 @@ class SpaycsController extends AppController {
      */
     public function index() {
         $userId = $this->Auth->user("id");
-        $limit = 2;
+        $limit = 5;
         if(!is_numeric($this->request->query('page'))) {
             $this->restException(['status'=>'failed', 'message'=>'Page number is not valid.'], 405);
         }
         $page = $this->request->query('page');
-        //?page=1&start_date=2018-01-10&end_date=2018-01-12&spayc_type=event&group_type=public&with_friends=true&timezome=5.5
+        $friends = TableRegistry::get('FriendRequest')->find('all', ['fields'=>['FriendRequest.requested_by', 'FriendRequest.requested_to'], 'conditions'=>['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId], 'requested_status'=>'Accepted']]);
+        $friend = [];
+        if($friends->count()) {
+            $friendIds = $friends->toArray();
+            $friend = array_unique(array_merge(array_column($friendIds,'requested_by'),array_column($friendIds,'requested_to')));
+        }
         $fieldArray = ['user_id'=>$userId];
-        $query =  $this->Spaycs->find()->select(['id','user_id','name','start_date','end_date','image', 'type', 'group_type', 'status', 'created', 'modified'])->where(['user_id'=>$fieldArray['user_id']]);
+        $query =  $this->Spaycs->find()->select(['id','user_id','name','start_date','end_date','image', 'type', 'group_type', 'status', 'created', 'modified'])->where(['user_id'=>$fieldArray['user_id']])->contain([
+            'JoinedSpayc' => function($q) use($friend) {
+                $row =  $q->select(['JoinedSpayc.spayc_id', 'joined_users' => $q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.spayc_id']);
+                $joinedUsers = 0;
+                if($row->count()) { $joinedUsers = $row->first()->toArray()['joined_users']; }
+                return  $q->select(['joined_users'=>$joinedUsers, 'JoinedSpayc.spayc_id', 'joined_friends'=>$q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.spayc_id'])->where(['JoinedSpayc.user_id IN'=>$friend]);
+            },
+            'SubscribedUsers' => function($q) {
+                return $q->select(['SubscribedUsers.spayc_id', 'subscribed_users' => $q->func()->count('SubscribedUsers.id')])->group(['SubscribedUsers.spayc_id']);
+            }
+        ]);
         $query->order(['Spaycs.created'=>'ASC'])->limit($limit);
         if($this->request->query('start_date')) {
             $startDate = (new \DateTime($this->request->query('start_date')))->format('Y-m-d'); 
@@ -71,10 +87,10 @@ class SpaycsController extends AppController {
             $endDate = (new \DateTime($this->request->query('end_date')))->format('Y-m-d');
             $query->where(["Spaycs.end_date <="=>$endDate]);
         }
-        if($this->request->query('spayc_type') && in_array($this->request->query('spayc_type'), ['Event'])) {
+        if(in_array(ucfirst($this->request->query('spayc_type')), ['Event', 'Community'])) {
             $query->where(["Spaycs.type"=>ucfirst($this->request->query('spayc_type'))]);
         }
-        if($this->request->query('group_type')) {
+        if(in_array(ucfirst($this->request->query('group_type')), ['Public', 'Private'])) {
             $query->where(["Spaycs.group_type"=>ucfirst($this->request->query('group_type'))]);
         }
         if($page < 0){
@@ -87,9 +103,8 @@ class SpaycsController extends AppController {
         if($page == 1) {
             $data['previous'] = $newQuery->count();            
         }
-        if($query->isEmpty()) {
-            $result = [];
-        } else {
+        $result = [];
+        if(!$query->isEmpty()) {
             $result = $query->toArray();
         }
         $data['spaycs'] = $result;
