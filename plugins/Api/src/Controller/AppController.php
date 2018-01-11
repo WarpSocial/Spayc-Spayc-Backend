@@ -13,7 +13,7 @@ class AppController extends BaseController {
             'authenticate'=>[
                 'Api.Api'=>[
                     'token'=>'HTTP_TOKEN',
-                    'fields' => ['username' => 'username', 'password' => 'password'],
+                    'fields' => ['username' => 'email', 'password' => 'password'],
                     'userModel' => 'Users',
                     'scope' => ['Users.status' => 'active'],
                 ],

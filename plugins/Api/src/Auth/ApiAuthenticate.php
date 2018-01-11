@@ -68,10 +68,11 @@ class ApiAuthenticate extends BaseAuthenticate {
         $table = TableRegistry::get('Api.'.$this->_config['userModel']);
         $user = $table->find()->matching('UserLogs',function($q)use($token){
             return $q
-                    ->select('user_id')
+                    ->select(['id','user_id','plain_token','token','matrix_access_token','device_id','matrix_user_id','login_status','last_login'])
                     ->where(['plain_token'=>$token]);
             
         })->where(['Users.status'=>'active'])->first();
+        $user['UserLogs'] = $user->_matchingData['UserLogs']->toArray();
         if (!$user){
             return false;
         } 
@@ -93,7 +94,7 @@ class ApiAuthenticate extends BaseAuthenticate {
             $user = $this->_findByFbidAndStatus($fbId,'active');
         }else{
             $user = false;
-        }        
+        }
         return $user;
     }    
     public function unauthenticated(ServerRequest $request, Response $response) {
@@ -124,7 +125,6 @@ class ApiAuthenticate extends BaseAuthenticate {
             return false;
         }
         $result = $entity->first();
-        
         if (!(new DefaultPasswordHasher)->check($password, $result[$fields['password']])) {
             return false;
         }

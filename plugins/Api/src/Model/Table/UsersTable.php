@@ -73,12 +73,6 @@ class UsersTable extends Table {
                     'message'=>__('Username is not valid.'),
                 ]);
                 
-        
-        $validator
-                ->requirePresence('device_id', __('create','Device id is required field.'))
-                ->notEmpty('device_id',__('Please enter a device id.'))
-                ->maxLength('username', 100,__('Device id cannot exceed to 100 characters.'));
-                
         $validator
                 ->requirePresence('password', 'create',__('Password is required field.'))
                 ->notEmpty('password',__('Password is required field.'))
@@ -290,7 +284,7 @@ class UsersTable extends Table {
         $logItems->token = $hasher->hash($plain_token);
         $logItems->plain_token = $plain_token;
         $logItems->device_id = $user['device_id'];
-        $logItems->matrix_access_token = $user['access_token'];
+        $logItems->matrix_access_token = $user['matrix_access_token'];
         $logItems->matrix_user_id = $user['matrix_user_id'];
         $logItems->login_status = 1;
         $logItems->created = Time::now();

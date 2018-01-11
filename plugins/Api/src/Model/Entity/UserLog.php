@@ -35,19 +35,8 @@ class UserLog extends Entity
      * @var array
      */
     protected $_accessible = [
-        'user_id' => true,
-        'token' => true,
-        'plain_token' => true,
-        'device_id' => true,
-        'matrix_access_token' => true,
-        'matrix_user_id' => true,
-        'login_status' => true,
-        'last_login' => true,
-        'created' => true,
-        'modified' => true,
-        'user' => true,
-        'device' => true,
-        'matrix_user' => true
+        '*' => true,
+        'id' => false
     ];
 
     /**
