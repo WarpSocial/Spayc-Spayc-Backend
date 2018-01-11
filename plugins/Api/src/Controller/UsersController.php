@@ -55,7 +55,6 @@ class UsersController extends AppController {
             $this->UserImages->save($items);
         }
         $response = ['status'=>'success','message'=>__('Profile image uploaded successfully.')];
-        
         $this->set($response);
     }
     
