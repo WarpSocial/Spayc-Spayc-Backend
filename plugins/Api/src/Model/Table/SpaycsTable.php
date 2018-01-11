@@ -85,13 +85,34 @@ class SpaycsTable extends Table {
                 ->dateTime('start_date','ymd',__('Start date is not in format YYYY-MM-DD H:i:s'))
                 ->notEmpty('start_date',__('Start date is required when type is event.'),function($context){
                      return (isset($context['data']['type']) && ($context['data']['type'] =='Event'));
-                });
+                })
+                ->add('start_date','daterange',[
+                    'rule'=> function($value,$context){
+                        if(!empty($value)){
+                            /* Doesn't exceed 1 year ahead */
+                            $startDate  = new \Cake\I18n\Time($value);
+                            return (bool)$startDate->isWithinNext('1 year');
+                        }
+                    },
+                    'message'=>__('Start date can\'t more than 1 year ahead.')
+                ]);
         $validator                
                 ->requirePresence('end_date', 'create',__('End Date key is missing.'))
                 ->dateTime('end_date','ymd',__('End date is not in format YYYY-MM-DD H:i:s'))
                 ->notEmpty('end_date',__('End date is required when type is event.'),function($context){
                      return (isset($context['data']['type']) && ($context['data']['type'] =='Event'));
-                });
+                })
+                ->add('end_date','daterange',[
+                    'rule'=> function($value,$context){
+                        if(!empty($value) && !empty($context['data']['end_date'])){
+                            /* End date must be below of start date */
+                            $startDate  = new \Cake\I18n\Time($context['data']['start_date']);
+                            $endDate  = new \Cake\I18n\Time($value);
+                            return (bool)($startDate < $endDate );
+                        }
+                    },
+                    'message'=>__('End date must be ahead from start date.')
+                ]);
 
         $validator
                 ->requirePresence('passcode', 'create',__('Passcode key is missing.'))

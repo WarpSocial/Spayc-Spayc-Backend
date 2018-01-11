@@ -70,8 +70,8 @@ class UsersController extends AppController {
         
         $validator = new \Cake\Validation\Validator();
         $validator
-                ->requirePresence('username')
-                ->notEmpty('username')
+                ->requirePresence('email')
+                ->notEmpty('email')
                 ->requirePresence('password')
                 ->notEmpty('password')
                 ->requirePresence('device_id')
@@ -85,30 +85,31 @@ class UsersController extends AppController {
             $this->restException(['status' => "failed", 'message' => 'Invalid login credentials.']);
         }
         $this->loadComponent('Api.Matrix');
-        $matrix = (array)$this->Matrix->login($data_item);    
-        if(!empty($matrix)){
-            $user['matrix_user_id'] = $matrix['user_id'];
-            $user['access_token'] = $matrix['access_token'];
-            $this->Auth->setUser($user);
-            $user = $this->Users->usrLog($user);
-            $data = [
-                'username'=>$user['username'],
-                'email'=>$user['email'],
-                'gender'=>$user['gender'],
-                'dob'=>(new \Cake\I18n\Time($user['dob']))->format("Y-m-d"),
-                'phone'=>$user['phone'],
-                'website_url'=>$user['website_url'],
-                'address'=>$user['address'],
-                'bio_data'=>$user['bio_data'],
-                'device_id'=>$user['device_id'],
-                'matrix_user_id'=>$user['matrix_user_id'],
-                'token'=>$user['token'],
-                'matrix_token'=>$user['matrix_token'],
-                ];
-            $response = ['status' => "success", 'message' => 'Login done successfully.','data'=>$data];
-        }else{
-            $response = ['status' => "failed", 'message' => 'Invalid login credential.'];            
+        $matrix = $this->Matrix->login($data_item+['username'=>$user['username']]); 
+        if(empty($matrix)){
+            $this->restException(['status'=>'failed','message'=>'Matrix login failed.']);
         }
+        $user['matrix_user_id'] = $matrix['user_id'];
+        $user['matrix_access_token'] = $matrix['access_token'];
+        $user['device_id'] = $matrix['device_id'];
+        $this->Auth->setUser($user);
+        $user = $this->Users->usrLog($user);
+        $data = [
+            'username'=>$user['username'],
+            'email'=>$user['email'],
+            'gender'=>$user['gender'],
+            'dob'=>(new \Cake\I18n\Time($user['dob']))->format("Y-m-d"),
+            'phone'=>$user['phone'],
+            'website_url'=>$user['website_url'],
+            'address'=>$user['address'],
+            'bio_data'=>$user['bio_data'],
+            'device_id'=>$user['device_id'],
+            'matrix_user_id'=>$user['matrix_user_id'],
+            'token'=>$user['token'],
+            'matrix_token'=>$user['matrix_access_token'],
+            ];
+        $response = ['status' => "success", 'message' => 'Login done successfully.','data'=>$data];
+        
         $this->set($response);
     }
 
@@ -152,7 +153,14 @@ class UsersController extends AppController {
         #echo $data['token_verification'];die;
         if ($this->Users->save($items)) {           
              $this->getMailer('Api.User')->send('signup', [$items]);
-            $response = ['status' => "success", 'message' => 'Registration done successfully.', 'data' => $this->request->data];
+            $response = ['status' => "success", 'message' => 'Registration done successfully.', 'data' =>
+                [
+                    'username'=>$data['username'],
+                    'email'=>$data['email'],
+                    'dob'=>$data['dob'],
+                    'gender'=>$data['gender'],
+                    'phone'=>$data['phone'],
+                ]];
         } else {
             $response = ['status' => "failed", 'message' => 'Failed to saved data.', 'errors'=>$this->mapErrors($items->errors())];
         }

@@ -92,7 +92,6 @@ function putUser() { return; }
  * @apiParam {Date}   dob Date of birth must in in format YYYY-MM-DD (Optional).
  * @apiParam {String} gender Gender of user like any one (male,femal,other) (Required).
  * @apiParam {Number} phone Phone no of user and accept only 10 digits only (Optional).
- * @apiParam {String} device_id Device personal id (Required).
  *
  * @apiExample Example usage:
  *
@@ -102,8 +101,7 @@ function putUser() { return; }
  *          "password": "XXXXXXXXX",
  *          "gender": "male|female|other",
  *          "phone": "7876565434",
- *          "dob": "2000-11-12",
- *          "device_id":"DATEOSDEVICEIP"
+ *          "dob": "2000-11-12"
  *       }
  *
  *
@@ -119,11 +117,9 @@ function putUser() { return; }
  *       {
  *          "username": "spaycdev",
  *          "email": "spaycdev@spayc.com",
- *          "password": "XXXXXXXXX",
  *          "gender": "male|female|other",
  *          "phone": "7876565434",
  *          "dob": "2000-11-12",
- *          "device_id":"DATEOSDEVICEIP"
  *       }
  *   ]
  * }
@@ -169,64 +165,53 @@ function postUser() { return; }
  */
 function getView() { return; }
 /**
- * @api {post} /login.json Login
- * @apiVersion 0.1.0
- * @apiName PostLogin
- * @apiGroup User
- * @apiPermission Private User
- *
- * @apiDescription User login with user name and its password.
- * User get logged in by using username and password including device_id.content-type must be in text/html(form-data)
- *
- * @apiParam {String} username Username must be unique and size between 3-30 charecters (Required).
- * @apiParam {String} password secret password (Required).
- * @apiParam {String} device_id Device personal id (Required).
- *
- * @apiExample Example usage:
- *
- *       {
- *          "username": "spaycdev",
- *          "password": "XXXXXXXXX",
- *          "device_id":"DATEOSDEVICEIP"
- *       }
- *
- *
- * @apiSuccess {String} status success.
- * @apiSuccess {String} message Login done successfully.
- * @apiSuccess {Object} data List of user details.
- * @apiSuccessExample {json} Success-Response: 
- *      HTTP/1.1 200 OK
- * {
- *   "status": "success",
- *   "message": "Login done successfully.",
- *       "data": {
- *       "id": 2,
- *       "first_name": null,
- *       "last_name": null,
- *        "username": "skumar1",
- *        "email": "subhash.kumar@kiwitech.com",
- *        "password": "$2y$10$ifWTI646naw6MlKiYKfgHOWyktbYyiedGE65GUqzUJOZkFStqs/8q",
- *        "gender": "male",
- *        "dob": "2017-02-02T00:00:00+00:00",
- *        "phone": null,
- *        "status": "active",
- *        "website_url": null,
- *        "address": null,
- *        "bio_data": null,
- *        "timezone": null,
- *        "token_verification": "fb2aa2326d1d591e4fa9b1e18c9d064a1a5cda5a",
- *        "created": "2018-01-07T18:10:23+00:00",
- *        "modified": "2018-01-07T18:10:23+00:00",
- *        "matrix_token": "MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyYWNpZCB1c2VyX2lkID0gQHNrdW1hcjE6MzUuMTY4LjExOS4yNDcKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSBzRU5DbFBha1M5ODZBcmU3CjAwMmZzaWduYXR1cmUgSEoBVpO2GifQmZV6_miQMI1SmrEAin2GSQ_CO39AOKwK",
- *        "access_token": "MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyYWNpZCB1c2VyX2lkID0gQHNrdW1hcjE6MzUuMTY4LjExOS4yNDcKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSBzRU5DbFBha1M5ODZBcmU3CjAwMmZzaWduYXR1cmUgSEoBVpO2GifQmZV6_miQMI1SmrEAin2GSQ_CO39AOKwK", * * *
- *        "home_server": "35.168.119.247",
- *        "user_id": "@skumar1:35.168.119.247",
- *        "device_id": "XJHZZQIWEV"
- *    }
- *   ]
- * }
- *
- * @apiError {String} Invalid login credentials..
- * @apiUse UserErrorResponse
- */
+  @api {post} /login.json Login
+  @apiVersion 0.1.0
+  @apiName PostLogin
+  @apiGroup User
+  @apiPermission Private User
+ 
+  @apiDescription User login with user name and its password.
+  User get logged in by using username and password including device_id.content-type must be in form-data
+ 
+  @apiParam {String} email Email Registered email id (Required).
+  @apiParam {String} password secret password (Required).
+  @apiParam {String} device_id Device personal id (Required).
+ 
+  @apiExample Example usage:
+ 
+        {
+           "email": "spaycdev@spayc.com",
+           "password": "XXXXXXXXX",
+           "device_id":"DATEOSDEVICEIP"
+        }
+ 
+ 
+  @apiSuccess {String} status success.
+  @apiSuccess {String} message Login done successfully.
+  @apiSuccess {Object} data List of user details.
+  @apiSuccessExample {json} Success-Response: 
+       HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Login done successfully.",
+    "data": {
+        "username": "skumar2 aa dds",
+        "email": "subhash.kumadr2aadds@kiwitech.com",
+        "gender": "male",
+        "dob": "2000-02-02",
+        "phone": "",
+        "website_url": null,
+        "address": null,
+        "bio_data": null,
+        "device_id": "VOYANVLOXG",
+        "matrix_user_id": "@skumar2_aa_dds:127.0.0.1",
+        "token": "7f39fa7c6642666c6802f0d4e2fddf6a695fc12458733764c64ad338d6d1ca5f",
+        "matrix_token": "MDAxN2xvY2F0aW9uIDEyNy4wLjAuMQowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMmNjaWQgdXNlcl9pZCA9IEBza3VtYXIyX2FhX2RkczoxMjcuMC4wLjEKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSA4Ok00T3VzN1h5cnlKUEBxCjAwMmZzaWduYXR1cmUg5JCNFFzLQ4N-K6MnNWqFfqQdueyPiR74U_r6qLUzrqAK"
+    }
+}
+ 
+  @apiError {String} Invalid login credentials..
+  @apiUse UserErrorResponse
+*/
 function postLogin() { return; }

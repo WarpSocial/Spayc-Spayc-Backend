@@ -48,7 +48,7 @@ class MatrixComponent extends Component {
         }
         $validInput = [
             'type'=>'m.login.password',
-            'user'=>preg_replace('/[\s\.-@#]/','_',$items['username']),
+            'user'=>preg_replace('/[\s\.\-\@\#]/','_',$items['username']),
             'password'=>$items['password']
         ]; 
         $url = $this->config('url') . DS.'login';
@@ -64,7 +64,7 @@ class MatrixComponent extends Component {
                     'ssl_verify_peer_name' => $this->config('sslverify')
                 ]
             );
-        $response = json_decode($httpResponse->body);
+        $response = json_decode($httpResponse->body,true);
         if($httpResponse->isOk()){
             return $response;
         }else{
@@ -82,9 +82,8 @@ class MatrixComponent extends Component {
         $validInput = [
             'auth'=>['type'=>'m.login.dummy'],
             'bind_email'=>false,
-            'device_id'=>$items['device_id'],
             'initial_device_display_name'=>$items['username'],
-            'username'=>preg_replace('/[\s\.-@#]/','_',$items['username']),
+            'username'=>preg_replace('/[\s\.\-\@\#]/','_',$items['username']),
             'password'=>$items['password']
         ]; 
         $url = $this->config('url') . DS.'register';
@@ -100,8 +99,8 @@ class MatrixComponent extends Component {
                     'ssl_verify_peer_name' => $this->config('sslverify')
                 ]
             );
-        $response = json_decode($httpResponse->body);
-        //pr($response);die;
+        $response = json_decode($httpResponse->body,true);
+        #pr($response);die;
         if($httpResponse->isOk()){
             return $response;
         }else{
@@ -123,7 +122,7 @@ class MatrixComponent extends Component {
             'name'=>$items['name'],
             'preset'=> strtolower($items['group_type']).'_chat',
             'room_alias_name'=> \Cake\Utility\Inflector::slug($items['name']),
-            'topic'=>$items['description']
+            'topic'=>(!empty($items['description']))?$items['description']:""
         ];
         $url = $this->config('url') . DS.'createRoom';
         $http = new Client(['headers' => ['Authorization' => 'Bearer ' . $items['matrix_token']]]);
@@ -139,12 +138,8 @@ class MatrixComponent extends Component {
                 ]
             );
         $response = json_decode($httpResponse->body,true);
-        //pr($response);die;
-        if($httpResponse->isOk()){
-            return $response;
-        }else{
-            return false;
-        }  
+        #pr($response);die;
+        return $response;
     }
 
 }
