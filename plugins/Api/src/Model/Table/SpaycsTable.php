@@ -145,7 +145,16 @@ class SpaycsTable extends Table {
                 ->add('image','size',[
                     'rule' => ['fileSize', '<=',\Cake\Core\Configure::read('maxupload')],
                     'message'=>__('Image size must be less than '.\Cake\Core\Configure::read('maxupload').'.')
-                ]);        
+                ]);
+        $validator
+                ->requirePresence('longitude', 'create',__('Longitude key is missing.'))
+                ->notEmpty('longitude',__('Please enter longitude.'))
+                ->longitude('longitude',__('Please enter valid longitude.'));        
+        $validator
+                ->requirePresence('latitude', 'create',__('Latitude key is missing.'))
+                ->notEmpty('latitude',__('Please enter latitude.'))
+                ->latitude('latitude',__('Location must be alpha numeric only.'));        
+        
         return $validator;
     }
 

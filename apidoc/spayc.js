@@ -40,6 +40,8 @@
 @apiParam {String} passcode Passcode is required in case of private group type.
 @apiParam {String} description Description for SPAYC (Optional).
 @apiParam {String} image Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
+@apiParam {String} longitude Langitude from google map (Required).
+@apiParam {String} latitude Latitude from google map (Required).
 
 @apiExample Example usage:
     {
@@ -51,7 +53,9 @@
         "end_date": "2019-01-12 01:02:20",
         "passcode": "s5d4f87sdf4545",
         "description":"spayc creating",
-        "image":"file.png"
+        "image":"file.png",
+        "longitude":"XX.00.XX",
+        "latitude":"XX.00.XX"
     }
  
 @apiSuccess {String} status success.
@@ -75,7 +79,9 @@
         "matrix_room_alias": "#dsfdsfdsf65esd-x:127.0.0.1",
         "user_id": 38,
         "created": "2018-01-11T09:31:50+00:00",
-        "modified": "2018-01-11T09:31:50+00:00"
+        "modified": "2018-01-11T09:31:50+00:00",
+        "longitude":"XX.00.XX",
+        "latitude":"XX.00.XX"
     }
 }
 
