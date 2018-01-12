@@ -289,4 +289,9 @@ class Utils {
         return $dateObj->format('Y-m-d H:i:s');
     }
 
+    public static function logWrite($message){
+        //$request = new \Cake\Http\ServerRequest();
+        \Cake\Log\Log::write('api', "ksldfjdklsf kldsjfkldsf");
+    }
+
 }

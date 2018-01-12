@@ -10,48 +10,30 @@ namespace Api\Auth;
 
 use Cake\Auth\AbstractPasswordHasher;
 use Cake\Utility\Security;
-use Cake\Utility\Crypto;
 
 class ApiPasswordHasher extends AbstractPasswordHasher {
+    private $hashkey = 'wt1U5MACWJFTXGenB8BB6FDF9E7B3A827A';
 
     public function hash($password) {
-        return static::epEncrypt($password);
+        $encrypt = base64_encode(Security::encrypt($password, $this->hashkey));
+        return $encrypt;
     }
 
-    public function check($password, $hashedPassword) {
-        if (static::epEncrypt($password) == $hashedPassword) {
-            return 1;
+    public function check($password, $hashedPassword) {        
+        $originalPassword = $this->dehash($hashedPassword);
+        if ($password == $originalPassword) {
+            return true;
         } else {
-            return 0;
+            return false;
         }
     }
-
-    public static function dehash($password) {
-        return static::epDecrypt($password);
+    
+    public function dehash($hashedPassword) {
+        $hashedPassword = base64_decode($hashedPassword);
+        $originalPassword = Security::decrypt($hashedPassword,$this->hashkey);
+        return $originalPassword;
     }
 
-    public static function epEncrypt($plaintext) {
-        $salt = substr(Security::salt(), 1, 31);
-        $td = mcrypt_module_open('cast-256', '', 'ecb', '');
-        $iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
-        mcrypt_generic_init($td, $salt, $iv);
-        $encrypted_data = mcrypt_generic($td, $plaintext);
-        mcrypt_generic_deinit($td);
-        mcrypt_module_close($td);
-        $encoded_64 = base64_encode($encrypted_data);
-        return trim($encoded_64);
-    }
-
-    public static function epDecrypt($crypttext) {
-        $salt = substr(Security::salt(), 1, 31);
-        $decoded_64 = base64_decode($crypttext);
-        $td = mcrypt_module_open('cast-256', '', 'ecb', '');
-        $iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
-        mcrypt_generic_init($td, $salt, $iv);
-        $decrypted_data = mdecrypt_generic($td, $decoded_64);
-        mcrypt_generic_deinit($td);
-        mcrypt_module_close($td);
-        return trim($decrypted_data);
-    }
+    
 
 }
