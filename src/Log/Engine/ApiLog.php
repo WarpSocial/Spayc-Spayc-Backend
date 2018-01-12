@@ -6,7 +6,8 @@
  * and open the template in the editor.
  */
 
-namespace Api\Log\Engine;
+namespace App\Log\Engine;
+
 use Cake\Core\Configure;
 use Cake\Utility\Text;
 use Cake\Log\Engine\BaseLog;
@@ -112,7 +113,24 @@ class ApiLog extends BaseLog {
      * @return bool success of write.
      */
     public function log($level, $message, array $context = []) {
-        $message = $this->_format($message, $context);
+        $userid = Configure::read('auth.id', null);
+        $request = \Cake\Routing\Router::getRequest();
+        $extrainfo = [
+            'url' => \Cake\Routing\Router::url('/', true) . ltrim($request->getRequestTarget(), DS),
+            'method' => $request->env('REQUEST_METHOD'),
+            'user_by' => $userid,
+            'user_ip' => $request->clientIp(),
+            'user_agent' => $request->env('HTTP_USER_AGENT')
+        ];
+        if (is_string($message)) {
+            $message = json_encode((['message' => $message] + $extrainfo), JSON_UNESCAPED_UNICODE);
+        } else if (is_array($message)) {
+            $message = json_encode(($message + $extrainfo), JSON_UNESCAPED_UNICODE);
+        } elseif (is_object($message)) {
+            $message = $this->_format($message, $context);
+        }
+
+
         $output = date('Y-m-d H:i:s') . ' ' . ucfirst($level) . ': ' . $message . "\n";
         $filename = $this->_getFilename($level);
         if ($this->_size) {
@@ -197,39 +215,6 @@ class ApiLog extends BaseLog {
         }
 
         return $result;
-    }
-
-    public function _format($data, $context) {
-        if (is_string($data)) {
-            return $this->_injectContext($data, $context);
-        }
-        $object = is_object($data);
-        if ($object && method_exists($data, '__toString')) {
-            $data = (string) $data;
-            return $this->_injectContext($data, $context);
-        }
-        if ($object && $data instanceof JsonSerializable) {
-            $data = json_decode(json_encode($data), true);
-            return $this->_injectContext($data, $context);
-        }
-        return $this->_injectContext(print_r($data, true), $context);
-    }
-
-    protected function _injectContext($message, $context) {
-        $via = null;
-        $userId = null;
-        if (!empty($context['request'])) {
-            $via = $context['request']->header('X-Client');
-        }
-        if (!empty($context['user'])) {
-            $userId = $context['user']->get('id');
-        }
-        $data = compact('message', 'via', 'userId');
-        // handle arrays
-        if (is_array($message)) {
-            $data = $message + compact('via', 'userId');
-        }
-        return parent::_format(json_encode($data), $context);
     }
 
 }

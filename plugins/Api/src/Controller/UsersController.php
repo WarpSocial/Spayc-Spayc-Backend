@@ -134,7 +134,6 @@ class UsersController extends AppController {
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
     public function add() {
-        \Api\Utils\Utils::logWrite("ksdjfkldsfdsf");die;
         $entity = $this->Users->newEntity();
         if (!$this->request->is('post')) {
             $this->restException(['status'=>'failed','message'=>'Invalid method'],405);

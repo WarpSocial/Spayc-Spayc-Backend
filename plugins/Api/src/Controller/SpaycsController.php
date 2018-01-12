@@ -5,6 +5,8 @@ namespace Api\Controller;
 use Api\Controller\AppController;
 use Cake\I18n\Time;
 use \Cake\ORM\TableRegistry;
+use Cake\Log\Log;
+use Api\Utils;
 
 /**
  * Spaycs Controller
@@ -20,21 +22,24 @@ class SpaycsController extends AppController {
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
-    public function add() {
+    public function add() {        
         $entity = $this->Spaycs->newEntity();
         if (!$this->request->is('post')) {
+            Log::info(['status'=>'failed','message'=>'Invalied method.']);
             $this->restException(['status'=>'failed','message'=>'Invalied method.'],405);
         }
         $data = $this->request->getData();
         $items = $this->Spaycs->patchEntity($entity, $data);
         
         if($items->errors()) {
+            Log::info(['status'=>'failed','message'=>'Validation errors','error'=>$this->mapErrors($items->errors())]);
             $this->restException(['status'=>'failed','message'=>'Validation errors','error'=>$this->mapErrors($items->errors())]);
         }
         $this->loadComponent('Api.Matrix');
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
         $matrix = $this->Matrix->createRoom($data);
-        if(!empty($matrix['error'])) {       
+        if(!empty($matrix['error'])) { 
+            Log::info(['status' => "failed", 'message' =>__($matrix['error'])]);
             $this->restException(['status' => "failed", 'message' =>__($matrix['error'])],401);
         }
         $items->set('matrix_room_id',$matrix['room_id']);
@@ -43,7 +48,8 @@ class SpaycsController extends AppController {
         if ($this->Spaycs->save($items)) {
             $response = ['status'=>'success','message'=>__('Your spayc, '.ucfirst($data['name']).', has been created.'),'data'=>$items];
         }else{
-            $response = ['status'=>'success','message'=>__('The spayc could not be saved. Please, try again.')];
+            Log::info(['status' => "failed", 'message' =>__('The spayc could not be saved. Please, try again.')]);
+            $response = ['status'=>'failed','message'=>__('The spayc could not be saved. Please, try again.')];
         }
         $this->set($response);
     }

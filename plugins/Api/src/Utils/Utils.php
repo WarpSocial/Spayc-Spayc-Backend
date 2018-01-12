@@ -262,10 +262,8 @@ class Utils {
         return $hash;
     }
     
-    public static function logWrite($message){
-        //$request = new \Cake\Http\ServerRequest();
-        \Cake\Log\Log::write('api', "ksldfjdklsf kldsjfkldsf");
+    public static function logWrite($message,$lavel='info'){
+        \Cake\Log\Log::write($lavel,$message);
     }
-    
 
 }

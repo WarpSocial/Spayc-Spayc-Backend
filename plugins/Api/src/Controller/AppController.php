@@ -23,6 +23,7 @@ class AppController extends BaseController {
             'storage' => 'Memory'
          ]);
          $user = $this->Auth->identify();
+         \Cake\Core\Configure::write('auth',$user);
          $this->Auth->setUser($user);
     }
     public function beforeRender(Event $event) {
