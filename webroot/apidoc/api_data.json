@@ -217,17 +217,17 @@
           },
           {
             "group": "Parameter",
-            "type": "Date/Time",
+            "type": "Timestamp",
             "optional": false,
             "field": "start_date",
-            "description": "<p>Spayc start date in query string (Optional).</p>"
+            "description": "<p>Spayc start date in query string(1515542400) (Optional).</p>"
           },
           {
             "group": "Parameter",
-            "type": "Date/Time",
+            "type": "Timestamp",
             "optional": false,
             "field": "end_date",
-            "description": "<p>Spayc end date in query string (Optional).</p>"
+            "description": "<p>Spayc end date in query string(1515715200) (Optional).</p>"
           },
           {
             "group": "Parameter",
@@ -275,7 +275,7 @@
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>List of user details.</p>"
+            "description": "<p>List of spayc details.</p>"
           }
         ]
       },

@@ -94,15 +94,15 @@ function postSpaycs() { return; }
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
     @apiParam {Number}      page        Page number in query string (Required).
-    @apiParam {Date/Time}   start_date  Spayc start date in query string (Optional).
-    @apiParam {Date/Time}   end_date    Spayc end date in query string (Optional).
+    @apiParam {Timestamp}   start_date  Spayc start date in query string(1515542400) (Optional).
+    @apiParam {Timestamp}   end_date    Spayc end date in query string(1515715200) (Optional).
     @apiParam {String}      group_type  Group type must be any one from the following Public|Private (Optional).
     @apiParam {String}      type        Spayc type must be any one from the following Event|Community (Optional).
     @apiParam {String}      with_friends Allow that spayc list with friends or not (Optional).
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Spayc lists.
- * @apiSuccess {Object} data List of user details.
+ * @apiSuccess {Object} data List of spayc details.
  * @apiSuccessExample {json} Success-Response: 
  *      HTTP/1.1 200 OK
 {

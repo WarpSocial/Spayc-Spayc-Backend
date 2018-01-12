@@ -85,12 +85,14 @@ class SpaycsController extends AppController {
             }
         ]);
         $query->order(['Spaycs.created'=>'ASC'])->limit($limit);
-        if($this->request->query('start_date')) {
-            $startDate = (new \DateTime($this->request->query('start_date')))->format('Y-m-d'); 
+        if($this->request->query('start_date') and  $this->request->header('timezone')) {
+            $date = new \Cake\I18n\Time($this->request->query('start_date'));
+            $startDate = Utils::setUtc($date->format('Y-m-d H:i:s'), $this->request->header('timezone'));
             $query->where(["Spaycs.start_date >="=>$startDate]);
         }
-        if($this->request->query('end_date')) {
-            $endDate = (new \DateTime($this->request->query('end_date')))->format('Y-m-d');
+        if($this->request->query('end_date') and $this->request->header('timezone')) {
+            $date = new \Cake\I18n\Time($this->request->query('start_date'));
+            $endDate = Utils::setUtc($date->format('Y-m-d H:i:s'), $this->request->header('timezone'));
             $query->where(["Spaycs.end_date <="=>$endDate]);
         }
         if(in_array(ucfirst($this->request->query('spayc_type')), ['Event', 'Community'])) {
