@@ -6,5 +6,4 @@ return [
     'grouptype'=>['Public','Private'],
     'maxupload'=>'2MB',
     'adminEmail' =>'kiwitech@gmail.com',
-    
 ];

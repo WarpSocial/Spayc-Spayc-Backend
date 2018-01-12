@@ -52,6 +52,14 @@ class UsersTable extends Table {
             'foreignKey' => 'user_id',
             'className' => 'Api.UserImages'
         ]);
+        $this->hasMany('JoinedSpayc', [
+            'foreignKey' => 'user_id',
+            'className' => 'Api.JoinedSpayc'
+        ]);
+        $this->hasMany('SubscribedUsers', [
+            'foreignKey' => 'user_id',
+            'className' => 'Api.SubscribedUsers'
+        ]);
     }
 
     /**

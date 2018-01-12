@@ -3,6 +3,8 @@
 namespace Api\Controller;
 
 use Api\Controller\AppController;
+use Cake\I18n\Time;
+use \Cake\ORM\TableRegistry;
 
 /**
  * Spaycs Controller
@@ -51,17 +53,62 @@ class SpaycsController extends AppController {
      *
      * @return \Cake\Http\Response|void
      */
-    public function index() { die("dkls");
-        
-        $this->paginate = [
-            'contain' => ['Users']
-        ];
-        $spaycs = $this->paginate($this->Spaycs);
-
-        $this->set(compact('spaycs'));
-        $id = $this->Auth->user("id");
-       // $user = $this->Users->get($id, ['fields'=>['username','email','gender','phone','dob','status','website_url','address','bio_data','created','modified']]);
-        $response = ['status' => "success", 'message' => 'Profile details', 'data' => $spaycs];
+    public function index() {
+        $userId = $this->Auth->user("id");
+        $limit = 5;
+        if(!is_numeric($this->request->query('page'))) {
+            $this->restException(['status'=>'failed', 'message'=>'Page number is not valid.'], 405);
+        }
+        $page = $this->request->query('page');
+        $friends = TableRegistry::get('FriendRequest')->find('all', ['fields'=>['FriendRequest.requested_by', 'FriendRequest.requested_to'], 'conditions'=>['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId], 'requested_status'=>'Accepted']]);
+        $friend = [];
+        if($friends->count()) {
+            $friendIds = $friends->toArray();
+            $friend = array_unique(array_merge(array_column($friendIds,'requested_by'),array_column($friendIds,'requested_to')));
+        }
+        $fieldArray = ['user_id'=>$userId];
+        $query =  $this->Spaycs->find()->select(['id','user_id','name','start_date','end_date','image', 'type', 'group_type', 'status', 'created', 'modified'])->where(['user_id'=>$fieldArray['user_id']])->contain([
+            'JoinedSpayc' => function($q) use($friend) {
+                $row =  $q->select(['JoinedSpayc.spayc_id', 'joined_users' => $q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.spayc_id']);
+                $joinedUsers = 0;
+                if($row->count()) { $joinedUsers = $row->first()->toArray()['joined_users']; }
+                return  $q->select(['joined_users'=>$joinedUsers, 'JoinedSpayc.spayc_id', 'joined_friends'=>$q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.spayc_id'])->where(['JoinedSpayc.user_id IN'=>$friend]);
+            },
+            'SubscribedUsers' => function($q) {
+                return $q->select(['SubscribedUsers.spayc_id', 'subscribed_users' => $q->func()->count('SubscribedUsers.id')])->group(['SubscribedUsers.spayc_id']);
+            }
+        ]);
+        $query->order(['Spaycs.created'=>'ASC'])->limit($limit);
+        if($this->request->query('start_date')) {
+            $startDate = (new \DateTime($this->request->query('start_date')))->format('Y-m-d'); 
+            $query->where(["Spaycs.start_date >="=>$startDate]);
+        }
+        if($this->request->query('end_date')) {
+            $endDate = (new \DateTime($this->request->query('end_date')))->format('Y-m-d');
+            $query->where(["Spaycs.end_date <="=>$endDate]);
+        }
+        if(in_array(ucfirst($this->request->query('spayc_type')), ['Event', 'Community'])) {
+            $query->where(["Spaycs.type"=>ucfirst($this->request->query('spayc_type'))]);
+        }
+        if(in_array(ucfirst($this->request->query('group_type')), ['Public', 'Private'])) {
+            $query->where(["Spaycs.group_type"=>ucfirst($this->request->query('group_type'))]);
+        }
+        if($page < 0){
+            $page = $page*-1;
+            $query->page($page);
+        } else {
+            $query->page($page);
+        }
+        $newQuery = clone $query;
+        if($page == 1) {
+            $data['previous'] = $newQuery->count();            
+        }
+        $result = [];
+        if(!$query->isEmpty()) {
+            $result = $query->toArray();
+        }
+        $data['spaycs'] = $result;
+        $response = ['status'=>'success','message'=>__('Spayc lists.'), 'data'=>$data];
         $this->set($response);
     }
 
