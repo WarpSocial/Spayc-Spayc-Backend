@@ -9,6 +9,7 @@
 namespace Api\Utils;
 
 use Cake\Utility\Text;
+use Cake\I18n\Time;
 /**
  * Description of Sanatize
  *
@@ -260,6 +261,32 @@ class Utils {
         $token = \Cake\Utility\Security::randomBytes(32);
         $hash = \Cake\Utility\Security::hash($token,'sha256',false);
         return $hash;
+    }
+    
+    public static function setUtc($dateTime, $timezone = 'UTC') {
+        if($dateTime instanceof \Cake\I18n\Time){
+            $date = $dateTime->format('Y-m-d H:i:s');
+        } elseif($dateTime instanceof \DateTime) {
+            $date = $dateTime->format('Y-m-d H:i:s');
+        } else {
+            $date = $dateTime;
+        }
+        $dateObj = new Time($date, $timezone);
+        $dateObj->setTimezone('UTC');
+        return $dateObj->format('Y-m-d H:i:s');
+    }
+    
+    public static function getFromUtc($dateTime, $timezone = 'UTC') {
+        if($dateTime instanceof \Cake\I18n\Time){
+            $date = $dateTime->format('Y-m-d H:i:s');
+        } elseif($dateTime instanceof \DateTime) {
+            $date = $dateTime->format('Y-m-d H:i:s');
+        } else {
+            $date = $dateTime;
+        }
+        $dateObj = new Time($date, 'UTC');
+        $dateObj->setTimezone($timezone);
+        return $dateObj->format('Y-m-d H:i:s');
     }
 
 }

@@ -102,7 +102,7 @@ function postSpaycs() { return; }
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Spayc lists.
- * @apiSuccess {Object} data List of user details.
+ * @apiSuccess {Object} data List of spayc details.
  * @apiSuccessExample {json} Success-Response: 
  *      HTTP/1.1 200 OK
 {
