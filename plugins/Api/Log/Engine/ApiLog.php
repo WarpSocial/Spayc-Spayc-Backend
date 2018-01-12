@@ -1,0 +1,235 @@
+<?php
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+namespace Api\Log\Engine;
+use Cake\Core\Configure;
+use Cake\Utility\Text;
+use Cake\Log\Engine\BaseLog;
+
+/**
+ * Description of ApiLog
+ *
+ * @author kiwitech
+ */
+class ApiLog extends BaseLog {
+
+    /**
+     * Default config for this class
+     *
+     * - `levels` string or array, levels the engine is interested in
+     * - `scopes` string or array, scopes the engine is interested in
+     * - `file` Log file name
+     * - `path` The path to save logs on.
+     * - `size` Used to implement basic log file rotation. If log file size
+     *   reaches specified size the existing file is renamed by appending timestamp
+     *   to filename and new log file is created. Can be integer bytes value or
+     *   human readable string values like '10MB', '100KB' etc.
+     * - `rotate` Log files are rotated specified times before being removed.
+     *   If value is 0, old versions are removed rather then rotated.
+     * - `mask` A mask is applied when log files are created. Left empty no chmod
+     *   is made.
+     *
+     * @var array
+     */
+    protected $_defaultConfig = [
+        'path' => null,
+        'file' => null,
+        'types' => null,
+        'levels' => [],
+        'scopes' => [],
+        'rotate' => 10,
+        'size' => 10485760, // 10MB
+        'mask' => null,
+    ];
+
+    /**
+     * Path to save log files on.
+     *
+     * @var string|null
+     */
+    protected $_path;
+
+    /**
+     * The name of the file to save logs into.
+     *
+     * @var string|null
+     */
+    protected $_file;
+
+    /**
+     * Max file size, used for log file rotation.
+     *
+     * @var int|null
+     */
+    protected $_size;
+
+    /**
+     * Sets protected properties based on config provided
+     *
+     * @param array $config Configuration array
+     */
+    public function __construct(array $config = []) {
+        parent::__construct($config);
+
+        if (!empty($this->_config['path'])) {
+            $this->_path = $this->_config['path'];
+        }
+        if ($this->_path !== null &&
+                Configure::read('debug') &&
+                !is_dir($this->_path)
+        ) {
+            mkdir($this->_path, 0775, true);
+        }
+
+        if (!empty($this->_config['file'])) {
+            $this->_file = $this->_config['file'];
+            if (substr($this->_file, -4) !== '.log') {
+                $this->_file .= '.log';
+            }
+        }
+
+        if (!empty($this->_config['size'])) {
+            if (is_numeric($this->_config['size'])) {
+                $this->_size = (int) $this->_config['size'];
+            } else {
+                $this->_size = Text::parseFileSize($this->_config['size']);
+            }
+        }
+    }
+
+    /**
+     * Implements writing to log files.
+     *
+     * @param string $level The severity level of the message being written.
+     *    See Cake\Log\Log::$_levels for list of possible levels.
+     * @param string $message The message you want to log.
+     * @param array $context Additional information about the logged message
+     * @return bool success of write.
+     */
+    public function log($level, $message, array $context = []) {
+        $message = $this->_format($message, $context);
+        $output = date('Y-m-d H:i:s') . ' ' . ucfirst($level) . ': ' . $message . "\n";
+        $filename = $this->_getFilename($level);
+        if ($this->_size) {
+            $this->_rotateFile($filename);
+        }
+
+        $pathname = $this->_path . $filename;
+        $mask = $this->_config['mask'];
+        if (!$mask) {
+            return file_put_contents($pathname, $output, FILE_APPEND);
+        }
+
+        $exists = file_exists($pathname);
+        $result = file_put_contents($pathname, $output, FILE_APPEND);
+        static $selfError = false;
+
+        if (!$selfError && !$exists && !chmod($pathname, (int) $mask)) {
+            $selfError = true;
+            trigger_error(vsprintf(
+                            'Could not apply permission mask "%s" on log file "%s"', [$mask, $pathname]
+                    ), E_USER_WARNING);
+            $selfError = false;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get filename
+     *
+     * @param string $level The level of log.
+     * @return string File name
+     */
+    protected function _getFilename($level) {
+        $debugTypes = ['notice', 'info', 'debug'];
+
+        if ($this->_file) {
+            $filename = $this->_file;
+        } elseif ($level === 'error' || $level === 'warning') {
+            $filename = 'error.log';
+        } elseif (in_array($level, $debugTypes)) {
+            $filename = 'debug.log';
+        } else {
+            $filename = $level . '.log';
+        }
+
+        return $filename;
+    }
+
+    /**
+     * Rotate log file if size specified in config is reached.
+     * Also if `rotate` count is reached oldest file is removed.
+     *
+     * @param string $filename Log file name
+     * @return bool|null True if rotated successfully or false in case of error.
+     *   Null if file doesn't need to be rotated.
+     */
+    protected function _rotateFile($filename) {
+        $filePath = $this->_path . $filename;
+        clearstatcache(true, $filePath);
+
+        if (!file_exists($filePath) ||
+                filesize($filePath) < $this->_size
+        ) {
+            return null;
+        }
+
+        $rotate = $this->_config['rotate'];
+        if ($rotate === 0) {
+            $result = unlink($filePath);
+        } else {
+            $result = rename($filePath, $filePath . '.' . time());
+        }
+
+        $files = glob($filePath . '.*');
+        if ($files) {
+            $filesToDelete = count($files) - $rotate;
+            while ($filesToDelete > 0) {
+                unlink(array_shift($files));
+                $filesToDelete--;
+            }
+        }
+
+        return $result;
+    }
+
+    public function _format($data, $context) {
+        if (is_string($data)) {
+            return $this->_injectContext($data, $context);
+        }
+        $object = is_object($data);
+        if ($object && method_exists($data, '__toString')) {
+            $data = (string) $data;
+            return $this->_injectContext($data, $context);
+        }
+        if ($object && $data instanceof JsonSerializable) {
+            $data = json_decode(json_encode($data), true);
+            return $this->_injectContext($data, $context);
+        }
+        return $this->_injectContext(print_r($data, true), $context);
+    }
+
+    protected function _injectContext($message, $context) {
+        $via = null;
+        $userId = null;
+        if (!empty($context['request'])) {
+            $via = $context['request']->header('X-Client');
+        }
+        if (!empty($context['user'])) {
+            $userId = $context['user']->get('id');
+        }
+        $data = compact('message', 'via', 'userId');
+        // handle arrays
+        if (is_array($message)) {
+            $data = $message + compact('via', 'userId');
+        }
+        return parent::_format(json_encode($data), $context);
+    }
+
+}

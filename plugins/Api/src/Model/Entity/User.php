@@ -50,7 +50,7 @@ class User extends Entity {
     ];
 
     protected function _setPassword($password) {
-        return (new \Cake\Auth\DefaultPasswordHasher())->hash($password);
+        return (new \Api\Auth\ApiPasswordHasher())->hash($password);
     }
 
     protected function _setDob($dob) {

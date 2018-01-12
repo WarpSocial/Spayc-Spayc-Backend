@@ -261,5 +261,11 @@ class Utils {
         $hash = \Cake\Utility\Security::hash($token,'sha256',false);
         return $hash;
     }
+    
+    public static function logWrite($message){
+        //$request = new \Cake\Http\ServerRequest();
+        \Cake\Log\Log::write('api', "ksldfjdklsf kldsjfkldsf");
+    }
+    
 
 }
