@@ -130,7 +130,13 @@ function postSpaycs() { return; }
                 "created": "2018-01-10T00:00:00+00:00",
                 "modified": "2018-01-10T00:00:00+00:00",
                 "subscribed_users": [],
-                "joined_spayc": []
+                "joined_spayc": [],
+                "comments": [
+                    {
+                        "spayc_id": 1,
+                        "total_comment": 1
+                    }
+                ]
             },
             {
                 "id": 3,
@@ -155,6 +161,12 @@ function postSpaycs() { return; }
                         "spayc_id": 3,
                         "joined_users": 3,
                         "joined_friends": 2
+                    }
+                ],
+                "comments": [
+                    {
+                        "spayc_id": 1,
+                        "total_comment": 1
                     }
                 ]
             }
