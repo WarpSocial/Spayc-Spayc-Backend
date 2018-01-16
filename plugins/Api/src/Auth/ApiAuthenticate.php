@@ -69,7 +69,11 @@ class ApiAuthenticate extends BaseAuthenticate {
                     ->select(['id','user_id','plain_token','token','matrix_access_token','device_id','matrix_user_id','login_status','last_login'])
                     ->where(['plain_token'=>$token]);
             
-        })->where(['Users.status'=>'active'])->first();
+        })->where(['Users.status'=>'Active']);
+        if($user->isEmpty()){
+            return false;
+        }
+        $user = $user->first();
         $user['UserLogs'] = $user->_matchingData['UserLogs']->toArray();
         if (!$user){
             return false;
@@ -90,7 +94,7 @@ class ApiAuthenticate extends BaseAuthenticate {
             $user = $this->getUser($request);
         }elseif(!empty($fbId)){
             $userModel = 'Api.'.$this->_config['userModel'];
-            $user = TableRegistry::get($userModel)->findByFbIdAndStatus($fbId, 'active');
+            $user = TableRegistry::get($userModel)->findByFbIdAndStatus($fbId, 'Active');
         }else{
             $user = false;
         }
