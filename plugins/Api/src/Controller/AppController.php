@@ -15,7 +15,7 @@ class AppController extends BaseController {
                     'token'=>'HTTP_TOKEN',
                     'fields' => ['username' => 'email', 'password' => 'password'],
                     'userModel' => 'Users',
-                    'scope' => ['Users.status' => 'active'],
+                    'scope' => ['Users.status' => 'Active'],
                 ],
                
             ],

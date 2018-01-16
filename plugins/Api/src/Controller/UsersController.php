@@ -148,7 +148,7 @@ class UsersController extends AppController {
         if(!$matrix) {       
             $this->restException(['status' => "failed", 'message' => 'Matrix registration failed.'],401);
         }            
-        $items->set('status', 'active');            
+        $items->set('status', 'Active');            
         $items->set('token_verification', Security::hash($data['email'], 'sha1', true));
         #echo $data['token_verification'];die;
         if ($this->Users->save($items)) {           
@@ -186,14 +186,14 @@ class UsersController extends AppController {
         if (!$user) {
             throw new RecordNotFoundException(__('Account not found or already activated. Please read email carefully and try again.'));
         }
-        if ($user->status == 'active') {
+        if ($user->status == 'Active') {
             $this->Flash->success(__('Your Account has been already activated. You can now log in using the username and password you chose during the registration'));
             //return $this->redirect('/');
         } else {
             if ($token != Security::hash($user->email, 'sha1', true)) {
                 throw new ForbiddenException(__('Invalid token. Please read email carefully and try again.'));
             }
-            $user->status = 'active';
+            $user->status = 'Active';
             if ($this->Users->save($user)) {
                 $this->Flash->success(__('Your Account has been successfully activated. You can now log in using the username and password you chose during the registration.'));
                 //return $this->redirect(['action' => 'login']);    
@@ -217,7 +217,7 @@ class UsersController extends AppController {
         }
         $this->loadComponent('Api.Matrix');
         $data = $this->request->getData();
-        $data['status'] = 'active';
+        $data['status'] = 'Active';
         $alreadyExist = $this->Users->findByEmail($data['email']);
         if(!$alreadyExist->count()) {
             $alreadyExist = $this->Users->findByFbId($data['fb_id']);
