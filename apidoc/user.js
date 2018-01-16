@@ -94,6 +94,8 @@ function putUser() { return; }
  * @apiParam {Date}   dob Date of birth must in in format YYYY-MM-DD (Optional).
  * @apiParam {String} gender Gender of user like any one (male,femal,other) (Required).
  * @apiParam {Number} phone Phone no of user and accept only 10 digits only (Optional).
+ * @apiParam {Number} latitude of user address (Required).
+ * @apiParam {Number} longitude of user address (Required).
  *
  * @apiExample Example usage:
  *
@@ -103,7 +105,9 @@ function putUser() { return; }
  *          "password": "XXXXXXXXX",
  *          "gender": "male|female|other",
  *          "phone": "7876565434",
- *          "dob": "2000-11-12"
+ *          "dob": "2000-11-12",
+ *          "latitude": "28.535516",
+ *          "longitude": "77.391026"
  *       }
  *
  *
@@ -121,7 +125,7 @@ function putUser() { return; }
  *          "email": "spaycdev@spayc.com",
  *          "gender": "male|female|other",
  *          "phone": "7876565434",
- *          "dob": "2000-11-12",
+ *          "dob": "2000-11-12"
  *       }
  *   ]
  * }

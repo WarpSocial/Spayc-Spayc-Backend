@@ -60,6 +60,11 @@ class UsersTable extends Table {
             'foreignKey' => 'user_id',
             'className' => 'Api.SubscribedUsers'
         ]);
+        
+        $this->hasMany('Users', [
+            'foreignKey' => 'user_id',
+            'className' => 'Api.Users'
+        ]);
     }
 
     /**
@@ -138,7 +143,14 @@ class UsersTable extends Table {
             ->requirePresence('gender', 'create',__('Gender is required field.'))    
             ->notEmpty('gender',__('Gender is required field.'))
             ->inList('gender', Configure::read('gender'),__('Gender must be any one '.implode(',',Configure::read('gender')).'.'));      
-
+        $validator
+                ->requirePresence('longitude', 'create',__('Longitude key is missing.'))
+                ->notEmpty('longitude',__('Please enter longitude.'))
+                ->longitude('longitude',__('Please enter valid longitude.'));        
+        $validator
+                ->requirePresence('latitude', 'create',__('Latitude key is missing.'))
+                ->notEmpty('latitude',__('Please enter latitude.'))
+                ->latitude('latitude',__('Location must be alpha numeric only.'));
         return $validator;
     }
     
@@ -262,12 +274,20 @@ class UsersTable extends Table {
                     },
                 'message'=>'Age must be 13 or greater than 13 year\'s old.',
             ]);
-                    
+
         $validator
             ->requirePresence('gender', 'create',__('Gender is required field.'))    
             ->notEmpty('gender',__('Gender is required field.'))
-            ->inList('gender', Configure::read('gender'),__('Gender must be any one '.implode(',',Configure::read('gender')).'.'));       
-
+            ->inList('gender', Configure::read('gender'),__('Gender must be any one '.implode(',',Configure::read('gender')).'.'));      
+        $validator
+                ->requirePresence('longitude', 'create',__('Longitude key is missing.'))
+                ->allowEmpty('longitude')
+                ->longitude('longitude',__('Please enter valid longitude.'));        
+        $validator
+                ->requirePresence('latitude', 'create',__('Latitude key is missing.'))
+                ->allowEmpty('latitude')
+                ->latitude('latitude',__('Location must be alpha numeric only.'));
+        
         return $validator;
     }
 

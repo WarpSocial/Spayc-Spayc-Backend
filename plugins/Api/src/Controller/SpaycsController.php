@@ -6,7 +6,8 @@ use Api\Controller\AppController;
 use Cake\I18n\Time;
 use \Cake\ORM\TableRegistry;
 use Cake\Log\Log;
-use Api\Utils;
+use Api\Utils\Utils;
+use Cake\Core\Configure;
 
 /**
  * Spaycs Controller
@@ -22,24 +23,21 @@ class SpaycsController extends AppController {
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
-    public function add() {        
+    public function add() {
         $entity = $this->Spaycs->newEntity();
         if (!$this->request->is('post')) {
-            Log::info(['status'=>'failed','message'=>'Invalied method.']);
             $this->restException(['status'=>'failed','message'=>'Invalied method.'],405);
         }
         $data = $this->request->getData();
         $items = $this->Spaycs->patchEntity($entity, $data);
         
         if($items->errors()) {
-            Log::info(['status'=>'failed','message'=>'Validation errors','error'=>$this->mapErrors($items->errors())]);
             $this->restException(['status'=>'failed','message'=>'Validation errors','error'=>$this->mapErrors($items->errors())]);
         }
         $this->loadComponent('Api.Matrix');
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
         $matrix = $this->Matrix->createRoom($data);
-        if(!empty($matrix['error'])) { 
-            Log::info(['status' => "failed", 'message' =>__($matrix['error'])]);
+        if(!empty($matrix['error'])) {
             $this->restException(['status' => "failed", 'message' =>__($matrix['error'])],401);
         }
         $items->set('matrix_room_id',$matrix['room_id']);
@@ -47,7 +45,7 @@ class SpaycsController extends AppController {
         $items->set('user_id',$this->Auth->user('id'));
         if ($this->Spaycs->save($items)) {
             $response = ['status'=>'success','message'=>__('Your spayc, '.ucfirst($data['name']).', has been created.'),'data'=>$items];
-        }else{
+        } else {
             Log::info(['status' => "failed", 'message' =>__('The spayc could not be saved. Please, try again.')]);
             $response = ['status'=>'failed','message'=>__('The spayc could not be saved. Please, try again.')];
         }
@@ -82,17 +80,20 @@ class SpaycsController extends AppController {
             },
             'SubscribedUsers' => function($q) {
                 return $q->select(['SubscribedUsers.spayc_id', 'subscribed_users' => $q->func()->count('SubscribedUsers.id')])->group(['SubscribedUsers.spayc_id']);
+            },
+            'Comments' => function($q) {
+                return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
             }
         ]);
         $query->order(['Spaycs.created'=>'ASC'])->limit($limit);
-        if($this->request->query('start_date') and  $this->request->header('timezone')) {
+        if($this->request->query('start_date')) {
             $date = new \Cake\I18n\Time($this->request->query('start_date'));
-            $startDate = Utils::setUtc($date->format('Y-m-d H:i:s'), $this->request->header('timezone'));
+            $startDate = Utils::setUtc($date->format('Y-m-d H:i:s'), Configure::read("timezone"));
             $query->where(["Spaycs.start_date >="=>$startDate]);
         }
-        if($this->request->query('end_date') and $this->request->header('timezone')) {
+        if($this->request->query('end_date')) {
             $date = new \Cake\I18n\Time($this->request->query('start_date'));
-            $endDate = Utils::setUtc($date->format('Y-m-d H:i:s'), $this->request->header('timezone'));
+            $endDate = Utils::setUtc($date->format('Y-m-d H:i:s'), Configure::read("timezone"));
             $query->where(["Spaycs.end_date <="=>$endDate]);
         }
         if(in_array(ucfirst($this->request->query('spayc_type')), ['Event', 'Community'])) {

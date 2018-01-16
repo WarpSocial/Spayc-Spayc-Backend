@@ -58,6 +58,10 @@ class SpaycsTable extends Table {
             'foreignKey' => 'spayc_id',
             'className' => 'Api.SubscribedUsers'
         ]);
+        $this->hasMany('Comments', [
+            'foreignKey' => 'spayc_id',
+            'className' => 'Api.Comments'
+        ]);
     }
 
     /**
