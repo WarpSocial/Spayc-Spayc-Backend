@@ -42,7 +42,7 @@ class JoinedSpaycTable extends Table
 
         $this->belongsTo('Spaycs', [
             'foreignKey' => 'spayc_id',
-            'joinType' => 'INNER',
+            'joinType' => 'Left',
             'className' => 'Api.Spaycs'
         ]);
         $this->belongsTo('Users', [
