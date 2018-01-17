@@ -838,21 +838,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "fb_id",
-            "description": "<ul> <li>User facebook unique id required in body.</li> </ul>"
+            "description": "<ul> <li>User facebook unique id required in body(Required).</li> </ul>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "username",
-            "description": "<ul> <li>Username optional in body.</li> </ul>"
+            "description": "<ul> <li>Username optional in body(Required).</li> </ul>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "email",
-            "description": "<ul> <li>User email required in body.</li> </ul>"
+            "description": "<ul> <li>User email required in body(Required).</li> </ul>"
           },
           {
             "group": "Parameter",
@@ -880,7 +880,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "device_id",
-            "description": "<ul> <li>Device id is required in body.</li> </ul>"
+            "description": "<ul> <li>Device id is required in body (Required).</li> </ul>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "latitude",
+            "description": "<ul> <li>Latitude of user address (Required).</li> </ul>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "longitude",
+            "description": "<ul> <li>Longitude of user address (Required).</li> </ul>"
           }
         ]
       }
@@ -914,7 +928,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "       HTTP/1.1 success\n{\n    \"status\": \"success\",\n    \"message\": \"Saved successfully.\",\n    \"data\": {\n        \"username\": \"sbsharma\",\n        \"email\": \"sbsharma@gmail.com\",\n        \"gender\": \"male\",\n        \"dob\": \"2001-12-11\",\n        \"phone\": null,\n        \"website_url\": null,\n        \"address\": null,\n        \"bio_data\": null,\n        \"device_id\": \"DFS455HER45555adf55af444\",\n        \"matrix_user_id\": \"@sbsharma:35.168.119.247\",\n        \"token\": \"3511fd4e28134e2c0cc44edf8609c576392a86494b4740783e55901662969d34\"\n    }\n}",
+          "content": "       HTTP/1.1 success\n{\n    \"status\": \"success\",\n    \"message\": \"Saved successfully.\",\n    \"data\": {\n        \"username\": \"spayc\",\n        \"email\": \"spayc@gmail.com\",\n        \"gender\": \"male                                              \",\n        \"dob\": \"2001-12-11\",\n        \"phone\": null,\n        \"website_url\": null,\n        \"address\": null,\n        \"bio_data\": null,\n        \"device_id\": \"xxxxxxxxxxxxxxxxxx\",\n        \"matrix_user_id\": \"@sbsharma11:35.168.119.247\",\n        \"token\": \"130d5b5d52f8b283a2705d5aa45ebd15f378a0763f6b369832c2dbe338e2369b\",\n        \"matrix_token\": \"MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyZGNpZCB1c2VyX2lkID0gQHNic2hhcm1hMTE6MzUuMTY4LjExOS4yNDcKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSAzZ2sxO1lJaDpfKzcuIzA4CjAwMmZzaWduYXR1cmUg_yk9Mt0_mur_yf6ZZT6sE7ybmtiMEID2xiDSqwQzLWQK\"\n    }\n}",
           "type": "json"
         }
       ]
@@ -922,7 +936,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "\n{\n   \"fb_id\":\"xxxxxxxxxxxx\",\n   \"username\":\"spayc\",\n   \"email\":\"spayc@gmail.com\",\n   \"dob\":\"12-11-2001\",\n   \"gender\":\"male|female|other\",\n   \"phone\": \"XXXXXXXXXX\",\n   \"device_id\":\"xxxxxxxxxxxxxxxxxx\"\n}",
+        "content": "\n{\n   \"fb_id\":\"xxxxxxxxxxxx\",\n   \"username\":\"spayc\",\n   \"email\":\"spayc@gmail.com\",\n   \"dob\":\"12-11-2001\",\n   \"gender\":\"male|female|other\",\n   \"phone\": \"XXXXXXXXXX\",\n   \"device_id\":\"xxxxxxxxxxxxxxxxxx\",\n   \"latitude\": \"28.535516\",\n  \"longitude\": \"77.391026\"\n}",
         "type": "json"
       }
     ],

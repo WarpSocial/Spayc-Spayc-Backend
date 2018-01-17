@@ -163,11 +163,11 @@ class UsersTable extends Table {
     public function validationFacebookSignup(Validator $validator) {
         
         $validator
-            ->requirePresence('fb_id', 'create',__('Facebook id is required field.'))
+            ->requirePresence('fb_id', true, __('Facebook id is required field.'))
             ->notEmpty('fb_id','Facebook id is required field.');
         
         $validator
-                ->requirePresence('username', 'create','Username is required field.')
+                ->requirePresence('username', true, 'Username is required field.')
                 ->notEmpty('username','Username is required field.')                
                 ->maxLength('username', 30,__('Username cannot exceed to 30 characters.'))
                 ->add('username', 'unique', ['rule' => 'validateUnique','message'=>__('User name already exist.'), 'provider' => 'table'])
@@ -180,7 +180,7 @@ class UsersTable extends Table {
         
         $validator
                 ->email('email',false,'Email is required field.')
-                ->requirePresence('email', 'create','Email is required field.')
+                ->requirePresence('email', true, 'Email is required field.')
                 //->add('email', 'unique', ['rule' => 'validateUnique','message'=>'Email has been used.', 'provider' => 'table']) 
                 ->notEmpty('email','Email is required field.');
         
@@ -204,7 +204,7 @@ class UsersTable extends Table {
             ]);
                 
         $validator
-            ->requirePresence('gender', 'create',__('Gender is required field.'))    
+            ->requirePresence('gender', true, __('Gender is required field.'))    
             ->notEmpty('gender',__('Gender is required field.'))
             ->inList('gender', Configure::read('gender'),__('Gender must be any one '.implode(',',Configure::read('gender')).'.')           );
         
@@ -217,9 +217,17 @@ class UsersTable extends Table {
                 'message'=>__('Phone no is not valid.')
                 ]);
         $validator
-                ->requirePresence('device_id', 'create', __('Device id is required field.'))
+                ->requirePresence('device_id', true, __('Device id is required field.'))
                 ->notEmpty('device_id', __('Please enter a device id.'))
                 ->maxLength('device_id', 100,__('Device id cannot exceed to 100 characters.'));
+        $validator
+                ->requirePresence('longitude', true, __('Longitude key is missing.'))
+                ->notEmpty('longitude',__('Please enter longitude.'))
+                ->longitude('longitude',__('Please enter valid longitude.'));        
+        $validator
+                ->requirePresence('latitude', true, __('Latitude key is missing.'))
+                ->notEmpty('latitude',__('Please enter latitude.'))
+                ->latitude('latitude',__('Location must be alpha numeric only.'));
         return $validator;
     }
     

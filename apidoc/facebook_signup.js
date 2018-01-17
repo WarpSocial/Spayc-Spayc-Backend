@@ -7,13 +7,15 @@
 *
 * @apiDescription User singup by facebook.
 * 
-* @apiParam {String} fb_id              * User facebook unique id required in body.
-* @apiParam {String} username           * Username optional in body.
-* @apiParam {String} email              * User email required in body.
+* @apiParam {String} fb_id              * User facebook unique id required in body(Required).
+* @apiParam {String} username           * Username optional in body(Required).
+* @apiParam {String} email              * User email required in body(Required).
 * @apiParam {String} dob                * Date of birth optional in body.
 * @apiParam {Number} phone              * Phone no of user and accept upto 16 digits (Optional).
 * @apiParam {String} gender             * Gender of user like any one (male,femal,other) (Required).
-* @apiParam {String} device_id          * Device id is required in body.
+* @apiParam {String} device_id          * Device id is required in body (Required).
+* @apiParam {Number} latitude           * Latitude of user address (Required).
+* @apiParam {Number} longitude          * Longitude of user address (Required).
 
 *
 *
@@ -30,7 +32,9 @@
 *    "dob":"12-11-2001",
 *    "gender":"male|female|other",
 *    "phone": "XXXXXXXXXX",
-*    "device_id":"xxxxxxxxxxxxxxxxxx"
+*    "device_id":"xxxxxxxxxxxxxxxxxx",
+*    "latitude": "28.535516",
+ *   "longitude": "77.391026"
 *}
 *
 *
@@ -41,17 +45,18 @@
     "status": "success",
     "message": "Saved successfully.",
     "data": {
-        "username": "sbsharma",
-        "email": "sbsharma@gmail.com",
-        "gender": "male",
+        "username": "spayc",
+        "email": "spayc@gmail.com",
+        "gender": "male                                              ",
         "dob": "2001-12-11",
         "phone": null,
         "website_url": null,
         "address": null,
         "bio_data": null,
-        "device_id": "DFS455HER45555adf55af444",
-        "matrix_user_id": "@sbsharma:35.168.119.247",
-        "token": "3511fd4e28134e2c0cc44edf8609c576392a86494b4740783e55901662969d34"
+        "device_id": "xxxxxxxxxxxxxxxxxx",
+        "matrix_user_id": "@sbsharma11:35.168.119.247",
+        "token": "130d5b5d52f8b283a2705d5aa45ebd15f378a0763f6b369832c2dbe338e2369b",
+        "matrix_token": "MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyZGNpZCB1c2VyX2lkID0gQHNic2hhcm1hMTE6MzUuMTY4LjExOS4yNDcKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSAzZ2sxO1lJaDpfKzcuIzA4CjAwMmZzaWduYXR1cmUg_yk9Mt0_mur_yf6ZZT6sE7ybmtiMEID2xiDSqwQzLWQK"
     }
 }
 *
