@@ -161,13 +161,9 @@ class UsersTable extends Table {
      * @return \Cake\Validation\Validator
     */
     public function validationFacebookSignup(Validator $validator) {
+        
         $validator
-            ->integer('id')
-            ->allowEmpty('id', 'create');
-
-        $validator
-            ->allowEmpty('fb_id')
-            ->requirePresence('fb_id', 'create','Facebook id is required field.')
+            ->requirePresence('fb_id', 'create',__('Facebook id is required field.'))
             ->notEmpty('fb_id','Facebook id is required field.');
         
         $validator
@@ -221,9 +217,9 @@ class UsersTable extends Table {
                 'message'=>__('Phone no is not valid.')
                 ]);
         $validator
-                ->requirePresence('device_id', __('create','Device id is required field.'))
-                ->notEmpty('device_id',__('Please enter a device id.'))
-                ->maxLength('username', 100,__('Device id cannot exceed to 100 characters.'));
+                ->requirePresence('device_id', 'create', __('Device id is required field.'))
+                ->notEmpty('device_id', __('Please enter a device id.'))
+                ->maxLength('device_id', 100,__('Device id cannot exceed to 100 characters.'));
         return $validator;
     }
     

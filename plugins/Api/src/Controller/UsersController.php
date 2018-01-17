@@ -229,9 +229,16 @@ class UsersController extends AppController {
             $data['username'] = !empty($data['username'])?$data['username']:$alreadyExist['username'];
             $data['email'] = !empty($data['email'])?$data['email']:$alreadyExist['email'];
             $entity = $this->Users->get($data['id']);
-        } else {
+        } else { 
             $data['token_verification'] = Security::hash($data['email'], 'sha1', true);
-            $entity = $this->Users->newEntity($data, ['validate' => 'FacebookSignup']);
+            $entity = $this->Users->newEntity();
+        }
+        $items = $this->Users->patchEntity($entity, $data, ['validate' => 'facebookSignup']);
+        
+        if($items->errors()) {
+            $this->restException(['status' => "failed", 'message' => $this->mapErrors($items->errors())], 401);
+        }
+        if(empty($data['id'])){
             $mdata = $data;
             $mdata['password'] = base64_encode($data['email']);
             $matrix = $this->Matrix->register($mdata);
@@ -239,20 +246,16 @@ class UsersController extends AppController {
                 $this->restException(['status' => "failed", 'message' => 'Matrix registration failed.'],401);
             }
         }
-        $items = $this->Users->patchEntity($entity, $data, ['validate' => 'FacebookSignup']);
-        if($items->errors()) {
-            $this->restException(['status' => "failed", 'message' => $items->errors()], 401);
-        }
         $saved = $this->Users->save($items);
         $data['id'] = $saved['id'];
         /*---login authentication---*/
         $user = $this->Auth->identify();
-        if(!$user->count()) {
+        if(!$user) {
             $this->restException(['status' => "failed", 'message' => 'Sign in credentials ain\'t right, try again buddy.'], 401);
         }
-        $user = $user->first()->toArray();
         $mdata['username'] = $data['username'];
         $mdata['password'] = base64_encode($data['email']);
+        $mdata['device_id'] = $data['device_id'];
         //$data_item = \Api\Utils\Utils::escape($mdata);pr($data_item);exit;
         $matrix = (array)$this->Matrix->login($mdata);
         if(empty($matrix['access_token'])) {
@@ -260,6 +263,7 @@ class UsersController extends AppController {
         }
         $user['matrix_user_id'] = $matrix['user_id'];
         $user['matrix_access_token'] = $matrix['access_token'];
+        $user['device_id'] = $matrix['device_id'];
         $this->Auth->setUser($user);
         $user = $this->Users->usrLog($user);
         $data = [
