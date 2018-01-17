@@ -49,7 +49,8 @@ class MatrixComponent extends Component {
         $validInput = [
             'type'=>'m.login.password',
             'user'=>preg_replace('/[\s\.\-\@\#]/','_',$items['username']),
-            'password'=>$items['password']
+            'password'=>$items['password'],
+            'device_id'=>$items['device_id']
         ]; 
         $url = $this->config('url') . DS.'login';
         $http = new Client();
