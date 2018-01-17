@@ -39,11 +39,28 @@ class SpaycsTable extends Table {
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
-
+        $this->addBehavior('ImgUpload', [
+            'field' => 'image',
+            'uploadPath' => 'room/',
+            'where' => 's3', /* local and s3 */
+        ]);
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id',
             'joinType' => 'INNER',
             'className' => 'Api.Users'
+        ]);
+        
+        $this->hasMany('JoinedSpayc', [
+            'foreignKey' => 'spayc_id',
+            'className' => 'Api.JoinedSpayc'
+        ]);
+        $this->hasMany('SubscribedUsers', [
+            'foreignKey' => 'spayc_id',
+            'className' => 'Api.SubscribedUsers'
+        ]);
+        $this->hasMany('Comments', [
+            'foreignKey' => 'spayc_id',
+            'className' => 'Api.Comments'
         ]);
     }
 
@@ -64,7 +81,7 @@ class SpaycsTable extends Table {
                 ->maxLength('location', 255,'Location test is too long.')
                 ->requirePresence('location', 'create',__('Location key is missing.'))
                 ->notEmpty('location',__('Location is required field.'))
-                ->regex('location','/[\w\s]/',__('Location must be alpha numeric only.'));
+                ->regex('location','/[\w\s]+$/',__('Location must be alpha numeric only.'));
 
         $validator
                 ->requirePresence('type', 'create',__('Type key is missing.'))
@@ -81,13 +98,34 @@ class SpaycsTable extends Table {
                 ->dateTime('start_date','ymd',__('Start date is not in format YYYY-MM-DD H:i:s'))
                 ->notEmpty('start_date',__('Start date is required when type is event.'),function($context){
                      return (isset($context['data']['type']) && ($context['data']['type'] =='Event'));
-                });
+                })
+                ->add('start_date','daterange',[
+                    'rule'=> function($value,$context){
+                        if(!empty($value)){
+                            /* Doesn't exceed 1 year ahead */
+                            $startDate  = new \Cake\I18n\Time($value);
+                            return (bool)$startDate->isWithinNext('1 year');
+                        }
+                    },
+                    'message'=>__('Start date can\'t more than 1 year ahead.')
+                ]);
         $validator                
                 ->requirePresence('end_date', 'create',__('End Date key is missing.'))
                 ->dateTime('end_date','ymd',__('End date is not in format YYYY-MM-DD H:i:s'))
                 ->notEmpty('end_date',__('End date is required when type is event.'),function($context){
                      return (isset($context['data']['type']) && ($context['data']['type'] =='Event'));
-                });
+                })
+                ->add('end_date','daterange',[
+                    'rule'=> function($value,$context){
+                        if(!empty($value) && !empty($context['data']['end_date'])){
+                            /* End date must be below of start date */
+                            $startDate  = new \Cake\I18n\Time($context['data']['start_date']);
+                            $endDate  = new \Cake\I18n\Time($value);
+                            return (bool)($startDate < $endDate );
+                        }
+                    },
+                    'message'=>__('End date must be ahead from start date.')
+                ]);
 
         $validator
                 ->requirePresence('passcode', 'create',__('Passcode key is missing.'))
@@ -101,7 +139,25 @@ class SpaycsTable extends Table {
                 ->requirePresence('description', 'create',__('Description key is missing.'))
                 ->maxLength('description', 50,__('Description must be less than 50 characters.'))
                 ->allowEmpty('description');
-
+        
+        $validator
+                ->allowEmpty('image')
+                ->add('image','extension',[
+                    'rule' => ['extension', ['jpeg', 'png','jpg']],
+                    'message'=>__('Please select only jpg,jpeg,png.')
+                ])
+                ->add('image','size',[
+                    'rule' => ['fileSize', '<=',\Cake\Core\Configure::read('maxupload')],
+                    'message'=>__('Image size must be less than '.\Cake\Core\Configure::read('maxupload').'.')
+                ]);
+        $validator
+                ->requirePresence('longitude', 'create',__('Longitude key is missing.'))
+                ->notEmpty('longitude',__('Please enter longitude.'))
+                ->longitude('longitude',__('Please enter valid longitude.'));        
+        $validator
+                ->requirePresence('latitude', 'create',__('Latitude key is missing.'))
+                ->notEmpty('latitude',__('Please enter latitude.'))
+                ->latitude('latitude',__('Location must be alpha numeric only.'));        
         
         return $validator;
     }

@@ -3,6 +3,11 @@
 namespace Api\Controller;
 
 use Api\Controller\AppController;
+use Cake\I18n\Time;
+use \Cake\ORM\TableRegistry;
+use Cake\Log\Log;
+use Api\Utils\Utils;
+use Cake\Core\Configure;
 
 /**
  * Spaycs Controller
@@ -20,22 +25,31 @@ class SpaycsController extends AppController {
      */
     public function add() {
         $entity = $this->Spaycs->newEntity();
-        if ($this->request->is('post')) {
-            $data = $this->request->getData();            
-            $items = $this->Spaycs->patchEntity($entity, $data);
-            if($items->errors()) {
-                $this->restException(['status'=>'failed','message'=>'Validation errors','error'=>$this->mapErrors($items->errors())]);
-            }
-            
-            $items->set('user_id',$this->Auth->user('id'));
-            if ($this->Spaycs->save($items)) {
-                $response = ['status'=>'success','message'=>__('The spayc has been created.'),'data'=>$items];
-            }else{
-                $response = ['status'=>'success','message'=>__('The spayc could not be saved. Please, try again.')];
-            }
-            
+        if (!$this->request->is('post')) {
+            $this->restException(['status'=>'failed','message'=>'Invalied method.'],405);
         }
-        $this->set(compact('response'));
+        $data = $this->request->getData();
+        $items = $this->Spaycs->patchEntity($entity, $data);
+        
+        if($items->errors()) {
+            $this->restException(['status'=>'failed','message'=>'Validation errors','error'=>$this->mapErrors($items->errors())]);
+        }
+        $this->loadComponent('Api.Matrix');
+        $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
+        $matrix = $this->Matrix->createRoom($data);
+        if(!empty($matrix['error'])) {
+            $this->restException(['status' => "failed", 'message' =>__($matrix['error'])],401);
+        }
+        $items->set('matrix_room_id',$matrix['room_id']);
+        $items->set('matrix_room_alias',$matrix['room_alias']);
+        $items->set('user_id',$this->Auth->user('id'));
+        if ($this->Spaycs->save($items)) {
+            $response = ['status'=>'success','message'=>__('Your spayc, '.ucfirst($data['name']).', has been created.'),'data'=>$items];
+        } else {
+            Log::info(['status' => "failed", 'message' =>__('The spayc could not be saved. Please, try again.')]);
+            $response = ['status'=>'failed','message'=>__('The spayc could not be saved. Please, try again.')];
+        }
+        $this->set($response);
     }
 
     /**
@@ -43,17 +57,87 @@ class SpaycsController extends AppController {
      *
      * @return \Cake\Http\Response|void
      */
-    public function index() { die("dkls");
-        
-        $this->paginate = [
-            'contain' => ['Users']
-        ];
-        $spaycs = $this->paginate($this->Spaycs);
+    public function index() {
+        $userId = $this->Auth->user("id");
+        $limit = 5;
+        if(!is_numeric($this->request->query('page'))) {
+            $this->restException(['status'=>'failed', 'message'=>'Page number is not valid.'], 405);
+        }
+        if(!Utils::isValidLatitude($this->request->query('latitude'))) {
+            $this->restException(['status'=>'failed', 'message'=>'Latitude is not valid.'], 405);
+        }
+        if(!Utils::isValidLongitude($this->request->query('longitude'))) {
+            $this->restException(['status'=>'failed', 'message'=>'Longitude is not valid.'], 405);
+        }
+        $page = $this->request->query('page');
+        $friends = TableRegistry::get('FriendRequest')->find('all', ['fields'=>['FriendRequest.requested_by', 'FriendRequest.requested_to'], 'conditions'=>['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId], 'requested_status'=>'Accepted']]);
+        $friend = [0];
+        if($friends->count()) {
+            $friendIds = $friends->toArray();
+            $friend = array_unique(array_merge(array_column($friendIds,'requested_by'),array_column($friendIds,'requested_to')));
+        }
+        //To search by kilometers instead of miles, replace 3959 with 6371.
+        $distanceField = '(3959 * acos (cos ( radians(:latitude) )
+            * cos( radians( Spaycs.latitude ) )
+            * cos( radians( Spaycs.longitude )
+            - radians(:longitude) )
+            + sin ( radians(:latitude) )
+            * sin( radians( Spaycs.latitude ) )))';
+        $distance = 25;
+        $spaycs = $this->Spaycs->find()
+            ->select([
+                'distance' => $distanceField, 'id', 'user_id', 'name', 'start_date', 'end_date', 'image', 'type', 'group_type', 'status', 'latitude', 'longitude', 'created', 'modified'
+            ])
+            ->where(["$distanceField < " => $distance])
+            ->bind(':latitude', $this->request->query('latitude'), 'float')
+            ->bind(':longitude', $this->request->query('longitude'), 'float');
+        $spaycs->contain([
+            'JoinedSpayc' => function($q) use($friend) {
+                $row =  $q->select(['JoinedSpayc.spayc_id', 'joined_users' => $q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.spayc_id']);
+                $joinedUsers = 0;
+                if($row->count()) { $joinedUsers = $row->first()->toArray()['joined_users']; }
+                return  $q->select(['joined_users'=>$joinedUsers, 'JoinedSpayc.spayc_id', 'joined_friends'=>$q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.spayc_id'])->where(['JoinedSpayc.user_id IN'=>$friend]);
+            },
+            'SubscribedUsers' => function($q) {
+                return $q->select(['SubscribedUsers.spayc_id', 'subscribed_users' => $q->func()->count('SubscribedUsers.id')])->group(['SubscribedUsers.spayc_id']);
+            },
+            'Comments' => function($q) {
+                return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
+            }
+        ]);
 
-        $this->set(compact('spaycs'));
-        $id = $this->Auth->user("id");
-       // $user = $this->Users->get($id, ['fields'=>['username','email','gender','phone','dob','status','website_url','address','bio_data','created','modified']]);
-        $response = ['status' => "success", 'message' => 'Profile details', 'data' => $spaycs];
+        $spaycs->order(['distance'=>'ASC'])->limit($limit);
+        if($this->request->query('start_date')) {
+            $date = new \Cake\I18n\Time($this->request->query('start_date'));
+            $startDate = Utils::setUtc($date->format('Y-m-d H:i:s'), Configure::read("timezone"));
+            $spaycs->where(["Spaycs.start_date >="=>$startDate]);
+        }
+        if($this->request->query('end_date')) {
+            $date = new \Cake\I18n\Time($this->request->query('start_date'));
+            $endDate = Utils::setUtc($date->format('Y-m-d H:i:s'), Configure::read("timezone"));
+            $spaycs->where(["Spaycs.end_date <="=>$endDate]);
+        }
+        if(in_array(ucfirst($this->request->query('spayc_type')), ['Event', 'Community'])) {
+            $spaycs->where(["Spaycs.type"=>ucfirst($this->request->query('spayc_type'))]);
+        }
+        if(in_array(ucfirst($this->request->query('group_type')), ['Public', 'Private'])) {
+            $spaycs->where(["Spaycs.group_type"=>ucfirst($this->request->query('group_type'))]);
+        }
+        if($page < 0){
+            $page = $page*-1;
+            $spaycs->page($page);
+        } else {
+            $spaycs->page($page);
+        }
+        $newQuery = clone $spaycs;
+        if($page == 1) {
+            $data['previous'] = $newQuery->count();            
+        }
+        $data['spaycs'] = [];
+        if($spaycs->count()) {
+            $data['spaycs'] = $spaycs->toArray();
+        }
+        $response = ['status'=>'success','message'=>__('Spayc lists.'), 'data'=>$data];
         $this->set($response);
     }
 

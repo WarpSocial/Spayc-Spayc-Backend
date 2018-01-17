@@ -52,6 +52,19 @@ class UsersTable extends Table {
             'foreignKey' => 'user_id',
             'className' => 'Api.UserImages'
         ]);
+        $this->hasMany('JoinedSpayc', [
+            'foreignKey' => 'user_id',
+            'className' => 'Api.JoinedSpayc'
+        ]);
+        $this->hasMany('SubscribedUsers', [
+            'foreignKey' => 'user_id',
+            'className' => 'Api.SubscribedUsers'
+        ]);
+        
+        $this->hasMany('Users', [
+            'foreignKey' => 'user_id',
+            'className' => 'Api.Users'
+        ]);
     }
 
     /**
@@ -72,12 +85,6 @@ class UsersTable extends Table {
                     },
                     'message'=>__('Username is not valid.'),
                 ]);
-                
-        
-        $validator
-                ->requirePresence('device_id', __('create','Device id is required field.'))
-                ->notEmpty('device_id',__('Please enter a device id.'))
-                ->maxLength('username', 100,__('Device id cannot exceed to 100 characters.'));
                 
         $validator
                 ->requirePresence('password', 'create',__('Password is required field.'))
@@ -136,7 +143,14 @@ class UsersTable extends Table {
             ->requirePresence('gender', 'create',__('Gender is required field.'))    
             ->notEmpty('gender',__('Gender is required field.'))
             ->inList('gender', Configure::read('gender'),__('Gender must be any one '.implode(',',Configure::read('gender')).'.'));      
-
+        $validator
+                ->requirePresence('longitude', 'create',__('Longitude key is missing.'))
+                ->notEmpty('longitude',__('Please enter longitude.'))
+                ->longitude('longitude',__('Please enter valid longitude.'));        
+        $validator
+                ->requirePresence('latitude', 'create',__('Latitude key is missing.'))
+                ->notEmpty('latitude',__('Please enter latitude.'))
+                ->latitude('latitude',__('Location must be alpha numeric only.'));
         return $validator;
     }
     
@@ -147,17 +161,13 @@ class UsersTable extends Table {
      * @return \Cake\Validation\Validator
     */
     public function validationFacebookSignup(Validator $validator) {
+        
         $validator
-            ->integer('id')
-            ->allowEmpty('id', 'create');
-
-        $validator
-            ->allowEmpty('fb_id')
-            ->requirePresence('fb_id', 'create','Facebook id is required field.')
+            ->requirePresence('fb_id', true, __('Facebook id is required field.'))
             ->notEmpty('fb_id','Facebook id is required field.');
         
         $validator
-                ->requirePresence('username', 'create','Username is required field.')
+                ->requirePresence('username', true, 'Username is required field.')
                 ->notEmpty('username','Username is required field.')                
                 ->maxLength('username', 30,__('Username cannot exceed to 30 characters.'))
                 ->add('username', 'unique', ['rule' => 'validateUnique','message'=>__('User name already exist.'), 'provider' => 'table'])
@@ -170,7 +180,7 @@ class UsersTable extends Table {
         
         $validator
                 ->email('email',false,'Email is required field.')
-                ->requirePresence('email', 'create','Email is required field.')
+                ->requirePresence('email', true, 'Email is required field.')
                 //->add('email', 'unique', ['rule' => 'validateUnique','message'=>'Email has been used.', 'provider' => 'table']) 
                 ->notEmpty('email','Email is required field.');
         
@@ -192,11 +202,32 @@ class UsersTable extends Table {
                     },
                 'message'=>'Age must be 13 or greater than 13 year\'s old.',
             ]);
-                    
+                
         $validator
-                ->requirePresence('device_id', __('create','Device id is required field.'))
-                ->notEmpty('device_id',__('Please enter a device id.'))
-                ->maxLength('username', 100,__('Device id cannot exceed to 100 characters.'));
+            ->requirePresence('gender', true, __('Gender is required field.'))    
+            ->notEmpty('gender',__('Gender is required field.'))
+            ->inList('gender', Configure::read('gender'),__('Gender must be any one '.implode(',',Configure::read('gender')).'.')           );
+        
+        $validator
+            ->allowEmpty('phone')                
+            ->add('phone', 'valid', [
+                'rule' => function($value,$context){
+                    return (bool)(preg_match('/^[\d\s\+\(\)]{3,15}$/',$value));
+                },
+                'message'=>__('Phone no is not valid.')
+                ]);
+        $validator
+                ->requirePresence('device_id', true, __('Device id is required field.'))
+                ->notEmpty('device_id', __('Please enter a device id.'))
+                ->maxLength('device_id', 100,__('Device id cannot exceed to 100 characters.'));
+        $validator
+                ->requirePresence('longitude', true, __('Longitude key is missing.'))
+                ->notEmpty('longitude',__('Please enter longitude.'))
+                ->longitude('longitude',__('Please enter valid longitude.'));        
+        $validator
+                ->requirePresence('latitude', true, __('Latitude key is missing.'))
+                ->notEmpty('latitude',__('Please enter latitude.'))
+                ->latitude('latitude',__('Location must be alpha numeric only.'));
         return $validator;
     }
     
@@ -247,12 +278,20 @@ class UsersTable extends Table {
                     },
                 'message'=>'Age must be 13 or greater than 13 year\'s old.',
             ]);
-                    
+
         $validator
             ->requirePresence('gender', 'create',__('Gender is required field.'))    
             ->notEmpty('gender',__('Gender is required field.'))
-            ->inList('gender', Configure::read('gender'),__('Gender must be any one '.implode(',',Configure::read('gender')).'.'));       
-
+            ->inList('gender', Configure::read('gender'),__('Gender must be any one '.implode(',',Configure::read('gender')).'.'));      
+        $validator
+                ->requirePresence('longitude', 'create',__('Longitude key is missing.'))
+                ->allowEmpty('longitude')
+                ->longitude('longitude',__('Please enter valid longitude.'));        
+        $validator
+                ->requirePresence('latitude', 'create',__('Latitude key is missing.'))
+                ->allowEmpty('latitude')
+                ->latitude('latitude',__('Location must be alpha numeric only.'));
+        
         return $validator;
     }
 
@@ -290,7 +329,7 @@ class UsersTable extends Table {
         $logItems->token = $hasher->hash($plain_token);
         $logItems->plain_token = $plain_token;
         $logItems->device_id = $user['device_id'];
-        $logItems->matrix_access_token = $user['access_token'];
+        $logItems->matrix_access_token = $user['matrix_access_token'];
         $logItems->matrix_user_id = $user['matrix_user_id'];
         $logItems->login_status = 1;
         $logItems->created = Time::now();
@@ -300,57 +339,5 @@ class UsersTable extends Table {
         }else{
             return false;
         }
-    }
-    
-    public function getAlreadyExistsUser($data = []) {
-        if(!empty($data['email'])) {
-            $user = $this->find("all", ['conditions'=>['email'=>$data['email']]]);
-            if($user->count()) {
-                return $user->first()->toArray();
-            }
-        }
-        if(!empty($data['fb_id'])) {
-            $user = $this->find("all", ['conditions'=>['fb_id'=>$data['fb_id']]]);
-            if($user->count()) {
-                return $user->first()->toArray();
-            }
-        }
-        return false;
-    }
-    
-    public function uploadImages($oldEntity, $files) {
-        $entity = [];
-        if(!empty($files)) { 
-            $ids = [];
-            if(!empty($oldEntity['user_images'])) {
-                foreach($oldEntity['user_images'] as $profile) {
-                    if(!empty($profile['image_url']) and file_exists(WWW_ROOT.'img/profile/'.$profile['image_url'])) {
-                        chmod(WWW_ROOT.'img/profile/'.$profile['image_url'], 0777);
-                        unlink(WWW_ROOT.'img/profile/'.$profile['image_url']);
-                        $ids[] = $profile['id']; 
-                    }
-                }
-                if(!empty($oldEntity['user_images'][0]['user_id'])) {
-                    TableRegistry::get('UserImages')->deleteAll(['user_id'=>$oldEntity['user_images'][0]['user_id']]);
-                }
-            }
-            $uploadPath = WWW_ROOT.'img/profile/';
-            foreach($files as $key=>$file) {
-                if(!empty($file['tmp_name'])) {
-                    $fileName = time().'-'.str_replace(' ', '-', $file['name']);
-                    $uploadFile = $uploadPath.$fileName;
-                    if(move_uploaded_file($file['tmp_name'], $uploadFile)){
-                        $entity['user_id'] = $oldEntity['id'];
-                        $entity['image_url'] = $fileName;
-                        $entity['created'] = date('Y-m-d');
-                        $entity['modified'] = date('Y-m-d'); //pr($entity);
-                        $newEntity = TableRegistry::get('UserImages')->newEntity();
-                        $item = TableRegistry::get('UserImages')->patchEntity($newEntity, $entity);
-                        TableRegistry::get('UserImages')->save($item);
-                    }
-                }
-            }
-        }
-        return $entity;
     }
 }

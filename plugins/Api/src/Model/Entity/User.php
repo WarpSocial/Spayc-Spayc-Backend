@@ -36,30 +36,8 @@ class User extends Entity {
      * @var array
      */
     protected $_accessible = [
-        'first_name' => true,
-        'last_name' => true,
-        'username' => true,
-        'email' => true,
-        'password' => true,
-        'gender' => true,
-        'dob' => true,
-        'phone' => true,
-        'status' => true,
-        'website_url' => true,        
-        'address' => true,
-        'bio_data'=> true,
-        'device_id' => true,
-        'device_display' => true,
-        'matrix_id' => true,
-        'timezone' => true,
-        'token_verification' => true,
-        'created' => true,
-        'modified' => true,
-        'users_logs' => true,
-        'fb_id'=>true,
-        'matrix_token'=>true,
-        'home_server'=>true,
-        'image'=>true
+        '*' => true,
+        'id' => false
     ];
 
     /**
@@ -72,7 +50,7 @@ class User extends Entity {
     ];
 
     protected function _setPassword($password) {
-        return (new \Cake\Auth\DefaultPasswordHasher())->hash($password);
+        return (new \Api\Auth\ApiPasswordHasher())->hash($password);
     }
 
     protected function _setDob($dob) {

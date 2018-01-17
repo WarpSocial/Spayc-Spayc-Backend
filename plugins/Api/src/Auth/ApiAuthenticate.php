@@ -18,9 +18,7 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Http\ServerRequest;
 Use Cake\Http\Response;
 use Cake\ORM\TableRegistry;
-use Cake\Utility\Text;
-use Cake\I18n\Time;
-use Cake\Auth\DefaultPasswordHasher;
+use Api\Auth\ApiPasswordHasher;
 
 class ApiAuthenticate extends BaseAuthenticate {
 
@@ -68,10 +66,15 @@ class ApiAuthenticate extends BaseAuthenticate {
         $table = TableRegistry::get('Api.'.$this->_config['userModel']);
         $user = $table->find()->matching('UserLogs',function($q)use($token){
             return $q
-                    ->select('user_id')
+                    ->select(['id','user_id','plain_token','token','matrix_access_token','device_id','matrix_user_id','login_status','last_login'])
                     ->where(['plain_token'=>$token]);
             
-        })->where(['Users.status'=>'active'])->first();
+        })->where(['Users.status'=>'Active']);
+        if($user->isEmpty()){
+            return false;
+        }
+        $user = $user->first();
+        $user['UserLogs'] = $user->_matchingData['UserLogs']->toArray();
         if (!$user){
             return false;
         } 
@@ -82,14 +85,23 @@ class ApiAuthenticate extends BaseAuthenticate {
         $fields = $this->_config['fields'];
         $username = $request->getData($fields['username']);
         $password = $request->getData($fields['password']);
+        /* in case of facebook */
+        $fbId = $request->getData('fb_id');
         $token = $request->env('HTTP_TOKEN');
         if(!empty($username) && !empty($password)){
             $user = $this->_findByFields($username,$password);
         }elseif(!empty($token)){
             $user = $this->getUser($request);
+        }elseif(!empty($fbId)){
+            $userModel = 'Api.'.$this->_config['userModel'];
+            $query = TableRegistry::get($userModel)->findByFbIdAndStatus($fbId, 'Active');
+            if($query->isEmpty()){
+                return false;
+            }
+            $user = $query->first()->toArray();
         }else{
             $user = false;
-        }        
+        }
         return $user;
     }    
     public function unauthenticated(ServerRequest $request, Response $response) {
@@ -120,8 +132,7 @@ class ApiAuthenticate extends BaseAuthenticate {
             return false;
         }
         $result = $entity->first();
-        
-        if (!(new DefaultPasswordHasher)->check($password, $result[$fields['password']])) {
+        if (!(new ApiPasswordHasher())->check($password, $result[$fields['password']])) {
             return false;
         }
         return $result;

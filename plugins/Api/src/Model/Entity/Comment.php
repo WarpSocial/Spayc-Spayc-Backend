@@ -4,26 +4,19 @@ namespace Api\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * Spayc Entity
+ * Comment Entity
  *
  * @property int $id
+ * @property int $spayc_id
  * @property int $user_id
- * @property string $name
- * @property string $location
- * @property string $type
- * @property string $group_type
- * @property \Cake\I18n\FrozenTime $start_date
- * @property \Cake\I18n\FrozenTime $end_date
- * @property string $passcode
- * @property string $description
- * @property string $status
- * @property string $image
+ * @property string $comment
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
  *
+ * @property \Api\Model\Entity\Spayc $spayc
  * @property \Api\Model\Entity\User $user
  */
-class Spayc extends Entity
+class Comment extends Entity
 {
 
     /**
@@ -36,7 +29,12 @@ class Spayc extends Entity
      * @var array
      */
     protected $_accessible = [
-        '*' => true,
-        'id' => false
-    ];    
+        'spayc_id' => true,
+        'user_id' => true,
+        'comment' => true,
+        'created' => true,
+        'modified' => true,
+        'spayc' => true,
+        'user' => true
+    ];
 }

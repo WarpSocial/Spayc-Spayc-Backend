@@ -9,6 +9,8 @@
 namespace Api\Utils;
 
 use Cake\Utility\Text;
+use Cake\I18n\Time;
+use Cake\Core\Configure;
 /**
  * Description of Sanatize
  *
@@ -261,5 +263,74 @@ class Utils {
         $hash = \Cake\Utility\Security::hash($token,'sha256',false);
         return $hash;
     }
-
+    
+    public static function logWrite($message,$lavel='info'){
+        \Cake\Log\Log::write($lavel,$message);
+    }
+        
+    public static function setUtc($dateTime, $timezone = 'UTC') {
+        if($dateTime instanceof \Cake\I18n\Time){
+            $date = $dateTime->format('Y-m-d H:i:s');
+        } elseif($dateTime instanceof \DateTime) {
+            $date = $dateTime->format('Y-m-d H:i:s');
+        } else {
+            $date = $dateTime;
+        }
+        $dateObj = new Time($date, $timezone);
+        $dateObj->setTimezone('UTC');
+        return $dateObj->format('Y-m-d H:i:s');
+    }
+    
+    public static function getFromUtc($dateTime, $timezone = 'UTC') {
+        if($dateTime instanceof \Cake\I18n\Time){
+            $date = $dateTime->format('Y-m-d H:i:s');
+        } elseif($dateTime instanceof \DateTime) {
+            $date = $dateTime->format('Y-m-d H:i:s');
+        } else {
+            $date = $dateTime;
+        }
+        $dateObj = new Time($date, 'UTC');
+        $dateObj->setTimezone($timezone);
+        return $dateObj->format('Y-m-d H:i:s');
+    }
+    
+     /**
+     * getDistanceByLatLong method
+     * function use to get distance spayc to user
+     * @param string|null $data.
+     * @return \Cake\Network\Response|null return json
+     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+    */
+    
+    public static function distanceBetweenTwoPoints($lat1, $lon1, $lat2, $lon2, $unit) {
+        $theta = $lon1 - $lon2;
+        $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+        $dist = acos($dist);
+        $dist = rad2deg($dist);
+        $miles = $dist * 60 * 1.1515;
+        $unit = strtoupper($unit);
+        if ($unit == "K") {
+            return ($miles * 1.609344);
+        } else if ($unit == "N") {
+            return ($miles * 0.8684);
+        } else {
+            return $miles;
+        }
+    }
+    
+    public static function isValidLongitude($longitude = null) {
+        if(preg_match("/^-?([1]?[1-7][1-9]|[1]?[1-8][0]|[1-9]?[0-9])\.{1}\d{1,10}$/", $longitude)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public static function isValidLatitude($latitude) {
+        if (preg_match("/^-?([1-8]?[1-9]|[1-9]0)\.{1}\d{1,10}$/", $latitude)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

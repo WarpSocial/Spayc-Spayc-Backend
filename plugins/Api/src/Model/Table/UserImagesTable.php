@@ -1,4 +1,5 @@
 <?php
+
 namespace Api\Model\Table;
 
 use Cake\ORM\Query;
@@ -21,8 +22,7 @@ use Cake\Validation\Validator;
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class UserImagesTable extends Table
-{
+class UserImagesTable extends Table {
 
     /**
      * Initialize method
@@ -30,8 +30,7 @@ class UserImagesTable extends Table
      * @param array $config The configuration for the Table.
      * @return void
      */
-    public function initialize(array $config)
-    {
+    public function initialize(array $config) {
         parent::initialize($config);
 
         $this->setTable('user_images');
@@ -39,16 +38,15 @@ class UserImagesTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
-
+        $this->addBehavior('ImgUpload', [
+            'field' => 'image_url',
+            'uploadPath' => 'profile/',
+            'where' => 's3', /* local and s3 */
+        ]);
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id',
             'joinType' => 'INNER',
             'className' => 'Api.Users'
-        ]);
-        $this->addBehavior('ImgUpload', [
-            'field' => ['image_url'],
-            'uploadPath' => 'img/profile/',
-            'where' => 's3', // local and s3
         ]);
     }
 
@@ -58,16 +56,17 @@ class UserImagesTable extends Table
      * @param \Cake\Validation\Validator $validator Validator instance.
      * @return \Cake\Validation\Validator
      */
-    public function validationDefault(Validator $validator)
-    {
+    public function validationDefault(Validator $validator) {
         $validator
-            ->integer('id')
-            ->allowEmpty('id', 'create');
-
-        /*$validator
-            ->scalar('image_url')
-            ->maxLength('image_url', 255)
-            ->allowEmpty('image_url');*/
+                ->notEmpty('image_url', __('Please select profile image.'))
+                ->add('image_url', 'extension', [
+                    'rule' => ['extension', ['jpeg', 'png', 'jpg']],
+                    'message' => __('Please select only jpg,jpeg,png.')
+                ])
+                ->add('image_url', 'size', [
+                    'rule' => ['fileSize', '<=', \Cake\Core\Configure::read('maxupload')],
+                    'message' => __('Image size must be less than ' . \Cake\Core\Configure::read('maxupload') . '.')
+        ]);
 
         return $validator;
     }
@@ -79,10 +78,10 @@ class UserImagesTable extends Table
      * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
      * @return \Cake\ORM\RulesChecker
      */
-    public function buildRules(RulesChecker $rules)
-    {
+    public function buildRules(RulesChecker $rules) {
         $rules->add($rules->existsIn(['user_id'], 'Users'));
 
         return $rules;
     }
+
 }
