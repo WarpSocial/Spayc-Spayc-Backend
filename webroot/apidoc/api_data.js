@@ -447,8 +447,8 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "String",
             "optional": false,
-            "field": "Invalid",
-            "description": "<p>login credentials..</p>"
+            "field": "Sign",
+            "description": "<p>in credentials ain't right, try again buddy.</p>"
           },
           {
             "group": "Error 4xx",

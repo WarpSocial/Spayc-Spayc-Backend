@@ -82,7 +82,7 @@ class UsersController extends AppController {
         }
         $user = $this->Auth->identify();
         if(empty($user)){
-            $this->restException(['status' => "failed", 'message' => 'Invalid login credentials.']);
+            $this->restException(['status' => "failed", 'message' => 'Sign in credentials ain\'t right, try again buddy.']);
         }
         $this->loadComponent('Api.Matrix');
         $matrix = $this->Matrix->login($data_item+['username'=>$user['username']]); 
@@ -248,7 +248,7 @@ class UsersController extends AppController {
         /*---login authentication---*/
         $user = $this->Auth->identify();
         if(!$user->count()) {
-            $this->restException(['status' => "failed", 'message' => 'Invalid login credentials.'], 401);
+            $this->restException(['status' => "failed", 'message' => 'Sign in credentials ain\'t right, try again buddy.'], 401);
         }
         $user = $user->first()->toArray();
         $mdata['username'] = $data['username'];

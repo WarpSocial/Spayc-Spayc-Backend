@@ -217,7 +217,7 @@ function getView() { return; }
     }
 }
  
-  @apiError {String} Invalid login credentials..
+  @apiError {String} Sign in credentials ain't right, try again buddy.
   @apiUse UserErrorResponse
 */
 function postLogin() { return; }

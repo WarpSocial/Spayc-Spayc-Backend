@@ -71,7 +71,7 @@ class SpaycsController extends AppController {
         }
         $page = $this->request->query('page');
         $friends = TableRegistry::get('FriendRequest')->find('all', ['fields'=>['FriendRequest.requested_by', 'FriendRequest.requested_to'], 'conditions'=>['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId], 'requested_status'=>'Accepted']]);
-        $friend = [];
+        $friend = [0];
         if($friends->count()) {
             $friendIds = $friends->toArray();
             $friend = array_unique(array_merge(array_column($friendIds,'requested_by'),array_column($friendIds,'requested_to')));
@@ -106,7 +106,7 @@ class SpaycsController extends AppController {
             }
         ]);
 
-        $spaycs->order(['distance'=>'DESC'])->limit($limit);
+        $spaycs->order(['distance'=>'ASC'])->limit($limit);
         if($this->request->query('start_date')) {
             $date = new \Cake\I18n\Time($this->request->query('start_date'));
             $startDate = Utils::setUtc($date->format('Y-m-d H:i:s'), Configure::read("timezone"));
