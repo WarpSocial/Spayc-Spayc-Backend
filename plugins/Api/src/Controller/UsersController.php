@@ -85,35 +85,9 @@ class UsersController extends AppController {
             $this->restException(['status' => "failed", 'message' => 'Sign in credentials ain\'t right, try again buddy.']);
         }
         $this->loadComponent('Api.Matrix');
-<<<<<<< HEAD
-        $matrix = (array)$this->Matrix->login($data_item);    
-        if(!empty($matrix)){
-            $user['matrix_user_id'] = $matrix['user_id'];
-            $user['access_token'] = $matrix['access_token'];
-            $this->Auth->setUser($user);
-            $user = $this->Users->usrLog($user);
-            $data = [
-                'username'=>$user['username'],
-                'email'=>$user['email'],
-                'gender'=>$user['gender'],
-                'dob'=>(new \Cake\I18n\Time($user['dob']))->format("Y-m-d"),
-                'phone'=>$user['phone'],
-                'website_url'=>$user['website_url'],
-                'address'=>$user['address'],
-                'bio_data'=>$user['bio_data'],
-                'device_id'=>$user['device_id'],
-                'matrix_user_id'=>$user['matrix_user_id'],
-                'token'=>$user['token'],
-                //'matrix_token'=>$user['matrix_token'],
-                ];
-            $response = ['status' => "success", 'message' => 'Login done successfully.','data'=>$data];
-        }else{
-            $response = ['status' => "failed", 'message' => 'Invalid login credential.'];            
-=======
         $matrix = $this->Matrix->login($data_item+['username'=>$user['username']]); 
         if(empty($matrix)){
             $this->restException(['status'=>'failed','message'=>'Matrix login failed.']);
->>>>>>> dev
         }
         $user['matrix_user_id'] = $matrix['user_id'];
         $user['matrix_access_token'] = $matrix['access_token'];
@@ -161,30 +135,6 @@ class UsersController extends AppController {
      */
     public function add() {
         $entity = $this->Users->newEntity();
-<<<<<<< HEAD
-        if ($this->request->is('post')) {
-            $this->loadComponent('Api.Matrix');
-            $data = $this->request->getData();   
-            //echo preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,12}$/', $data['password']);exit;
-            $items = $this->Users->patchEntity($entity, $data);
-            if($items->errors()) {
-                $this->restException($this->mapErrors($items->errors()));
-            }
-            $matrix = $this->Matrix->register($data);
-            if(!$matrix) {       
-                $this->restException(['status' => "failed", 'message' => 'Matrix registration failed.'],401);
-            }            
-            $items->set('status', 'active');            
-            $items->set('token_verification', Security::hash($data['email'], 'sha1', true));
-            #echo $data['token_verification'];die;
-            if ($this->Users->save($items)) {           
-                 $this->getMailer('Api.User')->send('signup', [$items]);
-                unset($this->request->data['confirm_password']);
-                $response = ['status' => "success", 'message' => 'Registration done successfully.', 'data' => $this->request->data];
-            } else {
-                $response = ['status' => "failed", 'message' => 'Failed to saved data.', 'errors'=>$this->mapErrors($items->errors())];
-            }
-=======
         if (!$this->request->is('post')) {
             $this->restException(['status'=>'failed','message'=>'Invalid method'],405);
         }
@@ -213,7 +163,6 @@ class UsersController extends AppController {
                 ]];
         } else {
             $response = ['status' => "failed", 'message' => 'Failed to saved data.', 'errors'=>$this->mapErrors($items->errors())];
->>>>>>> dev
         }
         $this->set($response);
     }
@@ -263,34 +212,6 @@ class UsersController extends AppController {
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
     */
     public function facebookSignup() {
-<<<<<<< HEAD
-        if ($this->request->is('post')) {
-            $data = $this->request->getData();
-            //$alreadyExist = $this->Users->getAlreadyExistsUser($data);
-            $alreadyExist = $this->Users->findByEmail($data['email']);
-            if(!$alreadyExist->count()) {
-                $alreadyExist = $this->Users->findByFbId($data['fb_id']);
-            }
-            if($alreadyExist->count()) {
-                $alreadyExist = $alreadyExist->first()->toArray();
-                $data['id'] = $alreadyExist['id'];
-                $data['fb_id'] = !empty($alreadyExist['fb_id'])?$alreadyExist['fb_id']:$data['fb_id'];
-                //$data['username'] = !empty($alreadyExist['username'])?$alreadyExist['username']:$data['username'];
-                $data['email'] = !empty($alreadyExist['email'])?$alreadyExist['email']:$data['email'];
-                $entity = $this->Users->get($data['id']);
-            } else {
-                $data['token_verification'] = Security::hash($data['email'], 'sha1', true);
-                $entity = $this->Users->newEntity($data, ['validate' => 'FacebookSignup']);
-            } 
-            $items = $this->Users->patchEntity($entity, $data, ['validate' => 'FacebookSignup']);
-            if (!$items->errors()) {
-                $saved = $this->Users->save($items);
-                $data['id'] = $saved['id'];
-                //$this->getMailer('Api.User')->send('signup', [$items]);
-                $response = ['status' => "success", 'message' => 'Saved successfully.', 'data' => $data];
-            } else {
-                $response = ['status' => "failed", 'message' => 'Failed to saved data.', 'data' => $this->request->data,'errors'=>$this->mapErrors($items->errors())];
-=======
         if (!$this->request->is('post')) {
             $this->restException(['status'=>'failed','message'=>'Invalid request type'],405);
         }
@@ -323,7 +244,6 @@ class UsersController extends AppController {
             $matrix = $this->Matrix->register($mdata);
             if(!$matrix) {
                 $this->restException(['status' => "failed", 'message' => 'Matrix registration failed.'],401);
->>>>>>> dev
             }
         }
         $saved = $this->Users->save($items);
