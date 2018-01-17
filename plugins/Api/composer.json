@@ -7,7 +7,8 @@
         "cakephp/cakephp": "^3.4"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.7|^6.0"
+        "phpunit/phpunit": "^5.7|^6.0",
+        "chris48s/cakephp-geodistance": "^1.0.0"
     },
     "autoload": {
         "psr-4": {

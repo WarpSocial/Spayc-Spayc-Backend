@@ -195,7 +195,7 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/spaycs.json?page=:page",
+    "url": "/spaycs.json?page=:page&latitude=28.4594965&longitude=77.0266383",
     "title": "Spayc Lists",
     "version": "0.1.0",
     "name": "getSpaycs",
@@ -263,6 +263,20 @@ define({ "api": [
             "optional": false,
             "field": "with_friends",
             "description": "<p>Allow that spayc list with friends or not (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "latitude",
+            "description": "<p>Latitude is required in query string(Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "longitude",
+            "description": "<p>Longitude is required in query string(Required).</p>"
           }
         ]
       }
@@ -296,7 +310,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Spayc lists.\",\n    \"data\": {\n        \"previous\": 4,\n        \"spaycs\": [\n            {\n                \"id\": 4,\n                \"user_id\": 51,\n                \"name\": \"Test123\",\n                \"start_date\": \"2018-01-10T00:00:00+00:00\",\n                \"end_date\": \"2018-01-11T00:00:00+00:00\",\n                \"image\": \"img.png\",\n                \"type\": \"Community\",\n                \"group_type\": \"Public\",\n                \"status\": \"Active\",\n                \"created\": \"2018-01-10T00:00:00+00:00\",\n                \"modified\": \"2018-01-10T00:00:00+00:00\",\n                \"subscribed_users\": [],\n                \"joined_spayc\": [],\n                \"comments\": [\n                    {\n                        \"spayc_id\": 1,\n                        \"total_comment\": 1\n                    }\n                ]\n            },\n            {\n                \"id\": 3,\n                \"user_id\": 51,\n                \"name\": \"Test12\",\n                \"start_date\": \"2018-01-10T00:00:00+00:00\",\n                \"end_date\": \"2018-01-11T00:00:00+00:00\",\n                \"image\": \"img.png\",\n                \"type\": \"Event\",\n                \"group_type\": \"Private\",\n                \"status\": \"Active\",\n                \"created\": \"2018-01-10T00:00:00+00:00\",\n                \"modified\": \"2018-01-10T00:00:00+00:00\",\n                \"subscribed_users\": [\n                    {\n                        \"spayc_id\": 3,\n                        \"subscribed_users\": 1\n                    }\n                ],\n                \"joined_spayc\": [\n                    {\n                        \"spayc_id\": 3,\n                        \"joined_users\": 3,\n                        \"joined_friends\": 2\n                    }\n                ],\n                \"comments\": [\n                    {\n                        \"spayc_id\": 1,\n                        \"total_comment\": 1\n                    }\n                ]\n            }\n        ]\n    }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Spayc lists.\",\n    \"data\": {\n        \"previous\": 4,\n        \"spaycs\": [\n            {\n                \"distance\": \"22.7463734587819\",\n                \"id\": 1,\n                \"user_id\": 51,\n                \"name\": \"Test\",\n                \"start_date\": \"2018-01-10T06:00:00+00:00\",\n                \"end_date\": \"2018-01-10T06:00:00+00:00\",\n                \"image\": \"img.png\",\n                \"type\": \"Event\",\n                \"group_type\": \"Public\",\n                \"status\": \"Active\",\n                \"latitude\": 28.535516,\n                \"longitude\": 77.391026,\n                \"created\": \"2018-01-10T00:00:00+00:00\",\n                \"modified\": \"2018-01-10T00:00:00+00:00\",\n                \"comments\": [\n                    {\n                        \"spayc_id\": 1,\n                        \"total_comment\": 1\n                    }\n                ],\n                \"subscribed_users\": [],\n                \"joined_spayc\": []\n            },\n            {\n                \"distance\": \"22.7463734587819\",\n                \"id\": 2,\n                \"user_id\": 51,\n                \"name\": \"Test1\",\n                \"start_date\": \"2018-01-10T01:00:00+00:00\",\n                \"end_date\": \"2018-01-11T11:00:00+00:00\",\n                \"image\": \"img.png\",\n                \"type\": \"Event\",\n                \"group_type\": \"Public\",\n                \"status\": \"Active\",\n                \"latitude\": 28.535516,\n                \"longitude\": 77.391026,\n                \"created\": \"2018-01-10T00:00:00+00:00\",\n                \"modified\": \"2018-01-10T00:00:00+00:00\",\n                \"comments\": [],\n                \"subscribed_users\": [],\n                \"joined_spayc\": []\n            },\n            {\n                \"distance\": \"22.7463734587819\",\n                \"id\": 3,\n                \"user_id\": 51,\n                \"name\": \"Test12\",\n                \"start_date\": \"2018-01-10T01:00:00+00:00\",\n                \"end_date\": \"2018-01-11T11:00:00+00:00\",\n                \"image\": \"img.png\",\n                \"type\": \"Event\",\n                \"group_type\": \"Private\",\n                \"status\": \"Active\",\n                \"latitude\": 28.535516,\n                \"longitude\": 77.391026,\n                \"created\": \"2018-01-10T00:00:00+00:00\",\n                \"modified\": \"2018-01-10T00:00:00+00:00\",\n                \"comments\": [],\n                \"subscribed_users\": [\n                    {\n                        \"spayc_id\": 3,\n                        \"subscribed_users\": 1\n                    }\n                ],\n                \"joined_spayc\": [\n                    {\n                        \"spayc_id\": 3,\n                        \"joined_users\": 3,\n                        \"joined_friends\": 2\n                    }\n                ]\n            },\n            {\n                \"distance\": \"22.7463734587819\",\n                \"id\": 4,\n                \"user_id\": 51,\n                \"name\": \"Test123\",\n                \"start_date\": \"2018-01-10T01:00:00+00:00\",\n                \"end_date\": \"2018-01-11T11:00:00+00:00\",\n                \"image\": \"img.png\",\n                \"type\": \"Community\",\n                \"group_type\": \"Public\",\n                \"status\": \"Active\",\n                \"latitude\": 28.535516,\n                \"longitude\": 77.391026,\n                \"created\": \"2018-01-10T00:00:00+00:00\",\n                \"modified\": \"2018-01-10T00:00:00+00:00\",\n                \"comments\": [],\n                \"subscribed_users\": [],\n                \"joined_spayc\": []\n            }\n        ]\n    }\n}",
           "type": "json"
         }
       ]
@@ -305,7 +319,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/spaycs.json?page=:page"
+        "url": "http://spayc.com/api/spaycs.json?page=:page&latitude=28.4594965&longitude=77.0266383"
       }
     ],
     "error": {
@@ -433,8 +447,8 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "String",
             "optional": false,
-            "field": "Invalid",
-            "description": "<p>login credentials..</p>"
+            "field": "Sign",
+            "description": "<p>in credentials ain't right, try again buddy.</p>"
           },
           {
             "group": "Error 4xx",

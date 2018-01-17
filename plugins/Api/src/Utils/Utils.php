@@ -302,7 +302,7 @@ class Utils {
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
     */
     
-    function distanceBetweenTwoPoints($lat1, $lon1, $lat2, $lon2, $unit) {
+    public static function distanceBetweenTwoPoints($lat1, $lon1, $lat2, $lon2, $unit) {
         $theta = $lon1 - $lon2;
         $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
         $dist = acos($dist);
@@ -317,5 +317,20 @@ class Utils {
             return $miles;
         }
     }
-
+    
+    public static function isValidLongitude($longitude = null) {
+        if(preg_match("/^-?([1]?[1-7][1-9]|[1]?[1-8][0]|[1-9]?[0-9])\.{1}\d{1,10}$/", $longitude)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public static function isValidLatitude($latitude) {
+        if (preg_match("/^-?([1-8]?[1-9]|[1-9]0)\.{1}\d{1,10}$/", $latitude)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

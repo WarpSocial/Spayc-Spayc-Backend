@@ -63,15 +63,35 @@ class SpaycsController extends AppController {
         if(!is_numeric($this->request->query('page'))) {
             $this->restException(['status'=>'failed', 'message'=>'Page number is not valid.'], 405);
         }
+        if(!Utils::isValidLatitude($this->request->query('latitude'))) {
+            $this->restException(['status'=>'failed', 'message'=>'Latitude is not valid.'], 405);
+        }
+        if(!Utils::isValidLongitude($this->request->query('longitude'))) {
+            $this->restException(['status'=>'failed', 'message'=>'Longitude is not valid.'], 405);
+        }
         $page = $this->request->query('page');
         $friends = TableRegistry::get('FriendRequest')->find('all', ['fields'=>['FriendRequest.requested_by', 'FriendRequest.requested_to'], 'conditions'=>['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId], 'requested_status'=>'Accepted']]);
-        $friend = [];
+        $friend = [0];
         if($friends->count()) {
             $friendIds = $friends->toArray();
             $friend = array_unique(array_merge(array_column($friendIds,'requested_by'),array_column($friendIds,'requested_to')));
         }
-        $fieldArray = ['user_id'=>$userId];
-        $query =  $this->Spaycs->find()->select(['id','user_id','name','start_date','end_date','image', 'type', 'group_type', 'status', 'created', 'modified'])->where(['user_id'=>$fieldArray['user_id']])->contain([
+        //To search by kilometers instead of miles, replace 3959 with 6371.
+        $distanceField = '(3959 * acos (cos ( radians(:latitude) )
+            * cos( radians( Spaycs.latitude ) )
+            * cos( radians( Spaycs.longitude )
+            - radians(:longitude) )
+            + sin ( radians(:latitude) )
+            * sin( radians( Spaycs.latitude ) )))';
+        $distance = 25;
+        $spaycs = $this->Spaycs->find()
+            ->select([
+                'distance' => $distanceField, 'id', 'user_id', 'name', 'start_date', 'end_date', 'image', 'type', 'group_type', 'status', 'latitude', 'longitude', 'created', 'modified'
+            ])
+            ->where(["$distanceField < " => $distance])
+            ->bind(':latitude', $this->request->query('latitude'), 'float')
+            ->bind(':longitude', $this->request->query('longitude'), 'float');
+        $spaycs->contain([
             'JoinedSpayc' => function($q) use($friend) {
                 $row =  $q->select(['JoinedSpayc.spayc_id', 'joined_users' => $q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.spayc_id']);
                 $joinedUsers = 0;
@@ -85,38 +105,38 @@ class SpaycsController extends AppController {
                 return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
             }
         ]);
-        $query->order(['Spaycs.created'=>'ASC'])->limit($limit);
+
+        $spaycs->order(['distance'=>'ASC'])->limit($limit);
         if($this->request->query('start_date')) {
             $date = new \Cake\I18n\Time($this->request->query('start_date'));
             $startDate = Utils::setUtc($date->format('Y-m-d H:i:s'), Configure::read("timezone"));
-            $query->where(["Spaycs.start_date >="=>$startDate]);
+            $spaycs->where(["Spaycs.start_date >="=>$startDate]);
         }
         if($this->request->query('end_date')) {
             $date = new \Cake\I18n\Time($this->request->query('start_date'));
             $endDate = Utils::setUtc($date->format('Y-m-d H:i:s'), Configure::read("timezone"));
-            $query->where(["Spaycs.end_date <="=>$endDate]);
+            $spaycs->where(["Spaycs.end_date <="=>$endDate]);
         }
         if(in_array(ucfirst($this->request->query('spayc_type')), ['Event', 'Community'])) {
-            $query->where(["Spaycs.type"=>ucfirst($this->request->query('spayc_type'))]);
+            $spaycs->where(["Spaycs.type"=>ucfirst($this->request->query('spayc_type'))]);
         }
         if(in_array(ucfirst($this->request->query('group_type')), ['Public', 'Private'])) {
-            $query->where(["Spaycs.group_type"=>ucfirst($this->request->query('group_type'))]);
+            $spaycs->where(["Spaycs.group_type"=>ucfirst($this->request->query('group_type'))]);
         }
         if($page < 0){
             $page = $page*-1;
-            $query->page($page);
+            $spaycs->page($page);
         } else {
-            $query->page($page);
+            $spaycs->page($page);
         }
-        $newQuery = clone $query;
+        $newQuery = clone $spaycs;
         if($page == 1) {
             $data['previous'] = $newQuery->count();            
         }
-        $result = [];
-        if(!$query->isEmpty()) {
-            $result = $query->toArray();
+        $data['spaycs'] = [];
+        if($spaycs->count()) {
+            $data['spaycs'] = $spaycs->toArray();
         }
-        $data['spaycs'] = $result;
         $response = ['status'=>'success','message'=>__('Spayc lists.'), 'data'=>$data];
         $this->set($response);
     }
