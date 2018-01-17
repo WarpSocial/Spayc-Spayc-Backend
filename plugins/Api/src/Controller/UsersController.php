@@ -160,6 +160,8 @@ class UsersController extends AppController {
                     'dob'=>$data['dob'],
                     'gender'=>$data['gender'],
                     'phone'=>$data['phone'],
+                    'latitude'=>$data['latitude'],
+                    'longitude'=>$data['longitude']
                 ]];
         } else {
             $response = ['status' => "failed", 'message' => 'Failed to saved data.', 'errors'=>$this->mapErrors($items->errors())];

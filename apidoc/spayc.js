@@ -75,13 +75,15 @@
         "end_date": "2018-01-12T09:23:01+00:00",
         "passcode": "",
         "description": "asdf dsfsd fdsfasdfadfadf",
+        "image": "",
         "matrix_room_id": "!PFzyEQEwQZuLhKCmMW:127.0.0.1",
         "matrix_room_alias": "#dsfdsfdsf65esd-x:127.0.0.1",
         "user_id": 38,
         "created": "2018-01-11T09:31:50+00:00",
         "modified": "2018-01-11T09:31:50+00:00",
         "longitude":"XX.00.XX",
-        "latitude":"XX.00.XX"
+        "latitude":"XX.00.XX",
+        "id": 1
     }
 }
 

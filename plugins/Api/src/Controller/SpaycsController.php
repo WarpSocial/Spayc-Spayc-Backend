@@ -88,7 +88,7 @@ class SpaycsController extends AppController {
             ->select([
                 'distance' => $distanceField, 'id', 'user_id', 'name', 'start_date', 'end_date', 'image', 'type', 'group_type', 'status', 'latitude', 'longitude', 'created', 'modified'
             ])
-            ->where(["$distanceField < " => $distance])
+            ->where(["$distanceField > " => $distance])
             ->bind(':latitude', $this->request->query('latitude'), 'float')
             ->bind(':longitude', $this->request->query('longitude'), 'float');
         $spaycs->contain([

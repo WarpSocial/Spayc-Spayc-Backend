@@ -108,8 +108,6 @@ function putUser() { return; }
  *          "gender": "male|female|other",
  *          "phone": "7876565434",
  *          "dob": "11-12-2000",
- *          "device_id":"DATEOSDEVICEIP"
- *          "dob": "2000-11-12",
  *          "latitude": "28.535516",
  *          "longitude": "77.391026"
  *       }
@@ -130,8 +128,8 @@ function putUser() { return; }
  *          "gender": "male|female|other",
  *          "phone": "7876565434",
  *          "dob": "11-12-2000",
- *          "device_id":"DATEOSDEVICEIP"
- *          "dob": "2000-11-12"
+ *          "latitude": "28.535516",
+ *          "longitude": "77.391026"
  *       }
  *   ]
  * }

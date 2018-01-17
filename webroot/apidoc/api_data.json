@@ -144,7 +144,7 @@
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "    HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Your spayc, Dsfdsfdsf65esd x, has been created.\",\n    \"data\": {\n        \"name\": \"dsfdsfdsf65esd x\",\n        \"location\": \"oaksd lfjlsdasdklfdjsfdfldas\",\n        \"type\": \"Community\",\n        \"group_type\": \"Public\",\n        \"start_date\": \"2018-01-11T11:16:01+00:00\",\n        \"end_date\": \"2018-01-12T09:23:01+00:00\",\n        \"passcode\": \"\",\n        \"description\": \"asdf dsfsd fdsfasdfadfadf\",\n        \"matrix_room_id\": \"!PFzyEQEwQZuLhKCmMW:127.0.0.1\",\n        \"matrix_room_alias\": \"#dsfdsfdsf65esd-x:127.0.0.1\",\n        \"user_id\": 38,\n        \"created\": \"2018-01-11T09:31:50+00:00\",\n        \"modified\": \"2018-01-11T09:31:50+00:00\",\n        \"longitude\":\"XX.00.XX\",\n        \"latitude\":\"XX.00.XX\"\n    }\n}",
+          "content": "    HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Your spayc, Dsfdsfdsf65esd x, has been created.\",\n    \"data\": {\n        \"name\": \"dsfdsfdsf65esd x\",\n        \"location\": \"oaksd lfjlsdasdklfdjsfdfldas\",\n        \"type\": \"Community\",\n        \"group_type\": \"Public\",\n        \"start_date\": \"2018-01-11T11:16:01+00:00\",\n        \"end_date\": \"2018-01-12T09:23:01+00:00\",\n        \"passcode\": \"\",\n        \"description\": \"asdf dsfsd fdsfasdfadfadf\",\n        \"image\": \"\",\n        \"matrix_room_id\": \"!PFzyEQEwQZuLhKCmMW:127.0.0.1\",\n        \"matrix_room_alias\": \"#dsfdsfdsf65esd-x:127.0.0.1\",\n        \"user_id\": 38,\n        \"created\": \"2018-01-11T09:31:50+00:00\",\n        \"modified\": \"2018-01-11T09:31:50+00:00\",\n        \"longitude\":\"XX.00.XX\",\n        \"latitude\":\"XX.00.XX\",\n        \"id\": 1\n    }\n}",
           "type": "json"
         }
       ]
@@ -576,7 +576,7 @@
     "examples": [
       {
         "title": "Example usage:",
-        "content": "\n{\n   \"username\": \"spaycdev\",\n   \"email\": \"spaycdev@spayc.com\",\n   \"password\": \"XXXXXXXXX\",\n   \"confirm_password\": \"XXXXXXXXX\",\n   \"gender\": \"male|female|other\",\n   \"phone\": \"7876565434\",\n   \"dob\": \"11-12-2000\",\n   \"device_id\":\"DATEOSDEVICEIP\"\n   \"dob\": \"2000-11-12\",\n   \"latitude\": \"28.535516\",\n   \"longitude\": \"77.391026\"\n}",
+        "content": "\n{\n   \"username\": \"spaycdev\",\n   \"email\": \"spaycdev@spayc.com\",\n   \"password\": \"XXXXXXXXX\",\n   \"confirm_password\": \"XXXXXXXXX\",\n   \"gender\": \"male|female|other\",\n   \"phone\": \"7876565434\",\n   \"dob\": \"11-12-2000\",\n   \"latitude\": \"28.535516\",\n   \"longitude\": \"77.391026\"\n}",
         "type": "json"
       }
     ],
@@ -609,7 +609,7 @@
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n  \"status\": \"success\",\n  \"message\": \"Saved successfully.\",\n  \"data\": [\n      {\n         \"username\": \"spaycdev\",\n         \"email\": \"spaycdev@spayc.com\",\n         \"gender\": \"male|female|other\",\n         \"phone\": \"7876565434\",\n         \"dob\": \"11-12-2000\",\n         \"device_id\":\"DATEOSDEVICEIP\"\n         \"dob\": \"2000-11-12\"\n      }\n  ]\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n  \"status\": \"success\",\n  \"message\": \"Saved successfully.\",\n  \"data\": [\n      {\n         \"username\": \"spaycdev\",\n         \"email\": \"spaycdev@spayc.com\",\n         \"gender\": \"male|female|other\",\n         \"phone\": \"7876565434\",\n         \"dob\": \"11-12-2000\",\n         \"latitude\": \"28.535516\",\n         \"longitude\": \"77.391026\"\n      }\n  ]\n}",
           "type": "json"
         }
       ]
