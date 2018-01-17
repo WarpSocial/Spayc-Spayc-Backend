@@ -158,7 +158,7 @@ class UsersController extends AppController {
                     'username'=>$data['username'],
                     'email'=>$data['email'],
                     'dob'=>$data['dob'],
-                    'gender'=>$data['gender'],
+                    'gender'=>trim($data['gender']),
                     'phone'=>$data['phone'],
                     'latitude'=>$data['latitude'],
                     'longitude'=>$data['longitude']
