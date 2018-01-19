@@ -62,6 +62,11 @@ class SpaycsTable extends Table {
             'foreignKey' => 'spayc_id',
             'className' => 'Api.Comments'
         ]);
+        $this->hasMany('SpaycHashtags', [
+            'foreignKey' => 'spayc_id',
+            'joinType' => 'INNER',
+            'className' => 'Api.SpaycHashtags'
+        ]);
     }
 
     /**
@@ -78,7 +83,7 @@ class SpaycsTable extends Table {
                 
 
         $validator
-                ->maxLength('location', 255,'Location test is too long.')
+                ->maxLength('location', 255,__('Location test is too long.'))
                 ->requirePresence('location', 'create',__('Location key is missing.'))
                 ->notEmpty('location',__('Location is required field.'))
                 ->regex('location','/[\w\s]+$/',__('Location must be alpha numeric only.'));
@@ -160,6 +165,45 @@ class SpaycsTable extends Table {
                 ->latitude('latitude',__('Location must be alpha numeric only.'));        
         
         return $validator;
+    }
+    
+    public function searchSpaycs($request = []) {
+        //To search by kilometers instead of miles, replace 3959 with 6371.
+        $distanceField = '(3959 * acos (cos ( radians(:latitude) )
+            * cos( radians( Spaycs.latitude ) )
+            * cos( radians( Spaycs.longitude )
+            - radians(:longitude) )
+            + sin ( radians(:latitude) )
+            * sin( radians( Spaycs.latitude ) )))';
+        $distance = 0;
+        $spaycs = $this->find()
+            ->select([
+                'distance' => $distanceField, 'id', 'user_id', 'name', 'start_date', 'end_date', 'image', 'type', 'group_type', 'status', 'latitude', 'longitude', 'created', 'modified'
+            ])
+            ->where(["$distanceField >" => $distance, 'status'=>'Active'])
+            ->bind(':latitude', $request['latitude'], 'float')
+            ->bind(':longitude', $request['longitude'], 'float');
+        $limit = is_numeric($request['limit'])?$request['limit']:5;
+        $spaycs->order(['distance'=>'ASC'])->limit($limit);
+        if(!empty($request['keyword'])) {
+            $spaycs->where(["Spaycs.name LIKE"=>"%".$request['keyword']."%"]);
+        }
+        $page = !empty($request['page'])?$request['page']:1;
+        if($page < 0){
+            $page = $page*-1;
+            $spaycs->page($page);
+        } else {
+            $spaycs->page($page);
+        }
+        $newQuery = clone $spaycs;
+        if($page == 1) {
+            $data['previous'] = $newQuery->count();            
+        }
+        $data['records'] = [];
+        if($spaycs->count()) {
+            $data['records'] = $spaycs->toArray();
+        }
+        return $data;
     }
 
 }

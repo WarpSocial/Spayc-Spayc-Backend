@@ -45,6 +45,23 @@ class FriendRequestTable extends Table
             'joinType' => 'INNER',
             'className' => 'Api.Spaycs'
         ]);
+        $this->belongsTo('RequestedBy', [
+            'foreignKey' => 'requested_by',
+            'joinType' => 'INNER',
+            'className' => 'Api.Users'
+        ]);
+        $this->belongsTo('RequestedTo', [
+            'foreignKey' => 'requested_to',
+            'joinType' => 'INNER',
+            'className' => 'Api.Users'
+        ]);
+        
+        $this->belongsTo('Users', [
+            'foreignKey' => 'requested_by',
+            'targetForeignKey'=>'requested_to',
+            'joinType' => 'INNER',
+            'className' => 'Api.Users'
+        ]);
     }
 
     /**

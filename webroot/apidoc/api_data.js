@@ -993,8 +993,8 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/users.json",
-    "title": "View Details",
+    "url": "/users.json?page=:page&limit=:limit&keyword=:keyword&latitude=:latitude&longitude=:longitude",
+    "title": "Search Users, Spaycs, Hashtags",
     "version": "0.1.0",
     "name": "getUsers",
     "group": "User",
@@ -1003,7 +1003,7 @@ define({ "api": [
         "name": "Private User"
       }
     ],
-    "description": "<p>View user details.</p>",
+    "description": "<p>Search users|spaycs|hashtags details.</p>",
     "header": {
       "fields": {
         "Header": [
@@ -1013,6 +1013,54 @@ define({ "api": [
             "optional": false,
             "field": "TOKEN",
             "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "page",
+            "description": "<p>Page number in query string (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>Record limit in query string (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "remark",
+            "description": "<p>Remark should be in (users|spaycs|hashtags|all) (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "keyword",
+            "description": "<p>Username|Spayc name|Hashtag name in query string to be search (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "latitude",
+            "description": "<p>of spayc to be search (Required in case of spayc search).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "longitude",
+            "description": "<p>of spayc to be search (Required in case of spayc search).</p>"
           }
         ]
       }
@@ -1032,21 +1080,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Profile details.</p>"
+            "description": "<p>Search Lists.</p>"
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>List of user details.</p>"
+            "description": "<p>List of users|spaycs|hashtags details.</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Profile details\",\n    \"data\": {\n        \"username\": \"dhiruns3\",\n        \"email\": \"dhiru3@gmail.com\",\n        \"gender\": null,\n        \"phone\": 8484839392,\n        \"dob\": \"02-05-2000\",\n        \"status\": \"active\",\n        \"website_url\": null,\n        \"address\": null,\n        \"bio_data\": null,\n        \"created\": \"2018-01-09T11:00:21+00:00\",\n        \"modified\": \"2018-01-09T11:00:21+00:00\"\n    }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Search Lists.\",\n    \"data\": {\n        \"users\": {\n            \"previous\": 6,\n            \"records\": [\n                {\n                    \"id\": 8,\n                    \"username\": \"sbsharma1123\",\n                    \"email\": \"sbsharma131@gmail.com\",\n                    \"gender\": \"male\",\n                    \"phone\": null,\n                    \"dob\": \"11-12-2001\",\n                    \"status\": \"Active\",\n                    \"website_url\": null,\n                    \"address\": null,\n                    \"bio_data\": null,\n                    \"created\": \"2018-01-18T05:56:46+00:00\",\n                    \"modified\": \"2018-01-18T05:57:01+00:00\",\n                    \"user_images\": [\n                        {\n                            \"user_id\": 8,\n                            \"image_url\": \"image1.png\"\n                        },\n                        {\n                            \"user_id\": 8,\n                            \"image_url\": \"image2.jpg\"\n                        }\n                    ],\n                    \"friend\": {\n                        \"id\": 1,\n                        \"requested_by\": 8,\n                        \"requested_status\": \"Approved\",\n                        \"friend_status\": \"Friend\"\n                    }\n                },\n                {\n                    \"id\": 9,\n                    \"username\": \"sbsharma11243\",\n                    \"email\": \"sbsharma1231@gmail.com\",\n                    \"gender\": \"male\",\n                    \"phone\": null,\n                    \"dob\": \"11-12-2001\",\n                    \"status\": \"Active\",\n                    \"website_url\": null,\n                    \"address\": null,\n                    \"bio_data\": null,\n                    \"created\": \"2018-01-18T05:59:37+00:00\",\n                    \"modified\": \"2018-01-18T05:59:37+00:00\",\n                    \"user_images\": [\n                        {\n                            \"user_id\": 9,\n                            \"image_url\": \"image3.png\"\n                        }\n                    ],\n                    \"friend\": {\n                        \"id\": 1,\n                        \"requested_to\": 9,\n                        \"requested_status\": \"Approved\",\n                        \"friend_status\": \"Friend\"\n                    }\n                }\n            ]\n        },\n        \"spaycs\": {\n            \"previous\": 2,\n            \"records\": [\n                {\n                    \"distance\": \"3700.66047272806\",\n                    \"id\": 2,\n                    \"user_id\": 7,\n                    \"name\": \"spaycdev13\",\n                    \"start_date\": \"2019-01-11T01:02:20+00:00\",\n                    \"end_date\": \"2019-01-12T01:02:20+00:00\",\n                    \"image\": \"\",\n                    \"type\": \"Event\",\n                    \"group_type\": \"Public\",\n                    \"status\": \"Active\",\n                    \"latitude\": 77.209021,\n                    \"longitude\": 28.613939,\n                    \"created\": \"2018-01-17T15:14:50+00:00\",\n                    \"modified\": \"2018-01-17T15:14:50+00:00\"\n                },\n                {\n                    \"distance\": \"4402.89875657017\",\n                    \"id\": 1,\n                    \"user_id\": 7,\n                    \"name\": \"spaycdev9\",\n                    \"start_date\": \"2019-01-11T01:02:20+00:00\",\n                    \"end_date\": \"2019-01-12T01:02:20+00:00\",\n                    \"image\": \"\",\n                    \"type\": \"Event\",\n                    \"group_type\": \"Public\",\n                    \"status\": \"Active\",\n                    \"latitude\": 20.895996,\n                    \"longitude\": 6.772989,\n                    \"created\": \"2018-01-17T14:37:02+00:00\",\n                    \"modified\": \"2018-01-17T14:37:02+00:00\"\n                }\n            ]\n        },\n        \"hashtags\": {\n            \"previous\": 2,\n            \"records\": [\n                {\n                    \"id\": 1,\n                    \"name\": \"hash tag1\",\n                    \"created\": \"2018-01-19T13:58:21+00:00\",\n                    \"modified\": \"2018-01-19T13:58:21+00:00\",\n                    \"total_space\": 2\n                },\n                {\n                    \"id\": 2,\n                    \"name\": \"hash tag2\",\n                    \"created\": \"2018-01-19T13:58:54+00:00\",\n                    \"modified\": \"2018-01-19T13:58:54+00:00\",\n                    \"total_space\": 0\n                }\n            ]\n        }\n    }\n}",
           "type": "json"
         }
       ]
@@ -1055,7 +1103,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/users.json"
+        "url": "http://spayc.com/api/users.json?page=:page&limit=:limit&keyword=:keyword&latitude=:latitude&longitude=:longitude"
       }
     ],
     "error": {

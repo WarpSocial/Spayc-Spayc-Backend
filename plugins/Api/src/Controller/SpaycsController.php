@@ -61,13 +61,13 @@ class SpaycsController extends AppController {
         $userId = $this->Auth->user("id");
         $limit = 5;
         if(!is_numeric($this->request->query('page'))) {
-            $this->restException(['status'=>'failed', 'message'=>'Page number is not valid.'], 405);
+            $this->restException(['status'=>'failed', 'message'=>__('Page number is not valid.')], 405);
         }
         if(!Utils::isValidLatitude($this->request->query('latitude'))) {
-            $this->restException(['status'=>'failed', 'message'=>'Latitude is not valid.'], 405);
+            $this->restException(['status'=>'failed', 'message'=>__('Latitude is not valid.')], 405);
         }
         if(!Utils::isValidLongitude($this->request->query('longitude'))) {
-            $this->restException(['status'=>'failed', 'message'=>'Longitude is not valid.'], 405);
+            $this->restException(['status'=>'failed', 'message'=>__('Longitude is not valid.')], 405);
         }
         $page = $this->request->query('page');
         $friends = TableRegistry::get('FriendRequest')->find('all', ['fields'=>['FriendRequest.requested_by', 'FriendRequest.requested_to'], 'conditions'=>['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId], 'requested_status'=>'Accepted']]);

@@ -138,36 +138,149 @@ function putUser() { return; }
  */
 function postUser() { return; }
 /**
- * @api {get} /users.json View Details
+ * @api {get} /users.json?page=:page&limit=:limit&keyword=:keyword&latitude=:latitude&longitude=:longitude Search Users, Spaycs, Hashtags
  * @apiVersion 0.1.0
  * @apiName getUsers
  * @apiGroup User
  * @apiPermission Private User
  *
- * @apiDescription View user details.
+ * @apiDescription Search users|spaycs|hashtags details.
  *
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
+ * @apiParam {Number}      page     Page number in query string (Required).
+ * @apiParam {number}      limit    Record limit in query string (Optional).
+ * @apiParam {String}      remark   Remark should be in (users|spaycs|hashtags|all) (Optional).
+ * @apiParam {String}      keyword  Username|Spayc name|Hashtag name in query string to be search (Optional).
+ * @apiParam {Number}      latitude of spayc to be search (Required in case of spayc search).
+ * @apiParam {Number}      longitude of spayc to be search (Required in case of spayc search).
+ * 
  * @apiSuccess {String} status success.
- * @apiSuccess {String} message Profile details.
- * @apiSuccess {Object} data List of user details.
+ * @apiSuccess {String} message Search Lists.
+ * @apiSuccess {Object} data List of users|spaycs|hashtags details.
  * @apiSuccessExample {json} Success-Response: 
  *      HTTP/1.1 200 OK
 {
     "status": "success",
-    "message": "Profile details",
+    "message": "Search Lists.",
     "data": {
-        "username": "dhiruns3",
-        "email": "dhiru3@gmail.com",
-        "gender": null,
-        "phone": 8484839392,
-        "dob": "02-05-2000",
-        "status": "active",
-        "website_url": null,
-        "address": null,
-        "bio_data": null,
-        "created": "2018-01-09T11:00:21+00:00",
-        "modified": "2018-01-09T11:00:21+00:00"
+        "users": {
+            "previous": 6,
+            "records": [
+                {
+                    "id": 8,
+                    "username": "sbsharma1123",
+                    "email": "sbsharma131@gmail.com",
+                    "gender": "male",
+                    "phone": null,
+                    "dob": "11-12-2001",
+                    "status": "Active",
+                    "website_url": null,
+                    "address": null,
+                    "bio_data": null,
+                    "created": "2018-01-18T05:56:46+00:00",
+                    "modified": "2018-01-18T05:57:01+00:00",
+                    "user_images": [
+                        {
+                            "user_id": 8,
+                            "image_url": "image1.png"
+                        },
+                        {
+                            "user_id": 8,
+                            "image_url": "image2.jpg"
+                        }
+                    ],
+                    "friend": {
+                        "id": 1,
+                        "requested_by": 8,
+                        "requested_status": "Approved",
+                        "friend_status": "Friend"
+                    }
+                },
+                {
+                    "id": 9,
+                    "username": "sbsharma11243",
+                    "email": "sbsharma1231@gmail.com",
+                    "gender": "male",
+                    "phone": null,
+                    "dob": "11-12-2001",
+                    "status": "Active",
+                    "website_url": null,
+                    "address": null,
+                    "bio_data": null,
+                    "created": "2018-01-18T05:59:37+00:00",
+                    "modified": "2018-01-18T05:59:37+00:00",
+                    "user_images": [
+                        {
+                            "user_id": 9,
+                            "image_url": "image3.png"
+                        }
+                    ],
+                    "friend": {
+                        "id": 1,
+                        "requested_to": 9,
+                        "requested_status": "Approved",
+                        "friend_status": "Friend"
+                    }
+                }
+            ]
+        },
+        "spaycs": {
+            "previous": 2,
+            "records": [
+                {
+                    "distance": "3700.66047272806",
+                    "id": 2,
+                    "user_id": 7,
+                    "name": "spaycdev13",
+                    "start_date": "2019-01-11T01:02:20+00:00",
+                    "end_date": "2019-01-12T01:02:20+00:00",
+                    "image": "",
+                    "type": "Event",
+                    "group_type": "Public",
+                    "status": "Active",
+                    "latitude": 77.209021,
+                    "longitude": 28.613939,
+                    "created": "2018-01-17T15:14:50+00:00",
+                    "modified": "2018-01-17T15:14:50+00:00"
+                },
+                {
+                    "distance": "4402.89875657017",
+                    "id": 1,
+                    "user_id": 7,
+                    "name": "spaycdev9",
+                    "start_date": "2019-01-11T01:02:20+00:00",
+                    "end_date": "2019-01-12T01:02:20+00:00",
+                    "image": "",
+                    "type": "Event",
+                    "group_type": "Public",
+                    "status": "Active",
+                    "latitude": 20.895996,
+                    "longitude": 6.772989,
+                    "created": "2018-01-17T14:37:02+00:00",
+                    "modified": "2018-01-17T14:37:02+00:00"
+                }
+            ]
+        },
+        "hashtags": {
+            "previous": 2,
+            "records": [
+                {
+                    "id": 1,
+                    "name": "hash tag1",
+                    "created": "2018-01-19T13:58:21+00:00",
+                    "modified": "2018-01-19T13:58:21+00:00",
+                    "total_space": 2
+                },
+                {
+                    "id": 2,
+                    "name": "hash tag2",
+                    "created": "2018-01-19T13:58:54+00:00",
+                    "modified": "2018-01-19T13:58:54+00:00",
+                    "total_space": 0
+                }
+            ]
+        }
     }
 }
  *

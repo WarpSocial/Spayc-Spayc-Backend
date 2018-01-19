@@ -37,7 +37,7 @@ class UsersTable extends Table {
      */
     public function initialize(array $config) {
         parent::initialize($config);
-
+        
         $this->setTable('users');
         $this->setDisplayField('id');
         $this->setPrimaryKey('id');
@@ -61,6 +61,24 @@ class UsersTable extends Table {
             'className' => 'Api.SubscribedUsers'
         ]);
         
+        $this->hasMany('RequestedBy', [
+            'foreignKey' => 'requested_by',
+            'joinType' => 'INNER',
+            'className' => 'Api.FriendRequest'
+        ]);
+        $this->hasMany('RequestedTo', [
+            'foreignKey' => 'requested_to',
+            'joinType' => 'INNER',
+            'className' => 'Api.FriendRequest'
+        ]);
+        
+        $this->hasMany('FriendRequest', [
+            'foreignKey' => 'requested_by',
+            'targetForeignKey'=>'requested_to',
+            'joinType' => 'INNER',
+            'className' => 'Api.FriendRequest'
+        ]);
+        
         $this->hasMany('Users', [
             'foreignKey' => 'user_id',
             'className' => 'Api.Users'
@@ -75,8 +93,8 @@ class UsersTable extends Table {
      */
     public function validationDefault(Validator $validator) {
         $validator
-                ->requirePresence('username', 'create','Username is required field.')
-                ->notEmpty('username','Please enter a user name')                
+                ->requirePresence('username', 'create',__('Username is required field.'))
+                ->notEmpty('username',__('Please enter a user name'))                
                 ->maxLength('username', 30,__('User name cannot exceed to 30 characters.'))
                 ->add('username', 'unique', ['rule' => 'validateUnique','message'=>__('User name already exist.'), 'provider' => 'table'])
                  ->add("username",'custom',[
@@ -127,7 +145,7 @@ class UsersTable extends Table {
                     'date' => [
                         'rule'=> ['date',['mdy']],
                         'last'=>true,
-                        'message'=>'Date of birth is not valid format.'
+                        'message'=>__('Date of birth is not valid format.')
                         ]
                     ])
                 ->add('dob','custom',[
@@ -137,7 +155,7 @@ class UsersTable extends Table {
                             $age = $now->diff($dob)->format("%Y");
                             return ($age > 13);
                         },
-                    'message'=>'Age must be 13 or greater than 13 year\'s old.',
+                    'message'=>__('Age must be 13 or greater than 13 year\'s old.'),
                 ]); 
         $validator
             ->requirePresence('gender', 'create',__('Gender is required field.'))    
@@ -164,13 +182,13 @@ class UsersTable extends Table {
         
         $validator
             ->requirePresence('fb_id', true, __('Facebook id is required field.'))
-            ->notEmpty('fb_id','Facebook id is required field.');
+            ->notEmpty('fb_id',__('Facebook id is required field.'));
         
         $validator
-                ->requirePresence('username', true, 'Username is required field.')
-                ->notEmpty('username','Username is required field.')                
+                ->requirePresence('username', true, __('Username is required field.'))
+                ->notEmpty('username',__('Username is required field.'))                
                 ->maxLength('username', 30,__('Username cannot exceed to 30 characters.'))
-                ->add('username', 'unique', ['rule' => 'validateUnique','message'=>__('User name already exist.'), 'provider' => 'table'])
+                ->add('username', 'unique', ['rule' => 'validateUnique','message'=>__('Username already exist.'), 'provider' => 'table'])
                  ->add("username",'custom',[
                     'rule'=>function($value,$context){
                         return (bool)(preg_match('/^[\w\s\.-@#]+$/', $value));
@@ -179,10 +197,10 @@ class UsersTable extends Table {
                 ]);
         
         $validator
-                ->email('email',false,'Email is required field.')
-                ->requirePresence('email', true, 'Email is required field.')
+                ->email('email',false,__('Email is required field.'))
+                ->requirePresence('email', true, __('Email is required field.'))
                 //->add('email', 'unique', ['rule' => 'validateUnique','message'=>'Email has been used.', 'provider' => 'table']) 
-                ->notEmpty('email','Email is required field.');
+                ->notEmpty('email',__('Email is required field.'));
         
         $validator
             ->allowEmpty('dob')
@@ -190,7 +208,7 @@ class UsersTable extends Table {
                 'date' => [
                     'rule'=> ['date',['mdy']],
                     'last'=>true,
-                    'message'=>'Date of birth is not valid format.'
+                    'message'=>__('Date of birth is not valid format.')
                     ]
                 ])
             ->add('dob','custom',[
@@ -200,7 +218,7 @@ class UsersTable extends Table {
                         $age = $now->diff($dob)->format("%Y");
                         return ($age > 13);
                     },
-                'message'=>'Age must be 13 or greater than 13 year\'s old.',
+                'message'=>__('Age must be 13 or greater than 13 year\'s old.'),
             ]);
                 
         $validator
@@ -240,10 +258,10 @@ class UsersTable extends Table {
     public function validationUpdateUser(Validator $validator) {
         
         $validator
-            ->requirePresence('username', 'create','Username is required field.')
-            ->notEmpty('username','Username is required field.')                
+            ->requirePresence('username', 'create',__('Username is required field.'))
+            ->notEmpty('username',__('Username is required field.'))                
             ->maxLength('username', 30,__('Username cannot exceed to 30 characters.'))
-            ->add('username', 'unique', ['rule' => 'validateUnique','message'=>__('User name already exist.'), 'provider' => 'table'])
+            ->add('username', 'unique', ['rule' => 'validateUnique','message'=>__('Username already exist.'), 'provider' => 'table'])
              ->add("username",'custom',[
                 'rule'=>function($value,$context){
                     return (bool)(preg_match('/^[\w\s\.-@#]+$/', $value));
@@ -266,7 +284,7 @@ class UsersTable extends Table {
                 'date' => [
                     'rule'=> ['date',['mdy']],
                     'last'=>true,
-                    'message'=>'Date of birth is not valid format.'
+                    'message'=>__('Date of birth is not valid format.')
                     ]
                 ])
             ->add('dob','custom',[
@@ -276,7 +294,7 @@ class UsersTable extends Table {
                         $age = $now->diff($dob)->format("%Y");
                         return ($age > 13);
                     },
-                'message'=>'Age must be 13 or greater than 13 year\'s old.',
+                'message'=>__('Age must be 13 or greater than 13 year\'s old.'),
             ]);
 
         $validator
@@ -339,5 +357,49 @@ class UsersTable extends Table {
         }else{
             return false;
         }
+    }
+    
+    public function searchUsers($userId = null, $request = []) {
+        $users = $this->find('all', ['fields'=>['id', 'username','email','gender','phone','dob','status','website_url','address','bio_data','created','modified']])->where(['Users.status'=>'Active']);
+        $users->contain([
+            'RequestedBy' => function($q) use($userId) {
+                return $q->select(['RequestedBy.id','RequestedBy.requested_by', 'RequestedBy.requested_status', 'RequestedBy.friend_status'])->orWhere(['RequestedBy.requested_by'=>$userId])->orWhere(['RequestedBy.requested_to'=>$userId]);
+            },
+            'RequestedTo' => function($q) use($userId) {
+                return $q->select(['RequestedTo.id','RequestedTo.requested_to', 'RequestedTo.requested_status', 'RequestedTo.friend_status'])->orWhere(['RequestedTo.requested_by'=>$userId])->orWhere(['RequestedTo.requested_to'=>$userId]);
+            },
+            'UserImages'=>function($q) {
+                return $q->select(['UserImages.user_id', 'UserImages.image_url']);
+            }
+        ]);
+        $users->formatResults(function (\Cake\Collection\CollectionInterface $results) {
+            return $results->map(function ($row) {
+                $row->friend = !empty($row['requested_to'][0])? $row['requested_to'][0] : [];
+                $row->friend = !empty($row['requested_by'][0]) && empty($row->friend)? $row['requested_by'][0] : $row->friend;
+                unset($row['requested_to']);
+                unset($row['requested_by']);
+                return $row;
+            });
+        });
+        $limit = is_numeric($request['limit'])?$request['limit']:5;
+        $users->order(['Users.username'=>'ASC'])->limit($limit);
+        if(!empty($request['keyword'])) {
+            $users->where(['Users.username LIKE'=>"%".$request['keyword']."%"]);
+        }
+        $page = is_numeric($request['page'])?$request['page']:1;
+        if($page < 0) {
+            $page = $page*-1;
+            $users->page($page);
+        } else {
+            $users->page($page);
+        }
+        if($page == 1) {
+            $data['previous'] = $users->count();            
+        }
+        $data['records'] = [];
+        if($users->count()) {
+            $data['records'] = $users->toArray();
+        }
+        return $data;
     }
 }
