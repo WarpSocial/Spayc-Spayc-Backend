@@ -83,8 +83,8 @@ class FriendRequestTable extends Table
 
         $validator
             ->integer('requested_to')
-            ->requirePresence('requested_to', 'create')
-            ->notEmpty('requested_to');
+            ->notEmpty('requested_to',__('Requested user id is required field.'))
+            ->requirePresence('requested_to', 'create');
 
         $validator
             ->scalar('requested_status')
@@ -106,8 +106,8 @@ class FriendRequestTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['spayc_id'], 'Spaycs'));
-
+        $rules->add($rules->existsIn(['requested_by'], 'Users'));
+        $rules->add($rules->existsIn(['requested_to'], 'Users'));
         return $rules;
     }
 }

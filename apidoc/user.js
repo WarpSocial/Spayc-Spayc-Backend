@@ -149,7 +149,7 @@ function postUser() { return; }
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
  * @apiParam {Number}      page     Page number in query string (Required).
- * @apiParam {number}      limit    Record limit in query string (Optional).
+ * @apiParam {Number}      limit    Records limit in query string (Optional).
  * @apiParam {String}      remark   Remark should be in (users|spaycs|hashtags|all) (Optional).
  * @apiParam {String}      keyword  Username|Spayc name|Hashtag name in query string to be search (Optional).
  * @apiParam {Number}      latitude of spayc to be search (Required in case of spayc search).
@@ -338,3 +338,39 @@ function getView() { return; }
   @apiUse UserErrorResponse
 */
 function postLogin() { return; }
+
+/**
+ @api {post} users/friend-request.json Send Friend Request
+  @apiVersion 0.1.0
+  @apiName FriendRequest
+  @apiGroup User
+  @apiPermission Private User
+ 
+  @apiDescription Send friend request.
+  
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+  @apiParam {Number} friend_id Friend id required (Required).
+ 
+  @apiExample Example usage:
+ 
+    {
+        "friend_id":"85"
+    }
+ 
+ 
+  @apiSuccess {String} status success.
+  @apiSuccess {String} message Friend request send successfully..
+  @apiSuccess {Object} data Null.
+  @apiSuccessExample {json} Success-Response: 
+       HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Friend request send successfully.",
+    "data": []
+}
+ 
+  @apiError {String} Friend request already sent.
+  @apiUse UserErrorResponse
+*/
+function postFriendRequest() { return; }

@@ -389,5 +389,32 @@ class UsersController extends AppController {
         $response = ['status'=>'success','message'=>__('Logout successfully.')];
         $this->set($response);
     }
+    
+    public function friendRequest() {
+        if (!$this->request->is(['post'])) {
+            $this->restException(['status'=>'failed','message'=>__('Method is not allowed.')], 405);
+        }
+        $data = $this->request->getData();
+        if(empty($data['friend_id'])) {
+            $this->restException(['status'=>'failed','message'=>__('Friend id is required fields.')], 405);
+        }
+        $frend = TableRegistry::get("FriendRequest");
+        $exists = $frend->exists(['requested_to'=>$data['friend_id'], 'requested_by'=>$this->Auth->user('id')]);
+        if($exists) {
+            $this->restException(['status'=>'failed','message'=>__('Friend request already sent.')], 405);
+        }
+        $friendReq['requested_to'] = $data['friend_id'];
+        $friendReq['requested_by'] = $this->Auth->user('id');
+        $friendReq['requested_status'] = 'Requested';
+        $friendReq['created'] = date("Y-m-d H:i:s");
+        $entity = $frend->newEntity();
+        $items = $frend->patchEntity($entity, $friendReq);
+        if($items->errors()) {
+            $this->restException(['status'=>'failed','message'=>__('Validation errors.'),'errors'=>$this->mapErrors($items->errors())],401);
+        }
+        $frend->save($items);
+        $response = ['status'=>'success', 'message'=>__('Friend request send successfully.'), 'data'=>[]];
+        $this->set($response);
+    }
 
 }

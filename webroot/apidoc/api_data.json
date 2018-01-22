@@ -361,6 +361,137 @@
   },
   {
     "type": "post",
+    "url": "users/friend-request.json",
+    "title": "Send Friend Request",
+    "version": "0.1.0",
+    "name": "FriendRequest",
+    "group": "User",
+    "permission": [
+      {
+        "name": "Private User"
+      }
+    ],
+    "description": "<p>Send friend request.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "friend_id",
+            "description": "<p>Friend id required (Required).</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "\n{\n    \"friend_id\":\"85\"\n}",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Friend request send successfully..</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>Null.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Friend request send successfully.\",\n    \"data\": []\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "String",
+            "optional": false,
+            "field": "Friend",
+            "description": "<p>request already sent.</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"errors:{Validation errors}\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/user.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/apiusers/friend-request.json"
+      }
+    ]
+  },
+  {
+    "type": "post",
     "url": "/login.json",
     "title": "Login",
     "version": "0.1.0",
@@ -1029,10 +1160,10 @@
           },
           {
             "group": "Parameter",
-            "type": "number",
+            "type": "Number",
             "optional": false,
             "field": "limit",
-            "description": "<p>Record limit in query string (Optional).</p>"
+            "description": "<p>Records limit in query string (Optional).</p>"
           },
           {
             "group": "Parameter",

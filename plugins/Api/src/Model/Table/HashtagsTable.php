@@ -35,6 +35,7 @@ class HashtagsTable extends Table
         $this->setTable('hashtags');
         $this->setDisplayField('name');
         $this->setPrimaryKey(['id']);
+
         $this->addBehavior('Timestamp');
         $this->hasMany('SpaycHashtags', [
             'foreignKey' => 'hashtag_id',
@@ -61,5 +62,41 @@ class HashtagsTable extends Table
             ->notEmpty('name');
 
         return $validator;
+    }
+    
+    public function searchHashtags($request = []) {
+        $hashTag = $this->find('all', ['fields'=>['Hashtags.id', 'Hashtags.name', 'Hashtags.created', 'Hashtags.modified']])
+        ->contain([
+            'SpaycHashtags' => function($q) {
+                return $q->select(['SpaycHashtags.hashtag_id', 'total_spayc' => $q->func()->count('SpaycHashtags.hashtag_id')])->group(['SpaycHashtags.hashtag_id']);
+            }
+        ])
+        ->formatResults(function (\Cake\Collection\CollectionInterface $results) {
+            return $results->map(function ($row) {
+                $row->total_space = !empty($row['spayc_hashtags'][0]['total_spayc'])? $row['spayc_hashtags'][0]['total_spayc']:0;
+                unset($row['spayc_hashtags']);
+                return $row;
+            });
+        });;
+        $limit = is_numeric($request['limit'])?$request['limit']:5;
+        $hashTag->order(['Hashtags.name'=>'ASC'])->limit($limit);
+        if(!empty($request['keyword'])) {
+            $hashTag->where(['Hashtags.name LIKE'=>"%".$request['keyword']."%"]);
+        }
+        $page = is_numeric($request['page'])?$request['page']:1;
+        if($page < 0) {
+            $page = $page*-1;
+            $hashTag->page($page);
+        } else {
+            $hashTag->page($page);
+        }
+        if($page == 1) {
+            $data['previous'] = $hashTag->count();            
+        }
+        $data['records'] = [];
+        if($hashTag->count()) { 
+            $data['records'] = $hashTag->toArray();
+        }
+        return $data;
     }
 }
