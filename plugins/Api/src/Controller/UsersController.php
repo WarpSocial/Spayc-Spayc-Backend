@@ -122,11 +122,8 @@ class UsersController extends AppController {
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function index() {
-        if(!is_numeric($this->request->query('page'))) {
-            $this->restException(['status'=>'failed', 'message'=>__('Page number is not valid.')], 405);
-        }
-        $remark = $this->request->query['remark'];
-        if(!empty($remark) && ($remark=='all' || $remark=='spaycs')) {
+        $type = $this->request->query['type'];
+        if(!empty($type) && ($type=='all' || $type=='spaycs')) {
             if(!Utils::isValidLatitude($this->request->query('latitude'))) {
                 $this->restException(['status'=>'failed', 'message'=>__('Latitude is not valid.')], 405);
             }
@@ -134,11 +131,11 @@ class UsersController extends AppController {
                 $this->restException(['status'=>'failed', 'message'=>__('Longitude is not valid.')], 405);
             }
         }
-        if(!empty($remark) && $remark=='users') {
+        if(!empty($type) && $type=='users') {
             $data['users'] = $this->Users->searchUsers($this->Auth->user('id'), $this->request->query);
-        } else if(!empty($remark) && $remark=='spaycs') {
+        } else if(!empty($type) && $type=='spaycs') {
             $data['spaycs'] = TableRegistry::get('Api.Spaycs')->searchSpaycs($this->request->query);
-        } else if(!empty($remark) && $remark=='hashtags') {
+        } else if(!empty($type) && $type=='hashtags') {
             $data['hashtags'] = TableRegistry::get('Api.Hashtags')->searchHashtags($this->request->query);
         } else {
             $data['users'] = $this->Users->searchUsers($this->Auth->user('id'), $this->request->query);

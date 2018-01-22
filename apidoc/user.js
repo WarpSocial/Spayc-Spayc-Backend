@@ -148,9 +148,9 @@ function postUser() { return; }
  *
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
- * @apiParam {Number}      page     Page number in query string (Required).
+ * @apiParam {Number}      page     Page number in query string (Optional).
  * @apiParam {Number}      limit    Records limit in query string (Optional).
- * @apiParam {String}      remark   Remark should be in (users|spaycs|hashtags|all) (Optional).
+ * @apiParam {String}      type     Type should be in (users|spaycs|hashtags|all) (Optional).
  * @apiParam {String}      keyword  Username|Spayc name|Hashtag name in query string to be search (Optional).
  * @apiParam {Number}      latitude of spayc to be search (Required in case of spayc search).
  * @apiParam {Number}      longitude of spayc to be search (Required in case of spayc search).

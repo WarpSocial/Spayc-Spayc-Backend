@@ -1156,7 +1156,7 @@ define({ "api": [
             "type": "Number",
             "optional": false,
             "field": "page",
-            "description": "<p>Page number in query string (Required).</p>"
+            "description": "<p>Page number in query string (Optional).</p>"
           },
           {
             "group": "Parameter",
@@ -1169,8 +1169,8 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "remark",
-            "description": "<p>Remark should be in (users|spaycs|hashtags|all) (Optional).</p>"
+            "field": "type",
+            "description": "<p>Type should be in (users|spaycs|hashtags|all) (Optional).</p>"
           },
           {
             "group": "Parameter",
