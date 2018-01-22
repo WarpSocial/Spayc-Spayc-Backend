@@ -361,7 +361,7 @@ define({ "api": [
   },
   {
     "type": "post",
-    "url": "users/friend-request.json",
+    "url": "/users/friend-request.json",
     "title": "Send Friend Request",
     "version": "0.1.0",
     "name": "FriendRequest",
@@ -486,7 +486,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/apiusers/friend-request.json"
+        "url": "http://spayc.com/api/users/friend-request.json"
       }
     ]
   },

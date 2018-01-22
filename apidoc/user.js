@@ -340,7 +340,7 @@ function getView() { return; }
 function postLogin() { return; }
 
 /**
- @api {post} users/friend-request.json Send Friend Request
+ @api {post} /users/friend-request.json Send Friend Request
   @apiVersion 0.1.0
   @apiName FriendRequest
   @apiGroup User
