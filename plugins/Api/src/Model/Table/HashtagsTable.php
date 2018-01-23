@@ -77,7 +77,7 @@ class HashtagsTable extends Table
                 unset($row['spayc_hashtags']);
                 return $row;
             });
-        });;
+        });
         $limit = is_numeric($request['limit'])?$request['limit']:5;
         $hashTag->order(['Hashtags.name'=>'ASC'])->limit($limit);
         if(!empty($request['keyword'])) {
@@ -90,9 +90,7 @@ class HashtagsTable extends Table
         } else {
             $hashTag->page($page);
         }
-        if($page == 1) {
-            $data['previous'] = $hashTag->count();            
-        }
+        $data['count'] = $hashTag->count();
         $data['records'] = [];
         if($hashTag->count()) { 
             $data['records'] = $hashTag->toArray();

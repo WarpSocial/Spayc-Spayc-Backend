@@ -70,12 +70,7 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Longitude is not valid.')], 405);
         }
         $page = $this->request->query('page');
-        $friends = TableRegistry::get('FriendRequest')->find('all', ['fields'=>['FriendRequest.requested_by', 'FriendRequest.requested_to'], 'conditions'=>['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId], 'requested_status'=>'Accepted']]);
-        $friend = [0];
-        if($friends->count()) {
-            $friendIds = $friends->toArray();
-            $friend = array_unique(array_merge(array_column($friendIds,'requested_by'),array_column($friendIds,'requested_to')));
-        }
+        $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Approved');
         //To search by kilometers instead of miles, replace 3959 with 6371.
         $distanceField = '(3959 * acos (cos ( radians(:latitude) )
             * cos( radians( Spaycs.latitude ) )
@@ -130,9 +125,7 @@ class SpaycsController extends AppController {
             $spaycs->page($page);
         }
         $newQuery = clone $spaycs;
-        if($page == 1) {
-            $data['previous'] = $newQuery->count();            
-        }
+        $data['count'] = $newQuery->count();
         $data['spaycs'] = [];
         if($spaycs->count()) {
             $data['spaycs'] = $spaycs->toArray();

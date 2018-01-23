@@ -104,8 +104,8 @@ function postSpaycs() { return; }
     @apiParam {Number}      page            Page number in query string (Required).
     @apiParam {Timestamp}   start_date      Spayc start date in query string(1515542400) (Optional).
     @apiParam {Timestamp}   end_date        Spayc end date in query string(1515715200) (Optional).
-    @apiParam {String}      group_type      Group type must be any one from the following Public|Private (Optional).
-    @apiParam {String}      type            Spayc type must be any one from the following Event|Community (Optional).
+    @apiParam {String}      group_type      Group type must be any one from the following (Public|Private) (Optional).
+    @apiParam {String}      type            Spayc type must be any one from the following (Event|Community) (Optional).
     @apiParam {String}      with_friends    Allow that spayc list with friends or not (Optional).
     @apiParam {String}      latitude        Latitude is required in query string(Required).
     @apiParam {String}      longitude       Longitude is required in query string(Required).
@@ -119,7 +119,7 @@ function postSpaycs() { return; }
     "status": "success",
     "message": "Spayc lists.",
     "data": {
-        "previous": 4,
+        "count": 4,
         "spaycs": [
             {
                 "distance": "22.7463734587819",

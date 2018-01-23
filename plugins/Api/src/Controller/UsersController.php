@@ -413,5 +413,48 @@ class UsersController extends AppController {
         $response = ['status'=>'success', 'message'=>__('Friend request send successfully.'), 'data'=>[]];
         $this->set($response);
     }
+    
+    public function getFriends() {
+        $friendStatus = !empty($this->request->query['friend_status'])?$this->request->query['friend_status']:'Approved';
+        $userId = $this->Auth->user('id');
+        $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($this->Auth->user('id'), $friendStatus);
+        $friends = $this->Users->find("all", ['conditions'=>['Users.id IN'=>$friend, 'Users.id !='=>$this->Auth->user('id'), 'Users.status'=>'Active']]);
+        $friends->contain([
+            'RequestedBy' => function($q) use($userId) {
+                return $q->select(['RequestedBy.id','RequestedBy.requested_by', 'RequestedBy.requested_status', 'RequestedBy.friend_status'])->orWhere(['RequestedBy.requested_by'=>$userId])->orWhere(['RequestedBy.requested_to'=>$userId]);
+            },
+            'RequestedTo' => function($q) use($userId) {
+                return $q->select(['RequestedTo.id','RequestedTo.requested_to', 'RequestedTo.requested_status', 'RequestedTo.friend_status'])->orWhere(['RequestedTo.requested_by'=>$userId])->orWhere(['RequestedTo.requested_to'=>$userId]);
+            },
+            'UserImages'=>function($q) {
+                return $q->select(['UserImages.user_id', 'UserImages.image_url']);
+            }
+        ]);
+        $friends->formatResults(function (\Cake\Collection\CollectionInterface $results) {
+            return $results->map(function ($row) {
+                $row->friend = !empty($row['requested_to'][0])? $row['requested_to'][0] : [];
+                $row->friend = !empty($row['requested_by'][0]) && empty($row->friend)? $row['requested_by'][0] : $row->friend;
+                unset($row['requested_to']);
+                unset($row['requested_by']);
+                return $row;
+            });
+        });;
+        $limit = (!empty($this->request->query['limit']) && is_numeric($this->request->query['limit']))?$this->request->query['limit']:5;
+        $friends->order(['Users.username'=>'ASC'])->limit($limit);
+        $page = (!empty($this->request->query['limit']) && is_numeric($this->request->query['page']))?$this->request->query['page']:1;
+        if($page < 0) {
+            $page = $page*-1;
+            $friends->page($page);
+        } else {
+            $friends->page($page);
+        }
+        $data = [];
+        $data['count'] = $friends->count();
+        if($friends->count()) {
+            $data = $friends->toArray();
+        }
+        $response = ['status'=>'success', 'message'=>__('Friend lists.'), 'data'=>$data];
+        $this->set($response);
+    }
 
 }

@@ -165,11 +165,11 @@ function postUser() { return; }
     "message": "Search Lists.",
     "data": {
         "users": {
-            "previous": 6,
+            "count": 6,
             "records": [
                 {
                     "id": 8,
-                    "username": "sbsharma1123",
+                    "name": "sbsharma1123",
                     "email": "sbsharma131@gmail.com",
                     "gender": "male",
                     "phone": null,
@@ -192,14 +192,15 @@ function postUser() { return; }
                     ],
                     "friend": {
                         "id": 1,
-                        "requested_by": 8,
+                        "requested_by": 7,
+                        "requested_to": 8,
                         "requested_status": "Approved",
                         "friend_status": "Friend"
                     }
                 },
                 {
                     "id": 9,
-                    "username": "sbsharma11243",
+                    "name": "sbsharma11243",
                     "email": "sbsharma1231@gmail.com",
                     "gender": "male",
                     "phone": null,
@@ -218,7 +219,8 @@ function postUser() { return; }
                     ],
                     "friend": {
                         "id": 1,
-                        "requested_to": 9,
+                        "requested_by": 9,
+                        "requested_to": 8,
                         "requested_status": "Approved",
                         "friend_status": "Friend"
                     }
@@ -226,7 +228,7 @@ function postUser() { return; }
             ]
         },
         "spaycs": {
-            "previous": 2,
+            "count": 2,
             "records": [
                 {
                     "distance": "3700.66047272806",
@@ -263,7 +265,7 @@ function postUser() { return; }
             ]
         },
         "hashtags": {
-            "previous": 2,
+            "count": 2,
             "records": [
                 {
                     "id": 1,
@@ -340,13 +342,13 @@ function getView() { return; }
 function postLogin() { return; }
 
 /**
- @api {post} /users/friend-request.json Send Friend Request
+ @api {post} /users/friend-request.json Add Friend
   @apiVersion 0.1.0
   @apiName FriendRequest
   @apiGroup User
   @apiPermission Private User
  
-  @apiDescription Send friend request.
+  @apiDescription Add Friend.
   
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  

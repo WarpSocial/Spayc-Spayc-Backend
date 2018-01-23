@@ -360,13 +360,13 @@ class UsersTable extends Table {
     }
     
     public function searchUsers($userId = null, $request = []) {
-        $users = $this->find('all', ['fields'=>['id', 'username','email','gender','phone','dob','status','website_url','address','bio_data','created','modified']])->where(['Users.status'=>'Active']);
+        $users = $this->find('all', ['fields'=>['Users.id', 'name'=>'Users.username','Users.email','Users.gender','Users.phone','Users.dob','Users.status','Users.website_url','Users.address','Users.bio_data','Users.created','Users.modified']])->where(['Users.status'=>'Active']);
         $users->contain([
             'RequestedBy' => function($q) use($userId) {
-                return $q->select(['RequestedBy.id','RequestedBy.requested_by', 'RequestedBy.requested_status', 'RequestedBy.friend_status'])->orWhere(['RequestedBy.requested_by'=>$userId])->orWhere(['RequestedBy.requested_to'=>$userId]);
+                return $q->select(['RequestedBy.id','RequestedBy.requested_by','RequestedBy.requested_to', 'RequestedBy.requested_status', 'RequestedBy.friend_status'])->Where(['OR'=>['RequestedBy.requested_by'=>$userId, 'RequestedBy.requested_to'=>$userId]]);
             },
             'RequestedTo' => function($q) use($userId) {
-                return $q->select(['RequestedTo.id','RequestedTo.requested_to', 'RequestedTo.requested_status', 'RequestedTo.friend_status'])->orWhere(['RequestedTo.requested_by'=>$userId])->orWhere(['RequestedTo.requested_to'=>$userId]);
+                return $q->select(['RequestedTo.id','RequestedTo.requested_to','RequestedTo.requested_by', 'RequestedTo.requested_status', 'RequestedTo.friend_status'])->Where(['OR'=>['RequestedTo.requested_by'=>$userId], ['RequestedTo.requested_to'=>$userId]]);
             },
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url']);
@@ -393,9 +393,7 @@ class UsersTable extends Table {
         } else {
             $users->page($page);
         }
-        if($page == 1) {
-            $data['previous'] = $users->count();            
-        }
+        $data['count'] = $users->count();
         $data['records'] = [];
         if($users->count()) {
             $data['records'] = $users->toArray();

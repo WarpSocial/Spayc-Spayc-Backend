@@ -17,6 +17,7 @@ Router::plugin(
         $routes->connect('/profile-edit',['controller'=>'Users', 'action'=>'edit']);
         $routes->connect('/doc',['controller'=>'ApiDoc','action'=>'apiList','ext'=>'html']);
         $routes->connect('/verify/:token/:email', ['controller' => 'Users', 'action' => 'verifyAccount','ext'=>'html'], ['pass' => ['token', 'email']]);
+        $routes->connect('/get-friends', ['controller' => 'Users', 'action' => 'getFriends']);
         $routes->fallbacks(DashedRoute::class);
     }
 );

@@ -196,9 +196,7 @@ class SpaycsTable extends Table {
             $spaycs->page($page);
         }
         $newQuery = clone $spaycs;
-        if($page == 1) {
-            $data['previous'] = $newQuery->count();            
-        }
+        $data['count'] = $newQuery->count();
         $data['records'] = [];
         if($spaycs->count()) {
             $data['records'] = $spaycs->toArray();

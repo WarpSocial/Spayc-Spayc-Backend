@@ -110,4 +110,14 @@ class FriendRequestTable extends Table
         $rules->add($rules->existsIn(['requested_to'], 'Users'));
         return $rules;
     }
+    
+    public function getFriendIdsByUserId($userId = null, $status = 'Approved') {
+        $friends = $this->find('all', ['fields'=>['FriendRequest.requested_by', 'FriendRequest.requested_to'], 'conditions'=>['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId], 'requested_status'=>$status]]);
+        $friend = [0];
+        if($friends->count()) {
+            $friendIds = $friends->toArray();
+            $friend = array_unique(array_merge(array_column($friendIds,'requested_by'), array_column($friendIds,'requested_to')));
+        }
+        return $friend;
+    }
 }
