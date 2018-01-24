@@ -26,19 +26,19 @@ class SpaycsController extends AppController {
     public function add() {
         $entity = $this->Spaycs->newEntity();
         if (!$this->request->is('post')) {
-            $this->restException(['status'=>'failed','message'=>'Invalied method.'],405);
+            $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
         }
         $data = $this->request->getData();
         $items = $this->Spaycs->patchEntity($entity, $data);
         
         if($items->errors()) {
-            $this->restException(['status'=>'failed','message'=>'Validation errors','error'=>$this->mapErrors($items->errors())]);
+            $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())]);
         }
         $this->loadComponent('Api.Matrix');
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
         $matrix = $this->Matrix->createRoom($data);
         if(!empty($matrix['error'])) {
-            $this->restException(['status' => "failed", 'message' =>__($matrix['error'])],401);
+            $this->restException(['status' => "failed", 'message' =>__($matrix['error'])], 401);
         }
         $items->set('matrix_room_id',$matrix['room_id']);
         $items->set('matrix_room_alias',$matrix['room_alias']);
@@ -58,6 +58,9 @@ class SpaycsController extends AppController {
      * @return \Cake\Http\Response|void
      */
     public function index() {
+        if(!$this->request->is('get')) {
+            $this->restException(['status'=>'failed','message'=>__('Method not allowed.')], 405);
+        }
         $userId = $this->Auth->user("id");
         $limit = 5;
         if(!is_numeric($this->request->query('page'))) {
@@ -81,7 +84,7 @@ class SpaycsController extends AppController {
         $distance = 25;
         $spaycs = $this->Spaycs->find()
             ->select([
-                'distance' => $distanceField, 'id', 'user_id', 'name', 'start_date', 'end_date', 'image', 'type', 'group_type', 'status', 'latitude', 'longitude', 'created', 'modified'
+                'distance' => $distanceField, 'id', 'user_id', 'name', 'address'=>'location', 'start_date', 'end_date', 'image', 'type', 'group_type', 'status', 'latitude', 'longitude', 'created', 'modified'
             ])
             ->where(["$distanceField <" => $distance])
             ->bind(':latitude', $this->request->query('latitude'), 'float')

@@ -8,7 +8,7 @@
 *   
 * {
 *   "status": failed,
-*   "errors:{Validation errors}"
+*   "message:"Method not allowed."
 * }
 * {
 *    "status": failed,
@@ -235,6 +235,7 @@ function postUser() { return; }
                     "id": 2,
                     "user_id": 7,
                     "name": "spaycdev13",
+                    "address": "Noida sec 16",
                     "start_date": "2019-01-11T01:02:20+00:00",
                     "end_date": "2019-01-12T01:02:20+00:00",
                     "image": "",
@@ -251,6 +252,7 @@ function postUser() { return; }
                     "id": 1,
                     "user_id": 7,
                     "name": "spaycdev9",
+                    "address": "Noida sec 15",
                     "start_date": "2019-01-11T01:02:20+00:00",
                     "end_date": "2019-01-12T01:02:20+00:00",
                     "image": "",
@@ -342,7 +344,7 @@ function getView() { return; }
 function postLogin() { return; }
 
 /**
- @api {post} /users/friend-request.json Add Friend
+ @api {post} /friend-request.json Add Friend
   @apiVersion 0.1.0
   @apiName FriendRequest
   @apiGroup User
@@ -376,3 +378,93 @@ function postLogin() { return; }
   @apiUse UserErrorResponse
 */
 function postFriendRequest() { return; }
+
+/**
+ @api {get} /get-friends.json?page=:page&limit=:page&friend_status=:status Get Friends
+  @apiVersion 0.1.0
+  @apiName GetFriends
+  @apiGroup User
+  @apiPermission Private User
+ 
+  @apiDescription Get Friends.
+  
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+* @apiParam  {Number}   page            Page number in query string (Optional).
+* @apiParam  {Number}   limit           Records limit in query string (Optional).
+* @apiParam  {String}   friend_status   Status in query string must be any one from the following(Requested, Accepted, 'Declined').
+ 
+ 
+  @apiSuccess {String} status success.
+  @apiSuccess {String} message Friend request send successfully..
+  @apiSuccess {Object} data Null.
+  @apiSuccessExample {json} Success-Response: 
+       HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Friend lists.",
+    "data": [
+        {
+            "id": 8,
+            "name": "sbsharma1123",
+            "user_images": [
+                {
+                    "user_id": 8,
+                    "image_url": "image1.png"
+                },
+                {
+                    "user_id": 8,
+                    "image_url": "image2.jpg"
+                }
+            ],
+            "friend": {
+                "id": 3,
+                "requested_by": 7,
+                "requested_to": 8,
+                "requested_status": "Accepted",
+                "friend_status": null
+            }
+        }
+    ]
+}
+ 
+
+  @apiUse UserErrorResponse
+*/
+function getFriends() { return; }
+
+/**
+ @api {put} /friend-response.json Set Friend Status
+  @apiVersion 0.1.0
+  @apiName setFriendStatus
+  @apiGroup User
+  @apiPermission Private User
+ 
+  @apiDescription Set Friend Status.
+  
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+* @apiParam  {Number}   id       Friend id required field in body.
+* @apiParam  {String}   status   Status is required field and status must be in(Accepted,Declined,Blocked,Unfriend).
+   @apiExample Example usage:
+ 
+    {
+        "id":"1",
+        "status":"Accepted"
+    }
+ 
+  @apiSuccess {String} status success.
+  @apiSuccess {String} message Friend status updated successfully.
+  @apiSuccess {Object} data Null.
+  @apiSuccessExample {json} Success-Response: 
+       HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Friend status updated successfully.",
+    "data": []
+}
+ 
+  @apiError {String} Status is required fields and status must be in(Accepted,Declined,Blocked,Unfriend)..
+  @apiUse UserErrorResponse
+*/
+function setFriendStatus() { return; }

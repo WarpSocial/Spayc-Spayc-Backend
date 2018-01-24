@@ -69,7 +69,7 @@
 *   
 *  {
 "status": false,
-"errors": "fb_id:Facebook id is required field."
+"message": "Method not allowed."
 }
 {
 "status": false,

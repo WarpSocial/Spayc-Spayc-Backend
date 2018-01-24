@@ -8,7 +8,7 @@
    
  {
    "status": failed,
-   "errors:{Validation errors}"
+   "message:"Method not allowed."
  }
  {
     "status": failed,
@@ -126,6 +126,7 @@ function postSpaycs() { return; }
                 "id": 1,
                 "user_id": 51,
                 "name": "Test",
+                "address": "Noida sec 16",
                 "start_date": "2018-01-10T06:00:00+00:00",
                 "end_date": "2018-01-10T06:00:00+00:00",
                 "image": "img.png",
@@ -150,6 +151,7 @@ function postSpaycs() { return; }
                 "id": 2,
                 "user_id": 51,
                 "name": "Test1",
+                "address": "Noida sec 15",
                 "start_date": "2018-01-10T01:00:00+00:00",
                 "end_date": "2018-01-11T11:00:00+00:00",
                 "image": "img.png",
@@ -169,6 +171,7 @@ function postSpaycs() { return; }
                 "id": 3,
                 "user_id": 51,
                 "name": "Test12",
+                "address": "Noida sec 18",
                 "start_date": "2018-01-10T01:00:00+00:00",
                 "end_date": "2018-01-11T11:00:00+00:00",
                 "image": "img.png",
@@ -199,6 +202,7 @@ function postSpaycs() { return; }
                 "id": 4,
                 "user_id": 51,
                 "name": "Test123",
+                "address": "Noida sec 16",
                 "start_date": "2018-01-10T01:00:00+00:00",
                 "end_date": "2018-01-11T11:00:00+00:00",
                 "image": "img.png",

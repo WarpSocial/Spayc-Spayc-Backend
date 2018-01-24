@@ -43,7 +43,7 @@ class AppController extends BaseController {
     public function mapErrors($errors) {
         foreach ($errors as $ekey => $row) {
             foreach ($row as $ikey => $ival) {
-                return $ekey.":".$ival;
+                return $ival;
             }
         }
     }
@@ -51,7 +51,7 @@ class AppController extends BaseController {
      * restException to deal the custom exception (To avoid much more nesting)
      * $data
      */
-    public function restException($data=[],$code=200){        
+    public function restException($data=[], $code=200){        
         Log::info($data);
         $this->response->type('json');
         $this->response->statusCode($code);

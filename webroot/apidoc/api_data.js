@@ -187,7 +187,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Sample Error-Response:",
-          "content": "  \n{\n  \"status\": failed,\n  \"errors:{Validation errors}\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
           "type": "json"
         }
       ]
@@ -310,7 +310,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Spayc lists.\",\n    \"data\": {\n        \"count\": 4,\n        \"spaycs\": [\n            {\n                \"distance\": \"22.7463734587819\",\n                \"id\": 1,\n                \"user_id\": 51,\n                \"name\": \"Test\",\n                \"start_date\": \"2018-01-10T06:00:00+00:00\",\n                \"end_date\": \"2018-01-10T06:00:00+00:00\",\n                \"image\": \"img.png\",\n                \"type\": \"Event\",\n                \"group_type\": \"Public\",\n                \"status\": \"Active\",\n                \"latitude\": 28.535516,\n                \"longitude\": 77.391026,\n                \"created\": \"2018-01-10T00:00:00+00:00\",\n                \"modified\": \"2018-01-10T00:00:00+00:00\",\n                \"comments\": [\n                    {\n                        \"spayc_id\": 1,\n                        \"total_comment\": 1\n                    }\n                ],\n                \"subscribed_users\": [],\n                \"joined_spayc\": []\n            },\n            {\n                \"distance\": \"22.7463734587819\",\n                \"id\": 2,\n                \"user_id\": 51,\n                \"name\": \"Test1\",\n                \"start_date\": \"2018-01-10T01:00:00+00:00\",\n                \"end_date\": \"2018-01-11T11:00:00+00:00\",\n                \"image\": \"img.png\",\n                \"type\": \"Event\",\n                \"group_type\": \"Public\",\n                \"status\": \"Active\",\n                \"latitude\": 28.535516,\n                \"longitude\": 77.391026,\n                \"created\": \"2018-01-10T00:00:00+00:00\",\n                \"modified\": \"2018-01-10T00:00:00+00:00\",\n                \"comments\": [],\n                \"subscribed_users\": [],\n                \"joined_spayc\": []\n            },\n            {\n                \"distance\": \"22.7463734587819\",\n                \"id\": 3,\n                \"user_id\": 51,\n                \"name\": \"Test12\",\n                \"start_date\": \"2018-01-10T01:00:00+00:00\",\n                \"end_date\": \"2018-01-11T11:00:00+00:00\",\n                \"image\": \"img.png\",\n                \"type\": \"Event\",\n                \"group_type\": \"Private\",\n                \"status\": \"Active\",\n                \"latitude\": 28.535516,\n                \"longitude\": 77.391026,\n                \"created\": \"2018-01-10T00:00:00+00:00\",\n                \"modified\": \"2018-01-10T00:00:00+00:00\",\n                \"comments\": [],\n                \"subscribed_users\": [\n                    {\n                        \"spayc_id\": 3,\n                        \"subscribed_users\": 1\n                    }\n                ],\n                \"joined_spayc\": [\n                    {\n                        \"spayc_id\": 3,\n                        \"joined_users\": 3,\n                        \"joined_friends\": 2\n                    }\n                ]\n            },\n            {\n                \"distance\": \"22.7463734587819\",\n                \"id\": 4,\n                \"user_id\": 51,\n                \"name\": \"Test123\",\n                \"start_date\": \"2018-01-10T01:00:00+00:00\",\n                \"end_date\": \"2018-01-11T11:00:00+00:00\",\n                \"image\": \"img.png\",\n                \"type\": \"Community\",\n                \"group_type\": \"Public\",\n                \"status\": \"Active\",\n                \"latitude\": 28.535516,\n                \"longitude\": 77.391026,\n                \"created\": \"2018-01-10T00:00:00+00:00\",\n                \"modified\": \"2018-01-10T00:00:00+00:00\",\n                \"comments\": [],\n                \"subscribed_users\": [],\n                \"joined_spayc\": []\n            }\n        ]\n    }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Spayc lists.\",\n    \"data\": {\n        \"count\": 4,\n        \"spaycs\": [\n            {\n                \"distance\": \"22.7463734587819\",\n                \"id\": 1,\n                \"user_id\": 51,\n                \"name\": \"Test\",\n                \"address\": \"Noida sec 16\",\n                \"start_date\": \"2018-01-10T06:00:00+00:00\",\n                \"end_date\": \"2018-01-10T06:00:00+00:00\",\n                \"image\": \"img.png\",\n                \"type\": \"Event\",\n                \"group_type\": \"Public\",\n                \"status\": \"Active\",\n                \"latitude\": 28.535516,\n                \"longitude\": 77.391026,\n                \"created\": \"2018-01-10T00:00:00+00:00\",\n                \"modified\": \"2018-01-10T00:00:00+00:00\",\n                \"comments\": [\n                    {\n                        \"spayc_id\": 1,\n                        \"total_comment\": 1\n                    }\n                ],\n                \"subscribed_users\": [],\n                \"joined_spayc\": []\n            },\n            {\n                \"distance\": \"22.7463734587819\",\n                \"id\": 2,\n                \"user_id\": 51,\n                \"name\": \"Test1\",\n                \"address\": \"Noida sec 15\",\n                \"start_date\": \"2018-01-10T01:00:00+00:00\",\n                \"end_date\": \"2018-01-11T11:00:00+00:00\",\n                \"image\": \"img.png\",\n                \"type\": \"Event\",\n                \"group_type\": \"Public\",\n                \"status\": \"Active\",\n                \"latitude\": 28.535516,\n                \"longitude\": 77.391026,\n                \"created\": \"2018-01-10T00:00:00+00:00\",\n                \"modified\": \"2018-01-10T00:00:00+00:00\",\n                \"comments\": [],\n                \"subscribed_users\": [],\n                \"joined_spayc\": []\n            },\n            {\n                \"distance\": \"22.7463734587819\",\n                \"id\": 3,\n                \"user_id\": 51,\n                \"name\": \"Test12\",\n                \"address\": \"Noida sec 18\",\n                \"start_date\": \"2018-01-10T01:00:00+00:00\",\n                \"end_date\": \"2018-01-11T11:00:00+00:00\",\n                \"image\": \"img.png\",\n                \"type\": \"Event\",\n                \"group_type\": \"Private\",\n                \"status\": \"Active\",\n                \"latitude\": 28.535516,\n                \"longitude\": 77.391026,\n                \"created\": \"2018-01-10T00:00:00+00:00\",\n                \"modified\": \"2018-01-10T00:00:00+00:00\",\n                \"comments\": [],\n                \"subscribed_users\": [\n                    {\n                        \"spayc_id\": 3,\n                        \"subscribed_users\": 1\n                    }\n                ],\n                \"joined_spayc\": [\n                    {\n                        \"spayc_id\": 3,\n                        \"joined_users\": 3,\n                        \"joined_friends\": 2\n                    }\n                ]\n            },\n            {\n                \"distance\": \"22.7463734587819\",\n                \"id\": 4,\n                \"user_id\": 51,\n                \"name\": \"Test123\",\n                \"address\": \"Noida sec 16\",\n                \"start_date\": \"2018-01-10T01:00:00+00:00\",\n                \"end_date\": \"2018-01-11T11:00:00+00:00\",\n                \"image\": \"img.png\",\n                \"type\": \"Community\",\n                \"group_type\": \"Public\",\n                \"status\": \"Active\",\n                \"latitude\": 28.535516,\n                \"longitude\": 77.391026,\n                \"created\": \"2018-01-10T00:00:00+00:00\",\n                \"modified\": \"2018-01-10T00:00:00+00:00\",\n                \"comments\": [],\n                \"subscribed_users\": [],\n                \"joined_spayc\": []\n            }\n        ]\n    }\n}",
           "type": "json"
         }
       ]
@@ -353,7 +353,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Sample Error-Response:",
-          "content": "  \n{\n  \"status\": failed,\n  \"errors:{Validation errors}\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
           "type": "json"
         }
       ]
@@ -361,7 +361,7 @@ define({ "api": [
   },
   {
     "type": "post",
-    "url": "/users/friend-request.json",
+    "url": "/friend-request.json",
     "title": "Add Friend",
     "version": "0.1.0",
     "name": "FriendRequest",
@@ -477,7 +477,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Sample Error-Response:",
-          "content": "  \n{\n  \"status\": failed,\n  \"errors:{Validation errors}\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
           "type": "json"
         }
       ]
@@ -486,9 +486,140 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/users/friend-request.json"
+        "url": "http://spayc.com/api/friend-request.json"
       }
     ]
+  },
+  {
+    "type": "get",
+    "url": "/get-friends.json?page=:page&limit=:page&friend_status=:status",
+    "title": "Get Friends",
+    "version": "0.1.0",
+    "name": "GetFriends",
+    "group": "User",
+    "permission": [
+      {
+        "name": "Private User"
+      }
+    ],
+    "description": "<p>Get Friends.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "page",
+            "description": "<p>Page number in query string (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>Records limit in query string (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "friend_status",
+            "description": "<p>Status in query string must be any one from the following(Requested, Accepted, 'Declined').</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Friend request send successfully..</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>Null.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Friend lists.\",\n    \"data\": [\n        {\n            \"id\": 8,\n            \"name\": \"sbsharma1123\",\n            \"user_images\": [\n                {\n                    \"user_id\": 8,\n                    \"image_url\": \"image1.png\"\n                },\n                {\n                    \"user_id\": 8,\n                    \"image_url\": \"image2.jpg\"\n                }\n            ],\n            \"friend\": {\n                \"id\": 3,\n                \"requested_by\": 7,\n                \"requested_to\": 8,\n                \"requested_status\": \"Accepted\",\n                \"friend_status\": null\n            }\n        }\n    ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/user.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/get-friends.json?page=:page&limit=:page&friend_status=:status"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
   },
   {
     "type": "post",
@@ -609,7 +740,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Sample Error-Response:",
-          "content": "  \n{\n  \"status\": failed,\n  \"errors:{Validation errors}\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
           "type": "json"
         }
       ]
@@ -783,7 +914,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Sample Error-Response:",
-          "content": "  \n{\n  \"status\": failed,\n  \"errors:{Validation errors}\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
           "type": "json"
         }
       ]
@@ -949,7 +1080,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Sample Error-Response:",
-          "content": "  \n{\n  \"status\": failed,\n  \"errors:{Validation errors}\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
           "type": "json"
         }
       ]
@@ -1109,7 +1240,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Sample Error-Response:",
-          "content": "  \n {\n\"status\": false,\n\"errors\": \"fb_id:Facebook id is required field.\"\n}\n{\n\"status\": false,\n\"message\": \"Resource not found.\"\n}\n{\n\"status\": false,\n\"message\": \"Requested Parameter is not correct\"\n}",
+          "content": "  \n {\n\"status\": false,\n\"message\": \"Method not allowed.\"\n}\n{\n\"status\": false,\n\"message\": \"Resource not found.\"\n}\n{\n\"status\": false,\n\"message\": \"Requested Parameter is not correct\"\n}",
           "type": "json"
         }
       ]
@@ -1225,7 +1356,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Search Lists.\",\n    \"data\": {\n        \"users\": {\n            \"count\": 6,\n            \"records\": [\n                {\n                    \"id\": 8,\n                    \"name\": \"sbsharma1123\",\n                    \"email\": \"sbsharma131@gmail.com\",\n                    \"gender\": \"male\",\n                    \"phone\": null,\n                    \"dob\": \"11-12-2001\",\n                    \"status\": \"Active\",\n                    \"website_url\": null,\n                    \"address\": null,\n                    \"bio_data\": null,\n                    \"created\": \"2018-01-18T05:56:46+00:00\",\n                    \"modified\": \"2018-01-18T05:57:01+00:00\",\n                    \"user_images\": [\n                        {\n                            \"user_id\": 8,\n                            \"image_url\": \"image1.png\"\n                        },\n                        {\n                            \"user_id\": 8,\n                            \"image_url\": \"image2.jpg\"\n                        }\n                    ],\n                    \"friend\": {\n                        \"id\": 1,\n                        \"requested_by\": 7,\n                        \"requested_to\": 8,\n                        \"requested_status\": \"Approved\",\n                        \"friend_status\": \"Friend\"\n                    }\n                },\n                {\n                    \"id\": 9,\n                    \"name\": \"sbsharma11243\",\n                    \"email\": \"sbsharma1231@gmail.com\",\n                    \"gender\": \"male\",\n                    \"phone\": null,\n                    \"dob\": \"11-12-2001\",\n                    \"status\": \"Active\",\n                    \"website_url\": null,\n                    \"address\": null,\n                    \"bio_data\": null,\n                    \"created\": \"2018-01-18T05:59:37+00:00\",\n                    \"modified\": \"2018-01-18T05:59:37+00:00\",\n                    \"user_images\": [\n                        {\n                            \"user_id\": 9,\n                            \"image_url\": \"image3.png\"\n                        }\n                    ],\n                    \"friend\": {\n                        \"id\": 1,\n                        \"requested_by\": 9,\n                        \"requested_to\": 8,\n                        \"requested_status\": \"Approved\",\n                        \"friend_status\": \"Friend\"\n                    }\n                }\n            ]\n        },\n        \"spaycs\": {\n            \"count\": 2,\n            \"records\": [\n                {\n                    \"distance\": \"3700.66047272806\",\n                    \"id\": 2,\n                    \"user_id\": 7,\n                    \"name\": \"spaycdev13\",\n                    \"start_date\": \"2019-01-11T01:02:20+00:00\",\n                    \"end_date\": \"2019-01-12T01:02:20+00:00\",\n                    \"image\": \"\",\n                    \"type\": \"Event\",\n                    \"group_type\": \"Public\",\n                    \"status\": \"Active\",\n                    \"latitude\": 77.209021,\n                    \"longitude\": 28.613939,\n                    \"created\": \"2018-01-17T15:14:50+00:00\",\n                    \"modified\": \"2018-01-17T15:14:50+00:00\"\n                },\n                {\n                    \"distance\": \"4402.89875657017\",\n                    \"id\": 1,\n                    \"user_id\": 7,\n                    \"name\": \"spaycdev9\",\n                    \"start_date\": \"2019-01-11T01:02:20+00:00\",\n                    \"end_date\": \"2019-01-12T01:02:20+00:00\",\n                    \"image\": \"\",\n                    \"type\": \"Event\",\n                    \"group_type\": \"Public\",\n                    \"status\": \"Active\",\n                    \"latitude\": 20.895996,\n                    \"longitude\": 6.772989,\n                    \"created\": \"2018-01-17T14:37:02+00:00\",\n                    \"modified\": \"2018-01-17T14:37:02+00:00\"\n                }\n            ]\n        },\n        \"hashtags\": {\n            \"count\": 2,\n            \"records\": [\n                {\n                    \"id\": 1,\n                    \"name\": \"hash tag1\",\n                    \"created\": \"2018-01-19T13:58:21+00:00\",\n                    \"modified\": \"2018-01-19T13:58:21+00:00\",\n                    \"total_space\": 2\n                },\n                {\n                    \"id\": 2,\n                    \"name\": \"hash tag2\",\n                    \"created\": \"2018-01-19T13:58:54+00:00\",\n                    \"modified\": \"2018-01-19T13:58:54+00:00\",\n                    \"total_space\": 0\n                }\n            ]\n        }\n    }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Search Lists.\",\n    \"data\": {\n        \"users\": {\n            \"count\": 6,\n            \"records\": [\n                {\n                    \"id\": 8,\n                    \"name\": \"sbsharma1123\",\n                    \"email\": \"sbsharma131@gmail.com\",\n                    \"gender\": \"male\",\n                    \"phone\": null,\n                    \"dob\": \"11-12-2001\",\n                    \"status\": \"Active\",\n                    \"website_url\": null,\n                    \"address\": null,\n                    \"bio_data\": null,\n                    \"created\": \"2018-01-18T05:56:46+00:00\",\n                    \"modified\": \"2018-01-18T05:57:01+00:00\",\n                    \"user_images\": [\n                        {\n                            \"user_id\": 8,\n                            \"image_url\": \"image1.png\"\n                        },\n                        {\n                            \"user_id\": 8,\n                            \"image_url\": \"image2.jpg\"\n                        }\n                    ],\n                    \"friend\": {\n                        \"id\": 1,\n                        \"requested_by\": 7,\n                        \"requested_to\": 8,\n                        \"requested_status\": \"Approved\",\n                        \"friend_status\": \"Friend\"\n                    }\n                },\n                {\n                    \"id\": 9,\n                    \"name\": \"sbsharma11243\",\n                    \"email\": \"sbsharma1231@gmail.com\",\n                    \"gender\": \"male\",\n                    \"phone\": null,\n                    \"dob\": \"11-12-2001\",\n                    \"status\": \"Active\",\n                    \"website_url\": null,\n                    \"address\": null,\n                    \"bio_data\": null,\n                    \"created\": \"2018-01-18T05:59:37+00:00\",\n                    \"modified\": \"2018-01-18T05:59:37+00:00\",\n                    \"user_images\": [\n                        {\n                            \"user_id\": 9,\n                            \"image_url\": \"image3.png\"\n                        }\n                    ],\n                    \"friend\": {\n                        \"id\": 1,\n                        \"requested_by\": 9,\n                        \"requested_to\": 8,\n                        \"requested_status\": \"Approved\",\n                        \"friend_status\": \"Friend\"\n                    }\n                }\n            ]\n        },\n        \"spaycs\": {\n            \"count\": 2,\n            \"records\": [\n                {\n                    \"distance\": \"3700.66047272806\",\n                    \"id\": 2,\n                    \"user_id\": 7,\n                    \"name\": \"spaycdev13\",\n                    \"address\": \"Noida sec 16\",\n                    \"start_date\": \"2019-01-11T01:02:20+00:00\",\n                    \"end_date\": \"2019-01-12T01:02:20+00:00\",\n                    \"image\": \"\",\n                    \"type\": \"Event\",\n                    \"group_type\": \"Public\",\n                    \"status\": \"Active\",\n                    \"latitude\": 77.209021,\n                    \"longitude\": 28.613939,\n                    \"created\": \"2018-01-17T15:14:50+00:00\",\n                    \"modified\": \"2018-01-17T15:14:50+00:00\"\n                },\n                {\n                    \"distance\": \"4402.89875657017\",\n                    \"id\": 1,\n                    \"user_id\": 7,\n                    \"name\": \"spaycdev9\",\n                    \"address\": \"Noida sec 15\",\n                    \"start_date\": \"2019-01-11T01:02:20+00:00\",\n                    \"end_date\": \"2019-01-12T01:02:20+00:00\",\n                    \"image\": \"\",\n                    \"type\": \"Event\",\n                    \"group_type\": \"Public\",\n                    \"status\": \"Active\",\n                    \"latitude\": 20.895996,\n                    \"longitude\": 6.772989,\n                    \"created\": \"2018-01-17T14:37:02+00:00\",\n                    \"modified\": \"2018-01-17T14:37:02+00:00\"\n                }\n            ]\n        },\n        \"hashtags\": {\n            \"count\": 2,\n            \"records\": [\n                {\n                    \"id\": 1,\n                    \"name\": \"hash tag1\",\n                    \"created\": \"2018-01-19T13:58:21+00:00\",\n                    \"modified\": \"2018-01-19T13:58:21+00:00\",\n                    \"total_space\": 2\n                },\n                {\n                    \"id\": 2,\n                    \"name\": \"hash tag2\",\n                    \"created\": \"2018-01-19T13:58:54+00:00\",\n                    \"modified\": \"2018-01-19T13:58:54+00:00\",\n                    \"total_space\": 0\n                }\n            ]\n        }\n    }\n}",
           "type": "json"
         }
       ]
@@ -1268,10 +1399,148 @@ define({ "api": [
       "examples": [
         {
           "title": "Sample Error-Response:",
-          "content": "  \n{\n  \"status\": failed,\n  \"errors:{Validation errors}\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
           "type": "json"
         }
       ]
     }
+  },
+  {
+    "type": "put",
+    "url": "/friend-response.json",
+    "title": "Set Friend Status",
+    "version": "0.1.0",
+    "name": "setFriendStatus",
+    "group": "User",
+    "permission": [
+      {
+        "name": "Private User"
+      }
+    ],
+    "description": "<p>Set Friend Status.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Friend id required field in body.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>Status is required field and status must be in(Accepted,Declined,Blocked,Unfriend).</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "\n{\n    \"id\":\"1\",\n    \"status\":\"Accepted\"\n}",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Friend status updated successfully.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>Null.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Friend status updated successfully.\",\n    \"data\": []\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "String",
+            "optional": false,
+            "field": "Status",
+            "description": "<p>is required fields and status must be in(Accepted,Declined,Blocked,Unfriend)..</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/user.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/friend-response.json"
+      }
+    ]
   }
 ] });

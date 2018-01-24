@@ -78,12 +78,12 @@ class HashtagsTable extends Table
                 return $row;
             });
         });
-        $limit = is_numeric($request['limit'])?$request['limit']:5;
+        $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
         $hashTag->order(['Hashtags.name'=>'ASC'])->limit($limit);
         if(!empty($request['keyword'])) {
             $hashTag->where(['Hashtags.name LIKE'=>"%".$request['keyword']."%"]);
         }
-        $page = is_numeric($request['page'])?$request['page']:1;
+        $page = (!empty($request['page']) && is_numeric($request['page']))?$request['page']:1;
         if($page < 0) {
             $page = $page*-1;
             $hashTag->page($page);

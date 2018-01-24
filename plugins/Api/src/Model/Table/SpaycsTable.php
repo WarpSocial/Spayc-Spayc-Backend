@@ -162,7 +162,7 @@ class SpaycsTable extends Table {
         $validator
                 ->requirePresence('latitude', 'create',__('Latitude key is missing.'))
                 ->notEmpty('latitude',__('Please enter latitude.'))
-                ->latitude('latitude',__('Location must be alpha numeric only.'));        
+                ->latitude('latitude',__('Please enter valid latitude.'));  
         
         return $validator;
     }
@@ -178,17 +178,17 @@ class SpaycsTable extends Table {
         $distance = 0;
         $spaycs = $this->find()
             ->select([
-                'distance' => $distanceField, 'id', 'user_id', 'name', 'start_date', 'end_date', 'image', 'type', 'group_type', 'status', 'latitude', 'longitude', 'created', 'modified'
+                'distance' => $distanceField, 'id', 'user_id', 'name', 'address'=>'location', 'start_date', 'end_date', 'image', 'type', 'group_type', 'status', 'latitude', 'longitude', 'created', 'modified'
             ])
             ->where(["$distanceField >" => $distance, 'status'=>'Active'])
             ->bind(':latitude', $request['latitude'], 'float')
             ->bind(':longitude', $request['longitude'], 'float');
-        $limit = is_numeric($request['limit'])?$request['limit']:5;
+        $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
         $spaycs->order(['distance'=>'ASC'])->limit($limit);
         if(!empty($request['keyword'])) {
             $spaycs->where(["Spaycs.name LIKE"=>"%".$request['keyword']."%"]);
         }
-        $page = !empty($request['page'])?$request['page']:1;
+        $page = (!empty($request['page']) && is_numeric($request['page']))?$request['page']:1;
         if($page < 0){
             $page = $page*-1;
             $spaycs->page($page);

@@ -18,6 +18,8 @@ Router::plugin(
         $routes->connect('/doc',['controller'=>'ApiDoc','action'=>'apiList','ext'=>'html']);
         $routes->connect('/verify/:token/:email', ['controller' => 'Users', 'action' => 'verifyAccount','ext'=>'html'], ['pass' => ['token', 'email']]);
         $routes->connect('/get-friends', ['controller' => 'Users', 'action' => 'getFriends']);
+        $routes->connect('/friend-request', ['controller' => 'Users', 'action' => 'friendRequest']);
+        $routes->connect('/friend-response', ['controller' => 'Users', 'action' => 'setFriendResponse']);
         $routes->fallbacks(DashedRoute::class);
     }
 );

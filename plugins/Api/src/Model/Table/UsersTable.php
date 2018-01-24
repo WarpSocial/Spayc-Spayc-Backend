@@ -96,7 +96,7 @@ class UsersTable extends Table {
                 ->requirePresence('username', 'create',__('Username is required field.'))
                 ->notEmpty('username',__('Please enter a user name'))                
                 ->maxLength('username', 30,__('User name cannot exceed to 30 characters.'))
-                ->add('username', 'unique', ['rule' => 'validateUnique','message'=>__('User name already exist.'), 'provider' => 'table'])
+                ->add('username', 'unique', ['rule' => 'validateUnique','message'=>__('Username already exist.'), 'provider' => 'table'])
                  ->add("username",'custom',[
                     'rule'=>function($value,$context){
                         return (bool)(preg_match('/^[\w\s\.-@#]+$/', $value));
@@ -168,7 +168,7 @@ class UsersTable extends Table {
         $validator
                 ->requirePresence('latitude', 'create',__('Latitude key is missing.'))
                 ->notEmpty('latitude',__('Please enter latitude.'))
-                ->latitude('latitude',__('Location must be alpha numeric only.'));
+                ->latitude('latitude',__('Please enter valid latitude.'));
         return $validator;
     }
     
@@ -245,7 +245,7 @@ class UsersTable extends Table {
         $validator
                 ->requirePresence('latitude', true, __('Latitude key is missing.'))
                 ->notEmpty('latitude',__('Please enter latitude.'))
-                ->latitude('latitude',__('Location must be alpha numeric only.'));
+                ->latitude('latitude',__('Please enter valid latitude.'));
         return $validator;
     }
     
@@ -308,7 +308,7 @@ class UsersTable extends Table {
         $validator
                 ->requirePresence('latitude', 'create',__('Latitude key is missing.'))
                 ->allowEmpty('latitude')
-                ->latitude('latitude',__('Location must be alpha numeric only.'));
+                ->latitude('latitude',__('Please enter valid latitude.'));
         
         return $validator;
     }
@@ -366,7 +366,7 @@ class UsersTable extends Table {
                 return $q->select(['RequestedBy.id','RequestedBy.requested_by','RequestedBy.requested_to', 'RequestedBy.requested_status', 'RequestedBy.friend_status'])->Where(['OR'=>['RequestedBy.requested_by'=>$userId, 'RequestedBy.requested_to'=>$userId]]);
             },
             'RequestedTo' => function($q) use($userId) {
-                return $q->select(['RequestedTo.id','RequestedTo.requested_to','RequestedTo.requested_by', 'RequestedTo.requested_status', 'RequestedTo.friend_status'])->Where(['OR'=>['RequestedTo.requested_by'=>$userId], ['RequestedTo.requested_to'=>$userId]]);
+                return $q->select(['RequestedTo.id', 'RequestedTo.requested_by', 'RequestedTo.requested_to', 'RequestedTo.requested_status', 'RequestedTo.friend_status'])->Where(['OR'=>['RequestedTo.requested_by'=>$userId, 'RequestedTo.requested_to'=>$userId]]);
             },
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url']);
@@ -381,12 +381,12 @@ class UsersTable extends Table {
                 return $row;
             });
         });
-        $limit = is_numeric($request['limit'])?$request['limit']:5;
+        $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
         $users->order(['Users.username'=>'ASC'])->limit($limit);
         if(!empty($request['keyword'])) {
             $users->where(['Users.username LIKE'=>"%".$request['keyword']."%"]);
         }
-        $page = is_numeric($request['page'])?$request['page']:1;
+        $page = (!empty($request['page']) && is_numeric($request['page']))?$request['page']:1;
         if($page < 0) {
             $page = $page*-1;
             $users->page($page);
