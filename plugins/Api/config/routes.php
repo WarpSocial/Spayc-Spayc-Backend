@@ -20,6 +20,7 @@ Router::plugin(
         $routes->connect('/get-friends', ['controller' => 'Users', 'action' => 'getFriends']);
         $routes->connect('/friend-request', ['controller' => 'Users', 'action' => 'friendRequest']);
         $routes->connect('/friend-response', ['controller' => 'Users', 'action' => 'setFriendResponse']);
+        $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
         $routes->fallbacks(DashedRoute::class);
     }
 );

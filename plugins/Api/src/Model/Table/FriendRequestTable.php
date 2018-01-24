@@ -120,4 +120,9 @@ class FriendRequestTable extends Table
         }
         return $friend;
     }
+    
+    public function getFriendCountByUserId($userId = null) {
+        $friends = $this->find('all', ['fields'=>['FriendRequest.id'], 'conditions'=>['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
+        return $friends->count();
+    }
 }

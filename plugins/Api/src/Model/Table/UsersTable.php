@@ -83,6 +83,10 @@ class UsersTable extends Table {
             'foreignKey' => 'user_id',
             'className' => 'Api.Users'
         ]);
+        $this->hasMany('Spaycs', [
+            'foreignKey' => 'user_id',
+            'className' => 'Api.Spaycs'
+        ]);
     }
 
     /**
@@ -300,7 +304,7 @@ class UsersTable extends Table {
         $validator
             ->requirePresence('gender', 'create',__('Gender is required field.'))    
             ->notEmpty('gender',__('Gender is required field.'))
-            ->inList('gender', Configure::read('gender'),__('Gender must be any one '.implode(',',Configure::read('gender')).'.'));      
+            ->inList('gender', Configure::read('gender'),__('Gender must be any one '.implode(',',Configure::read('gender')).'.'));
         $validator
                 ->requirePresence('longitude', 'create',__('Longitude key is missing.'))
                 ->allowEmpty('longitude')
@@ -363,19 +367,26 @@ class UsersTable extends Table {
         $users = $this->find('all', ['fields'=>['Users.id', 'name'=>'Users.username','Users.email','Users.gender','Users.phone','Users.dob','Users.status','Users.website_url','Users.address','Users.bio_data','Users.created','Users.modified']])->where(['Users.status'=>'Active']);
         $users->contain([
             'RequestedBy' => function($q) use($userId) {
-                return $q->select(['RequestedBy.id','RequestedBy.requested_by','RequestedBy.requested_to', 'RequestedBy.requested_status', 'RequestedBy.friend_status'])->Where(['OR'=>['RequestedBy.requested_by'=>$userId, 'RequestedBy.requested_to'=>$userId]]);
+                return $q->select(['RequestedBy.id', 'RequestedBy.requested_by', 'RequestedBy.requested_to', 'RequestedBy.requested_status', 'RequestedBy.friend_status'])->Where(['OR'=>['RequestedBy.requested_by'=>$userId, 'RequestedBy.requested_to'=>$userId]]);
             },
             'RequestedTo' => function($q) use($userId) {
                 return $q->select(['RequestedTo.id', 'RequestedTo.requested_by', 'RequestedTo.requested_to', 'RequestedTo.requested_status', 'RequestedTo.friend_status'])->Where(['OR'=>['RequestedTo.requested_by'=>$userId, 'RequestedTo.requested_to'=>$userId]]);
             },
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url']);
+            },
+            'JoinedSpayc'=>function($q) {
+                return $q->select(['JoinedSpayc.user_id', 'joined_spaycs'=>$q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.user_id']);
+            },
+            'Spaycs'=>function($q) {
+                return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id']);
             }
         ]);
         $users->formatResults(function (\Cake\Collection\CollectionInterface $results) {
             return $results->map(function ($row) {
-                $row->friend = !empty($row['requested_to'][0])? $row['requested_to'][0] : [];
-                $row->friend = !empty($row['requested_by'][0]) && empty($row->friend)? $row['requested_by'][0] : $row->friend;
+                $row['friend'] = !empty($row['requested_to'][0])? $row['requested_to'][0] : [];
+                $row['friend'] = !empty($row['requested_by'][0]) && empty($row['friend'])?$row['requested_by'][0]:$row['friend'];
+                $row['friend']['total_friends'] = TableRegistry::get('Api.FriendRequest')->getFriendCountByUserId($row->id);
                 unset($row['requested_to']);
                 unset($row['requested_by']);
                 return $row;

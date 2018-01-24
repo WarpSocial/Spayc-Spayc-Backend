@@ -8,6 +8,7 @@ use Cake\Utility\Security;
 use \Cake\ORM\TableRegistry;
 use Api\Utils\Utils;
 use Cake\Log\Log;
+use Cake\Core\Configure;
 /**
  * Users Controller
  *
@@ -162,6 +163,7 @@ class UsersController extends AppController {
         }
         $this->loadComponent('Api.Matrix');
         $data = $this->request->getData(); 
+        $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';
         $items = $this->Users->patchEntity($entity, $data);
         if($items->errors()) {
             $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())],401);
@@ -242,6 +244,7 @@ class UsersController extends AppController {
         }
         $this->loadComponent('Api.Matrix');
         $data = $this->request->getData();
+        $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';
         $data['status'] = 'Active';
         if(empty($data['email']) or empty($data['fb_id'])) {
             $this->restException(['status' => "failed", 'message' => __('Email and fb_id are required field.')],401);
@@ -347,6 +350,7 @@ class UsersController extends AppController {
         }
         $id = $this->Auth->user('id');
         $data = $this->request->getData();
+        $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';
         $entity = $this->Users->get($id);
         $items = $this->Users->patchEntity($entity, $data, ['validate' =>'UpdateUser']);
         if($items->errors()){
@@ -423,7 +427,7 @@ class UsersController extends AppController {
         if (!$this->request->is(['get'])) {
             $this->restException(['status'=>'failed','message'=>__('Method not allowed.')], 405);
         }
-        $friendStatus = !empty($this->request->query['friend_status'])?$this->request->query['friend_status']:'Approved';
+        $friendStatus = !empty($this->request->query['friend_status'])?$this->request->query['friend_status']:'Accepted';
         $userId = $this->Auth->user('id');
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($this->Auth->user('id'), $friendStatus);
         $friends = $this->Users->find("all", ['fields'=>['Users.id', 'name'=>'Users.username'], 'conditions'=>['Users.id IN'=>$friend, 'Users.id !='=>$this->Auth->user('id'), 'Users.status'=>'Active']]);
@@ -473,18 +477,19 @@ class UsersController extends AppController {
         if(empty($data['id'])) {
             $this->restException(['status'=>'failed','message'=>__('id is required fields.')], 401);
         }
-        if(empty($data['status']) || !in_array(ucfirst($data['status']), ['Accepted', 'Declined', 'Blocked', 'Unfriend'])) {
-            $this->restException(['status'=>'failed', 'message'=>__('Status is required fields and status must be in(Accepted,Declined,Blocked,Unfriend).')], 405);
+        $friendStatus = array_merge(Configure::read('friend_requested_status'), Configure::read('friend_status'));
+        if(empty($data['status']) || !in_array(ucfirst($data['status']), $friendStatus)) {
+            $this->restException(['status'=>'failed', 'message'=>__('Status is required fields and status must be in('.  implode(',', $friendStatus).').')], 405);
         }
         $status = ucfirst($data['status']);
-        if(in_array($status, ['Accepted', 'Declined'])) {
+        if(in_array($status, Configure::read('friend_requested_status'))) {
             $friend['requested_status'] = $status;
-        } else if(in_array($status, ['Blocked', 'Unfriend'])) {
+        } else if(in_array($status, Configure::read('friend_status'))) {
             $friend['friend_status'] = $status;
         }
         $friendRequest = TableRegistry::get('Api.FriendRequest');
         $friendRequest->updateAll($friend, ['id'=>$data['id']]);
-        $response = ['status'=>'success', 'message'=>__('Friend status updated successfully.'), 'data'=>[]];
+        $response = ['status'=>'success', 'message'=>__('Friend status updated successfully.')];
         $this->set($response);
     }
 

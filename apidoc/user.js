@@ -168,61 +168,63 @@ function postUser() { return; }
             "count": 6,
             "records": [
                 {
-                    "id": 8,
-                    "name": "sbsharma1123",
-                    "email": "sbsharma131@gmail.com",
+                    "id": 7,
+                    "name": "dhiru",
+                    "email": "shubhash453s3@gmail.com",
                     "gender": "male",
-                    "phone": null,
-                    "dob": "11-12-2001",
+                    "phone": "7876565434",
+                    "dob": "12-11-2000",
                     "status": "Active",
-                    "website_url": null,
-                    "address": null,
-                    "bio_data": null,
-                    "created": "2018-01-18T05:56:46+00:00",
-                    "modified": "2018-01-18T05:57:01+00:00",
-                    "user_images": [
+                    "website_url": "www.spayc.com",
+                    "address": "b-3 noida",
+                    "bio_data": "your122 bio data",
+                    "created": "2018-01-17T14:09:52+00:00",
+                    "modified": "2018-01-18T07:43:46+00:00",
+                    "spaycs": [
                         {
-                            "user_id": 8,
-                            "image_url": "image1.png"
-                        },
-                        {
-                            "user_id": 8,
-                            "image_url": "image2.jpg"
+                            "user_id": 7,
+                            "created_spaycs": 2
                         }
                     ],
+                    "joined_spayc": [
+                        {
+                            "user_id": 7,
+                            "joined_spaycs": 2
+                        }
+                    ],
+                    "user_images": [],
                     "friend": {
-                        "id": 1,
+                        "id": 13,
                         "requested_by": 7,
-                        "requested_to": 8,
-                        "requested_status": "Approved",
-                        "friend_status": "Friend"
+                        "requested_to": 10,
+                        "requested_status": "Declined",
+                        "friend_status": "Unfriend",
+                        "total_friends": 8
                     }
                 },
                 {
-                    "id": 9,
-                    "name": "sbsharma11243",
-                    "email": "sbsharma1231@gmail.com",
-                    "gender": "male",
+                    "id": 5,
+                    "name": "sbsharma112",
+                    "email": "sbsharma11@gmail.com",
+                    "gender": "male                                              ",
                     "phone": null,
                     "dob": "11-12-2001",
                     "status": "Active",
                     "website_url": null,
-                    "address": null,
-                    "bio_data": null,
-                    "created": "2018-01-18T05:59:37+00:00",
-                    "modified": "2018-01-18T05:59:37+00:00",
-                    "user_images": [
+                    "address": "",
+                    "bio_data": "",
+                    "created": "2018-01-17T12:29:29+00:00",
+                    "modified": "2018-01-18T05:55:37+00:00",
+                    "spaycs": [],
+                    "joined_spayc": [
                         {
-                            "user_id": 9,
-                            "image_url": "image3.png"
+                            "user_id": 5,
+                            "joined_spaycs": 1
                         }
                     ],
+                    "user_images": [],
                     "friend": {
-                        "id": 1,
-                        "requested_by": 9,
-                        "requested_to": 8,
-                        "requested_status": "Approved",
-                        "friend_status": "Friend"
+                        "total_friends": 0
                     }
                 }
             ]
@@ -396,7 +398,7 @@ function postFriendRequest() { return; }
  
  
   @apiSuccess {String} status success.
-  @apiSuccess {String} message Friend request send successfully..
+  @apiSuccess {String} message Friend request send successfully.
   @apiSuccess {Object} data Null.
   @apiSuccessExample {json} Success-Response: 
        HTTP/1.1 200 OK
@@ -460,11 +462,36 @@ function getFriends() { return; }
        HTTP/1.1 200 OK
 {
     "status": "success",
-    "message": "Friend status updated successfully.",
-    "data": []
+    "message": "Friend status updated successfully."
 }
  
   @apiError {String} Status is required fields and status must be in(Accepted,Declined,Blocked,Unfriend)..
   @apiUse UserErrorResponse
 */
 function setFriendStatus() { return; }
+
+/**
+ @api {post} /logout.json Logout
+  @apiVersion 0.1.0
+  @apiName getLogout
+  @apiGroup User
+  @apiPermission Private User
+ 
+  @apiDescription User get logout.
+  
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+ 
+  @apiSuccess {String} status success.
+  @apiSuccess {String} message Logout successfully.
+  @apiSuccess {Object} data Null.
+  @apiSuccessExample {json} Success-Response: 
+       HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Logout successfully."
+}
+
+  @apiUse UserErrorResponse
+*/
+function getLogout() { return; }

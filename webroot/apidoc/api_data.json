@@ -558,7 +558,7 @@
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Friend request send successfully..</p>"
+            "description": "<p>Friend request send successfully.</p>"
           },
           {
             "group": "Success 200",
@@ -1254,6 +1254,110 @@
     ]
   },
   {
+    "type": "post",
+    "url": "/logout.json",
+    "title": "Logout",
+    "version": "0.1.0",
+    "name": "getLogout",
+    "group": "User",
+    "permission": [
+      {
+        "name": "Private User"
+      }
+    ],
+    "description": "<p>User get logout.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Logout successfully.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>Null.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Logout successfully.\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/user.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/logout.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
     "type": "get",
     "url": "/users.json?page=:page&limit=:limit&keyword=:keyword&latitude=:latitude&longitude=:longitude",
     "title": "Search Users, Spaycs, Hashtags",
@@ -1356,7 +1460,7 @@
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Search Lists.\",\n    \"data\": {\n        \"users\": {\n            \"count\": 6,\n            \"records\": [\n                {\n                    \"id\": 8,\n                    \"name\": \"sbsharma1123\",\n                    \"email\": \"sbsharma131@gmail.com\",\n                    \"gender\": \"male\",\n                    \"phone\": null,\n                    \"dob\": \"11-12-2001\",\n                    \"status\": \"Active\",\n                    \"website_url\": null,\n                    \"address\": null,\n                    \"bio_data\": null,\n                    \"created\": \"2018-01-18T05:56:46+00:00\",\n                    \"modified\": \"2018-01-18T05:57:01+00:00\",\n                    \"user_images\": [\n                        {\n                            \"user_id\": 8,\n                            \"image_url\": \"image1.png\"\n                        },\n                        {\n                            \"user_id\": 8,\n                            \"image_url\": \"image2.jpg\"\n                        }\n                    ],\n                    \"friend\": {\n                        \"id\": 1,\n                        \"requested_by\": 7,\n                        \"requested_to\": 8,\n                        \"requested_status\": \"Approved\",\n                        \"friend_status\": \"Friend\"\n                    }\n                },\n                {\n                    \"id\": 9,\n                    \"name\": \"sbsharma11243\",\n                    \"email\": \"sbsharma1231@gmail.com\",\n                    \"gender\": \"male\",\n                    \"phone\": null,\n                    \"dob\": \"11-12-2001\",\n                    \"status\": \"Active\",\n                    \"website_url\": null,\n                    \"address\": null,\n                    \"bio_data\": null,\n                    \"created\": \"2018-01-18T05:59:37+00:00\",\n                    \"modified\": \"2018-01-18T05:59:37+00:00\",\n                    \"user_images\": [\n                        {\n                            \"user_id\": 9,\n                            \"image_url\": \"image3.png\"\n                        }\n                    ],\n                    \"friend\": {\n                        \"id\": 1,\n                        \"requested_by\": 9,\n                        \"requested_to\": 8,\n                        \"requested_status\": \"Approved\",\n                        \"friend_status\": \"Friend\"\n                    }\n                }\n            ]\n        },\n        \"spaycs\": {\n            \"count\": 2,\n            \"records\": [\n                {\n                    \"distance\": \"3700.66047272806\",\n                    \"id\": 2,\n                    \"user_id\": 7,\n                    \"name\": \"spaycdev13\",\n                    \"address\": \"Noida sec 16\",\n                    \"start_date\": \"2019-01-11T01:02:20+00:00\",\n                    \"end_date\": \"2019-01-12T01:02:20+00:00\",\n                    \"image\": \"\",\n                    \"type\": \"Event\",\n                    \"group_type\": \"Public\",\n                    \"status\": \"Active\",\n                    \"latitude\": 77.209021,\n                    \"longitude\": 28.613939,\n                    \"created\": \"2018-01-17T15:14:50+00:00\",\n                    \"modified\": \"2018-01-17T15:14:50+00:00\"\n                },\n                {\n                    \"distance\": \"4402.89875657017\",\n                    \"id\": 1,\n                    \"user_id\": 7,\n                    \"name\": \"spaycdev9\",\n                    \"address\": \"Noida sec 15\",\n                    \"start_date\": \"2019-01-11T01:02:20+00:00\",\n                    \"end_date\": \"2019-01-12T01:02:20+00:00\",\n                    \"image\": \"\",\n                    \"type\": \"Event\",\n                    \"group_type\": \"Public\",\n                    \"status\": \"Active\",\n                    \"latitude\": 20.895996,\n                    \"longitude\": 6.772989,\n                    \"created\": \"2018-01-17T14:37:02+00:00\",\n                    \"modified\": \"2018-01-17T14:37:02+00:00\"\n                }\n            ]\n        },\n        \"hashtags\": {\n            \"count\": 2,\n            \"records\": [\n                {\n                    \"id\": 1,\n                    \"name\": \"hash tag1\",\n                    \"created\": \"2018-01-19T13:58:21+00:00\",\n                    \"modified\": \"2018-01-19T13:58:21+00:00\",\n                    \"total_space\": 2\n                },\n                {\n                    \"id\": 2,\n                    \"name\": \"hash tag2\",\n                    \"created\": \"2018-01-19T13:58:54+00:00\",\n                    \"modified\": \"2018-01-19T13:58:54+00:00\",\n                    \"total_space\": 0\n                }\n            ]\n        }\n    }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Search Lists.\",\n    \"data\": {\n        \"users\": {\n            \"count\": 6,\n            \"records\": [\n                {\n                    \"id\": 7,\n                    \"name\": \"dhiru\",\n                    \"email\": \"shubhash453s3@gmail.com\",\n                    \"gender\": \"male\",\n                    \"phone\": \"7876565434\",\n                    \"dob\": \"12-11-2000\",\n                    \"status\": \"Active\",\n                    \"website_url\": \"www.spayc.com\",\n                    \"address\": \"b-3 noida\",\n                    \"bio_data\": \"your122 bio data\",\n                    \"created\": \"2018-01-17T14:09:52+00:00\",\n                    \"modified\": \"2018-01-18T07:43:46+00:00\",\n                    \"spaycs\": [\n                        {\n                            \"user_id\": 7,\n                            \"created_spaycs\": 2\n                        }\n                    ],\n                    \"joined_spayc\": [\n                        {\n                            \"user_id\": 7,\n                            \"joined_spaycs\": 2\n                        }\n                    ],\n                    \"user_images\": [],\n                    \"friend\": {\n                        \"id\": 13,\n                        \"requested_by\": 7,\n                        \"requested_to\": 10,\n                        \"requested_status\": \"Declined\",\n                        \"friend_status\": \"Unfriend\",\n                        \"total_friends\": 8\n                    }\n                },\n                {\n                    \"id\": 5,\n                    \"name\": \"sbsharma112\",\n                    \"email\": \"sbsharma11@gmail.com\",\n                    \"gender\": \"male                                              \",\n                    \"phone\": null,\n                    \"dob\": \"11-12-2001\",\n                    \"status\": \"Active\",\n                    \"website_url\": null,\n                    \"address\": \"\",\n                    \"bio_data\": \"\",\n                    \"created\": \"2018-01-17T12:29:29+00:00\",\n                    \"modified\": \"2018-01-18T05:55:37+00:00\",\n                    \"spaycs\": [],\n                    \"joined_spayc\": [\n                        {\n                            \"user_id\": 5,\n                            \"joined_spaycs\": 1\n                        }\n                    ],\n                    \"user_images\": [],\n                    \"friend\": {\n                        \"total_friends\": 0\n                    }\n                }\n            ]\n        },\n        \"spaycs\": {\n            \"count\": 2,\n            \"records\": [\n                {\n                    \"distance\": \"3700.66047272806\",\n                    \"id\": 2,\n                    \"user_id\": 7,\n                    \"name\": \"spaycdev13\",\n                    \"address\": \"Noida sec 16\",\n                    \"start_date\": \"2019-01-11T01:02:20+00:00\",\n                    \"end_date\": \"2019-01-12T01:02:20+00:00\",\n                    \"image\": \"\",\n                    \"type\": \"Event\",\n                    \"group_type\": \"Public\",\n                    \"status\": \"Active\",\n                    \"latitude\": 77.209021,\n                    \"longitude\": 28.613939,\n                    \"created\": \"2018-01-17T15:14:50+00:00\",\n                    \"modified\": \"2018-01-17T15:14:50+00:00\"\n                },\n                {\n                    \"distance\": \"4402.89875657017\",\n                    \"id\": 1,\n                    \"user_id\": 7,\n                    \"name\": \"spaycdev9\",\n                    \"address\": \"Noida sec 15\",\n                    \"start_date\": \"2019-01-11T01:02:20+00:00\",\n                    \"end_date\": \"2019-01-12T01:02:20+00:00\",\n                    \"image\": \"\",\n                    \"type\": \"Event\",\n                    \"group_type\": \"Public\",\n                    \"status\": \"Active\",\n                    \"latitude\": 20.895996,\n                    \"longitude\": 6.772989,\n                    \"created\": \"2018-01-17T14:37:02+00:00\",\n                    \"modified\": \"2018-01-17T14:37:02+00:00\"\n                }\n            ]\n        },\n        \"hashtags\": {\n            \"count\": 2,\n            \"records\": [\n                {\n                    \"id\": 1,\n                    \"name\": \"hash tag1\",\n                    \"created\": \"2018-01-19T13:58:21+00:00\",\n                    \"modified\": \"2018-01-19T13:58:21+00:00\",\n                    \"total_space\": 2\n                },\n                {\n                    \"id\": 2,\n                    \"name\": \"hash tag2\",\n                    \"created\": \"2018-01-19T13:58:54+00:00\",\n                    \"modified\": \"2018-01-19T13:58:54+00:00\",\n                    \"total_space\": 0\n                }\n            ]\n        }\n    }\n}",
           "type": "json"
         }
       ]
@@ -1487,7 +1591,7 @@
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Friend status updated successfully.\",\n    \"data\": []\n}",
+          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Friend status updated successfully.\"\n}",
           "type": "json"
         }
       ]
