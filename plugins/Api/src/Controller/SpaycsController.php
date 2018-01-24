@@ -32,13 +32,13 @@ class SpaycsController extends AppController {
         $items = $this->Spaycs->patchEntity($entity, $data);
         
         if($items->errors()) {
-            $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())]);
+            $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
         }
         $this->loadComponent('Api.Matrix');
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
         $matrix = $this->Matrix->createRoom($data);
         if(!empty($matrix['error'])) {
-            $this->restException(['status' => "failed", 'message' =>__($matrix['error'])], 401);
+            $this->restException(['status' => "failed", 'message' =>__($matrix['error'])], 400);
         }
         $items->set('matrix_room_id',$matrix['room_id']);
         $items->set('matrix_room_alias',$matrix['room_alias']);
@@ -46,8 +46,7 @@ class SpaycsController extends AppController {
         if ($this->Spaycs->save($items)) {
             $response = ['status'=>'success','message'=>__('Your spayc, '.ucfirst($data['name']).', has been created.'),'data'=>$items];
         } else {
-            Log::info(['status' => "failed", 'message' =>__('The spayc could not be saved. Please, try again.')]);
-            $response = ['status'=>'failed','message'=>__('The spayc could not be saved. Please, try again.')];
+            $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be saved. Please, try again.')], 400);
         }
         $this->set($response);
     }
@@ -62,17 +61,14 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Method not allowed.')], 405);
         }
         $userId = $this->Auth->user("id");
-        $limit = 5;
-        if(!is_numeric($this->request->query('page'))) {
-            $this->restException(['status'=>'failed', 'message'=>__('Page number is not valid.')], 405);
-        }
+        $limit = (!empty($this->request->query('limit')) and is_numeric($this->request->query('limit')))?$this->request->query('limit'):5;
         if(!Utils::isValidLatitude($this->request->query('latitude'))) {
-            $this->restException(['status'=>'failed', 'message'=>__('Latitude is not valid.')], 405);
+            $this->restException(['status'=>'failed', 'message'=>__('Latitude is not valid.')], 400);
         }
         if(!Utils::isValidLongitude($this->request->query('longitude'))) {
-            $this->restException(['status'=>'failed', 'message'=>__('Longitude is not valid.')], 405);
+            $this->restException(['status'=>'failed', 'message'=>__('Longitude is not valid.')], 400);
         }
-        $page = $this->request->query('page');
+        $page = (!empty($this->request->query('page')) and is_numeric($this->request->query('page')))?$this->request->query('page'):1;
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Approved');
         //To search by kilometers instead of miles, replace 3959 with 6371.
         $distanceField = '(3959 * acos (cos ( radians(:latitude) )

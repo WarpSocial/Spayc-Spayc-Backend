@@ -91,7 +91,7 @@
  */
 function postSpaycs() { return; }
 /**
- * @api {get} /spaycs.json?page=:page&latitude=28.4594965&longitude=77.0266383 Spayc Lists
+ * @api {get} /spaycs.json?page=:page&limit=5&latitude=28.4594965&longitude=77.0266383 Spayc Lists
  * @apiVersion 0.1.0
  * @apiName getSpaycs
  * @apiGroup Spayc
@@ -101,7 +101,8 @@ function postSpaycs() { return; }
  * 
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
-    @apiParam {Number}      page            Page number in query string (Required).
+    @apiParam {Number}      page            Page number in query string (Optional).
+    @apiParam {Number}      limit           Limit in query string (Optional).
     @apiParam {Timestamp}   start_date      Spayc start date in query string(1515542400) (Optional).
     @apiParam {Timestamp}   end_date        Spayc end date in query string(1515715200) (Optional).
     @apiParam {String}      group_type      Group type must be any one from the following (Public|Private) (Optional).

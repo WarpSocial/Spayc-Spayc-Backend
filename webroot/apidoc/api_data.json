@@ -195,7 +195,7 @@
   },
   {
     "type": "get",
-    "url": "/spaycs.json?page=:page&latitude=28.4594965&longitude=77.0266383",
+    "url": "/spaycs.json?page=:page&limit=5&latitude=28.4594965&longitude=77.0266383",
     "title": "Spayc Lists",
     "version": "0.1.0",
     "name": "getSpaycs",
@@ -227,7 +227,14 @@
             "type": "Number",
             "optional": false,
             "field": "page",
-            "description": "<p>Page number in query string (Required).</p>"
+            "description": "<p>Page number in query string (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>Limit in query string (Optional).</p>"
           },
           {
             "group": "Parameter",
@@ -319,7 +326,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/spaycs.json?page=:page&latitude=28.4594965&longitude=77.0266383"
+        "url": "http://spayc.com/api/spaycs.json?page=:page&limit=5&latitude=28.4594965&longitude=77.0266383"
       }
     ],
     "error": {

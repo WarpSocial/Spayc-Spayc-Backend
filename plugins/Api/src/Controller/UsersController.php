@@ -44,7 +44,7 @@ class UsersController extends AppController {
                 $entity = $this->UserImages->newEntity();
                 $items = $this->UserImages->patchEntity($entity, $imgData);
                 if(!empty($items->errors())){
-                     $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 401);
+                     $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
                 }
                 $this->UserImages->save($items);
             }
@@ -52,7 +52,7 @@ class UsersController extends AppController {
             $entity = $this->UserImages->newEntity();
             $items = $this->UserImages->patchEntity($entity, $data);
             if(!empty($items->errors())){
-                 $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 401);
+                 $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
             }
             $this->UserImages->save($items);
         }
@@ -80,7 +80,7 @@ class UsersController extends AppController {
                 ->notEmpty('device_id', __('Device id is required field.'));
         $errors = $validator->errors($data_item);
         if (!empty($errors)) {
-            $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($errors)], 401);
+            $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($errors)], 400);
         }
         $user = $this->Auth->identify();
         if(empty($user)){
@@ -130,10 +130,10 @@ class UsersController extends AppController {
         $type = !empty($this->request->query['type'])?$this->request->query['type']:'';
         if(!empty($type) && ($type=='all' || $type=='spaycs')) {
             if(!Utils::isValidLatitude($this->request->query('latitude'))) {
-                $this->restException(['status'=>'failed', 'message'=>__('Latitude is not valid.')], 405);
+                $this->restException(['status'=>'failed', 'message'=>__('Latitude is not valid.')], 400);
             }
             if(!Utils::isValidLongitude($this->request->query('longitude'))) {
-                $this->restException(['status'=>'failed', 'message'=>__('Longitude is not valid.')], 405);
+                $this->restException(['status'=>'failed', 'message'=>__('Longitude is not valid.')], 400);
             }
         }
         if(!empty($type) && $type=='users') {
@@ -166,11 +166,11 @@ class UsersController extends AppController {
         $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';
         $items = $this->Users->patchEntity($entity, $data);
         if($items->errors()) {
-            $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())],401);
+            $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
         }
         $matrix = $this->Matrix->register($data);
         if(!$matrix) {       
-            $this->restException(['status' => "failed", 'message' => __('Matrix registration failed.')],401);
+            $this->restException(['status' => "failed", 'message' => __('Matrix registration failed.')], 401);
         }            
         $items->set('status', 'Active');        
         $items->set('token_verification', Security::hash($data['email'], 'sha1', true));
@@ -247,7 +247,7 @@ class UsersController extends AppController {
         $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';
         $data['status'] = 'Active';
         if(empty($data['email']) or empty($data['fb_id'])) {
-            $this->restException(['status' => "failed", 'message' => __('Email and fb_id are required field.')],401);
+            $this->restException(['status' => "failed", 'message' => __('Email and fb_id are required field.')], 400);
         }
         /* find user if already registered */
         $alreadyExist = $this->Users->findByEmailOrFbId($data['email'], $data['fb_id']);
@@ -265,14 +265,14 @@ class UsersController extends AppController {
         $items = $this->Users->patchEntity($entity, $data, ['validate' => 'facebookSignup']);
         
         if($items->errors()) {
-            $this->restException(['status' => "failed", 'message' => $this->mapErrors($items->errors())], 401);
+            $this->restException(['status' => "failed", 'message' => $this->mapErrors($items->errors())], 400);
         }
         if(empty($data['id'])) {
             $mdata = $data;
             $mdata['password'] = base64_encode($data['email']);
             $matrix = $this->Matrix->register($mdata);
             if(!$matrix) {
-                $this->restException(['status' => "failed", 'message' => __('Matrix registration failed.')],401);
+                $this->restException(['status' => "failed", 'message' => __('Matrix registration failed.')], 401);
             }
         }
         $saved = $this->Users->save($items);
@@ -280,7 +280,7 @@ class UsersController extends AppController {
         /*---login authentication---*/
         $user = $this->Auth->identify();
         if(!$user) {
-            $this->restException(['status' => "failed", 'message' => __('Sign in credentials ain\'t right, try again buddy.')], 401);
+            $this->restException(['status' => "failed", 'message' => __('Sign in credentials ain\'t right, try again buddy.')],  401);
         }
         $mdata['username'] = $data['username'];
         $mdata['password'] = base64_encode($data['email']);
@@ -346,7 +346,7 @@ class UsersController extends AppController {
      */
     public function edit() {
         if (!$this->request->is(['put'])) {
-            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')],405);
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
         $id = $this->Auth->user('id');
         $data = $this->request->getData();
@@ -354,7 +354,7 @@ class UsersController extends AppController {
         $entity = $this->Users->get($id);
         $items = $this->Users->patchEntity($entity, $data, ['validate' =>'UpdateUser']);
         if($items->errors()){
-            $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 401);
+            $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
         }
         if ($this->Users->save($items)) {
             $response = ['status' => "success", 'message' => __('Updated successfully.'), 'data' => $data];
@@ -402,12 +402,12 @@ class UsersController extends AppController {
         }
         $data = $this->request->getData();
         if(empty($data['friend_id'])) {
-            $this->restException(['status'=>'failed','message'=>__('Friend id is required fields.')], 401);
+            $this->restException(['status'=>'failed','message'=>__('Friend id is required fields.')], 400);
         }
         $frend = TableRegistry::get("FriendRequest");
         $exists = $frend->exists(['requested_to'=>$data['friend_id'], 'requested_by'=>$this->Auth->user('id')]);
         if($exists) {
-            $this->restException(['status'=>'failed','message'=>__('Friend request already sent.')], 401);
+            $this->restException(['status'=>'failed','message'=>__('Friend request already sent.')], 400);
         }
         $friendReq['requested_to'] = $data['friend_id'];
         $friendReq['requested_by'] = $this->Auth->user('id');
@@ -416,7 +416,7 @@ class UsersController extends AppController {
         $entity = $frend->newEntity();
         $items = $frend->patchEntity($entity, $friendReq);
         if($items->errors()) {
-            $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 401);
+            $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
         }
         $frend->save($items);
         $response = ['status'=>'success', 'message'=>__('Friend request send successfully.')];
@@ -475,11 +475,11 @@ class UsersController extends AppController {
         }
         $data = $this->request->getData();
         if(empty($data['id'])) {
-            $this->restException(['status'=>'failed','message'=>__('id is required fields.')], 401);
+            $this->restException(['status'=>'failed','message'=>__('id is required fields.')], 400);
         }
         $friendStatus = array_merge(Configure::read('friend_requested_status'), Configure::read('friend_status'));
         if(empty($data['status']) || !in_array(ucfirst($data['status']), $friendStatus)) {
-            $this->restException(['status'=>'failed', 'message'=>__('Status is required fields and status must be in('.  implode(',', $friendStatus).').')], 405);
+            $this->restException(['status'=>'failed', 'message'=>__('Status is required fields and status must be in('.  implode(',', $friendStatus).').')], 400);
         }
         $status = ucfirst($data['status']);
         if(in_array($status, Configure::read('friend_requested_status'))) {
