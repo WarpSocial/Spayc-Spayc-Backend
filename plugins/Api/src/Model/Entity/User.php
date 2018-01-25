@@ -55,7 +55,8 @@ class User extends Entity {
 
     protected function _setDob($dob) {
         if (!empty($dob)) {            
-            return (new \Cake\I18n\Time($dob))->format("Y-m-d");
+            $dob = \Cake\I18n\Time::createFromFormat('m-d-Y',$dob);
+            return $dob->format("Y-m-d");
         } else {
             return;
         }

@@ -33,7 +33,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "name",
-            "description": "<p>name title of the spayc (Required).</p>"
+            "description": "<p>Name title of the spayc (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "matrix_room_id",
+            "description": "<p>Matrix room id from matrix (Required).</p>"
           },
           {
             "group": "Parameter",
@@ -111,7 +118,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "{\n    \"name\": \"spaycdev\",\n    \"location\": \"spaycdev@spayc.com\",\n    \"type\": \"XXXXXXXXX\",\n    \"group_type\": \"male|female|other\",\n    \"start_date\": \"2019-01-11 01:02:20\",\n    \"end_date\": \"2019-01-12 01:02:20\",\n    \"passcode\": \"s5d4f87sdf4545\",\n    \"description\":\"spayc creating\",\n    \"image\":\"file.png\",\n    \"longitude\":\"XX.00.XX\",\n    \"latitude\":\"XX.00.XX\"\n}",
+        "content": "{\n    \"name\": \"spaycdev\",\n    \"matrix_room_id\":\"!asfLdzLnOdGRkdPZWu:localhost\",\n    \"location\": \"spayc addrss\",\n    \"type\": \"Event|Community\",\n    \"group_type\": \"Public|Private\",\n    \"start_date\": \"2019-01-11 01:02:20\",\n    \"end_date\": \"2019-01-12 01:02:20\",\n    \"passcode\": \"s5d4f87sdf4545\",\n    \"description\":\"spayc creating\",\n    \"image\":\"file.png\",\n    \"longitude\":\"XX.00.XX\",\n    \"latitude\":\"XX.00.XX\"\n}",
         "type": "json"
       }
     ],
@@ -130,21 +137,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Registration done successfully.</p>"
+            "description": "<p>Your spayc, spaycdev, has been created.</p>"
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>List of user details.</p>"
+            "description": "<p>Spayc details.</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "    HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Your spayc, Dsfdsfdsf65esd x, has been created.\",\n    \"data\": {\n        \"name\": \"dsfdsfdsf65esd x\",\n        \"location\": \"oaksd lfjlsdasdklfdjsfdfldas\",\n        \"type\": \"Community\",\n        \"group_type\": \"Public\",\n        \"start_date\": \"2018-01-11T11:16:01+00:00\",\n        \"end_date\": \"2018-01-12T09:23:01+00:00\",\n        \"passcode\": \"\",\n        \"description\": \"asdf dsfsd fdsfasdfadfadf\",\n        \"image\": \"\",\n        \"matrix_room_id\": \"!PFzyEQEwQZuLhKCmMW:127.0.0.1\",\n        \"matrix_room_alias\": \"#dsfdsfdsf65esd-x:127.0.0.1\",\n        \"user_id\": 38,\n        \"created\": \"2018-01-11T09:31:50+00:00\",\n        \"modified\": \"2018-01-11T09:31:50+00:00\",\n        \"longitude\":\"XX.00.XX\",\n        \"latitude\":\"XX.00.XX\",\n        \"id\": 1\n    }\n}",
+          "content": "    HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Your spayc, Dsfdsfdsf65esd x, has been created.\",\n    \"data\": {\n        \"name\": \"dsfdsfdsf65esd x\",\n        \"matrix_room_id\":\"!asfLdzLnOdGRkdPZWu:localhost\",\n        \"location\": \"oaksd lfjlsdasdklfdjsfdfldas\",\n        \"type\": \"Community\",\n        \"group_type\": \"Public\",\n        \"start_date\": \"2018-01-11T11:16:01+00:00\",\n        \"end_date\": \"2018-01-12T09:23:01+00:00\",\n        \"passcode\": \"\",\n        \"description\": \"asdf dsfsd fdsfasdfadfadf\",\n        \"image\": \"\",\n        \"user_id\": 38,\n        \"created\": \"2018-01-11T09:31:50+00:00\",\n        \"modified\": \"2018-01-11T09:31:50+00:00\",\n        \"longitude\":\"XX.00.XX\",\n        \"latitude\":\"XX.00.XX\",\n        \"id\": 1\n    }\n}",
           "type": "json"
         }
       ]

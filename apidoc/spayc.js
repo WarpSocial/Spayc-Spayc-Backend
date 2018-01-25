@@ -31,24 +31,26 @@
 
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
 
-@apiParam {String} name name title of the spayc (Required).
-@apiParam {String} location Location must be alphanumeric with space (Required).
-@apiParam {String} type SPAYC type must be any one from the following Event|Community (Required).
-@apiParam {String} group_type Group type must be any one from the following Public|Private (Required).
-@apiParam {Datetime} start_date Start date with time in format YYYY-MM-DD H:i:s (Required).
-@apiParam {Datetime} end_date End date with time in format YYYY-MM-DD H:i:s (Required).
-@apiParam {String} passcode Passcode is required in case of private group type.
-@apiParam {String} description Description for SPAYC (Optional).
-@apiParam {String} image Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
-@apiParam {String} longitude Langitude from google map (Required).
-@apiParam {String} latitude Latitude from google map (Required).
+@apiParam {String} name             Name title of the spayc (Required).
+@apiParam {String} matrix_room_id   Matrix room id from matrix (Required).
+@apiParam {String} location         Location must be alphanumeric with space (Required).
+@apiParam {String} type             SPAYC type must be any one from the following Event|Community (Required).
+@apiParam {String} group_type       Group type must be any one from the following Public|Private (Required).
+@apiParam {Datetime} start_date     Start date with time in format YYYY-MM-DD H:i:s (Required).
+@apiParam {Datetime} end_date       End date with time in format YYYY-MM-DD H:i:s (Required).
+@apiParam {String} passcode         Passcode is required in case of private group type.
+@apiParam {String} description      Description for SPAYC (Optional).
+@apiParam {String} image            Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
+@apiParam {String} longitude        Langitude from google map (Required).
+@apiParam {String} latitude         Latitude from google map (Required).
 
 @apiExample Example usage:
     {
         "name": "spaycdev",
-        "location": "spaycdev@spayc.com",
-        "type": "XXXXXXXXX",
-        "group_type": "male|female|other",
+        "matrix_room_id":"!asfLdzLnOdGRkdPZWu:localhost",
+        "location": "spayc addrss",
+        "type": "Event|Community",
+        "group_type": "Public|Private",
         "start_date": "2019-01-11 01:02:20",
         "end_date": "2019-01-12 01:02:20",
         "passcode": "s5d4f87sdf4545",
@@ -59,8 +61,8 @@
     }
  
 @apiSuccess {String} status success.
-@apiSuccess {String} message Registration done successfully.
-@apiSuccess {Object} data List of user details.
+@apiSuccess {String} message Your spayc, spaycdev, has been created.
+@apiSuccess {Object} data Spayc details.
 @apiSuccessExample {json} Success-Response: 
     HTTP/1.1 200 OK
 {
@@ -68,6 +70,7 @@
     "message": "Your spayc, Dsfdsfdsf65esd x, has been created.",
     "data": {
         "name": "dsfdsfdsf65esd x",
+        "matrix_room_id":"!asfLdzLnOdGRkdPZWu:localhost",
         "location": "oaksd lfjlsdasdklfdjsfdfldas",
         "type": "Community",
         "group_type": "Public",
@@ -76,8 +79,6 @@
         "passcode": "",
         "description": "asdf dsfsd fdsfasdfadfadf",
         "image": "",
-        "matrix_room_id": "!PFzyEQEwQZuLhKCmMW:127.0.0.1",
-        "matrix_room_alias": "#dsfdsfdsf65esd-x:127.0.0.1",
         "user_id": 38,
         "created": "2018-01-11T09:31:50+00:00",
         "modified": "2018-01-11T09:31:50+00:00",

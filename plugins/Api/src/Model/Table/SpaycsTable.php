@@ -80,6 +80,11 @@ class SpaycsTable extends Table {
                 ->requirePresence('name','create', __('Name key is missing.'))
                 ->maxLength('name', 255,'Name text is too long.')
                 ->notEmpty('name',__('Spayc name is required.'));
+        
+        $validator
+                ->requirePresence('matrix_room_id', 'create', __('Matrix room id key is missing.'))
+                ->maxLength('matrix_room_id', 255, 'Matrix room id text is too long.')
+                ->notEmpty('matrix_room_id', __('Matrix room id is required.'));
                 
 
         $validator
@@ -122,12 +127,13 @@ class SpaycsTable extends Table {
                 })
                 ->add('end_date','daterange',[
                     'rule'=> function($value,$context){
-                        if(!empty($value) && !empty($context['data']['end_date'])){
+                        if(!empty($value) && !empty($context['data']['end_date']) && !empty($context['data']['start_date'])){
                             /* End date must be below of start date */
                             $startDate  = new \Cake\I18n\Time($context['data']['start_date']);
                             $endDate  = new \Cake\I18n\Time($value);
                             return (bool)($startDate < $endDate );
                         }
+                        return true;
                     },
                     'message'=>__('End date must be ahead from start date.')
                 ]);
