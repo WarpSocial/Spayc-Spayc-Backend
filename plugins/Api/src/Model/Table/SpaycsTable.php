@@ -117,7 +117,7 @@ class SpaycsTable extends Table {
                             return (bool)$startDate->isWithinNext('1 year');
                         }
                     },
-                    'message'=>__('Start date can\'t more than 1 year ahead.')
+                    'message'=>__('Start date can\'t be more than 1 year ahead or any past date.')
                 ]);
         $validator                
                 ->requirePresence('end_date', 'create',__('End Date key is missing.'))
