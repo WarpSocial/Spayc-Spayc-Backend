@@ -28,11 +28,7 @@ class SubscribedUser extends Entity
      * @var array
      */
     protected $_accessible = [
-        'spayc_id' => true,
-        'requested_by' => true,
-        'status' => true,
-        'created' => true,
-        'modified' => true,
-        'spayc' => true
+       '*' => true,
+       'id' => false
     ];
 }

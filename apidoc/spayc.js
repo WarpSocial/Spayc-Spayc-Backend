@@ -225,4 +225,95 @@ function postSpaycs() { return; }
  *
  * @apiUse UserErrorResponse
  */
+function getSpaycs() { return; }
+
+/**
+ @api {post} /subscribe-spayc.json Subscribe Spayc
+  @apiVersion 0.1.0
+  @apiName subscribeSpayc
+  @apiGroup Spayc
+  @apiPermission Subscribe Spayc
+ 
+  @apiDescription Subscribe Spayc.
+  
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+  @apiParam {Number} spayc_id Spayc id is required (Required).
+ 
+  @apiExample Example usage:
+ 
+    {
+        "spayc_id":"5"
+    }
+ 
+ 
+  @apiSuccess {String} status success.
+  @apiSuccess {String} message User Subscribed successfully.
+  @apiSuccess {Object} data Null.
+  @apiSuccessExample {json} Success-Response:
+       HTTP/1.1 201 OK
+{
+    "status": "success",
+    "message": "User Subscribed successfully."
+}
+ 
+  @apiError {String} User already subscribed.
+  @apiUse UserErrorResponse
+*/
+function postSubscribeSpayc() { return; }
+
+/**
+ * @api {get} /spayc-details/:spaceId.json Spayc Details
+ * @apiVersion 0.1.0
+ * @apiName spaycDetails
+ * @apiGroup Spayc
+ * @apiPermission private
+ *
+ * @apiDescription Spayc details by id.
+ * 
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * 
+    @apiParam {Number}      spaceId     spayc id in query string (Required).
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Spayc Details.
+ * @apiSuccess {Object} data Object of Spayc details.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Spayc Details.",
+    "data": [
+        {
+            "id": 5,
+            "name": "spaycdev13",
+            "address": "Your address",
+            "start_date": "2019-01-11T01:02:20+00:00",
+            "end_date": "2019-01-12T01:02:20+00:00",
+            "image": "",
+            "comments": [
+                {
+                    "spayc_id": 5,
+                    "total_comment": 2
+                }
+            ],
+            "subscribed_users": [
+                {
+                    "spayc_id": 5,
+                    "subscribed_users": 1
+                }
+            ],
+            "joined_spayc": [
+                {
+                    "spayc_id": 5,
+                    "joined_users": 1,
+                    "joined_friends": 1
+                }
+            ]
+        }
+    ]
+}
+ *
+ * @apiUse UserErrorResponse
+ */
 function getView() { return; }

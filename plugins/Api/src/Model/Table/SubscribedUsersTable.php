@@ -65,9 +65,9 @@ class SubscribedUsersTable extends Table
             ->allowEmpty('id', 'create');
 
         $validator
-            ->integer('requested_by')
-            ->requirePresence('requested_by', 'create')
-            ->notEmpty('requested_by');
+            ->integer('user_id')
+            ->requirePresence('user_id', 'create')
+            ->notEmpty('user_id');
 
         $validator
             ->scalar('status')
@@ -86,7 +86,7 @@ class SubscribedUsersTable extends Table
     public function buildRules(RulesChecker $rules)
     {
         $rules->add($rules->existsIn(['spayc_id'], 'Spaycs'));
-
+        $rules->add($rules->existsIn(['user_id'], 'Users'));
         return $rules;
     }
 }

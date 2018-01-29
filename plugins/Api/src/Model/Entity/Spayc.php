@@ -38,5 +38,9 @@ class Spayc extends Entity
     protected $_accessible = [
         '*' => true,
         'id' => false
-    ];    
+    ];
+    
+    //protected function _getId($id) {
+        //return \Cake\Utility\Security::hash($id);
+    //}
 }

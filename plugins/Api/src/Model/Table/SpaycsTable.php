@@ -181,12 +181,12 @@ class SpaycsTable extends Table {
             - radians(:longitude) )
             + sin ( radians(:latitude) )
             * sin( radians( Spaycs.latitude ) )))';
-        $distance = 0;
+        $distance = 25;
         $spaycs = $this->find()
             ->select([
                 'distance' => $distanceField, 'id', 'user_id', 'name', 'address'=>'location', 'start_date', 'end_date', 'image', 'type', 'group_type', 'status', 'latitude', 'longitude', 'created', 'modified'
             ])
-            ->where(["$distanceField >" => $distance, 'status'=>'Active'])
+            ->where(["$distanceField <" => $distance, 'status'=>'Active'])
             ->bind(':latitude', $request['latitude'], 'float')
             ->bind(':longitude', $request['longitude'], 'float');
         $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;

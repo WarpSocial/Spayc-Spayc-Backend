@@ -30,6 +30,7 @@ class SpaycsController extends AppController {
         $data = $this->request->getData();
         $data['type'] = !empty($data['type'])?ucfirst($data['type']):'';
         $data['group_type'] = !empty($data['group_type'])?ucfirst($data['group_type']):'';
+        $data['status'] = 'Active';
         $entity = $this->Spaycs->newEntity();
         $items = $this->Spaycs->patchEntity($entity, $data);
         if($items->errors()) {
@@ -83,15 +84,12 @@ class SpaycsController extends AppController {
             ->select([
                 'distance' => $distanceField, 'id', 'user_id', 'name', 'address'=>'location', 'start_date', 'end_date', 'image', 'type', 'group_type', 'status', 'latitude', 'longitude', 'created', 'modified'
             ])
-            ->where(["$distanceField <" => $distance])
+            ->where(["$distanceField <" => $distance, 'status'=>'Active'])
             ->bind(':latitude', $this->request->query('latitude'), 'float')
             ->bind(':longitude', $this->request->query('longitude'), 'float');
         $spaycs->contain([
-            'JoinedSpayc' => function($q) use($friend) {
-                $row =  $q->select(['JoinedSpayc.spayc_id', 'joined_users' => $q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.spayc_id']);
-                $joinedUsers = 0;
-                if($row->count()) { $joinedUsers = $row->first()->toArray()['joined_users']; }
-                return  $q->select(['joined_users'=>$joinedUsers, 'JoinedSpayc.spayc_id', 'joined_friends'=>$q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.spayc_id'])->where(['JoinedSpayc.user_id IN'=>$friend]);
+            'JoinedSpayc' => function($q) {
+                return $q->select(['JoinedSpayc.spayc_id', 'joined_users' => $q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.spayc_id']);
             },
             'SubscribedUsers' => function($q) {
                 return $q->select(['SubscribedUsers.spayc_id', 'subscribed_users' => $q->func()->count('SubscribedUsers.id')])->group(['SubscribedUsers.spayc_id']);
@@ -124,6 +122,15 @@ class SpaycsController extends AppController {
         } else {
             $spaycs->page($page);
         }
+        $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend){
+            return $results->map(function ($row) use($friend) {
+                if(!empty($row['joined_spayc'])) {
+                    $row['joined_spayc'][0]['joined_friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriendsBySpaycIdAndUserIds($row->id, $friend);
+                }
+                return $row;
+            });
+        });
+        
         $newQuery = clone $spaycs;
         $data['count'] = $newQuery->count();
         $data['spaycs'] = [];
@@ -134,6 +141,37 @@ class SpaycsController extends AppController {
         $this->set($response);
     }
 
+    public function subscribeSpayc() {
+        if (!$this->request->is(['post'])) {
+            $this->restException(['status'=>'failed','message'=>__('Method not allowed.')], 405);
+        }
+        $data = $this->request->getData();
+        if(empty($data['spayc_id'])) {
+            $this->restException(['status'=>'failed','message'=>__('Spayc id is required fields.')], 400);
+        }
+        $isExist = $this->Spaycs->exists(['id'=>$data['spayc_id']]);
+        if(!$isExist) {
+            $this->restException(['status'=>'failed','message'=>__('Spayc id not found.')], 400);
+        }
+        $subscribers = TableRegistry::get("Api.SubscribedUsers");
+        $exists = $subscribers->exists(['spayc_id'=>$data['spayc_id'], 'user_id'=>$this->Auth->user('id')]);
+        if($exists) {
+            $this->restException(['status'=>'failed', 'message'=>__('User already subscribed.')], 400);
+        }
+        $subscribe['user_id'] = $this->Auth->user('id');
+        $subscribe['spayc_id'] = $data['spayc_id'];
+        $subscribe['status'] = 'Active';
+        $entity = $subscribers->newEntity();
+        $items = $subscribers->patchEntity($entity, $subscribe);
+        if($items->errors()) {
+            $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
+        }
+        $subscribers->save($items);
+        $this->response->statusCode(201);
+        $response = ['status'=>'success','message'=>__('User Subscribed successfully.')];
+        $this->set($response);
+    }
+    
     /**
      * View method
      *
@@ -142,11 +180,40 @@ class SpaycsController extends AppController {
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function view($id = null) {
-        $spayc = $this->Spaycs->get($id, [
-            'contain' => ['Users']
+        if(!$this->request->is(['get'])) {
+            $this->restException(['status'=>'failed','message'=>__('Method not allowed.')], 405);
+        }
+        if(empty($id)) {
+            $this->restException(['status'=>'failed', 'message'=>__('Spayc id is required fields.')], 400);
+        }
+        $userId = $this->Auth->user('id');
+        $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Approved');
+        $spayc = $this->Spaycs->find('all', ['fields' => ['Spaycs.id', 'Spaycs.name', 'address'=>'Spaycs.location', 'Spaycs.start_date', 'Spaycs.end_date', 'Spaycs.image']])->where(['id'=>$id, 'status'=>'Active']);
+        $spayc->contain([
+            'JoinedSpayc' => function($q) {
+                return  $q->select(['JoinedSpayc.spayc_id', 'joined_users' => $q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.spayc_id']);
+            },
+            'SubscribedUsers' => function($q) {
+                return $q->select(['SubscribedUsers.spayc_id', 'subscribed_users' => $q->func()->count('SubscribedUsers.id')])->group(['SubscribedUsers.spayc_id']);
+            },
+            'Comments' => function($q) {
+                return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
+            }
         ]);
-
-        $this->set('spayc', $spayc);
+        $spayc->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend) {
+            return $results->map(function ($row) use($friend) {
+                if(!empty($row['joined_spayc'])) {
+                    $row['joined_spayc'][0]['joined_friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriendsBySpaycIdAndUserIds($row->id, $friend);
+                }
+                return $row;
+            });
+        });
+        $data = [];
+        if($spayc) {
+            $data = $spayc;
+        }
+        $response = ['status'=>'success','message'=>__('Spayc Details.'), 'data'=>$data];
+        $this->set($response);
     }
 
     /**

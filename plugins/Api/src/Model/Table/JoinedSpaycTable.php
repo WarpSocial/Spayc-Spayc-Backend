@@ -89,4 +89,8 @@ class JoinedSpaycTable extends Table
 
         return $rules;
     }
+    
+    public function getTotalJoinedFriendsBySpaycIdAndUserIds($spaycId = null, $userIds = []) {
+        return $this->find("all", ['fields'=>['id'], 'conditions'=>['spayc_id'=>$spaycId, 'user_id IN'=>$userIds]])->count();
+    }
 }

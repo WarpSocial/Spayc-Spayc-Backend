@@ -404,7 +404,11 @@ class UsersController extends AppController {
         if(empty($data['friend_id'])) {
             $this->restException(['status'=>'failed','message'=>__('Friend id is required fields.')], 400);
         }
-        $frend = TableRegistry::get("FriendRequest");
+        $isUserExist = $this->Users->exists(['id'=>$data['friend_id']]);
+        if(!$isUserExist) {
+            $this->restException(['status'=>'failed','message'=>__('Friend id not found.')], 400);
+        }
+        $frend = TableRegistry::get("Api.FriendRequest");
         $exists = $frend->exists(['requested_to'=>$data['friend_id'], 'requested_by'=>$this->Auth->user('id')]);
         if($exists) {
             $this->restException(['status'=>'failed','message'=>__('Friend request already sent.')], 400);
@@ -419,7 +423,7 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
         }
         $frend->save($items);
-        $response = ['status'=>'success', 'message'=>__('Friend request send successfully.')];
+        $response = ['status'=>'success', 'message'=>__('Friend request sent successfully.')];
         $this->set($response);
     }
     
@@ -450,7 +454,7 @@ class UsersController extends AppController {
                 unset($row['requested_by']);
                 return $row;
             });
-        });;
+        });
         $limit = (!empty($this->request->query['limit']) && is_numeric($this->request->query['limit']))?$this->request->query['limit']:5;
         $friends->order(['Users.username'=>'ASC'])->limit($limit);
         $page = (!empty($this->request->query['limit']) && is_numeric($this->request->query['page']))?$this->request->query['page']:1;
@@ -477,6 +481,11 @@ class UsersController extends AppController {
         if(empty($data['id'])) {
             $this->restException(['status'=>'failed','message'=>__('id is required fields.')], 400);
         }
+        $friendRequest = TableRegistry::get('Api.FriendRequest');
+        $exists = $friendRequest->exists(['id'=>$data['id']]);
+        if(!$exists) {
+            $this->restException(['status'=>'failed', 'message'=>__('Requested id not found.')], 400);
+        }
         $friendStatus = array_merge(Configure::read('friend_requested_status'), Configure::read('friend_status'));
         if(empty($data['status']) || !in_array(ucfirst($data['status']), $friendStatus)) {
             $this->restException(['status'=>'failed', 'message'=>__('Status is required fields and status must be in('.  implode(',', $friendStatus).').')], 400);
@@ -487,7 +496,7 @@ class UsersController extends AppController {
         } else if(in_array($status, Configure::read('friend_status'))) {
             $friend['friend_status'] = $status;
         }
-        $friendRequest = TableRegistry::get('Api.FriendRequest');
+        
         $friendRequest->updateAll($friend, ['id'=>$data['id']]);
         $response = ['status'=>'success', 'message'=>__('Friend status updated successfully.')];
         $this->set($response);
