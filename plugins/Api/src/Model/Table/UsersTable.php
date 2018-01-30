@@ -138,7 +138,7 @@ class UsersTable extends Table {
                 ->allowEmpty('phone')                
                 ->add('phone', 'valid', [
                     'rule' => function($value,$context){
-                        return (bool)(preg_match('/^[\d\s\+\(\)]{3,15}$/',$value));
+                        return (bool)(preg_match('/^([\+\s\(\)\-]*\d[\+\s\(\)\-]*){3,15}$/',$value));
                     },
                     'message'=>__('Phone no is not valid.')
                     ]);
@@ -234,7 +234,7 @@ class UsersTable extends Table {
             ->allowEmpty('phone')                
             ->add('phone', 'valid', [
                 'rule' => function($value,$context){
-                    return (bool)(preg_match('/^[\d\s\+\(\)]{3,15}$/',$value));
+                    return (bool)(preg_match('/^([\+\s\(\)\-]*\d[\+\s\(\)\-]*){3,15}$/',$value));
                 },
                 'message'=>__('Phone no is not valid.')
                 ]);
@@ -277,7 +277,7 @@ class UsersTable extends Table {
             ->allowEmpty('phone')                
             ->add('phone', 'valid', [
                 'rule' => function($value,$context){
-                    return (bool)(preg_match('/^[\d\s\+\(\)]{3,15}$/',$value));
+                    return (bool)(preg_match('/^([\+\s\(\)\-]*\d[\+\s\(\)\-]*){3,15}$/',$value));
                 },
                 'message'=>__('Phone no is not valid.')
                 ]);
