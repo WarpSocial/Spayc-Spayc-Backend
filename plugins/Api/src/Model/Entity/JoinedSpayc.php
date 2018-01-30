@@ -2,7 +2,7 @@
 namespace Api\Model\Entity;
 
 use Cake\ORM\Entity;
-
+use Api\Auth\ApiHasher;
 /**
  * JoinedSpayc Entity
  *
@@ -28,11 +28,11 @@ class JoinedSpayc extends Entity
      * @var array
      */
     protected $_accessible = [
-        'spayc_id' => true,
-        'requested_by' => true,
-        'status' => true,
-        'created' => true,
-        'modified' => true,
-        'spayc' => true
+        '*' => true,
+        'id' => false
     ];
+    
+    protected function _getId($id) {      
+        return ApiHasher::hash($id);
+    }
 }

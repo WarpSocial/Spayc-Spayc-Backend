@@ -6,6 +6,7 @@ use App\Controller\AppController as BaseController;
 use Cake\Event\Event;
 use Cake\Core\Configure;
 use Cake\Log\Log;
+use Api\Auth\ApiHasher;
 
 class AppController extends BaseController {
     
@@ -25,6 +26,9 @@ class AppController extends BaseController {
             'storage' => 'Memory'
          ]);
          $user = $this->Auth->identify();
+         if(!empty($user['id'])) {
+             $user['id'] = ApiHasher::dehash($user['id']);
+         }
          \Cake\Core\Configure::write('auth',$user);
          $this->Auth->setUser($user);
         Configure::write('timezone', 'UTC');

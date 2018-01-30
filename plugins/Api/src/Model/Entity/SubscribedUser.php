@@ -2,7 +2,7 @@
 namespace Api\Model\Entity;
 
 use Cake\ORM\Entity;
-
+use Api\Auth\ApiHasher;
 /**
  * SubscribedUser Entity
  *
@@ -28,7 +28,11 @@ class SubscribedUser extends Entity
      * @var array
      */
     protected $_accessible = [
-       '*' => true,
-       'id' => false
+        '*' => true,
+        'id' => false
     ];
+    
+    protected function _getId($id) {      
+        return ApiHasher::hash($id);
+    }
 }

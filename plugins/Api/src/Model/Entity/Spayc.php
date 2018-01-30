@@ -2,7 +2,7 @@
 namespace Api\Model\Entity;
 
 use Cake\ORM\Entity;
-
+use Api\Auth\ApiHasher;
 /**
  * Spayc Entity
  *
@@ -40,7 +40,7 @@ class Spayc extends Entity
         'id' => false
     ];
     
-    //protected function _getId($id) {
-        //return \Cake\Utility\Security::hash($id);
-    //}
+    protected function _getId($id) {      
+        return ApiHasher::hash($id);
+    }
 }

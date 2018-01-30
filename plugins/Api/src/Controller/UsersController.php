@@ -9,6 +9,7 @@ use \Cake\ORM\TableRegistry;
 use Api\Utils\Utils;
 use Cake\Log\Log;
 use Cake\Core\Configure;
+use Api\Auth\ApiHasher;
 /**
  * Users Controller
  *
@@ -64,7 +65,7 @@ class UsersController extends AppController {
      * login method to login and generate the token
      */
     
-    public function login(){
+    public function login() {
         if (!$this->request->is('post')) {
             $this->restException(['status'=>'failed','message'=>__('Method not allowed.')],405);
         }
@@ -111,7 +112,6 @@ class UsersController extends AppController {
             'matrix_token'=>$user['matrix_access_token'],
             ];
         $response = ['status' => "success", 'message' => __('Login done successfully.'),'data'=>$data];
-        
         $this->set($response);
     }
 
@@ -187,6 +187,7 @@ class UsersController extends AppController {
                     'latitude'=>$data['latitude'],
                     'longitude'=>$data['longitude']
                 ]];
+            $this->response->statusCode(201);
         } else {
             Log::info(['status' => "failed", 'message' =>__('Failed to saved data.')]);
             $response = ['status' => "failed", 'message' => $this->mapErrors($items->errors())];
@@ -253,7 +254,7 @@ class UsersController extends AppController {
         $alreadyExist = $this->Users->findByEmailOrFbId($data['email'], $data['fb_id']);
         if($alreadyExist->count()) {
             $alreadyExist = $alreadyExist->first()->toArray();
-            $data['id'] = $alreadyExist['id'];
+            $data['id'] = ApiHasher::dehash($alreadyExist['id']);
             $data['fb_id'] = !empty($data['fb_id'])?$data['fb_id']:$alreadyExist['fb_id'];
             $data['username'] = !empty($data['username'])?$data['username']:$alreadyExist['username'];
             $data['email'] = !empty($data['email'])?$data['email']:$alreadyExist['email'];
@@ -312,6 +313,7 @@ class UsersController extends AppController {
         //$response = ['status' => "success", 'message' => 'Login successfully.', 'data'=>$data];
         /*---end login authentication---*/
         $this->getMailer('Api.User')->send('signup', [$items]);
+        $this->response->statusCode(201);
         $response = ['status' => "success", 'message' => __('Saved successfully.'), 'data' => $data];
         $this->set($response);
     }
@@ -404,17 +406,18 @@ class UsersController extends AppController {
         if(empty($data['friend_id'])) {
             $this->restException(['status'=>'failed','message'=>__('Friend id is required fields.')], 400);
         }
+        $data['friend_id'] = ApiHasher::dehash($data['friend_id']);
         $isUserExist = $this->Users->exists(['id'=>$data['friend_id']]);
         if(!$isUserExist) {
-            $this->restException(['status'=>'failed','message'=>__('Friend id not found.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Invalid friend id.')], 400);
         }
         $frend = TableRegistry::get("Api.FriendRequest");
-        $exists = $frend->exists(['requested_to'=>$data['friend_id'], 'requested_by'=>$this->Auth->user('id')]);
+        $exists = $frend->exists(['FriendRequest.requested_to'=>$data['friend_id'], 'FriendRequest.requested_by'=>$this->Auth->user('id')]);
         if($exists) {
             $this->restException(['status'=>'failed','message'=>__('Friend request already sent.')], 400);
         }
-        $friendReq['requested_to'] = $data['friend_id'];
         $friendReq['requested_by'] = $this->Auth->user('id');
+        $friendReq['requested_to'] = $data['friend_id'];
         $friendReq['requested_status'] = 'Requested';
         $friendReq['created'] = date("Y-m-d H:i:s");
         $entity = $frend->newEntity();
@@ -436,11 +439,11 @@ class UsersController extends AppController {
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($this->Auth->user('id'), $friendStatus);
         $friends = $this->Users->find("all", ['fields'=>['Users.id', 'name'=>'Users.username'], 'conditions'=>['Users.id IN'=>$friend, 'Users.id !='=>$this->Auth->user('id'), 'Users.status'=>'Active']]);
         $friends->contain([
-            'RequestedBy' => function($q) use($userId) {
-                return $q->select(['RequestedBy.id','RequestedBy.requested_by', 'RequestedBy.requested_status', 'RequestedBy.requested_to', 'RequestedBy.friend_status'])->Where(['OR'=>['RequestedBy.requested_by'=>$userId, 'RequestedBy.requested_to'=>$userId]]);
+            'Requestedby' => function($q) use($userId) {
+                return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_status', 'Requestedby.requested_to', 'Requestedby.friend_status'])->Where(['OR'=>['Requestedby.requested_by'=>$userId, 'Requestedby.requested_to'=>$userId]]);
             },
-            'RequestedTo' => function($q) use($userId) {
-                return $q->select(['RequestedTo.id', 'RequestedTo.requested_by', 'RequestedTo.requested_to', 'RequestedTo.requested_status', 'RequestedTo.friend_status'])->Where(['OR'=>['RequestedTo.requested_by'=>$userId, 'RequestedTo.requested_to'=>$userId]]);
+            'Requestedto' => function($q) use($userId) {
+                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.friend_status'])->Where(['OR'=>['Requestedto.requested_by'=>$userId, 'Requestedto.requested_to'=>$userId]]);
             },
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url']);
@@ -448,10 +451,10 @@ class UsersController extends AppController {
         ]);
         $friends->formatResults(function (\Cake\Collection\CollectionInterface $results) {
             return $results->map(function ($row) {
-                $row->friend = !empty($row['requested_to'][0])? $row['requested_to'][0] : [];
-                $row->friend = !empty($row['requested_by'][0]) && empty($row->friend)? $row['requested_by'][0] : $row->friend;
-                unset($row['requested_to']);
-                unset($row['requested_by']);
+                $row->friend = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
+                $row->friend = !empty($row['requestedby'][0]) && empty($row->friend)? $row['requestedby'][0] : $row->friend;
+                unset($row['requestedto']);
+                unset($row['requestedby']);
                 return $row;
             });
         });
@@ -481,10 +484,11 @@ class UsersController extends AppController {
         if(empty($data['id'])) {
             $this->restException(['status'=>'failed','message'=>__('id is required fields.')], 400);
         }
+        $data['id'] = ApiHasher::dehash($data['id']);
         $friendRequest = TableRegistry::get('Api.FriendRequest');
         $exists = $friendRequest->exists(['id'=>$data['id']]);
         if(!$exists) {
-            $this->restException(['status'=>'failed', 'message'=>__('Requested id not found.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('Invalid requested id.')], 400);
         }
         $friendStatus = array_merge(Configure::read('friend_requested_status'), Configure::read('friend_status'));
         if(empty($data['status']) || !in_array(ucfirst($data['status']), $friendStatus)) {
@@ -496,7 +500,6 @@ class UsersController extends AppController {
         } else if(in_array($status, Configure::read('friend_status'))) {
             $friend['friend_status'] = $status;
         }
-        
         $friendRequest->updateAll($friend, ['id'=>$data['id']]);
         $response = ['status'=>'success', 'message'=>__('Friend status updated successfully.')];
         $this->set($response);

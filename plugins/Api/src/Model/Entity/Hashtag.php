@@ -2,7 +2,7 @@
 namespace Api\Model\Entity;
 
 use Cake\ORM\Entity;
-
+use Api\Auth\ApiHasher;
 /**
  * Hashtag Entity
  *
@@ -26,5 +26,9 @@ class Hashtag extends Entity
     protected $_accessible = [
         '*' => true,
         'id' => false
-    ];  
+    ];
+    
+    protected function _getId($id) {      
+        return ApiHasher::hash($id);
+    }
 }

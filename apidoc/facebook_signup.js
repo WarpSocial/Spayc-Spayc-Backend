@@ -10,7 +10,7 @@
 * @apiParam {String} fb_id              * User facebook unique id required in body(Required).
 * @apiParam {String} username           * Username optional in body(Required).
 * @apiParam {String} email              * User email required in body(Required).
-* @apiParam {String} dob                * Date of birth optional in body.
+* @apiParam {String} dob                * Date of birth optional in body MM-DD-YYYY (Optional).
 * @apiParam {Number} phone              * Phone no of user and accept upto 16 digits (Optional).
 * @apiParam {String} gender             * Gender of user like any one (male,femal,other) (Required).
 * @apiParam {String} device_id          * Device id is required in body (Required).
@@ -40,15 +40,15 @@
 *
 * 
 * @apiSuccessExample {json} Success-Response: 
-*        HTTP/1.1 success
+*        HTTP/1.1 201 OK
 {
     "status": "success",
     "message": "Saved successfully.",
     "data": {
         "username": "spayc",
         "email": "spayc@gmail.com",
-        "gender": "male                                              ",
-        "dob": "2001-12-11",
+        "gender": "Male",
+        "dob": "11-12-2000",
         "phone": null,
         "website_url": null,
         "address": null,

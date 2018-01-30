@@ -92,7 +92,7 @@ function putUser() { return; }
  * @apiParam {String} email Email of user must be unique (Required).
  * @apiParam {String} password secret password (Required).
  * @apiParam {String} confirm_password secret password (Required).
- * @apiParam {Date}   dob Date of birth must in in format YYYY-MM-DD (Optional).
+ * @apiParam {Date}   dob Date of birth must in in format MM-DD-YYYY (Optional).
  * @apiParam {String} gender Gender of user like any one (male,femal,other) (Required).
  * @apiParam {Number} phone Phone no of user and accept only 10 digits only (Optional).
  * @apiParam {Number} latitude of user address (Required).
@@ -116,8 +116,8 @@ function putUser() { return; }
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Registration done successfully.
  * @apiSuccess {Object} data List of user details.
- * @apiSuccessExample {json} Success-Response: 
- *      HTTP/1.1 200 OK
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 201 OK
  * {
  *   "status": "success",
  *   "message": "Saved successfully.",

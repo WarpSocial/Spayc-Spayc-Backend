@@ -64,7 +64,7 @@
 @apiSuccess {String} message Your spayc, spaycdev, has been created.
 @apiSuccess {Object} data Spayc details.
 @apiSuccessExample {json} Success-Response: 
-    HTTP/1.1 200 OK
+    HTTP/1.1 201 OK
 {
     "status": "success",
     "message": "Your spayc, Dsfdsfdsf65esd x, has been created.",

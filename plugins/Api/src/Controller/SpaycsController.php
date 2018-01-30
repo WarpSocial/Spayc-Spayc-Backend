@@ -8,6 +8,7 @@ use \Cake\ORM\TableRegistry;
 use Cake\Log\Log;
 use Api\Utils\Utils;
 use Cake\Core\Configure;
+use Api\Auth\ApiHasher;
 
 /**
  * Spaycs Controller
@@ -46,6 +47,7 @@ class SpaycsController extends AppController {
         $items->set('matrix_room_alias',$matrix['room_alias']);*/
         $items->set('user_id', $this->Auth->user('id'));
         if ($this->Spaycs->save($items)) {
+            $this->response->statusCode(201);
             $response = ['status'=>'success','message'=>__('Your spayc, '.ucfirst($data['name']).', has been created.'),'data'=>$items];
         } else {
             $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be saved. Please, try again.')], 400);
@@ -149,9 +151,10 @@ class SpaycsController extends AppController {
         if(empty($data['spayc_id'])) {
             $this->restException(['status'=>'failed','message'=>__('Spayc id is required fields.')], 400);
         }
+        $data['spayc_id'] = ApiHasher::dehash($data['spayc_id']);
         $isExist = $this->Spaycs->exists(['id'=>$data['spayc_id']]);
         if(!$isExist) {
-            $this->restException(['status'=>'failed','message'=>__('Spayc id not found.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Invalid spayc Id.')], 400);
         }
         $subscribers = TableRegistry::get("Api.SubscribedUsers");
         $exists = $subscribers->exists(['spayc_id'=>$data['spayc_id'], 'user_id'=>$this->Auth->user('id')]);
@@ -181,8 +184,9 @@ class SpaycsController extends AppController {
      */
     public function view($id = null) {
         if(!$this->request->is(['get'])) {
-            $this->restException(['status'=>'failed','message'=>__('Method not allowed.')], 405);
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
+        $id = ApiHasher::dehash($id);
         if(empty($id)) {
             $this->restException(['status'=>'failed', 'message'=>__('Spayc id is required fields.')], 400);
         }

@@ -18,7 +18,7 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Http\ServerRequest;
 Use Cake\Http\Response;
 use Cake\ORM\TableRegistry;
-use Api\Auth\ApiPasswordHasher;
+use Api\Auth\ApiHasher;
 
 class ApiAuthenticate extends BaseAuthenticate {
 
@@ -132,7 +132,7 @@ class ApiAuthenticate extends BaseAuthenticate {
             return false;
         }
         $result = $entity->first();
-        if (!(new ApiPasswordHasher())->check($password, $result[$fields['password']])) {
+        if (!ApiHasher::check($password, $result[$fields['password']])) {
             return false;
         }
         return $result;
