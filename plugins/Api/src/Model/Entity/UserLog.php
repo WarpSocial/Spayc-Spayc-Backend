@@ -48,6 +48,7 @@ class UserLog extends Entity
         'token'
     ];
     
+    
     protected function _getId($id) {      
         return ApiHasher::hash($id);
     }
