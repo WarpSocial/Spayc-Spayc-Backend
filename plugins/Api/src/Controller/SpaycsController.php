@@ -49,21 +49,7 @@ class SpaycsController extends AppController {
         if (!$items->errors()) {
             $this->Spaycs->save($items);
             if(!empty($items['description'])) {
-                $hastag['name'] = $items['description'];
-                $hastag['created'] = date('Y-m-d H:i:s');
-                $hashtags = TableRegistry::get('Api.Hashtags');
-                $entity = $hashtags->newEntity();
-                $hItems = $hashtags->patchEntity($entity, $hastag);
-                $hashtags->save($hItems);
-            }
-            if(!empty($hItems['id'])) {
-                $spaycHastag['spayc_id'] = ApiHasher::decrypt($items['id']);
-                $spaycHastag['hashtag_id'] = ApiHasher::decrypt($hItems['id']);
-                $spaycHastag['created'] = date('Y-m-d H:i:s');
-                $spHashtags = TableRegistry::get('Api.SpaycHashtags');
-                $entity = $spHashtags->newEntity();
-                $shItems = $spHashtags->patchEntity($entity, $spaycHastag);
-                $spHashtags->save($shItems);
+                TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
             }
             $this->response->statusCode(201);
             $response = ['status'=>'success','message'=>__('Your spayc, '.ucfirst($data['name']).', has been created.'),'data'=>$items];

@@ -5,6 +5,8 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\ORM\TableRegistry;
+use Api\Auth\ApiHasher;
 
 /**
  * Hashtags Model
@@ -96,5 +98,28 @@ class HashtagsTable extends Table
             $data['records'] = $hashTag->toArray();
         }
         return $data;
+    }
+    
+    public function saveHashTags($hashTags = null, $spaycId = null) {
+        if(!empty($hashTags) and !empty($spaycId)) {
+            preg_match_all('/#([^\s,#]+)/', $hashTags, $matches);
+            if(!empty($matches[1])) {
+                foreach($matches[1] as $key=>$hash) {
+                    $hastag[$key]['name'] = $hash;
+                }
+            }
+            $entities = $this->newEntities($hastag);
+            $this->saveMany($entities);
+            if(!empty($entities)) {
+                $spaycId = ApiHasher::decrypt($spaycId);
+                foreach($entities as $key=>$entity) {
+                    $spaycHastag[$key]['spayc_id'] = $spaycId;
+                    $spaycHastag[$key]['hashtag_id'] = ApiHasher::decrypt($entity['id']);
+                }
+                $spHashtags = TableRegistry::get('Api.SpaycHashtags');
+                $shEntities = $spHashtags->newEntities($spaycHastag);
+                $spHashtags->saveMany($shEntities);
+            }
+        }
     }
 }
