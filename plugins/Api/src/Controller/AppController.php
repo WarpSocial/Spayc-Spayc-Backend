@@ -27,7 +27,7 @@ class AppController extends BaseController {
          ]);
          $user = $this->Auth->identify();
          if(!empty($user['id'])) {
-             $user['id'] = ApiHasher::dehash($user['id']);
+             $user['id'] = ApiHasher::decrypt($user['id']);
          }
          \Cake\Core\Configure::write('auth',$user);
          $this->Auth->setUser($user);

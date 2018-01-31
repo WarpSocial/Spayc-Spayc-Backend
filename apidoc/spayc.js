@@ -129,6 +129,7 @@ function postSpaycs() { return; }
                 "user_id": 51,
                 "name": "Test",
                 "address": "Noida sec 16",
+                "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
                 "start_date": "2018-01-10T06:00:00+00:00",
                 "end_date": "2018-01-10T06:00:00+00:00",
                 "image": "img.png",
@@ -154,6 +155,7 @@ function postSpaycs() { return; }
                 "user_id": 51,
                 "name": "Test1",
                 "address": "Noida sec 15",
+                "matrix_room_id": "!asfLdzLnOdGRkdrrPZWu:localhost",
                 "start_date": "2018-01-10T01:00:00+00:00",
                 "end_date": "2018-01-11T11:00:00+00:00",
                 "image": "img.png",
@@ -174,6 +176,7 @@ function postSpaycs() { return; }
                 "user_id": 51,
                 "name": "Test12",
                 "address": "Noida sec 18",
+                "matrix_room_id": "!asfLdzLnGRkdPZWu:localhost",
                 "start_date": "2018-01-10T01:00:00+00:00",
                 "end_date": "2018-01-11T11:00:00+00:00",
                 "image": "img.png",
@@ -205,6 +208,7 @@ function postSpaycs() { return; }
                 "user_id": 51,
                 "name": "Test123",
                 "address": "Noida sec 16",
+                "matrix_room_id": "!asfLdOdGRkdPZWu:localhost",
                 "start_date": "2018-01-10T01:00:00+00:00",
                 "end_date": "2018-01-11T11:00:00+00:00",
                 "image": "img.png",
@@ -238,12 +242,12 @@ function getSpaycs() { return; }
   
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  
-  @apiParam {Number} spayc_id Spayc id is required (Required).
+  @apiParam {String} spayc_id Spayc id is required (Required).
  
   @apiExample Example usage:
  
     {
-        "spayc_id":"5"
+        "spayc_id":"NDIwMjYwMjAwLjU2"
     }
  
  
@@ -273,7 +277,7 @@ function postSubscribeSpayc() { return; }
  * 
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
-    @apiParam {Number}      spaceId     spayc id in query string (Required).
+    @apiParam {String}      spaceId     spayc id in query string (Required).
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Spayc Details.

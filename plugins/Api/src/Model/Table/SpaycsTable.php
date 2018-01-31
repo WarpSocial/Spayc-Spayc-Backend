@@ -184,7 +184,7 @@ class SpaycsTable extends Table {
         $distance = 25;
         $spaycs = $this->find()
             ->select([
-                'distance' => $distanceField, 'id', 'user_id', 'name', 'address'=>'location', 'start_date', 'end_date', 'image', 'type', 'group_type', 'status', 'latitude', 'longitude', 'created', 'modified'
+                'distance' => $distanceField, 'id', 'user_id', 'name', 'address'=>'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'status', 'latitude', 'longitude', 'created', 'modified'
             ])
             ->where(["$distanceField <" => $distance, 'status'=>'Active'])
             ->bind(':latitude', $request['latitude'], 'float')

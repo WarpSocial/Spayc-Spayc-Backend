@@ -35,6 +35,6 @@ class FriendRequest extends Entity
     ];
     
     protected function _getId($id) {      
-        return ApiHasher::hash($id);
+        return ApiHasher::encrypt($id);
     }
 }

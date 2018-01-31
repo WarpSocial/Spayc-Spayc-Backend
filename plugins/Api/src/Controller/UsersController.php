@@ -254,7 +254,7 @@ class UsersController extends AppController {
         $alreadyExist = $this->Users->findByEmailOrFbId($data['email'], $data['fb_id']);
         if($alreadyExist->count()) {
             $alreadyExist = $alreadyExist->first()->toArray();
-            $data['id'] = ApiHasher::dehash($alreadyExist['id']);
+            $data['id'] = ApiHasher::decrypt($alreadyExist['id']);
             $data['fb_id'] = !empty($data['fb_id'])?$data['fb_id']:$alreadyExist['fb_id'];
             $data['username'] = !empty($data['username'])?$data['username']:$alreadyExist['username'];
             $data['email'] = !empty($data['email'])?$data['email']:$alreadyExist['email'];
@@ -406,7 +406,7 @@ class UsersController extends AppController {
         if(empty($data['friend_id'])) {
             $this->restException(['status'=>'failed','message'=>__('Friend id is required fields.')], 400);
         }
-        $data['friend_id'] = ApiHasher::dehash($data['friend_id']);
+        $data['friend_id'] = ApiHasher::decrypt($data['friend_id']);
         $isUserExist = $this->Users->exists(['id'=>$data['friend_id']]);
         if(!$isUserExist) {
             $this->restException(['status'=>'failed','message'=>__('Invalid friend id.')], 400);
@@ -426,6 +426,7 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
         }
         $frend->save($items);
+        $this->response->statusCode(201);
         $response = ['status'=>'success', 'message'=>__('Friend request sent successfully.')];
         $this->set($response);
     }
@@ -484,7 +485,7 @@ class UsersController extends AppController {
         if(empty($data['id'])) {
             $this->restException(['status'=>'failed','message'=>__('id is required fields.')], 400);
         }
-        $data['id'] = ApiHasher::dehash($data['id']);
+        $data['id'] = ApiHasher::decrypt($data['id']);
         $friendRequest = TableRegistry::get('Api.FriendRequest');
         $exists = $friendRequest->exists(['id'=>$data['id']]);
         if(!$exists) {

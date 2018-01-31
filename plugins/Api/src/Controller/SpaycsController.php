@@ -84,7 +84,7 @@ class SpaycsController extends AppController {
         $distance = 25;
         $spaycs = $this->Spaycs->find()
             ->select([
-                'distance' => $distanceField, 'id', 'user_id', 'name', 'address'=>'location', 'start_date', 'end_date', 'image', 'type', 'group_type', 'status', 'latitude', 'longitude', 'created', 'modified'
+                'distance' => $distanceField, 'id', 'user_id', 'name', 'address'=>'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'status', 'latitude', 'longitude', 'created', 'modified'
             ])
             ->where(["$distanceField <" => $distance, 'status'=>'Active'])
             ->bind(':latitude', $this->request->query('latitude'), 'float')
@@ -151,7 +151,7 @@ class SpaycsController extends AppController {
         if(empty($data['spayc_id'])) {
             $this->restException(['status'=>'failed','message'=>__('Spayc id is required fields.')], 400);
         }
-        $data['spayc_id'] = ApiHasher::dehash($data['spayc_id']);
+        $data['spayc_id'] = ApiHasher::decrypt($data['spayc_id']);
         $isExist = $this->Spaycs->exists(['id'=>$data['spayc_id']]);
         if(!$isExist) {
             $this->restException(['status'=>'failed','message'=>__('Invalid spayc Id.')], 400);
@@ -186,7 +186,7 @@ class SpaycsController extends AppController {
         if(!$this->request->is(['get'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
-        $id = ApiHasher::dehash($id);
+        $id = ApiHasher::decrypt($id);
         if(empty($id)) {
             $this->restException(['status'=>'failed', 'message'=>__('Spayc id is required fields.')], 400);
         }

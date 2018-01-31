@@ -238,6 +238,7 @@ function postUser() { return; }
                     "user_id": 7,
                     "name": "spaycdev13",
                     "address": "Noida sec 16",
+                    "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
                     "start_date": "2019-01-11T01:02:20+00:00",
                     "end_date": "2019-01-12T01:02:20+00:00",
                     "image": "",
@@ -255,6 +256,7 @@ function postUser() { return; }
                     "user_id": 7,
                     "name": "spaycdev9",
                     "address": "Noida sec 15",
+                    "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
                     "start_date": "2019-01-11T01:02:20+00:00",
                     "end_date": "2019-01-12T01:02:20+00:00",
                     "image": "",
@@ -356,12 +358,12 @@ function postLogin() { return; }
   
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  
-  @apiParam {Number} friend_id Friend id required (Required).
+  @apiParam {String} friend_id Friend id required (Required).
  
   @apiExample Example usage:
  
     {
-        "friend_id":"85"
+        "friend_id":"NDIwMjYwMjAwLjU2"
     }
  
  
@@ -369,11 +371,10 @@ function postLogin() { return; }
   @apiSuccess {String} message Friend request send successfully..
   @apiSuccess {Object} data Null.
   @apiSuccessExample {json} Success-Response: 
-       HTTP/1.1 200 OK
+        HTTP/1.1 201 OK
 {
     "status": "success",
-    "message": "Friend request send successfully.",
-    "data": []
+    "message": "Friend request sent successfully."
 }
  
   @apiError {String} Friend request already sent.
@@ -446,7 +447,7 @@ function getFriends() { return; }
   
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  
-* @apiParam  {Number}   id       Friend id required field in body.
+* @apiParam  {String}   id       Friend id required field in body.
 * @apiParam  {String}   status   Status is required field and status must be in(Accepted,Declined,Blocked,Unfriend).
    @apiExample Example usage:
  
