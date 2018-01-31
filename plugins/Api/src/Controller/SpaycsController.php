@@ -46,7 +46,25 @@ class SpaycsController extends AppController {
         $items->set('matrix_room_id',$matrix['room_id']);
         $items->set('matrix_room_alias',$matrix['room_alias']);*/
         $items->set('user_id', $this->Auth->user('id'));
-        if ($this->Spaycs->save($items)) {
+        if (!$items->errors()) {
+            $this->Spaycs->save($items);
+            if(!empty($items['description'])) {
+                $hastag['name'] = $items['description'];
+                $hastag['created'] = date('Y-m-d H:i:s');
+                $hashtags = TableRegistry::get('Api.Hashtags');
+                $entity = $hashtags->newEntity();
+                $hItems = $hashtags->patchEntity($entity, $hastag);
+                $hashtags->save($hItems);
+            }
+            if(!empty($hItems['id'])) {
+                $spaycHastag['spayc_id'] = ApiHasher::decrypt($items['id']);
+                $spaycHastag['hashtag_id'] = ApiHasher::decrypt($hItems['id']);
+                $spaycHastag['created'] = date('Y-m-d H:i:s');
+                $spHashtags = TableRegistry::get('Api.SpaycHashtags');
+                $entity = $spHashtags->newEntity();
+                $shItems = $spHashtags->patchEntity($entity, $spaycHastag);
+                $spHashtags->save($shItems);
+            }
             $this->response->statusCode(201);
             $response = ['status'=>'success','message'=>__('Your spayc, '.ucfirst($data['name']).', has been created.'),'data'=>$items];
         } else {
@@ -66,10 +84,10 @@ class SpaycsController extends AppController {
         }
         $userId = $this->Auth->user("id");
         $limit = (!empty($this->request->query('limit')) and is_numeric($this->request->query('limit')))?$this->request->query('limit'):5;
-        if(!Utils::isValidLatitude($this->request->query('latitude'))) {
+        if(!Utils::isValidLatitude($this->request->query('latitude')) || empty($this->request->query('latitude'))) {
             $this->restException(['status'=>'failed', 'message'=>__('Latitude is not valid.')], 400);
         }
-        if(!Utils::isValidLongitude($this->request->query('longitude'))) {
+        if(!Utils::isValidLongitude($this->request->query('longitude')) || empty($this->request->query('longitude'))) {
             $this->restException(['status'=>'failed', 'message'=>__('Longitude is not valid.')], 400);
         }
         $page = (!empty($this->request->query('page')) and is_numeric($this->request->query('page')))?$this->request->query('page'):1;
