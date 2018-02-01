@@ -33,8 +33,8 @@
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  *
  * @apiParam {String} username     Username (Required).
- * @apiParam {Date}   dob          Date of birth must in this format YYYY-MM-DD (Optional).
- * @apiParam {String} gender       Gender of user like any one (male,femal,other) (Required).
+ * @apiParam {Date}   dob          Date of birth must in this format MM-DD-YYYY (Optional).
+ * @apiParam {String} gender       Gender of user like any one (Male, Femal, Other) (Required).
  * @apiParam {Number} phone        Phone no of user and accept upto 16 digits (Optional).
  * @apiParam {String} address      User address (Optional).
  * @apiParam {String} website_url  Website url (Optional).
@@ -44,10 +44,10 @@
  *
  *       {
  *          "username":"spayc",
- *          "dob": "2000-11-12",
- *          "gender": "male|female|other",
+ *          "dob": "12-11-2001",
+ *          "gender": "Male|Female|Other",
  *          "phone": "XXXXXXXXXX",
- *          "address": "b-3 noida",
+ *          "address": "spayc address",
  *          "website_url":"www.spayc.com",
  *          "bio_data":"your bio data",
  *       }
@@ -65,10 +65,10 @@
  *   "data": [
  *       {
  *          "username":"spayc",
- *          "dob": "2000-11-12",
- *          "gender": "male|female|other",
+ *          "dob": "12-11-2001",
+ *          "gender": "Male|Female|Other",
  *          "phone": "XXXXXXXXXX",
- *          "address": "b-3 noida",
+ *          "address": "spayc address",
  *          "website_url":"www.spayc.com",
  *          "bio_data":"your bio data",
  *       }
@@ -93,7 +93,7 @@ function putUser() { return; }
  * @apiParam {String} password secret password (Required).
  * @apiParam {String} confirm_password secret password (Required).
  * @apiParam {Date}   dob Date of birth must in in format MM-DD-YYYY (Optional).
- * @apiParam {String} gender Gender of user like any one (male,femal,other) (Required).
+ * @apiParam {String} gender Gender of user like any one (Male, Femal, Other) (Required).
  * @apiParam {Number} phone Phone no of user and accept only 10 digits only (Optional).
  * @apiParam {Number} latitude of user address (Required).
  * @apiParam {Number} longitude of user address (Required).
@@ -105,11 +105,11 @@ function putUser() { return; }
  *          "email": "spaycdev@spayc.com",
  *          "password": "XXXXXXXXX",
  *          "confirm_password": "XXXXXXXXX",
- *          "gender": "male|female|other",
- *          "phone": "7876565434",
+ *          "gender": "Male|Female|Other",
+ *          "phone": "+91 (XXX) (XXXXXXX)",
  *          "dob": "11-12-2000",
- *          "latitude": "28.535516",
- *          "longitude": "77.391026"
+ *          "latitude": "XX.XXXXXX",
+ *          "longitude": "XX.XXXXXX"
  *       }
  *
  *
@@ -126,10 +126,10 @@ function putUser() { return; }
  *          "username": "spaycdev",
  *          "email": "spaycdev@spayc.com",
  *          "gender": "male|female|other",
- *          "phone": "7876565434",
+ *          "phone": "+91 (XXX) (XXXXXXX)",
  *          "dob": "11-12-2000",
- *          "latitude": "28.535516",
- *          "longitude": "77.391026"
+ *          "latitude": "XX.XXXXXX",
+ *          "longitude": "XX.XXXXXX"
  *       }
  *   ]
  * }
@@ -169,15 +169,15 @@ function postUser() { return; }
             "records": [
                 {
                     "id": "MzY3NzI3Njc1LjQ5",
-                    "name": "dhiru",
-                    "email": "shubhash453s3@gmail.com",
-                    "gender": "male",
-                    "phone": "7876565434",
+                    "name": "spayc1",
+                    "email": "spayc1@domain.com",
+                    "gender": "Male",
+                    "phone": "+91 (XXX) (XXXXXXX)",
                     "dob": "12-11-2000",
                     "status": "Active",
                     "website_url": "www.spayc.com",
-                    "address": "b-3 noida",
-                    "bio_data": "your122 bio data",
+                    "address": "spayc address",
+                    "bio_data": "your bio data",
                     "created": "2018-01-17T14:09:52+00:00",
                     "modified": "2018-01-18T07:43:46+00:00",
                     "spaycs": [
@@ -194,20 +194,20 @@ function postUser() { return; }
                     ],
                     "user_images": [],
                     "friend": {
-                        "total_friends": 0
+                        "total_friends": 2
                     }
                 },
                 {
                     "id": "NTI1MzI1MjUwLjc=",
-                    "name": "dhiru11111",
-                    "email": "shubhash11@gmail.com",
+                    "name": "spayc2",
+                    "email": "spayc2@domain.com",
                     "gender": "Male",
-                    "phone": "7876565434",
+                    "phone": "+91 (XXX) (XXXXXXX)",
                     "dob": "11-12-2000",
                     "status": "Active",
                     "website_url": "www.spayc.com",
-                    "address": "b-3 noida",
-                    "bio_data": "your122 bio data",
+                    "address": "your address",
+                    "bio_data": "your bio data",
                     "created": "2018-01-24T13:46:10+00:00",
                     "modified": "2018-01-29T07:30:01+00:00",
                     "spaycs": [
@@ -236,7 +236,7 @@ function postUser() { return; }
                     "distance": "12.3020109427781",
                     "id": "MTczMzU3MzMyNy4zMQ==",
                     "user_id": 10,
-                    "name": "spaycdev13",
+                    "name": "spaycdev3",
                     "address": "Your address",
                     "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
                     "start_date": "2019-01-11T01:02:20+00:00",
@@ -254,7 +254,7 @@ function postUser() { return; }
                     "distance": "12.3020109427781",
                     "id": "MTY4MTA0MDgwMi4yNA==",
                     "user_id": 10,
-                    "name": "spaycdev13",
+                    "name": "spaycdev4",
                     "address": "Your address",
                     "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
                     "start_date": "2019-01-11T01:02:20+00:00",
@@ -325,16 +325,16 @@ function getView() { return; }
     "status": "success",
     "message": "Login done successfully.",
     "data": {
-        "username": "skumar2 aa dds",
-        "email": "subhash.kumadr2aadds@kiwitech.com",
-        "gender": "male",
+        "username": "spayc",
+        "email": "spayc@domain.com",
+        "gender": "Male",
         "dob": "2000-02-02",
         "phone": "",
         "website_url": null,
         "address": null,
         "bio_data": null,
         "device_id": "VOYANVLOXG",
-        "matrix_user_id": "@skumar2_aa_dds:127.0.0.1",
+        "matrix_user_id": "@spayc:127.0.0.1",
         "token": "7f39fa7c6642666c6802f0d4e2fddf6a695fc12458733764c64ad338d6d1ca5f",
         "matrix_token": "MDAxN2xvY2F0aW9uIDEyNy4wLjAuMQowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMmNjaWQgdXNlcl9pZCA9IEBza3VtYXIyX2FhX2RkczoxMjcuMC4wLjEKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSA4Ok00T3VzN1h5cnlKUEBxCjAwMmZzaWduYXR1cmUg5JCNFFzLQ4N-K6MnNWqFfqQdueyPiR74U_r6qLUzrqAK"
     }
@@ -406,8 +406,8 @@ function postFriendRequest() { return; }
     "message": "Friend lists.",
     "data": [
         {
-            "id": 8,
-            "name": "sbsharma1123",
+            "id": "NDIwMjYwMjAwLjU2",
+            "name": "spayc",
             "user_images": [
                 {
                     "user_id": 8,
@@ -419,7 +419,7 @@ function postFriendRequest() { return; }
                 }
             ],
             "friend": {
-                "id": 3,
+                "id": "NDIsdfaYwMjAwLjU2",
                 "requested_by": 7,
                 "requested_to": 8,
                 "requested_status": "Accepted",
@@ -450,7 +450,7 @@ function getFriends() { return; }
    @apiExample Example usage:
  
     {
-        "id":"1",
+        "id":"NDIwMjYwMjAwLjU2",
         "status":"Accepted"
     }
  

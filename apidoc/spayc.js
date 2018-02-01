@@ -67,24 +67,24 @@
     HTTP/1.1 201 OK
 {
     "status": "success",
-    "message": "Your spayc, Dsfdsfdsf65esd x, has been created.",
+    "message": "Your spayc, spaycdev, has been created.",
     "data": {
-        "name": "dsfdsfdsf65esd x",
+        "name": "spaycdev",
         "matrix_room_id":"!asfLdzLnOdGRkdPZWu:localhost",
-        "location": "oaksd lfjlsdasdklfdjsfdfldas",
+        "location": "spayc addrss",
         "type": "Community",
         "group_type": "Public",
         "start_date": "2018-01-11T11:16:01+00:00",
         "end_date": "2018-01-12T09:23:01+00:00",
         "passcode": "",
-        "description": "asdf dsfsd fdsfasdfadfadf",
+        "description": "its about festival #color #festival #abc",
         "image": "",
         "user_id": 38,
         "created": "2018-01-11T09:31:50+00:00",
         "modified": "2018-01-11T09:31:50+00:00",
         "longitude":"XX.00.XX",
         "latitude":"XX.00.XX",
-        "id": 1
+        "id": "NDQ2NTI2NDYzMC45NQ=="
     }
 }
 
@@ -125,7 +125,7 @@ function postSpaycs() { return; }
         "spaycs": [
             {
                 "distance": "22.7463734587819",
-                "id": 1,
+                "id": "NDQ2NTI2NDYzMC45NQ==",
                 "user_id": 51,
                 "name": "Test",
                 "address": "Noida sec 16",
@@ -151,7 +151,7 @@ function postSpaycs() { return; }
             },
             {
                 "distance": "22.7463734587819",
-                "id": 2,
+                "id": "NDQ2N5I2NDY43C45NQ==",
                 "user_id": 51,
                 "name": "Test1",
                 "address": "Noida sec 15",
@@ -172,7 +172,7 @@ function postSpaycs() { return; }
             },
             {
                 "distance": "22.7463734587819",
-                "id": 3,
+                "id": "NDQ2NTI2NDgfMC45NQ5g",
                 "user_id": 51,
                 "name": "Test12",
                 "address": "Noida sec 18",
@@ -204,7 +204,7 @@ function postSpaycs() { return; }
             },
             {
                 "distance": "22.7463734587819",
-                "id": 4,
+                "id": "NDsdaf2NDYzMC45NQFA",
                 "user_id": 51,
                 "name": "Test123",
                 "address": "Noida sec 16",
@@ -289,7 +289,7 @@ function postSubscribeSpayc() { return; }
     "message": "Spayc Details.",
     "data": [
         {
-            "id": 5,
+            "id": "MGQ2NTI2NDYzMC45NFSJ",
             "name": "spaycdev13",
             "address": "Your address",
             "start_date": "2019-01-11T01:02:20+00:00",
