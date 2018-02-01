@@ -165,10 +165,10 @@ function postUser() { return; }
     "message": "Search Lists.",
     "data": {
         "users": {
-            "count": 6,
+            "count": 14,
             "records": [
                 {
-                    "id": 7,
+                    "id": "MzY3NzI3Njc1LjQ5",
                     "name": "dhiru",
                     "email": "shubhash453s3@gmail.com",
                     "gender": "male",
@@ -194,98 +194,96 @@ function postUser() { return; }
                     ],
                     "user_images": [],
                     "friend": {
-                        "id": 13,
-                        "requested_by": 7,
-                        "requested_to": 10,
-                        "requested_status": "Declined",
-                        "friend_status": "Unfriend",
-                        "total_friends": 8
+                        "total_friends": 0
                     }
                 },
                 {
-                    "id": 5,
-                    "name": "sbsharma112",
-                    "email": "sbsharma11@gmail.com",
-                    "gender": "male                                              ",
-                    "phone": null,
-                    "dob": "11-12-2001",
+                    "id": "NTI1MzI1MjUwLjc=",
+                    "name": "dhiru11111",
+                    "email": "shubhash11@gmail.com",
+                    "gender": "Male",
+                    "phone": "7876565434",
+                    "dob": "11-12-2000",
                     "status": "Active",
-                    "website_url": null,
-                    "address": "",
-                    "bio_data": "",
-                    "created": "2018-01-17T12:29:29+00:00",
-                    "modified": "2018-01-18T05:55:37+00:00",
-                    "spaycs": [],
-                    "joined_spayc": [
+                    "website_url": "www.spayc.com",
+                    "address": "b-3 noida",
+                    "bio_data": "your122 bio data",
+                    "created": "2018-01-24T13:46:10+00:00",
+                    "modified": "2018-01-29T07:30:01+00:00",
+                    "spaycs": [
                         {
-                            "user_id": 5,
-                            "joined_spaycs": 1
+                            "user_id": 10,
+                            "created_spaycs": 32
                         }
                     ],
+                    "joined_spayc": [],
                     "user_images": [],
                     "friend": {
-                        "total_friends": 0
+                        "id": "NTI1MzI1MjUuMDc=",
+                        "requested_by": 10,
+                        "requested_to": 17,
+                        "requested_status": "Accepted",
+                        "friend_status": "Unfriend",
+                        "total_friends": 7
                     }
                 }
             ]
         },
         "spaycs": {
-            "count": 2,
+            "count": 10,
             "records": [
                 {
-                    "distance": "3700.66047272806",
-                    "id": 2,
-                    "user_id": 7,
+                    "distance": "12.3020109427781",
+                    "id": "MTczMzU3MzMyNy4zMQ==",
+                    "user_id": 10,
                     "name": "spaycdev13",
-                    "address": "Noida sec 16",
+                    "address": "Your address",
                     "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
                     "start_date": "2019-01-11T01:02:20+00:00",
                     "end_date": "2019-01-12T01:02:20+00:00",
                     "image": "",
-                    "type": "Event",
+                    "type": "Community",
                     "group_type": "Public",
                     "status": "Active",
-                    "latitude": 77.209021,
-                    "longitude": 28.613939,
-                    "created": "2018-01-17T15:14:50+00:00",
-                    "modified": "2018-01-17T15:14:50+00:00"
+                    "latitude": 28.613939,
+                    "longitude": 77.209021,
+                    "created": "2018-01-25T11:49:48+00:00",
+                    "modified": "2018-01-25T11:49:48+00:00"
                 },
                 {
-                    "distance": "4402.89875657017",
-                    "id": 1,
-                    "user_id": 7,
-                    "name": "spaycdev9",
-                    "address": "Noida sec 15",
+                    "distance": "12.3020109427781",
+                    "id": "MTY4MTA0MDgwMi4yNA==",
+                    "user_id": 10,
+                    "name": "spaycdev13",
+                    "address": "Your address",
                     "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
                     "start_date": "2019-01-11T01:02:20+00:00",
                     "end_date": "2019-01-12T01:02:20+00:00",
                     "image": "",
-                    "type": "Event",
+                    "type": "Community",
                     "group_type": "Public",
                     "status": "Active",
-                    "latitude": 20.895996,
-                    "longitude": 6.772989,
-                    "created": "2018-01-17T14:37:02+00:00",
-                    "modified": "2018-01-17T14:37:02+00:00"
+                    "latitude": 28.613939,
+                    "longitude": 77.209021,
+                    "created": "2018-01-25T11:40:10+00:00",
+                    "modified": "2018-01-25T11:40:10+00:00"
                 }
             ]
         },
         "hashtags": {
-            "count": 2,
+            "count": 9,
             "records": [
                 {
-                    "id": 1,
-                    "name": "hash tag1",
-                    "created": "2018-01-19T13:58:21+00:00",
-                    "modified": "2018-01-19T13:58:21+00:00",
-                    "total_space": 2
+                    "id": "MjA0ODc2ODQ3Ny43Mw==",
+                    "name": "color",
+                    "created": "2018-01-31T13:54:20+00:00",
+                    "modified": "2018-01-31T13:54:20+00:00"
                 },
                 {
-                    "id": 2,
-                    "name": "hash tag2",
-                    "created": "2018-01-19T13:58:54+00:00",
-                    "modified": "2018-01-19T13:58:54+00:00",
-                    "total_space": 0
+                    "id": "MjEwMTMwMTAwMi44",
+                    "name": "festival",
+                    "created": "2018-01-31T13:54:20+00:00",
+                    "modified": "2018-01-31T13:54:20+00:00"
                 }
             ]
         }

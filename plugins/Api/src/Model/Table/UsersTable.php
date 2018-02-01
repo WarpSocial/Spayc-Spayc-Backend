@@ -12,6 +12,7 @@ use Cake\Auth\DefaultPasswordHasher;
 use \Cake\ORM\TableRegistry;
 use Cake\Core\Configure;
 use Api\Utils;
+use Api\Auth\ApiHasher;
 /**
  * Users Model
  *
@@ -385,9 +386,10 @@ class UsersTable extends Table {
         ]);
         $users->formatResults(function (\Cake\Collection\CollectionInterface $results) {
             return $results->map(function ($row) {
+                $uId = ApiHasher::decrypt($row->id);
                 $row['friend'] = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
                 $row['friend'] = !empty($row['requestedby'][0]) && empty($row['friend'])?$row['requestedby'][0]:$row['friend'];
-                $row['friend']['total_friends'] = TableRegistry::get('Api.FriendRequest')->getFriendCountByUserId($row->id);
+                $row['friend']['total_friends'] = TableRegistry::get('Api.FriendRequest')->getFriendCountByUserId($uId);
                 unset($row['requestedto']);
                 unset($row['requestedby']);
                 return $row;

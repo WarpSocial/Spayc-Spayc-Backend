@@ -131,7 +131,8 @@ class SpaycsController extends AppController {
         $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend){
             return $results->map(function ($row) use($friend) {
                 if(!empty($row['joined_spayc'])) {
-                    $row['joined_spayc'][0]['joined_friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriendsBySpaycIdAndUserIds($row->id, $friend);
+                    $spaycId = ApiHasher::decrypt($row->id);
+                    $row['joined_spayc'][0]['joined_friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
                 }
                 return $row;
             });
@@ -211,7 +212,8 @@ class SpaycsController extends AppController {
         $spayc->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend) {
             return $results->map(function ($row) use($friend) {
                 if(!empty($row['joined_spayc'])) {
-                    $row['joined_spayc'][0]['joined_friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriendsBySpaycIdAndUserIds($row->id, $friend);
+                    $spaycId = ApiHasher::decrypt($row->id);
+                    $row['joined_spayc'][0]['joined_friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
                 }
                 return $row;
             });
