@@ -178,6 +178,8 @@ function postUser() { return; }
                     "website_url": "www.spayc.com",
                     "address": "spayc address",
                     "bio_data": "your bio data",
+                    "matrix_user_id": "@test2:35.168.119.247",
+                    "matrix_access_token": "MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyOGNpZCB1c2VyX2lkID0gQHRlc3QyOjM1LjE2OC4xMTkuMjQ3CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gMVJKXjJSTEs3Klc9LmhyQAowMDJmc2lnbmF0dXJlIMyd1A3UtgJZEWcmvehB84AboRIZrFb46AqHTrn4Y2reCg",
                     "created": "2018-01-17T14:09:52+00:00",
                     "modified": "2018-01-18T07:43:46+00:00",
                     "spaycs": [
@@ -208,6 +210,8 @@ function postUser() { return; }
                     "website_url": "www.spayc.com",
                     "address": "your address",
                     "bio_data": "your bio data",
+                    "matrix_user_id": "@test2:35.168.119.247",
+                    "matrix_access_token": "MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyOGNpZCB1c2VyX2lkID0gQHRlc3QyOjM1LjE2OC4xMTkuMjQ3CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gMVJKXjJSTEs3Klc9LmhyQAowMDJmc2lnbmF0dXJlIMyd1A3UtgJZEWcmvehB84AboRIZrFb46AqHTrn4Y2reCg",
                     "created": "2018-01-24T13:46:10+00:00",
                     "modified": "2018-01-29T07:30:01+00:00",
                     "spaycs": [
@@ -408,6 +412,8 @@ function postFriendRequest() { return; }
         {
             "id": "NDIwMjYwMjAwLjU2",
             "name": "spayc",
+            "matrix_user_id": "@test2:35.168.119.247",
+            "matrix_access_token": "MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyOGNpZCB1c2VyX2lkID0gQHRlc3QyOjM1LjE2OC4xMTkuMjQ3CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gMVJKXjJSTEs3Klc9LmhyQAowMDJmc2lnbmF0dXJlIMyd1A3UtgJZEWcmvehB84AboRIZrFb46AqHTrn4Y2reCg",
             "user_images": [
                 {
                     "user_id": 8,

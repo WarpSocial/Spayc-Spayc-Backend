@@ -177,6 +177,8 @@ class UsersController extends AppController {
         }            
         $items->set('status', 'Active');        
         $items->set('token_verification', Security::hash($data['email'], 'sha1', true));
+        $items->set('matrix_user_id', $matrix['user_id']);
+        $items->set('matrix_access_token', $matrix['access_token']);
         #echo $data['token_verification'];die;
         if ($this->Users->save($items)) {           
             $this->getMailer('Api.User')->send('signup', [$items]);
@@ -441,7 +443,7 @@ class UsersController extends AppController {
         $friendStatus = !empty($this->request->query['friend_status'])?$this->request->query['friend_status']:'Accepted';
         $userId = $this->Auth->user('id');
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($this->Auth->user('id'), $friendStatus);
-        $friends = $this->Users->find("all", ['fields'=>['Users.id', 'name'=>'Users.username'], 'conditions'=>['Users.id IN'=>$friend, 'Users.id !='=>$this->Auth->user('id'), 'Users.status'=>'Active']]);
+        $friends = $this->Users->find("all", ['fields'=>['Users.id', 'name'=>'Users.username', 'Users.matrix_user_id', 'Users.matrix_access_token'], 'conditions'=>['Users.id IN'=>$friend, 'Users.id !='=>$this->Auth->user('id'), 'Users.status'=>'Active']]);
         $friends->contain([
             'Requestedby' => function($q) use($userId) {
                 return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_status', 'Requestedby.requested_to', 'Requestedby.friend_status'])->Where(['OR'=>['Requestedby.requested_by'=>$userId, 'Requestedby.requested_to'=>$userId]]);
@@ -508,6 +510,17 @@ class UsersController extends AppController {
         }
         $friendRequest->updateAll($friend, ['id'=>$data['id']]);
         $response = ['status'=>'success', 'message'=>__('Friend status updated successfully.')];
+        $this->set($response);
+    }
+    
+    public function getFacebookFriends() {
+        $data = [];
+        if(!empty($this->Auth->user('fb_id'))) {
+            $data = $this->Auth->user();
+        } else {
+            $this->response->statusCode(204);
+        }
+        $response = ['status'=>'success', 'message'=>__('Facebook friend lists.'), 'data'=>$data];
         $this->set($response);
     }
 }

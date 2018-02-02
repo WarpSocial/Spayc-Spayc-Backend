@@ -15,6 +15,8 @@ CREATE TABLE users (
     longitude double precision,
     latitude double precision,
     timezone VARCHAR(100),
+    matrix_user_id VARCHAR(100),
+    matrix_access_token VARCHAR(1000),
     created timestamp NOT NULL,
     modified timestamp,
     primary key (id,created),

@@ -22,6 +22,7 @@ Router::plugin(
         $routes->connect('/friend-response', ['controller' => 'Users', 'action' => 'setFriendResponse']);
         $routes->connect('/subscribe-spayc', ['controller' => 'Spaycs', 'action' => 'subscribeSpayc']);
         $routes->connect('/spayc-details/:id', ['controller' => 'Spaycs', 'action' => 'view'], ['pass'=>['id']]);
+        $routes->connect('/facebook-friends', ['controller' => 'Users', 'action' => 'getFacebookFriends']);
         $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
         $routes->fallbacks(DashedRoute::class);
     }
