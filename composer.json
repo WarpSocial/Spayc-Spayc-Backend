@@ -11,8 +11,7 @@
         "cakephp/plugin-installer": "^1.0",
         "josegonzalez/dotenv": "2.*",
         "mobiledetect/mobiledetectlib": "2.*",
-        "aws/aws-sdk-php": "~3.18",
-        "akkaweb/cakephp-facebook": "dev-master"
+        "aws/aws-sdk-php": "~3.18"
     },
     "require-dev": {
         "cakephp/bake": "^1.1",

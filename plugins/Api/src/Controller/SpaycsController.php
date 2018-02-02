@@ -143,6 +143,8 @@ class SpaycsController extends AppController {
         $data['spaycs'] = [];
         if($spaycs->count()) {
             $data['spaycs'] = $spaycs->toArray();
+        } else {
+            $this->response->statusCode(204);
         }
         $response = ['status'=>'success','message'=>__('Spayc lists.'), 'data'=>$data];
         $this->set($response);
@@ -219,8 +221,10 @@ class SpaycsController extends AppController {
             });
         });
         $data = [];
-        if($spayc) {
+        if($spayc->count()) {
             $data = $spayc;
+        } else {
+            $this->response->statusCode(204);
         }
         $response = ['status'=>'success','message'=>__('Spayc Details.'), 'data'=>$data];
         $this->set($response);

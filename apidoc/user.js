@@ -356,7 +356,7 @@ function postLogin() { return; }
   
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  
-  @apiParam {String} friend_id Friend id required (Required).
+  @apiParam {String} friend_id Friend id required (friend_id must be an user id)(Required).
  
   @apiExample Example usage:
  

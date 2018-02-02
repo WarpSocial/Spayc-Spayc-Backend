@@ -30,7 +30,7 @@ class UsersController extends AppController {
         $this->Auth->allow(['login','add','facebookSignup']);
     }
     
-    public function avatars(){
+    public function avatars() {
         if (!$this->request->is('post')) {
             $this->restException(['status'=>'failed','message'=>__('Method not allowed.')],405);
         }
@@ -146,6 +146,9 @@ class UsersController extends AppController {
             $data['users'] = $this->Users->searchUsers($this->Auth->user('id'), $this->request->query);
             $data['spaycs'] = TableRegistry::get('Api.Spaycs')->searchSpaycs($this->request->query);
             $data['hashtags'] = TableRegistry::get('Api.Hashtags')->searchHashtags($this->request->query);
+        }
+        if(empty($data['users']['records']) && empty($data['spaycs']['records']) && empty($data['hashtags']['records'])) {
+            $this->response->statusCode(204);
         }
         $response = ['status' => "success", 'message' => __('Search Lists.'), 'data' => $data];
         $this->set($response);
@@ -472,6 +475,8 @@ class UsersController extends AppController {
         $data['count'] = $friends->count();
         if($friends->count()) {
             $data = $friends->toArray();
+        } else {
+            $this->response->statusCode(204);
         }
         $response = ['status'=>'success', 'message'=>__('Friend lists.'), 'data'=>$data];
         $this->set($response);
@@ -505,5 +510,4 @@ class UsersController extends AppController {
         $response = ['status'=>'success', 'message'=>__('Friend status updated successfully.')];
         $this->set($response);
     }
-
 }

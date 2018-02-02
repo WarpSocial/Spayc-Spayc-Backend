@@ -4,57 +4,9 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ac8bd489b8e6af3969c52ef5f8725f6b",
-    "content-hash": "f0bbf1e1094dcf9a9a5f8fe2a28a726b",
+    "hash": "50c05bca4c90756b9fab9605dbbe8c71",
+    "content-hash": "38c262d9ba3725b32cbb0b8a7848a700",
     "packages": [
-        {
-            "name": "akkaweb/cakephp-facebook",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/akkaweb/AKKA-CakePHP-Facebook-Plugin.git",
-                "reference": "4f65259c12187d6addd72255193b0d8a29cc4d13"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/akkaweb/AKKA-CakePHP-Facebook-Plugin/zipball/4f65259c12187d6addd72255193b0d8a29cc4d13",
-                "reference": "4f65259c12187d6addd72255193b0d8a29cc4d13",
-                "shasum": ""
-            },
-            "require": {
-                "facebook/php-sdk-v4": "4.0.*",
-                "php": ">=5.4"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "*"
-            },
-            "type": "cakephp-plugin",
-            "extra": {
-                "installer-name": "AkkaFacebook"
-            },
-            "autoload": {
-                "psr-4": {
-                    "AkkaFacebook\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Andre Santiago",
-                    "email": "admin@akkaweb.com"
-                }
-            ],
-            "description": "CakePHP 3 Facebook Plugin",
-            "keywords": [
-                "cakephp",
-                "cakephp3",
-                "facebook"
-            ],
-            "time": "2017-07-23 16:36:50"
-        },
         {
             "name": "aura/intl",
             "version": "3.0.0",
@@ -417,56 +369,6 @@
             ],
             "description": "A composer installer for CakePHP 3.0+ plugins.",
             "time": "2017-12-24 21:09:29"
-        },
-        {
-            "name": "facebook/php-sdk-v4",
-            "version": "4.0.23",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/facebook/php-graph-sdk.git",
-                "reference": "c82611e05596622c9bd7abfa1cea1512d885c95e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/facebook/php-graph-sdk/zipball/c82611e05596622c9bd7abfa1cea1512d885c95e",
-                "reference": "c82611e05596622c9bd7abfa1cea1512d885c95e",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4.0"
-            },
-            "require-dev": {
-                "guzzlehttp/guzzle": "~4.0",
-                "mockery/mockery": "dev-master",
-                "phpunit/phpunit": "3.7.*"
-            },
-            "suggest": {
-                "guzzlehttp/guzzle": "Allows for implementation of the Guzzle HTTP client"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Facebook\\": "src/Facebook/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Facebook Platform"
-            ],
-            "authors": [
-                {
-                    "name": "Facebook",
-                    "homepage": "https://github.com/facebook/facebook-php-sdk-v4/contributors"
-                }
-            ],
-            "description": "Facebook SDK for PHP",
-            "homepage": "https://github.com/facebook/facebook-php-sdk-v4",
-            "keywords": [
-                "facebook",
-                "sdk"
-            ],
-            "abandoned": "facebook/graph-sdk",
-            "time": "2015-04-03 20:31:47"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -4474,7 +4376,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "akkaweb/cakephp-facebook": 20,
         "psy/psysh": 0
     },
     "prefer-stable": true,

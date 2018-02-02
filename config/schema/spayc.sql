@@ -83,7 +83,7 @@ CREATE TABLE spaycs (
     longitude double precision,
     latitude double precision,
     status row_status DEFAULT 'Inactive'::row_status,
-    matrix_room_id VARCHAR(255) NULL,
+    matrix_room_id VARCHAR(100) NULL,
     created timestamp NOT NULL,
     modified timestamp,
     PRIMARY KEY (id,user_id,created)
