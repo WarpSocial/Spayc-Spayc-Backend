@@ -188,6 +188,9 @@ class UsersTable extends Table {
         $validator
             ->requirePresence('fb_id', true, __('Facebook id is required field.'))
             ->notEmpty('fb_id',__('Facebook id is required field.'));
+        $validator
+            ->requirePresence('fb_access_key', true, __('Facebook access key is required field.'))
+            ->notEmpty('fb_access_key',__('Facebook access key is required field.'));
         
         $validator
                 ->requirePresence('username', true, __('Username is required field.'))
