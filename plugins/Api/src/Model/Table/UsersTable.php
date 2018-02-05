@@ -10,7 +10,9 @@ use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\Auth\DefaultPasswordHasher;
 use \Cake\ORM\TableRegistry;
+use Cake\Core\Configure;
 use Api\Utils;
+use Api\Auth\ApiHasher;
 /**
  * Users Model
  *
@@ -36,7 +38,7 @@ class UsersTable extends Table {
      */
     public function initialize(array $config) {
         parent::initialize($config);
-
+        
         $this->setTable('users');
         $this->setDisplayField('id');
         $this->setPrimaryKey('id');
@@ -51,6 +53,41 @@ class UsersTable extends Table {
             'foreignKey' => 'user_id',
             'className' => 'Api.UserImages'
         ]);
+        $this->hasMany('JoinedSpayc', [
+            'foreignKey' => 'user_id',
+            'className' => 'Api.JoinedSpayc'
+        ]);
+        $this->hasMany('SubscribedUsers', [
+            'foreignKey' => 'user_id',
+            'className' => 'Api.SubscribedUsers'
+        ]);
+        
+        $this->hasMany('Requestedby', [
+            'foreignKey' => 'requested_by',
+            'joinType' => 'INNER',
+            'className' => 'Api.FriendRequest'
+        ]);
+        $this->hasMany('Requestedto', [
+            'foreignKey' => 'requested_to',
+            'joinType' => 'INNER',
+            'className' => 'Api.FriendRequest'
+        ]);
+        
+        $this->hasMany('FriendRequest', [
+            'foreignKey' => 'requested_by',
+            'targetForeignKey'=>'requested_to',
+            'joinType' => 'INNER',
+            'className' => 'Api.FriendRequest'
+        ]);
+        
+        $this->hasMany('Users', [
+            'foreignKey' => 'user_id',
+            'className' => 'Api.Users'
+        ]);
+        $this->hasMany('Spaycs', [
+            'foreignKey' => 'user_id',
+            'className' => 'Api.Spaycs'
+        ]);
     }
 
     /**
@@ -61,92 +98,82 @@ class UsersTable extends Table {
      */
     public function validationDefault(Validator $validator) {
         $validator
-                ->integer('id')
-                ->allowEmpty('id', 'create');
-
-        $validator
-                ->allowEmpty('first_name')
-                ->add('first_name', 'length', ['rule' => ['maxLength', 30], 'message' => 'First name should be less than 30 chars.']);
-
-        $validator
-                ->allowEmpty('last_name')
-                ->add('last_name', 'length', ['rule' => ['maxLength', 30], 'message' => 'Last name should be less than 30 chars.']);
-
-        $validator
-                ->requirePresence('username', 'create','Username is required field.')
-                ->notEmpty('username','Username  is required field.')                
-                ->add('username', 'unique', ['rule' => 'validateUnique','message'=>'Username has been used.', 'provider' => 'table'])                
-                ->add('username', [
-                    'lengthBetween' => [
-                        'rule' => ['lengthBetween', 3, 30],
-                        'message' => 'Username length must be between 3-30 alphanumeric.'
-                    ]
+                ->requirePresence('username', 'create',__('Username is required field.'))
+                ->notEmpty('username',__('Please enter a user name'))                
+                ->maxLength('username', 30,__('User name cannot exceed to 30 characters.'))
+                ->add('username', 'unique', ['rule' => 'validateUnique','message'=>__('Username already exist.'), 'provider' => 'table'])
+                 ->add("username",'custom',[
+                    'rule'=>function($value,$context){
+                        return (bool)(preg_match('/^[\w\s\.-@#]+$/', $value));
+                    },
+                    'message'=>__('Username is not valid.'),
                 ]);
-        $validator
-                ->requirePresence('device_id', 'create','Device id is required field.')
-                ->notEmpty('device_id','Device id is required field.');
                 
         $validator
-                ->requirePresence('password', 'create','Password is required field.')
-                ->notEmpty('password','Password is required field.')
+                ->requirePresence('password', 'create',__('Password is required field.'))
+                ->notEmpty('password',__('Password is required field.'))
                 ->add("password",'custom',[
-                    'rule'=>function($value,$context){
-                        if(preg_match('/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}/', $value)){
+                    'rule'=>function($value,$context) {
+                        if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,30}$/', $value)){
                             return false;
                         }else{
                             return true;
                         }
                     },
-                    'message'=>'Password must be between 4-8 charecters length.',
+                    'message'=>__('Password must contain 8-30 character length, at least one letter and one number.'),
                 ]);
-
-        $validator
-                ->email('email',false,'Email is required field.')
-                ->requirePresence('email', 'create','Email is required field.')
-                ->add('email', 'unique', ['rule' => 'validateUnique','message'=>'Email has been used.', 'provider' => 'table']) 
-                ->notEmpty('email','Email is required field.');
         
         $validator
-                ->allowEmpty('phone')
-                ->requirePresence('phone', 'create','Phone must exist.')
+                ->requirePresence('confirm_password', 'create', __('Confirm password is required field.'))
+                ->notEmpty('confirm_password', __('Confirm password is required field.'))
+                ->sameAs('confirm_password', 'password',__('Passwords don\'t match, try again please!'));
+        
+        $validator
+                ->requirePresence('email', 'create',__('Email is required field.'))
+                ->notEmpty('email',__('Email is required field.'))
+                ->email('email', false, __('Invalid email address.'))                
+                ->add('email', 'unique', ['rule' => 'validateUnique','message'=>__('Email already exist.'), 'provider' => 'table']) ;
+                
+        
+        $validator
+                ->allowEmpty('phone')                
                 ->add('phone', 'valid', [
                     'rule' => function($value,$context){
-                        if(preg_match('/[\d]{16}$/',$value)){
-                            return false;
-                        }else{
-                            return true;
-                        }
+                        return (bool)(preg_match('/^([\+\s\(\)\-]*\d[\+\s\(\)\-]*){3,15}$/',$value));
                     },
-                    'message'=>'Phone no is not valid'
+                    'message'=>__('Phone no is not valid.')
                     ]);
 
         $validator
                 ->allowEmpty('dob')
                 ->add('dob',[
                     'date' => [
-                        'rule'=> ['date',['ymd']],
+                        'rule'=> ['date',['mdy']],
                         'last'=>true,
-                        'message'=>'Date of birth is not valid format.'
+                        'message'=>__('Date of birth is not valid format.')
                         ]
                     ])
                 ->add('dob','custom',[
                     'rule'=>function($value,$context){
                             $now = new Time('now');
-                            $dob = Time::createFromFormat('Y-m-d',$value);
+                            $dob = Time::createFromFormat('m-d-Y',$value);
                             $age = $now->diff($dob)->format("%Y");
                             return ($age > 13);
                         },
-                    'message'=>'Age must be 13 or greater than 13 year\'s old.',
+                    'message'=>__('Age must be 13 or greater than 13 year\'s old.'),
                 ]); 
         $validator
-            ->allowEmpty('gender')
-            ->add('gender', 'custom', [
-                        'rule' => function ($value, $context){
-                          return in_array($value, \Cake\Core\Configure::read('gender'));
-                        },
-                        'message' => 'Gender value must be any one male,female or other only.'
-                    ]);                
-
+            ->requirePresence('gender', 'create',__('Gender is required field.'))    
+            ->notEmpty('gender',__('Gender is required field.'))
+            ->inList('gender', Configure::read('gender'),__('Gender must be any one '.implode(',',Configure::read('gender')).'.'));      
+        $validator
+                ->requirePresence('longitude', 'create',__('Longitude key is missing.'))
+                ->notEmpty('longitude',__('Please enter longitude.'))
+                ->longitude('longitude',__('Please enter valid longitude.'));        
+        $validator
+                ->requirePresence('latitude', 'create',__('Latitude key is missing.'))
+                ->notEmpty('latitude',__('Please enter latitude.'))
+                ->latitude('latitude',__('Please enter valid latitude.'));
         return $validator;
     }
     
@@ -157,54 +184,74 @@ class UsersTable extends Table {
      * @return \Cake\Validation\Validator
     */
     public function validationFacebookSignup(Validator $validator) {
+        
         $validator
-            ->integer('id')
-            ->allowEmpty('id', 'create');
-
+            ->requirePresence('fb_id', true, __('Facebook id is required field.'))
+            ->notEmpty('fb_id',__('Facebook id is required field.'));
+        
         $validator
-            ->allowEmpty('fb_id')
-            ->requirePresence('fb_id', 'create','Facebook id is required field.')
-            ->notEmpty('fb_id','Facebook id is required field.');
-
+                ->requirePresence('username', true, __('Username is required field.'))
+                ->notEmpty('username',__('Username is required field.'))                
+                ->maxLength('username', 30,__('Username cannot exceed to 30 characters.'))
+                ->add('username', 'unique', ['rule' => 'validateUnique','message'=>__('Username already exist.'), 'provider' => 'table'])
+                 ->add("username",'custom',[
+                    'rule'=>function($value,$context){
+                        return (bool)(preg_match('/^[\w\s\.-@#]+$/', $value));
+                    },
+                    'message'=>__('Username is not valid.'),
+                ]);
+        
         $validator
-            ->allowEmpty('first_name')
-            ->add('first_name', 'length', ['rule' => ['maxLength', 30], 'message' => 'First name should be less than 30 chars.']);
-
-        $validator
-            ->allowEmpty('last_name')
-            ->add('last_name', 'length', ['rule' => ['maxLength', 30], 'message' => 'Last name should be less than 30 chars.']);
-        $validator
-                ->requirePresence('username', 'create','Username is required field.')
-                ->allowEmpty('username');
-        $validator
-            ->allowEmpty('email')
-            ->email('email',false,'Email is required field.')
-            ->requirePresence('email', 'create','Email is required field.');
-            //->add('email', 'unique', ['rule' => 'validateUnique','message'=>'Email has been used.', 'provider' => 'table']) 
-            //->notEmpty('email','Email is required field.');
-
+                ->email('email',false,__('Email is required field.'))
+                ->requirePresence('email', true, __('Email is required field.'))
+                ->email('email', false, __('Invalid email address.'))
+                //->add('email', 'unique', ['rule' => 'validateUnique','message'=>'Email has been used.', 'provider' => 'table']) 
+                ->notEmpty('email',__('Email is required field.'));
+        
         $validator
             ->allowEmpty('dob')
             ->add('dob',[
                 'date' => [
-                    'rule'=> ['date',['ymd']],
+                    'rule'=> ['date',['mdy']],
                     'last'=>true,
-                    'message'=>'Date of birth is not valid format.'
+                    'message'=>__('Date of birth is not valid format.')
                     ]
                 ])
             ->add('dob','custom',[
                 'rule'=>function($value,$context){
-                        $today = new Time('now');
-                        $udob = Time::createFromFormat('Y-m-d',$value);
-                        return ($udob<$today);
+                        $now = new Time('now');
+                        $dob = Time::createFromFormat('m-d-Y',$value);
+                        $age = $now->diff($dob)->format("%Y");
+                        return ($age > 13);
                     },
-                'message'=>'Date of birth must be below the current date.',
+                'message'=>__('Age must be 13 or greater than 13 year\'s old.'),
             ]);
-                    
+                
         $validator
-            ->requirePresence('device_id', 'create','Device id is required field.')
-            ->notEmpty('device_id','Device id is required field.')                
-            ->add('device_id', 'unique', ['rule' => 'validateUnique','message'=>'Device id has been used.', 'provider' => 'table']);
+            ->requirePresence('gender', true, __('Gender is required field.'))    
+            ->notEmpty('gender',__('Gender is required field.'))
+            ->inList('gender', Configure::read('gender'),__('Gender must be any one '.implode(',',Configure::read('gender')).'.')           );
+        
+        $validator
+            ->allowEmpty('phone')                
+            ->add('phone', 'valid', [
+                'rule' => function($value,$context){
+                    return (bool)(preg_match('/^([\+\s\(\)\-]*\d[\+\s\(\)\-]*){3,15}$/',$value));
+                },
+                'message'=>__('Phone no is not valid.')
+                ]);
+        $validator
+                ->requirePresence('device_id', true, __('Device id is required field.'))
+                ->notEmpty('device_id', __('Please enter a device id.'))
+                ->maxLength('device_id', 100,__('Device id cannot exceed to 100 characters.'));
+        $validator
+                ->requirePresence('longitude', true, __('Longitude key is missing.'))
+                ->notEmpty('longitude',__('Please enter longitude.'))
+                ->longitude('longitude',__('Please enter valid longitude.'));        
+        $validator
+                ->requirePresence('latitude', true, __('Latitude key is missing.'))
+                ->notEmpty('latitude',__('Please enter latitude.'))
+                ->latitude('latitude',__('Please enter valid latitude.'));
         return $validator;
     }
     
@@ -215,61 +262,60 @@ class UsersTable extends Table {
      * @return \Cake\Validation\Validator
      */
     public function validationUpdateUser(Validator $validator) {
-        $validator
-                ->integer('id')
-                ->notEmpty('id', 'User id is required field.');
-
-        $validator
-                ->requirePresence('first_name', 'First name is required field.')
-                ->add('first_name', 'length', ['rule' => ['maxLength', 30], 'message' => 'First name should be less than 30 chars.'])
-                ->notEmpty('first_name', 'First name is required field.');
-
-        $validator
-                ->requirePresence('last_name', 'Last name is required field.')
-                ->add('last_name', 'length', ['rule' => ['maxLength', 30], 'message' => 'Last name should be less than 30 chars.'])
-                ->notEmpty('last_name', 'Last name is required field.');
-                
         
         $validator
-                ->allowEmpty('phone')
-                ->add('phone', 'valid', [
-                    'rule' => function($value,$context){
-                        if(preg_match('/[\d]{16}$/',$value)){
-                            return false;
-                        }else{
-                            return true;
-                        }
+            ->requirePresence('username', 'create',__('Username is required field.'))
+            ->notEmpty('username',__('Username is required field.'))                
+            ->maxLength('username', 30,__('Username cannot exceed to 30 characters.'))
+            ->add('username', 'unique', ['rule' => 'validateUnique','message'=>__('Username already exist.'), 'provider' => 'table'])
+             ->add("username",'custom',[
+                'rule'=>function($value,$context){
+                    return (bool)(preg_match('/^[\w\s\.-@#]+$/', $value));
+                },
+                'message'=>__('Username is not valid.'),
+            ]);
+        
+        $validator
+            ->allowEmpty('phone')                
+            ->add('phone', 'valid', [
+                'rule' => function($value,$context){
+                    return (bool)(preg_match('/^([\+\s\(\)\-]*\d[\+\s\(\)\-]*){3,15}$/',$value));
+                },
+                'message'=>__('Phone no is not valid.')
+                ]);
+
+        $validator
+            ->allowEmpty('dob')
+            ->add('dob',[
+                'date' => [
+                    'rule'=> ['date',['mdy']],
+                    'last'=>true,
+                    'message'=>__('Date of birth is not valid format.')
+                    ]
+                ])
+            ->add('dob','custom',[
+                'rule'=>function($value,$context){
+                        $now = new Time('now');
+                        $dob = Time::createFromFormat('m-d-Y',$value);
+                        $age = $now->diff($dob)->format("%Y");
+                        return ($age > 13);
                     },
-                    'message'=>'Phone no is not valid'
-                    ]);
+                'message'=>__('Age must be 13 or greater than 13 year\'s old.'),
+            ]);
 
         $validator
-                ->allowEmpty('dob')
-                ->add('dob',[
-                    'date' => [
-                        'rule'=> ['date',['ymd']],
-                        'last'=>true,
-                        'message'=>'Date of birth is not valid format.'
-                        ]
-                    ])
-                ->add('dob','custom',[
-                    'rule'=>function($value,$context){
-                            $now = new Time('now');
-                            $dob = Time::createFromFormat('Y-m-d',$value);
-                            $age = $now->diff($dob)->format("%Y");
-                            return ($age > 13);
-                        },
-                    'message'=>'Age must be 13 or greater than 13 year\'s old.',
-                ]); 
+            ->requirePresence('gender', 'create',__('Gender is required field.'))    
+            ->notEmpty('gender',__('Gender is required field.'))
+            ->inList('gender', Configure::read('gender'),__('Gender must be any one '.implode(',',Configure::read('gender')).'.'));
         $validator
-            ->allowEmpty('gender')
-            ->add('gender', 'custom', [
-                        'rule' => function ($value, $context){
-                          return in_array($value, \Cake\Core\Configure::read('gender'));
-                        },
-                        'message' => 'Gender value must be any one male,female or other only.'
-                    ]);                
-
+                ->requirePresence('longitude', 'create',__('Longitude key is missing.'))
+                ->allowEmpty('longitude')
+                ->longitude('longitude',__('Please enter valid longitude.'));        
+        $validator
+                ->requirePresence('latitude', 'create',__('Latitude key is missing.'))
+                ->allowEmpty('latitude')
+                ->latitude('latitude',__('Please enter valid latitude.'));
+        
         return $validator;
     }
 
@@ -307,7 +353,7 @@ class UsersTable extends Table {
         $logItems->token = $hasher->hash($plain_token);
         $logItems->plain_token = $plain_token;
         $logItems->device_id = $user['device_id'];
-        $logItems->matrix_access_token = $user['access_token'];
+        $logItems->matrix_access_token = $user['matrix_access_token'];
         $logItems->matrix_user_id = $user['matrix_user_id'];
         $logItems->login_status = 1;
         $logItems->created = Time::now();
@@ -319,55 +365,53 @@ class UsersTable extends Table {
         }
     }
     
-    public function getAlreadyExistsUser($data = []) {
-        if(!empty($data['email'])) {
-            $user = $this->find("all", ['conditions'=>['email'=>$data['email']]]);
-            if($user->count()) {
-                return $user->first()->toArray();
+    public function searchUsers($userId = null, $request = []) {
+        $users = $this->find('all', ['fields'=>['Users.id', 'name'=>'Users.username','Users.email','Users.gender','Users.phone','Users.dob','Users.status','Users.website_url','Users.address','Users.bio_data', 'Users.matrix_user_id', 'Users.matrix_access_token', 'Users.created','Users.modified']])->where(['Users.status'=>'Active']);
+        $users->contain([
+            'Requestedby' => function($q) use($userId) {
+                return $q->select(['Requestedby.id', 'Requestedby.requested_by', 'Requestedby.requested_to', 'Requestedby.requested_status', 'Requestedby.friend_status'])->Where(['OR'=>['Requestedby.requested_by'=>$userId, 'Requestedby.requested_to'=>$userId]]);
+            },
+            'Requestedto' => function($q) use($userId) {
+                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.friend_status'])->Where(['OR'=>['Requestedto.requested_by'=>$userId, 'Requestedto.requested_to'=>$userId]]);
+            },
+            'UserImages'=>function($q) {
+                return $q->select(['UserImages.user_id', 'UserImages.image_url']);
+            },
+            'JoinedSpayc'=>function($q) {
+                return $q->select(['JoinedSpayc.user_id', 'joined_spaycs'=>$q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.user_id']);
+            },
+            'Spaycs'=>function($q) {
+                return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id']);
             }
+        ]);
+        $users->formatResults(function (\Cake\Collection\CollectionInterface $results) {
+            return $results->map(function ($row) {
+                $uId = ApiHasher::decrypt($row->id);
+                $row['friend'] = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
+                $row['friend'] = !empty($row['requestedby'][0]) && empty($row['friend'])?$row['requestedby'][0]:$row['friend'];
+                $row['friend']['total_friends'] = TableRegistry::get('Api.FriendRequest')->getFriendCountByUserId($uId);
+                unset($row['requestedto']);
+                unset($row['requestedby']);
+                return $row;
+            });
+        });
+        $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
+        $users->order(['Users.username'=>'ASC'])->limit($limit);
+        if(!empty($request['keyword'])) {
+            $users->where(['Users.username LIKE'=>"%".$request['keyword']."%"]);
         }
-        if(!empty($data['fb_id'])) {
-            $user = $this->find("all", ['conditions'=>['fb_id'=>$data['fb_id']]]);
-            if($user->count()) {
-                return $user->first()->toArray();
-            }
+        $page = (!empty($request['page']) && is_numeric($request['page']))?$request['page']:1;
+        if($page < 0) {
+            $page = $page*-1;
+            $users->page($page);
+        } else {
+            $users->page($page);
         }
-        return false;
-    }
-    
-    public function uploadImages($oldEntity, $files) {
-        $entity = [];
-        if(!empty($files)) { 
-            $ids = [];
-            if(!empty($oldEntity['user_images'])) {
-                foreach($oldEntity['user_images'] as $profile) {
-                    if(!empty($profile['image_url']) and file_exists(WWW_ROOT.'img/profile/'.$profile['image_url'])) {
-                        chmod(WWW_ROOT.'img/profile/'.$profile['image_url'], 0777);
-                        unlink(WWW_ROOT.'img/profile/'.$profile['image_url']);
-                        $ids[] = $profile['id']; 
-                    }
-                }
-                if(!empty($oldEntity['user_images'][0]['user_id'])) {
-                    TableRegistry::get('UserImages')->deleteAll(['user_id'=>$oldEntity['user_images'][0]['user_id']]);
-                }
-            }
-            $uploadPath = WWW_ROOT.'img/profile/';
-            foreach($files as $key=>$file) {
-                if(!empty($file['tmp_name'])) {
-                    $fileName = time().'-'.str_replace(' ', '-', $file['name']);
-                    $uploadFile = $uploadPath.$fileName;
-                    if(move_uploaded_file($file['tmp_name'], $uploadFile)){
-                        $entity['user_id'] = $oldEntity['id'];
-                        $entity['image_url'] = $fileName;
-                        $entity['created'] = date('Y-m-d');
-                        $entity['modified'] = date('Y-m-d'); //pr($entity);
-                        $newEntity = TableRegistry::get('UserImages')->newEntity();
-                        $item = TableRegistry::get('UserImages')->patchEntity($newEntity, $entity);
-                        TableRegistry::get('UserImages')->save($item);
-                    }
-                }
-            }
+        $data['count'] = $users->count();
+        $data['records'] = [];
+        if($users->count()) {
+            $data['records'] = $users->toArray();
         }
-        return $entity;
+        return $data;
     }
 }

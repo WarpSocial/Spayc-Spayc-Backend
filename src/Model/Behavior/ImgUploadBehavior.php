@@ -36,8 +36,16 @@ class ImgUploadBehavior extends Behavior {
     private $aws3Obj = null;
 
     public function initialize(array $config) {
-        $this->_aws3 = \Cake\Core\Configure::read('AWS3');
-        $this->aws3Obj = S3Client::factory(['base_url' => $this->_aws3['url'],'key' => $this->_aws3['key'],'secret' => $this->_aws3['secret'], 'version' => $this->_aws3['version'], 'region' => $this->_aws3['region']]);
+        $this->_aws3 = \Cake\Core\Configure::read('AWS3');        
+        $this->aws3Obj = S3Client::factory([
+            'version' => $this->_aws3['version'],
+            'region'  => $this->_aws3['region'],
+            'credentials' => [
+                'base_url' => $this->_aws3['url'],
+                'key' => $this->_aws3['key'],
+                'secret' => $this->_aws3['secret'], 
+            ]
+        ]);
     }
     
     /**
@@ -65,12 +73,11 @@ class ImgUploadBehavior extends Behavior {
      */
     
     public function beforeSave(Event $event, $entity, \ArrayObject $options) {        
-        if($this->_config['where']=='s3'){
+        if($this->_config['where']=='s3') {
             $this->uploadToAWS($entity);            
-        }else{
+        } else {
             $this->uploadLocal($entity);
         }
-        
     }
     
     public function beforeDelete(Event $event, $entity, \ArrayObject $options) {

@@ -2,7 +2,7 @@
 namespace Api\Model\Entity;
 
 use Cake\ORM\Entity;
-
+use Api\Auth\ApiHasher;
 /**
  * UserImage Entity
  *
@@ -27,10 +27,11 @@ class UserImage extends Entity
      * @var array
      */
     protected $_accessible = [
-        'user_id' => true,
-        'image_url' => true,
-        'created' => true,
-        'modified' => true,
-        'user' => true
+        '*' => true,
+        'id' => false
     ];
+    
+    protected function _getId($id) {      
+        return ApiHasher::encrypt($id);
+    }
 }

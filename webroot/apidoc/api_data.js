@@ -1,6 +1,890 @@
 define({ "api": [
   {
     "type": "post",
+    "url": "/spaycs.json",
+    "title": "New SPAYC",
+    "version": "0.1.0",
+    "name": "PostSpayc",
+    "group": "Spayc",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>Create a new SPAYC.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Name title of the spayc (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "matrix_room_id",
+            "description": "<p>Matrix room id from matrix (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "location",
+            "description": "<p>Location must be alphanumeric with space (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "type",
+            "description": "<p>SPAYC type must be any one from the following Event|Community (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "group_type",
+            "description": "<p>Group type must be any one from the following Public|Private (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Datetime",
+            "optional": false,
+            "field": "start_date",
+            "description": "<p>Start date with time in format YYYY-MM-DD H:i:s (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Datetime",
+            "optional": false,
+            "field": "end_date",
+            "description": "<p>End date with time in format YYYY-MM-DD H:i:s (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "passcode",
+            "description": "<p>Passcode is required in case of private group type.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "description",
+            "description": "<p>Description for SPAYC (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "image",
+            "description": "<p>Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "longitude",
+            "description": "<p>Langitude from google map (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "latitude",
+            "description": "<p>Latitude from google map (Required).</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "{\n    \"name\": \"spaycdev\",\n    \"matrix_room_id\":\"!asfLdzLnOdGRkdPZWu:localhost\",\n    \"location\": \"Community addrss\",\n    \"type\": \"Event|Community\",\n    \"group_type\": \"Public|Private\",\n    \"start_date\": \"2019-01-11 01:02:20\",\n    \"end_date\": \"2019-01-12 01:02:20\",\n    \"passcode\": \"s5d4f87sdf4545\",\n    \"description\":\"spayc creating\",\n    \"image\":\"file.png\",\n    \"longitude\":\"XX.00.XX\",\n    \"latitude\":\"XX.00.XX\"\n}",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Your spayc, spaycdev, has been created.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>Spayc details.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "    HTTP/1.1 201 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Your spayc, spaycdev, has been created.\",\n    \"data\": {\n        \"name\": \"spaycdev\",\n        \"matrix_room_id\":\"!asfLdzLnOdGRkdPZWu:localhost\",\n        \"location\": \"Community addrss\",\n        \"type\": \"Community\",\n        \"group_type\": \"Public\",\n        \"start_date\": \"2018-01-11T11:16:01+00:00\",\n        \"end_date\": \"2018-01-12T09:23:01+00:00\",\n        \"passcode\": \"\",\n        \"description\": \"its about festival #color #festival #abc\",\n        \"image\": \"\",\n        \"user_id\": 38,\n        \"created\": \"2018-01-11T09:31:50+00:00\",\n        \"modified\": \"2018-01-11T09:31:50+00:00\",\n        \"longitude\":\"XX.00.XX\",\n        \"latitude\":\"XX.00.XX\",\n        \"id\": \"NDQ2NTI2NDYzMC45NQ==\"\n    }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/spayc.js",
+    "groupTitle": "Spayc",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/spaycs.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
+    "url": "/spaycs.json?page=:page&limit=5&latitude=28.4594965&longitude=77.0266383",
+    "title": "Spayc Lists",
+    "version": "0.1.0",
+    "name": "getSpaycs",
+    "group": "Spayc",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>Filter spayc list.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "page",
+            "description": "<p>Page number in query string (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>Limit in query string (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Timestamp",
+            "optional": false,
+            "field": "start_date",
+            "description": "<p>Spayc start date in query string(1515542400) (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Timestamp",
+            "optional": false,
+            "field": "end_date",
+            "description": "<p>Spayc end date in query string(1515715200) (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "group_type",
+            "description": "<p>Group type must be any one from the following (Public|Private) (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "type",
+            "description": "<p>Spayc type must be any one from the following (Event|Community) (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "with_friends",
+            "description": "<p>Allow that spayc list with friends or not (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "latitude",
+            "description": "<p>Latitude is required in query string(Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "longitude",
+            "description": "<p>Longitude is required in query string(Required).</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Spayc lists.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>List of spayc details.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Spayc lists.\",\n    \"data\": {\n        \"count\": 4,\n        \"spaycs\": [\n            {\n                \"distance\": \"22.7463734587819\",\n                \"id\": \"NDQ2NTI2NDYzMC45NQ==\",\n                \"user_id\": 51,\n                \"name\": \"Test\",\n                \"address\": \"Event address\",\n                \"matrix_room_id\": \"!asfLdzLnOdGRkdPZWu:localhost\",\n                \"start_date\": \"2018-01-10T06:00:00+00:00\",\n                \"end_date\": \"2018-01-10T06:00:00+00:00\",\n                \"image\": \"img.png\",\n                \"type\": \"Event\",\n                \"group_type\": \"Public\",\n                \"status\": \"Active\",\n                \"latitude\": 28.535516,\n                \"longitude\": 77.391026,\n                \"created\": \"2018-01-10T00:00:00+00:00\",\n                \"modified\": \"2018-01-10T00:00:00+00:00\",\n                \"comments\": [\n                    {\n                        \"spayc_id\": 1,\n                        \"total_comment\": 1\n                    }\n                ],\n                \"subscribed_users\": [],\n                \"joined_spayc\": []\n            },\n            {\n                \"distance\": \"22.7463734587819\",\n                \"id\": \"NDQ2N5I2NDY43C45NQ==\",\n                \"user_id\": 51,\n                \"name\": \"Test1\",\n                \"address\": \"Event address\",\n                \"matrix_room_id\": \"!asfLdzLnOdGRkdrrPZWu:localhost\",\n                \"start_date\": \"2018-01-10T01:00:00+00:00\",\n                \"end_date\": \"2018-01-11T11:00:00+00:00\",\n                \"image\": \"img.png\",\n                \"type\": \"Event\",\n                \"group_type\": \"Public\",\n                \"status\": \"Active\",\n                \"latitude\": 28.535516,\n                \"longitude\": 77.391026,\n                \"created\": \"2018-01-10T00:00:00+00:00\",\n                \"modified\": \"2018-01-10T00:00:00+00:00\",\n                \"comments\": [],\n                \"subscribed_users\": [],\n                \"joined_spayc\": []\n            },\n            {\n                \"distance\": \"22.7463734587819\",\n                \"id\": \"NDQ2NTI2NDgfMC45NQ5g\",\n                \"user_id\": 51,\n                \"name\": \"Test12\",\n                \"address\": \"Event address\",\n                \"matrix_room_id\": \"!asfLdzLnGRkdPZWu:localhost\",\n                \"start_date\": \"2018-01-10T01:00:00+00:00\",\n                \"end_date\": \"2018-01-11T11:00:00+00:00\",\n                \"image\": \"img.png\",\n                \"type\": \"Event\",\n                \"group_type\": \"Private\",\n                \"status\": \"Active\",\n                \"latitude\": 28.535516,\n                \"longitude\": 77.391026,\n                \"created\": \"2018-01-10T00:00:00+00:00\",\n                \"modified\": \"2018-01-10T00:00:00+00:00\",\n                \"comments\": [],\n                \"subscribed_users\": [\n                    {\n                        \"spayc_id\": 3,\n                        \"subscribed_users\": 1\n                    }\n                ],\n                \"joined_spayc\": [\n                    {\n                        \"spayc_id\": 3,\n                        \"joined_users\": 3,\n                        \"joined_friends\": 2\n                    }\n                ]\n            },\n            {\n                \"distance\": \"22.7463734587819\",\n                \"id\": \"NDsdaf2NDYzMC45NQFA\",\n                \"user_id\": 51,\n                \"name\": \"Test123\",\n                \"address\": \"Community address\",\n                \"matrix_room_id\": \"!asfLdOdGRkdPZWu:localhost\",\n                \"start_date\": \"2018-01-10T01:00:00+00:00\",\n                \"end_date\": \"2018-01-11T11:00:00+00:00\",\n                \"image\": \"img.png\",\n                \"type\": \"Community\",\n                \"group_type\": \"Public\",\n                \"status\": \"Active\",\n                \"latitude\": 28.535516,\n                \"longitude\": 77.391026,\n                \"created\": \"2018-01-10T00:00:00+00:00\",\n                \"modified\": \"2018-01-10T00:00:00+00:00\",\n                \"comments\": [],\n                \"subscribed_users\": [],\n                \"joined_spayc\": []\n            }\n        ]\n    }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/spayc.js",
+    "groupTitle": "Spayc",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/spaycs.json?page=:page&limit=5&latitude=28.4594965&longitude=77.0266383"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
+    "url": "/spayc-details/:spaceId.json",
+    "title": "Spayc Details",
+    "version": "0.1.0",
+    "name": "spaycDetails",
+    "group": "Spayc",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>Spayc details by id.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "spaceId",
+            "description": "<p>spayc id in query string (Required).</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Spayc Details.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>Object of Spayc details.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Spayc Details.\",\n    \"data\": [\n        {\n            \"id\": \"MGQ2NTI2NDYzMC45NFSJ\",\n            \"name\": \"spaycdev13\",\n            \"address\": \"Event address\",\n            \"start_date\": \"2019-01-11T01:02:20+00:00\",\n            \"end_date\": \"2019-01-12T01:02:20+00:00\",\n            \"image\": \"\",\n            \"comments\": [\n                {\n                    \"spayc_id\": 5,\n                    \"total_comment\": 2\n                }\n            ],\n            \"subscribed_users\": [\n                {\n                    \"spayc_id\": 5,\n                    \"subscribed_users\": 1\n                }\n            ],\n            \"joined_spayc\": [\n                {\n                    \"spayc_id\": 5,\n                    \"joined_users\": 1,\n                    \"joined_friends\": 1\n                }\n            ]\n        }\n    ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/spayc.js",
+    "groupTitle": "Spayc",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/spayc-details/:spaceId.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/subscribe-spayc.json",
+    "title": "Subscribe Spayc",
+    "version": "0.1.0",
+    "name": "subscribeSpayc",
+    "group": "Spayc",
+    "permission": [
+      {
+        "name": "Subscribe Spayc"
+      }
+    ],
+    "description": "<p>Subscribe Spayc.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "spayc_id",
+            "description": "<p>Spayc id is required (Required).</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "\n{\n    \"spayc_id\":\"NDIwMjYwMjAwLjU2\"\n}",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>User Subscribed successfully.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>Null.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "       HTTP/1.1 201 OK\n{\n    \"status\": \"success\",\n    \"message\": \"User Subscribed successfully.\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "String",
+            "optional": false,
+            "field": "User",
+            "description": "<p>already subscribed.</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/spayc.js",
+    "groupTitle": "Spayc",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/subscribe-spayc.json"
+      }
+    ]
+  },
+  {
+    "type": "post",
+    "url": "/friend-request.json",
+    "title": "Add Friend",
+    "version": "0.1.0",
+    "name": "FriendRequest",
+    "group": "User",
+    "permission": [
+      {
+        "name": "Private User"
+      }
+    ],
+    "description": "<p>Add Friend.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "friend_id",
+            "description": "<p>Friend id required (friend_id must be an user id)(Required).</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "\n{\n    \"friend_id\":\"NDIwMjYwMjAwLjU2\"\n}",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Friend request send successfully..</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>Null.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "        HTTP/1.1 201 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Friend request sent successfully.\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "String",
+            "optional": false,
+            "field": "Friend",
+            "description": "<p>request already sent.</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/user.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/friend-request.json"
+      }
+    ]
+  },
+  {
+    "type": "get",
+    "url": "/get-friends.json?page=:page&limit=:page&friend_status=:status",
+    "title": "Get Friends",
+    "version": "0.1.0",
+    "name": "GetFriends",
+    "group": "User",
+    "permission": [
+      {
+        "name": "Private User"
+      }
+    ],
+    "description": "<p>Get Friends.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "page",
+            "description": "<p>Page number in query string (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>Records limit in query string (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "friend_status",
+            "description": "<p>Status in query string must be any one from the following(Requested, Accepted, 'Declined').</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Friend request send successfully.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>Null.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Friend lists.\",\n    \"data\": [\n        {\n            \"id\": \"NDIwMjYwMjAwLjU2\",\n            \"name\": \"spayc\",\n            \"matrix_user_id\": \"@test2:35.168.119.247\",\n            \"matrix_access_token\": \"MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyOGNpZCB1c2VyX2lkID0gQHRlc3QyOjM1LjE2OC4xMTkuMjQ3CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gMVJKXjJSTEs3Klc9LmhyQAowMDJmc2lnbmF0dXJlIMyd1A3UtgJZEWcmvehB84AboRIZrFb46AqHTrn4Y2reCg\",\n            \"user_images\": [\n                {\n                    \"user_id\": 8,\n                    \"image_url\": \"image1.png\"\n                },\n                {\n                    \"user_id\": 8,\n                    \"image_url\": \"image2.jpg\"\n                }\n            ],\n            \"friend\": {\n                \"id\": \"NDIsdfaYwMjAwLjU2\",\n                \"requested_by\": 7,\n                \"requested_to\": 8,\n                \"requested_status\": \"Accepted\",\n                \"friend_status\": null\n            }\n        }\n    ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/user.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/get-friends.json?page=:page&limit=:page&friend_status=:status"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
     "url": "/login.json",
     "title": "Login",
     "version": "0.1.0",
@@ -11,7 +895,7 @@ define({ "api": [
         "name": "Private User"
       }
     ],
-    "description": "<p>User login with user name and its password. User get logged in by using username and password including device_id.content-type must be in text/html(form-data)</p>",
+    "description": "<p>User login with user name and its password. User get logged in by using username and password including device_id.content-type must be in form-data</p>",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -19,8 +903,8 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "username",
-            "description": "<p>Username must be unique and size between 3-30 charecters (Required).</p>"
+            "field": "email",
+            "description": "<p>Email Registered email id (Required).</p>"
           },
           {
             "group": "Parameter",
@@ -42,7 +926,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "\n{\n   \"username\": \"spaycdev\",\n   \"password\": \"XXXXXXXXX\",\n   \"device_id\":\"DATEOSDEVICEIP\"\n}",
+        "content": "\n{\n   \"email\": \"spaycdev@spayc.com\",\n   \"password\": \"XXXXXXXXX\",\n   \"device_id\":\"DATEOSDEVICEIP\"\n}",
         "type": "json"
       }
     ],
@@ -75,7 +959,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n  \"status\": \"success\",\n  \"message\": \"Login done successfully.\",\n      \"data\": {\n      \"id\": 2,\n      \"first_name\": null,\n      \"last_name\": null,\n       \"username\": \"skumar1\",\n       \"email\": \"subhash.kumar@kiwitech.com\",\n       \"password\": \"$2y$10$ifWTI646naw6MlKiYKfgHOWyktbYyiedGE65GUqzUJOZkFStqs/8q\",\n       \"gender\": \"male\",\n       \"dob\": \"2017-02-02T00:00:00+00:00\",\n       \"phone\": null,\n       \"status\": \"active\",\n       \"website_url\": null,\n       \"address\": null,\n       \"bio_data\": null,\n       \"timezone\": null,\n       \"token_verification\": \"fb2aa2326d1d591e4fa9b1e18c9d064a1a5cda5a\",\n       \"created\": \"2018-01-07T18:10:23+00:00\",\n       \"modified\": \"2018-01-07T18:10:23+00:00\",\n       \"matrix_token\": \"MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyYWNpZCB1c2VyX2lkID0gQHNrdW1hcjE6MzUuMTY4LjExOS4yNDcKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSBzRU5DbFBha1M5ODZBcmU3CjAwMmZzaWduYXR1cmUgSEoBVpO2GifQmZV6_miQMI1SmrEAin2GSQ_CO39AOKwK\",\n       \"access_token\": \"MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyYWNpZCB1c2VyX2lkID0gQHNrdW1hcjE6MzUuMTY4LjExOS4yNDcKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSBzRU5DbFBha1M5ODZBcmU3CjAwMmZzaWduYXR1cmUgSEoBVpO2GifQmZV6_miQMI1SmrEAin2GSQ_CO39AOKwK\", * * *\n       \"home_server\": \"35.168.119.247\",\n       \"user_id\": \"@skumar1:35.168.119.247\",\n       \"device_id\": \"XJHZZQIWEV\"\n   }\n  ]\n}",
+          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Login done successfully.\",\n    \"data\": {\n        \"username\": \"spayc\",\n        \"email\": \"spayc@domain.com\",\n        \"gender\": \"Male\",\n        \"dob\": \"2000-02-02\",\n        \"phone\": \"\",\n        \"website_url\": null,\n        \"address\": null,\n        \"bio_data\": null,\n        \"device_id\": \"VOYANVLOXG\",\n        \"matrix_user_id\": \"@spayc:127.0.0.1\",\n        \"token\": \"7f39fa7c6642666c6802f0d4e2fddf6a695fc12458733764c64ad338d6d1ca5f\",\n        \"matrix_token\": \"MDAxN2xvY2F0aW9uIDEyNy4wLjAuMQowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMmNjaWQgdXNlcl9pZCA9IEBza3VtYXIyX2FhX2RkczoxMjcuMC4wLjEKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSA4Ok00T3VzN1h5cnlKUEBxCjAwMmZzaWduYXR1cmUg5JCNFFzLQ4N-K6MnNWqFfqQdueyPiR74U_r6qLUzrqAK\"\n    }\n}",
           "type": "json"
         }
       ]
@@ -87,8 +971,8 @@ define({ "api": [
             "group": "Error 4xx",
             "type": "String",
             "optional": false,
-            "field": "Invalid",
-            "description": "<p>login credentials..</p>"
+            "field": "Sign",
+            "description": "<p>in credentials ain't right, try again buddy.</p>"
           },
           {
             "group": "Error 4xx",
@@ -118,7 +1002,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Sample Error-Response:",
-          "content": "  \n{\n  \"status\": failed,\n  \"errors:{Validation errors}\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
           "type": "json"
         }
       ]
@@ -134,7 +1018,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/users.json",
-    "title": "Register a User",
+    "title": "Register User",
     "version": "0.1.0",
     "name": "PostUser",
     "group": "User",
@@ -143,7 +1027,7 @@ define({ "api": [
         "name": "none"
       }
     ],
-    "description": "<p>Create a new account. Register new user with content-type =&gt; text/html(form-data).</p>",
+    "description": "<p>Create a new account. Register new user with form-data option.</p>",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -170,17 +1054,24 @@ define({ "api": [
           },
           {
             "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "confirm_password",
+            "description": "<p>secret password (Required).</p>"
+          },
+          {
+            "group": "Parameter",
             "type": "Date",
             "optional": false,
             "field": "dob",
-            "description": "<p>Date of birth must in in format YYYY-MM-DD (Optional).</p>"
+            "description": "<p>Date of birth must in in format MM-DD-YYYY (Optional).</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "gender",
-            "description": "<p>Gender of user like any one (male,femal,other) (Required).</p>"
+            "description": "<p>Gender of user like any one (Male, Femal, Other) (Required).</p>"
           },
           {
             "group": "Parameter",
@@ -191,10 +1082,17 @@ define({ "api": [
           },
           {
             "group": "Parameter",
-            "type": "String",
+            "type": "Number",
             "optional": false,
-            "field": "device_id",
-            "description": "<p>Device personal id (Required).</p>"
+            "field": "latitude",
+            "description": "<p>of user address (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "longitude",
+            "description": "<p>of user address (Required).</p>"
           }
         ]
       }
@@ -202,7 +1100,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "\n{\n   \"username\": \"spaycdev\",\n   \"email\": \"spaycdev@spayc.com\",\n   \"password\": \"XXXXXXXXX\",\n   \"gender\": \"male|female|other\",\n   \"phone\": \"7876565434\",\n   \"dob\": \"2000-11-12\",\n   \"device_id\":\"DATEOSDEVICEIP\"\n}",
+        "content": "\n{\n   \"username\": \"spaycdev\",\n   \"email\": \"spaycdev@spayc.com\",\n   \"password\": \"XXXXXXXXX\",\n   \"confirm_password\": \"XXXXXXXXX\",\n   \"gender\": \"Male|Female|Other\",\n   \"phone\": \"+91 (XXX) (XXXXXXX)\",\n   \"dob\": \"11-12-2000\",\n   \"latitude\": \"XX.XXXXXX\",\n   \"longitude\": \"XX.XXXXXX\"\n}",
         "type": "json"
       }
     ],
@@ -234,8 +1132,8 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n  \"status\": \"success\",\n  \"message\": \"Saved successfully.\",\n  \"data\": [\n      {\n         \"username\": \"spaycdev\",\n         \"email\": \"spaycdev@spayc.com\",\n         \"password\": \"XXXXXXXXX\",\n         \"gender\": \"male|female|other\",\n         \"phone\": \"7876565434\",\n         \"dob\": \"2000-11-12\",\n         \"device_id\":\"DATEOSDEVICEIP\"\n      }\n  ]\n}",
+          "title": "Success-Response:",
+          "content": "     HTTP/1.1 201 OK\n{\n  \"status\": \"success\",\n  \"message\": \"Saved successfully.\",\n  \"data\": [\n      {\n         \"username\": \"spaycdev\",\n         \"email\": \"spaycdev@spayc.com\",\n         \"gender\": \"male|female|other\",\n         \"phone\": \"+91 (XXX) (XXXXXXX)\",\n         \"dob\": \"11-12-2000\",\n         \"latitude\": \"XX.XXXXXX\",\n         \"longitude\": \"XX.XXXXXX\"\n      }\n  ]\n}",
           "type": "json"
         }
       ]
@@ -278,16 +1176,16 @@ define({ "api": [
       "examples": [
         {
           "title": "Sample Error-Response:",
-          "content": "  \n{\n  \"status\": failed,\n  \"errors:{Validation errors}\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
           "type": "json"
         }
       ]
     }
   },
   {
-    "type": "Post",
-    "url": "/users/edit/:id.json",
-    "title": "Update a User",
+    "type": "Put",
+    "url": "/profile-edit.json",
+    "title": "Update User",
     "version": "0.1.0",
     "name": "PutUser",
     "group": "User",
@@ -296,7 +1194,20 @@ define({ "api": [
         "name": "Private User"
       }
     ],
-    "description": "<p>Update profile of existing user. Update user own profile details with content-type =&gt; text/html(form-data).</p>",
+    "description": "<p>Update profile of existing user. Update user own profile details with form-data option.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
     "parameter": {
       "fields": {
         "Parameter": [
@@ -304,36 +1215,50 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "first_name",
-            "description": "<p>User first name (Optional).</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "last_name",
-            "description": "<p>User last name (Optional).</p>"
+            "field": "username",
+            "description": "<p>Username (Required).</p>"
           },
           {
             "group": "Parameter",
             "type": "Date",
             "optional": false,
             "field": "dob",
-            "description": "<p>Date of birth must in in format YYYY-MM-DD (Optional).</p>"
+            "description": "<p>Date of birth must in this format MM-DD-YYYY (Optional).</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "gender",
-            "description": "<p>Gender of user like any one (male,femal,other) (Required).</p>"
+            "description": "<p>Gender of user like any one (Male, Femal, Other) (Required).</p>"
           },
           {
             "group": "Parameter",
             "type": "Number",
             "optional": false,
             "field": "phone",
-            "description": "<p>Phone no of user and accept only 10 digits only (Optional).</p>"
+            "description": "<p>Phone no of user and accept upto 16 digits (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "address",
+            "description": "<p>User address (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "website_url",
+            "description": "<p>Website url (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "bio_data",
+            "description": "<p>Bio data of user (Optional).</p>"
           }
         ]
       }
@@ -341,7 +1266,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "\n{\n   \"first_name\":\"spayc\",\n   \"last_name\":\"test\",\n   \"gender\": \"male|female|other\",\n   \"phone\": \"7876565434\",\n   \"dob\": \"2000-11-12\",\n   \"images\":{\"image1.jpg\",\"image2.png\"}\n}",
+        "content": "\n{\n   \"username\":\"spayc\",\n   \"dob\": \"12-11-2001\",\n   \"gender\": \"Male|Female|Other\",\n   \"phone\": \"XXXXXXXXXX\",\n   \"address\": \"spayc address\",\n   \"website_url\":\"www.spayc.com\",\n   \"bio_data\":\"your bio data\",\n}",
         "type": "json"
       }
     ],
@@ -374,7 +1299,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "    HTTP/1.1 200 OK\n{\n  \"status\": \"success\",\n  \"message\": \"Saved successfully.\",\n  \"data\": [\n      {\n         \"first_name\":\"spayc\",\n         \"last_name\":\"test\",\n         \"gender\": \"male|female|other\",\n         \"phone\": \"7876565434\",\n         \"dob\": \"2000-11-12\",\n         \"images\":{\"image1.jpg\",\"image2.png\"}\n      }\n  ]\n}",
+          "content": "    HTTP/1.1 200 OK\n{\n  \"status\": \"success\",\n  \"message\": \"Saved successfully.\",\n  \"data\": [\n      {\n         \"username\":\"spayc\",\n         \"dob\": \"12-11-2001\",\n         \"gender\": \"Male|Female|Other\",\n         \"phone\": \"XXXXXXXXXX\",\n         \"address\": \"spayc address\",\n         \"website_url\":\"www.spayc.com\",\n         \"bio_data\":\"your bio data\",\n      }\n  ]\n}",
           "type": "json"
         }
       ]
@@ -383,7 +1308,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/users/edit/:id.json"
+        "url": "http://spayc.com/api/profile-edit.json"
       }
     ],
     "error": {
@@ -417,7 +1342,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Sample Error-Response:",
-          "content": "  \n{\n  \"status\": failed,\n  \"errors:{Validation errors}\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
           "type": "json"
         }
       ]
@@ -425,7 +1350,7 @@ define({ "api": [
   },
   {
     "type": "post",
-    "url": "/facebooksignup.json",
+    "url": "/facebook-signup.json",
     "title": "Facebook Sign-up",
     "version": "0.0.1",
     "name": "facebookSignup",
@@ -443,64 +1368,64 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "title",
-            "description": "<ul> <li>User title (Mr.|Mrs) required in body.</li> </ul>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
             "field": "fb_id",
-            "description": "<ul> <li>User facebook unique id required in body.</li> </ul>"
+            "description": "<ul> <li>User facebook unique id required in body(Required).</li> </ul>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "username",
-            "description": "<ul> <li>Username optional in body.</li> </ul>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "first_name",
-            "description": "<ul> <li>User first name required in body.</li> </ul>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "last_name",
-            "description": "<ul> <li>User last name required in body.</li> </ul>"
+            "description": "<ul> <li>Username optional in body(Required).</li> </ul>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "email",
-            "description": "<ul> <li>User email required in body.</li> </ul>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "password",
-            "description": "<ul> <li>Password is optional in body.</li> </ul>"
+            "description": "<ul> <li>User email required in body(Required).</li> </ul>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "dob",
-            "description": "<ul> <li>Date of birth optional in body.</li> </ul>"
+            "description": "<ul> <li>Date of birth optional in body MM-DD-YYYY (Optional).</li> </ul>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "phone",
+            "description": "<ul> <li>Phone no of user and accept upto 16 digits (Optional).</li> </ul>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "gender",
+            "description": "<ul> <li>Gender of user like any one (Male, Femal, Other) (Required).</li> </ul>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "device_id",
-            "description": "<ul> <li>Device id is required in body.</li> </ul>"
+            "description": "<ul> <li>Device id is required in body (Required).</li> </ul>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "latitude",
+            "description": "<ul> <li>Latitude of user address (Required).</li> </ul>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "longitude",
+            "description": "<ul> <li>Longitude of user address (Required).</li> </ul>"
           }
         ]
       }
@@ -534,7 +1459,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "       HTTP/1.1 success\n{\n    \"status\": \"success\",\n    \"message\": \"Saved successfully.\",\n    \"data\": [\n        \"ones\",\n        {\n            \"title\": \"Mr.\",\n            \"fb_id\": \"45545454545\",\n            \"username\": \"dhiru.php\",\n            \"first_name\": \"dhiru\",\n            \"last_name\": \"singh2\",\n            \"email\": \"dhiru12.php@gmail.com\",\n            \"password\": \"Dhiru@123\",\n            \"dob\": \"2000-11-12\",\n            \"device_id\":\"DFS455HER45555af55af\"\n        }\n    ]\n}",
+          "content": "       HTTP/1.1 201 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Saved successfully.\",\n    \"data\": {\n        \"username\": \"spayc\",\n        \"email\": \"user@domain.com\",\n        \"gender\": \"Male\",\n        \"dob\": \"11-12-2000\",\n        \"phone\": null,\n        \"website_url\": null,\n        \"address\": null,\n        \"bio_data\": null,\n        \"device_id\": \"xxxxxxxxxxxxxxxxxx\",\n        \"matrix_user_id\": \"@spayc11:35.168.119.247\",\n        \"token\": \"130d5b5d52f8b283a2705d5aa45ebd15f378a0763f6b369832c2dbe338e2369b\",\n        \"matrix_token\": \"MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyZGNpZCB1c2VyX2lkID0gQHNic2hhcm1hMTE6MzUuMTY4LjExOS4yNDcKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSAzZ2sxO1lJaDpfKzcuIzA4CjAwMmZzaWduYXR1cmUg_yk9Mt0_mur_yf6ZZT6sE7ybmtiMEID2xiDSqwQzLW\n    }\n}",
           "type": "json"
         }
       ]
@@ -542,7 +1467,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "\n{\n   \"title\":\"Mr.\",\n   \"fb_id\":\"8552254552\",\n   \"username\":\"dhiru.php\",\n   \"first_name\":\"dhiru\",\n   \"last_name\":\"singh\",\n   \"email\":\"dhiru.php@gmail.com\",\n   \"password\":\"Dhiru@123\",\n   \"dob\":\"2000-11-12\",\n   \"device_id\":\"DFS455HER45555af55af\"\n}",
+        "content": "\n{\n   \"fb_id\":\"xxxxxxxxxxxx\",\n   \"username\":\"spayc\",\n   \"email\":\"user@domainname.com\",\n   \"dob\":\"12-11-2001\",\n   \"gender\":\"Male|Female|Other\",\n   \"phone\": \"XXXXXXXXXX\",\n   \"device_id\":\"xxxxxxxxxxxxxxxxxx\",\n   \"latitude\": \"xx.xxxxx\",\n  \"longitude\": \"xx.xxxxx\"\n}",
         "type": "json"
       }
     ],
@@ -577,7 +1502,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Sample Error-Response:",
-          "content": "  \n {\n\"status\": false,\n\"errors\": \"fb_id:Facebook id is required field.\"\n}\n{\n\"status\": false,\n\"message\": \"Resource not found.\"\n}\n{\n\"status\": false,\n\"message\": \"Requested Parameter is not correct\"\n}",
+          "content": "  \n {\n\"status\": false,\n\"message\": \"Method not allowed.\"\n}\n{\n\"status\": false,\n\"message\": \"Resource not found.\"\n}\n{\n\"status\": false,\n\"message\": \"Requested Parameter is not correct\"\n}",
           "type": "json"
         }
       ]
@@ -586,7 +1511,401 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/facebooksignup.json"
+        "url": "http://spayc.com/api/facebook-signup.json"
+      }
+    ]
+  },
+  {
+    "type": "post",
+    "url": "/logout.json",
+    "title": "Logout",
+    "version": "0.1.0",
+    "name": "getLogout",
+    "group": "User",
+    "permission": [
+      {
+        "name": "Private User"
+      }
+    ],
+    "description": "<p>User get logout.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Logout successfully.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>Null.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Logout successfully.\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/user.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/logout.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
+    "url": "/users.json?page=:page&limit=:limit&keyword=:keyword&latitude=:latitude&longitude=:longitude",
+    "title": "Search Users, Spaycs, Hashtags",
+    "version": "0.1.0",
+    "name": "getUsers",
+    "group": "User",
+    "permission": [
+      {
+        "name": "Private User"
+      }
+    ],
+    "description": "<p>Search users|spaycs|hashtags details.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "page",
+            "description": "<p>Page number in query string (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>Records limit in query string (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "type",
+            "description": "<p>Type should be in (users|spaycs|hashtags|all) (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "keyword",
+            "description": "<p>Username|Spayc name|Hashtag name in query string to be search (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "latitude",
+            "description": "<p>of spayc to be search (Required in case of spayc search).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "longitude",
+            "description": "<p>of spayc to be search (Required in case of spayc search).</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Search Lists.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>List of users|spaycs|hashtags details.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Search Lists.\",\n    \"data\": {\n        \"users\": {\n            \"count\": 14,\n            \"records\": [\n                {\n                    \"id\": \"MzY3NzI3Njc1LjQ5\",\n                    \"name\": \"spayc1\",\n                    \"email\": \"spayc1@domain.com\",\n                    \"gender\": \"Male\",\n                    \"phone\": \"+91 (XXX) (XXXXXXX)\",\n                    \"dob\": \"12-11-2000\",\n                    \"status\": \"Active\",\n                    \"website_url\": \"www.spayc.com\",\n                    \"address\": \"spayc address\",\n                    \"bio_data\": \"your bio data\",\n                    \"matrix_user_id\": \"@test2:35.168.119.247\",\n                    \"matrix_access_token\": \"MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyOGNpZCB1c2VyX2lkID0gQHRlc3QyOjM1LjE2OC4xMTkuMjQ3CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gMVJKXjJSTEs3Klc9LmhyQAowMDJmc2lnbmF0dXJlIMyd1A3UtgJZEWcmvehB84AboRIZrFb46AqHTrn4Y2reCg\",\n                    \"created\": \"2018-01-17T14:09:52+00:00\",\n                    \"modified\": \"2018-01-18T07:43:46+00:00\",\n                    \"spaycs\": [\n                        {\n                            \"user_id\": 7,\n                            \"created_spaycs\": 2\n                        }\n                    ],\n                    \"joined_spayc\": [\n                        {\n                            \"user_id\": 7,\n                            \"joined_spaycs\": 2\n                        }\n                    ],\n                    \"user_images\": [],\n                    \"friend\": {\n                        \"total_friends\": 2\n                    }\n                },\n                {\n                    \"id\": \"NTI1MzI1MjUwLjc=\",\n                    \"name\": \"spayc2\",\n                    \"email\": \"spayc2@domain.com\",\n                    \"gender\": \"Male\",\n                    \"phone\": \"+91 (XXX) (XXXXXXX)\",\n                    \"dob\": \"11-12-2000\",\n                    \"status\": \"Active\",\n                    \"website_url\": \"www.spayc.com\",\n                    \"address\": \"your address\",\n                    \"bio_data\": \"your bio data\",\n                    \"matrix_user_id\": \"@test2:35.168.119.247\",\n                    \"matrix_access_token\": \"MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyOGNpZCB1c2VyX2lkID0gQHRlc3QyOjM1LjE2OC4xMTkuMjQ3CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gMVJKXjJSTEs3Klc9LmhyQAowMDJmc2lnbmF0dXJlIMyd1A3UtgJZEWcmvehB84AboRIZrFb46AqHTrn4Y2reCg\",\n                    \"created\": \"2018-01-24T13:46:10+00:00\",\n                    \"modified\": \"2018-01-29T07:30:01+00:00\",\n                    \"spaycs\": [\n                        {\n                            \"user_id\": 10,\n                            \"created_spaycs\": 32\n                        }\n                    ],\n                    \"joined_spayc\": [],\n                    \"user_images\": [],\n                    \"friend\": {\n                        \"id\": \"NTI1MzI1MjUuMDc=\",\n                        \"requested_by\": 10,\n                        \"requested_to\": 17,\n                        \"requested_status\": \"Accepted\",\n                        \"friend_status\": \"Unfriend\",\n                        \"total_friends\": 7\n                    }\n                }\n            ]\n        },\n        \"spaycs\": {\n            \"count\": 10,\n            \"records\": [\n                {\n                    \"distance\": \"12.3020109427781\",\n                    \"id\": \"MTczMzU3MzMyNy4zMQ==\",\n                    \"user_id\": 10,\n                    \"name\": \"spaycdev3\",\n                    \"address\": \"Your address\",\n                    \"matrix_room_id\": \"!asfLdzLnOdGRkdPZWu:localhost\",\n                    \"start_date\": \"2019-01-11T01:02:20+00:00\",\n                    \"end_date\": \"2019-01-12T01:02:20+00:00\",\n                    \"image\": \"\",\n                    \"type\": \"Community\",\n                    \"group_type\": \"Public\",\n                    \"status\": \"Active\",\n                    \"latitude\": 28.613939,\n                    \"longitude\": 77.209021,\n                    \"created\": \"2018-01-25T11:49:48+00:00\",\n                    \"modified\": \"2018-01-25T11:49:48+00:00\"\n                },\n                {\n                    \"distance\": \"12.3020109427781\",\n                    \"id\": \"MTY4MTA0MDgwMi4yNA==\",\n                    \"user_id\": 10,\n                    \"name\": \"spaycdev4\",\n                    \"address\": \"Your address\",\n                    \"matrix_room_id\": \"!asfLdzLnOdGRkdPZWu:localhost\",\n                    \"start_date\": \"2019-01-11T01:02:20+00:00\",\n                    \"end_date\": \"2019-01-12T01:02:20+00:00\",\n                    \"image\": \"\",\n                    \"type\": \"Community\",\n                    \"group_type\": \"Public\",\n                    \"status\": \"Active\",\n                    \"latitude\": 28.613939,\n                    \"longitude\": 77.209021,\n                    \"created\": \"2018-01-25T11:40:10+00:00\",\n                    \"modified\": \"2018-01-25T11:40:10+00:00\"\n                }\n            ]\n        },\n        \"hashtags\": {\n            \"count\": 9,\n            \"records\": [\n                {\n                    \"id\": \"MjA0ODc2ODQ3Ny43Mw==\",\n                    \"name\": \"color\",\n                    \"created\": \"2018-01-31T13:54:20+00:00\",\n                    \"modified\": \"2018-01-31T13:54:20+00:00\"\n                },\n                {\n                    \"id\": \"MjEwMTMwMTAwMi44\",\n                    \"name\": \"festival\",\n                    \"created\": \"2018-01-31T13:54:20+00:00\",\n                    \"modified\": \"2018-01-31T13:54:20+00:00\"\n                }\n            ]\n        }\n    }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/user.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/users.json?page=:page&limit=:limit&keyword=:keyword&latitude=:latitude&longitude=:longitude"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "put",
+    "url": "/friend-response.json",
+    "title": "Set Friend Status",
+    "version": "0.1.0",
+    "name": "setFriendStatus",
+    "group": "User",
+    "permission": [
+      {
+        "name": "Private User"
+      }
+    ],
+    "description": "<p>Set Friend Status.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Friend id required field in body.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>Status is required field and status must be in(Accepted,Declined,Blocked,Unfriend).</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "\n{\n    \"id\":\"NDIwMjYwMjAwLjU2\",\n    \"status\":\"Accepted\"\n}",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Friend status updated successfully.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>Null.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Friend status updated successfully.\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "String",
+            "optional": false,
+            "field": "Status",
+            "description": "<p>is required fields and status must be in(Accepted,Declined,Blocked,Unfriend)..</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/user.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/friend-response.json"
       }
     ]
   }

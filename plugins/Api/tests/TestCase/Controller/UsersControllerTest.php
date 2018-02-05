@@ -46,7 +46,24 @@ class UsersControllerTest extends IntegrationTestCase
      */
     public function testAdd()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $data = [
+            "username"=>"spayc",
+            "dob"=> "2000-11-12",
+            "gender"=> "male",
+            "phone"=> "XXXXXXXXXX",
+            "address"=> "b-3 noida",
+            "website_url"=>"www.spayc.com",
+            "bio_data"=>"your bio data",
+            "latitude"=> "28.535516",
+            "longitude"=> "77.391026"
+        ];
+        $this->post('/api/users.json', $data);
+
+        $this->assertResponseSuccess();
+        $articles = TableRegistry::get('Users');
+        $query = $articles->find();
+        $this->assertEquals(1, $query->count());
+        //$this->markTestIncomplete('Not implemented yet.');
     }
 
     /**
@@ -56,7 +73,23 @@ class UsersControllerTest extends IntegrationTestCase
      */
     public function testEdit()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $data = [
+            "id"=>5,
+            "username"=>"spayc",
+            "dob"=> "2000-11-12",
+            "gender"=> "male",
+            "phone"=> "XXXXXXXXXX",
+            "address"=> "b-3 noida",
+            "website_url"=>"www.spayc.com",
+            "bio_data"=>"your bio data",
+        ];
+        $this->put('/api/add', $data);
+
+        $this->assertResponseSuccess();
+        $articles = TableRegistry::get('Users');
+        $query = $articles->find()->where(['id' => $data['id']]);
+        $this->assertEquals(1, $query->count());
+        //$this->markTestIncomplete('Not implemented yet.');
     }
 
     /**
