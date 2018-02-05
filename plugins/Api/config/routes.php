@@ -23,6 +23,7 @@ Router::plugin(
         $routes->connect('/subscribe-spayc', ['controller' => 'Spaycs', 'action' => 'subscribeSpayc']);
         $routes->connect('/spayc-details/:id', ['controller' => 'Spaycs', 'action' => 'view'], ['pass'=>['id']]);
         $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
+        $routes->connect('/as', ['controller' => 'Spaycs', 'action' => 'matrixApplicationService']);
         $routes->fallbacks(DashedRoute::class);
     }
 );

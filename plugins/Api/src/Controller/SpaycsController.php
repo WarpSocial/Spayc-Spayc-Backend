@@ -18,6 +18,11 @@ use Cake\Core\Configure;
  */
 class SpaycsController extends AppController {
     
+    public function beforeFilter(\Cake\Event\Event $event) {
+        parent::beforeFilter($event);
+        $this->Auth->allow('matrixApplicationService');
+    }
+    
     /**
      * Add method
      *
@@ -257,6 +262,11 @@ class SpaycsController extends AppController {
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+    
+    public function matrixApplicationService(){
+       // pr($this->request);
+       Log::info($this->request);
     }
 
 }
