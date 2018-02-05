@@ -12,6 +12,7 @@ CREATE TABLE users (
     address text NULL,
     bio_data text NULL,
     fb_id VARCHAR(200),
+    fb_access_key  VARCHAR(1000),
     longitude double precision,
     latitude double precision,
     timezone VARCHAR(100),

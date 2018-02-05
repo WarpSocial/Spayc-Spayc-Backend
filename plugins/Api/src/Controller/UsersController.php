@@ -515,7 +515,7 @@ class UsersController extends AppController {
     
     public function getFacebookFriends() {
         $data = [];
-        if(!empty($this->Auth->user('fb_id'))) {
+        if(!empty($this->Auth->user('fb_id')) and !empty($this->Auth->user('fb_access_key'))) {
             $data = $this->Auth->user();
         } else {
             $this->response->statusCode(204);
