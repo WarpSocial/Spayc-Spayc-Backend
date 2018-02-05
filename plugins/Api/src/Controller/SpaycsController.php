@@ -8,6 +8,7 @@ use \Cake\ORM\TableRegistry;
 use Cake\Log\Log;
 use Api\Utils\Utils;
 use Cake\Core\Configure;
+use Api\Auth\ApiHasher;
 
 /**
  * Spaycs Controller
@@ -50,7 +51,12 @@ class SpaycsController extends AppController {
         $items->set('matrix_room_id',$matrix['room_id']);
         $items->set('matrix_room_alias',$matrix['room_alias']);*/
         $items->set('user_id', $this->Auth->user('id'));
-        if ($this->Spaycs->save($items)) {
+        if (!$items->errors()) {
+            $this->Spaycs->save($items);
+            if(!empty($items['description'])) {
+                TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
+            }
+            $this->response->statusCode(201);
             $response = ['status'=>'success','message'=>__('Your spayc, '.ucfirst($data['name']).', has been created.'),'data'=>$items];
         } else {
             $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be saved. Please, try again.')], 400);
@@ -69,10 +75,10 @@ class SpaycsController extends AppController {
         }
         $userId = $this->Auth->user("id");
         $limit = (!empty($this->request->query('limit')) and is_numeric($this->request->query('limit')))?$this->request->query('limit'):5;
-        if(!Utils::isValidLatitude($this->request->query('latitude'))) {
+        if(!Utils::isValidLatitude($this->request->query('latitude')) || empty($this->request->query('latitude'))) {
             $this->restException(['status'=>'failed', 'message'=>__('Latitude is not valid.')], 400);
         }
-        if(!Utils::isValidLongitude($this->request->query('longitude'))) {
+        if(!Utils::isValidLongitude($this->request->query('longitude')) || empty($this->request->query('longitude'))) {
             $this->restException(['status'=>'failed', 'message'=>__('Longitude is not valid.')], 400);
         }
         $page = (!empty($this->request->query('page')) and is_numeric($this->request->query('page')))?$this->request->query('page'):1;
@@ -87,7 +93,7 @@ class SpaycsController extends AppController {
         $distance = 25;
         $spaycs = $this->Spaycs->find()
             ->select([
-                'distance' => $distanceField, 'id', 'user_id', 'name', 'address'=>'location', 'start_date', 'end_date', 'image', 'type', 'group_type', 'status', 'latitude', 'longitude', 'created', 'modified'
+                'distance' => $distanceField, 'id', 'user_id', 'name', 'address'=>'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'status', 'latitude', 'longitude', 'created', 'modified'
             ])
             ->where(["$distanceField <" => $distance, 'status'=>'Active'])
             ->bind(':latitude', $this->request->query('latitude'), 'float')
@@ -130,7 +136,8 @@ class SpaycsController extends AppController {
         $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend){
             return $results->map(function ($row) use($friend) {
                 if(!empty($row['joined_spayc'])) {
-                    $row['joined_spayc'][0]['joined_friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriendsBySpaycIdAndUserIds($row->id, $friend);
+                    $spaycId = ApiHasher::decrypt($row->id);
+                    $row['joined_spayc'][0]['joined_friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
                 }
                 return $row;
             });
@@ -141,6 +148,8 @@ class SpaycsController extends AppController {
         $data['spaycs'] = [];
         if($spaycs->count()) {
             $data['spaycs'] = $spaycs->toArray();
+        } else {
+            $this->response->statusCode(204);
         }
         $response = ['status'=>'success','message'=>__('Spayc lists.'), 'data'=>$data];
         $this->set($response);
@@ -154,9 +163,10 @@ class SpaycsController extends AppController {
         if(empty($data['spayc_id'])) {
             $this->restException(['status'=>'failed','message'=>__('Spayc id is required fields.')], 400);
         }
+        $data['spayc_id'] = ApiHasher::decrypt($data['spayc_id']);
         $isExist = $this->Spaycs->exists(['id'=>$data['spayc_id']]);
         if(!$isExist) {
-            $this->restException(['status'=>'failed','message'=>__('Spayc id not found.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Invalid spayc Id.')], 400);
         }
         $subscribers = TableRegistry::get("Api.SubscribedUsers");
         $exists = $subscribers->exists(['spayc_id'=>$data['spayc_id'], 'user_id'=>$this->Auth->user('id')]);
@@ -186,8 +196,9 @@ class SpaycsController extends AppController {
      */
     public function view($id = null) {
         if(!$this->request->is(['get'])) {
-            $this->restException(['status'=>'failed','message'=>__('Method not allowed.')], 405);
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
+        $id = ApiHasher::decrypt($id);
         if(empty($id)) {
             $this->restException(['status'=>'failed', 'message'=>__('Spayc id is required fields.')], 400);
         }
@@ -208,14 +219,17 @@ class SpaycsController extends AppController {
         $spayc->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend) {
             return $results->map(function ($row) use($friend) {
                 if(!empty($row['joined_spayc'])) {
-                    $row['joined_spayc'][0]['joined_friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriendsBySpaycIdAndUserIds($row->id, $friend);
+                    $spaycId = ApiHasher::decrypt($row->id);
+                    $row['joined_spayc'][0]['joined_friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
                 }
                 return $row;
             });
         });
         $data = [];
-        if($spayc) {
+        if($spayc->count()) {
             $data = $spayc;
+        } else {
+            $this->response->statusCode(204);
         }
         $response = ['status'=>'success','message'=>__('Spayc Details.'), 'data'=>$data];
         $this->set($response);

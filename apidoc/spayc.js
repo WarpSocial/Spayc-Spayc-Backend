@@ -48,7 +48,7 @@
     {
         "name": "spaycdev",
         "matrix_room_id":"!asfLdzLnOdGRkdPZWu:localhost",
-        "location": "spayc addrss",
+        "location": "Community addrss",
         "type": "Event|Community",
         "group_type": "Public|Private",
         "start_date": "2019-01-11 01:02:20",
@@ -64,27 +64,27 @@
 @apiSuccess {String} message Your spayc, spaycdev, has been created.
 @apiSuccess {Object} data Spayc details.
 @apiSuccessExample {json} Success-Response: 
-    HTTP/1.1 200 OK
+    HTTP/1.1 201 OK
 {
     "status": "success",
-    "message": "Your spayc, Dsfdsfdsf65esd x, has been created.",
+    "message": "Your spayc, spaycdev, has been created.",
     "data": {
-        "name": "dsfdsfdsf65esd x",
+        "name": "spaycdev",
         "matrix_room_id":"!asfLdzLnOdGRkdPZWu:localhost",
-        "location": "oaksd lfjlsdasdklfdjsfdfldas",
+        "location": "Community addrss",
         "type": "Community",
         "group_type": "Public",
         "start_date": "2018-01-11T11:16:01+00:00",
         "end_date": "2018-01-12T09:23:01+00:00",
         "passcode": "",
-        "description": "asdf dsfsd fdsfasdfadfadf",
+        "description": "its about festival #color #festival #abc",
         "image": "",
         "user_id": 38,
         "created": "2018-01-11T09:31:50+00:00",
         "modified": "2018-01-11T09:31:50+00:00",
         "longitude":"XX.00.XX",
         "latitude":"XX.00.XX",
-        "id": 1
+        "id": "NDQ2NTI2NDYzMC45NQ=="
     }
 }
 
@@ -125,10 +125,11 @@ function postSpaycs() { return; }
         "spaycs": [
             {
                 "distance": "22.7463734587819",
-                "id": 1,
+                "id": "NDQ2NTI2NDYzMC45NQ==",
                 "user_id": 51,
                 "name": "Test",
-                "address": "Noida sec 16",
+                "address": "Event address",
+                "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
                 "start_date": "2018-01-10T06:00:00+00:00",
                 "end_date": "2018-01-10T06:00:00+00:00",
                 "image": "img.png",
@@ -150,10 +151,11 @@ function postSpaycs() { return; }
             },
             {
                 "distance": "22.7463734587819",
-                "id": 2,
+                "id": "NDQ2N5I2NDY43C45NQ==",
                 "user_id": 51,
                 "name": "Test1",
-                "address": "Noida sec 15",
+                "address": "Event address",
+                "matrix_room_id": "!asfLdzLnOdGRkdrrPZWu:localhost",
                 "start_date": "2018-01-10T01:00:00+00:00",
                 "end_date": "2018-01-11T11:00:00+00:00",
                 "image": "img.png",
@@ -170,10 +172,11 @@ function postSpaycs() { return; }
             },
             {
                 "distance": "22.7463734587819",
-                "id": 3,
+                "id": "NDQ2NTI2NDgfMC45NQ5g",
                 "user_id": 51,
                 "name": "Test12",
-                "address": "Noida sec 18",
+                "address": "Event address",
+                "matrix_room_id": "!asfLdzLnGRkdPZWu:localhost",
                 "start_date": "2018-01-10T01:00:00+00:00",
                 "end_date": "2018-01-11T11:00:00+00:00",
                 "image": "img.png",
@@ -201,10 +204,11 @@ function postSpaycs() { return; }
             },
             {
                 "distance": "22.7463734587819",
-                "id": 4,
+                "id": "NDsdaf2NDYzMC45NQFA",
                 "user_id": 51,
                 "name": "Test123",
-                "address": "Noida sec 16",
+                "address": "Community address",
+                "matrix_room_id": "!asfLdOdGRkdPZWu:localhost",
                 "start_date": "2018-01-10T01:00:00+00:00",
                 "end_date": "2018-01-11T11:00:00+00:00",
                 "image": "img.png",
@@ -238,12 +242,12 @@ function getSpaycs() { return; }
   
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  
-  @apiParam {Number} spayc_id Spayc id is required (Required).
+  @apiParam {String} spayc_id Spayc id is required (Required).
  
   @apiExample Example usage:
  
     {
-        "spayc_id":"5"
+        "spayc_id":"NDIwMjYwMjAwLjU2"
     }
  
  
@@ -273,7 +277,7 @@ function postSubscribeSpayc() { return; }
  * 
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
-    @apiParam {Number}      spaceId     spayc id in query string (Required).
+    @apiParam {String}      spaceId     spayc id in query string (Required).
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Spayc Details.
@@ -285,9 +289,9 @@ function postSubscribeSpayc() { return; }
     "message": "Spayc Details.",
     "data": [
         {
-            "id": 5,
+            "id": "MGQ2NTI2NDYzMC45NFSJ",
             "name": "spaycdev13",
-            "address": "Your address",
+            "address": "Event address",
             "start_date": "2019-01-11T01:02:20+00:00",
             "end_date": "2019-01-12T01:02:20+00:00",
             "image": "",

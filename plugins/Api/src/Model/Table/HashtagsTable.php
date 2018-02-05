@@ -5,6 +5,8 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\ORM\TableRegistry;
+use Api\Auth\ApiHasher;
 
 /**
  * Hashtags Model
@@ -65,19 +67,7 @@ class HashtagsTable extends Table
     }
     
     public function searchHashtags($request = []) {
-        $hashTag = $this->find('all', ['fields'=>['Hashtags.id', 'Hashtags.name', 'Hashtags.created', 'Hashtags.modified']])
-        ->contain([
-            'SpaycHashtags' => function($q) {
-                return $q->select(['SpaycHashtags.hashtag_id', 'total_spayc' => $q->func()->count('SpaycHashtags.hashtag_id')])->group(['SpaycHashtags.hashtag_id']);
-            }
-        ])
-        ->formatResults(function (\Cake\Collection\CollectionInterface $results) {
-            return $results->map(function ($row) {
-                $row->total_space = !empty($row['spayc_hashtags'][0]['total_spayc'])? $row['spayc_hashtags'][0]['total_spayc']:0;
-                unset($row['spayc_hashtags']);
-                return $row;
-            });
-        });
+        $hashTag = $this->find('all', ['fields'=>['Hashtags.id', 'Hashtags.name', 'Hashtags.created', 'Hashtags.modified']]);
         $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
         $hashTag->order(['Hashtags.name'=>'ASC'])->limit($limit);
         if(!empty($request['keyword'])) {
@@ -96,5 +86,28 @@ class HashtagsTable extends Table
             $data['records'] = $hashTag->toArray();
         }
         return $data;
+    }
+    
+    public function saveHashTags($hashTags = null, $spaycId = null) {
+        if(!empty($hashTags) and !empty($spaycId)) {
+            preg_match_all('/#([^\s,#]+)/', $hashTags, $matches);
+            if(!empty($matches[1])) {
+                foreach($matches[1] as $key=>$hash) {
+                    $hastag[$key]['name'] = $hash;
+                }
+            }
+            $entities = $this->newEntities($hastag);
+            $this->saveMany($entities);
+            if(!empty($entities)) {
+                $spaycId = ApiHasher::decrypt($spaycId);
+                foreach($entities as $key=>$entity) {
+                    $spaycHastag[$key]['spayc_id'] = $spaycId;
+                    $spaycHastag[$key]['hashtag_id'] = ApiHasher::decrypt($entity['id']);
+                }
+                $spHashtags = TableRegistry::get('Api.SpaycHashtags');
+                $shEntities = $spHashtags->newEntities($spaycHastag);
+                $spHashtags->saveMany($shEntities);
+            }
+        }
     }
 }

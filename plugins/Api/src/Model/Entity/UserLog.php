@@ -2,7 +2,7 @@
 namespace Api\Model\Entity;
 
 use Cake\ORM\Entity;
-
+use Api\Auth\ApiHasher;
 /**
  * UserLog Entity
  *
@@ -47,4 +47,8 @@ class UserLog extends Entity
     protected $_hidden = [
         'token'
     ];
+    
+    protected function _getId($id) {  
+        return ApiHasher::encrypt($id);
+    }
 }

@@ -2,7 +2,7 @@
 namespace Api\Model\Entity;
 
 use Cake\ORM\Entity;
-
+use Api\Auth\ApiHasher;
 /**
  * Comment Entity
  *
@@ -29,12 +29,11 @@ class Comment extends Entity
      * @var array
      */
     protected $_accessible = [
-        'spayc_id' => true,
-        'user_id' => true,
-        'comment' => true,
-        'created' => true,
-        'modified' => true,
-        'spayc' => true,
-        'user' => true
+        '*' => true,
+        'id' => false
     ];
+    
+    protected function _getId($id) {
+        return ApiHasher::encrypt($id);
+    }
 }

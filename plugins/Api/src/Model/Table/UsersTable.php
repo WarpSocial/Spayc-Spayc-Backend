@@ -12,6 +12,7 @@ use Cake\Auth\DefaultPasswordHasher;
 use \Cake\ORM\TableRegistry;
 use Cake\Core\Configure;
 use Api\Utils;
+use Api\Auth\ApiHasher;
 /**
  * Users Model
  *
@@ -61,12 +62,12 @@ class UsersTable extends Table {
             'className' => 'Api.SubscribedUsers'
         ]);
         
-        $this->hasMany('RequestedBy', [
+        $this->hasMany('Requestedby', [
             'foreignKey' => 'requested_by',
             'joinType' => 'INNER',
             'className' => 'Api.FriendRequest'
         ]);
-        $this->hasMany('RequestedTo', [
+        $this->hasMany('Requestedto', [
             'foreignKey' => 'requested_to',
             'joinType' => 'INNER',
             'className' => 'Api.FriendRequest'
@@ -130,7 +131,7 @@ class UsersTable extends Table {
         $validator
                 ->requirePresence('email', 'create',__('Email is required field.'))
                 ->notEmpty('email',__('Email is required field.'))
-                ->email('email',false,__('Email is required field.'))                
+                ->email('email', false, __('Invalid email address.'))                
                 ->add('email', 'unique', ['rule' => 'validateUnique','message'=>__('Email already exist.'), 'provider' => 'table']) ;
                 
         
@@ -203,6 +204,7 @@ class UsersTable extends Table {
         $validator
                 ->email('email',false,__('Email is required field.'))
                 ->requirePresence('email', true, __('Email is required field.'))
+                ->email('email', false, __('Invalid email address.'))
                 //->add('email', 'unique', ['rule' => 'validateUnique','message'=>'Email has been used.', 'provider' => 'table']) 
                 ->notEmpty('email',__('Email is required field.'));
         
@@ -364,13 +366,13 @@ class UsersTable extends Table {
     }
     
     public function searchUsers($userId = null, $request = []) {
-        $users = $this->find('all', ['fields'=>['Users.id', 'name'=>'Users.username','Users.email','Users.gender','Users.phone','Users.dob','Users.status','Users.website_url','Users.address','Users.bio_data','Users.created','Users.modified']])->where(['Users.status'=>'Active']);
+        $users = $this->find('all', ['fields'=>['Users.id', 'name'=>'Users.username','Users.email','Users.gender','Users.phone','Users.dob','Users.status','Users.website_url','Users.address','Users.bio_data', 'Users.matrix_user_id', 'Users.matrix_access_token', 'Users.created','Users.modified']])->where(['Users.status'=>'Active']);
         $users->contain([
-            'RequestedBy' => function($q) use($userId) {
-                return $q->select(['RequestedBy.id', 'RequestedBy.requested_by', 'RequestedBy.requested_to', 'RequestedBy.requested_status', 'RequestedBy.friend_status'])->Where(['OR'=>['RequestedBy.requested_by'=>$userId, 'RequestedBy.requested_to'=>$userId]]);
+            'Requestedby' => function($q) use($userId) {
+                return $q->select(['Requestedby.id', 'Requestedby.requested_by', 'Requestedby.requested_to', 'Requestedby.requested_status', 'Requestedby.friend_status'])->Where(['OR'=>['Requestedby.requested_by'=>$userId, 'Requestedby.requested_to'=>$userId]]);
             },
-            'RequestedTo' => function($q) use($userId) {
-                return $q->select(['RequestedTo.id', 'RequestedTo.requested_by', 'RequestedTo.requested_to', 'RequestedTo.requested_status', 'RequestedTo.friend_status'])->Where(['OR'=>['RequestedTo.requested_by'=>$userId, 'RequestedTo.requested_to'=>$userId]]);
+            'Requestedto' => function($q) use($userId) {
+                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.friend_status'])->Where(['OR'=>['Requestedto.requested_by'=>$userId, 'Requestedto.requested_to'=>$userId]]);
             },
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url']);
@@ -384,11 +386,12 @@ class UsersTable extends Table {
         ]);
         $users->formatResults(function (\Cake\Collection\CollectionInterface $results) {
             return $results->map(function ($row) {
-                $row['friend'] = !empty($row['requested_to'][0])? $row['requested_to'][0] : [];
-                $row['friend'] = !empty($row['requested_by'][0]) && empty($row['friend'])?$row['requested_by'][0]:$row['friend'];
-                $row['friend']['total_friends'] = TableRegistry::get('Api.FriendRequest')->getFriendCountByUserId($row->id);
-                unset($row['requested_to']);
-                unset($row['requested_by']);
+                $uId = ApiHasher::decrypt($row->id);
+                $row['friend'] = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
+                $row['friend'] = !empty($row['requestedby'][0]) && empty($row['friend'])?$row['requestedby'][0]:$row['friend'];
+                $row['friend']['total_friends'] = TableRegistry::get('Api.FriendRequest')->getFriendCountByUserId($uId);
+                unset($row['requestedto']);
+                unset($row['requestedby']);
                 return $row;
             });
         });

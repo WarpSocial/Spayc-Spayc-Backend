@@ -2,7 +2,7 @@
 namespace Api\Model\Entity;
 
 use Cake\ORM\Entity;
-
+use Api\Auth\ApiHasher;
 /**
  * FriendRequest Entity
  *
@@ -30,13 +30,11 @@ class FriendRequest extends Entity
      * @var array
      */
     protected $_accessible = [
-        'spayc_id' => true,
-        'requested_by' => true,
-        'requested_to' => true,
-        'requested_status' => true,
-        'friend_status' => true,
-        'created' => true,
-        'modified' => true,
-        'spayc' => true
+        '*' => true,
+        'id' => false
     ];
+    
+    protected function _getId($id) {      
+        return ApiHasher::encrypt($id);
+    }
 }

@@ -33,8 +33,8 @@
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  *
  * @apiParam {String} username     Username (Required).
- * @apiParam {Date}   dob          Date of birth must in this format YYYY-MM-DD (Optional).
- * @apiParam {String} gender       Gender of user like any one (male,femal,other) (Required).
+ * @apiParam {Date}   dob          Date of birth must in this format MM-DD-YYYY (Optional).
+ * @apiParam {String} gender       Gender of user like any one (Male, Femal, Other) (Required).
  * @apiParam {Number} phone        Phone no of user and accept upto 16 digits (Optional).
  * @apiParam {String} address      User address (Optional).
  * @apiParam {String} website_url  Website url (Optional).
@@ -44,10 +44,10 @@
  *
  *       {
  *          "username":"spayc",
- *          "dob": "2000-11-12",
- *          "gender": "male|female|other",
+ *          "dob": "12-11-2001",
+ *          "gender": "Male|Female|Other",
  *          "phone": "XXXXXXXXXX",
- *          "address": "b-3 noida",
+ *          "address": "spayc address",
  *          "website_url":"www.spayc.com",
  *          "bio_data":"your bio data",
  *       }
@@ -65,10 +65,10 @@
  *   "data": [
  *       {
  *          "username":"spayc",
- *          "dob": "2000-11-12",
- *          "gender": "male|female|other",
+ *          "dob": "12-11-2001",
+ *          "gender": "Male|Female|Other",
  *          "phone": "XXXXXXXXXX",
- *          "address": "b-3 noida",
+ *          "address": "spayc address",
  *          "website_url":"www.spayc.com",
  *          "bio_data":"your bio data",
  *       }
@@ -92,8 +92,8 @@ function putUser() { return; }
  * @apiParam {String} email Email of user must be unique (Required).
  * @apiParam {String} password secret password (Required).
  * @apiParam {String} confirm_password secret password (Required).
- * @apiParam {Date}   dob Date of birth must in in format YYYY-MM-DD (Optional).
- * @apiParam {String} gender Gender of user like any one (male,femal,other) (Required).
+ * @apiParam {Date}   dob Date of birth must in in format MM-DD-YYYY (Optional).
+ * @apiParam {String} gender Gender of user like any one (Male, Femal, Other) (Required).
  * @apiParam {Number} phone Phone no of user and accept only 10 digits only (Optional).
  * @apiParam {Number} latitude of user address (Required).
  * @apiParam {Number} longitude of user address (Required).
@@ -105,19 +105,19 @@ function putUser() { return; }
  *          "email": "spaycdev@spayc.com",
  *          "password": "XXXXXXXXX",
  *          "confirm_password": "XXXXXXXXX",
- *          "gender": "male|female|other",
- *          "phone": "7876565434",
+ *          "gender": "Male|Female|Other",
+ *          "phone": "+91 (XXX) (XXXXXXX)",
  *          "dob": "11-12-2000",
- *          "latitude": "28.535516",
- *          "longitude": "77.391026"
+ *          "latitude": "XX.XXXXXX",
+ *          "longitude": "XX.XXXXXX"
  *       }
  *
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Registration done successfully.
  * @apiSuccess {Object} data List of user details.
- * @apiSuccessExample {json} Success-Response: 
- *      HTTP/1.1 200 OK
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 201 OK
  * {
  *   "status": "success",
  *   "message": "Saved successfully.",
@@ -126,10 +126,10 @@ function putUser() { return; }
  *          "username": "spaycdev",
  *          "email": "spaycdev@spayc.com",
  *          "gender": "male|female|other",
- *          "phone": "7876565434",
+ *          "phone": "+91 (XXX) (XXXXXXX)",
  *          "dob": "11-12-2000",
- *          "latitude": "28.535516",
- *          "longitude": "77.391026"
+ *          "latitude": "XX.XXXXXX",
+ *          "longitude": "XX.XXXXXX"
  *       }
  *   ]
  * }
@@ -165,19 +165,21 @@ function postUser() { return; }
     "message": "Search Lists.",
     "data": {
         "users": {
-            "count": 6,
+            "count": 14,
             "records": [
                 {
-                    "id": 7,
-                    "name": "dhiru",
-                    "email": "shubhash453s3@gmail.com",
-                    "gender": "male",
-                    "phone": "7876565434",
+                    "id": "MzY3NzI3Njc1LjQ5",
+                    "name": "spayc1",
+                    "email": "spayc1@domain.com",
+                    "gender": "Male",
+                    "phone": "+91 (XXX) (XXXXXXX)",
                     "dob": "12-11-2000",
                     "status": "Active",
                     "website_url": "www.spayc.com",
-                    "address": "b-3 noida",
-                    "bio_data": "your122 bio data",
+                    "address": "spayc address",
+                    "bio_data": "your bio data",
+                    "matrix_user_id": "@test2:35.168.119.247",
+                    "matrix_access_token": "MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyOGNpZCB1c2VyX2lkID0gQHRlc3QyOjM1LjE2OC4xMTkuMjQ3CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gMVJKXjJSTEs3Klc9LmhyQAowMDJmc2lnbmF0dXJlIMyd1A3UtgJZEWcmvehB84AboRIZrFb46AqHTrn4Y2reCg",
                     "created": "2018-01-17T14:09:52+00:00",
                     "modified": "2018-01-18T07:43:46+00:00",
                     "spaycs": [
@@ -194,96 +196,98 @@ function postUser() { return; }
                     ],
                     "user_images": [],
                     "friend": {
-                        "id": 13,
-                        "requested_by": 7,
-                        "requested_to": 10,
-                        "requested_status": "Declined",
-                        "friend_status": "Unfriend",
-                        "total_friends": 8
+                        "total_friends": 2
                     }
                 },
                 {
-                    "id": 5,
-                    "name": "sbsharma112",
-                    "email": "sbsharma11@gmail.com",
-                    "gender": "male                                              ",
-                    "phone": null,
-                    "dob": "11-12-2001",
+                    "id": "NTI1MzI1MjUwLjc=",
+                    "name": "spayc2",
+                    "email": "spayc2@domain.com",
+                    "gender": "Male",
+                    "phone": "+91 (XXX) (XXXXXXX)",
+                    "dob": "11-12-2000",
                     "status": "Active",
-                    "website_url": null,
-                    "address": "",
-                    "bio_data": "",
-                    "created": "2018-01-17T12:29:29+00:00",
-                    "modified": "2018-01-18T05:55:37+00:00",
-                    "spaycs": [],
-                    "joined_spayc": [
+                    "website_url": "www.spayc.com",
+                    "address": "your address",
+                    "bio_data": "your bio data",
+                    "matrix_user_id": "@test2:35.168.119.247",
+                    "matrix_access_token": "MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyOGNpZCB1c2VyX2lkID0gQHRlc3QyOjM1LjE2OC4xMTkuMjQ3CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gMVJKXjJSTEs3Klc9LmhyQAowMDJmc2lnbmF0dXJlIMyd1A3UtgJZEWcmvehB84AboRIZrFb46AqHTrn4Y2reCg",
+                    "created": "2018-01-24T13:46:10+00:00",
+                    "modified": "2018-01-29T07:30:01+00:00",
+                    "spaycs": [
                         {
-                            "user_id": 5,
-                            "joined_spaycs": 1
+                            "user_id": 10,
+                            "created_spaycs": 32
                         }
                     ],
+                    "joined_spayc": [],
                     "user_images": [],
                     "friend": {
-                        "total_friends": 0
+                        "id": "NTI1MzI1MjUuMDc=",
+                        "requested_by": 10,
+                        "requested_to": 17,
+                        "requested_status": "Accepted",
+                        "friend_status": "Unfriend",
+                        "total_friends": 7
                     }
                 }
             ]
         },
         "spaycs": {
-            "count": 2,
+            "count": 10,
             "records": [
                 {
-                    "distance": "3700.66047272806",
-                    "id": 2,
-                    "user_id": 7,
-                    "name": "spaycdev13",
-                    "address": "Noida sec 16",
+                    "distance": "12.3020109427781",
+                    "id": "MTczMzU3MzMyNy4zMQ==",
+                    "user_id": 10,
+                    "name": "spaycdev3",
+                    "address": "Your address",
+                    "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
                     "start_date": "2019-01-11T01:02:20+00:00",
                     "end_date": "2019-01-12T01:02:20+00:00",
                     "image": "",
-                    "type": "Event",
+                    "type": "Community",
                     "group_type": "Public",
                     "status": "Active",
-                    "latitude": 77.209021,
-                    "longitude": 28.613939,
-                    "created": "2018-01-17T15:14:50+00:00",
-                    "modified": "2018-01-17T15:14:50+00:00"
+                    "latitude": 28.613939,
+                    "longitude": 77.209021,
+                    "created": "2018-01-25T11:49:48+00:00",
+                    "modified": "2018-01-25T11:49:48+00:00"
                 },
                 {
-                    "distance": "4402.89875657017",
-                    "id": 1,
-                    "user_id": 7,
-                    "name": "spaycdev9",
-                    "address": "Noida sec 15",
+                    "distance": "12.3020109427781",
+                    "id": "MTY4MTA0MDgwMi4yNA==",
+                    "user_id": 10,
+                    "name": "spaycdev4",
+                    "address": "Your address",
+                    "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
                     "start_date": "2019-01-11T01:02:20+00:00",
                     "end_date": "2019-01-12T01:02:20+00:00",
                     "image": "",
-                    "type": "Event",
+                    "type": "Community",
                     "group_type": "Public",
                     "status": "Active",
-                    "latitude": 20.895996,
-                    "longitude": 6.772989,
-                    "created": "2018-01-17T14:37:02+00:00",
-                    "modified": "2018-01-17T14:37:02+00:00"
+                    "latitude": 28.613939,
+                    "longitude": 77.209021,
+                    "created": "2018-01-25T11:40:10+00:00",
+                    "modified": "2018-01-25T11:40:10+00:00"
                 }
             ]
         },
         "hashtags": {
-            "count": 2,
+            "count": 9,
             "records": [
                 {
-                    "id": 1,
-                    "name": "hash tag1",
-                    "created": "2018-01-19T13:58:21+00:00",
-                    "modified": "2018-01-19T13:58:21+00:00",
-                    "total_space": 2
+                    "id": "MjA0ODc2ODQ3Ny43Mw==",
+                    "name": "color",
+                    "created": "2018-01-31T13:54:20+00:00",
+                    "modified": "2018-01-31T13:54:20+00:00"
                 },
                 {
-                    "id": 2,
-                    "name": "hash tag2",
-                    "created": "2018-01-19T13:58:54+00:00",
-                    "modified": "2018-01-19T13:58:54+00:00",
-                    "total_space": 0
+                    "id": "MjEwMTMwMTAwMi44",
+                    "name": "festival",
+                    "created": "2018-01-31T13:54:20+00:00",
+                    "modified": "2018-01-31T13:54:20+00:00"
                 }
             ]
         }
@@ -325,16 +329,16 @@ function getView() { return; }
     "status": "success",
     "message": "Login done successfully.",
     "data": {
-        "username": "skumar2 aa dds",
-        "email": "subhash.kumadr2aadds@kiwitech.com",
-        "gender": "male",
+        "username": "spayc",
+        "email": "spayc@domain.com",
+        "gender": "Male",
         "dob": "2000-02-02",
         "phone": "",
         "website_url": null,
         "address": null,
         "bio_data": null,
         "device_id": "VOYANVLOXG",
-        "matrix_user_id": "@skumar2_aa_dds:127.0.0.1",
+        "matrix_user_id": "@spayc:127.0.0.1",
         "token": "7f39fa7c6642666c6802f0d4e2fddf6a695fc12458733764c64ad338d6d1ca5f",
         "matrix_token": "MDAxN2xvY2F0aW9uIDEyNy4wLjAuMQowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMmNjaWQgdXNlcl9pZCA9IEBza3VtYXIyX2FhX2RkczoxMjcuMC4wLjEKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSA4Ok00T3VzN1h5cnlKUEBxCjAwMmZzaWduYXR1cmUg5JCNFFzLQ4N-K6MnNWqFfqQdueyPiR74U_r6qLUzrqAK"
     }
@@ -356,12 +360,12 @@ function postLogin() { return; }
   
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  
-  @apiParam {Number} friend_id Friend id required (Required).
+  @apiParam {String} friend_id Friend id required (friend_id must be an user id)(Required).
  
   @apiExample Example usage:
  
     {
-        "friend_id":"85"
+        "friend_id":"NDIwMjYwMjAwLjU2"
     }
  
  
@@ -369,11 +373,10 @@ function postLogin() { return; }
   @apiSuccess {String} message Friend request send successfully..
   @apiSuccess {Object} data Null.
   @apiSuccessExample {json} Success-Response: 
-       HTTP/1.1 200 OK
+        HTTP/1.1 201 OK
 {
     "status": "success",
-    "message": "Friend request send successfully.",
-    "data": []
+    "message": "Friend request sent successfully."
 }
  
   @apiError {String} Friend request already sent.
@@ -407,8 +410,10 @@ function postFriendRequest() { return; }
     "message": "Friend lists.",
     "data": [
         {
-            "id": 8,
-            "name": "sbsharma1123",
+            "id": "NDIwMjYwMjAwLjU2",
+            "name": "spayc",
+            "matrix_user_id": "@test2:35.168.119.247",
+            "matrix_access_token": "MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyOGNpZCB1c2VyX2lkID0gQHRlc3QyOjM1LjE2OC4xMTkuMjQ3CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gMVJKXjJSTEs3Klc9LmhyQAowMDJmc2lnbmF0dXJlIMyd1A3UtgJZEWcmvehB84AboRIZrFb46AqHTrn4Y2reCg",
             "user_images": [
                 {
                     "user_id": 8,
@@ -420,7 +425,7 @@ function postFriendRequest() { return; }
                 }
             ],
             "friend": {
-                "id": 3,
+                "id": "NDIsdfaYwMjAwLjU2",
                 "requested_by": 7,
                 "requested_to": 8,
                 "requested_status": "Accepted",
@@ -446,12 +451,12 @@ function getFriends() { return; }
   
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  
-* @apiParam  {Number}   id       Friend id required field in body.
+* @apiParam  {String}   id       Friend id required field in body.
 * @apiParam  {String}   status   Status is required field and status must be in(Accepted,Declined,Blocked,Unfriend).
    @apiExample Example usage:
  
     {
-        "id":"1",
+        "id":"NDIwMjYwMjAwLjU2",
         "status":"Accepted"
     }
  

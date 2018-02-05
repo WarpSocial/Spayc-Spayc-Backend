@@ -3,7 +3,7 @@
 namespace Api\Model\Entity;
 
 use Cake\ORM\Entity;
-
+use Api\Auth\ApiHasher;
 /**
  * User Entity
  *
@@ -50,7 +50,7 @@ class User extends Entity {
     ];
 
     protected function _setPassword($password) {
-        return (new \Api\Auth\ApiPasswordHasher())->hash($password);
+        return ApiHasher::hash($password);
     }
 
     protected function _setDob($dob) {
@@ -68,6 +68,10 @@ class User extends Entity {
         } else {
             return;
         }
+    }
+    
+    protected function _getId($id) {      
+        return ApiHasher::encrypt($id);
     }
 
 }
