@@ -12,8 +12,10 @@ use Cake\Utility\Security;
 
 class ApiHasher {
     private static $hashkey = 'wt1U5MACWJFTXGenB8BB6FDF9E7B3A827A';
-    private static $floatKey = 52532525.07;
-
+    //private static $floatKey = 52532525.07;
+    private static $secret_iv = 'eaiYYkYTysia2lnHiw0N0';
+    private static $encrypt_method = "AES-256-CBC";
+    
     public static function hash($password) {
         $encrypt = base64_encode(Security::encrypt($password, self::$hashkey));
         return $encrypt;
@@ -35,13 +37,23 @@ class ApiHasher {
     }
     
     public static function encrypt($sData) {
-        $id=(double)$sData*self::$floatKey;
-        return base64_encode($id);
+        $output = '';
+        $key = hash('sha256', self::$hashkey);
+        $initialization_vector = substr(hash('sha256', self::$secret_iv), 0, 16);
+        if(!empty($sData)) {
+          $output = openssl_encrypt($sData, self::$encrypt_method, $key, 0, $initialization_vector);
+          $output = base64_encode($output);
+        }
+        return $output;
     }
 
     public static function decrypt($sData) {
-        $url_id=base64_decode($sData);
-        $id=(double)$url_id/self::$floatKey;
-        return (int)$id;
+        $output = '';
+        $key = hash('sha256', self::$hashkey);
+        $initialization_vector = substr(hash('sha256', self::$secret_iv), 0, 16);
+        if(!empty($sData)) {
+            $output = openssl_decrypt(base64_decode($sData), self::$encrypt_method, $key, 0, $initialization_vector);
+        }
+        return $output;
     }
 }
