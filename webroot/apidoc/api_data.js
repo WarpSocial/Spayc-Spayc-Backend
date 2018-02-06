@@ -1350,6 +1350,110 @@ define({ "api": [
   },
   {
     "type": "post",
+    "url": "/reverification.json",
+    "title": "Send Reverification Link",
+    "version": "0.1.0",
+    "name": "Reverification",
+    "group": "User",
+    "permission": [
+      {
+        "name": "none"
+      }
+    ],
+    "description": "<p>Send reverification link.</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "email",
+            "description": "<p>User registered email required field.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "\n{\n   \"email\": \"spaycdev@spayc.com\"\n}",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Re-verification email sent successfully.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Re-verification email sent successfully.\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/user.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/reverification.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
     "url": "/facebook-signup.json",
     "title": "Facebook Sign-up",
     "version": "0.0.1",
@@ -1391,6 +1495,13 @@ define({ "api": [
             "optional": false,
             "field": "email",
             "description": "<ul> <li>User email required in body(Required).</li> </ul>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "image_url",
+            "description": "<ul> <li>User image url optional in body(Optional).</li> </ul>"
           },
           {
             "group": "Parameter",
@@ -1474,7 +1585,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "\n{\n   \"fb_id\":\"xxxxxxxxxxxx\",\n   \"fb_access_key\":\"xxxxxxxxxxxxxxxxxxxx\",\n   \"username\":\"spayc\",\n   \"email\":\"user@domainname.com\",\n   \"dob\":\"12-11-2001\",\n   \"gender\":\"Male|Female|Other\",\n   \"phone\": \"XXXXXXXXXX\",\n   \"device_id\":\"xxxxxxxxxxxxxxxxxx\",\n   \"latitude\": \"xx.xxxxx\",\n  \"longitude\": \"xx.xxxxx\"\n}",
+        "content": "\n{\n   \"fb_id\":\"xxxxxxxxxxxx\",\n   \"fb_access_key\":\"xxxxxxxxxxxxxxxxxxxx\",\n   \"username\":\"spayc\",\n   \"email\":\"user@domainname.com\",\n   \"image_url\":\"image.png\",\n   \"dob\":\"12-11-2001\",\n   \"gender\":\"Male|Female|Other\",\n   \"phone\": \"XXXXXXXXXX\",\n   \"device_id\":\"xxxxxxxxxxxxxxxxxx\",\n   \"latitude\": \"xx.xxxxx\",\n  \"longitude\": \"xx.xxxxx\"\n}",
         "type": "json"
       }
     ],
@@ -1521,6 +1632,110 @@ define({ "api": [
         "url": "http://spayc.com/api/facebook-signup.json"
       }
     ]
+  },
+  {
+    "type": "post",
+    "url": "/forgot-password.json",
+    "title": "Forgot Password",
+    "version": "0.1.0",
+    "name": "forgotPassword",
+    "group": "User",
+    "permission": [
+      {
+        "name": "none"
+      }
+    ],
+    "description": "<p>Reset password link to be send at requested email.</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "email",
+            "description": "<p>User registered email required field.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "\n{\n   \"email\": \"spaycdev@spayc.com\"\n}",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Reset password link send to your email address.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Reset password link send to your email address.\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/user.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/forgot-password.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
   },
   {
     "type": "post",

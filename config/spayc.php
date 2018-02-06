@@ -8,4 +8,6 @@ return [
     'friend_status'=>['Blocked', 'Unfriend'],
     'maxupload'=>'2MB',
     'adminEmail' =>'kiwitech@gmail.com',
+    'reverification_subject'=>'Re-Verifiaction',
+    'forgotpassword_subject'=>'Forgot Password'
 ];

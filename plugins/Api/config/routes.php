@@ -23,6 +23,9 @@ Router::plugin(
         $routes->connect('/subscribe-spayc', ['controller' => 'Spaycs', 'action' => 'subscribeSpayc']);
         $routes->connect('/spayc-details/:id', ['controller' => 'Spaycs', 'action' => 'view'], ['pass'=>['id']]);
         $routes->connect('/facebook-friends', ['controller' => 'Users', 'action' => 'getFacebookFriends']);
+        $routes->connect('/reverification', ['controller' => 'Users', 'action' => 'reverification']);
+        $routes->connect('/forgot-password', ['controller' => 'Users', 'action' => 'forgotPassword']);
+        $routes->connect('/reset-password/:token/:email', ['controller' => 'Users', 'action' => 'resetPassword', 'ext'=>'html'], ['pass' => ['token', 'email']]);
         $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
         $routes->fallbacks(DashedRoute::class);
     }

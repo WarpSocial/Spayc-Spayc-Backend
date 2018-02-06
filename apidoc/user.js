@@ -500,3 +500,65 @@ function setFriendStatus() { return; }
   @apiUse UserErrorResponse
 */
 function getLogout() { return; }
+
+/**
+ * @api {post} /reverification.json Send Reverification Link
+ * @apiVersion 0.1.0
+ * @apiName Reverification
+ * @apiGroup User
+ * @apiPermission none
+ *
+ * @apiDescription Send reverification link.
+ *
+ * @apiParam {String} email User registered email required field.
+ *
+ * @apiExample Example usage:
+ *
+ *       {
+ *          "email": "spaycdev@spayc.com"
+ *       }
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Re-verification email sent successfully.
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Re-verification email sent successfully."
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function postReverification() { return; }
+
+/**
+ * @api {post} /forgot-password.json Forgot Password
+ * @apiVersion 0.1.0
+ * @apiName forgotPassword
+ * @apiGroup User
+ * @apiPermission none
+ *
+ * @apiDescription Reset password link to be send at requested email.
+ *
+ * @apiParam {String} email User registered email required field.
+ *
+ * @apiExample Example usage:
+ *
+ *       {
+ *          "email": "spaycdev@spayc.com"
+ *       }
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Reset password link send to your email address.
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Reset password link send to your email address."
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function postForgotPassword() { return; }
