@@ -26,6 +26,7 @@ Router::plugin(
         $routes->connect('/reverification', ['controller' => 'Users', 'action' => 'reverification']);
         $routes->connect('/forgot-password', ['controller' => 'Users', 'action' => 'forgotPassword']);
         $routes->connect('/reset-password/:token/:email', ['controller' => 'Users', 'action' => 'resetPassword', 'ext'=>'html'], ['pass' => ['token', 'email']]);
+        $routes->connect('/user-profile/:id', ['controller' => 'Users', 'action' => 'viewProfile'], ['pass'=>['id']]);
         $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
         $routes->fallbacks(DashedRoute::class);
     }

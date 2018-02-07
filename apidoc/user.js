@@ -562,3 +562,54 @@ function postReverification() { return; }
  * @apiUse UserErrorResponse
  */
 function postForgotPassword() { return; }
+
+/**
+ @api {post} /user-profile/:userId.json User Profile
+  @apiVersion 0.1.0
+  @apiName userProfile
+  @apiGroup User
+  @apiPermission Private User
+ 
+  @apiDescription Get user profile.
+  
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * 
+  * @apiParam {String} userId User id required field in query string.
+ 
+  @apiSuccess {String} status success.
+  @apiSuccess {String} message Logout successfully.
+  @apiSuccess {Object} data Null.
+  @apiSuccessExample {json} Success-Response: 
+       HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "User profile.",
+    "data": [
+        {
+            "id": "anM1a0FkWGlWUXBwR1ZDUU9iR09XQT09",
+            "username": "test2",
+            "email": "test2@gmail.com",
+            "gender": "Male",
+            "dob": "01-25-1996",
+            "phone": "(789)877878",
+            "website_url": null,
+            "address": null,
+            "bio_data": null,
+            "longitude": 77.391026,
+            "latitude": 28.535516,
+            "matrix_user_id": "@test2:35.168.119.247",
+            "friend": {
+                "id": "MzNNbkN6V05zQ2c1N0ViMVJJeEVqZz09",
+                "requested_by": 10,
+                "requested_to": 19,
+                "requested_status": "Requested",
+                "friend_status": null
+            },
+            "image_url": "https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2017_12_26_15_18_47_20180206133935.png"
+        }
+    ]
+}
+
+  @apiUse UserErrorResponse
+*/
+function getUserProfile() { return; }

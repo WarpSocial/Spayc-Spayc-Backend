@@ -291,7 +291,6 @@ class UsersController extends AppController {
             $entity = $this->Users->newEntity();
         }
         $items = $this->Users->patchEntity($entity, $data, ['validate' => 'facebookSignup']);
-        
         if($items->errors()) {
             $this->restException(['status' => "failed", 'message' => $this->mapErrors($items->errors())], 400);
         }
@@ -568,6 +567,46 @@ class UsersController extends AppController {
         }
         $friendRequest->updateAll($friend, ['id'=>$data['id']]);
         $response = ['status'=>'success', 'message'=>__('Friend status updated successfully.')];
+        $this->set($response);
+    }
+    
+    public function viewProfile($id = null) {
+        if(!$this->request->is(['get'])) {
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
+        }
+        $id = ApiHasher::decrypt($id);
+        if(empty($id)) {
+            $this->restException(['status'=>'failed', 'message'=>__('User id is required field.')], 400);
+        }
+        $exist = $this->Users->exists(['id'=>$id]);
+        if(!$exist) {
+            $this->restException(['status'=>'failed', 'message'=>__('Invalid user id')], 400);
+        }
+        $user = $this->Users->find('all', ['fields'=>['Users.id', 'Users.username', 'Users.email', 'Users.gender', 'Users.dob', 'Users.phone', 'Users.website_url', 'Users.address', 'Users.bio_data', 'Users.longitude', 'Users.latitude', 'Users.matrix_user_id']])->where(['Users.id'=>$id]);
+        $userId = $this->Auth->user('id');
+        $user->contain([
+            'Requestedby' => function($q) use($userId) {
+                return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_status', 'Requestedby.requested_to', 'Requestedby.friend_status'])->Where(['OR'=>['Requestedby.requested_by'=>$userId, 'Requestedby.requested_to'=>$userId]]);
+            },
+            'Requestedto' => function($q) use($userId) {
+                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.friend_status'])->Where(['OR'=>['Requestedto.requested_by'=>$userId, 'Requestedto.requested_to'=>$userId]]);
+            },
+            'UserImages'=>function($q) {
+                return $q->select(['UserImages.user_id', 'UserImages.image_url']);
+            }
+        ]);
+        $user->formatResults(function (\Cake\Collection\CollectionInterface $results) {
+            return $results->map(function ($row) {
+                $row->friend = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
+                $row->friend = !empty($row['requestedby'][0]) && empty($row->friend)? $row['requestedby'][0] : $row->friend;
+                $row->image_url = !empty($row['user_images'][0]['image_url'])? $row['user_images'][0]['image_url']:'';
+                unset($row['requestedto']);
+                unset($row['requestedby']);
+                unset($row['user_images']);
+                return $row;
+            });
+        });
+        $response = ['status'=>'success', 'message'=>__('User profile.'), 'data'=>$user];
         $this->set($response);
     }
     
