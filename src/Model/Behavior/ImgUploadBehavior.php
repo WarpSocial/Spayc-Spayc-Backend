@@ -148,7 +148,7 @@ class ImgUploadBehavior extends Behavior {
      *     
      * @return boolean
      */
-    public function uploadToAWS($entity) {
+    public function uploadToAWS($entity) { pr($entity);exit;
         $config = $this->config();
         if (empty($this->_virtualField)) {
             return;

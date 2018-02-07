@@ -83,5 +83,18 @@ class UserImagesTable extends Table {
 
         return $rules;
     }
+    
+    public function uploadFacebookImage($fileName, $userId) {
+        $data['user_id'] = $userId;
+        $data['image_url']['tmp_name'] = $fileName;
+        $entity = $this->newEntity();
+        $items = $this->patchEntity($entity, $data);
+        pr($items->errors());exit;
+        if(!empty($items->errors())) {
+            // $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
+        }
+        $this->UserImages->save($items);
+        
+    }
 
 }

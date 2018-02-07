@@ -310,6 +310,7 @@ class UsersController extends AppController {
         if(!$user) {
             $this->restException(['status' => "failed", 'message' => __('Sign in credentials ain\'t right, try again buddy.')],  401);
         }
+        $user['id'] = ApiHasher::decrypt($user['id']);
         $mdata['username'] = $data['username'];
         $mdata['password'] = base64_encode($data['email']);
         $mdata['device_id'] = $data['device_id'];
@@ -323,6 +324,9 @@ class UsersController extends AppController {
         $user['device_id'] = $matrix['device_id'];
         $this->Auth->setUser($user);
         $user = $this->Users->usrLog($user);
+        if(!empty($data['image_url'])) {
+            TableRegistry::get('Api.UserImages')->uploadFacebookImage($data['image_url'], $this->Auth->user('id'));
+        }
         $data = [
             'username'=>$user['username'],
             'email'=>$user['email'],
