@@ -576,10 +576,10 @@ class UsersController extends AppController {
         if(!$this->request->is(['get'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
-        $id = ApiHasher::decrypt($id);
         if(empty($id)) {
             $this->restException(['status'=>'failed', 'message'=>__('User id is required field.')], 400);
         }
+        $id = ApiHasher::decrypt($id);
         $exist = $this->Users->exists(['id'=>$id]);
         if(!$exist) {
             $this->restException(['status'=>'failed', 'message'=>__('Invalid user id')], 400);
@@ -608,6 +608,9 @@ class UsersController extends AppController {
                 return $row;
             });
         });
+        if($user->count()) {
+            $user = $user->first()->toArray();
+        }
         $response = ['status'=>'success', 'message'=>__('User profile.'), 'data'=>$user];
         $this->set($response);
     }
