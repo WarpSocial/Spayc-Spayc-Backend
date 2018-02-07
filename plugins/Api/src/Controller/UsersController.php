@@ -516,8 +516,10 @@ class UsersController extends AppController {
             return $results->map(function ($row) {
                 $row->friend = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
                 $row->friend = !empty($row['requestedby'][0]) && empty($row->friend)? $row['requestedby'][0] : $row->friend;
+                $row->image_url = !empty($row['user_images'][0]['image_url'])?$row['user_images'][0]['image_url']:'';
                 unset($row['requestedto']);
                 unset($row['requestedby']);
+                unset($row['user_images']);
                 return $row;
             });
         });
@@ -533,7 +535,7 @@ class UsersController extends AppController {
         $data = [];
         $data['count'] = $friends->count();
         if($friends->count()) {
-            $data = $friends->toArray();
+            $data['records'] = $friends->toArray();
         } else {
             $this->response->statusCode(204);
         }

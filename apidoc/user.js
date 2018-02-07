@@ -408,31 +408,39 @@ function postFriendRequest() { return; }
 {
     "status": "success",
     "message": "Friend lists.",
-    "data": [
-        {
-            "id": "NDIwMjYwMjAwLjU2",
-            "name": "spayc",
-            "matrix_user_id": "@test2:35.168.119.247",
-            "matrix_access_token": "MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyOGNpZCB1c2VyX2lkID0gQHRlc3QyOjM1LjE2OC4xMTkuMjQ3CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gMVJKXjJSTEs3Klc9LmhyQAowMDJmc2lnbmF0dXJlIMyd1A3UtgJZEWcmvehB84AboRIZrFb46AqHTrn4Y2reCg",
-            "user_images": [
-                {
-                    "user_id": 8,
-                    "image_url": "image1.png"
+    "data": {
+        "count": 4,
+        "records": [
+            {
+                "id": "VkR0a3p4anQ2SUxScm85RGhTZTFpZz09",
+                "name": "test",
+                "matrix_user_id": null,
+                "matrix_access_token": null,
+                "friend": {
+                    "id": "bmRkeTJVYjhwTlQzKzdpeWJwWEMvZz09",
+                    "requested_by": 10,
+                    "requested_to": 7,
+                    "requested_status": "Requested",
+                    "friend_status": null
                 },
-                {
-                    "user_id": 8,
-                    "image_url": "image2.jpg"
-                }
-            ],
-            "friend": {
-                "id": "NDIsdfaYwMjAwLjU2",
-                "requested_by": 7,
-                "requested_to": 8,
-                "requested_status": "Accepted",
-                "friend_status": null
+                "image_url": ""
+            },
+            {
+                "id": "OWxtVWpXalVkaVdWRHVTWUR5amxuZz09",
+                "name": "test2",
+                "matrix_user_id": null,
+                "matrix_access_token": null,
+                "friend": {
+                    "id": "NlJpUEx0M016dXBGTjhZdWpWeThBUT09",
+                    "requested_by": 10,
+                    "requested_to": 8,
+                    "requested_status": "Requested",
+                    "friend_status": null
+                },
+                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2017_08_14_18_14_10_20180206133936.png"
             }
-        }
-    ]
+        ]
+    }
 }
  
 
@@ -577,7 +585,7 @@ function postForgotPassword() { return; }
   * @apiParam {String} userId User id required field in query string.
  
   @apiSuccess {String} status success.
-  @apiSuccess {String} message Logout successfully.
+  @apiSuccess {String} message User profile.
   @apiSuccess {Object} data Null.
   @apiSuccessExample {json} Success-Response: 
        HTTP/1.1 200 OK

@@ -834,7 +834,7 @@
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Friend lists.\",\n    \"data\": [\n        {\n            \"id\": \"NDIwMjYwMjAwLjU2\",\n            \"name\": \"spayc\",\n            \"matrix_user_id\": \"@test2:35.168.119.247\",\n            \"matrix_access_token\": \"MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyOGNpZCB1c2VyX2lkID0gQHRlc3QyOjM1LjE2OC4xMTkuMjQ3CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gMVJKXjJSTEs3Klc9LmhyQAowMDJmc2lnbmF0dXJlIMyd1A3UtgJZEWcmvehB84AboRIZrFb46AqHTrn4Y2reCg\",\n            \"user_images\": [\n                {\n                    \"user_id\": 8,\n                    \"image_url\": \"image1.png\"\n                },\n                {\n                    \"user_id\": 8,\n                    \"image_url\": \"image2.jpg\"\n                }\n            ],\n            \"friend\": {\n                \"id\": \"NDIsdfaYwMjAwLjU2\",\n                \"requested_by\": 7,\n                \"requested_to\": 8,\n                \"requested_status\": \"Accepted\",\n                \"friend_status\": null\n            }\n        }\n    ]\n}",
+          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Friend lists.\",\n    \"data\": {\n        \"count\": 4,\n        \"records\": [\n            {\n                \"id\": \"VkR0a3p4anQ2SUxScm85RGhTZTFpZz09\",\n                \"name\": \"test\",\n                \"matrix_user_id\": null,\n                \"matrix_access_token\": null,\n                \"friend\": {\n                    \"id\": \"bmRkeTJVYjhwTlQzKzdpeWJwWEMvZz09\",\n                    \"requested_by\": 10,\n                    \"requested_to\": 7,\n                    \"requested_status\": \"Requested\",\n                    \"friend_status\": null\n                },\n                \"image_url\": \"\"\n            },\n            {\n                \"id\": \"OWxtVWpXalVkaVdWRHVTWUR5amxuZz09\",\n                \"name\": \"test2\",\n                \"matrix_user_id\": null,\n                \"matrix_access_token\": null,\n                \"friend\": {\n                    \"id\": \"NlJpUEx0M016dXBGTjhZdWpWeThBUT09\",\n                    \"requested_by\": 10,\n                    \"requested_to\": 8,\n                    \"requested_status\": \"Requested\",\n                    \"friend_status\": null\n                },\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2017_08_14_18_14_10_20180206133936.png\"\n            }\n        ]\n    }\n}",
           "type": "json"
         }
       ]
@@ -1585,7 +1585,7 @@
     "examples": [
       {
         "title": "Example usage:",
-        "content": "\n{\n   \"fb_id\":\"xxxxxxxxxxxx\",\n   \"fb_access_key\":\"xxxxxxxxxxxxxxxxxxxx\",\n   \"username\":\"spayc\",\n   \"email\":\"user@domainname.com\",\n   \"image_url\":\"image.png\",\n   \"dob\":\"12-11-2001\",\n   \"gender\":\"Male|Female|Other\",\n   \"phone\": \"XXXXXXXXXX\",\n   \"device_id\":\"xxxxxxxxxxxxxxxxxx\",\n   \"latitude\": \"xx.xxxxx\",\n  \"longitude\": \"xx.xxxxx\"\n}",
+        "content": "\n{\n   \"fb_id\":\"xxxxxxxxxxxx\",\n   \"fb_access_key\":\"xxxxxxxxxxxxxxxxxxxx\",\n   \"username\":\"spayc\",\n   \"email\":\"user@domainname.com\",\n   \"image_url\":\"https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2018_02_02_12_10_56_20180206133933.png\",\n   \"dob\":\"12-11-2001\",\n   \"gender\":\"Male|Female|Other\",\n   \"phone\": \"XXXXXXXXXX\",\n   \"device_id\":\"xxxxxxxxxxxxxxxxxx\",\n   \"latitude\": \"xx.xxxxx\",\n  \"longitude\": \"xx.xxxxx\"\n}",
         "type": "json"
       }
     ],
@@ -2130,5 +2130,122 @@
         "url": "http://spayc.com/api/friend-response.json"
       }
     ]
+  },
+  {
+    "type": "post",
+    "url": "/user-profile/:userId.json",
+    "title": "User Profile",
+    "version": "0.1.0",
+    "name": "userProfile",
+    "group": "User",
+    "permission": [
+      {
+        "name": "Private User"
+      }
+    ],
+    "description": "<p>Get user profile.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "userId",
+            "description": "<p>User id required field in query string.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>User profile.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>Null.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"User profile.\",\n    \"data\": [\n        {\n            \"id\": \"anM1a0FkWGlWUXBwR1ZDUU9iR09XQT09\",\n            \"username\": \"test2\",\n            \"email\": \"test2@gmail.com\",\n            \"gender\": \"Male\",\n            \"dob\": \"01-25-1996\",\n            \"phone\": \"(789)877878\",\n            \"website_url\": null,\n            \"address\": null,\n            \"bio_data\": null,\n            \"longitude\": 77.391026,\n            \"latitude\": 28.535516,\n            \"matrix_user_id\": \"@test2:35.168.119.247\",\n            \"friend\": {\n                \"id\": \"MzNNbkN6V05zQ2c1N0ViMVJJeEVqZz09\",\n                \"requested_by\": 10,\n                \"requested_to\": 19,\n                \"requested_status\": \"Requested\",\n                \"friend_status\": null\n            },\n            \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2017_12_26_15_18_47_20180206133935.png\"\n        }\n    ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/user.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/user-profile/:userId.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
   }
 ]
