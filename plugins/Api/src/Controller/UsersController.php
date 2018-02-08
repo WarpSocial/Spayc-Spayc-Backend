@@ -549,7 +549,7 @@ class UsersController extends AppController {
         }
         $data = $this->request->getData();
         if(empty($data['id'])) {
-            $this->restException(['status'=>'failed','message'=>__('id is required fields.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Id is required fields.')], 400);
         }
         $data['id'] = ApiHasher::decrypt($data['id']);
         $friendRequest = TableRegistry::get('Api.FriendRequest');
@@ -565,7 +565,7 @@ class UsersController extends AppController {
         if(in_array($status, Configure::read('friend_requested_status'))) {
             $friend['requested_status'] = $status;
         } else if(in_array($status, Configure::read('friend_status'))) {
-            $friend['friend_status'] = $status;
+            $friend['friend_status'] = ($status=='Unblock')?NULL:$status;
         }
         $friendRequest->updateAll($friend, ['id'=>$data['id']]);
         $response = ['status'=>'success', 'message'=>__('Friend status updated successfully.')];

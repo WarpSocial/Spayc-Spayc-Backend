@@ -397,7 +397,7 @@ function postFriendRequest() { return; }
  
 * @apiParam  {Number}   page            Page number in query string (Optional).
 * @apiParam  {Number}   limit           Records limit in query string (Optional).
-* @apiParam  {String}   friend_status   Status in query string must be any one from the following(Requested, Accepted, 'Declined').
+* @apiParam  {String}   friend_status   Status in query string must be any one from the following(Requested, Accepted, 'Declined',Blocked, Unfriend).
  
  
   @apiSuccess {String} status success.
@@ -460,7 +460,7 @@ function getFriends() { return; }
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  
 * @apiParam  {String}   id       Friend id required field in body.
-* @apiParam  {String}   status   Status is required field and status must be in(Accepted,Declined,Blocked,Unfriend).
+* @apiParam  {String}   status   Status is required field and status must be in(Accepted,Declined,Blocked, Unblock, Unfriend).
    @apiExample Example usage:
  
     {

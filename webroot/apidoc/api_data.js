@@ -800,7 +800,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "friend_status",
-            "description": "<p>Status in query string must be any one from the following(Requested, Accepted, 'Declined').</p>"
+            "description": "<p>Status in query string must be any one from the following(Requested, Accepted, 'Declined',Blocked, Unfriend).</p>"
           }
         ]
       }
@@ -2034,7 +2034,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>Status is required field and status must be in(Accepted,Declined,Blocked,Unfriend).</p>"
+            "description": "<p>Status is required field and status must be in(Accepted,Declined,Blocked, Unblock, Unfriend).</p>"
           }
         ]
       }
