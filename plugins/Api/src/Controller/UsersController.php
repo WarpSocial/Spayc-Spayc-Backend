@@ -601,10 +601,8 @@ class UsersController extends AppController {
             return $results->map(function ($row) {
                 $row->friend = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
                 $row->friend = !empty($row['requestedby'][0]) && empty($row->friend)? $row['requestedby'][0] : $row->friend;
-                $row->image_url = !empty($row['user_images'][0]['image_url'])? $row['user_images'][0]['image_url']:'';
                 unset($row['requestedto']);
                 unset($row['requestedby']);
-                unset($row['user_images']);
                 return $row;
             });
         });
@@ -616,10 +614,48 @@ class UsersController extends AppController {
     }
     
     public function getFacebookFriends() {
+        if (!$this->request->is(['get'])) {
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
+        }
         $data = [];
-        if(!empty($this->Auth->user('fb_id')) and !empty($this->Auth->user('fb_access_key'))) {
-            $data = $this->Auth->user();
+        if(empty($this->Auth->user('fb_id')) || empty($this->Auth->user('fb_access_key'))) {
+            $this->restException(['status'=>'failed', 'message'=>__('User not signup with facebook.')], 400);
+        }
+        $this->loadComponent('Api.Facebook');
+        $friends = $this->Facebook->getFriends($this->Auth->user('fb_id'), $this->Auth->user('fb_access_key'));
+        $friendEmails = ['shubhash1231@gmail.com'];
+        if(!empty($friends)) {
+            foreach($friends as $friend) {
+                if(!empty($friend['email'])) { $friendEmails[] = $friend['email']; }
+            }
+        }
+        $spaycFriends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username', 'Users.dob', 'Users.gender', 'Users.phone'], 'conditions'=>['Users.email IN'=>$friendEmails, 'Users.id !='=>$this->Auth->user('id')]]);
+        $spaycFriends->contain([
+            'UserImages'=>function($q) {
+                return $q->select(['UserImages.user_id', 'UserImages.image_url']);
+            }
+        ]);
+        $spaycFriends->formatResults(function (\Cake\Collection\CollectionInterface $results) {
+            return $results->map(function ($row) {
+                $row->image_url = !empty($row['user_images'][0]['image_url'])? $row['user_images'][0]['image_url']:'';
+                unset($row['user_images']);
+                return $row;
+            });
+        });
+        $limit = (!empty($this->request->query['limit']) && is_numeric($this->request->query['limit']))?$this->request->query['limit']:5;
+        $spaycFriends->order(['Users.username'=>'ASC'])->limit($limit);
+        $page = (!empty($this->request->query['limit']) && is_numeric($this->request->query['page']))?$this->request->query['page']:1;
+        if($page < 0) {
+            $page = $page*-1;
+            $spaycFriends->page($page);
         } else {
+            $spaycFriends->page($page);
+        }
+        $data['count'] = $spaycFriends->count();
+        if($spaycFriends->count()) {
+            $data['records'] = $spaycFriends->toArray();
+        }
+        if(empty($data)) {
             $this->response->statusCode(204);
         }
         $response = ['status'=>'success', 'message'=>__('Facebook friend lists.'), 'data'=>$data];
