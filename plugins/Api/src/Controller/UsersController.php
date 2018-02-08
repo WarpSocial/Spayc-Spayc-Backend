@@ -27,19 +27,19 @@ class UsersController extends AppController {
     
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
-        $this->Auth->allow(['login','add','facebookSignup']);
+        $this->Auth->allow(['login', 'add', 'facebookSignup', 'forgotPassword', 'reverification', 'verifyAccount', 'resetPassword']);
     }
     
     public function avatars() {
         if (!$this->request->is('post')) {
-            $this->restException(['status'=>'failed','message'=>__('Method not allowed.')],405);
+            $this->restException(['status'=>'failed','message'=>__('Method not allowed.')], 405);
         }
         $this->loadModel('Api.UserImages');
         #$this->Users->uploadProfileImages();
         $data  = $this->request->getData();
         $data['user_id'] = $this->Auth->user('id');
-        if(isset($data['image_url'][0])){
-            foreach($data['image_url'] as $img){
+        if(isset($data['image_url'][0])) {
+            foreach($data['image_url'] as $img) {
                 $imgData = ['user_id'=>$this->Auth->user('id'),'image_url'=>$img];
                 
                 $entity = $this->UserImages->newEntity();
@@ -49,10 +49,10 @@ class UsersController extends AppController {
                 }
                 $this->UserImages->save($items);
             }
-        }else{
+        } else {
             $entity = $this->UserImages->newEntity();
             $items = $this->UserImages->patchEntity($entity, $data);
-            if(!empty($items->errors())){
+            if(!empty($items->errors())) {
                  $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
             }
             $this->UserImages->save($items);
@@ -90,7 +90,7 @@ class UsersController extends AppController {
         $this->loadComponent('Api.Matrix');
         $matrix = $this->Matrix->login($data_item+['username'=>$user['username']]); 
         if(empty($matrix)){
-            $this->restException(['status'=>'failed','message'=>__('Matrix login failed.')]);
+            $this->restException(['status'=>'failed','message'=>__('Matrix login failed.')], 401);
         }
         $user['matrix_user_id'] = $matrix['user_id'];
         $user['matrix_access_token'] = $matrix['access_token'];
@@ -114,8 +114,7 @@ class UsersController extends AppController {
         $response = ['status' => "success", 'message' => __('Login done successfully.'),'data'=>$data];
         $this->set($response);
     }
-
-
+    
     /**
      * index method
      *
@@ -154,6 +153,29 @@ class UsersController extends AppController {
         $this->set($response);
     }
 
+    public function reverification() {
+        if (!$this->request->is('post')) {
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
+        }
+        $data = $this->request->getData();
+        if(empty($data['email'])) {
+            $this->restException(['status'=>'failed', 'message'=>__('Email is required field.')], 400);
+        }
+        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            $this->restException(['status'=>'failed', 'message'=>__('Invalid email address.')], 400);
+        }
+        $user = $this->Users->findByEmail($data['email']);
+        if(!$user->count()) {
+            $this->restException(['status'=>'failed', 'message'=>__('Email does not exists.')], 400);
+        }
+        $user = $user->first();
+        $data['token_verification'] = Security::hash($data['email'], 'sha1', true);
+        $this->Users->updateAll($data, ['email'=>$data['email']]);
+        $this->getMailer('Api.User')->send('reverification', [$user]);
+        $response = ['status' => "success", 'message' => __('Re-verification email sent successfully.')];
+        $this->set($response);
+    }
+    
     /**
      * Add method
      *
@@ -269,7 +291,6 @@ class UsersController extends AppController {
             $entity = $this->Users->newEntity();
         }
         $items = $this->Users->patchEntity($entity, $data, ['validate' => 'facebookSignup']);
-        
         if($items->errors()) {
             $this->restException(['status' => "failed", 'message' => $this->mapErrors($items->errors())], 400);
         }
@@ -288,6 +309,7 @@ class UsersController extends AppController {
         if(!$user) {
             $this->restException(['status' => "failed", 'message' => __('Sign in credentials ain\'t right, try again buddy.')],  401);
         }
+        $user['id'] = ApiHasher::decrypt($user['id']);
         $mdata['username'] = $data['username'];
         $mdata['password'] = base64_encode($data['email']);
         $mdata['device_id'] = $data['device_id'];
@@ -301,6 +323,9 @@ class UsersController extends AppController {
         $user['device_id'] = $matrix['device_id'];
         $this->Auth->setUser($user);
         $user = $this->Users->usrLog($user);
+        if(!empty($data['image_url'])) {
+            TableRegistry::get('Api.UserImages')->uploadFacebookImage($data['image_url'], $this->Auth->user('id'));
+        }
         $data = [
             'username'=>$user['username'],
             'email'=>$user['email'],
@@ -329,19 +354,51 @@ class UsersController extends AppController {
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
     */
     public function forgotPassword() {
-        if ($this->request->is('post')) {
-            $data = $this->request->getData();
-            if(!empty($data['email'])) {
-                $isExists = $this->Users->exists(['email' => $data['email']]);
-                if($isExists) {
-                    $data['token_verification'] = Security::hash($data['email'], 'sha1', true);
-                    $this->getMailer('Api.User')->send('forgotPassword', [$items]);
-                }
-            } else {
-                $response = ['status' => "failed", 'message' => __('Email is required field.')];
-            }
+        if (!$this->request->is('post')) {
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
+        $data = $this->request->getData();
+        if(empty($data['email'])) {
+            $this->restException(['status'=>'failed', 'message'=>__('Email is required field.')], 400);
+        }
+        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            $this->restException(['status'=>'failed', 'message'=>__('Invalid email address.')], 400);
+        }
+        $user = $this->Users->findByEmail($data['email']);
+        if(!$user->count()) {
+            $this->restException(['status'=>'failed', 'message'=>__('Email does not exists.')], 400);
+        }
+        $user = $user->first();
+        $data['forgot_password_token'] = Security::hash($data['email'], 'sha1', true);
+        $data['forgot_password_timestamp'] = time();
+        $d = $this->Users->updateAll($data, ['email'=>$data['email']]);
+        $this->getMailer('Api.User')->send('forgotPassword', [$user]);
+        $response = ['status' => "success", 'message' => __('Reset password link send to your email address.')];
         $this->set($response);
+    }
+    
+    public function resetPassword($token, $email) {
+        if (!$token || !$email) {
+            throw new NotFoundException(__('Missing required information. Please read email carefully and try again.'));
+        }
+        $user = $this->Users->findByEmail($email)->first();
+        if (!$user) {
+            throw new RecordNotFoundException(__('Account not found or already activated. Please read email carefully and try again.'));
+        }
+        
+        if ($token != Security::hash($user->email, 'sha1', true)) {
+            throw new ForbiddenException(__('Invalid token. Please read email carefully and try again.'));
+        }
+        $user->status = 'Active';
+        if ($this->Users->save($user)) {
+            $this->Flash->success(__('Your Account has been successfully activated. You can now log in using the username and password you chose during the registration.'));
+            //return $this->redirect(['action' => 'login']);    
+        } else {
+            $this->Flash->success(__('This link has no longer existing.'));
+            //return $this->redirect(['action' => 'login']);    
+        }
+        $this->set(compact('user'));
+        $this->render('Users/reset_password',false);
     }
 
     /**
@@ -459,8 +516,10 @@ class UsersController extends AppController {
             return $results->map(function ($row) {
                 $row->friend = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
                 $row->friend = !empty($row['requestedby'][0]) && empty($row->friend)? $row['requestedby'][0] : $row->friend;
+                $row->image_url = !empty($row['user_images'][0]['image_url'])?$row['user_images'][0]['image_url']:'';
                 unset($row['requestedto']);
                 unset($row['requestedby']);
+                unset($row['user_images']);
                 return $row;
             });
         });
@@ -476,7 +535,7 @@ class UsersController extends AppController {
         $data = [];
         $data['count'] = $friends->count();
         if($friends->count()) {
-            $data = $friends->toArray();
+            $data['records'] = $friends->toArray();
         } else {
             $this->response->statusCode(204);
         }
@@ -490,7 +549,7 @@ class UsersController extends AppController {
         }
         $data = $this->request->getData();
         if(empty($data['id'])) {
-            $this->restException(['status'=>'failed','message'=>__('id is required fields.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Id is required fields.')], 400);
         }
         $data['id'] = ApiHasher::decrypt($data['id']);
         $friendRequest = TableRegistry::get('Api.FriendRequest');
@@ -506,10 +565,53 @@ class UsersController extends AppController {
         if(in_array($status, Configure::read('friend_requested_status'))) {
             $friend['requested_status'] = $status;
         } else if(in_array($status, Configure::read('friend_status'))) {
-            $friend['friend_status'] = $status;
+            $friend['friend_status'] = ($status=='Unblock')?NULL:$status;
         }
         $friendRequest->updateAll($friend, ['id'=>$data['id']]);
         $response = ['status'=>'success', 'message'=>__('Friend status updated successfully.')];
+        $this->set($response);
+    }
+    
+    public function viewProfile($id = null) {
+        if(!$this->request->is(['get'])) {
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
+        }
+        if(empty($id)) {
+            $this->restException(['status'=>'failed', 'message'=>__('User id is required field.')], 400);
+        }
+        $id = ApiHasher::decrypt($id);
+        $exist = $this->Users->exists(['id'=>$id]);
+        if(!$exist) {
+            $this->restException(['status'=>'failed', 'message'=>__('Invalid user id')], 400);
+        }
+        $user = $this->Users->find('all', ['fields'=>['Users.id', 'Users.username', 'Users.email', 'Users.gender', 'Users.dob', 'Users.phone', 'Users.website_url', 'Users.address', 'Users.bio_data', 'Users.longitude', 'Users.latitude', 'Users.matrix_user_id']])->where(['Users.id'=>$id]);
+        $userId = $this->Auth->user('id');
+        $user->contain([
+            'Requestedby' => function($q) use($userId) {
+                return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_status', 'Requestedby.requested_to', 'Requestedby.friend_status'])->Where(['OR'=>['Requestedby.requested_by'=>$userId, 'Requestedby.requested_to'=>$userId]]);
+            },
+            'Requestedto' => function($q) use($userId) {
+                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.friend_status'])->Where(['OR'=>['Requestedto.requested_by'=>$userId, 'Requestedto.requested_to'=>$userId]]);
+            },
+            'UserImages'=>function($q) {
+                return $q->select(['UserImages.user_id', 'UserImages.image_url']);
+            }
+        ]);
+        $user->formatResults(function (\Cake\Collection\CollectionInterface $results) {
+            return $results->map(function ($row) {
+                $row->friend = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
+                $row->friend = !empty($row['requestedby'][0]) && empty($row->friend)? $row['requestedby'][0] : $row->friend;
+                $row->image_url = !empty($row['user_images'][0]['image_url'])? $row['user_images'][0]['image_url']:'';
+                unset($row['requestedto']);
+                unset($row['requestedby']);
+                unset($row['user_images']);
+                return $row;
+            });
+        });
+        if($user->count()) {
+            $user = $user->first()->toArray();
+        }
+        $response = ['status'=>'success', 'message'=>__('User profile.'), 'data'=>$user];
         $this->set($response);
     }
     
@@ -522,5 +624,22 @@ class UsersController extends AppController {
         }
         $response = ['status'=>'success', 'message'=>__('Facebook friend lists.'), 'data'=>$data];
         $this->set($response);
+    }
+    
+    public function pushNotification() {
+        if(!$this->request->is(['post'])) {
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
+        }
+        $data = $this->request->getData();
+        $this->loadComponent('Api.Push');
+        if(empty($data['notification']['devices'])) {
+            $this->restException(['status'=>'failed', 'message'=>__('Notification data not found.')], 400);
+        }
+        $message = !empty($data['notification']['content']['body'])?$data['notification']['content']['body']:'';
+        foreach($data['notification']['devices'] as $key=>$device) {
+            if(!empty($device['pushkey']) && !empty($message)) {
+                $this->Push->sendOnIOS($device['pushkey'], $message);
+            }
+        }
     }
 }

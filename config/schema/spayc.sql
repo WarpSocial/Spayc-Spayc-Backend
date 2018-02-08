@@ -18,6 +18,7 @@ CREATE TABLE users (
     timezone VARCHAR(100),
     matrix_user_id VARCHAR(100),
     matrix_access_token VARCHAR(1000),
+    token_verification VARCHAR(255),
     created timestamp NOT NULL,
     modified timestamp,
     primary key (id,created),

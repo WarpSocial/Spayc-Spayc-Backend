@@ -83,5 +83,13 @@ class UserImagesTable extends Table {
 
         return $rules;
     }
+    
+    public function uploadFacebookImage($fileName, $userId) {
+        $data['user_id'] = $userId;
+        $data['image_url']['tmp_name'] = $fileName;
+        $entity = $this->newEntity();
+        $items = $this->patchEntity($entity, $data, ['validate'=>false]);
+        $this->save($items);
+    }
 
 }

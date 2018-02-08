@@ -72,7 +72,8 @@ class ImgUploadBehavior extends Behavior {
      * upload image before save the record
      */
     
-    public function beforeSave(Event $event, $entity, \ArrayObject $options) {        
+    public function beforeSave(Event $event, $entity, \ArrayObject $options) {
+        //pr($this->_virtualField);echo "befor save";exit;
         if($this->_config['where']=='s3') {
             $this->uploadToAWS($entity);            
         } else {
@@ -153,12 +154,15 @@ class ImgUploadBehavior extends Behavior {
         if (empty($this->_virtualField)) {
             return;
         }
-        if (!is_array($config['field'])) {            
+        if (!is_array($config['field'])) { 
             $requestField  =$this->_virtualField[$config['field']];
             if (!empty($requestField['tmp_name'])) {
                 if (($entity->get($config['field']) != $entity->getOriginal($config['field']))) {
                     $originalFilePath = $entity->getOriginal($config['field']);
                     $this->_deleteFromASW($entity,$originalFilePath);
+                }
+                if(empty($requestField['name'])) {
+                    $requestField['name'] = $requestField['tmp_name'];
                 }
                 $fileName = $config['uploadPath'].$this->uniqueString($requestField['name']);
                 //echo $fileName;die;
