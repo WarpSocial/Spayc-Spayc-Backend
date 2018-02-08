@@ -32,14 +32,9 @@ class PushComponent extends Component {
         $this->snsConfig = Configure::read('SNS');       
     }
     
-    public function sendOnIOS($device_token, $message, $eventData = null){
+    public function sendOnIOS($device_token, $message){
         try {
             $config = $this->snsConfig;
-            if(isset($eventData) && !empty($eventData)) {
-                $updated = true; 
-            } else {                
-                $updated = false;  
-            }
             $this->SnsClient = SnsClient::factory(['key'=>$config['key'], 'secret'=>$config['secret'], 'region'=>$config['region'], 'version'=>$config['version']]);
             /*Start Create EndpointARN*/
             $attr1 = array(
@@ -73,11 +68,8 @@ class PushComponent extends Component {
                     'aps' => array(
                       'alert' => $message,
                       'sound'=>'default'
-                       
-                    ),
-                'updated' => $updated
-                       
-                  ))
+                      )
+                    ))
                 ));
             $this->SnsClient->publish(
                 array(

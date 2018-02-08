@@ -625,4 +625,21 @@ class UsersController extends AppController {
         $response = ['status'=>'success', 'message'=>__('Facebook friend lists.'), 'data'=>$data];
         $this->set($response);
     }
+    
+    public function pushNotification() {
+        if(!$this->request->is(['post'])) {
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
+        }
+        $data = $this->request->getData();
+        $this->loadComponent('Api.Push');
+        if(empty($data['notification']['devices'])) {
+            $this->restException(['status'=>'failed', 'message'=>__('Notification data not found.')], 400);
+        }
+        $message = !empty($data['notification']['content']['body'])?$data['notification']['content']['body']:'';
+        foreach($data['notification']['devices'] as $key=>$device) {
+            if(!empty($device['pushkey']) && !empty($message)) {
+                $this->Push->sendOnIOS($device['pushkey'], $message);
+            }
+        }
+    }
 }
