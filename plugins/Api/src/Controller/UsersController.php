@@ -474,15 +474,21 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Invalid friend id.')], 400);
         }
         $frend = TableRegistry::get("Api.FriendRequest");
-        $exists = $frend->exists(['FriendRequest.requested_to'=>$data['friend_id'], 'FriendRequest.requested_by'=>$this->Auth->user('id')]);
-        if($exists) {
-            $this->restException(['status'=>'failed','message'=>__('Friend request already sent.')], 400);
+        $exists = $frend->find('all', ['conditions'=>['FriendRequest.requested_to'=>$data['friend_id'], 'FriendRequest.requested_by'=>$this->Auth->user('id')]])->first();
+        if(!empty($exists) and $exists->friend_status!='Unfriend') {
+            $friendStatus = !empty($exists->friend_status)?$exists->friend_status:$exists->requested_status;
+            $this->restException(['status'=>'failed', 'message'=>__('Friend request already sent status is '.$friendStatus)], 400);
+        } else if(!empty($exists) and $exists->friend_status=='Unfriend') {
+            $friendReq['id'] = ApiHasher::decrypt($exists->id);
+            $friendReq['requested_status'] = 'Requested';
+            $friendReq['friend_status'] = NULL;
+            $friendReq['modified'] = date("Y-m-d H:i:s");
         }
         $friendReq['requested_by'] = $this->Auth->user('id');
         $friendReq['requested_to'] = $data['friend_id'];
         $friendReq['requested_status'] = 'Requested';
         $friendReq['created'] = date("Y-m-d H:i:s");
-        $entity = $frend->newEntity();
+        $entity = empty($friendReq['id'])?$frend->newEntity():$frend->get($friendReq['id']);//pr($entity);exit;
         $items = $frend->patchEntity($entity, $friendReq);
         if($items->errors()) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
