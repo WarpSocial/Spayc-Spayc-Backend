@@ -517,7 +517,7 @@ class UsersController extends AppController {
                 return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.friend_status'])->Where(['OR'=>['Requestedto.requested_by'=>$userId, 'Requestedto.requested_to'=>$userId]]);
             },
             'UserImages'=>function($q) {
-                return $q->select(['UserImages.user_id', 'UserImages.image_url']);
+                return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
             }
         ]);
         $friends->formatResults(function (\Cake\Collection\CollectionInterface $results) {
@@ -606,13 +606,21 @@ class UsersController extends AppController {
                 return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.friend_status'])->Where(['OR'=>['Requestedto.requested_by'=>$userId, 'Requestedto.requested_to'=>$userId]]);
             },
             'UserImages'=>function($q) {
-                return $q->select(['UserImages.user_id', 'UserImages.image_url']);
+                return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile']);
+            },
+            'JoinedSpayc'=>function($q) {
+                return $q->select(['JoinedSpayc.user_id', 'joined_spaycs'=>$q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.user_id']);
+            },
+            'Spaycs'=>function($q) {
+                return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id']);
             }
         ]);
         $user->formatResults(function (\Cake\Collection\CollectionInterface $results) {
             return $results->map(function ($row) {
-                $row->friend = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
-                $row->friend = !empty($row['requestedby'][0]) && empty($row->friend)? $row['requestedby'][0] : $row->friend;
+                $uId = ApiHasher::decrypt($row['id']);
+                $row['friend'] = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
+                $row['friend'] = !empty($row['requestedby'][0]) && empty($row['friend'])?$row['requestedby'][0] : $row['friend'];
+                $row['friend']['total_friends'] = TableRegistry::get('Api.FriendRequest')->getFriendCountByUserId($uId);
                 unset($row['requestedto']);
                 unset($row['requestedby']);
                 return $row;
@@ -644,7 +652,7 @@ class UsersController extends AppController {
         $spaycFriends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username', 'Users.dob', 'Users.gender', 'Users.phone'], 'conditions'=>['Users.email IN'=>$friendEmails, 'Users.id !='=>$this->Auth->user('id')]]);
         $spaycFriends->contain([
             'UserImages'=>function($q) {
-                return $q->select(['UserImages.user_id', 'UserImages.image_url']);
+                return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
             }
         ]);
         $spaycFriends->formatResults(function (\Cake\Collection\CollectionInterface $results) {

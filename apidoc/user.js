@@ -605,10 +605,23 @@ function postForgotPassword() { return; }
         "longitude": 77.391026,
         "latitude": 28.535516,
         "matrix_user_id": "@test2:35.168.119.247",
+        "spaycs": [
+            {
+                "user_id": 19,
+                "created_spaycs": 3
+            }
+        ],
+        "joined_spayc": [
+            {
+                "user_id": 19,
+                "joined_spaycs": 1
+            }
+        ],
         "user_images": [
             {
                 "user_id": 19,
-                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2017_12_26_15_18_47_20180206133935.png"
+                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2017_12_26_15_18_47_20180206133935.png",
+                "is_profile": "No"
             }
         ],
         "friend": {
@@ -616,7 +629,8 @@ function postForgotPassword() { return; }
             "requested_by": 10,
             "requested_to": 19,
             "requested_status": "Requested",
-            "friend_status": null
+            "friend_status": null,
+            "total_friends": 2
         }
     }
 }

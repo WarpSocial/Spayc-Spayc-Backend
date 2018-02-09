@@ -109,6 +109,7 @@ CREATE TABLE user_images (
     id BIGSERIAL NOT NULL,
     user_id BIGINT NOT NULL,
     image_url VARCHAR(255),
+    is_profile VARCHAR(10) DEFAULT 'No',
     created timestamp NOT NULL,
     modified timestamp,
     PRIMARY KEY (id,user_id,created)
