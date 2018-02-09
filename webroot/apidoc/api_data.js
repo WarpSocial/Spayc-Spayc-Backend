@@ -2132,7 +2132,7 @@ define({ "api": [
     ]
   },
   {
-    "type": "post",
+    "type": "get",
     "url": "/user-profile/:userId.json",
     "title": "User Profile",
     "version": "0.1.0",
@@ -2199,7 +2199,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"User profile.\",\n    \"data\": {\n        \"id\": \"anM1a0FkWGlWUXBwR1ZDUU9iR09XQT09\",\n        \"username\": \"test2\",\n        \"email\": \"test2@gmail.com\",\n        \"gender\": \"Male\",\n        \"dob\": \"01-25-1996\",\n        \"phone\": \"(789)877878\",\n        \"website_url\": null,\n        \"address\": null,\n        \"bio_data\": null,\n        \"longitude\": 77.391026,\n        \"latitude\": 28.535516,\n        \"matrix_user_id\": \"@test2:35.168.119.247\",\n        \"friend\": {\n            \"id\": \"MzNNbkN6V05zQ2c1N0ViMVJJeEVqZz09\",\n            \"requested_by\": 10,\n            \"requested_to\": 19,\n            \"requested_status\": \"Requested\",\n            \"friend_status\": null\n        },\n        \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2017_12_26_15_18_47_20180206133935.png\"\n    }\n}",
+          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"User profile.\",\n    \"data\": {\n        \"id\": \"anM1a0FkWGlWUXBwR1ZDUU9iR09XQT09\",\n        \"username\": \"test2\",\n        \"email\": \"test2@gmail.com\",\n        \"gender\": \"Male\",\n        \"dob\": \"01-25-1996\",\n        \"phone\": \"(789)877878\",\n        \"website_url\": null,\n        \"address\": null,\n        \"bio_data\": null,\n        \"longitude\": 77.391026,\n        \"latitude\": 28.535516,\n        \"matrix_user_id\": \"@test2:35.168.119.247\",\n        \"user_images\": [\n            {\n                \"user_id\": 19,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2017_12_26_15_18_47_20180206133935.png\"\n            }\n        ],\n        \"friend\": {\n            \"id\": \"MzNNbkN6V05zQ2c1N0ViMVJJeEVqZz09\",\n            \"requested_by\": 10,\n            \"requested_to\": 19,\n            \"requested_status\": \"Requested\",\n            \"friend_status\": null\n        }\n    }\n}",
           "type": "json"
         }
       ]

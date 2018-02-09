@@ -572,7 +572,7 @@ function postReverification() { return; }
 function postForgotPassword() { return; }
 
 /**
- @api {post} /user-profile/:userId.json User Profile
+ @api {get} /user-profile/:userId.json User Profile
   @apiVersion 0.1.0
   @apiName userProfile
   @apiGroup User
