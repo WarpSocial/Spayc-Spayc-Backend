@@ -607,7 +607,7 @@ class UsersController extends AppController {
                 return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.friend_status'])->Where(['OR'=>['Requestedto.requested_by'=>$userId, 'Requestedto.requested_to'=>$userId]]);
             },
             'UserImages'=>function($q) {
-                return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile']);
+                return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile', 'UserImages.order_index']);
             },
             'JoinedSpayc'=>function($q) {
                 return $q->select(['JoinedSpayc.user_id', 'joined_spaycs'=>$q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.user_id']);
@@ -622,6 +622,10 @@ class UsersController extends AppController {
                 $row['friend'] = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
                 $row['friend'] = !empty($row['requestedby'][0]) && empty($row['friend'])?$row['requestedby'][0] : $row['friend'];
                 $row['friend']['total_friends'] = TableRegistry::get('Api.FriendRequest')->getFriendCountByUserId($uId);
+                $row['created_spaycs'] = !empty($row['spaycs'][0]['created_spaycs'])? $row['spaycs'][0]['created_spaycs'] : 0;
+                $row['joined_spaycs'] = !empty($row['joined_spayc'][0]['joined_spaycs'])? $row['joined_spayc'][0]['joined_spaycs'] : 0;
+                unset($row['spaycs']);
+                unset($row['joined_spayc']);
                 unset($row['requestedto']);
                 unset($row['requestedby']);
                 return $row;

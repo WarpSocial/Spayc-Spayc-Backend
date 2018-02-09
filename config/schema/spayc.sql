@@ -110,6 +110,7 @@ CREATE TABLE user_images (
     user_id BIGINT NOT NULL,
     image_url VARCHAR(255),
     is_profile VARCHAR(10) DEFAULT 'No',
+    order_index SMALLINT NULL,
     created timestamp NOT NULL,
     modified timestamp,
     PRIMARY KEY (id,user_id,created)
