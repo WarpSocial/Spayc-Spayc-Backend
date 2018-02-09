@@ -104,7 +104,6 @@ class SpaycsController extends AppController {
                 return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
             }
         ]);
-
         $spaycs->order(['distance'=>'ASC'])->limit($limit);
         if($this->request->query('start_date')) {
             $date = new \Cake\I18n\Time($this->request->query('start_date'));
