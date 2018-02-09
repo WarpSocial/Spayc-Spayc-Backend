@@ -474,13 +474,11 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Invalid friend id.')], 400);
         }
         $frend = TableRegistry::get("Api.FriendRequest");
-        $exists = $frend->find('all', ['conditions'=>['FriendRequest.requested_to'=>$data['friend_id'], 'FriendRequest.requested_by'=>$this->Auth->user('id')]])->first();
-        if(!empty($exists) and $exists->friend_status!='Unfriend') {
+        $exists = $frend->find('all', ['conditions'=>['OR'=>[['FriendRequest.requested_to'=>$data['friend_id'], 'FriendRequest.requested_by'=>$this->Auth->user('id')], ['FriendRequest.requested_to'=>$this->Auth->user('id'), 'FriendRequest.requested_by'=>$data['friend_id']]]]])->first();
+        if(!empty($exists) && ($exists->friend_status!='Unfriend')) {
             $friendStatus = !empty($exists->friend_status)?$exists->friend_status:$exists->requested_status;
             $this->restException(['status'=>'failed', 'message'=>__('Friend request already sent status is '.$friendStatus)], 400);
-        } else if(!empty($exists) and $exists->friend_status=='Unfriend') {
-            $friendReq['id'] = ApiHasher::decrypt($exists->id);
-            $friendReq['requested_status'] = 'Requested';
+        } else if(!empty($exists) && ($exists->friend_status=='Unfriend')) {
             $friendReq['friend_status'] = NULL;
             $friendReq['modified'] = date("Y-m-d H:i:s");
         }
@@ -488,12 +486,16 @@ class UsersController extends AppController {
         $friendReq['requested_to'] = $data['friend_id'];
         $friendReq['requested_status'] = 'Requested';
         $friendReq['created'] = date("Y-m-d H:i:s");
-        $entity = empty($friendReq['id'])?$frend->newEntity():$frend->get($friendReq['id']);//pr($entity);exit;
-        $items = $frend->patchEntity($entity, $friendReq);
-        if($items->errors()) {
-            $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
+        if(empty($exists->id)){
+            $entity = $frend->newEntity();
+            $items = $frend->patchEntity($entity, $friendReq);
+            if($items->errors()) {
+                $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
+            }
+            $frend->save($items);
+        } else {
+            $frend->updateAll($friendReq,['id'=>ApiHasher::decrypt($exists->id)]);
         }
-        $frend->save($items);
         $this->response->statusCode(201);
         $response = ['status'=>'success', 'message'=>__('Friend request sent successfully.')];
         $this->set($response);
@@ -573,7 +575,11 @@ class UsersController extends AppController {
         } else if(in_array($status, Configure::read('friend_status'))) {
             $friend['friend_status'] = ($status=='Unblock')?NULL:$status;
         }
-        $friendRequest->updateAll($friend, ['id'=>$data['id']]);
+        if($status=='Unblock') {
+            $friendRequest->deleteAll(['id'=>$data['id']]);
+        } else {
+            $friendRequest->updateAll($friend, ['id'=>$data['id']]);
+        }
         $response = ['status'=>'success', 'message'=>__('Friend status updated successfully.')];
         $this->set($response);
     }
