@@ -98,6 +98,7 @@ class UsersController extends AppController {
         $this->Auth->setUser($user);
         $user = $this->Users->usrLog($user);
         $data = [
+            'id'=>  ApiHasher::encrypt($user['id']),
             'username'=>$user['username'],
             'email'=>$user['email'],
             'gender'=>$user['gender'],
