@@ -287,35 +287,21 @@ function postSubscribeSpayc() { return; }
 {
     "status": "success",
     "message": "Spayc Details.",
-    "data": [
-        {
-            "id": "MGQ2NTI2NDYzMC45NFSJ",
-            "name": "spaycdev13",
-            "address": "Event address",
-            "start_date": "2019-01-11T01:02:20+00:00",
-            "end_date": "2019-01-12T01:02:20+00:00",
-            "image": "",
-            "comments": [
-                {
-                    "spayc_id": 5,
-                    "total_comment": 2
-                }
-            ],
-            "subscribed_users": [
-                {
-                    "spayc_id": 5,
-                    "subscribed_users": 1
-                }
-            ],
-            "joined_spayc": [
-                {
-                    "spayc_id": 5,
-                    "joined_users": 1,
-                    "joined_friends": 1
-                }
-            ]
-        }
-    ]
+    "data": {
+        "id": "U3kvaWlJcFREL3R2ZUh0c3RSVkZRdz09",
+        "name": "spaycdev13",
+        "address": "Your address",
+        "start_date": "2019-01-11T01:02:20+00:00",
+        "end_date": "2019-01-12T01:02:20+00:00",
+        "image": "",
+        "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
+        "group_type": "Public",
+        "type": "Community",
+        "total_comments": 1,
+        "total_subscribed_users": 2,
+        "total_joined_users": 1,
+        "total_joined_friends": 1
+    }
 }
  *
  * @apiUse UserErrorResponse

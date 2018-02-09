@@ -192,13 +192,17 @@ class SpaycsController extends AppController {
         if(!$this->request->is(['get'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
-        $id = ApiHasher::decrypt($id);
         if(empty($id)) {
             $this->restException(['status'=>'failed', 'message'=>__('Spayc id is required fields.')], 400);
         }
+        $id = ApiHasher::decrypt($id);
+        $exists = $this->Spaycs->exists(['id'=>$id]);
+        if(!$exists) {
+            $this->restException(['status'=>'failed', 'message'=>__('Invalid spayc id.')], 400);
+        }
         $userId = $this->Auth->user('id');
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Approved');
-        $spayc = $this->Spaycs->find('all', ['fields' => ['Spaycs.id', 'Spaycs.name', 'address'=>'Spaycs.location', 'Spaycs.start_date', 'Spaycs.end_date', 'Spaycs.image']])->where(['id'=>$id, 'status'=>'Active']);
+        $spayc = $this->Spaycs->find('all', ['fields' => ['Spaycs.id', 'Spaycs.name', 'address'=>'Spaycs.location', 'Spaycs.start_date', 'Spaycs.end_date', 'Spaycs.image', 'Spaycs.matrix_room_id', 'Spaycs.group_type', 'Spaycs.type']])->where(['id'=>$id, 'status'=>'Active']);
         $spayc->contain([
             'JoinedSpayc' => function($q) {
                 return  $q->select(['JoinedSpayc.spayc_id', 'joined_users' => $q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.spayc_id']);
@@ -215,13 +219,20 @@ class SpaycsController extends AppController {
                 if(!empty($row['joined_spayc'])) {
                     $spaycId = ApiHasher::decrypt($row->id);
                     $row['joined_spayc'][0]['joined_friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
+                    $row['total_comments'] = !empty($row['comments'][0]['total_comment'])?$row['comments'][0]['total_comment']:0;
+                    $row['total_subscribed_users'] = !empty($row['subscribed_users'][0]['subscribed_users'])?$row['subscribed_users'][0]['subscribed_users']:0;
+                    $row['total_joined_users'] = !empty($row['joined_spayc'][0]['joined_users'])?$row['joined_spayc'][0]['joined_users']:0;
+                    $row['total_joined_friends'] = !empty($row['joined_spayc'][0]['joined_friends'])?$row['joined_spayc'][0]['joined_friends']:0;
+                    unset($row['subscribed_users']);
+                    unset($row['joined_spayc']);
+                    unset($row['comments']);
                 }
                 return $row;
             });
         });
         $data = [];
         if($spayc->count()) {
-            $data = $spayc;
+            $data = $spayc->first();
         } else {
             $this->response->statusCode(204);
         }
