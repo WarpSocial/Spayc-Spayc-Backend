@@ -142,5 +142,38 @@ class MatrixComponent extends Component {
         #pr($response);die;
         return $response;
     }
+    
+    /**
+     * change password to matrix chatserver
+     */
+    public function changePassword($items){
+        if(empty($items)){
+            return false;
+        }
+        $validInput = [
+            'auth'=>['type'=>'m.login.password', 'user'=>$items['matrix_user_id'], 'password'=>$items['old_password']],
+            'new_password'=>$items['new_password']
+        ]; 
+        $url = $this->config('url') . DS.'account'.DS.'password?access_token='.$items['matrix_access_token'];
+        $http = new Client();
+        $httpResponse = $http->post(
+                $url, 
+                json_encode($validInput), 
+                [
+                    'type'=>'json',
+                    'ssl_verify_host' => $this->config('sslverify'), 
+                    'ssl_verify_peer' => $this->config('sslverify'),
+                    'ssl_verify_host' => $this->config('sslverify'),
+                    'ssl_verify_peer_name' => $this->config('sslverify')
+                ]
+            );
+        $response = json_decode($httpResponse->body,true);
+        #pr($response);die;
+        if($httpResponse->isOk()){
+            return $response;
+        }else{
+            return false;
+        }        
+    }
 
 }
