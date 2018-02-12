@@ -278,9 +278,10 @@ class SpaycsController extends AppController {
         return $this->redirect(['action' => 'index']);
     }
     
-    public function matrixApplicationService(){
+    public function matrixApplicationService($id = null){
+        $this->autoRender = false;
        // pr($this->request);
-       Log::info($this->request);
+       Log::info(json_encode($this->request->data(),JSON_PRETTY_PRINT));
     }
 
 }
