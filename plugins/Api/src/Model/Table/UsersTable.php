@@ -321,6 +321,57 @@ class UsersTable extends Table {
         
         return $validator;
     }
+    
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationChangePassword(Validator $validator, $userId = null) {
+        
+        $validator
+                ->requirePresence('old_password', 'create',__('Old password is required field.'))
+                ->notEmpty('old_password',__('Old password is required field.'))
+                ->add('old_password','custom', [
+                    'rule'=>function($value, $context) use($userId) {
+                        $password = $this->get($userId, ['fields'=>'password']);
+                        if (!ApiHasher::check($value, $password['password'])) {
+                            return false;
+                        }
+                        return true;
+                    },
+                    'message'=>__('Old passwords don\'t match, try again please!'),
+                ]);
+        
+        $validator
+                ->requirePresence('new_password', 'create',__('New password is required field.'))
+                ->notEmpty('new_password',__('New password is required field.'))
+                ->add("new_password",'custom',[
+                    'rule'=>function($value,$context) {
+                        if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,30}$/', $value)){
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    },
+                    'message'=>__('New password must contain 8-30 character length, at least one letter and one number.'),
+                ])
+                ->add('new_password', 'custom', [
+                    'rule' => function($value, $context) {
+                        if ($value === $context['data']['old_password']) {
+                            return false;
+                        }
+                        return true;
+                    },
+                    'message' => 'New password and old password should not be same, try again please!']);
+        $validator
+                ->requirePresence('confirm_password', 'create', __('Confirm password is required field.'))
+                ->notEmpty('confirm_password', __('Confirm password is required field.'))
+                ->sameAs('confirm_password', 'new_password',__('New password and confirm password should be matched, try again please!'));
+        
+        return $validator;
+    }
 
     /**
      * Returns a rules checker object that will be used for validating

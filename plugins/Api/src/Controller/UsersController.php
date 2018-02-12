@@ -403,6 +403,31 @@ class UsersController extends AppController {
         $this->set(compact('user'));
         $this->render('Users/reset_password',false);
     }
+    
+    public function changePassword() {
+        if (!$this->request->is('post')) {
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
+        }
+        $data_item = \Api\Utils\Utils::escape($this->request->data);
+        $validator = new \Cake\Validation\Validator();
+        $validator = $this->Users->validationChangePassword($validator, $this->Auth->user('id'));
+        $errors = $validator->errors($data_item);
+        if($errors) {
+            $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($errors)], 400);
+        }
+        if(!empty($this->Auth->user('matrix_user_id')) && !empty($this->Auth->user('matrix_access_token'))) {
+            $this->loadComponent('Api.Matrix');
+            $data_item['matrix_user_id'] = $this->Auth->user('matrix_user_id');
+            $data_item['matrix_access_token'] = $this->Auth->user('matrix_access_token');
+            $matrix = $this->Matrix->changePassword($data_item);
+            if($matrix === false) {
+                $this->restException(['status'=>'failed', 'message'=>"Unable to change password on matrix"], 400);
+            }
+        }
+        $this->Users->updateAll(['password'=>ApiHasher::hash($data_item['new_password'])], ['id'=>$this->Auth->user('id')]);
+        $response = ['status' => "success", 'message' => __('Password changed successfully.')];
+        $this->set($response);
+    }
 
     /**
      * Edit method
