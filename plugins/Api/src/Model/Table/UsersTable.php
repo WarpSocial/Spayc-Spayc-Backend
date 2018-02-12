@@ -321,6 +321,50 @@ class UsersTable extends Table {
         
         return $validator;
     }
+    
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationChangePassword(Validator $validator) {
+        
+        $validator
+                ->requirePresence('old_password', 'create',__('Old password is required field.'))
+                ->notEmpty('old_password',__('Old password is required field.'));
+                /*->add("old_password",'custom',[
+                    'rule'=>function($value,$context) {
+                        if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,30}$/', $value)){
+                            return false;
+                        }else{
+                            return true;
+                        }
+                    },
+                    'message'=>__('Old password must contain 8-30 character length, at least one letter and one number.'),
+                ]);*/
+        
+        $validator
+                ->requirePresence('new_password', 'create',__('Password is required field.'))
+                ->notEmpty('new_password',__('Password is required field.'))
+                ->add("new_password",'custom',[
+                    'rule'=>function($value,$context) {
+                        if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,30}$/', $value)){
+                            return false;
+                        }else{
+                            return true;
+                        }
+                    },
+                    'message'=>__('Password must contain 8-30 character length, at least one letter and one number.'),
+                ]);
+                    
+        $validator
+                ->requirePresence('confirm_password', 'create', __('Confirm password is required field.'))
+                ->notEmpty('confirm_password', __('Confirm password is required field.'))
+                ->sameAs('confirm_password', 'new_password',__('Passwords don\'t match, try again please!'));
+        
+        return $validator;
+    }
 
     /**
      * Returns a rules checker object that will be used for validating

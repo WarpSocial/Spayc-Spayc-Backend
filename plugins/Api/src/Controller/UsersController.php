@@ -401,6 +401,21 @@ class UsersController extends AppController {
         $this->set(compact('user'));
         $this->render('Users/reset_password',false);
     }
+    
+    public function changePassword() {
+        if (!$this->request->is('post')) {
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
+        }
+        $data = $this->request->getData();
+        $data['password'] = $data['new_password'];
+        $entity = $this->Users->get($this->Auth->user('id'));
+        $items = $this->Users->patchEntity($entity, $data, ['validate' => 'changePassword']);
+        if($items->errors()) {
+            $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
+        }
+        
+        pr($items);exit;
+    }
 
     /**
      * Edit method
