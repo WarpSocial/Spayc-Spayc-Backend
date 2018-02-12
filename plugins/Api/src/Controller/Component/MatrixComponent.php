@@ -18,7 +18,10 @@ class MatrixComponent extends Component {
      *
      * @var array
      */
-    protected $_defaultConfig = [];
+    protected $_defaultConfig = [
+        'client'=> 'client/r0',
+        'media'=> 'media/v1'
+    ];
     
     /**
      * initialize function to initialize the current component config with new more config param
@@ -53,7 +56,7 @@ class MatrixComponent extends Component {
             'password'=>$items['password'],
             'device_id'=>$items['device_id']
         ]; 
-        $url = $this->config('url') . DS.'client/r0/login';
+        $url = $this->config('url') .DS.$this->config('client'). DS.'login';
         $http = new Client();
         $httpResponse = $http->post(
                 $url, 
@@ -88,7 +91,7 @@ class MatrixComponent extends Component {
             'username'=>preg_replace('/[\s\.\-\@\#]/','_',$items['username']),
             'password'=>$items['password']
         ]; 
-        $url = $this->config('url') . DS.'client/r0/register';
+        $url = $this->config('url') .DS.$this->config('client'). DS.'register';
         $http = new Client();
         $httpResponse = $http->post(
                 $url, 
@@ -138,7 +141,7 @@ class MatrixComponent extends Component {
             'invite' => !empty($items['invite'])?explode(',',$items['invite']):""
         ];
         #pr($validInput);die;
-        $url = $this->config('url') . DS.'client/r0/createRoom';
+        $url = $this->config('url') .DS.$this->config('client'). DS.'createRoom';
         $http = new Client(['headers' => ['Authorization' => 'Bearer ' . $items['matrix_token']]]);
         $httpResponse = $http->post(
                 $url, 
@@ -161,7 +164,7 @@ class MatrixComponent extends Component {
      */
     
     public function uploadRoomImage($filename){
-        $url = $this->config('url') . DS.'media/v1/upload?filename='.$filename;
+        $url = $this->config('url') .DS.$this->config('media'). DS.'upload?filename='.$filename;
         
         $http = new Client(['headers' => ['Authorization' => 'Bearer ' . $items['matrix_token']]]);
         $httpResponse = $http->post(
