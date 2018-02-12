@@ -97,6 +97,7 @@ class UsersController extends AppController {
         $user['device_id'] = $matrix['device_id'];
         $this->Auth->setUser($user);
         $user = $this->Users->usrLog($user);
+        $userImages = TableRegistry::get("Api.UserImages")->findByUserId($user['id'])->select(['id', 'user_id', 'image_url', 'is_profile', 'order_index']);
         $data = [
             'id'=>  ApiHasher::encrypt($user['id']),
             'username'=>$user['username'],
@@ -111,6 +112,7 @@ class UsersController extends AppController {
             'matrix_user_id'=>$user['matrix_user_id'],
             'token'=>$user['token'],
             'matrix_token'=>$user['matrix_access_token'],
+            'user_images'=>$userImages
             ];
         $response = ['status' => "success", 'message' => __('Login done successfully.'),'data'=>$data];
         $this->set($response);
