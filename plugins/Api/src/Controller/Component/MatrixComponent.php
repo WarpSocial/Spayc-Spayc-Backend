@@ -6,6 +6,7 @@ use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Network\Http\Client;
 use Cake\Core\Configure;
+use Api\Utils\Utils;
 
 /**
  * Matrix component
@@ -52,7 +53,7 @@ class MatrixComponent extends Component {
             'password'=>$items['password'],
             'device_id'=>$items['device_id']
         ]; 
-        $url = $this->config('url') . DS.'login';
+        $url = $this->config('url') . DS.'client/r0/login';
         $http = new Client();
         $httpResponse = $http->post(
                 $url, 
@@ -87,7 +88,7 @@ class MatrixComponent extends Component {
             'username'=>preg_replace('/[\s\.\-\@\#]/','_',$items['username']),
             'password'=>$items['password']
         ]; 
-        $url = $this->config('url') . DS.'register';
+        $url = $this->config('url') . DS.'client/r0/register';
         $http = new Client();
         $httpResponse = $http->post(
                 $url, 
@@ -119,13 +120,49 @@ class MatrixComponent extends Component {
             return false;
         }
         $validInput = [
-            'creation_content'=>['m.federate'=>false],
-            'name'=>$items['name'],
+            'creation_content'=>[
+                'm.federate'=>false,
+                'location'=> Utils::getVar('location', $items),
+                'type'=>Utils::getVar('type', $items),
+                'group_type'=>Utils::getVar('group_type', $items),
+                'start_date'=> Utils::getVar('start_date', $items),
+                'end_date'=> Utils::getVar('end_date', $items),
+                'passcode'=> Utils::getVar('passcode', $items),
+                'latitude'=> Utils::getVar('latitude', $items),
+                'longitude'=> Utils::getVar('longitude', $items)
+                ],
+            'name'=>Utils::getVar('name', $items),
             'preset'=> strtolower($items['group_type']).'_chat',
             'room_alias_name'=> \Cake\Utility\Inflector::slug($items['name']),
-            'topic'=>(!empty($items['description']))?$items['description']:""
+            'topic'=> Utils::getVar('description', $items),
+            'invite' => !empty($items['invite'])?explode(',',$items['invite']):""
         ];
-        $url = $this->config('url') . DS.'createRoom';
+        #pr($validInput);die;
+        $url = $this->config('url') . DS.'client/r0/createRoom';
+        $http = new Client(['headers' => ['Authorization' => 'Bearer ' . $items['matrix_token']]]);
+        $httpResponse = $http->post(
+                $url, 
+                json_encode($validInput), 
+                [
+                    'type'=>'json',
+                    'ssl_verify_host' => $this->config('sslverify'), 
+                    'ssl_verify_peer' => $this->config('sslverify'),
+                    'ssl_verify_host' => $this->config('sslverify'),
+                    'ssl_verify_peer_name' => $this->config('sslverify')
+                ]
+            );
+        $response = json_decode($httpResponse->body,true);
+        #pr($response);die;
+        return $response;
+    }
+    
+    /**
+     * uploadRoomImage to upload room image
+     */
+    
+    public function uploadRoomImage($filename){
+        $url = $this->config('url') . DS.'media/v1/upload?filename='.$filename;
+        
         $http = new Client(['headers' => ['Authorization' => 'Bearer ' . $items['matrix_token']]]);
         $httpResponse = $http->post(
                 $url, 

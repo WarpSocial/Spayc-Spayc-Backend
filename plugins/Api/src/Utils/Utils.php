@@ -17,6 +17,24 @@ use Cake\Core\Configure;
  * @author kiwitech
  */
 class Utils {
+    
+    /**
+     * getVar method to return the value from array
+     * 
+     * @param string $var key of array
+     * @param array $array array of keys
+     * 
+     * @return string value of key
+     */
+    public static function getVar($var,$array){
+        if(is_array($array)){
+            if(isset($array[$var])){
+                return $array[$var];
+            }else{
+                return "";
+            }
+        }
+    }
 
     /**
      * Removes any non-alphanumeric characters.
