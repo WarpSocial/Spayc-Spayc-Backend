@@ -329,6 +329,7 @@ function getView() { return; }
     "status": "success",
     "message": "Login done successfully.",
     "data": {
+        "id": "NDhxaUsvbWtGUDN3MXJ4YXJmTC9pdz09",
         "username": "spayc",
         "email": "spayc@domain.com",
         "gender": "Male",
@@ -340,7 +341,23 @@ function getView() { return; }
         "device_id": "VOYANVLOXG",
         "matrix_user_id": "@spayc:127.0.0.1",
         "token": "7f39fa7c6642666c6802f0d4e2fddf6a695fc12458733764c64ad338d6d1ca5f",
-        "matrix_token": "MDAxN2xvY2F0aW9uIDEyNy4wLjAuMQowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMmNjaWQgdXNlcl9pZCA9IEBza3VtYXIyX2FhX2RkczoxMjcuMC4wLjEKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSA4Ok00T3VzN1h5cnlKUEBxCjAwMmZzaWduYXR1cmUg5JCNFFzLQ4N-K6MnNWqFfqQdueyPiR74U_r6qLUzrqAK"
+        "matrix_token": "MDAxN2xvY2F0aW9uIDEyNy4wLjAuMQowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMmNjaWQgdXNlcl9pZCA9IEBza3VtYXIyX2FhX2RkczoxMjcuMC4wLjEKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSA4Ok00T3VzN1h5cnlKUEBxCjAwMmZzaWduYXR1cmUg5JCNFFzLQ4N-K6MnNWqFfqQdueyPiR74U_r6qLUzrqAK",
+        "user_images": [
+            {
+                "id": "MVpZL0tlbEp1N0JiT2JnLzhkLzB5dz09",
+                "user_id": 17,
+                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2018_02_02_12_10_56_20180206133933.png",
+                "is_profile": "No",
+                "order_index": null
+            },
+            {
+                "id": "eHFzRWc1VFljdzlzdnVqSkpZL3ZYZz09",
+                "user_id": 17,
+                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2017_08_14_18_14_10_20180206133936.png",
+                "is_profile": "No",
+                "order_index": null
+            }
+        ]
     }
 }
  
@@ -572,7 +589,7 @@ function postReverification() { return; }
 function postForgotPassword() { return; }
 
 /**
- @api {post} /user-profile/:userId.json User Profile
+ @api {get} /user-profile/:userId.json User Profile
   @apiVersion 0.1.0
   @apiName userProfile
   @apiGroup User
@@ -605,14 +622,24 @@ function postForgotPassword() { return; }
         "longitude": 77.391026,
         "latitude": 28.535516,
         "matrix_user_id": "@test2:35.168.119.247",
+        "user_images": [
+            {
+                "user_id": 19,
+                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2017_12_26_15_18_47_20180206133935.png",
+                "is_profile": "No",
+                "order_index": 1
+            }
+        ],
         "friend": {
             "id": "MzNNbkN6V05zQ2c1N0ViMVJJeEVqZz09",
             "requested_by": 10,
             "requested_to": 19,
             "requested_status": "Requested",
-            "friend_status": null
+            "friend_status": null,
+            "total_friends": 2
         },
-        "image_url": "https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2017_12_26_15_18_47_20180206133935.png"
+        "created_spaycs": 3,
+        "joined_spaycs": 1
     }
 }
 

@@ -97,7 +97,9 @@ class UsersController extends AppController {
         $user['device_id'] = $matrix['device_id'];
         $this->Auth->setUser($user);
         $user = $this->Users->usrLog($user);
+        $userImages = TableRegistry::get("Api.UserImages")->findByUserId($user['id'])->select(['id', 'user_id', 'image_url', 'is_profile', 'order_index']);
         $data = [
+            'id'=>  ApiHasher::encrypt($user['id']),
             'username'=>$user['username'],
             'email'=>$user['email'],
             'gender'=>$user['gender'],
@@ -110,6 +112,7 @@ class UsersController extends AppController {
             'matrix_user_id'=>$user['matrix_user_id'],
             'token'=>$user['token'],
             'matrix_token'=>$user['matrix_access_token'],
+            'user_images'=>$userImages
             ];
         $response = ['status' => "success", 'message' => __('Login done successfully.'),'data'=>$data];
         $this->set($response);
@@ -474,20 +477,28 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Invalid friend id.')], 400);
         }
         $frend = TableRegistry::get("Api.FriendRequest");
-        $exists = $frend->exists(['FriendRequest.requested_to'=>$data['friend_id'], 'FriendRequest.requested_by'=>$this->Auth->user('id')]);
-        if($exists) {
-            $this->restException(['status'=>'failed','message'=>__('Friend request already sent.')], 400);
+        $exists = $frend->find('all', ['conditions'=>['OR'=>[['FriendRequest.requested_to'=>$data['friend_id'], 'FriendRequest.requested_by'=>$this->Auth->user('id')], ['FriendRequest.requested_to'=>$this->Auth->user('id'), 'FriendRequest.requested_by'=>$data['friend_id']]]]])->first();
+        if(!empty($exists) && ($exists->friend_status!='Unfriend')) {
+            $friendStatus = !empty($exists->friend_status)?$exists->friend_status:$exists->requested_status;
+            $this->restException(['status'=>'failed', 'message'=>__('Friend request already sent status is '.$friendStatus)], 400);
+        } else if(!empty($exists) && ($exists->friend_status=='Unfriend')) {
+            $friendReq['friend_status'] = NULL;
+            $friendReq['modified'] = date("Y-m-d H:i:s");
         }
         $friendReq['requested_by'] = $this->Auth->user('id');
         $friendReq['requested_to'] = $data['friend_id'];
         $friendReq['requested_status'] = 'Requested';
         $friendReq['created'] = date("Y-m-d H:i:s");
-        $entity = $frend->newEntity();
-        $items = $frend->patchEntity($entity, $friendReq);
-        if($items->errors()) {
-            $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
+        if(empty($exists->id)){
+            $entity = $frend->newEntity();
+            $items = $frend->patchEntity($entity, $friendReq);
+            if($items->errors()) {
+                $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
+            }
+            $frend->save($items);
+        } else {
+            $frend->updateAll($friendReq,['id'=>ApiHasher::decrypt($exists->id)]);
         }
-        $frend->save($items);
         $this->response->statusCode(201);
         $response = ['status'=>'success', 'message'=>__('Friend request sent successfully.')];
         $this->set($response);
@@ -509,7 +520,7 @@ class UsersController extends AppController {
                 return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.friend_status'])->Where(['OR'=>['Requestedto.requested_by'=>$userId, 'Requestedto.requested_to'=>$userId]]);
             },
             'UserImages'=>function($q) {
-                return $q->select(['UserImages.user_id', 'UserImages.image_url']);
+                return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
             }
         ]);
         $friends->formatResults(function (\Cake\Collection\CollectionInterface $results) {
@@ -567,7 +578,11 @@ class UsersController extends AppController {
         } else if(in_array($status, Configure::read('friend_status'))) {
             $friend['friend_status'] = ($status=='Unblock')?NULL:$status;
         }
-        $friendRequest->updateAll($friend, ['id'=>$data['id']]);
+        if($status=='Unblock') {
+            $friendRequest->deleteAll(['id'=>$data['id']]);
+        } else {
+            $friendRequest->updateAll($friend, ['id'=>$data['id']]);
+        }
         $response = ['status'=>'success', 'message'=>__('Friend status updated successfully.')];
         $this->set($response);
     }
@@ -594,17 +609,27 @@ class UsersController extends AppController {
                 return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.friend_status'])->Where(['OR'=>['Requestedto.requested_by'=>$userId, 'Requestedto.requested_to'=>$userId]]);
             },
             'UserImages'=>function($q) {
-                return $q->select(['UserImages.user_id', 'UserImages.image_url']);
+                return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile', 'UserImages.order_index']);
+            },
+            'JoinedSpayc'=>function($q) {
+                return $q->select(['JoinedSpayc.user_id', 'joined_spaycs'=>$q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.user_id']);
+            },
+            'Spaycs'=>function($q) {
+                return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id']);
             }
         ]);
         $user->formatResults(function (\Cake\Collection\CollectionInterface $results) {
             return $results->map(function ($row) {
-                $row->friend = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
-                $row->friend = !empty($row['requestedby'][0]) && empty($row->friend)? $row['requestedby'][0] : $row->friend;
-                $row->image_url = !empty($row['user_images'][0]['image_url'])? $row['user_images'][0]['image_url']:'';
+                $uId = ApiHasher::decrypt($row['id']);
+                $row['friend'] = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
+                $row['friend'] = !empty($row['requestedby'][0]) && empty($row['friend'])?$row['requestedby'][0] : $row['friend'];
+                $row['friend']['total_friends'] = TableRegistry::get('Api.FriendRequest')->getFriendCountByUserId($uId);
+                $row['created_spaycs'] = !empty($row['spaycs'][0]['created_spaycs'])? $row['spaycs'][0]['created_spaycs'] : 0;
+                $row['joined_spaycs'] = !empty($row['joined_spayc'][0]['joined_spaycs'])? $row['joined_spayc'][0]['joined_spaycs'] : 0;
+                unset($row['spaycs']);
+                unset($row['joined_spayc']);
                 unset($row['requestedto']);
                 unset($row['requestedby']);
-                unset($row['user_images']);
                 return $row;
             });
         });
@@ -616,10 +641,48 @@ class UsersController extends AppController {
     }
     
     public function getFacebookFriends() {
+        if (!$this->request->is(['get'])) {
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
+        }
         $data = [];
-        if(!empty($this->Auth->user('fb_id')) and !empty($this->Auth->user('fb_access_key'))) {
-            $data = $this->Auth->user();
+        if(empty($this->Auth->user('fb_id')) || empty($this->Auth->user('fb_access_key'))) {
+            $this->restException(['status'=>'failed', 'message'=>__('User not signup with facebook.')], 400);
+        }
+        $this->loadComponent('Api.Facebook');
+        $friends = $this->Facebook->getFriends($this->Auth->user('fb_id'), $this->Auth->user('fb_access_key'));
+        $friendEmails = ['shubhash1231@gmail.com'];
+        if(!empty($friends)) {
+            foreach($friends as $friend) {
+                if(!empty($friend['email'])) { $friendEmails[] = $friend['email']; }
+            }
+        }
+        $spaycFriends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username', 'Users.dob', 'Users.gender', 'Users.phone'], 'conditions'=>['Users.email IN'=>$friendEmails, 'Users.id !='=>$this->Auth->user('id')]]);
+        $spaycFriends->contain([
+            'UserImages'=>function($q) {
+                return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
+            }
+        ]);
+        $spaycFriends->formatResults(function (\Cake\Collection\CollectionInterface $results) {
+            return $results->map(function ($row) {
+                $row->image_url = !empty($row['user_images'][0]['image_url'])? $row['user_images'][0]['image_url']:'';
+                unset($row['user_images']);
+                return $row;
+            });
+        });
+        $limit = (!empty($this->request->query['limit']) && is_numeric($this->request->query['limit']))?$this->request->query['limit']:5;
+        $spaycFriends->order(['Users.username'=>'ASC'])->limit($limit);
+        $page = (!empty($this->request->query['limit']) && is_numeric($this->request->query['page']))?$this->request->query['page']:1;
+        if($page < 0) {
+            $page = $page*-1;
+            $spaycFriends->page($page);
         } else {
+            $spaycFriends->page($page);
+        }
+        $data['count'] = $spaycFriends->count();
+        if($spaycFriends->count()) {
+            $data['records'] = $spaycFriends->toArray();
+        }
+        if(empty($data)) {
             $this->response->statusCode(204);
         }
         $response = ['status'=>'success', 'message'=>__('Facebook friend lists.'), 'data'=>$data];
