@@ -1,0 +1,23 @@
+# An ID which is unique across all application services on your homeserver. This should never be changed once set.
+id: users-application-service
+
+# this is the base URL of the application service
+url: 'http://127.0.0.1:5000'
+# This is the token that the AS should use as its access_token when using the Client-Server API
+# This can be anything you want.
+as_token: 5130f0dff2b31eb3fbbed4fc99cadb67f40f7ced15dfb785ea26555d95c452ed
+# This is the token that the HS will use when sending requests to the AS.
+# This can be anything you want.
+hs_token: 2172e5c5b0f4aba208bac1ea05f23acdde0fef8d6744c8b2ce769e314913te25
+
+# this is the local part of the desired user ID for this AS (in this case @logging:localhost)
+ # this is the local part of the desired user ID for this AS (in this case @logging:localhost)
+sender_localpart: subhash
+namespaces:
+  users:
+    - exclusive: false
+      regex: '@.*'
+  aliases: []
+  rooms:
+    - exclusive: false
+      regex: '#.*'

@@ -61,7 +61,7 @@ CREATE TABLE friend_request (
     friend_status VARCHAR(15) DEFAULT NULL,
     created timestamp NOT NULL,
     modified timestamp ,
-    PRIMARY KEY (id,spayc_id,requested_by,requested_to,created)
+    PRIMARY KEY (id,requested_by,requested_to,created)
 );
 SELECT create_hypertable('friend_request', 'created');
 CREATE TABLE joined_spayc (
@@ -116,7 +116,6 @@ CREATE TABLE user_images (
     PRIMARY KEY (id,user_id,created)
 );
 SELECT create_hypertable('user_images', 'created');
-
 CREATE TABLE hashtags (
     id BIGSERIAL NOT NULL,
     name VARCHAR(255) NOT NULL,
@@ -125,7 +124,6 @@ CREATE TABLE hashtags (
     PRIMARY KEY (id,created)
 );
 SELECT create_hypertable('hashtags', 'created');
-
 CREATE TABLE spayc_hashtags (
     id BIGSERIAL NOT NULL,
     spayc_id BIGINT NOT NULL,
@@ -133,6 +131,6 @@ CREATE TABLE spayc_hashtags (
     created timestamp NOT NULL,
     modified timestamp,
     PRIMARY KEY (id,created)
-)
+);
 SELECT create_hypertable('spayc_hashtags', 'created');
 

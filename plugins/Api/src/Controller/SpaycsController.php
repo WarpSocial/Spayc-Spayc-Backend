@@ -19,6 +19,11 @@ use Api\Auth\ApiHasher;
  */
 class SpaycsController extends AppController {
     
+    public function beforeFilter(\Cake\Event\Event $event) {
+        parent::beforeFilter($event);
+        $this->Auth->allow('matrixApplicationService');
+    }
+    
     /**
      * Add method
      *
@@ -37,14 +42,14 @@ class SpaycsController extends AppController {
         if($items->errors()) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
         }
-        /*$this->loadComponent('Api.Matrix');
+        $this->loadComponent('Api.Matrix');
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
         $matrix = $this->Matrix->createRoom($data);
         if(!empty($matrix['error'])) {
             $this->restException(['status' => "failed", 'message' =>__($matrix['error'])], 400);
         }
         $items->set('matrix_room_id',$matrix['room_id']);
-        $items->set('matrix_room_alias',$matrix['room_alias']);*/
+        $items->set('matrix_room_alias',$matrix['room_alias']);
         $items->set('user_id', $this->Auth->user('id'));
         if (!$items->errors()) {
             $this->Spaycs->save($items);
@@ -281,6 +286,12 @@ class SpaycsController extends AppController {
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+    
+    public function matrixApplicationService($id = null){
+        $this->autoRender = false;
+       // pr($this->request);
+       Log::info(json_encode($this->request->data(),JSON_PRETTY_PRINT));
     }
 
 }
