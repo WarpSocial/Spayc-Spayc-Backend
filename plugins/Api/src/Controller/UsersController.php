@@ -104,6 +104,7 @@ class UsersController extends AppController {
             'email'=>$user['email'],
             'gender'=>$user['gender'],
             'dob'=>(new \Cake\I18n\Time($user['dob']))->format("Y-m-d"),
+            'country_code'=>$user['country_code'],
             'phone'=>$user['phone'],
             'website_url'=>$user['website_url'],
             'address'=>$user['address'],
@@ -213,6 +214,7 @@ class UsersController extends AppController {
                     'email'=>$data['email'],
                     'dob'=>$data['dob'],
                     'gender'=>trim($data['gender']),
+                    'country_code'=>$data['country_code'],
                     'phone'=>$data['phone'],
                     'latitude'=>$data['latitude'],
                     'longitude'=>$data['longitude']
@@ -334,6 +336,7 @@ class UsersController extends AppController {
             'email'=>$user['email'],
             'gender'=>$user['gender'],
             'dob'=>(new \Cake\I18n\Time($user['dob']))->format("Y-m-d"),
+            'country_code'=>$user['country_code'],
             'phone'=>$user['phone'],
             'website_url'=>$user['website_url'],
             'address'=>$user['address'],
@@ -599,7 +602,7 @@ class UsersController extends AppController {
         if(!$exist) {
             $this->restException(['status'=>'failed', 'message'=>__('Invalid user id')], 400);
         }
-        $user = $this->Users->find('all', ['fields'=>['Users.id', 'Users.username', 'Users.email', 'Users.gender', 'Users.dob', 'Users.phone', 'Users.website_url', 'Users.address', 'Users.bio_data', 'Users.longitude', 'Users.latitude', 'Users.matrix_user_id']])->where(['Users.id'=>$id]);
+        $user = $this->Users->find('all', ['fields'=>['Users.id', 'Users.username', 'Users.email', 'Users.gender', 'Users.dob','Users.country_code', 'Users.phone', 'Users.website_url', 'Users.address', 'Users.bio_data', 'Users.longitude', 'Users.latitude', 'Users.matrix_user_id']])->where(['Users.id'=>$id]);
         $userId = $this->Auth->user('id');
         $user->contain([
             'Requestedby' => function($q) use($userId) {
@@ -656,7 +659,7 @@ class UsersController extends AppController {
                 if(!empty($friend['email'])) { $friendEmails[] = $friend['email']; }
             }
         }
-        $spaycFriends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username', 'Users.dob', 'Users.gender', 'Users.phone'], 'conditions'=>['Users.email IN'=>$friendEmails, 'Users.id !='=>$this->Auth->user('id')]]);
+        $spaycFriends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username', 'Users.dob', 'Users.gender','Users.country_code', 'Users.phone'], 'conditions'=>['Users.email IN'=>$friendEmails, 'Users.id !='=>$this->Auth->user('id')]]);
         $spaycFriends->contain([
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);

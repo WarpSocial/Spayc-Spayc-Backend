@@ -6,6 +6,7 @@ CREATE TABLE users (
     password VARCHAR(255) NULL,
     gender VARCHAR(50) NULL,
     dob date NULL,
+    country_code VARCHAR(10) NULL,
     phone VARCHAR(20) NULL,
     status row_status DEFAULT 'Pending'::row_status NOT NULL,
     website_url VARCHAR(150) NULL,
