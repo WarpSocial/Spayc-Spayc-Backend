@@ -646,3 +646,38 @@ function postForgotPassword() { return; }
   @apiUse UserErrorResponse
 */
 function getUserProfile() { return; }
+
+/**
+ * @api {post} /change-password.json Change Password
+ * @apiVersion 0.1.0
+ * @apiName changePassword
+ * @apiGroup User
+ * @apiPermission none
+ *
+ * @apiDescription Change password request.
+ *
+ * @apiParam {String} old_password      User old password (Required).
+ * @apiParam {String} new_password      User new password (Required).
+ * @apiParam {String} confirm_password  Confirm new password (Required).
+ *
+ * @apiExample Example usage:
+ *
+ *       {
+ *          "old_password": "password@123"
+ *          "new_password": "newPassword@123"
+ *          "confirm_password": "newPassword@123"
+ *       }
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Password changed successfully..
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Password changed successfully."
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function postChangePassword() { return; }
