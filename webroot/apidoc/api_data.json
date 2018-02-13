@@ -834,7 +834,7 @@
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Friend lists.\",\n    \"data\": {\n        \"count\": 4,\n        \"records\": [\n            {\n                \"id\": \"VkR0a3p4anQ2SUxScm85RGhTZTFpZz09\",\n                \"name\": \"test\",\n                \"matrix_user_id\": null,\n                \"matrix_access_token\": null,\n                \"friend\": {\n                    \"id\": \"bmRkeTJVYjhwTlQzKzdpeWJwWEMvZz09\",\n                    \"requested_by\": 10,\n                    \"requested_to\": 7,\n                    \"requested_status\": \"Requested\",\n                    \"friend_status\": null\n                },\n                \"image_url\": \"\"\n            },\n            {\n                \"id\": \"OWxtVWpXalVkaVdWRHVTWUR5amxuZz09\",\n                \"name\": \"test2\",\n                \"matrix_user_id\": null,\n                \"matrix_access_token\": null,\n                \"friend\": {\n                    \"id\": \"NlJpUEx0M016dXBGTjhZdWpWeThBUT09\",\n                    \"requested_by\": 10,\n                    \"requested_to\": 8,\n                    \"requested_status\": \"Requested\",\n                    \"friend_status\": null\n                },\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2017_08_14_18_14_10_20180206133936.png\"\n            }\n        ]\n    }\n}",
+          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Friend lists.\",\n    \"data\": {\n        \"count\": 4,\n        \"records\": [\n            {\n                \"id\": \"VkR0a3p4anQ2SUxScm85RGhTZTFpZz09\",\n                \"name\": \"test\",\n                \"matrix_user_id\": null,\n                \"matrix_access_token\": null,\n                \"friend\": {\n                    \"id\": \"bmRkeTJVYjhwTlQzKzdpeWJwWEMvZz09\",\n                    \"requested_by\": 10,\n                    \"requested_to\": 7,\n                    \"requested_status\": \"Requested\",\n                    \"friend_status\": null,\n                    \"matrix_room_id\": \"room:@848843444\"\n                },\n                \"image_url\": \"\"\n            },\n            {\n                \"id\": \"OWxtVWpXalVkaVdWRHVTWUR5amxuZz09\",\n                \"name\": \"test2\",\n                \"matrix_user_id\": null,\n                \"matrix_access_token\": null,\n                \"friend\": {\n                    \"id\": \"NlJpUEx0M016dXBGTjhZdWpWeThBUT09\",\n                    \"requested_by\": 10,\n                    \"requested_to\": 8,\n                    \"requested_status\": \"Requested\",\n                    \"friend_status\": null,\n                    \"matrix_room_id\": \"room:@84854843\"\n                },\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2017_08_14_18_14_10_20180206133936.png\"\n            }\n        ]\n    }\n}",
           "type": "json"
         }
       ]
@@ -1514,7 +1514,7 @@
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Password changed successfully..</p>"
+            "description": "<p>Password changed successfully.</p>"
           }
         ]
       },
@@ -1531,6 +1531,117 @@
     "sampleRequest": [
       {
         "url": "http://spayc.com/api/change-password.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/chat-request.json",
+    "title": "Chat request",
+    "version": "0.1.0",
+    "name": "chatRequest",
+    "group": "User",
+    "permission": [
+      {
+        "name": "none"
+      }
+    ],
+    "description": "<p>One ot One chat request.</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "friend_id",
+            "description": "<p>User id to whom you send request(Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "matrix_room_id",
+            "description": "<p>Matrix room id from matrix (Required).</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "\n{\n   \"friend_id\": \"anM1a0FkWGlWUXBwR1ZDUU9iR09XQT09\"\n   \"matrix_room_id\": \"room:@000123\"\n}",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Friend request sent successfully.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "     HTTP/1.1 201 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Friend request sent successfully.\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/user.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/chat-request.json"
       }
     ],
     "error": {
@@ -2062,7 +2173,7 @@
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Search Lists.\",\n    \"data\": {\n        \"users\": {\n            \"count\": 14,\n            \"records\": [\n                {\n                    \"id\": \"MzY3NzI3Njc1LjQ5\",\n                    \"name\": \"spayc1\",\n                    \"email\": \"spayc1@domain.com\",\n                    \"gender\": \"Male\",\n                    \"phone\": \"+91 (XXX) (XXXXXXX)\",\n                    \"dob\": \"12-11-2000\",\n                    \"status\": \"Active\",\n                    \"website_url\": \"www.spayc.com\",\n                    \"address\": \"spayc address\",\n                    \"bio_data\": \"your bio data\",\n                    \"matrix_user_id\": \"@test2:35.168.119.247\",\n                    \"matrix_access_token\": \"MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyOGNpZCB1c2VyX2lkID0gQHRlc3QyOjM1LjE2OC4xMTkuMjQ3CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gMVJKXjJSTEs3Klc9LmhyQAowMDJmc2lnbmF0dXJlIMyd1A3UtgJZEWcmvehB84AboRIZrFb46AqHTrn4Y2reCg\",\n                    \"created\": \"2018-01-17T14:09:52+00:00\",\n                    \"modified\": \"2018-01-18T07:43:46+00:00\",\n                    \"spaycs\": [\n                        {\n                            \"user_id\": 7,\n                            \"created_spaycs\": 2\n                        }\n                    ],\n                    \"joined_spayc\": [\n                        {\n                            \"user_id\": 7,\n                            \"joined_spaycs\": 2\n                        }\n                    ],\n                    \"user_images\": [],\n                    \"friend\": {\n                        \"total_friends\": 2\n                    }\n                },\n                {\n                    \"id\": \"NTI1MzI1MjUwLjc=\",\n                    \"name\": \"spayc2\",\n                    \"email\": \"spayc2@domain.com\",\n                    \"gender\": \"Male\",\n                    \"phone\": \"+91 (XXX) (XXXXXXX)\",\n                    \"dob\": \"11-12-2000\",\n                    \"status\": \"Active\",\n                    \"website_url\": \"www.spayc.com\",\n                    \"address\": \"your address\",\n                    \"bio_data\": \"your bio data\",\n                    \"matrix_user_id\": \"@test2:35.168.119.247\",\n                    \"matrix_access_token\": \"MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyOGNpZCB1c2VyX2lkID0gQHRlc3QyOjM1LjE2OC4xMTkuMjQ3CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gMVJKXjJSTEs3Klc9LmhyQAowMDJmc2lnbmF0dXJlIMyd1A3UtgJZEWcmvehB84AboRIZrFb46AqHTrn4Y2reCg\",\n                    \"created\": \"2018-01-24T13:46:10+00:00\",\n                    \"modified\": \"2018-01-29T07:30:01+00:00\",\n                    \"spaycs\": [\n                        {\n                            \"user_id\": 10,\n                            \"created_spaycs\": 32\n                        }\n                    ],\n                    \"joined_spayc\": [],\n                    \"user_images\": [],\n                    \"friend\": {\n                        \"id\": \"NTI1MzI1MjUuMDc=\",\n                        \"requested_by\": 10,\n                        \"requested_to\": 17,\n                        \"requested_status\": \"Accepted\",\n                        \"friend_status\": \"Unfriend\",\n                        \"total_friends\": 7\n                    }\n                }\n            ]\n        },\n        \"spaycs\": {\n            \"count\": 10,\n            \"records\": [\n                {\n                    \"distance\": \"12.3020109427781\",\n                    \"id\": \"MTczMzU3MzMyNy4zMQ==\",\n                    \"user_id\": 10,\n                    \"name\": \"spaycdev3\",\n                    \"address\": \"Your address\",\n                    \"matrix_room_id\": \"!asfLdzLnOdGRkdPZWu:localhost\",\n                    \"start_date\": \"2019-01-11T01:02:20+00:00\",\n                    \"end_date\": \"2019-01-12T01:02:20+00:00\",\n                    \"image\": \"\",\n                    \"type\": \"Community\",\n                    \"group_type\": \"Public\",\n                    \"status\": \"Active\",\n                    \"latitude\": 28.613939,\n                    \"longitude\": 77.209021,\n                    \"created\": \"2018-01-25T11:49:48+00:00\",\n                    \"modified\": \"2018-01-25T11:49:48+00:00\"\n                },\n                {\n                    \"distance\": \"12.3020109427781\",\n                    \"id\": \"MTY4MTA0MDgwMi4yNA==\",\n                    \"user_id\": 10,\n                    \"name\": \"spaycdev4\",\n                    \"address\": \"Your address\",\n                    \"matrix_room_id\": \"!asfLdzLnOdGRkdPZWu:localhost\",\n                    \"start_date\": \"2019-01-11T01:02:20+00:00\",\n                    \"end_date\": \"2019-01-12T01:02:20+00:00\",\n                    \"image\": \"\",\n                    \"type\": \"Community\",\n                    \"group_type\": \"Public\",\n                    \"status\": \"Active\",\n                    \"latitude\": 28.613939,\n                    \"longitude\": 77.209021,\n                    \"created\": \"2018-01-25T11:40:10+00:00\",\n                    \"modified\": \"2018-01-25T11:40:10+00:00\"\n                }\n            ]\n        },\n        \"hashtags\": {\n            \"count\": 9,\n            \"records\": [\n                {\n                    \"id\": \"MjA0ODc2ODQ3Ny43Mw==\",\n                    \"name\": \"color\",\n                    \"created\": \"2018-01-31T13:54:20+00:00\",\n                    \"modified\": \"2018-01-31T13:54:20+00:00\"\n                },\n                {\n                    \"id\": \"MjEwMTMwMTAwMi44\",\n                    \"name\": \"festival\",\n                    \"created\": \"2018-01-31T13:54:20+00:00\",\n                    \"modified\": \"2018-01-31T13:54:20+00:00\"\n                }\n            ]\n        }\n    }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Search Lists.\",\n    \"data\": {\n        \"users\": {\n            \"count\": 14,\n            \"records\": [\n                {\n                    \"id\": \"MzY3NzI3Njc1LjQ5\",\n                    \"name\": \"spayc1\",\n                    \"email\": \"spayc1@domain.com\",\n                    \"gender\": \"Male\",\n                    \"phone\": \"+91 (XXX) (XXXXXXX)\",\n                    \"dob\": \"12-11-2000\",\n                    \"status\": \"Active\",\n                    \"website_url\": \"www.spayc.com\",\n                    \"address\": \"spayc address\",\n                    \"bio_data\": \"your bio data\",\n                    \"matrix_user_id\": \"@test2:35.168.119.247\",\n                    \"matrix_access_token\": \"MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyOGNpZCB1c2VyX2lkID0gQHRlc3QyOjM1LjE2OC4xMTkuMjQ3CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gMVJKXjJSTEs3Klc9LmhyQAowMDJmc2lnbmF0dXJlIMyd1A3UtgJZEWcmvehB84AboRIZrFb46AqHTrn4Y2reCg\",\n                    \"created\": \"2018-01-17T14:09:52+00:00\",\n                    \"modified\": \"2018-01-18T07:43:46+00:00\",\n                    \"spaycs\": [\n                        {\n                            \"user_id\": 7,\n                            \"created_spaycs\": 2\n                        }\n                    ],\n                    \"joined_spayc\": [\n                        {\n                            \"user_id\": 7,\n                            \"joined_spaycs\": 2\n                        }\n                    ],\n                    \"user_images\": [],\n                    \"friend\": {\n                        \"total_friends\": 2\n                    }\n                },\n                {\n                    \"id\": \"NTI1MzI1MjUwLjc=\",\n                    \"name\": \"spayc2\",\n                    \"email\": \"spayc2@domain.com\",\n                    \"gender\": \"Male\",\n                    \"phone\": \"+91 (XXX) (XXXXXXX)\",\n                    \"dob\": \"11-12-2000\",\n                    \"status\": \"Active\",\n                    \"website_url\": \"www.spayc.com\",\n                    \"address\": \"your address\",\n                    \"bio_data\": \"your bio data\",\n                    \"matrix_user_id\": \"@test2:35.168.119.247\",\n                    \"matrix_access_token\": \"MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyOGNpZCB1c2VyX2lkID0gQHRlc3QyOjM1LjE2OC4xMTkuMjQ3CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gMVJKXjJSTEs3Klc9LmhyQAowMDJmc2lnbmF0dXJlIMyd1A3UtgJZEWcmvehB84AboRIZrFb46AqHTrn4Y2reCg\",\n                    \"created\": \"2018-01-24T13:46:10+00:00\",\n                    \"modified\": \"2018-01-29T07:30:01+00:00\",\n                    \"spaycs\": [\n                        {\n                            \"user_id\": 10,\n                            \"created_spaycs\": 32\n                        }\n                    ],\n                    \"joined_spayc\": [],\n                    \"user_images\": [],\n                    \"friend\": {\n                        \"id\": \"NTI1MzI1MjUuMDc=\",\n                        \"requested_by\": 10,\n                        \"requested_to\": 17,\n                        \"requested_status\": \"Accepted\",\n                        \"friend_status\": \"Unfriend\",\n                        \"matrix_room_id\": null,\n                        \"total_friends\": 7\n                    }\n                }\n            ]\n        },\n        \"spaycs\": {\n            \"count\": 10,\n            \"records\": [\n                {\n                    \"distance\": \"12.3020109427781\",\n                    \"id\": \"MTczMzU3MzMyNy4zMQ==\",\n                    \"user_id\": 10,\n                    \"name\": \"spaycdev3\",\n                    \"address\": \"Your address\",\n                    \"matrix_room_id\": \"!asfLdzLnOdGRkdPZWu:localhost\",\n                    \"start_date\": \"2019-01-11T01:02:20+00:00\",\n                    \"end_date\": \"2019-01-12T01:02:20+00:00\",\n                    \"image\": \"\",\n                    \"type\": \"Community\",\n                    \"group_type\": \"Public\",\n                    \"status\": \"Active\",\n                    \"latitude\": 28.613939,\n                    \"longitude\": 77.209021,\n                    \"created\": \"2018-01-25T11:49:48+00:00\",\n                    \"modified\": \"2018-01-25T11:49:48+00:00\"\n                },\n                {\n                    \"distance\": \"12.3020109427781\",\n                    \"id\": \"MTY4MTA0MDgwMi4yNA==\",\n                    \"user_id\": 10,\n                    \"name\": \"spaycdev4\",\n                    \"address\": \"Your address\",\n                    \"matrix_room_id\": \"!asfLdzLnOdGRkdPZWu:localhost\",\n                    \"start_date\": \"2019-01-11T01:02:20+00:00\",\n                    \"end_date\": \"2019-01-12T01:02:20+00:00\",\n                    \"image\": \"\",\n                    \"type\": \"Community\",\n                    \"group_type\": \"Public\",\n                    \"status\": \"Active\",\n                    \"latitude\": 28.613939,\n                    \"longitude\": 77.209021,\n                    \"created\": \"2018-01-25T11:40:10+00:00\",\n                    \"modified\": \"2018-01-25T11:40:10+00:00\"\n                }\n            ]\n        },\n        \"hashtags\": {\n            \"count\": 9,\n            \"records\": [\n                {\n                    \"id\": \"MjA0ODc2ODQ3Ny43Mw==\",\n                    \"name\": \"color\",\n                    \"created\": \"2018-01-31T13:54:20+00:00\",\n                    \"modified\": \"2018-01-31T13:54:20+00:00\"\n                },\n                {\n                    \"id\": \"MjEwMTMwMTAwMi44\",\n                    \"name\": \"festival\",\n                    \"created\": \"2018-01-31T13:54:20+00:00\",\n                    \"modified\": \"2018-01-31T13:54:20+00:00\"\n                }\n            ]\n        }\n    }\n}",
           "type": "json"
         }
       ]

@@ -228,6 +228,7 @@ function postUser() { return; }
                         "requested_to": 17,
                         "requested_status": "Accepted",
                         "friend_status": "Unfriend",
+                        "matrix_room_id": null,
                         "total_friends": 7
                     }
                 }
@@ -438,7 +439,8 @@ function postFriendRequest() { return; }
                     "requested_by": 10,
                     "requested_to": 7,
                     "requested_status": "Requested",
-                    "friend_status": null
+                    "friend_status": null,
+                    "matrix_room_id": "room:@848843444"
                 },
                 "image_url": ""
             },
@@ -452,7 +454,8 @@ function postFriendRequest() { return; }
                     "requested_by": 10,
                     "requested_to": 8,
                     "requested_status": "Requested",
-                    "friend_status": null
+                    "friend_status": null,
+                    "matrix_room_id": "room:@84854843"
                 },
                 "image_url": "https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2017_08_14_18_14_10_20180206133936.png"
             }
@@ -670,7 +673,7 @@ function getUserProfile() { return; }
  *
  *
  * @apiSuccess {String} status success.
- * @apiSuccess {String} message Password changed successfully..
+ * @apiSuccess {String} message Password changed successfully.
  * @apiSuccessExample {json} Success-Response:
  *      HTTP/1.1 200 OK
 {
@@ -681,3 +684,36 @@ function getUserProfile() { return; }
  * @apiUse UserErrorResponse
  */
 function postChangePassword() { return; }
+
+/**
+ * @api {post} /chat-request.json Chat request
+ * @apiVersion 0.1.0
+ * @apiName chatRequest
+ * @apiGroup User
+ * @apiPermission none
+ *
+ * @apiDescription One ot One chat request.
+ *
+ * @apiParam {String} friend_id         User id to whom you send request(Required).
+ * @apiParam {String} matrix_room_id    Matrix room id from matrix (Required).
+ *
+ * @apiExample Example usage:
+ *
+ *       {
+ *          "friend_id": "anM1a0FkWGlWUXBwR1ZDUU9iR09XQT09"
+ *          "matrix_room_id": "room:@000123"
+ *       }
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Friend request sent successfully.
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 201 OK
+{
+    "status": "success",
+    "message": "Friend request sent successfully."
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function postChatRequest() { return; }

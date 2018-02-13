@@ -494,7 +494,7 @@ class UsersController extends AppController {
         }
         $data = $this->request->getData();
         if(empty($data['friend_id'])) {
-            $this->restException(['status'=>'failed','message'=>__('Friend id is required fields.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Friend id is required field.')], 400);
         }
         $data['friend_id'] = ApiHasher::decrypt($data['friend_id']);
         $isUserExist = $this->Users->exists(['id'=>$data['friend_id']]);
@@ -529,6 +529,48 @@ class UsersController extends AppController {
         $this->set($response);
     }
     
+    public function directChatRequest() {
+        if (!$this->request->is(['post'])) {
+            $this->restException(['status'=>'failed','message'=>__('Method not allowed.')], 405);
+        }
+        $data = $this->request->getData();
+        if(empty($data['friend_id'])) {
+            $this->restException(['status'=>'failed','message'=>__('Friend id is required field.')], 400);
+        }
+        if(empty($data['matrix_room_id'])) {
+            $this->restException(['status'=>'failed','message'=>__('Matrix room id is required field.')], 400);
+        }
+        $data['friend_id'] = ApiHasher::decrypt($data['friend_id']);
+        $isUserExist = $this->Users->exists(['id'=>$data['friend_id']]);
+        if(!$isUserExist) {
+            $this->restException(['status'=>'failed','message'=>__('Invalid friend id.')], 400);
+        }
+        $frend = TableRegistry::get("Api.FriendRequest");
+        $exists = $frend->find('all', ['conditions'=>['OR'=>[['FriendRequest.requested_to'=>$data['friend_id'], 'FriendRequest.requested_by'=>$this->Auth->user('id')], ['FriendRequest.requested_to'=>$this->Auth->user('id'), 'FriendRequest.requested_by'=>$data['friend_id']]]]])->first();
+        if(!empty($exists) && ($exists->friend_status=='Unfriend')) {
+            $friendReq['friend_status'] = NULL;
+        }
+        $friendReq['matrix_room_id'] = $data['matrix_room_id'];
+        if(empty($exists->id)) {
+            $friendReq['requested_by'] = $this->Auth->user('id');
+            $friendReq['requested_to'] = $data['friend_id'];
+            $friendReq['requested_status'] = 'Anonymous';
+            $friendReq['created'] = date("Y-m-d H:i:s");
+            $entity = $frend->newEntity();
+            $items = $frend->patchEntity($entity, $friendReq);
+            if($items->errors()) {
+                $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
+            }
+            $frend->save($items);
+        } else {
+            $friendReq['modified'] = date("Y-m-d H:i:s");
+            $frend->updateAll($friendReq, ['id'=>ApiHasher::decrypt($exists->id)]);
+        }
+        $this->response->statusCode(201);
+        $response = ['status'=>'success', 'message'=>__('Friend request sent successfully.')];
+        $this->set($response);
+    }
+    
     public function getFriends() {
         if (!$this->request->is(['get'])) {
             $this->restException(['status'=>'failed','message'=>__('Method not allowed.')], 405);
@@ -539,10 +581,10 @@ class UsersController extends AppController {
         $friends = $this->Users->find("all", ['fields'=>['Users.id', 'name'=>'Users.username', 'Users.matrix_user_id', 'Users.matrix_access_token'], 'conditions'=>['Users.id IN'=>$friend, 'Users.id !='=>$this->Auth->user('id'), 'Users.status'=>'Active']]);
         $friends->contain([
             'Requestedby' => function($q) use($userId) {
-                return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_status', 'Requestedby.requested_to', 'Requestedby.friend_status'])->Where(['OR'=>['Requestedby.requested_by'=>$userId, 'Requestedby.requested_to'=>$userId]]);
+                return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_status', 'Requestedby.requested_to', 'Requestedby.friend_status', 'Requestedby.matrix_room_id'])->Where(['OR'=>['Requestedby.requested_by'=>$userId, 'Requestedby.requested_to'=>$userId]]);
             },
             'Requestedto' => function($q) use($userId) {
-                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.friend_status'])->Where(['OR'=>['Requestedto.requested_by'=>$userId, 'Requestedto.requested_to'=>$userId]]);
+                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.friend_status', 'Requestedto.matrix_room_id'])->Where(['OR'=>['Requestedto.requested_by'=>$userId, 'Requestedto.requested_to'=>$userId]]);
             },
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
