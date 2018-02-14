@@ -35,6 +35,7 @@
  * @apiParam {String} username     Username (Required).
  * @apiParam {Date}   dob          Date of birth must in this format MM-DD-YYYY (Optional).
  * @apiParam {String} gender       Gender of user like any one (Male, Femal, Other) (Required).
+ * @apiParam {String} country_code Country code of user phone number(Optional).
  * @apiParam {Number} phone        Phone no of user and accept upto 16 digits (Optional).
  * @apiParam {String} address      User address (Optional).
  * @apiParam {String} website_url  Website url (Optional).
@@ -46,6 +47,7 @@
  *          "username":"spayc",
  *          "dob": "12-11-2001",
  *          "gender": "Male|Female|Other",
+ *          "country_code":"+91",
  *          "phone": "XXXXXXXXXX",
  *          "address": "spayc address",
  *          "website_url":"www.spayc.com",
@@ -67,6 +69,7 @@
  *          "username":"spayc",
  *          "dob": "12-11-2001",
  *          "gender": "Male|Female|Other",
+ *          "country_code":"+91",
  *          "phone": "XXXXXXXXXX",
  *          "address": "spayc address",
  *          "website_url":"www.spayc.com",
@@ -94,6 +97,7 @@ function putUser() { return; }
  * @apiParam {String} confirm_password secret password (Required).
  * @apiParam {Date}   dob Date of birth must in in format MM-DD-YYYY (Optional).
  * @apiParam {String} gender Gender of user like any one (Male, Femal, Other) (Required).
+ * @apiParam {String} country_code Country code of user phone number(Optional).
  * @apiParam {Number} phone Phone no of user and accept only 10 digits only (Optional).
  * @apiParam {Number} latitude of user address (Required).
  * @apiParam {Number} longitude of user address (Required).
@@ -106,7 +110,8 @@ function putUser() { return; }
  *          "password": "XXXXXXXXX",
  *          "confirm_password": "XXXXXXXXX",
  *          "gender": "Male|Female|Other",
- *          "phone": "+91 (XXX) (XXXXXXX)",
+ *          "country_code":"+91",
+ *          "phone": "(XXX) (XXXXXXX)",
  *          "dob": "11-12-2000",
  *          "latitude": "XX.XXXXXX",
  *          "longitude": "XX.XXXXXX"
@@ -126,7 +131,8 @@ function putUser() { return; }
  *          "username": "spaycdev",
  *          "email": "spaycdev@spayc.com",
  *          "gender": "male|female|other",
- *          "phone": "+91 (XXX) (XXXXXXX)",
+ *          "country_code":"+91",
+ *          "phone": "(XXX) (XXXXXXX)",
  *          "dob": "11-12-2000",
  *          "latitude": "XX.XXXXXX",
  *          "longitude": "XX.XXXXXX"
@@ -172,7 +178,8 @@ function postUser() { return; }
                     "name": "spayc1",
                     "email": "spayc1@domain.com",
                     "gender": "Male",
-                    "phone": "+91 (XXX) (XXXXXXX)",
+                    "country_code":"+91",
+                    "phone": "(XXX) (XXXXXXX)",
                     "dob": "12-11-2000",
                     "status": "Active",
                     "website_url": "www.spayc.com",
@@ -204,7 +211,8 @@ function postUser() { return; }
                     "name": "spayc2",
                     "email": "spayc2@domain.com",
                     "gender": "Male",
-                    "phone": "+91 (XXX) (XXXXXXX)",
+                    "country_code":"+91",
+                    "phone": "(XXX) (XXXXXXX)",
                     "dob": "11-12-2000",
                     "status": "Active",
                     "website_url": "www.spayc.com",
@@ -333,6 +341,7 @@ function getView() { return; }
         "email": "spayc@domain.com",
         "gender": "Male",
         "dob": "2000-02-02",
+        "country_code":"",
         "phone": "",
         "website_url": null,
         "address": null,
@@ -429,7 +438,7 @@ function postFriendRequest() { return; }
         "records": [
             {
                 "id": "VkR0a3p4anQ2SUxScm85RGhTZTFpZz09",
-                "name": "test",
+                "username": "test",
                 "matrix_user_id": null,
                 "matrix_access_token": null,
                 "friend": {
@@ -616,6 +625,7 @@ function postForgotPassword() { return; }
         "email": "test2@gmail.com",
         "gender": "Male",
         "dob": "01-25-1996",
+        "country_code":"+91",
         "phone": "(789)877878",
         "website_url": null,
         "address": null,
@@ -782,3 +792,34 @@ function postChatRequest() { return; }
  * @apiUse UserErrorResponse
  */
 function postProfileImage() { return; }
+
+/**
+ * @api {put} /set-profile-image.json Set Profile Images
+ * @apiVersion 0.1.0
+ * @apiName setProfileImage
+ * @apiGroup User
+ * @apiPermission none
+ *
+ * @apiDescription Set image as default profile pic.
+ *
+ * @apiParam {String} id      Image id is required field in body.
+ *
+ * @apiExample Example usage:
+ *
+{
+    "id":"42"
+}
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Profile image uploaded successfully.
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Profile image set as default."
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function putSetProfileImage() { return; }

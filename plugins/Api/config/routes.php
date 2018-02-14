@@ -29,6 +29,7 @@ Router::plugin(
         $routes->connect('/user-profile/:id', ['controller' => 'Users', 'action' => 'viewProfile'], ['pass'=>['id']]);
         $routes->connect('/change-password', ['controller' => 'Users', 'action' => 'changePassword']);
         $routes->connect('/chat-request', ['controller' => 'Users', 'action' => 'directChatRequest']);
+        $routes->connect('/set-profile-image', ['controller' => 'Users', 'action' => 'setProfileImage']);
         $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
         //$routes->connect('/as', ['controller' => 'Spaycs', 'action' => 'matrixApplicationService']);
         $routes->connect('/transactions/:id', ['controller' => 'Spaycs', 'action' => 'matrixApplicationService'],['pass'=>'id']);
