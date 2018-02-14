@@ -60,6 +60,7 @@ CREATE TABLE friend_request (
     requested_to BIGINT,
     requested_status VARCHAR(15)  DEFAULT 'Requested',
     friend_status VARCHAR(15) DEFAULT NULL,
+    matrix_room_id VARCHAR(255) DEFAULT NULL,
     created timestamp NOT NULL,
     modified timestamp ,
     PRIMARY KEY (id,requested_by,requested_to,created)

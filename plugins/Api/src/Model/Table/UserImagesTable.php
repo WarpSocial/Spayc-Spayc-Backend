@@ -91,5 +91,4 @@ class UserImagesTable extends Table {
         $items = $this->patchEntity($entity, $data, ['validate'=>false]);
         $this->save($items);
     }
-
 }

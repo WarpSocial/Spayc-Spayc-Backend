@@ -32,7 +32,6 @@
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
 
 @apiParam {String} name             Name title of the spayc (Required).
-@apiParam {String} matrix_room_id   Matrix room id from matrix (Required).
 @apiParam {String} location         Location must be alphanumeric with space (Required).
 @apiParam {String} type             SPAYC type must be any one from the following Event|Community (Required).
 @apiParam {String} group_type       Group type must be any one from the following Public|Private (Required).
@@ -47,7 +46,6 @@
 @apiExample Example usage:
     {
         "name": "spaycdev",
-        "matrix_room_id":"!asfLdzLnOdGRkdPZWu:localhost",
         "location": "Community addrss",
         "type": "Event|Community",
         "group_type": "Public|Private",
@@ -70,7 +68,6 @@
     "message": "Your spayc, spaycdev, has been created.",
     "data": {
         "name": "spaycdev",
-        "matrix_room_id":"!asfLdzLnOdGRkdPZWu:localhost",
         "location": "Community addrss",
         "type": "Community",
         "group_type": "Public",
@@ -129,7 +126,6 @@ function postSpaycs() { return; }
                 "user_id": 51,
                 "name": "Test",
                 "address": "Event address",
-                "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
                 "start_date": "2018-01-10T06:00:00+00:00",
                 "end_date": "2018-01-10T06:00:00+00:00",
                 "image": "img.png",
@@ -155,7 +151,6 @@ function postSpaycs() { return; }
                 "user_id": 51,
                 "name": "Test1",
                 "address": "Event address",
-                "matrix_room_id": "!asfLdzLnOdGRkdrrPZWu:localhost",
                 "start_date": "2018-01-10T01:00:00+00:00",
                 "end_date": "2018-01-11T11:00:00+00:00",
                 "image": "img.png",
@@ -176,7 +171,6 @@ function postSpaycs() { return; }
                 "user_id": 51,
                 "name": "Test12",
                 "address": "Event address",
-                "matrix_room_id": "!asfLdzLnGRkdPZWu:localhost",
                 "start_date": "2018-01-10T01:00:00+00:00",
                 "end_date": "2018-01-11T11:00:00+00:00",
                 "image": "img.png",
@@ -208,7 +202,6 @@ function postSpaycs() { return; }
                 "user_id": 51,
                 "name": "Test123",
                 "address": "Community address",
-                "matrix_room_id": "!asfLdOdGRkdPZWu:localhost",
                 "start_date": "2018-01-10T01:00:00+00:00",
                 "end_date": "2018-01-11T11:00:00+00:00",
                 "image": "img.png",
@@ -294,7 +287,6 @@ function postSubscribeSpayc() { return; }
         "start_date": "2019-01-11T01:02:20+00:00",
         "end_date": "2019-01-12T01:02:20+00:00",
         "image": "",
-        "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
         "group_type": "Public",
         "type": "Community",
         "total_comments": 1,

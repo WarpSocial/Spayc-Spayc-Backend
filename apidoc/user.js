@@ -228,6 +228,7 @@ function postUser() { return; }
                         "requested_to": 17,
                         "requested_status": "Accepted",
                         "friend_status": "Unfriend",
+                        "matrix_room_id": null,
                         "total_friends": 7
                     }
                 }
@@ -242,7 +243,6 @@ function postUser() { return; }
                     "user_id": 10,
                     "name": "spaycdev3",
                     "address": "Your address",
-                    "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
                     "start_date": "2019-01-11T01:02:20+00:00",
                     "end_date": "2019-01-12T01:02:20+00:00",
                     "image": "",
@@ -260,7 +260,6 @@ function postUser() { return; }
                     "user_id": 10,
                     "name": "spaycdev4",
                     "address": "Your address",
-                    "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
                     "start_date": "2019-01-11T01:02:20+00:00",
                     "end_date": "2019-01-12T01:02:20+00:00",
                     "image": "",
@@ -438,7 +437,8 @@ function postFriendRequest() { return; }
                     "requested_by": 10,
                     "requested_to": 7,
                     "requested_status": "Requested",
-                    "friend_status": null
+                    "friend_status": null,
+                    "matrix_room_id": "room:@848843444"
                 },
                 "image_url": ""
             },
@@ -452,7 +452,8 @@ function postFriendRequest() { return; }
                     "requested_by": 10,
                     "requested_to": 8,
                     "requested_status": "Requested",
-                    "friend_status": null
+                    "friend_status": null,
+                    "matrix_room_id": "room:@84854843"
                 },
                 "image_url": "https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2017_08_14_18_14_10_20180206133936.png"
             }
@@ -670,7 +671,7 @@ function getUserProfile() { return; }
  *
  *
  * @apiSuccess {String} status success.
- * @apiSuccess {String} message Password changed successfully..
+ * @apiSuccess {String} message Password changed successfully.
  * @apiSuccessExample {json} Success-Response:
  *      HTTP/1.1 200 OK
 {
@@ -681,3 +682,103 @@ function getUserProfile() { return; }
  * @apiUse UserErrorResponse
  */
 function postChangePassword() { return; }
+
+/**
+ * @api {post} /chat-request.json Chat request
+ * @apiVersion 0.1.0
+ * @apiName chatRequest
+ * @apiGroup User
+ * @apiPermission none
+ *
+ * @apiDescription One ot One chat request.
+ *
+ * @apiParam {String} friend_id         User id to whom you send request(Required).
+ * @apiParam {String} matrix_room_id    Matrix room id from matrix (Required).
+ *
+ * @apiExample Example usage:
+ *
+ *       {
+ *          "friend_id": "anM1a0FkWGlWUXBwR1ZDUU9iR09XQT09"
+ *          "matrix_room_id": "room:@000123"
+ *       }
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Friend request sent successfully.
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 201 OK
+{
+    "status": "success",
+    "message": "Friend request sent successfully."
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function postChatRequest() { return; }
+
+/**
+ * @api {post} /avatars.json Upload Profile Images
+ * @apiVersion 0.1.0
+ * @apiName imageUpload
+ * @apiGroup User
+ * @apiPermission none
+ *
+ * @apiDescription Upload up to 5 image for profile.
+ *
+ * @apiParam {String} images      Images contain up to 5 image object required(index key should be order_index of image if already saved).
+ *
+ * @apiExample Example usage:
+ *
+{
+    "images":{
+        "1":{
+            "tmp_name":"\/tmp\/phpj212j5",
+            "error":0,
+            "name":"Screenshot from 2017-12-26 15:18:47.png",
+            "type":"image\/png",
+            "size":154882
+        },
+        "2":{
+            "tmp_name":"\/tmp\/php0yUWwr",
+            "error":0,
+            "name":"Screenshot from 2017-08-14 18:14:15.png",
+            "type":"image\/png",
+            "size":590333
+        },
+        "3":{
+            "tmp_name":"\/tmp\/phpluwiKN",
+            "error":0,
+            "name":"Screenshot from 2017-04-10 17:04:21.png",
+            "type":"image\/png",
+            "size":172875
+        },
+        "4":{
+            "tmp_name":"\/tmp\/phpiTiNX9",
+            "error":0,
+            "name":"Screenshot from 2016-07-21 17:30:37.png",
+            "type":"image\/png",
+            "size":212200
+        },
+        "5":{
+            "tmp_name":"\/tmp\/phpv0ssbw",
+            "error":0,
+            "name":"Screenshot from 2016-06-15 18:56:02.png",
+            "type":"image\/png",
+            "size":211765
+        }
+    }
+}
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Profile image uploaded successfully.
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Profile image uploaded successfully."
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function postProfileImage() { return; }

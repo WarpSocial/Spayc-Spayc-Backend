@@ -68,6 +68,4 @@ class AppController extends BaseController {
     protected function _outputMessage($template){
         
     }
-    
-    
 }
