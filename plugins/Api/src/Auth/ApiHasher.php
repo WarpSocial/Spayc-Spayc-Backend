@@ -35,25 +35,25 @@ class ApiHasher {
         $originalPassword = Security::decrypt($hashedPassword,  self::$hashkey);
         return $originalPassword;
     }
-    
+
     public static function encrypt($sData) {
-        $output = '';
-        $key = hash('sha256', self::$hashkey);
+        $output = (string)$sData;
+        /*$key = hash('sha256', self::$hashkey);
         $initialization_vector = substr(hash('sha256', self::$secret_iv), 0, 16);
         if(!empty($sData)) {
           $output = openssl_encrypt($sData, self::$encrypt_method, $key, 0, $initialization_vector);
           $output = base64_encode($output);
-        }
+        }*/
         return $output;
     }
 
     public static function decrypt($sData) {
-        $output = '';
-        $key = hash('sha256', self::$hashkey);
+        $output = $sData;
+        /*$key = hash('sha256', self::$hashkey);
         $initialization_vector = substr(hash('sha256', self::$secret_iv), 0, 16);
         if(!empty($sData)) {
             $output = openssl_decrypt(base64_decode($sData), self::$encrypt_method, $key, 0, $initialization_vector);
-        }
+        }*/
         return $output;
     }
 }
