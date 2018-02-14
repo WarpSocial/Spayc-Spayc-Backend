@@ -10,6 +10,7 @@ use Api\Utils\Utils;
 use Cake\Log\Log;
 use Cake\Core\Configure;
 use Api\Auth\ApiHasher;
+use Api\Model\Entity\UserImage;
 /**
  * Users Controller
  *
@@ -35,25 +36,23 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Method not allowed.')], 405);
         }
         $this->loadModel('Api.UserImages');
-        #$this->Users->uploadProfileImages();
         $data  = $this->request->getData();
         $data['user_id'] = $this->Auth->user('id');
-        if(isset($data['image_url'][0])) {
-            foreach($data['image_url'] as $img) {
-                $imgData = ['user_id'=>$this->Auth->user('id'),'image_url'=>$img];
-                
+        if(!is_array($data['images'])) {
+            $this->restException(['status'=>'failed','message'=>'Invalid requested data format.'], 400);
+        }
+        foreach($data['images'] as $key=>$img) {
+            $exists = $this->UserImages->findByUserIdAndOrderIndex($this->Auth->user('id'), $key);
+            $imgData = ['user_id'=>$this->Auth->user('id'), 'image_url'=>$img, 'order_index'=>$key];
+            if($exists->count()) {
+                $entity = $this->UserImages->get($exists->first()->id);
+            } else {
+                if($key==1) { $imgData['is_profile'] = 'Yes';}
                 $entity = $this->UserImages->newEntity();
-                $items = $this->UserImages->patchEntity($entity, $imgData);
-                if(!empty($items->errors())){
-                     $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
-                }
-                $this->UserImages->save($items);
             }
-        } else {
-            $entity = $this->UserImages->newEntity();
-            $items = $this->UserImages->patchEntity($entity, $data);
+            $items = $this->UserImages->patchEntity($entity, $imgData);
             if(!empty($items->errors())) {
-                 $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
+                $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
             }
             $this->UserImages->save($items);
         }
