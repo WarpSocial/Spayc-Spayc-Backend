@@ -10,6 +10,8 @@ use Api\Utils\Utils;
 use Cake\Log\Log;
 use Cake\Core\Configure;
 use Api\Auth\ApiHasher;
+use Cake\Event\Event;
+use Cake\Event\EventManager;
 use Api\Model\Entity\UserImage;
 /**
  * Users Controller
@@ -57,13 +59,21 @@ class UsersController extends AppController {
             if(!empty($items->errors())) {
                 $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
             }
-            $this->UserImages->save($items);
+            $this->UserImages->save($items);            
             if(!empty($items->is_profile) && ($items->is_profile == 'Yes')){
                 $defaultImg = $items;
             }
         }
-        if(!empty($defaultImg) ){
-            
+        if(!empty($defaultImg) ){            
+            /*Event to bind to update the set upload room image */
+            $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
+                'options' => [
+                    'matrix_token'=>$this->Auth->user('UserLogs.matrix_access_token'),
+                    'image'=> $defaultImg->image_url,
+                    'matrix_user_id'=> $this->Auth->user('UserLogs.matrix_user_id'),
+                    ]
+            ]);
+            EventManager::instance()->dispatch($event);
         }
         $response = ['status'=>'success','message'=>__('Profile image uploaded successfully.')];
         $this->set($response);
@@ -78,12 +88,21 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>'Order index is required field.'], 400);
         }
         $this->loadModel('Api.UserImages');
-        $exists = $this->UserImages->exists(['id'=>$data['id']]);
-        if(!$exists) {
+        $entity = $this->UserImages->get($data['id']);
+        if(empty($entity)) {
             $this->restException(['status'=>'failed', 'message'=>'Invalid image id.'], 400);
         }
         $this->UserImages->updateAll(['is_profile'=>'No'], ['user_id'=>$this->Auth->user('id')]);
         $this->UserImages->updateAll(['is_profile'=>'Yes'], ['id'=>$data['id']]);
+        /*Event to bind to update the set upload room image */
+        $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
+            'options' => [
+                'matrix_token'=>$this->Auth->user('UserLogs.matrix_access_token'),
+                'image'=> $entity->image_url,
+                'matrix_user_id'=> $this->Auth->user('UserLogs.matrix_user_id'),
+                ]
+        ]);
+        EventManager::instance()->dispatch($event);
         $response = ['status'=>'success', 'message'=>__('Profile image set as default.')];
         $this->set($response);
     }

@@ -26,15 +26,17 @@ class SpaycListener implements EventListenerInterface {
         ];
     }
     
-    public function matrixMedia(Event $event, EntityInterface $entity,$options){
-        $controller = $event->getSubject();
-        //$controller->loadComponent('Api.Matrix');
+    public function matrixMedia(Event $event, $options){        
         $matrix = new MatrixComponent(new ComponentRegistry());
-        $matrix->uploadMediaImage([
-            'image_url'=>$entity->image,
-            'room_id'=>$entity->matrix_room_id,
-            'token'=>$options['matrix_token']
-            ]);
+        $items = ['image_url'=>$options['image'],'matrix_token'=>$options['matrix_token']];
+        if(!empty($options['matrix_room_id'])){
+            $items['matrix_room_id'] = $options['matrix_room_id'];
+        }elseif(!empty($options['matrix_user_id'])){
+            $items['matrix_user_id'] = $options['matrix_user_id'];
+        }else{
+            return;
+        }
+        $matrix->uploadMediaImage($items);
         return true;
     }
 }

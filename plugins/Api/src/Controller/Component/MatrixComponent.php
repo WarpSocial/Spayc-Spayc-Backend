@@ -188,13 +188,13 @@ class MatrixComponent extends Component {
             $contentType = $data['image_url']['type'];
             $rawfile = $data['image_url']['tmp_name'];
         }
-        if(empty($data['token'])){
-            $data['token'] = $this->Auth->user('UserLogs.matrix_access_token');
+        if(empty($data['matrix_token'])){
+            $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
             //pr($data['token']);die;
         }
         
         //$body = fopen($data['image_url']['tmp_name'], 'r');        
-        $url = $this->config('url') .DS.$this->config('media'). DS.'upload?access_token='.$data['token'].'&filename='.$filename;
+        $url = $this->config('url') .DS.$this->config('media'). DS.'upload?access_token='.$data['matrix_token'].'&filename='.$filename;
         $http = new Client(['headers' => ['Content-Type' =>$contentType]]);
         $httpResponse = $http->post(
                 $url, 
@@ -208,21 +208,29 @@ class MatrixComponent extends Component {
             );
         $response = json_decode($httpResponse->body,true);
         if(!empty($response['content_uri'])){
-            $this->setRoomAvatar($response['content_uri'],$data['room_id'],$data['token']);
+            $this->setAvatarUrl($response['content_uri'],$data);
         }
         return $response;
     }
     
-    public function setRoomAvatar($matrixuri = null,$roomid = null,$token = null){
-        if($matrixuri == null || $roomid == null || $token == null){
+    public function setAvatarUrl($matrixuri = null,$options){
+        if($matrixuri == null || empty($options['matrix_token'])){
             return;
         }
-        $url = $this->config('url') .DS.$this->config('client'). DS.'rooms'.DS.$roomid.DS.'state/m.room.avatar/?access_token='.$token;
-        //echo $url;
+        if(!empty($options['matrix_room_id'])){
+            $options['body'] = ['url'=>$matrixuri];
+            $options['url'] = $this->config('url') .DS.$this->config('client'). DS.'rooms'.DS.$roomid.DS.'state/m.room.avatar/?access_token='.$options['matrix_token'];
+        }elseif(!empty($options['matrix_user_id'])){
+            $options['body'] = ['avatar_url'=>$matrixuri];
+            $options['url'] = $this->config('url') .DS.$this->config('client'). DS.'profile'.DS. urlencode($options['matrix_user_id']).DS.'avatar_url?access_token='.$options['matrix_token'];
+        }else{
+            return;
+        }
+        
         $http = new Client();
         $httpResponse = $http->put(
-                $url, 
-                json_encode(['url'=>$matrixuri]),
+                $options['url'], 
+                json_encode($options['body']),
                 [
                     'type' => 'json',
                     'ssl_verify_host' => $this->config('sslverify'), 

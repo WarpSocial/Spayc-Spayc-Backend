@@ -67,7 +67,11 @@ class SpaycsController extends AppController {
                 $response = ['status'=>'success','message'=>__('Your spayc, '.ucfirst($data['name']).', has been created.'),'data'=>$items];
                 /*Event to bind to update the set upload room image */
                 $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
-                    'saved' => $items,'input'=>$data
+                    'options' => [
+                        'matrix_token'=>$data['matrix_token'],
+                        'image'=> $items->image,
+                        'matrix_room_id'=> $items->matrix_room_id,
+                        ]
                 ]);
                 EventManager::instance()->dispatch($event);
             }else{
