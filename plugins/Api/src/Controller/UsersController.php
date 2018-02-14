@@ -69,13 +69,32 @@ class UsersController extends AppController {
         $this->set($response);
     }
     
+    public function setProfileImage() {
+        if (!$this->request->is('put')) {
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
+        }
+        $data  = $this->request->getData();
+        if(empty($data['id'])) {
+            $this->restException(['status'=>'failed', 'message'=>'Order index is required field.'], 400);
+        }
+        $this->loadModel('Api.UserImages');
+        $exists = $this->UserImages->exists(['id'=>$data['id']]);
+        if(!$exists) {
+            $this->restException(['status'=>'failed', 'message'=>'Invalid image id.'], 400);
+        }
+        $this->UserImages->updateAll(['is_profile'=>'No'], ['user_id'=>$this->Auth->user('id')]);
+        $this->UserImages->updateAll(['is_profile'=>'Yes'], ['id'=>$data['id']]);
+        $response = ['status'=>'success', 'message'=>__('Profile image set as default.')];
+        $this->set($response);
+    }
+    
     /**
      * login method to login and generate the token
      */
     
     public function login() {
         if (!$this->request->is('post')) {
-            $this->restException(['status'=>'failed','message'=>__('Method not allowed.')],405);
+            $this->restException(['status'=>'failed','message'=>__('Method not allowed.')], 405);
         }
         $data_item = \Api\Utils\Utils::escape($this->request->data);        
         
@@ -589,7 +608,7 @@ class UsersController extends AppController {
         $friendStatus = !empty($this->request->query['friend_status'])?$this->request->query['friend_status']:'Accepted';
         $userId = $this->Auth->user('id');
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($this->Auth->user('id'), $friendStatus);
-        $friends = $this->Users->find("all", ['fields'=>['Users.id', 'name'=>'Users.username', 'Users.matrix_user_id', 'Users.matrix_access_token'], 'conditions'=>['Users.id IN'=>$friend, 'Users.id !='=>$this->Auth->user('id'), 'Users.status'=>'Active']]);
+        $friends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username', 'Users.matrix_user_id', 'Users.matrix_access_token'], 'conditions'=>['Users.id IN'=>$friend, 'Users.id !='=>$this->Auth->user('id'), 'Users.status'=>'Active']]);
         $friends->contain([
             'Requestedby' => function($q) use($userId) {
                 return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_status', 'Requestedby.requested_to', 'Requestedby.friend_status', 'Requestedby.matrix_room_id'])->Where(['OR'=>['Requestedby.requested_by'=>$userId, 'Requestedby.requested_to'=>$userId]]);
@@ -687,7 +706,7 @@ class UsersController extends AppController {
                 return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.friend_status'])->Where(['OR'=>['Requestedto.requested_by'=>$userId, 'Requestedto.requested_to'=>$userId]]);
             },
             'UserImages'=>function($q) {
-                return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile', 'UserImages.order_index']);
+                return $q->select(['UserImages.id', 'UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile', 'UserImages.order_index']);
             },
             'JoinedSpayc'=>function($q) {
                 return $q->select(['JoinedSpayc.user_id', 'joined_spaycs'=>$q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.user_id']);
