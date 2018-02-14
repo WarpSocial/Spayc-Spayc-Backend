@@ -41,13 +41,16 @@ class UsersController extends AppController {
         if(!is_array($data['images'])) {
             $this->restException(['status'=>'failed','message'=>'Invalid requested data format.'], 400);
         }
+        $defaultImg  = [];
         foreach($data['images'] as $key=>$img) {
             $exists = $this->UserImages->findByUserIdAndOrderIndex($this->Auth->user('id'), $key);
             $imgData = ['user_id'=>$this->Auth->user('id'), 'image_url'=>$img, 'order_index'=>$key];
             if($exists->count()) {
                 $entity = $this->UserImages->get($exists->first()->id);
             } else {
-                if($key==1) { $imgData['is_profile'] = 'Yes';}
+                if($key==1) { 
+                    $imgData['is_profile'] = 'Yes';                    
+                }
                 $entity = $this->UserImages->newEntity();
             }
             $items = $this->UserImages->patchEntity($entity, $imgData);
@@ -55,6 +58,12 @@ class UsersController extends AppController {
                 $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
             }
             $this->UserImages->save($items);
+            if(!empty($items->is_profile) && ($items->is_profile == 'Yes')){
+                $defaultImg = $items;
+            }
+        }
+        if(!empty($defaultImg) ){
+            
         }
         $response = ['status'=>'success','message'=>__('Profile image uploaded successfully.')];
         $this->set($response);
