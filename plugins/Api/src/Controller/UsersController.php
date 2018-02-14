@@ -214,7 +214,7 @@ class UsersController extends AppController {
                     'email'=>$data['email'],
                     'dob'=>$data['dob'],
                     'gender'=>trim($data['gender']),
-                    'country_code'=>$data['country_code'],
+                    'country_code'=> Utils::getVar('country_code',$data),
                     'phone'=>$data['phone'],
                     'latitude'=>$data['latitude'],
                     'longitude'=>$data['longitude']

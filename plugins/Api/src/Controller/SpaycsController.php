@@ -9,6 +9,8 @@ use Cake\Log\Log;
 use Api\Utils\Utils;
 use Cake\Core\Configure;
 use Api\Auth\ApiHasher;
+use Cake\Event\Event;
+use Cake\Event\EventManager;
 
 /**
  * Spaycs Controller
@@ -33,6 +35,7 @@ class SpaycsController extends AppController {
         if (!$this->request->is('post')) {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
         }
+        
         $data = $this->request->getData();
         $data['type'] = !empty($data['type'])?ucfirst($data['type']):'';
         $data['group_type'] = !empty($data['group_type'])?ucfirst($data['group_type']):'';
@@ -44,6 +47,10 @@ class SpaycsController extends AppController {
         }
         $this->loadComponent('Api.Matrix');
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
+        
+        //$data['image_url']='https://spayc-qa.s3.amazonaws.com/room/screenshot_from_2017_10_09_16_53_55_20180214070522.png';
+        //$matrix = $this->Matrix->uploadMediaImage($data);die();
+        
         $matrix = $this->Matrix->createRoom($data);
         if(!empty($matrix['error'])) {
             $this->restException(['status' => "failed", 'message' =>__($matrix['error'])], 400);
@@ -52,12 +59,22 @@ class SpaycsController extends AppController {
         $items->set('matrix_room_alias',$matrix['room_alias']);
         $items->set('user_id', $this->Auth->user('id'));
         if (!$items->errors()) {
-            $this->Spaycs->save($items);
-            if(!empty($items['description'])) {
-                TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
+            if($this->Spaycs->save($items)){
+                 if(!empty($items['description'])) {
+                    TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
+                }
+                $this->response->statusCode(201);
+                $response = ['status'=>'success','message'=>__('Your spayc, '.ucfirst($data['name']).', has been created.'),'data'=>$items];
+                /*Event to bind to update the set upload room image */
+                $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
+                    'saved' => $items,'input'=>$data
+                ]);
+                EventManager::instance()->dispatch($event);
+            }else{
+                $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be saved. Please, try again.')], 400);
             }
-            $this->response->statusCode(201);
-            $response = ['status'=>'success','message'=>__('Your spayc, '.ucfirst($data['name']).', has been created.'),'data'=>$items];
+            
+           
         } else {
             $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be saved. Please, try again.')], 400);
         }
