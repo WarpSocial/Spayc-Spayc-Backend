@@ -10,6 +10,8 @@ use Api\Utils\Utils;
 use Cake\Log\Log;
 use Cake\Core\Configure;
 use Api\Auth\ApiHasher;
+use Cake\Event\Event;
+use Cake\Event\EventManager;
 use Api\Model\Entity\UserImage;
 /**
  * Users Controller
@@ -41,20 +43,37 @@ class UsersController extends AppController {
         if(!is_array($data['images'])) {
             $this->restException(['status'=>'failed','message'=>'Invalid requested data format.'], 400);
         }
+        $defaultImg  = [];
         foreach($data['images'] as $key=>$img) {
             $exists = $this->UserImages->findByUserIdAndOrderIndex($this->Auth->user('id'), $key);
             $imgData = ['user_id'=>$this->Auth->user('id'), 'image_url'=>$img, 'order_index'=>$key];
             if($exists->count()) {
                 $entity = $this->UserImages->get($exists->first()->id);
             } else {
-                if($key==1) { $imgData['is_profile'] = 'Yes';}
+                if($key==1) { 
+                    $imgData['is_profile'] = 'Yes';                    
+                }
                 $entity = $this->UserImages->newEntity();
             }
             $items = $this->UserImages->patchEntity($entity, $imgData);
             if(!empty($items->errors())) {
                 $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
             }
-            $this->UserImages->save($items);
+            $this->UserImages->save($items);            
+            if(!empty($items->is_profile) && ($items->is_profile == 'Yes')){
+                $defaultImg = $items;
+            }
+        }
+        if(!empty($defaultImg) ){            
+            /*Event to bind to update the set upload room image */
+            $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
+                'options' => [
+                    'matrix_token'=>$this->Auth->user('UserLogs.matrix_access_token'),
+                    'image'=> $defaultImg->image_url,
+                    'matrix_user_id'=> $this->Auth->user('UserLogs.matrix_user_id'),
+                    ]
+            ]);
+            EventManager::instance()->dispatch($event);
         }
         $response = ['status'=>'success','message'=>__('Profile image uploaded successfully.')];
         $this->set($response);
@@ -69,12 +88,21 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>'Order index is required field.'], 400);
         }
         $this->loadModel('Api.UserImages');
-        $exists = $this->UserImages->exists(['id'=>$data['id']]);
-        if(!$exists) {
+        $entity = $this->UserImages->get($data['id']);
+        if(empty($entity)) {
             $this->restException(['status'=>'failed', 'message'=>'Invalid image id.'], 400);
         }
         $this->UserImages->updateAll(['is_profile'=>'No'], ['user_id'=>$this->Auth->user('id')]);
         $this->UserImages->updateAll(['is_profile'=>'Yes'], ['id'=>$data['id']]);
+        /*Event to bind to update the set upload room image */
+        $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
+            'options' => [
+                'matrix_token'=>$this->Auth->user('UserLogs.matrix_access_token'),
+                'image'=> $entity->image_url,
+                'matrix_user_id'=> $this->Auth->user('UserLogs.matrix_user_id'),
+                ]
+        ]);
+        EventManager::instance()->dispatch($event);
         $response = ['status'=>'success', 'message'=>__('Profile image set as default.')];
         $this->set($response);
     }
@@ -122,6 +150,7 @@ class UsersController extends AppController {
             'email'=>$user['email'],
             'gender'=>$user['gender'],
             'dob'=>(new \Cake\I18n\Time($user['dob']))->format("Y-m-d"),
+            'country_code'=>$user['country_code'],
             'phone'=>$user['phone'],
             'website_url'=>$user['website_url'],
             'address'=>$user['address'],
@@ -231,6 +260,7 @@ class UsersController extends AppController {
                     'email'=>$data['email'],
                     'dob'=>$data['dob'],
                     'gender'=>trim($data['gender']),
+                    'country_code'=> Utils::getVar('country_code',$data),
                     'phone'=>$data['phone'],
                     'latitude'=>$data['latitude'],
                     'longitude'=>$data['longitude']
@@ -352,6 +382,7 @@ class UsersController extends AppController {
             'email'=>$user['email'],
             'gender'=>$user['gender'],
             'dob'=>(new \Cake\I18n\Time($user['dob']))->format("Y-m-d"),
+            'country_code'=>$user['country_code'],
             'phone'=>$user['phone'],
             'website_url'=>$user['website_url'],
             'address'=>$user['address'],
@@ -688,7 +719,7 @@ class UsersController extends AppController {
         if(!$exist) {
             $this->restException(['status'=>'failed', 'message'=>__('Invalid user id')], 400);
         }
-        $user = $this->Users->find('all', ['fields'=>['Users.id', 'Users.username', 'Users.email', 'Users.gender', 'Users.dob', 'Users.phone', 'Users.website_url', 'Users.address', 'Users.bio_data', 'Users.longitude', 'Users.latitude', 'Users.matrix_user_id']])->where(['Users.id'=>$id]);
+        $user = $this->Users->find('all', ['fields'=>['Users.id', 'Users.username', 'Users.email', 'Users.gender', 'Users.dob','Users.country_code', 'Users.phone', 'Users.website_url', 'Users.address', 'Users.bio_data', 'Users.longitude', 'Users.latitude', 'Users.matrix_user_id']])->where(['Users.id'=>$id]);
         $userId = $this->Auth->user('id');
         $user->contain([
             'Requestedby' => function($q) use($userId) {
@@ -745,7 +776,7 @@ class UsersController extends AppController {
                 if(!empty($friend['email'])) { $friendEmails[] = $friend['email']; }
             }
         }
-        $spaycFriends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username', 'Users.dob', 'Users.gender', 'Users.phone'], 'conditions'=>['Users.email IN'=>$friendEmails, 'Users.id !='=>$this->Auth->user('id')]]);
+        $spaycFriends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username', 'Users.dob', 'Users.gender','Users.country_code', 'Users.phone'], 'conditions'=>['Users.email IN'=>$friendEmails, 'Users.id !='=>$this->Auth->user('id')]]);
         $spaycFriends->contain([
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);

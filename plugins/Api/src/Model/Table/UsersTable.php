@@ -133,6 +133,17 @@ class UsersTable extends Table {
                 ->notEmpty('email',__('Email is required field.'))
                 ->email('email', false, __('Invalid email address.'))                
                 ->add('email', 'unique', ['rule' => 'validateUnique','message'=>__('Email already exist.'), 'provider' => 'table']) ;
+        
+        $validator
+                ->notEmpty('country_code',__('Country code is required field.'),function($context){
+                     return !empty($context['data']['phone']);
+                })
+                ->add('country_code', 'countrycode', [
+                    'rule' => function($value,$context){
+                         return (bool)(preg_match('/^([\+\s\(\)\-]*\d[\+\s\(\)\-]*){1,5}$/',$value));
+                    },
+                    'message'=>__('Country Code is not valid.')
+                    ]);
                 
         
         $validator

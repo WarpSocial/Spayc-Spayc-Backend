@@ -2,6 +2,8 @@
 
 use Cake\Core\Configure;
 use Cake\Log\Log;
+use Cake\Event\EventManager;
+use Api\Event\SpaycListener;
 //use Api\Error\ApiError;
 
 try {
@@ -9,7 +11,7 @@ try {
 } catch (Exception $e) {
     exit($e->getMessage() . "\n");
 }
-
+EventManager::instance()->on(new SpaycListener());
 //Log::config('api', [
 //            'className' => 'Api\Log\Engine\ApiLog.Api',
 //            'path' => LOGS,
