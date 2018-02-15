@@ -695,6 +695,9 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Invalid requested id.')], 400);
         }
         $entity = $friendRequest->get($data['id']);
+        if(in_array($status, Configure::read('friend_requested_status')) && ($entity->requested_by == $this->Auth->user('id'))) {
+            $this->restException(['status'=>'failed', 'message'=>__("You can\'t change friend request as ".$status )], 400);
+        }
         if($entity->requested_status!='Accepted' && in_array($status, Configure::read('friend_status'))) {
             $this->restException(['status'=>'failed', 'message'=>__('Friend requested status should be accepted for '.$status.' status')], 400);
         }
