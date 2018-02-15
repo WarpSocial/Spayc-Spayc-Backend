@@ -137,6 +137,25 @@ class FriendRequestTable extends Table
         return $friend;
     }
     
+    public function getFriendIdsByStatus($userId = null, $status = 'Blocked') {
+        $status = ucfirst($status);
+        $cond = ['OR'=>['FriendRequest.requested_by'=>$userId, 'FriendRequest.requested_to'=>$userId]];
+        if(in_array($status, Configure::read('friend_requested_status'))) {
+            $cond['requested_status'] = $status;
+            $cond['friend_status IS'] = NULL;
+        }
+        if(in_array($status, Configure::read('friend_status'))) {
+            $cond['friend_status'] = $status;
+        }
+        $friends = $this->find('all', ['fields'=>['FriendRequest.requested_by', 'FriendRequest.requested_to'], 'conditions'=>[$cond]]);
+        $friend = [];
+        if($friends->count()) {
+            $friendIds = $friends->toArray();
+            $friend = array_unique(array_merge(array_column($friendIds,'requested_by'), array_column($friendIds,'requested_to'))); 
+        }
+        return $friend;
+    }
+    
     public function getFriendCountByUserId($userId = null) {
         $friends = $this->find('all')
             ->select(['FriendRequest.id'])

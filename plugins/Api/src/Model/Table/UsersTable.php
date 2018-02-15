@@ -431,13 +431,20 @@ class UsersTable extends Table {
     }
     
     public function searchUsers($userId = null, $request = []) {
-        $users = $this->find('all', ['fields'=>['Users.id', 'name'=>'Users.username','Users.email','Users.gender','Users.phone','Users.dob','Users.status','Users.website_url','Users.address','Users.bio_data', 'Users.matrix_user_id', 'Users.matrix_access_token', 'Users.created','Users.modified']])->where(['Users.status'=>'Active', 'Users.id !='=>$userId]);
+        $blockedFriendIds = TableRegistry::get('Api.FriendRequest')->getFriendIdsByStatus($userId, 'Blocked');
+        $cond['Users.status'] = 'Active';
+        if(!empty($blockedFriendIds)) {
+            $cond['Users.id NOT IN'] = $blockedFriendIds;
+        } else {
+            $cond['Users.id !='] = $userId;
+        }
+        $users = $this->find('all', ['fields'=>['Users.id', 'name'=>'Users.username','Users.email','Users.gender','Users.phone','Users.dob','Users.status','Users.website_url','Users.address','Users.bio_data', 'Users.matrix_user_id', 'Users.matrix_access_token', 'Users.created','Users.modified']])->where($cond);
         $users->contain([
             'Requestedby' => function($q) use($userId) {
-                return $q->select(['Requestedby.id', 'Requestedby.requested_by', 'Requestedby.requested_to', 'Requestedby.requested_status', 'Requestedby.friend_status', 'Requestedby.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]], ['OR'=>['friend_status !='=>'Anonymous', 'friend_status IS'=>NULL]]]);
+                return $q->select(['Requestedby.id', 'Requestedby.requested_by', 'Requestedby.requested_to', 'Requestedby.requested_status', 'Requestedby.friend_status', 'Requestedby.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
             },
             'Requestedto' => function($q) use($userId) {
-                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.friend_status', 'Requestedto.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]], ['OR'=>['friend_status !='=>'Anonymous', 'friend_status IS'=>NULL]]]);
+                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.friend_status', 'Requestedto.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
             },
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url']);
