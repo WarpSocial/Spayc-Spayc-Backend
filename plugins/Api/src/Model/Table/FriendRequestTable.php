@@ -117,7 +117,7 @@ class FriendRequestTable extends Table
         if($status == 'Requested') {
             $cond = ['FriendRequest.requested_to'=>$userId];
         } else if($status == 'Blocked') {
-            $cond = ['OR'=>['FriendRequest.requested_by'=>$userId, 'FriendRequest.requested_to'=>$userId]];
+            $cond = ['FriendRequest.blocked_by'=>$userId];
         } else {
             $cond = ['OR'=>['FriendRequest.requested_by'=>$userId, 'FriendRequest.requested_to'=>$userId]];
         }
@@ -140,7 +140,7 @@ class FriendRequestTable extends Table
     public function getFriendCountByUserId($userId = null) {
         $friends = $this->find('all')
             ->select(['FriendRequest.id'])
-            ->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]], ['OR'=>['friend_status NOT IN'=>['Unfriend', 'Anonymous'], 'friend_status IS'=>NULL]]]);
+            ->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]], ['requested_status'=>'Accepted', 'friend_status IS'=>NULL]]);
         return $friends->count();
     }
 }

@@ -680,23 +680,29 @@ class UsersController extends AppController {
         }
         $data = $this->request->getData();
         if(empty($data['id'])) {
-            $this->restException(['status'=>'failed','message'=>__('Id is required fields.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Id is required field.')], 400);
         }
         $data['id'] = ApiHasher::decrypt($data['id']);
-        $friendRequest = TableRegistry::get('Api.FriendRequest');
-        $exists = $friendRequest->exists(['id'=>$data['id']]);
-        if(!$exists) {
-            $this->restException(['status'=>'failed', 'message'=>__('Invalid requested id.')], 400);
-        }
         $friendStatus = array_merge(Configure::read('friend_requested_status'), Configure::read('friend_status'));
         if(empty($data['status']) || !in_array(ucfirst($data['status']), $friendStatus)) {
             $this->restException(['status'=>'failed', 'message'=>__('Status is required fields and status must be in('.  implode(',', $friendStatus).').')], 400);
         }
         $status = ucfirst($data['status']);
+        $friendRequest = TableRegistry::get('Api.FriendRequest');
+        
+        $exist = $friendRequest->exists(['id'=>$data['id']]);
+        if(!$exist) {
+            $this->restException(['status'=>'failed', 'message'=>__('Invalid requested id.')], 400);
+        }
+        $entity = $friendRequest->get($data['id']);
+        if($entity->requested_status!='Accepted' && in_array($status, Configure::read('friend_status'))) {
+            $this->restException(['status'=>'failed', 'message'=>__('Friend requested status should be accepted for '.$status.' status')], 400);
+        }
         if(in_array($status, Configure::read('friend_requested_status'))) {
             $friend['requested_status'] = $status;
         } else if(in_array($status, Configure::read('friend_status'))) {
             $friend['friend_status'] = ($status=='Unblock')?NULL:$status;
+            $friend['blocked_by'] = ($status=='Blocked')?$this->Auth->user('id'):NULL;
         }
         if($status=='Unblock') {
             $friendRequest->deleteAll(['id'=>$data['id']]);
