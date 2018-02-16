@@ -58,11 +58,12 @@ CREATE TABLE friend_request (
     id BIGSERIAL NOT NULL,
     requested_by BIGINT,
     requested_to BIGINT,
+    blocked_by BIGINT DEFAULT NULL,
     requested_status VARCHAR(15)  DEFAULT 'Requested',
     friend_status VARCHAR(15) DEFAULT NULL,
-    matrix_room_id VARCHAR(255) DEFAULT NULL,
+    matrix_room_id VARCHAR(100) DEFAULT NULL,
     created timestamp NOT NULL,
-    modified timestamp ,
+    modified timestamp,
     PRIMARY KEY (id,requested_by,requested_to,created)
 );
 SELECT create_hypertable('friend_request', 'created');

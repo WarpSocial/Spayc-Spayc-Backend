@@ -35,7 +35,6 @@ class SpaycsController extends AppController {
         if (!$this->request->is('post')) {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
         }
-        
         $data = $this->request->getData();
         $data['type'] = !empty($data['type'])?ucfirst($data['type']):'';
         $data['group_type'] = !empty($data['group_type'])?ucfirst($data['group_type']):'';
@@ -77,8 +76,6 @@ class SpaycsController extends AppController {
             }else{
                 $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be saved. Please, try again.')], 400);
             }
-            
-           
         } else {
             $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be saved. Please, try again.')], 400);
         }

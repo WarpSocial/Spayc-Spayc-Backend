@@ -130,7 +130,7 @@ class MatrixComponent extends Component {
      * @return false|$data return data if created or false
      */
     public function createRoom($items=[]){
-        if(empty($items)){
+        if(empty($items)) {
             return false;
         }
         $validInput = [
