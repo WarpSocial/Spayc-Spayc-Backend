@@ -39,7 +39,6 @@ class UsersController extends AppController {
         }
         $this->loadModel('Api.UserImages');
         $data  = $this->request->getData();
-        
         if(!is_array($data)) {
             $this->restException(['status'=>'failed','message'=>'Invalid requested data format.'], 400);
         }
