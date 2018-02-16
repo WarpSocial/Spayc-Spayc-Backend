@@ -39,12 +39,12 @@ class UsersController extends AppController {
         }
         $this->loadModel('Api.UserImages');
         $data  = $this->request->getData();
-        $data['user_id'] = $this->Auth->user('id');
-        if(!is_array($data['images'])) {
+        
+        if(!is_array($data)) {
             $this->restException(['status'=>'failed','message'=>'Invalid requested data format.'], 400);
         }
         $defaultImg  = [];
-        foreach($data['images'] as $key=>$img) {
+        foreach($data as $key=>$img) {
             $exists = $this->UserImages->findByUserIdAndOrderIndex($this->Auth->user('id'), $key);
             $imgData = ['user_id'=>$this->Auth->user('id'), 'image_url'=>$img, 'order_index'=>$key];
             if($exists->count()) {
