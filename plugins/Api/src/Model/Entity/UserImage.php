@@ -31,7 +31,7 @@ class UserImage extends Entity
         'id' => false
     ];
     
-    protected function _getId($id) {      
+    protected function _getId($id) {
         return ApiHasher::encrypt($id);
     }
 }

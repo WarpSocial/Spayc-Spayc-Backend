@@ -80,12 +80,6 @@ class SpaycsTable extends Table {
                 ->requirePresence('name','create', __('Name key is missing.'))
                 ->maxLength('name', 255,'Name text is too long.')
                 ->notEmpty('name',__('Spayc name is required.'));
-        
-        $validator
-                ->requirePresence('matrix_room_id', 'create', __('Matrix room id key is missing.'))
-                ->maxLength('matrix_room_id', 255, 'Matrix room id text is too long.')
-                ->notEmpty('matrix_room_id', __('Matrix room id is required.'));
-                
 
         $validator
                 ->maxLength('location', 255,__('Location test is too long.'))

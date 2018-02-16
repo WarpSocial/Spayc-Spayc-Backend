@@ -9,6 +9,8 @@ use Cake\Log\Log;
 use Api\Utils\Utils;
 use Cake\Core\Configure;
 use Api\Auth\ApiHasher;
+use Cake\Event\Event;
+use Cake\Event\EventManager;
 
 /**
  * Spaycs Controller
@@ -19,6 +21,11 @@ use Api\Auth\ApiHasher;
  */
 class SpaycsController extends AppController {
     
+    public function beforeFilter(\Cake\Event\Event $event) {
+        parent::beforeFilter($event);
+        $this->Auth->allow('matrixApplicationService');
+    }
+    
     /**
      * Add method
      *
@@ -28,6 +35,7 @@ class SpaycsController extends AppController {
         if (!$this->request->is('post')) {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
         }
+        
         $data = $this->request->getData();
         $data['type'] = !empty($data['type'])?ucfirst($data['type']):'';
         $data['group_type'] = !empty($data['group_type'])?ucfirst($data['group_type']):'';
@@ -37,22 +45,40 @@ class SpaycsController extends AppController {
         if($items->errors()) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
         }
-        /*$this->loadComponent('Api.Matrix');
+        $this->loadComponent('Api.Matrix');
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
+        
+        //$data['image_url']='https://spayc-qa.s3.amazonaws.com/room/screenshot_from_2017_10_09_16_53_55_20180214070522.png';
+        //$matrix = $this->Matrix->uploadMediaImage($data);die();
+        
         $matrix = $this->Matrix->createRoom($data);
         if(!empty($matrix['error'])) {
             $this->restException(['status' => "failed", 'message' =>__($matrix['error'])], 400);
         }
         $items->set('matrix_room_id',$matrix['room_id']);
-        $items->set('matrix_room_alias',$matrix['room_alias']);*/
+        $items->set('matrix_room_alias',$matrix['room_alias']);
         $items->set('user_id', $this->Auth->user('id'));
         if (!$items->errors()) {
-            $this->Spaycs->save($items);
-            if(!empty($items['description'])) {
-                TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
+            if($this->Spaycs->save($items)){
+                 if(!empty($items['description'])) {
+                    TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
+                }
+                $this->response->statusCode(201);
+                $response = ['status'=>'success','message'=>__('Your spayc, '.ucfirst($data['name']).', has been created.'),'data'=>$items];
+                /*Event to bind to update the set upload room image */
+                $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
+                    'options' => [
+                        'matrix_token'=>$data['matrix_token'],
+                        'image'=> $items->image,
+                        'matrix_room_id'=> $items->matrix_room_id,
+                        ]
+                ]);
+                EventManager::instance()->dispatch($event);
+            }else{
+                $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be saved. Please, try again.')], 400);
             }
-            $this->response->statusCode(201);
-            $response = ['status'=>'success','message'=>__('Your spayc, '.ucfirst($data['name']).', has been created.'),'data'=>$items];
+            
+           
         } else {
             $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be saved. Please, try again.')], 400);
         }
@@ -77,7 +103,7 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Longitude is not valid.')], 400);
         }
         $page = (!empty($this->request->query('page')) and is_numeric($this->request->query('page')))?$this->request->query('page'):1;
-        $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Approved');
+        $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Accepted');
         //To search by kilometers instead of miles, replace 3959 with 6371.
         $distanceField = '(3959 * acos (cos ( radians(:latitude) )
             * cos( radians( Spaycs.latitude ) )
@@ -104,7 +130,6 @@ class SpaycsController extends AppController {
                 return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
             }
         ]);
-
         $spaycs->order(['distance'=>'ASC'])->limit($limit);
         if($this->request->query('start_date')) {
             $date = new \Cake\I18n\Time($this->request->query('start_date'));
@@ -193,13 +218,17 @@ class SpaycsController extends AppController {
         if(!$this->request->is(['get'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
-        $id = ApiHasher::decrypt($id);
         if(empty($id)) {
             $this->restException(['status'=>'failed', 'message'=>__('Spayc id is required fields.')], 400);
         }
+        $id = ApiHasher::decrypt($id);
+        $exists = $this->Spaycs->exists(['id'=>$id]);
+        if(!$exists) {
+            $this->restException(['status'=>'failed', 'message'=>__('Invalid spayc id.')], 400);
+        }
         $userId = $this->Auth->user('id');
-        $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Approved');
-        $spayc = $this->Spaycs->find('all', ['fields' => ['Spaycs.id', 'Spaycs.name', 'address'=>'Spaycs.location', 'Spaycs.start_date', 'Spaycs.end_date', 'Spaycs.image']])->where(['id'=>$id, 'status'=>'Active']);
+        $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Accepted');
+        $spayc = $this->Spaycs->find('all', ['fields' => ['Spaycs.id', 'Spaycs.name', 'address'=>'Spaycs.location', 'Spaycs.start_date', 'Spaycs.end_date', 'Spaycs.image', 'Spaycs.matrix_room_id', 'Spaycs.group_type', 'Spaycs.type']])->where(['id'=>$id, 'status'=>'Active']);
         $spayc->contain([
             'JoinedSpayc' => function($q) {
                 return  $q->select(['JoinedSpayc.spayc_id', 'joined_users' => $q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.spayc_id']);
@@ -216,13 +245,20 @@ class SpaycsController extends AppController {
                 if(!empty($row['joined_spayc'])) {
                     $spaycId = ApiHasher::decrypt($row->id);
                     $row['joined_spayc'][0]['joined_friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
+                    $row['total_comments'] = !empty($row['comments'][0]['total_comment'])?$row['comments'][0]['total_comment']:0;
+                    $row['total_subscribed_users'] = !empty($row['subscribed_users'][0]['subscribed_users'])?$row['subscribed_users'][0]['subscribed_users']:0;
+                    $row['total_joined_users'] = !empty($row['joined_spayc'][0]['joined_users'])?$row['joined_spayc'][0]['joined_users']:0;
+                    $row['total_joined_friends'] = !empty($row['joined_spayc'][0]['joined_friends'])?$row['joined_spayc'][0]['joined_friends']:0;
+                    unset($row['subscribed_users']);
+                    unset($row['joined_spayc']);
+                    unset($row['comments']);
                 }
                 return $row;
             });
         });
         $data = [];
         if($spayc->count()) {
-            $data = $spayc;
+            $data = $spayc->first();
         } else {
             $this->response->statusCode(204);
         }
@@ -271,6 +307,12 @@ class SpaycsController extends AppController {
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+    
+    public function matrixApplicationService($id = null){
+        $this->autoRender = false;
+       // pr($this->request);
+       Log::info(json_encode($this->request->data(),JSON_PRETTY_PRINT));
     }
 
 }

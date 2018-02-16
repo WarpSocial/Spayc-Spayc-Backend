@@ -5,6 +5,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Core\Configure;
 
 /**
  * FriendRequest Model
@@ -111,18 +112,54 @@ class FriendRequestTable extends Table
         return $rules;
     }
     
-    public function getFriendIdsByUserId($userId = null, $status = 'Approved') {
-        $friends = $this->find('all', ['fields'=>['FriendRequest.requested_by', 'FriendRequest.requested_to'], 'conditions'=>['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId], 'requested_status'=>$status]]);
+    public function getFriendIdsByUserId($userId = null, $status = 'Accepted') {
+        $status = ucfirst($status);
+        if($status == 'Requested') {
+            $cond = ['FriendRequest.requested_to'=>$userId];
+        } else if($status == 'Blocked') {
+            $cond = ['FriendRequest.blocked_by'=>$userId];
+        } else {
+            $cond = ['OR'=>['FriendRequest.requested_by'=>$userId, 'FriendRequest.requested_to'=>$userId]];
+        }
+        if(in_array($status, Configure::read('friend_requested_status'))) {
+            $cond['requested_status'] = $status;
+            $cond['friend_status IS'] = NULL;
+        }
+        if(in_array($status, Configure::read('friend_status'))) {
+            $cond['friend_status'] = $status;
+        }
+        $friends = $this->find('all', ['fields'=>['FriendRequest.requested_by', 'FriendRequest.requested_to'], 'conditions'=>[$cond]]);
         $friend = [0];
         if($friends->count()) {
             $friendIds = $friends->toArray();
-            $friend = array_unique(array_merge(array_column($friendIds,'requested_by'), array_column($friendIds,'requested_to')));
+            $friend = array_unique(array_merge(array_column($friendIds,'requested_by'), array_column($friendIds,'requested_to'))); 
+        }
+        return $friend;
+    }
+    
+    public function getFriendIdsByStatus($userId = null, $status = 'Blocked') {
+        $status = ucfirst($status);
+        $cond = ['OR'=>['FriendRequest.requested_by'=>$userId, 'FriendRequest.requested_to'=>$userId]];
+        if(in_array($status, Configure::read('friend_requested_status'))) {
+            $cond['requested_status'] = $status;
+            $cond['friend_status IS'] = NULL;
+        }
+        if(in_array($status, Configure::read('friend_status'))) {
+            $cond['friend_status'] = $status;
+        }
+        $friends = $this->find('all', ['fields'=>['FriendRequest.requested_by', 'FriendRequest.requested_to'], 'conditions'=>[$cond]]);
+        $friend = [];
+        if($friends->count()) {
+            $friendIds = $friends->toArray();
+            $friend = array_unique(array_merge(array_column($friendIds,'requested_by'), array_column($friendIds,'requested_to'))); 
         }
         return $friend;
     }
     
     public function getFriendCountByUserId($userId = null) {
-        $friends = $this->find('all', ['fields'=>['FriendRequest.id'], 'conditions'=>['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
+        $friends = $this->find('all')
+            ->select(['FriendRequest.id'])
+            ->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]], ['requested_status'=>'Accepted', 'friend_status IS'=>NULL]]);
         return $friends->count();
     }
 }

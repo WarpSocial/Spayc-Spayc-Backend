@@ -6,17 +6,22 @@ CREATE TABLE users (
     password VARCHAR(255) NULL,
     gender VARCHAR(50) NULL,
     dob date NULL,
+    country_code VARCHAR(10) NULL,
     phone VARCHAR(20) NULL,
     status row_status DEFAULT 'Pending'::row_status NOT NULL,
     website_url VARCHAR(150) NULL,
     address text NULL,
     bio_data text NULL,
     fb_id VARCHAR(200),
+    fb_access_key  VARCHAR(1000),
     longitude double precision,
     latitude double precision,
     timezone VARCHAR(100),
     matrix_user_id VARCHAR(100),
     matrix_access_token VARCHAR(1000),
+    token_verification VARCHAR(255) NULL,
+    forgot_password_token VARCHAR(255) NULL,
+    forgot_password_timestamp timestamp NULL,
     created timestamp NOT NULL,
     modified timestamp,
     primary key (id,created),
@@ -55,9 +60,10 @@ CREATE TABLE friend_request (
     requested_to BIGINT,
     requested_status VARCHAR(15)  DEFAULT 'Requested',
     friend_status VARCHAR(15) DEFAULT NULL,
+    matrix_room_id VARCHAR(255) DEFAULT NULL,
     created timestamp NOT NULL,
     modified timestamp ,
-    PRIMARY KEY (id,spayc_id,requested_by,requested_to,created)
+    PRIMARY KEY (id,requested_by,requested_to,created)
 );
 SELECT create_hypertable('friend_request', 'created');
 CREATE TABLE joined_spayc (
@@ -105,12 +111,13 @@ CREATE TABLE user_images (
     id BIGSERIAL NOT NULL,
     user_id BIGINT NOT NULL,
     image_url VARCHAR(255),
+    is_profile VARCHAR(10) DEFAULT 'No',
+    order_index SMALLINT NULL,
     created timestamp NOT NULL,
     modified timestamp,
     PRIMARY KEY (id,user_id,created)
 );
 SELECT create_hypertable('user_images', 'created');
-
 CREATE TABLE hashtags (
     id BIGSERIAL NOT NULL,
     name VARCHAR(255) NOT NULL,
@@ -119,7 +126,6 @@ CREATE TABLE hashtags (
     PRIMARY KEY (id,created)
 );
 SELECT create_hypertable('hashtags', 'created');
-
 CREATE TABLE spayc_hashtags (
     id BIGSERIAL NOT NULL,
     spayc_id BIGINT NOT NULL,
@@ -127,6 +133,6 @@ CREATE TABLE spayc_hashtags (
     created timestamp NOT NULL,
     modified timestamp,
     PRIMARY KEY (id,created)
-)
+);
 SELECT create_hypertable('spayc_hashtags', 'created');
 

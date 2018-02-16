@@ -7,9 +7,11 @@
 *
 * @apiDescription User singup by facebook.
 * 
-* @apiParam {String} fb_id              * User facebook unique id required in body(Required).
+* @apiParam {String} fb_id              * Facebook user unique id required in body(Required).
+* @apiParam {String} fb_access_key      * Facebook user access key required in body(Required).
 * @apiParam {String} username           * Username optional in body(Required).
 * @apiParam {String} email              * User email required in body(Required).
+* @apiParam {String} image_url          * User image url optional in body(Optional).
 * @apiParam {String} dob                * Date of birth optional in body MM-DD-YYYY (Optional).
 * @apiParam {Number} phone              * Phone no of user and accept upto 16 digits (Optional).
 * @apiParam {String} gender             * Gender of user like any one (Male, Femal, Other) (Required).
@@ -27,8 +29,10 @@
 *
 *{
 *    "fb_id":"xxxxxxxxxxxx",
+*    "fb_access_key":"xxxxxxxxxxxxxxxxxxxx",
 *    "username":"spayc",
 *    "email":"user@domainname.com",
+*    "image_url":"https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2018_02_02_12_10_56_20180206133933.png",
 *    "dob":"12-11-2001",
 *    "gender":"Male|Female|Other",
 *    "phone": "XXXXXXXXXX",

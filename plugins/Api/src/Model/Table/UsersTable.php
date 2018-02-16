@@ -133,6 +133,17 @@ class UsersTable extends Table {
                 ->notEmpty('email',__('Email is required field.'))
                 ->email('email', false, __('Invalid email address.'))                
                 ->add('email', 'unique', ['rule' => 'validateUnique','message'=>__('Email already exist.'), 'provider' => 'table']) ;
+        
+        $validator
+                ->notEmpty('country_code',__('Country code is required field.'),function($context){
+                     return !empty($context['data']['phone']);
+                })
+                ->add('country_code', 'countrycode', [
+                    'rule' => function($value,$context){
+                         return (bool)(preg_match('/^([\+\s\(\)\-]*\d[\+\s\(\)\-]*){1,5}$/',$value));
+                    },
+                    'message'=>__('Country Code is not valid.')
+                    ]);
                 
         
         $validator
@@ -188,6 +199,9 @@ class UsersTable extends Table {
         $validator
             ->requirePresence('fb_id', true, __('Facebook id is required field.'))
             ->notEmpty('fb_id',__('Facebook id is required field.'));
+        $validator
+            ->requirePresence('fb_access_key', true, __('Facebook access key is required field.'))
+            ->notEmpty('fb_access_key',__('Facebook access key is required field.'));
         
         $validator
                 ->requirePresence('username', true, __('Username is required field.'))
@@ -318,6 +332,57 @@ class UsersTable extends Table {
         
         return $validator;
     }
+    
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationChangePassword(Validator $validator, $userId = null) {
+        
+        $validator
+                ->requirePresence('old_password', 'create',__('Old password is required field.'))
+                ->notEmpty('old_password',__('Old password is required field.'))
+                ->add('old_password','custom', [
+                    'rule'=>function($value, $context) use($userId) {
+                        $password = $this->get($userId, ['fields'=>'password']);
+                        if (!ApiHasher::check($value, $password['password'])) {
+                            return false;
+                        }
+                        return true;
+                    },
+                    'message'=>__('Old passwords don\'t match, try again please!'),
+                ]);
+        
+        $validator
+                ->requirePresence('new_password', 'create',__('New password is required field.'))
+                ->notEmpty('new_password',__('New password is required field.'))
+                ->add("new_password",'custom',[
+                    'rule'=>function($value,$context) {
+                        if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,30}$/', $value)){
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    },
+                    'message'=>__('New password must contain 8-30 character length, at least one letter and one number.'),
+                ])
+                ->add('new_password', 'custom', [
+                    'rule' => function($value, $context) {
+                        if ($value === $context['data']['old_password']) {
+                            return false;
+                        }
+                        return true;
+                    },
+                    'message' => 'New password and old password should not be same, try again please!']);
+        $validator
+                ->requirePresence('confirm_password', 'create', __('Confirm password is required field.'))
+                ->notEmpty('confirm_password', __('Confirm password is required field.'))
+                ->sameAs('confirm_password', 'new_password',__('New password and confirm password should be matched, try again please!'));
+        
+        return $validator;
+    }
 
     /**
      * Returns a rules checker object that will be used for validating
@@ -366,13 +431,20 @@ class UsersTable extends Table {
     }
     
     public function searchUsers($userId = null, $request = []) {
-        $users = $this->find('all', ['fields'=>['Users.id', 'name'=>'Users.username','Users.email','Users.gender','Users.phone','Users.dob','Users.status','Users.website_url','Users.address','Users.bio_data', 'Users.matrix_user_id', 'Users.matrix_access_token', 'Users.created','Users.modified']])->where(['Users.status'=>'Active']);
+        $blockedFriendIds = TableRegistry::get('Api.FriendRequest')->getFriendIdsByStatus($userId, 'Blocked');
+        $cond['Users.status'] = 'Active';
+        if(!empty($blockedFriendIds)) {
+            $cond['Users.id NOT IN'] = $blockedFriendIds;
+        } else {
+            $cond['Users.id !='] = $userId;
+        }
+        $users = $this->find('all', ['fields'=>['Users.id', 'name'=>'Users.username','Users.email','Users.gender','Users.phone','Users.dob','Users.status','Users.website_url','Users.address','Users.bio_data', 'Users.matrix_user_id', 'Users.matrix_access_token', 'Users.created','Users.modified']])->where($cond);
         $users->contain([
             'Requestedby' => function($q) use($userId) {
-                return $q->select(['Requestedby.id', 'Requestedby.requested_by', 'Requestedby.requested_to', 'Requestedby.requested_status', 'Requestedby.friend_status'])->Where(['OR'=>['Requestedby.requested_by'=>$userId, 'Requestedby.requested_to'=>$userId]]);
+                return $q->select(['Requestedby.id', 'Requestedby.requested_by', 'Requestedby.requested_to', 'Requestedby.requested_status', 'Requestedby.friend_status', 'Requestedby.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
             },
             'Requestedto' => function($q) use($userId) {
-                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.friend_status'])->Where(['OR'=>['Requestedto.requested_by'=>$userId, 'Requestedto.requested_to'=>$userId]]);
+                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.friend_status', 'Requestedto.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
             },
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url']);

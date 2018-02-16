@@ -96,6 +96,9 @@ class HashtagsTable extends Table
                     $hastag[$key]['name'] = $hash;
                 }
             }
+            if(empty($hastag)){
+                return;
+            }
             $entities = $this->newEntities($hastag);
             $this->saveMany($entities);
             if(!empty($entities)) {

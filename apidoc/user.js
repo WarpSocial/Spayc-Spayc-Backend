@@ -35,6 +35,7 @@
  * @apiParam {String} username     Username (Required).
  * @apiParam {Date}   dob          Date of birth must in this format MM-DD-YYYY (Optional).
  * @apiParam {String} gender       Gender of user like any one (Male, Femal, Other) (Required).
+ * @apiParam {String} country_code Country code of user phone number(Optional).
  * @apiParam {Number} phone        Phone no of user and accept upto 16 digits (Optional).
  * @apiParam {String} address      User address (Optional).
  * @apiParam {String} website_url  Website url (Optional).
@@ -46,6 +47,7 @@
  *          "username":"spayc",
  *          "dob": "12-11-2001",
  *          "gender": "Male|Female|Other",
+ *          "country_code":"+91",
  *          "phone": "XXXXXXXXXX",
  *          "address": "spayc address",
  *          "website_url":"www.spayc.com",
@@ -67,6 +69,7 @@
  *          "username":"spayc",
  *          "dob": "12-11-2001",
  *          "gender": "Male|Female|Other",
+ *          "country_code":"+91",
  *          "phone": "XXXXXXXXXX",
  *          "address": "spayc address",
  *          "website_url":"www.spayc.com",
@@ -94,6 +97,7 @@ function putUser() { return; }
  * @apiParam {String} confirm_password secret password (Required).
  * @apiParam {Date}   dob Date of birth must in in format MM-DD-YYYY (Optional).
  * @apiParam {String} gender Gender of user like any one (Male, Femal, Other) (Required).
+ * @apiParam {String} country_code Country code of user phone number(Optional).
  * @apiParam {Number} phone Phone no of user and accept only 10 digits only (Optional).
  * @apiParam {Number} latitude of user address (Required).
  * @apiParam {Number} longitude of user address (Required).
@@ -106,7 +110,8 @@ function putUser() { return; }
  *          "password": "XXXXXXXXX",
  *          "confirm_password": "XXXXXXXXX",
  *          "gender": "Male|Female|Other",
- *          "phone": "+91 (XXX) (XXXXXXX)",
+ *          "country_code":"+91",
+ *          "phone": "(XXX) (XXXXXXX)",
  *          "dob": "11-12-2000",
  *          "latitude": "XX.XXXXXX",
  *          "longitude": "XX.XXXXXX"
@@ -126,7 +131,8 @@ function putUser() { return; }
  *          "username": "spaycdev",
  *          "email": "spaycdev@spayc.com",
  *          "gender": "male|female|other",
- *          "phone": "+91 (XXX) (XXXXXXX)",
+ *          "country_code":"+91",
+ *          "phone": "(XXX) (XXXXXXX)",
  *          "dob": "11-12-2000",
  *          "latitude": "XX.XXXXXX",
  *          "longitude": "XX.XXXXXX"
@@ -172,7 +178,8 @@ function postUser() { return; }
                     "name": "spayc1",
                     "email": "spayc1@domain.com",
                     "gender": "Male",
-                    "phone": "+91 (XXX) (XXXXXXX)",
+                    "country_code":"+91",
+                    "phone": "(XXX) (XXXXXXX)",
                     "dob": "12-11-2000",
                     "status": "Active",
                     "website_url": "www.spayc.com",
@@ -204,7 +211,8 @@ function postUser() { return; }
                     "name": "spayc2",
                     "email": "spayc2@domain.com",
                     "gender": "Male",
-                    "phone": "+91 (XXX) (XXXXXXX)",
+                    "country_code":"+91",
+                    "phone": "(XXX) (XXXXXXX)",
                     "dob": "11-12-2000",
                     "status": "Active",
                     "website_url": "www.spayc.com",
@@ -228,6 +236,7 @@ function postUser() { return; }
                         "requested_to": 17,
                         "requested_status": "Accepted",
                         "friend_status": "Unfriend",
+                        "matrix_room_id": null,
                         "total_friends": 7
                     }
                 }
@@ -242,7 +251,6 @@ function postUser() { return; }
                     "user_id": 10,
                     "name": "spaycdev3",
                     "address": "Your address",
-                    "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
                     "start_date": "2019-01-11T01:02:20+00:00",
                     "end_date": "2019-01-12T01:02:20+00:00",
                     "image": "",
@@ -260,7 +268,6 @@ function postUser() { return; }
                     "user_id": 10,
                     "name": "spaycdev4",
                     "address": "Your address",
-                    "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
                     "start_date": "2019-01-11T01:02:20+00:00",
                     "end_date": "2019-01-12T01:02:20+00:00",
                     "image": "",
@@ -329,10 +336,12 @@ function getView() { return; }
     "status": "success",
     "message": "Login done successfully.",
     "data": {
+        "id": "NDhxaUsvbWtGUDN3MXJ4YXJmTC9pdz09",
         "username": "spayc",
         "email": "spayc@domain.com",
         "gender": "Male",
         "dob": "2000-02-02",
+        "country_code":"",
         "phone": "",
         "website_url": null,
         "address": null,
@@ -340,7 +349,23 @@ function getView() { return; }
         "device_id": "VOYANVLOXG",
         "matrix_user_id": "@spayc:127.0.0.1",
         "token": "7f39fa7c6642666c6802f0d4e2fddf6a695fc12458733764c64ad338d6d1ca5f",
-        "matrix_token": "MDAxN2xvY2F0aW9uIDEyNy4wLjAuMQowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMmNjaWQgdXNlcl9pZCA9IEBza3VtYXIyX2FhX2RkczoxMjcuMC4wLjEKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSA4Ok00T3VzN1h5cnlKUEBxCjAwMmZzaWduYXR1cmUg5JCNFFzLQ4N-K6MnNWqFfqQdueyPiR74U_r6qLUzrqAK"
+        "matrix_token": "MDAxN2xvY2F0aW9uIDEyNy4wLjAuMQowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMmNjaWQgdXNlcl9pZCA9IEBza3VtYXIyX2FhX2RkczoxMjcuMC4wLjEKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSA4Ok00T3VzN1h5cnlKUEBxCjAwMmZzaWduYXR1cmUg5JCNFFzLQ4N-K6MnNWqFfqQdueyPiR74U_r6qLUzrqAK",
+        "user_images": [
+            {
+                "id": "MVpZL0tlbEp1N0JiT2JnLzhkLzB5dz09",
+                "user_id": 17,
+                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2018_02_02_12_10_56_20180206133933.png",
+                "is_profile": "No",
+                "order_index": null
+            },
+            {
+                "id": "eHFzRWc1VFljdzlzdnVqSkpZL3ZYZz09",
+                "user_id": 17,
+                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2017_08_14_18_14_10_20180206133936.png",
+                "is_profile": "No",
+                "order_index": null
+            }
+        ]
     }
 }
  
@@ -397,7 +422,7 @@ function postFriendRequest() { return; }
  
 * @apiParam  {Number}   page            Page number in query string (Optional).
 * @apiParam  {Number}   limit           Records limit in query string (Optional).
-* @apiParam  {String}   friend_status   Status in query string must be any one from the following(Requested, Accepted, 'Declined').
+* @apiParam  {String}   friend_status   Status in query string must be any one from the following(Requested, Accepted, 'Declined',Blocked, Unfriend).
  
  
   @apiSuccess {String} status success.
@@ -408,31 +433,41 @@ function postFriendRequest() { return; }
 {
     "status": "success",
     "message": "Friend lists.",
-    "data": [
-        {
-            "id": "NDIwMjYwMjAwLjU2",
-            "name": "spayc",
-            "matrix_user_id": "@test2:35.168.119.247",
-            "matrix_access_token": "MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyOGNpZCB1c2VyX2lkID0gQHRlc3QyOjM1LjE2OC4xMTkuMjQ3CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gMVJKXjJSTEs3Klc9LmhyQAowMDJmc2lnbmF0dXJlIMyd1A3UtgJZEWcmvehB84AboRIZrFb46AqHTrn4Y2reCg",
-            "user_images": [
-                {
-                    "user_id": 8,
-                    "image_url": "image1.png"
+    "data": {
+        "count": 4,
+        "records": [
+            {
+                "id": "VkR0a3p4anQ2SUxScm85RGhTZTFpZz09",
+                "username": "test",
+                "matrix_user_id": null,
+                "matrix_access_token": null,
+                "friend": {
+                    "id": "bmRkeTJVYjhwTlQzKzdpeWJwWEMvZz09",
+                    "requested_by": 10,
+                    "requested_to": 7,
+                    "requested_status": "Requested",
+                    "friend_status": null,
+                    "matrix_room_id": "room:@848843444"
                 },
-                {
-                    "user_id": 8,
-                    "image_url": "image2.jpg"
-                }
-            ],
-            "friend": {
-                "id": "NDIsdfaYwMjAwLjU2",
-                "requested_by": 7,
-                "requested_to": 8,
-                "requested_status": "Accepted",
-                "friend_status": null
+                "image_url": ""
+            },
+            {
+                "id": "OWxtVWpXalVkaVdWRHVTWUR5amxuZz09",
+                "name": "test2",
+                "matrix_user_id": null,
+                "matrix_access_token": null,
+                "friend": {
+                    "id": "NlJpUEx0M016dXBGTjhZdWpWeThBUT09",
+                    "requested_by": 10,
+                    "requested_to": 8,
+                    "requested_status": "Requested",
+                    "friend_status": null,
+                    "matrix_room_id": "room:@84854843"
+                },
+                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2017_08_14_18_14_10_20180206133936.png"
             }
-        }
-    ]
+        ]
+    }
 }
  
 
@@ -452,7 +487,7 @@ function getFriends() { return; }
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  
 * @apiParam  {String}   id       Friend id required field in body.
-* @apiParam  {String}   status   Status is required field and status must be in(Accepted,Declined,Blocked,Unfriend).
+* @apiParam  {String}   status   Status is required field and status must be in(Accepted,Declined,Blocked, Unblock, Unfriend).
    @apiExample Example usage:
  
     {
@@ -500,3 +535,291 @@ function setFriendStatus() { return; }
   @apiUse UserErrorResponse
 */
 function getLogout() { return; }
+
+/**
+ * @api {post} /reverification.json Send Reverification Link
+ * @apiVersion 0.1.0
+ * @apiName Reverification
+ * @apiGroup User
+ * @apiPermission none
+ *
+ * @apiDescription Send reverification link.
+ *
+ * @apiParam {String} email User registered email required field.
+ *
+ * @apiExample Example usage:
+ *
+ *       {
+ *          "email": "spaycdev@spayc.com"
+ *       }
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Re-verification email sent successfully.
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Re-verification email sent successfully."
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function postReverification() { return; }
+
+/**
+ * @api {post} /forgot-password.json Forgot Password
+ * @apiVersion 0.1.0
+ * @apiName forgotPassword
+ * @apiGroup User
+ * @apiPermission none
+ *
+ * @apiDescription Reset password link to be send at requested email.
+ *
+ * @apiParam {String} email User registered email required field.
+ *
+ * @apiExample Example usage:
+ *
+ *       {
+ *          "email": "spaycdev@spayc.com"
+ *       }
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Reset password link send to your email address.
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Reset password link send to your email address."
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function postForgotPassword() { return; }
+
+/**
+ @api {get} /user-profile/:userId.json User Profile
+  @apiVersion 0.1.0
+  @apiName userProfile
+  @apiGroup User
+  @apiPermission Private User
+ 
+  @apiDescription Get user profile.
+  
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * 
+  * @apiParam {String} userId User id required field in query string.
+ 
+  @apiSuccess {String} status success.
+  @apiSuccess {String} message User profile.
+  @apiSuccess {Object} data Null.
+  @apiSuccessExample {json} Success-Response: 
+       HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "User profile.",
+    "data": {
+        "id": "anM1a0FkWGlWUXBwR1ZDUU9iR09XQT09",
+        "username": "test2",
+        "email": "test2@gmail.com",
+        "gender": "Male",
+        "dob": "01-25-1996",
+        "country_code":"+91",
+        "phone": "(789)877878",
+        "website_url": null,
+        "address": null,
+        "bio_data": null,
+        "longitude": 77.391026,
+        "latitude": 28.535516,
+        "matrix_user_id": "@test2:35.168.119.247",
+        "user_images": [
+            {
+                "user_id": 19,
+                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2017_12_26_15_18_47_20180206133935.png",
+                "is_profile": "No",
+                "order_index": 1
+            }
+        ],
+        "friend": {
+            "id": "MzNNbkN6V05zQ2c1N0ViMVJJeEVqZz09",
+            "requested_by": 10,
+            "requested_to": 19,
+            "requested_status": "Requested",
+            "friend_status": null,
+            "total_friends": 2
+        },
+        "created_spaycs": 3,
+        "joined_spaycs": 1
+    }
+}
+
+  @apiUse UserErrorResponse
+*/
+function getUserProfile() { return; }
+
+/**
+ * @api {post} /change-password.json Change Password
+ * @apiVersion 0.1.0
+ * @apiName changePassword
+ * @apiGroup User
+ * @apiPermission none
+ *
+ * @apiDescription Change password request.
+ *
+ * @apiParam {String} old_password      User old password (Required).
+ * @apiParam {String} new_password      User new password (Required).
+ * @apiParam {String} confirm_password  Confirm new password (Required).
+ *
+ * @apiExample Example usage:
+ *
+ *       {
+ *          "old_password": "password@123"
+ *          "new_password": "newPassword@123"
+ *          "confirm_password": "newPassword@123"
+ *       }
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Password changed successfully.
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Password changed successfully."
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function postChangePassword() { return; }
+
+/**
+ * @api {post} /chat-request.json Chat request
+ * @apiVersion 0.1.0
+ * @apiName chatRequest
+ * @apiGroup User
+ * @apiPermission none
+ *
+ * @apiDescription One ot One chat request.
+ *
+ * @apiParam {String} friend_id         User id to whom you send request(Required).
+ * @apiParam {String} matrix_room_id    Matrix room id from matrix (Required).
+ *
+ * @apiExample Example usage:
+ *
+ *       {
+ *          "friend_id": "anM1a0FkWGlWUXBwR1ZDUU9iR09XQT09"
+ *          "matrix_room_id": "room:@000123"
+ *       }
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Friend request sent successfully.
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 201 OK
+{
+    "status": "success",
+    "message": "Friend request sent successfully."
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function postChatRequest() { return; }
+
+/**
+ * @api {post} /avatars.json Upload Profile Images
+ * @apiVersion 0.1.0
+ * @apiName imageUpload
+ * @apiGroup User
+ * @apiPermission none
+ *
+ * @apiDescription Upload up to 5 image for profile.
+ *
+ * @apiParam {String} images      Images contain up to 5 image object required(index key should be order_index of image if already saved).
+ *
+ * @apiExample Example usage:
+ *
+{
+    "images":{
+        "1":{
+            "tmp_name":"\/tmp\/phpj212j5",
+            "error":0,
+            "name":"Screenshot from 2017-12-26 15:18:47.png",
+            "type":"image\/png",
+            "size":154882
+        },
+        "2":{
+            "tmp_name":"\/tmp\/php0yUWwr",
+            "error":0,
+            "name":"Screenshot from 2017-08-14 18:14:15.png",
+            "type":"image\/png",
+            "size":590333
+        },
+        "3":{
+            "tmp_name":"\/tmp\/phpluwiKN",
+            "error":0,
+            "name":"Screenshot from 2017-04-10 17:04:21.png",
+            "type":"image\/png",
+            "size":172875
+        },
+        "4":{
+            "tmp_name":"\/tmp\/phpiTiNX9",
+            "error":0,
+            "name":"Screenshot from 2016-07-21 17:30:37.png",
+            "type":"image\/png",
+            "size":212200
+        },
+        "5":{
+            "tmp_name":"\/tmp\/phpv0ssbw",
+            "error":0,
+            "name":"Screenshot from 2016-06-15 18:56:02.png",
+            "type":"image\/png",
+            "size":211765
+        }
+    }
+}
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Profile image uploaded successfully.
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Profile image uploaded successfully."
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function postProfileImage() { return; }
+
+/**
+ * @api {put} /set-profile-image.json Set Profile Images
+ * @apiVersion 0.1.0
+ * @apiName setProfileImage
+ * @apiGroup User
+ * @apiPermission none
+ *
+ * @apiDescription Set image as default profile pic.
+ *
+ * @apiParam {String} id      Image id is required field in body.
+ *
+ * @apiExample Example usage:
+ *
+{
+    "id":"42"
+}
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Profile image uploaded successfully.
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Profile image set as default."
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function putSetProfileImage() { return; }
