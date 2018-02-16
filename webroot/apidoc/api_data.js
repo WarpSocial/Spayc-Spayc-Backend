@@ -104,6 +104,13 @@ define({ "api": [
             "optional": false,
             "field": "latitude",
             "description": "<p>Latitude from google map (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "invite",
+            "description": "<p>Matrix user id is optional in query string(Optional).</p>"
           }
         ]
       }
@@ -111,7 +118,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "{\n    \"name\": \"spaycdev\",\n    \"location\": \"Community addrss\",\n    \"type\": \"Event|Community\",\n    \"group_type\": \"Public|Private\",\n    \"start_date\": \"2019-01-11 01:02:20\",\n    \"end_date\": \"2019-01-12 01:02:20\",\n    \"passcode\": \"s5d4f87sdf4545\",\n    \"description\":\"spayc creating\",\n    \"image\":\"file.png\",\n    \"longitude\":\"XX.00.XX\",\n    \"latitude\":\"XX.00.XX\"\n}",
+        "content": "{\n    \"name\": \"spaycdev\",\n    \"location\": \"Community addrss\",\n    \"type\": \"Event|Community\",\n    \"group_type\": \"Public|Private\",\n    \"start_date\": \"2019-01-11 01:02:20\",\n    \"end_date\": \"2019-01-12 01:02:20\",\n    \"passcode\": \"s5d4f87sdf4545\",\n    \"description\":\"spayc creating\",\n    \"image\":\"file.png\",\n    \"longitude\":\"XX.00.XX\",\n    \"latitude\":\"XX.00.XX\",\n    \"invite\":\"@test2:35.168.119.247, @test3:35.168.119.247\"\n}",
         "type": "json"
       }
     ],
@@ -144,7 +151,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "    HTTP/1.1 201 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Your spayc, spaycdev, has been created.\",\n    \"data\": {\n        \"name\": \"spaycdev\",\n        \"location\": \"Community addrss\",\n        \"type\": \"Community\",\n        \"group_type\": \"Public\",\n        \"start_date\": \"2018-01-11T11:16:01+00:00\",\n        \"end_date\": \"2018-01-12T09:23:01+00:00\",\n        \"passcode\": \"\",\n        \"description\": \"its about festival #color #festival #abc\",\n        \"image\": \"\",\n        \"user_id\": 38,\n        \"created\": \"2018-01-11T09:31:50+00:00\",\n        \"modified\": \"2018-01-11T09:31:50+00:00\",\n        \"longitude\":\"XX.00.XX\",\n        \"latitude\":\"XX.00.XX\",\n        \"id\": \"NDQ2NTI2NDYzMC45NQ==\"\n    }\n}",
+          "content": "    HTTP/1.1 201 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Your spayc, Festive, has been created.\",\n    \"data\": {\n        \"name\": \"Festive\",\n        \"location\": \"Your address\",\n        \"type\": \"Event\",\n        \"group_type\": \"Public\",\n        \"start_date\": \"2019-01-11T01:02:20+00:00\",\n        \"end_date\": \"2019-01-11T01:08:20+00:00\",\n        \"passcode\": \"\",\n        \"description\": \"Holi is a festival of color #color #festival\",\n        \"image\": \"\",\n        \"longitude\": 77.209021,\n        \"latitude\": 28.613939,\n        \"invite\": \"@test2:35.168.119.247\",\n        \"status\": \"Active\",\n        \"matrix_room_id\": \"!JqhnnrWCtlFTnWlwWL:35.168.119.247\",\n        \"matrix_room_alias\": \"#Holi13:35.168.119.247\",\n        \"user_id\": \"10\",\n        \"created\": \"2018-02-16T11:02:47+00:00\",\n        \"modified\": \"2018-02-16T11:02:47+00:00\",\n        \"id\": \"95\"\n    }\n}",
           "type": "json"
         }
       ]

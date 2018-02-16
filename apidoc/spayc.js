@@ -42,6 +42,7 @@
 @apiParam {String} image            Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
 @apiParam {String} longitude        Langitude from google map (Required).
 @apiParam {String} latitude         Latitude from google map (Required).
+@apiParam {String} invite           Matrix user id is optional in query string(Optional).
 
 @apiExample Example usage:
     {
@@ -55,7 +56,8 @@
         "description":"spayc creating",
         "image":"file.png",
         "longitude":"XX.00.XX",
-        "latitude":"XX.00.XX"
+        "latitude":"XX.00.XX",
+        "invite":"@test2:35.168.119.247, @test3:35.168.119.247"
     }
  
 @apiSuccess {String} status success.
@@ -65,23 +67,27 @@
     HTTP/1.1 201 OK
 {
     "status": "success",
-    "message": "Your spayc, spaycdev, has been created.",
+    "message": "Your spayc, Festive, has been created.",
     "data": {
-        "name": "spaycdev",
-        "location": "Community addrss",
-        "type": "Community",
+        "name": "Festive",
+        "location": "Your address",
+        "type": "Event",
         "group_type": "Public",
-        "start_date": "2018-01-11T11:16:01+00:00",
-        "end_date": "2018-01-12T09:23:01+00:00",
+        "start_date": "2019-01-11T01:02:20+00:00",
+        "end_date": "2019-01-11T01:08:20+00:00",
         "passcode": "",
-        "description": "its about festival #color #festival #abc",
+        "description": "Holi is a festival of color #color #festival",
         "image": "",
-        "user_id": 38,
-        "created": "2018-01-11T09:31:50+00:00",
-        "modified": "2018-01-11T09:31:50+00:00",
-        "longitude":"XX.00.XX",
-        "latitude":"XX.00.XX",
-        "id": "NDQ2NTI2NDYzMC45NQ=="
+        "longitude": 77.209021,
+        "latitude": 28.613939,
+        "invite": "@test2:35.168.119.247",
+        "status": "Active",
+        "matrix_room_id": "!JqhnnrWCtlFTnWlwWL:35.168.119.247",
+        "matrix_room_alias": "#Holi13:35.168.119.247",
+        "user_id": "10",
+        "created": "2018-02-16T11:02:47+00:00",
+        "modified": "2018-02-16T11:02:47+00:00",
+        "id": "95"
     }
 }
 

@@ -129,7 +129,7 @@ class MatrixComponent extends Component {
      * @param Array $items array contain required field of matrix fields
      * @return false|$data return data if created or false
      */
-    public function createRoom($items=[]){
+    public function createRoom($items=[]) {
         if(empty($items)) {
             return false;
         }
