@@ -43,7 +43,8 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed','message'=>'Invalid requested data format.'], 400);
         }
         $defaultImg  = [];
-        foreach($data as $key=>$img) {
+        $images = [];
+        foreach($data['images'] as $key=>$img) {
             $exists = $this->UserImages->findByUserIdAndOrderIndex($this->Auth->user('id'), $key);
             $imgData = ['user_id'=>$this->Auth->user('id'), 'image_url'=>$img, 'order_index'=>$key];
             if($exists->count()) {
@@ -58,7 +59,8 @@ class UsersController extends AppController {
             if(!empty($items->errors())) {
                 $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
             }
-            $this->UserImages->save($items);            
+            $this->UserImages->save($items);
+            $images[$key] = $items->image_url;
             if(!empty($items->is_profile) && ($items->is_profile == 'Yes')){
                 $defaultImg = $items;
             }
@@ -74,7 +76,7 @@ class UsersController extends AppController {
             ]);
             EventManager::instance()->dispatch($event);
         }
-        $response = ['status'=>'success','message'=>__('Profile image uploaded successfully.')];
+        $response = ['status'=>'success','message'=>__('Profile image uploaded successfully.'),'data'=>$images];
         $this->set($response);
     }
     

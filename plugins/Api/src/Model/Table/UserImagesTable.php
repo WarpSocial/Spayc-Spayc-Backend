@@ -63,7 +63,7 @@ class UserImagesTable extends Table {
                     'rule' => ['extension', ['jpeg', 'png', 'jpg']],
                     'message' => __('Please select only jpg,jpeg,png.')
                 ])
-                ->add('image_url', 'size', [
+                ->add('image_url["size"]', 'size', [
                     'rule' => ['fileSize', '<=', \Cake\Core\Configure::read('maxupload')],
                     'message' => __('Image size must be less than ' . \Cake\Core\Configure::read('maxupload') . '.')
         ]);
