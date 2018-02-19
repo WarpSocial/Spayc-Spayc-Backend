@@ -2589,7 +2589,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "order",
-            "description": "<p>Order of profile image.</p>"
+            "description": "<p>Image order index in query string required.</p>"
           }
         ]
       }
@@ -2812,7 +2812,7 @@ define({ "api": [
   },
   {
     "type": "put",
-    "url": "/set-profile-image.json",
+    "url": "/set-profile-image/:order.json",
     "title": "Set Profile Images",
     "version": "0.1.0",
     "name": "setProfileImage",
@@ -2830,19 +2830,12 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "id",
-            "description": "<p>Image id is required field in body.</p>"
+            "field": "order",
+            "description": "<p>Image order index in query string required.</p>"
           }
         ]
       }
     },
-    "examples": [
-      {
-        "title": "Example usage:",
-        "content": "\n{\n    \"id\":\"42\"\n}",
-        "type": "json"
-      }
-    ],
     "success": {
       "fields": {
         "Success 200": [
@@ -2858,7 +2851,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Profile image uploaded successfully.</p>"
+            "description": "<p>Profile Profile image set as default.</p>"
           }
         ]
       },
@@ -2874,7 +2867,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/set-profile-image.json"
+        "url": "http://spayc.com/api/set-profile-image/:order.json"
       }
     ],
     "error": {

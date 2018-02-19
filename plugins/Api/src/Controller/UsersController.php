@@ -80,22 +80,22 @@ class UsersController extends AppController {
         $this->set($response);
     }
     
-    public function setProfileImage() {
+    public function setProfileImage($orderId = null) {
         if (!$this->request->is('put')) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
-        $data  = $this->request->getData();
-        if(empty($data['id'])) {
-            $this->restException(['status'=>'failed', 'message'=>'Order index is required field.'], 400);
+        if($orderId == null) {
+            $this->restException(['status'=>'failed', 'message'=>'Profile image index is required'], 400);
         }
         $this->loadModel('Api.UserImages');
-        $entity = $this->UserImages->get($data['id']);
-        if(empty($entity)) {
-            $this->restException(['status'=>'failed', 'message'=>'Invalid image id.'], 400);
+        $entity = $this->UserImages->findByUserIdAndOrderIndex($this->Auth->user('id'), $orderId);
+        if(!$entity->count()) {
+            $this->restException(['status'=>'failed', 'message'=>'Order index number not found.'], 400);
         }
         $this->UserImages->updateAll(['is_profile'=>'No'], ['user_id'=>$this->Auth->user('id')]);
-        $this->UserImages->updateAll(['is_profile'=>'Yes'], ['id'=>$data['id']]);
+        $this->UserImages->updateAll(['is_profile'=>'Yes'], ['user_id'=>$this->Auth->user('id'), 'order_index'=>$orderId]);
         /*Event to bind to update the set upload room image */
+        $entity = $entity->first();
         $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
             'options' => [
                 'matrix_token'=>$this->Auth->user('UserLogs.matrix_access_token'),
@@ -118,7 +118,10 @@ class UsersController extends AppController {
      * @return json http response message
      */
     
-    public function removeAvatar($order = null){
+    public function removeAvatar($order = null) {
+        if (!$this->request->is('put')) {
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
+        }
         if($order == null){
             $this->restException(['status'=>'failed', 'message'=>'Profile image index is required'], 400);
         }
@@ -128,7 +131,7 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>'Record not found'], 400);
         }
         $image = $profileImg->first();
-        if(TableRegistry::get('UserImages')->delete($image)){
+        if(TableRegistry::get('UserImages')->delete($image)) {
             if(($image->is_profile == 'Yes')){
                 $this->loadComponent('Api.Matrix');
                 $this->Matrix->setAvatarUrl(null,[
@@ -137,8 +140,8 @@ class UsersController extends AppController {
                 ]);
             }
             $response = ['status'=>'success', 'message'=>__('Profile image has been removed.')];        
-        }else{
-            $response = ['status'=>'failed', 'message'=>__('Failed to remove profile image.')];        
+        } else {
+            $response = ['status'=>'failed', 'message'=>__('Failed to remove profile image.'), 400];        
         }
         $this->set($response);
     }

@@ -794,7 +794,7 @@ function postChatRequest() { return; }
 function postProfileImage() { return; }
 
 /**
- * @api {put} /set-profile-image.json Set Profile Images
+ * @api {put} /set-profile-image/:order.json Set Profile Images
  * @apiVersion 0.1.0
  * @apiName setProfileImage
  * @apiGroup User
@@ -802,17 +802,11 @@ function postProfileImage() { return; }
  *
  * @apiDescription Set image as default profile pic.
  *
- * @apiParam {String} id      Image id is required field in body.
- *
- * @apiExample Example usage:
- *
-{
-    "id":"42"
-}
+ * @apiParam {String} order      Image order index in query string required.
  *
  *
  * @apiSuccess {String} status success.
- * @apiSuccess {String} message Profile image uploaded successfully.
+ * @apiSuccess {String} message Profile Profile image set as default.
  * @apiSuccessExample {json} Success-Response:
  *      HTTP/1.1 200 OK
 {
@@ -833,7 +827,7 @@ function putSetProfileImage() { return; }
  *
  * @apiDescription Remove profile image. Token must be set in header.if image is default profile image then it will also remove from matrix.
  *
- * @apiParam {String} order      Order of profile image.
+ * @apiParam {String} order      Image order index in query string required.
  *
  * @apiExample Example usage:
  *
