@@ -195,7 +195,7 @@ class ImgUploadBehavior extends Behavior {
             $resource = fopen($requestField['tmp_name'], 'r');
             $AWS3File = $this->aws3Obj->upload($this->_aws3['bucket'], $fileName, $resource, 'public-read');         
         } catch (S3Exception $e) {
-            echo "There was an error uploading the file.\n";
+            echo "There was an error uploading the file. s3 error ".$e->getMessage();
         }
         return $AWS3File['ObjectURL'];
     }
