@@ -6,6 +6,7 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use Cake\Core\Configure;
+use Cake\ORM\TableRegistry;
 
 /**
  * FriendRequest Model
@@ -161,5 +162,27 @@ class FriendRequestTable extends Table
             ->select(['FriendRequest.id'])
             ->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]], ['requested_status'=>'Accepted', 'friend_status IS'=>NULL]]);
         return $friends->count();
+    }
+    
+    public function updateRoomId($matrixId = null, $userId = null, $matrixRoomId = null) {
+        if(!empty($matrixId)) {
+            $user = TableRegistry::get('Users')->findByMatrixUserId($matrixId)->select(['id']);
+            if($user->count()) {
+                $inviteId = $user->first()->id;
+                $friend = $this->find('all')
+                ->Where(['OR'=>[['requested_by'=>$userId, 'requested_to'=>$inviteId], ['requested_by'=>$inviteId, 'requested_to'=>$userId]]]);
+                $request['matrix_room_id'] = $matrixRoomId;
+                if($friend->count()) {
+                    $entity = $friend->first();
+                } else {
+                    $request['requested_by'] = $userId;
+                    $request['requested_to'] = $inviteId;
+                    $request['requested_status'] = 'Anonymous';
+                    $entity = $this->newEntity();
+                }
+                $items = $this->patchEntity($entity, $request);
+                $this->save($items);
+            }
+        }
     }
 }

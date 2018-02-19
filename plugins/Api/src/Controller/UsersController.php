@@ -815,13 +815,13 @@ class UsersController extends AppController {
         }
         $this->loadComponent('Api.Facebook');
         $friends = $this->Facebook->getFriends($this->Auth->user('fb_id'), $this->Auth->user('fb_access_key'));
-        $friendEmails = ['shubhash1231@gmail.com'];
+        $friendIds = [0];
         if(!empty($friends)) {
             foreach($friends as $friend) {
-                if(!empty($friend['email'])) { $friendEmails[] = $friend['email']; }
+                if(!empty($friend['id'])) { $friendIds[] = $friend['id']; }
             }
-        }
-        $spaycFriends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username', 'Users.dob', 'Users.gender','Users.country_code', 'Users.phone'], 'conditions'=>['Users.email IN'=>$friendEmails, 'Users.id !='=>$this->Auth->user('id')]]);
+        } 
+        $spaycFriends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username', 'Users.dob', 'Users.gender','Users.country_code', 'Users.phone'], 'conditions'=>['Users.fb_id IN'=>$friendIds, 'Users.id !='=>$this->Auth->user('id')]]);
         $spaycFriends->contain([
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);

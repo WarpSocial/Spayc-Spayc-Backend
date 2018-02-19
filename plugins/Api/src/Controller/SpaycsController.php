@@ -81,6 +81,59 @@ class SpaycsController extends AppController {
         }
         $this->set($response);
     }
+    
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function createChatRoom() {
+        if (!$this->request->is('post')) {
+            $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
+        }
+        $data = $this->request->getData();
+        if(empty($data['invite'])) {
+            $this->restException(['status'=>'failed', 'message'=>'Invite is required field.'], 400);
+        }
+        $data['name'] = $data['invite'].'-'.$this->Auth->user('UserLogs.matrix_user_id');
+        $data['group_type'] = 'Private';
+        $entity = $this->Spaycs->newEntity();
+        $items = $this->Spaycs->patchEntity($entity, $data, ['validate'=>false]);
+        if($items->errors()) {
+            $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
+        }
+        $this->loadComponent('Api.Matrix');
+        $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
+        $matrix = $this->Matrix->createRoom($data);
+        if(!empty($matrix['error'])) {
+            $this->restException(['status' => "failed", 'message' =>__($matrix['error'])], 400);
+        }
+        $items->set('matrix_room_id', $matrix['room_id']);
+        $items->set('matrix_room_alias', $matrix['room_alias']);
+        $items->set('user_id', $this->Auth->user('id'));
+        $items->set('status', 'Active');
+        if (!$items->errors()) {
+            if($this->Spaycs->save($items)) {
+                TableRegistry::get('Api.FriendRequest')->updateRoomId($items['invite'], $this->Auth->user('id'), $matrix['room_id']);
+                $this->response->statusCode(201);
+                $response = ['status'=>'success','message'=>__('Your room, '.ucfirst($data['name']).', has been created.'), 'data'=>$items];
+                /*Event to bind to update the set upload room image */
+                $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
+                    'options' => [
+                        'matrix_token'=>$data['matrix_token'],
+                        'image'=> $items->image,
+                        'matrix_room_id'=> $items->matrix_room_id,
+                        ]
+                ]);
+                EventManager::instance()->dispatch($event);
+            } else {
+                $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be saved. Please, try again.')], 400);
+            }
+        } else {
+            $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be saved. Please, try again.')], 400);
+        }
+        $this->set($response);
+    }
 
     /**
      * Index method
