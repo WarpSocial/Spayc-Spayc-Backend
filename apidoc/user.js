@@ -823,3 +823,45 @@ function postProfileImage() { return; }
  * @apiUse UserErrorResponse
  */
 function putSetProfileImage() { return; }
+
+/**
+ * @api {get} /facebook-friends.json?page=:page&limit=:limit Get facebook friends
+ * @apiVersion 0.1.0
+ * @apiName FacebookFriends
+ * @apiGroup User
+ * @apiPermission none
+ *
+ * @apiDescription get facebook friend for suggetion.
+ *
+ * @apiParam {Number} page      Page number is required in query string.
+ * @apiParam {Number} page      Limit is required in query string.
+ *
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Facebook friend lists.
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Facebook friend lists.",
+    "data": {
+        "count": 2,
+        "records": [
+            {
+                "id": "7",
+                "username": "user1",
+                "image_url": ""
+            },
+            {
+                "id": "11",
+                "username": "user2",
+                "image_url": ""
+            }
+        ]
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function getFacebookFriends() { return; }

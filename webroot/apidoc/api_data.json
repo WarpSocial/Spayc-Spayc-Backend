@@ -2,7 +2,7 @@
   {
     "type": "post",
     "url": "/chat-room.json",
-    "title": "Create Room",
+    "title": "One to One Room",
     "version": "0.1.0",
     "name": "ChatRoom",
     "group": "Spayc",
@@ -126,7 +126,7 @@
   {
     "type": "post",
     "url": "/spaycs.json",
-    "title": "New SPAYC",
+    "title": "Create Spayc",
     "version": "0.1.0",
     "name": "PostSpayc",
     "group": "Spayc",
@@ -744,6 +744,103 @@
         "url": "http://spayc.com/api/subscribe-spayc.json"
       }
     ]
+  },
+  {
+    "type": "get",
+    "url": "/facebook-friends.json?page=:page&limit=:limit",
+    "title": "Get facebook friends",
+    "version": "0.1.0",
+    "name": "FacebookFriends",
+    "group": "User",
+    "permission": [
+      {
+        "name": "none"
+      }
+    ],
+    "description": "<p>get facebook friend for suggetion.</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "page",
+            "description": "<p>Page number is required in query string.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Facebook friend lists.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Facebook friend lists.\",\n    \"data\": {\n        \"count\": 2,\n        \"records\": [\n            {\n                \"id\": \"7\",\n                \"username\": \"user1\",\n                \"image_url\": \"\"\n            },\n            {\n                \"id\": \"11\",\n                \"username\": \"user2\",\n                \"image_url\": \"\"\n            }\n        ]\n    }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/user.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/facebook-friends.json?page=:page&limit=:limit"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
   },
   {
     "type": "post",
