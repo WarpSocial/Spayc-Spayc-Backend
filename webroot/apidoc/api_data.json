@@ -1,6 +1,130 @@
 [
   {
     "type": "post",
+    "url": "/chat-room.json",
+    "title": "Create Room",
+    "version": "0.1.0",
+    "name": "ChatRoom",
+    "group": "Spayc",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>Create a new room for one to one chat.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "invite",
+            "description": "<p>Matrix user id is optional in query string(Required).</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "{\n    \"invite\":\"@test2:35.168.119.247\"\n}",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Your room, spaycdev, has been created.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>Spayc details.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "    HTTP/1.1 201 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Your room, @test4:35.168.119.247-@test5:35.168.119.247, has been created.\",\n    \"data\": {\n        \"invite\": \"@test4:35.168.119.247\",\n        \"name\": \"@test4:35.168.119.247-@shubhash11:35.168.119.247\",\n        \"group_type\": \"Private\",\n        \"matrix_room_id\": \"!ICbUbLzaoTzIvIoEjf:35.168.119.247\",\n        \"matrix_room_alias\": \"#test4-35-168-119-247-shubhash11-35-168-119-247:35.168.119.247\",\n        \"user_id\": \"10\",\n        \"status\": \"Active\",\n        \"created\": \"2018-02-16T14:14:01+00:00\",\n        \"modified\": \"2018-02-16T14:14:01+00:00\",\n        \"id\": \"99\"\n    }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/spayc.js",
+    "groupTitle": "Spayc",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/chat-room.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
     "url": "/spaycs.json",
     "title": "New SPAYC",
     "version": "0.1.0",
