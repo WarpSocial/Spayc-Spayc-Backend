@@ -21,7 +21,7 @@
 */
 
 /**
-@api {post} /spaycs.json New SPAYC
+@api {post} /spaycs.json Create Spayc
 @apiVersion 0.1.0
 @apiName PostSpayc
 @apiGroup Spayc
@@ -307,7 +307,7 @@ function postSubscribeSpayc() { return; }
 function getView() { return; }
 
 /**
-@api {post} /chat-room.json Create Room
+@api {post} /chat-room.json One to One Room
 @apiVersion 0.1.0
 @apiName ChatRoom
 @apiGroup Spayc

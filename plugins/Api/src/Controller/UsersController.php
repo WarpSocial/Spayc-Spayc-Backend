@@ -692,7 +692,7 @@ class UsersController extends AppController {
         });
         $limit = (!empty($this->request->query['limit']) && is_numeric($this->request->query['limit']))?$this->request->query['limit']:5;
         $friends->order(['Users.username'=>'ASC'])->limit($limit);
-        $page = (!empty($this->request->query['limit']) && is_numeric($this->request->query['page']))?$this->request->query['page']:1;
+        $page = (!empty($this->request->query['page']) && is_numeric($this->request->query['page']))?$this->request->query['page']:1;
         if($page < 0) {
             $page = $page*-1;
             $friends->page($page);
@@ -820,8 +820,8 @@ class UsersController extends AppController {
             foreach($friends as $friend) {
                 if(!empty($friend['id'])) { $friendIds[] = $friend['id']; }
             }
-        } 
-        $spaycFriends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username', 'Users.dob', 'Users.gender','Users.country_code', 'Users.phone'], 'conditions'=>['Users.fb_id IN'=>$friendIds, 'Users.id !='=>$this->Auth->user('id')]]);
+        }
+        $spaycFriends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username'], 'conditions'=>['Users.fb_id IN'=>$friendIds, 'Users.id !='=>$this->Auth->user('id')]]);
         $spaycFriends->contain([
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
@@ -836,7 +836,7 @@ class UsersController extends AppController {
         });
         $limit = (!empty($this->request->query['limit']) && is_numeric($this->request->query['limit']))?$this->request->query['limit']:5;
         $spaycFriends->order(['Users.username'=>'ASC'])->limit($limit);
-        $page = (!empty($this->request->query['limit']) && is_numeric($this->request->query['page']))?$this->request->query['page']:1;
+        $page = (!empty($this->request->query['page']) && is_numeric($this->request->query['page']))?$this->request->query['page']:1;
         if($page < 0) {
             $page = $page*-1;
             $spaycFriends->page($page);
@@ -846,8 +846,8 @@ class UsersController extends AppController {
         $data['count'] = $spaycFriends->count();
         if($spaycFriends->count()) {
             $data['records'] = $spaycFriends->toArray();
-        }
-        if(empty($data)) {
+        } 
+        if(empty($data['records'])) {
             $this->response->statusCode(204);
         }
         $response = ['status'=>'success', 'message'=>__('Facebook friend lists.'), 'data'=>$data];

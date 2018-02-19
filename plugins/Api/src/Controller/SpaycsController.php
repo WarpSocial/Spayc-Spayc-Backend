@@ -121,7 +121,6 @@ class SpaycsController extends AppController {
                 $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
                     'options' => [
                         'matrix_token'=>$data['matrix_token'],
-                        'image'=> $items->image,
                         'matrix_room_id'=> $items->matrix_room_id,
                         ]
                 ]);
