@@ -214,7 +214,7 @@ class MatrixComponent extends Component {
     }
     
     public function setAvatarUrl($matrixuri = null,$options){
-        if($matrixuri == null || empty($options['matrix_token'])){
+        if(empty($options['matrix_token'])){
             return;
         }
         if(!empty($options['matrix_room_id'])){

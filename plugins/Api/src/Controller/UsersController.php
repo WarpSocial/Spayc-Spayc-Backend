@@ -44,7 +44,7 @@ class UsersController extends AppController {
         }
         $defaultImg  = [];
         $images = [];
-        foreach($data['images'] as $key=>$img) {
+        foreach($data as $key=>$img) {
             $exists = $this->UserImages->findByUserIdAndOrderIndex($this->Auth->user('id'), $key);
             $imgData = ['user_id'=>$this->Auth->user('id'), 'image_url'=>$img, 'order_index'=>$key];
             if($exists->count()) {
@@ -105,6 +105,41 @@ class UsersController extends AppController {
         ]);
         EventManager::instance()->dispatch($event);
         $response = ['status'=>'success', 'message'=>__('Profile image set as default.')];
+        $this->set($response);
+    }
+    
+    /**
+     * remvoeAvatar method to remove profile image
+     * 
+     * @method Get
+     * @param int $order order of profile image
+     * @param Strng $token comes from header or auth
+     * 
+     * @return json http response message
+     */
+    
+    public function removeAvatar($order = null){
+        if($order == null){
+            $this->restException(['status'=>'failed', 'message'=>'Profile image index is required'], 400);
+        }
+        $user = $this->Auth->user();
+        $profileImg = TableRegistry::get('UserImages')->find()->where(['user_id'=>$user['id'],'order_index'=>$order]);
+        if($profileImg->isEmpty()){
+            $this->restException(['status'=>'failed', 'message'=>'Record not found'], 400);
+        }
+        $image = $profileImg->first();
+        if(TableRegistry::get('UserImages')->delete($image)){
+            if(($image->is_profile == 'Yes')){
+                $this->loadComponent('Api.Matrix');
+                $this->Matrix->setAvatarUrl(null,[
+                    'matrix_token'=>$user['UserLogs']['matrix_access_token'],
+                    'matrix_user_id'=>$user['UserLogs']['matrix_user_id']
+                ]);
+            }
+            $response = ['status'=>'success', 'message'=>__('Profile image has been removed.')];        
+        }else{
+            $response = ['status'=>'failed', 'message'=>__('Failed to remove profile image.')];        
+        }
         $this->set($response);
     }
     

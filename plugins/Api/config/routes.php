@@ -32,7 +32,8 @@ Router::plugin(
         $routes->connect('/set-profile-image', ['controller' => 'Users', 'action' => 'setProfileImage']);
         $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
         //$routes->connect('/as', ['controller' => 'Spaycs', 'action' => 'matrixApplicationService']);
-        $routes->connect('/transactions/:id', ['controller' => 'Spaycs', 'action' => 'matrixApplicationService'],['pass'=>'id']);
+        $routes->connect('/transactions/:id', ['controller' => 'Spaycs', 'action' => 'matrixApplicationService'],['pass'=>['id']]);
+        $routes->connect('/remove-avatar/:order', ['controller' => 'Users', 'action' => 'removeAvatar'],['pass'=>['order']]);
         $routes->fallbacks(DashedRoute::class);
     }
 );
