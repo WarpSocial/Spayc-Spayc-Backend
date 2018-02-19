@@ -766,7 +766,14 @@ define({ "api": [
             "type": "Number",
             "optional": false,
             "field": "page",
-            "description": "<p>Page number is required in query string.</p>"
+            "description": "<p>Page number is optional in query string default value 1.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>Limit is optional in query string default value 5.</p>"
           }
         ]
       }
@@ -793,7 +800,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Facebook friend lists.\",\n    \"data\": {\n        \"count\": 2,\n        \"records\": [\n            {\n                \"id\": \"7\",\n                \"username\": \"user1\",\n                \"image_url\": \"\"\n            },\n            {\n                \"id\": \"11\",\n                \"username\": \"user2\",\n                \"image_url\": \"\"\n            }\n        ]\n    }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n \"message\": \"Facebook friend lists.\",\n \"data\": {\n        \"count\": 2,\n        \"records\": [\n            {\n                \"id\": \"7\",\n                \"username\": \"user1\",\n                \"image_url\": \"\"\n            },\n            {\n                \"id\": \"11\",\n                \"username\": \"user2\",\n                \"image_url\": \"\"\n            }\n        ]\n    }",
           "type": "json"
         }
       ]
@@ -2522,6 +2529,110 @@ define({ "api": [
     "sampleRequest": [
       {
         "url": "http://spayc.com/api/avatars.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
+    "url": "/remove-avatar/:order.json",
+    "title": "Remove Profile Image",
+    "version": "0.1.0",
+    "name": "removeAvatar",
+    "group": "User",
+    "permission": [
+      {
+        "name": "Logged in user"
+      }
+    ],
+    "description": "<p>Remove profile image. Token must be set in header.if image is default profile image then it will also remove from matrix.</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "order",
+            "description": "<p>Order of profile image.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "\n{\n    \"status\": \"success\",\n    \"message\": \"Profile image has been removed.\"\n}",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Profile image has been removed.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Profile image set as default.\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/user.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/remove-avatar/:order.json"
       }
     ],
     "error": {

@@ -825,6 +825,39 @@ function postProfileImage() { return; }
 function putSetProfileImage() { return; }
 
 /**
+ * @api {get} /remove-avatar/:order.json Remove Profile Image
+ * @apiVersion 0.1.0
+ * @apiName removeAvatar
+ * @apiGroup User
+ * @apiPermission Logged in user
+ *
+ * @apiDescription Remove profile image. Token must be set in header.if image is default profile image then it will also remove from matrix.
+ *
+ * @apiParam {String} order      Order of profile image.
+ *
+ * @apiExample Example usage:
+ *
+    {
+        "status": "success",
+        "message": "Profile image has been removed."
+    }
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Profile image has been removed.
+
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Profile image set as default."
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+
+function getRemoveAvatar() { return; }
+/**
  * @api {get} /facebook-friends.json?page=:page&limit=:limit Get facebook friends
  * @apiVersion 0.1.0
  * @apiName FacebookFriends
@@ -833,8 +866,8 @@ function putSetProfileImage() { return; }
  *
  * @apiDescription get facebook friend for suggetion.
  *
- * @apiParam {Number} page      Page number is required in query string.
- * @apiParam {Number} page      Limit is required in query string.
+ * @apiParam {Number} page      Page number is optional in query string default value 1.
+ * @apiParam {Number} limit     Limit is optional in query string default value 5.
  *
  *
  *
@@ -843,9 +876,8 @@ function putSetProfileImage() { return; }
  * @apiSuccessExample {json} Success-Response:
  *      HTTP/1.1 200 OK
 {
-    "status": "success",
-    "message": "Facebook friend lists.",
-    "data": {
+ "message": "Facebook friend lists.",
+ "data": {
         "count": 2,
         "records": [
             {
@@ -860,8 +892,7 @@ function putSetProfileImage() { return; }
             }
         ]
     }
-}
  *
  * @apiUse UserErrorResponse
  */
-function getFacebookFriends() { return; }
+ function getFacebookFriends() { return; }
