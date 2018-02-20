@@ -125,8 +125,9 @@ class SpaycsTable extends Table {
                             /* End date must be below of start date */
                             $startDate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$context['data']['start_date']);
                             $endDate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$value);
-//                            $startDate  = new \Cake\I18n\Time($context['data']['start_date']);
-//                            $endDate  = new \Cake\I18n\Time($value);
+                            if($endDate->format('H') == '00'){
+                                $endDate->setTime(23,55);
+                            }
                             return (bool)($startDate <= $endDate );
                         }
                         return true;
