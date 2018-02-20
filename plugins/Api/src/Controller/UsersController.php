@@ -423,6 +423,7 @@ class UsersController extends AppController {
             'address'=>$user['address'],
             'bio_data'=>$user['bio_data'],
             'image_url'=>$data['image_url'],
+            'order_index'=>1,
             'device_id'=>$user['device_id'],
             'matrix_user_id'=>$user['matrix_user_id'],
             'token'=>$user['token'],

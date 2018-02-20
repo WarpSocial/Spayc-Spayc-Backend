@@ -86,6 +86,8 @@ class UserImagesTable extends Table {
     
     public function uploadFacebookImage($fileName, $userId) {
         $data['user_id'] = $userId;
+        $data['is_profile'] = 'Yes';
+        $data['order_index'] = 1;
         $data['image_url']['tmp_name'] = $fileName;
         $entity = $this->newEntity();
         $items = $this->patchEntity($entity, $data, ['validate'=>false]);
