@@ -134,7 +134,7 @@ class UsersController extends AppController {
                     'matrix_user_id'=>$user['UserLogs']['matrix_user_id']
                 ]);
             }
-            $response = ['status'=>'success', 'message'=>__('Profile image has been removed.')];        
+            $response = ['status'=>'success', 'message'=>__('Profile image has been removed.'),'data'=>['index'=>$order]];        
         } else {
             $response = ['status'=>'failed', 'message'=>__('Failed to remove profile image.'), 400];        
         }
