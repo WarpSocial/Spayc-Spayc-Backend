@@ -355,6 +355,7 @@ class UsersController extends AppController {
         if(!$this->request->is('post')) {
             $this->restException(['status'=>'failed','message'=>__('Method not allowed.')],405);
         }
+        $pk = null;
         $this->loadComponent('Api.Matrix');
         $data = $this->request->getData();
         $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';
@@ -367,6 +368,7 @@ class UsersController extends AppController {
         if($alreadyExist->count()) {
             $alreadyExist = $alreadyExist->first()->toArray();
             $data['id'] = ApiHasher::decrypt($alreadyExist['id']);
+            $pk = $data['id'];
             $data['fb_id'] = !empty($data['fb_id'])?$data['fb_id']:$alreadyExist['fb_id'];
             $data['username'] = !empty($data['username'])?$data['username']:$alreadyExist['username'];
             $data['email'] = !empty($data['email'])?$data['email']:$alreadyExist['email'];
@@ -408,7 +410,7 @@ class UsersController extends AppController {
         $user['device_id'] = $matrix['device_id'];
         $this->Auth->setUser($user);
         $user = $this->Users->usrLog($user);
-        if(!empty($data['image_url'])) {
+        if($pk == null) {
             TableRegistry::get('Api.UserImages')->uploadFacebookImage($data['image_url'], $this->Auth->user('id'));
         }
         $data = [
