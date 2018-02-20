@@ -99,7 +99,7 @@ class SpaycsTable extends Table {
 
         $validator                
                 ->requirePresence('start_date', 'create',__('Start Date key is missing.'))
-                ->dateTime('start_date','ymd',__('Start date is not in format YYYY-MM-DD H:i:s'))
+                ->dateTime('start_date','mdy',__('Start date is not in format MM-DD-YYYY H:i:s'))
                 ->notEmpty('start_date',__('Start date is required when type is event.'),function($context){
                      return (isset($context['data']['type']) && ($context['data']['type'] =='Event'));
                 })
@@ -107,7 +107,7 @@ class SpaycsTable extends Table {
                     'rule'=> function($value,$context){
                         if(!empty($value)){
                             /* Doesn't exceed 1 year ahead */
-                            $startDate  = new \Cake\I18n\Time($value);
+                            $startDate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$value);
                             return (bool)$startDate->isWithinNext('1 year');
                         }
                     },
@@ -115,7 +115,7 @@ class SpaycsTable extends Table {
                 ]);
         $validator                
                 ->requirePresence('end_date', 'create',__('End Date key is missing.'))
-                ->dateTime('end_date','ymd',__('End date is not in format YYYY-MM-DD H:i:s'))
+                ->dateTime('end_date','mdy',__('End date is not in format MM-DD-YYYY H:i:s'))
                 ->notEmpty('end_date',__('End date is required when type is event.'),function($context){
                      return (isset($context['data']['type']) && ($context['data']['type'] =='Event'));
                 })
@@ -123,9 +123,11 @@ class SpaycsTable extends Table {
                     'rule'=> function($value,$context){
                         if(!empty($value) && !empty($context['data']['end_date']) && !empty($context['data']['start_date'])){
                             /* End date must be below of start date */
-                            $startDate  = new \Cake\I18n\Time($context['data']['start_date']);
-                            $endDate  = new \Cake\I18n\Time($value);
-                            return (bool)($startDate < $endDate );
+                            $startDate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$context['data']['start_date']);
+                            $endDate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$value);
+//                            $startDate  = new \Cake\I18n\Time($context['data']['start_date']);
+//                            $endDate  = new \Cake\I18n\Time($value);
+                            return (bool)($startDate <= $endDate );
                         }
                         return true;
                     },
@@ -133,7 +135,7 @@ class SpaycsTable extends Table {
                 ]);
 
         $validator
-                ->requirePresence('passcode', 'create',__('Passcode key is missing.'))
+                //->requirePresence('passcode', 'create',__('Passcode key is missing.'))
                 ->maxLength('passcode', 30,__('Max 30 character is allowed for passcode.'))
                 //->add('passcode', 'unique', ['rule' => 'validateUnique','message'=>'Username must be unique.', 'provider' => 'table'])
                 ->notEmpty('passcode',__('Passcode is required in case of private group type.'),function($context){                    

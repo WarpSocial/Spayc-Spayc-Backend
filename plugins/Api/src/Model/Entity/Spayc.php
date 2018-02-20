@@ -43,4 +43,43 @@ class Spayc extends Entity
     protected function _getId($id) {      
         return ApiHasher::encrypt($id);
     }
+    
+    protected function _setStartDate($stardDate) {
+        if (!empty($stardDate)) {            
+            $startdate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$stardDate);
+            return $startdate->format("Y-m-d H:i:s");
+        } else {
+            return;
+        }
+    }
+    protected function _setEndDate($endDate) {
+        if (!empty($endDate)) {            
+            $endDate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$endDate);
+            return $endDate->format("Y-m-d H:i:s");
+        } else {
+            return;
+        }
+    }
+    protected function _getStartDate($stardDate) {
+        if (!empty($stardDate)) {
+            if($stardDate instanceof \Cake\I18n\Time){
+                return (new \Cake\I18n\Time($stardDate))->format("m-d-Y H:i:s");
+            }else{
+                return (new \DateTime($stardDate))->format("m-d-Y H:i:s");
+            }
+        } else {
+            return;
+        }
+    }
+    protected function _getEndDate($endDate) {
+        if (!empty($endDate)) {
+            if($endDate instanceof \Cake\I18n\Time){
+                return (new \Cake\I18n\Time($endDate))->format("m-d-Y H:i:s");
+            }else{
+                return (new \DateTime($endDate))->format("m-d-Y H:i:s");
+            }
+        } else {
+            return;
+        }
+    }
 }

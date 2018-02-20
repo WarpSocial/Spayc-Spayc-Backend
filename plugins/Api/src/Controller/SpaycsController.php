@@ -47,9 +47,6 @@ class SpaycsController extends AppController {
         $this->loadComponent('Api.Matrix');
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
         
-        //$data['image_url']='https://spayc-qa.s3.amazonaws.com/room/screenshot_from_2017_10_09_16_53_55_20180214070522.png';
-        //$matrix = $this->Matrix->uploadMediaImage($data);die();
-        
         $matrix = $this->Matrix->createRoom($data);
         if(!empty($matrix['error'])) {
             $this->restException(['status' => "failed", 'message' =>__($matrix['error'])], 400);
@@ -63,7 +60,7 @@ class SpaycsController extends AppController {
                     TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
                 }
                 $this->response->statusCode(201);
-                $response = ['status'=>'success','message'=>__('Your spayc, '.ucfirst($data['name']).', has been created.'),'data'=>$items];
+                $response = ['status'=>'success','message'=>__('Your spayc '.ucfirst($data['name']).', has been created.'),'data'=>$items];
                 /*Event to bind to update the set upload room image */
                 $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
                     'options' => [

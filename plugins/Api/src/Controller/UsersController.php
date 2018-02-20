@@ -67,14 +67,12 @@ class UsersController extends AppController {
         }
         if(!empty($defaultImg) ){            
             /*Event to bind to update the set upload room image */
-            $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
-                'options' => [
+           $this->loadComponent('Api.Matrix');
+            $this->Matrix->uploadMediaImage([
                     'matrix_token'=>$this->Auth->user('UserLogs.matrix_access_token'),
                     'image'=> $defaultImg->image_url,
-                    'matrix_user_id'=> $this->Auth->user('UserLogs.matrix_user_id'),
-                    ]
+                    'matrix_user_id'=> $this->Auth->user('UserLogs.matrix_user_id')
             ]);
-            EventManager::instance()->dispatch($event);
         }
         $response = ['status'=>'success','message'=>__('Profile image uploaded successfully.'),'data'=>$images];
         $this->set($response);
@@ -92,18 +90,15 @@ class UsersController extends AppController {
         if(!$entity->count()) {
             $this->restException(['status'=>'failed', 'message'=>'Order index number not found.'], 400);
         }
-        $this->UserImages->updateAll(['is_profile'=>'No'], ['user_id'=>$this->Auth->user('id')]);
-        $this->UserImages->updateAll(['is_profile'=>'Yes'], ['user_id'=>$this->Auth->user('id'), 'order_index'=>$orderId]);
-        /*Event to bind to update the set upload room image */
+        $conn = $this->Users->getConnection();
+        $conn->execute('UPDATE '.$this->UserImages->getTable().' SET is_profile = CASE WHEN order_index='.$orderId.' THEN \'Yes\' else \'No\' END WHERE user_id='.$this->Auth->user('id'));
         $entity = $entity->first();
-        $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
-            'options' => [
+        $this->loadComponent('Api.Matrix');
+        $this->Matrix->uploadMediaImage([
+                'image_url'=>$entity->image_url,
                 'matrix_token'=>$this->Auth->user('UserLogs.matrix_access_token'),
-                'image'=> $entity->image_url,
-                'matrix_user_id'=> $this->Auth->user('UserLogs.matrix_user_id'),
-                ]
-        ]);
-        EventManager::instance()->dispatch($event);
+                'matrix_user_id'=>$this->Auth->user('UserLogs.matrix_user_id')
+                ]);
         $response = ['status'=>'success', 'message'=>__('Profile image set as default.')];
         $this->set($response);
     }
@@ -417,6 +412,7 @@ class UsersController extends AppController {
             TableRegistry::get('Api.UserImages')->uploadFacebookImage($data['image_url'], $this->Auth->user('id'));
         }
         $data = [
+            'id'=>$user['id'],
             'username'=>$user['username'],
             'email'=>$user['email'],
             'gender'=>$user['gender'],
@@ -426,6 +422,7 @@ class UsersController extends AppController {
             'website_url'=>$user['website_url'],
             'address'=>$user['address'],
             'bio_data'=>$user['bio_data'],
+            'image_url'=>$data['image_url'],
             'device_id'=>$user['device_id'],
             'matrix_user_id'=>$user['matrix_user_id'],
             'token'=>$user['token'],
