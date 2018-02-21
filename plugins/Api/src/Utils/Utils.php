@@ -351,4 +351,13 @@ class Utils {
             return false;
         }
     }
+    
+    public static function extractKeys($data=[],$key=[]){
+        if(empty($data)){
+            return;
+        }
+        for($i=0;$i< count($data);$i++){
+            
+        }
+    }
 }
