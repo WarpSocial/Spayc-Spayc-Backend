@@ -649,12 +649,17 @@ class UsersController extends AppController {
         if(!$spaceUsr){
              $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
         }
-        $loggedUser = $this->Auth->user();        
+        $loggedUser = $this->Auth->user();     
+         if(in_array($data['friend_status'],['Decline','Unfriend'])){
+            if($frObj->deleteAll(['requested_by' => $data['friend_id'],'requested_to'=>$loggedUser['id']])){
+                $this->restException(['status'=>'success', 'message'=>__('Status has been changed successfully')]);
+            }
+        }
         $requestedFrnd = $frObj->find()->where(['requested_by' => $data['friend_id'],'requested_to'=>$loggedUser['id']]);        
         if($requestedFrnd->isEmpty()){
-            $this->restException(['status'=>'failed', 'message'=>__('There is not request to set status.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('Record not found to update status.')], 400);
         }
-        $frndRequest = $requestedFrnd->first();            
+        $frndRequest = $requestedFrnd->first();
         if($data['friend_status'] == $frndRequest->requested_status){
             $this->restException(['status'=>'failed', 'message'=>__('Friend request already update the status.')], 400);
        }            
