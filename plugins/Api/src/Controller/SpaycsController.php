@@ -208,6 +208,7 @@ class SpaycsController extends AppController {
                 $row['subscribed_users'] = !empty($row['subscribed_users'][0]['subscribed_users'])?$row['subscribed_users'][0]['subscribed_users']:0;
                 $row['total_comments'] = !empty($row['comments'][0]['total_comment'])?$row['comments'][0]['total_comment']:0;
                 unset($row['comments']);
+                $row['total_presents'] = 0;
                 return $row;
             });
         });

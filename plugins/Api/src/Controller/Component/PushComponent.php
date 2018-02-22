@@ -35,13 +35,22 @@ class PushComponent extends Component {
     public function sendOnIOS($device_token, $message){
         try {
             $config = $this->snsConfig;
-            $this->SnsClient = SnsClient::factory(['key'=>$config['key'], 'secret'=>$config['secret'], 'region'=>$config['region'], 'version'=>$config['version']]);
+            
+            
+            $this->SnsClient = SnsClient::factory([
+                'version' => $config['version'],
+                'region'  => $config['region'],
+                'credentials' => [
+                    'key' => $config['key'],
+                    'secret' => $config['secret'], 
+                ]
+            ]); //pr($this->SnsClient);exit;
             /*Start Create EndpointARN*/
             $attr1 = array(
                 'PlatformApplicationArn' => $config['ARN_IOS'],
                 'Token' => $device_token
             );
-            $endpointARN = $this->SnsClient->createPlatformEndpoint($attr1);
+            $endpointARN = $this->SnsClient->createPlatformEndpoint($attr1); pr($endpointARN);exit;
             $end_point_arn1 =$endpointARN['EndpointArn'];
             /*End Create EndpointARN*/
             //print_r($endpointARN);exit;
