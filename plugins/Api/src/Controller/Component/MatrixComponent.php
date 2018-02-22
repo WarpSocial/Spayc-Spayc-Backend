@@ -194,7 +194,7 @@ class MatrixComponent extends Component {
         }
         
         //$body = fopen($data['image_url']['tmp_name'], 'r');        
-        $url = $this->config('url') .DS.$this->config('media'). DS.'upload?access_token='.$data['matrix_token'].'&filename='.$filename;
+        $url = $this->config('url') .DS.$this->config('media'). DS.'upload?access_token='.$data['matrix_token'].'&filename='.urldecode($filename);
         $http = new Client(['headers' => ['Content-Type' =>$contentType]]);
         $httpResponse = $http->post(
                 $url, 
@@ -213,13 +213,13 @@ class MatrixComponent extends Component {
         return $response;
     }
     
-    public function setAvatarUrl($matrixuri = null,$options){
+    public function setAvatarUrl($matrixuri = null,$options){        
         if(empty($options['matrix_token'])){
             return;
         }
         if(!empty($options['matrix_room_id'])){
             $options['body'] = ['url'=>$matrixuri];
-            $options['url'] = $this->config('url') .DS.$this->config('client'). DS.'rooms'.DS.$roomid.DS.'state/m.room.avatar/?access_token='.$options['matrix_token'];
+            $options['url'] = $this->config('url') .DS.$this->config('client'). DS.'rooms'.DS.$options['matrix_room_id'].DS.'state/m.room.avatar/?access_token='.$options['matrix_token'];
         }elseif(!empty($options['matrix_user_id'])){
             $options['body'] = ['avatar_url'=>$matrixuri];
             $options['url'] = $this->config('url') .DS.$this->config('client'). DS.'profile'.DS. urlencode($options['matrix_user_id']).DS.'avatar_url?access_token='.$options['matrix_token'];
