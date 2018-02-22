@@ -592,7 +592,12 @@ class UsersController extends AppController {
         if(!$spaceUsr){
              $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
         }
-        $loggedUser = $this->Auth->user();        
+        $loggedUser = $this->Auth->user();   
+         if(in_array($data['friend_status'],['Decline','Unfriend'])){
+            if($frObj->deleteAll(['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']])){
+                $this->restException(['status'=>'success', 'message'=>__('Status has been changed successfully')]);
+            }
+        }
         $requestedFrnd = $frObj->find()->where(['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']]);
         if($requestedFrnd->isEmpty()){
             $newObj = $frObj->newEntity();
