@@ -50,7 +50,8 @@ class PushComponent extends Component {
                 'PlatformApplicationArn' => $config['ARN_IOS'],
                 'Token' => $device_token
             );
-            $endpointARN = $this->SnsClient->createPlatformEndpoint($attr1); pr($endpointARN);exit;
+            //echo $config['ARN_IOS'];die;
+            $endpointARN = $this->SnsClient->createPlatformEndpoint($attr1); 
             $end_point_arn1 =$endpointARN['EndpointArn'];
             /*End Create EndpointARN*/
             //print_r($endpointARN);exit;
@@ -67,6 +68,7 @@ class PushComponent extends Component {
                 'PlatformApplicationArn' => $config['ARN_IOS'],
                 'Token' => $device_token
             );
+            
             $endpointARN = $this->SnsClient->createPlatformEndpoint($attr);
 
             $device_token =$endpointARN['EndpointArn'];

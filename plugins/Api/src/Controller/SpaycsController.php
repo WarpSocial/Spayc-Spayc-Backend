@@ -167,7 +167,8 @@ class SpaycsController extends AppController {
             ->bind(':longitude', $this->request->query('longitude'), 'float');
         $spaycs->contain([
             'JoinedSpayc' => function($q) {
-                return $q->select(['JoinedSpayc.spayc_id', 'joined_users' => $q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.spayc_id']);
+                //return $q->select(['JoinedSpayc.spayc_id', 'joined_users' => $q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.spayc_id']);
+            return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
             },
             'SubscribedUsers' => function($q) {
                 return $q->select(['SubscribedUsers.spayc_id', 'subscribed_users' => $q->func()->count('SubscribedUsers.id')])->group(['SubscribedUsers.spayc_id']);
@@ -199,11 +200,18 @@ class SpaycsController extends AppController {
         } else {
             $spaycs->page($page);
         }
-        $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend){
-            return $results->map(function ($row) use($friend) {
+        $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend,$userId){
+            return $results->map(function ($row) use($friend,$userId) {
                 $spaycId = ApiHasher::decrypt($row->id);
                 $row['friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
-                $row['joined_users'] = !empty($row['joined_spayc'][0]['joined_users'])?$row['joined_spayc'][0]['joined_users']:0;
+                if(!empty($row['joined_spayc'])){
+                    $status = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.'].status');
+                    
+                }
+                $row['joined_spayc_status'] = !empty($status[0])?$status[0]:null;
+                $row['joined_users'] = !empty($row['joined_spayc'])?count($row['joined_spayc']):0;
+                
+                //$row['joined_users'] = !empty($row['joined_spayc'][0]['joined_users'])?$row['joined_spayc'][0]['joined_users']:0;
                 unset($row['joined_spayc']);
                 $row['subscribed_users'] = !empty($row['subscribed_users'][0]['subscribed_users'])?$row['subscribed_users'][0]['subscribed_users']:0;
                 $row['total_comments'] = !empty($row['comments'][0]['total_comment'])?$row['comments'][0]['total_comment']:0;
@@ -213,6 +221,7 @@ class SpaycsController extends AppController {
             });
         });
         
+        //pr($spaycs->toArray());die;
         $newQuery = clone $spaycs;
         $data['count'] = $newQuery->count();
         $data['spaycs'] = [];
