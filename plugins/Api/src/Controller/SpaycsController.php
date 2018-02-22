@@ -150,6 +150,7 @@ class SpaycsController extends AppController {
         }
         $page = (!empty($this->request->query('page')) and is_numeric($this->request->query('page')))?$this->request->query('page'):1;
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Accepted');
+        //pr($friend);exit;
         //To search by kilometers instead of miles, replace 3959 with 6371.
         $distanceField = '(3959 * acos (cos ( radians(:latitude) )
             * cos( radians( Spaycs.latitude ) )
@@ -160,8 +161,7 @@ class SpaycsController extends AppController {
         $distance = 25;
         $spaycs = $this->Spaycs->find()
             ->select([
-                'distance' => $distanceField, 'id', 'user_id', 'name', 'address'=>'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'status', 'latitude', 'longitude', 'created', 'modified'
-            ])
+                'distance' => $distanceField, 'id', 'name', 'address'=>'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode'])
             ->where(["$distanceField <" => $distance, 'status'=>'Active'])
             ->bind(':latitude', $this->request->query('latitude'), 'float')
             ->bind(':longitude', $this->request->query('longitude'), 'float');
@@ -201,10 +201,13 @@ class SpaycsController extends AppController {
         }
         $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend){
             return $results->map(function ($row) use($friend) {
-                if(!empty($row['joined_spayc'])) {
-                    $spaycId = ApiHasher::decrypt($row->id);
-                    $row['joined_spayc'][0]['joined_friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
-                }
+                $spaycId = ApiHasher::decrypt($row->id);
+                $row['friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
+                $row['joined_users'] = !empty($row['joined_spayc'][0]['joined_users'])?$row['joined_spayc'][0]['joined_users']:0;
+                unset($row['joined_spayc']);
+                $row['subscribed_users'] = !empty($row['subscribed_users'][0]['subscribed_users'])?$row['subscribed_users'][0]['subscribed_users']:0;
+                $row['total_comments'] = !empty($row['comments'][0]['total_comment'])?$row['comments'][0]['total_comment']:0;
+                unset($row['comments']);
                 return $row;
             });
         });

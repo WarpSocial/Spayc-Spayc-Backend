@@ -337,7 +337,7 @@ class Utils {
     }
     
     public static function isValidLongitude($longitude = null) {
-        if(preg_match("/^-?([1]?[1-7][1-9]|[1]?[1-8][0]|[1-9]?[0-9])\.{1}\d{1,10}$/", $longitude)) {
+        if(preg_match("/^-?([1]?[1-7][1-9]|[1]?[1-8][0]|[1-9]?[0-9])\.{1}\d{1,20}$/", $longitude)) {
             return true;
         } else {
             return false;
@@ -345,7 +345,7 @@ class Utils {
     }
     
     public static function isValidLatitude($latitude) {
-        if (preg_match("/^-?([1-8]?[1-9]|[1-9]0)\.{1}\d{1,10}$/", $latitude)) {
+        if (preg_match("/^-?([1-8]?[1-9]|[1-9]0)\.{1}\d{1,20}$/", $latitude)) {
             return true;
         } else {
             return false;

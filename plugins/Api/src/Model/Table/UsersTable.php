@@ -467,6 +467,8 @@ class UsersTable extends Table {
     }
     
     public function searchUsers($userId = null, $request = []) {
+        //id,name,email,matrix_user_id, matrix_access_token, image_url
+        //
         $blockedFriendIds = TableRegistry::get('Api.FriendRequest')->getFriendIdsByStatus($userId, 'Blocked');
         $cond['Users.status'] = 'Active';
         if(!empty($blockedFriendIds)) {
@@ -474,23 +476,25 @@ class UsersTable extends Table {
         } else {
             $cond['Users.id !='] = $userId;
         }
-        $users = $this->find('all', ['fields'=>['Users.id', 'name'=>'Users.username','Users.email','Users.gender','Users.phone','Users.dob','Users.status','Users.website_url','Users.address','Users.bio_data', 'Users.matrix_user_id', 'Users.matrix_access_token', 'Users.created','Users.modified']])->where($cond);
+        $users = $this->find('all', ['fields'=>['Users.id', 'Users.username', 'Users.email', 'Users.matrix_user_id', 'Users.matrix_access_token']])->where($cond);
         $users->contain([
-            'Requestedby' => function($q) use($userId) {
-                return $q->select(['Requestedby.id', 'Requestedby.requested_by', 'Requestedby.requested_to', 'Requestedby.requested_status', 'Requestedby.friend_status', 'Requestedby.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
-            },
-            'Requestedto' => function($q) use($userId) {
-                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.friend_status', 'Requestedto.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
-            },
-            'UserImages'=>function($q) {
-                return $q->select(['UserImages.user_id', 'UserImages.image_url']);
-            },
+            /*
             'JoinedSpayc'=>function($q) {
                 return $q->select(['JoinedSpayc.user_id', 'joined_spaycs'=>$q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.user_id']);
             },
             'Spaycs'=>function($q) {
                 return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id']);
+            },*/
+            'Requestedby' => function($q) use($userId) {
+                return $q->select(['Requestedby.id', 'Requestedby.requested_by', 'Requestedby.requested_to', 'Requestedby.requested_status', 'Requestedby.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
+            },
+            'Requestedto' => function($q) use($userId) {
+                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
+            },
+            'UserImages'=>function($q) {
+                return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
             }
+            
         ]);
         $users->formatResults(function (\Cake\Collection\CollectionInterface $results) {
             return $results->map(function ($row) {
@@ -498,6 +502,8 @@ class UsersTable extends Table {
                 $row['friend'] = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
                 $row['friend'] = !empty($row['requestedby'][0]) && empty($row['friend'])?$row['requestedby'][0]:$row['friend'];
                 $row['friend']['total_friends'] = TableRegistry::get('Api.FriendRequest')->getFriendCountByUserId($uId);
+                $row['image_url'] = !empty($row['user_images'][0]['image_url'])?$row['user_images'][0]['image_url']:'';
+                unset($row['user_images']);
                 unset($row['requestedto']);
                 unset($row['requestedby']);
                 return $row;

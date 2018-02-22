@@ -92,9 +92,9 @@ class FriendRequestTable extends Table
             ->scalar('requested_status')
             ->allowEmpty('requested_status');
 
-        $validator
+        /*$validator
             ->scalar('friend_status')
-            ->allowEmpty('friend_status');
+            ->allowEmpty('friend_status');*/
 
         return $validator;
     }
@@ -118,19 +118,19 @@ class FriendRequestTable extends Table
         if($status == 'Requested') {
             $cond = ['FriendRequest.requested_to'=>$userId];
         } else if($status == 'Blocked') {
-            $cond = ['FriendRequest.blocked_by'=>$userId];
+            $cond = ['FriendRequest.action_by'=>$userId];
         } else {
             $cond = ['OR'=>['FriendRequest.requested_by'=>$userId, 'FriendRequest.requested_to'=>$userId]];
         }
         if(in_array($status, Configure::read('friend_requested_status'))) {
             $cond['requested_status'] = $status;
-            $cond['friend_status IS'] = NULL;
+            //$cond['friend_status IS'] = NULL;
         }
-        if(in_array($status, Configure::read('friend_status'))) {
+        /*if(in_array($status, Configure::read('friend_status'))) {
             $cond['friend_status'] = $status;
-        }
+        }*/
         $friends = $this->find('all', ['fields'=>['FriendRequest.requested_by', 'FriendRequest.requested_to'], 'conditions'=>[$cond]]);
-        $friend = [0];
+        $friend = [0]; //echo $friends->count();exit;
         if($friends->count()) {
             $friendIds = $friends->toArray();
             $friend = array_unique(array_merge(array_column($friendIds,'requested_by'), array_column($friendIds,'requested_to'))); 
@@ -143,11 +143,10 @@ class FriendRequestTable extends Table
         $cond = ['OR'=>['FriendRequest.requested_by'=>$userId, 'FriendRequest.requested_to'=>$userId]];
         if(in_array($status, Configure::read('friend_requested_status'))) {
             $cond['requested_status'] = $status;
-            $cond['friend_status IS'] = NULL;
         }
-        if(in_array($status, Configure::read('friend_status'))) {
+        /*if(in_array($status, Configure::read('friend_status'))) {
             $cond['friend_status'] = $status;
-        }
+        }*/
         $friends = $this->find('all', ['fields'=>['FriendRequest.requested_by', 'FriendRequest.requested_to'], 'conditions'=>[$cond]]);
         $friend = [];
         if($friends->count()) {

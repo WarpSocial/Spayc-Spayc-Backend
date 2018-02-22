@@ -977,4 +977,15 @@ class UsersController extends AppController {
             }
         }
     }
+    
+    public function testPushnotification() {
+        if(!$this->request->is(['post'])) {
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
+        }
+        $this->loadComponent('Api.Push');
+        $data = $this->request->getData();
+        $this->Push->sendOnIOS($data['device_token'], "test push notification for spayc");
+        $response = ['status'=>'success', 'message'=>__('notification sent')];
+        $this->set($response);
+    }
 }
