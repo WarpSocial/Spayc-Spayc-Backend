@@ -147,7 +147,7 @@ class MatrixComponent extends Component {
                 ],
             'name'=>Utils::getVar('name', $items),
             'preset'=> strtolower($items['group_type']).'_chat',
-            'room_alias_name'=> \Cake\Utility\Inflector::slug($items['name']),
+            'room_alias_name'=> \Cake\Utility\Inflector::slug($items['name'].'_'.\Cake\Utility\Text::uuid()),
             'topic'=> Utils::getVar('description', $items),
             'invite' => !empty($items['invite'])?explode(',',$items['invite']):""
         ];
