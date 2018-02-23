@@ -225,8 +225,7 @@ class SpaycsController extends AppController {
             ->bind(':longitude', $this->request->query('longitude'), 'float');
         $spaycs->contain([
             'JoinedSpayc' => function($q) {
-                //return $q->select(['JoinedSpayc.spayc_id', 'joined_users' => $q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.spayc_id']);
-            return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
+                return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
             },
             'SubscribedUsers' => function($q) {
                 return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);

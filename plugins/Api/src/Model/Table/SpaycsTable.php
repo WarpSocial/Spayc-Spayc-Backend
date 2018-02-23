@@ -170,7 +170,7 @@ class SpaycsTable extends Table {
         return $validator;
     }
     
-    public function searchSpaycs($request = []) {
+    public function searchSpaycs($request = [], $userId=null) {
         //To search by kilometers instead of miles, replace 3959 with 6371.
         $distanceField = '(3959 * acos (cos ( radians(:latitude) )
             * cos( radians( Spaycs.latitude ) )
@@ -185,13 +185,40 @@ class SpaycsTable extends Table {
             ->where(["$distanceField <" => $distance, 'status'=>'Active'])
             ->bind(':latitude', $request['latitude'], 'float')
             ->bind(':longitude', $request['longitude'], 'float');
+        $spaycs->contain([
+            'JoinedSpayc' => function($q) {
+                return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
+            },
+            'SubscribedUsers' => function($q) {
+                return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
+            }
+        ]);
         $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
         $spaycs->order(['distance'=>'ASC'])->limit($limit);
         if(!empty($request['keyword'])) {
             $spaycs->where(["Spaycs.name LIKE"=>"%".$request['keyword']."%"]);
         }
+        
+        $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($userId) {
+            return $results->map(function ($row) use($userId) {
+                if(!empty($row['joined_spayc'])) {
+                    $status = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.'].status');
+                }
+                $row['joined_spayc_status'] = !empty($status[0])?$status[0]:null;
+                $row['is_joined'] = !empty($status[0])?true:false;
+                $row['joined_users'] = !empty($row['joined_spayc'])?count($row['joined_spayc']):0;
+                unset($row['joined_spayc']);
+                if(!empty($row['subscribed_users'])) {
+                    $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');
+                }
+                $row['subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):0;
+                $row['is_subscribed'] = !empty($subUserId[0])?true:false;
+                return $row;
+            });
+        });
+        
         $page = (!empty($request['page']) && is_numeric($request['page']))?$request['page']:1;
-        if($page < 0){
+        if($page < 0) {
             $page = $page*-1;
             $spaycs->page($page);
         } else {
