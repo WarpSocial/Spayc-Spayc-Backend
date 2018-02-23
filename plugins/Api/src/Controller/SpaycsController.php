@@ -88,14 +88,24 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
         }
         $data = $this->request->getData();
-        $data['type'] = !empty($data['type'])?ucfirst($data['type']):'';
         $data['group_type'] = !empty($data['group_type'])?ucfirst($data['group_type']):'';
         $data['status'] = 'Active';
-        $entity = $this->Spaycs->newEntity();
-        $items = $this->Spaycs->patchEntity($entity, $data);
-        if($items->errors()) {
-            $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
+        $errors = $this->Spaycs->validateSubspace($data);
+        if(!empty($errors)) {
+            $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
+        $entity = $this->Spaycs->find()->where(['id'=>$data['parent_id']]);
+        if($entity->isEmpty()){
+            $this->restException(['status'=>'failed','message'=>__('Parent space has not been found.')], 400);
+        }
+        $parentObj = $entity->first();
+        $data['start_date'] = $parentObj->start_date;
+        $data['end_date'] = $parentObj->end_date;
+        $data['latitude'] = $parentObj->latitude;
+        $data['longitude'] = $parentObj->longitude;
+        $data['type'] = $parentObj->type;
+        $items = $this->Spaycs->newEntity($data,['validate'=>false]);
+        
         $this->loadComponent('Api.Matrix');
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
         
@@ -112,7 +122,8 @@ class SpaycsController extends AppController {
                     TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
                 }
                 $this->response->statusCode(201);
-                $response = ['status'=>'success','message'=>__('Your spayc '.ucfirst($data['name']).', has been created.'),'data'=>$items];
+               // $data += ['id'=>$items=>id,'']
+                $response = ['status'=>'success','message'=>__('Your spayc '.ucfirst($data['name']).', has been created.'),'data'=>$data+['id'=>$items->id]];
                 /*Event to bind to update the set upload room image */
                 $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
                     'options' => [

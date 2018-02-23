@@ -169,6 +169,53 @@ class SpaycsTable extends Table {
         
         return $validator;
     }
+    /**
+     * validateSubspace vlaidate create subspace
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validateSubspace($data) {
+        $validator = new Validator();
+        $validator
+                ->requirePresence('parent_id','create', __('Prent id key is missing.'))
+                ->notEmpty('parent_id',__('Prent id is required.'));
+        
+        $validator
+                ->requirePresence('name','create', __('Name key is missing.'))
+                ->maxLength('name', 255,'Name text is too long.')
+                ->notEmpty('name',__('Spayc name is required.'));
+
+        $validator
+                ->requirePresence('group_type', 'create',__('Group key is missing.'))
+                ->notEmpty('group_type',__('Group is required field.'))
+                ->inList('group_type', Configure::read('grouptype'),__('Group value must be any one '.implode(',',Configure::read('grouptype')).'.')); 
+
+        $validator
+                //->requirePresence('passcode', 'create',__('Passcode key is missing.'))
+                ->maxLength('passcode', 30,__('Max 30 character is allowed for passcode.'))
+                //->add('passcode', 'unique', ['rule' => 'validateUnique','message'=>'Username must be unique.', 'provider' => 'table'])
+                ->notEmpty('passcode',__('Passcode is required in case of private group type.'),function($context){                    
+                     return (isset($context['data']['group_type']) && ($context['data']['group_type'] =='Private'));
+                });
+
+        $validator
+                ->requirePresence('description', 'create',__('Description key is missing.'))
+                ->maxLength('description', 50,__('Description must be less than 50 characters.'))
+                ->allowEmpty('description');
+        
+        $validator
+                ->allowEmpty('image')
+                ->add('image','extension',[
+                    'rule' => ['extension', ['jpeg', 'png','jpg']],
+                    'message'=>__('Please select only jpg,jpeg,png.')
+                ])
+                ->add('image','size',[
+                    'rule' => ['fileSize', '<=',\Cake\Core\Configure::read('maxupload')],
+                    'message'=>__('Image size must be less than '.\Cake\Core\Configure::read('maxupload').'.')
+                ]);
+         return $validator->errors($data);
+    }
     
     public function searchSpaycs($request = [], $userId=null) {
         //To search by kilometers instead of miles, replace 3959 with 6371.
