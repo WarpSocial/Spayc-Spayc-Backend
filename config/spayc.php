@@ -6,7 +6,7 @@ return [
     'grouptype'=>['Public', 'Private'],
     'friend_requested_status'=>['Pending', 'Accepted', 'Blocked','Unblock','Direct','Decline','Unfriend'],
     'requestMsg'=>[
-        'Pending'=>'Friend Request send Successfully.',
+        'Pending'=>'Friend Request sent Successfully.',
         'Accepted'=>'Friend added successfully.',
         'Blocked'=>'User has been blocked successfully.',
         'Unblock'=>'User has been unblocked successfully.',

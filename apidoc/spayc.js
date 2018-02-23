@@ -161,7 +161,7 @@ function postSubspaycs() { return; }
  * @apiGroup Spayc
  * @apiPermission private
  *
- * @apiDescription Filter spayc list.
+ * @apiDescription Filter spayc all list, created by logged in user and joined by logged in user using list_by parameter.
  * 
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
@@ -171,10 +171,9 @@ function postSubspaycs() { return; }
     @apiParam {Timestamp}   end_date        Spayc end date in query string(1515715200) (Optional).
     @apiParam {String}      group_type      Group type must be any one from the following (Public|Private) (Optional).
     @apiParam {String}      type            Spayc type must be any one from the following (Event|Community) (Optional).
-    @apiParam {String}      with_friends    Allow that spayc list with friends or not (Optional).
-    @apiParam {String}      latitude        Latitude is required in query string(Required).
-    @apiParam {String}      longitude       Longitude is required in query string(Required).
-    @apiParam {String}      type            Type is optional in query string['created', 'joined', 'all'](Optional).
+    @apiParam {String}      latitude        Latitude is required in query string(Optional).
+    @apiParam {String}      longitude       Longitude is required in query string(Optional).
+    @apiParam {String}      list_by         List by is optional in query string(created|joined|all).
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Spayc lists.
@@ -202,7 +201,9 @@ function postSubspaycs() { return; }
                 "subscribed_users": 0,
                 "friends": 0,
                 "joined_spayc_status": null,
+                "is_joined": false,
                 "joined_users": 0,
+                "is_subscribed": false,
                 "total_comments": 0,
                 "total_presents": 0
             },
@@ -221,7 +222,9 @@ function postSubspaycs() { return; }
                 "subscribed_users": 1,
                 "friends": 0,
                 "joined_spayc_status": "Pending",
+                "is_joined": false,
                 "joined_users": 3,
+                "is_subscribed": true,
                 "total_comments": 1,
                 "total_presents": 0
             }

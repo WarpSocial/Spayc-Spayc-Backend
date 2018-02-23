@@ -115,7 +115,7 @@ class FriendRequestTable extends Table
     
     public function getFriendIdsByUserId($userId = null, $status = 'Accepted') {
         $status = ucfirst($status);
-        if($status == 'Requested') {
+        if($status == 'Pending') {
             $cond = ['FriendRequest.requested_to'=>$userId];
         } else if($status == 'Blocked') {
             $cond = ['FriendRequest.action_by'=>$userId];

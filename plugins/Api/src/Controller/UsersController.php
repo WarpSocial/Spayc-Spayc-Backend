@@ -219,15 +219,16 @@ class UsersController extends AppController {
                 $this->restException(['status'=>'failed', 'message'=>__('Longitude is not valid.')], 400);
             }
         }
+        $userId = $this->Auth->user('id');
         if(!empty($type) && $type=='users') {
             $data['users'] = $this->Users->searchUsers($this->Auth->user('id'), $this->request->query);
         } else if(!empty($type) && $type=='spaycs') {
-            $data['spaycs'] = TableRegistry::get('Api.Spaycs')->searchSpaycs($this->request->query);
+            $data['spaycs'] = TableRegistry::get('Api.Spaycs')->searchSpaycs($this->request->query, $userId);
         } else if(!empty($type) && $type=='hashtags') {
             $data['hashtags'] = TableRegistry::get('Api.Hashtags')->searchHashtags($this->request->query);
         } else {
             $data['users'] = $this->Users->searchUsers($this->Auth->user('id'), $this->request->query);
-            $data['spaycs'] = TableRegistry::get('Api.Spaycs')->searchSpaycs($this->request->query);
+            $data['spaycs'] = TableRegistry::get('Api.Spaycs')->searchSpaycs($this->request->query, $userId);
             $data['hashtags'] = TableRegistry::get('Api.Hashtags')->searchHashtags($this->request->query);
         }
         if(empty($data['users']['records']) && empty($data['spaycs']['records']) && empty($data['hashtags']['records'])) {
@@ -464,7 +465,7 @@ class UsersController extends AppController {
         $data['forgot_password_timestamp'] = time();
         $d = $this->Users->updateAll($data, ['email'=>$data['email']]);
         $this->getMailer('Api.User')->send('forgotPassword', [$user]);
-        $response = ['status' => "success", 'message' => __('Reset password link send to your email address.')];
+        $response = ['status' => "success", 'message' => __('Reset password link has been sent to your email address.')];
         $this->set($response);
     }
     
@@ -594,11 +595,18 @@ class UsersController extends AppController {
         }
         $loggedUser = $this->Auth->user();   
          if(in_array($data['friend_status'], ['Decline','Unfriend'])){
-            if($frObj->deleteAll(['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']])){
-                $this->restException(['status'=>'success', 'message'=>__('Status has been changed successfully')]);
+            if($frObj->deleteAll(['OR'=>[
+                ['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']],
+                ['requested_by' => $data['friend_id'],'requested_to'=>$loggedUser['id']]
+            ]])){
+                $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status'])]);
             }
         }
-        $requestedFrnd = $frObj->find()->where(['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']]);
+        $requestedFrnd = $frObj->find()->Where(['OR'=>[
+            ['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']],
+            ['requested_by' => $data['friend_id'],'requested_to'=>$loggedUser['id']]
+            ]]);
+        //debug($requestedFrnd);
         if($requestedFrnd->isEmpty()){
             $newObj = $frObj->newEntity();
             $newObj->requested_by = $loggedUser['id'];
@@ -606,7 +614,7 @@ class UsersController extends AppController {
             $newObj->action_by = $loggedUser['id'];
             $newObj->requested_status = $data['friend_status'];
             if($frObj->save($newObj)){
-                $this->restException(['status'=>'success', 'message'=>__('Friend status updated successfully.'),'data'=>[
+                $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status']),'data'=>[
                     'id'=>$newObj->id,
                     'requested_by'=>$newObj->requested_by,
                     'requested_to'=>$newObj->requested_to,

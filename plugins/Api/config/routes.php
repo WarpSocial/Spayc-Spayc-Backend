@@ -31,6 +31,7 @@ Router::plugin(
         $routes->connect('/chat-request', ['controller' => 'Users', 'action' => 'directChatRequest']);
         $routes->connect('/set-profile-image/:id', ['controller' => 'Users', 'action' => 'setProfileImage'], ['pass'=>['id']]);
         $routes->connect('/chat-room', ['controller' => 'Spaycs', 'action' => 'createChatRoom']);
+        $routes->connect('/create-subspace', ['controller' => 'Spaycs', 'action' => 'createSubSpace']);
         $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
         //$routes->connect('/as', ['controller' => 'Spaycs', 'action' => 'matrixApplicationService']);
         $routes->connect('/transactions/:id', ['controller' => 'Spaycs', 'action' => 'matrixApplicationService'],['pass'=>['id']]);
