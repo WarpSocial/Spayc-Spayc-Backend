@@ -101,7 +101,7 @@ function postSpaycs() { return; }
  * @apiGroup Spayc
  * @apiPermission private
  *
- * @apiDescription Filter spayc list.
+ * @apiDescription Filter spayc all list, created by logged in user and joined by logged in user using list_by parameter.
  * 
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
@@ -111,10 +111,9 @@ function postSpaycs() { return; }
     @apiParam {Timestamp}   end_date        Spayc end date in query string(1515715200) (Optional).
     @apiParam {String}      group_type      Group type must be any one from the following (Public|Private) (Optional).
     @apiParam {String}      type            Spayc type must be any one from the following (Event|Community) (Optional).
-    @apiParam {String}      with_friends    Allow that spayc list with friends or not (Optional).
-    @apiParam {String}      latitude        Latitude is required in query string(Required).
-    @apiParam {String}      longitude       Longitude is required in query string(Required).
-    @apiParam {String}      list_by         List by is optional in query string[created, joined, all](Optional).
+    @apiParam {String}      latitude        Latitude is required in query string(Optional).
+    @apiParam {String}      longitude       Longitude is required in query string(Optional).
+    @apiParam {String}      list_by         List by is optional in query string(created|joined|all).
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Spayc lists.

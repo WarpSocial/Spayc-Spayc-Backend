@@ -219,15 +219,16 @@ class UsersController extends AppController {
                 $this->restException(['status'=>'failed', 'message'=>__('Longitude is not valid.')], 400);
             }
         }
+        $userId = $this->Auth->user('id');
         if(!empty($type) && $type=='users') {
             $data['users'] = $this->Users->searchUsers($this->Auth->user('id'), $this->request->query);
         } else if(!empty($type) && $type=='spaycs') {
-            $data['spaycs'] = TableRegistry::get('Api.Spaycs')->searchSpaycs($this->request->query);
+            $data['spaycs'] = TableRegistry::get('Api.Spaycs')->searchSpaycs($this->request->query, $userId);
         } else if(!empty($type) && $type=='hashtags') {
             $data['hashtags'] = TableRegistry::get('Api.Hashtags')->searchHashtags($this->request->query);
         } else {
             $data['users'] = $this->Users->searchUsers($this->Auth->user('id'), $this->request->query);
-            $data['spaycs'] = TableRegistry::get('Api.Spaycs')->searchSpaycs($this->request->query);
+            $data['spaycs'] = TableRegistry::get('Api.Spaycs')->searchSpaycs($this->request->query, $userId);
             $data['hashtags'] = TableRegistry::get('Api.Hashtags')->searchHashtags($this->request->query);
         }
         if(empty($data['users']['records']) && empty($data['spaycs']['records']) && empty($data['hashtags']['records'])) {

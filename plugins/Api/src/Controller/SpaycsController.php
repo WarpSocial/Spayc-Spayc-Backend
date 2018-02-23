@@ -222,16 +222,21 @@ class SpaycsController extends AppController {
             + sin ( radians(:latitude) )
             * sin( radians( Spaycs.latitude ) )))';
         $distance = 25;
+        $cond = ['status'=>'Active'];
+        if(empty($this->request->query('list_by')) || !in_array($this->request->query('list_by'), ['created', 'joined'])) {
+            $cond["$distanceField <"] = $distance;
+        } else {
+            $cond["$distanceField >="] = 0;
+        }
         $spaycs = $this->Spaycs->find()
             ->select([
                 'distance' => $distanceField, 'id', 'name', 'address'=>'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode'])
-            ->where(["$distanceField <" => $distance, 'status'=>'Active'])
+            ->where($cond)
             ->bind(':latitude', $this->request->query('latitude'), 'float')
             ->bind(':longitude', $this->request->query('longitude'), 'float');
         $spaycs->contain([
             'JoinedSpayc' => function($q) {
-                //return $q->select(['JoinedSpayc.spayc_id', 'joined_users' => $q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.spayc_id']);
-            return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
+                return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
             },
             'SubscribedUsers' => function($q) {
                 return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);

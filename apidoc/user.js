@@ -150,7 +150,7 @@ function postUser() { return; }
  * @apiGroup User
  * @apiPermission Private User
  *
- * @apiDescription Search users|spaycs|hashtags details.
+ * @apiDescription Search users|spaycs|hashtags details by requesting parameters.
  *
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
@@ -171,128 +171,89 @@ function postUser() { return; }
     "message": "Search Lists.",
     "data": {
         "users": {
-            "count": 14,
+            "count": 26,
             "records": [
                 {
-                    "id": "MzY3NzI3Njc1LjQ5",
-                    "name": "spayc1",
-                    "email": "spayc1@domain.com",
-                    "gender": "Male",
-                    "country_code":"+91",
-                    "phone": "(XXX) (XXXXXXX)",
-                    "dob": "12-11-2000",
-                    "status": "Active",
-                    "website_url": "www.spayc.com",
-                    "address": "spayc address",
-                    "bio_data": "your bio data",
-                    "matrix_user_id": "@test2:35.168.119.247",
-                    "matrix_access_token": "MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyOGNpZCB1c2VyX2lkID0gQHRlc3QyOjM1LjE2OC4xMTkuMjQ3CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gMVJKXjJSTEs3Klc9LmhyQAowMDJmc2lnbmF0dXJlIMyd1A3UtgJZEWcmvehB84AboRIZrFb46AqHTrn4Y2reCg",
-                    "created": "2018-01-17T14:09:52+00:00",
-                    "modified": "2018-01-18T07:43:46+00:00",
-                    "spaycs": [
-                        {
-                            "user_id": 7,
-                            "created_spaycs": 2
-                        }
-                    ],
-                    "joined_spayc": [
-                        {
-                            "user_id": 7,
-                            "joined_spaycs": 2
-                        }
-                    ],
-                    "user_images": [],
+                    "id": "5",
+                    "username": "user1",
+                    "email": "user1@domain.com",
+                    "matrix_user_id": null,
                     "friend": {
-                        "total_friends": 2
-                    }
+                        "id": "57",
+                        "requested_by": "17",
+                        "requested_to": "5",
+                        "requested_status": "Requested",
+                        "total_friends": 0
+                    },
+                    "matrix_room_id": "!asfLdzLnOdGRkdd4dPZWu:localhost",
+                    "image_url": ""
                 },
                 {
-                    "id": "NTI1MzI1MjUwLjc=",
-                    "name": "spayc2",
-                    "email": "spayc2@domain.com",
-                    "gender": "Male",
-                    "country_code":"+91",
-                    "phone": "(XXX) (XXXXXXX)",
-                    "dob": "11-12-2000",
-                    "status": "Active",
-                    "website_url": "www.spayc.com",
-                    "address": "your address",
-                    "bio_data": "your bio data",
-                    "matrix_user_id": "@test2:35.168.119.247",
-                    "matrix_access_token": "MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyOGNpZCB1c2VyX2lkID0gQHRlc3QyOjM1LjE2OC4xMTkuMjQ3CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gMVJKXjJSTEs3Klc9LmhyQAowMDJmc2lnbmF0dXJlIMyd1A3UtgJZEWcmvehB84AboRIZrFb46AqHTrn4Y2reCg",
-                    "created": "2018-01-24T13:46:10+00:00",
-                    "modified": "2018-01-29T07:30:01+00:00",
-                    "spaycs": [
-                        {
-                            "user_id": 10,
-                            "created_spaycs": 32
-                        }
-                    ],
-                    "joined_spayc": [],
-                    "user_images": [],
+                    "id": "7",
+                    "username": "user2",
+                    "email": "user2@domain.com",
+                    "matrix_user_id": null,
                     "friend": {
-                        "id": "NTI1MzI1MjUuMDc=",
-                        "requested_by": 10,
-                        "requested_to": 17,
-                        "requested_status": "Accepted",
-                        "friend_status": "Unfriend",
-                        "matrix_room_id": null,
-                        "total_friends": 7
-                    }
+                        "total_friends": 0
+                    },
+                    "matrix_room_id": null,
+                    "image_url": ""
                 }
             ]
         },
         "spaycs": {
-            "count": 10,
+            "count": 22,
             "records": [
                 {
-                    "distance": "12.3020109427781",
-                    "id": "MTczMzU3MzMyNy4zMQ==",
-                    "user_id": 10,
-                    "name": "spaycdev3",
+                    "distance": "15.5999136892407",
+                    "id": "33",
+                    "name": "spaycdev13",
                     "address": "Your address",
-                    "start_date": "2019-01-11T01:02:20+00:00",
-                    "end_date": "2019-01-12T01:02:20+00:00",
+                    "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
+                    "start_date": "01-11-2019 01:02:00",
+                    "end_date": "01-12-2019 01:02:00",
                     "image": "",
                     "type": "Community",
                     "group_type": "Public",
-                    "status": "Active",
-                    "latitude": 28.613939,
-                    "longitude": 77.209021,
-                    "created": "2018-01-25T11:49:48+00:00",
-                    "modified": "2018-01-25T11:49:48+00:00"
+                    "passcode": "",
+                    "subscribed_users": 1,
+                    "joined_spayc_status": null,
+                    "is_joined": false,
+                    "joined_users": 0,
+                    "is_subscribed": false
                 },
                 {
-                    "distance": "12.3020109427781",
-                    "id": "MTY4MTA0MDgwMi4yNA==",
-                    "user_id": 10,
-                    "name": "spaycdev4",
+                    "distance": "15.5999136892407",
+                    "id": "32",
+                    "name": "spaycdev13",
                     "address": "Your address",
-                    "start_date": "2019-01-11T01:02:20+00:00",
-                    "end_date": "2019-01-12T01:02:20+00:00",
+                    "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
+                    "start_date": "01-11-2019 01:02:00",
+                    "end_date": "01-12-2019 01:02:00",
                     "image": "",
                     "type": "Community",
                     "group_type": "Public",
-                    "status": "Active",
-                    "latitude": 28.613939,
-                    "longitude": 77.209021,
-                    "created": "2018-01-25T11:40:10+00:00",
-                    "modified": "2018-01-25T11:40:10+00:00"
+                    "passcode": "",
+                    "subscribed_users": 2,
+                    "joined_spayc_status": null,
+                    "is_joined": false,
+                    "joined_users": 1,
+                    "is_subscribed": false
                 }
             ]
         },
         "hashtags": {
-            "count": 9,
+            "count": 33,
             "records": [
                 {
-                    "id": "MjA0ODc2ODQ3Ny43Mw==",
+                    "id": "41",
                     "name": "color",
-                    "created": "2018-01-31T13:54:20+00:00",
-                    "modified": "2018-01-31T13:54:20+00:00"
+                    "created": "2018-02-01T08:18:00+00:00",
+                    "modified": "2018-02-01T08:18:00+00:00"
                 },
                 {
-                    "id": "MjEwMTMwMTAwMi44",
-                    "name": "festival",
+                    "id": "39",
+                    "name": "festive",
                     "created": "2018-01-31T13:54:20+00:00",
                     "modified": "2018-01-31T13:54:20+00:00"
                 }

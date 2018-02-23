@@ -467,8 +467,6 @@ class UsersTable extends Table {
     }
     
     public function searchUsers($userId = null, $request = []) {
-        //id,name,email,matrix_user_id, matrix_access_token, image_url
-        //
         $blockedFriendIds = TableRegistry::get('Api.FriendRequest')->getFriendIdsByStatus($userId, 'Blocked');
         $cond['Users.status'] = 'Active';
         if(!empty($blockedFriendIds)) {
@@ -476,7 +474,7 @@ class UsersTable extends Table {
         } else {
             $cond['Users.id !='] = $userId;
         }
-        $users = $this->find('all', ['fields'=>['Users.id', 'Users.username', 'Users.email', 'Users.matrix_user_id', 'Users.matrix_access_token']])->where($cond);
+        $users = $this->find('all', ['fields'=>['Users.id', 'Users.username', 'Users.email', 'Users.matrix_user_id']])->where($cond);
         $users->contain([
             /*
             'JoinedSpayc'=>function($q) {
@@ -501,6 +499,8 @@ class UsersTable extends Table {
                 $uId = ApiHasher::decrypt($row->id);
                 $row['friend'] = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
                 $row['friend'] = !empty($row['requestedby'][0]) && empty($row['friend'])?$row['requestedby'][0]:$row['friend'];
+                $row['matrix_room_id'] = !empty($row['friend']['matrix_room_id'])?$row['friend']['matrix_room_id']:null;
+                unset($row['friend']['matrix_room_id']);
                 $row['friend']['total_friends'] = TableRegistry::get('Api.FriendRequest')->getFriendCountByUserId($uId);
                 $row['image_url'] = !empty($row['user_images'][0]['image_url'])?$row['user_images'][0]['image_url']:'';
                 unset($row['user_images']);
