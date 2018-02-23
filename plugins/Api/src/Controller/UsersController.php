@@ -626,7 +626,7 @@ class UsersController extends AppController {
             $frndRequest->set('action_by',$loggedUser['id']);
             if($frObj->save($frndRequest)){
                 
-                $this->restException(['status'=>'success', 'message'=>__('Friend request send successfully.'),'data'=>[                    
+                $this->restException(['status'=>'success', 'message'=> Configure::read('requestMsg.'.$data['friend_status']),'data'=>[                    
                     'id'=>$frndRequest->id,
                     'requested_by'=>$frndRequest->requested_by,
                     'requested_to'=>$frndRequest->requested_to,
@@ -657,7 +657,7 @@ class UsersController extends AppController {
         $loggedUser = $this->Auth->user();     
          if(in_array($data['friend_status'],['Decline','Unfriend'])){
             if($frObj->deleteAll(['requested_by' => $data['friend_id'],'requested_to'=>$loggedUser['id']])){
-                $this->restException(['status'=>'success', 'message'=>__('Status has been changed successfully')]);
+                $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status'])]);
             }
         }
         $requestedFrnd = $frObj->find()->where(['requested_by' => $data['friend_id'],'requested_to'=>$loggedUser['id']]);        
@@ -672,7 +672,7 @@ class UsersController extends AppController {
         $frndRequest->set('action_by',$loggedUser['id']);
         if($frObj->save($frndRequest)){
 
-            $this->restException(['status'=>'success', 'message'=>__('Friend status updated successfully.'),'data'=>[                    
+            $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status']),'data'=>[                    
                 'id'=>$frndRequest->id,
                 'requested_by'=>$frndRequest->requested_by,
                 'requested_to'=>$frndRequest->requested_to,
