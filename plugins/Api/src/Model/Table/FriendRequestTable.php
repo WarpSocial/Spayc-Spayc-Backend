@@ -129,13 +129,21 @@ class FriendRequestTable extends Table
         /*if(in_array($status, Configure::read('friend_status'))) {
             $cond['friend_status'] = $status;
         }*/
-        $friends = $this->find('all', ['fields'=>['FriendRequest.requested_by', 'FriendRequest.requested_to'], 'conditions'=>[$cond]]);
-        $friend = [0]; //echo $friends->count();exit;
-        if($friends->count()) {
-            $friendIds = $friends->toArray();
-            $friend = array_unique(array_merge(array_column($friendIds,'requested_by'), array_column($friendIds,'requested_to'))); 
+        $friends = $this->find('all', ['fields'=>['FriendRequest.requested_by', 'FriendRequest.requested_to'], 'conditions'=>[$cond]]);        
+        if($friends->isEmpty()){
+            return false;
         }
-        return $friend;
+        
+        $ids = [];
+        foreach($friends as $frnd){
+            if($frnd->requested_by != $userId){
+                array_push($ids, $frnd->requested_by);
+            }
+            if($frnd->requested_to != $userId){
+                array_push($ids, $frnd->requested_to);
+            }
+        }
+        return $ids;
     }
     
     public function getFriendIdsByStatus($userId = null, $status = 'Blocked') {
