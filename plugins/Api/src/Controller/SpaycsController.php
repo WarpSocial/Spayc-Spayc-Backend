@@ -178,22 +178,33 @@ class SpaycsController extends AppController {
             }
         ]);
         $spaycs->order(['distance'=>'ASC'])->limit($limit);
+        if($this->request->query('type')=='created') {
+            $spaycs->where(['Spaycs.user_id'=>$userId]);
+        } else if($this->request->query('type')=='joined') {
+            $ids = TableRegistry::get("Api.JoinedSpayc")->getJoinedSpaycIds($userId);
+            $spaycs->where(['Spaycs.id IN'=>$ids]);
+        }
+        
         if($this->request->query('start_date')) {
             $date = new \Cake\I18n\Time($this->request->query('start_date'));
             $startDate = Utils::setUtc($date->format('Y-m-d H:i:s'), Configure::read("timezone"));
             $spaycs->where(["Spaycs.start_date >="=>$startDate]);
         }
+        
         if($this->request->query('end_date')) {
             $date = new \Cake\I18n\Time($this->request->query('start_date'));
             $endDate = Utils::setUtc($date->format('Y-m-d H:i:s'), Configure::read("timezone"));
             $spaycs->where(["Spaycs.end_date <="=>$endDate]);
         }
+        
         if(in_array(ucfirst($this->request->query('spayc_type')), ['Event', 'Community'])) {
             $spaycs->where(["Spaycs.type"=>ucfirst($this->request->query('spayc_type'))]);
         }
+        
         if(in_array(ucfirst($this->request->query('group_type')), ['Public', 'Private'])) {
             $spaycs->where(["Spaycs.group_type"=>ucfirst($this->request->query('group_type'))]);
         }
+        
         if($page < 0){
             $page = $page*-1;
             $spaycs->page($page);
@@ -204,9 +215,8 @@ class SpaycsController extends AppController {
             return $results->map(function ($row) use($friend,$userId) {
                 $spaycId = ApiHasher::decrypt($row->id);
                 $row['friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
-                if(!empty($row['joined_spayc'])){
+                if(!empty($row['joined_spayc'])) {
                     $status = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.'].status');
-                    
                 }
                 $row['joined_spayc_status'] = !empty($status[0])?$status[0]:null;
                 $row['joined_users'] = !empty($row['joined_spayc'])?count($row['joined_spayc']):0;
@@ -278,7 +288,7 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
         if(empty($id)) {
-            $this->restException(['status'=>'failed', 'message'=>__('Spayc id is required fields.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('Spayc id is required field.')], 400);
         }
         $id = ApiHasher::decrypt($id);
         $exists = $this->Spaycs->exists(['id'=>$id]);
@@ -321,7 +331,7 @@ class SpaycsController extends AppController {
         } else {
             $this->response->statusCode(204);
         }
-        $response = ['status'=>'success','message'=>__('Spayc Details.'), 'data'=>$data];
+        $response = ['status'=>'success', 'message'=>__('Spayc Details.'), 'data'=>$data];
         $this->set($response);
     }
 
@@ -364,7 +374,6 @@ class SpaycsController extends AppController {
         } else {
             $this->Flash->error(__('The spayc could not be deleted. Please, try again.'));
         }
-
         return $this->redirect(['action' => 'index']);
     }
     

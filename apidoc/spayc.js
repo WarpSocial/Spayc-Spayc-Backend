@@ -114,6 +114,7 @@ function postSpaycs() { return; }
     @apiParam {String}      with_friends    Allow that spayc list with friends or not (Optional).
     @apiParam {String}      latitude        Latitude is required in query string(Required).
     @apiParam {String}      longitude       Longitude is required in query string(Required).
+    @apiParam {String}      type            Type is optional in query string['created', 'joined', 'all'](Optional).
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Spayc lists.
@@ -124,103 +125,45 @@ function postSpaycs() { return; }
     "status": "success",
     "message": "Spayc lists.",
     "data": {
-        "count": 4,
+        "count": 22,
         "spaycs": [
             {
-                "distance": "22.7463734587819",
-                "id": "NDQ2NTI2NDYzMC45NQ==",
-                "user_id": 51,
-                "name": "Test",
-                "address": "Event address",
-                "start_date": "2018-01-10T06:00:00+00:00",
-                "end_date": "2018-01-10T06:00:00+00:00",
-                "image": "img.png",
-                "type": "Event",
-                "group_type": "Public",
-                "status": "Active",
-                "latitude": 28.535516,
-                "longitude": 77.391026,
-                "created": "2018-01-10T00:00:00+00:00",
-                "modified": "2018-01-10T00:00:00+00:00",
-                "comments": [
-                    {
-                        "spayc_id": 1,
-                        "total_comment": 1
-                    }
-                ],
-                "subscribed_users": [],
-                "joined_spayc": []
-            },
-            {
-                "distance": "22.7463734587819",
-                "id": "NDQ2N5I2NDY43C45NQ==",
-                "user_id": 51,
-                "name": "Test1",
-                "address": "Event address",
-                "start_date": "2018-01-10T01:00:00+00:00",
-                "end_date": "2018-01-11T11:00:00+00:00",
-                "image": "img.png",
-                "type": "Event",
-                "group_type": "Public",
-                "status": "Active",
-                "latitude": 28.535516,
-                "longitude": 77.391026,
-                "created": "2018-01-10T00:00:00+00:00",
-                "modified": "2018-01-10T00:00:00+00:00",
-                "comments": [],
-                "subscribed_users": [],
-                "joined_spayc": []
-            },
-            {
-                "distance": "22.7463734587819",
-                "id": "NDQ2NTI2NDgfMC45NQ5g",
-                "user_id": 51,
-                "name": "Test12",
-                "address": "Event address",
-                "start_date": "2018-01-10T01:00:00+00:00",
-                "end_date": "2018-01-11T11:00:00+00:00",
-                "image": "img.png",
-                "type": "Event",
-                "group_type": "Private",
-                "status": "Active",
-                "latitude": 28.535516,
-                "longitude": 77.391026,
-                "created": "2018-01-10T00:00:00+00:00",
-                "modified": "2018-01-10T00:00:00+00:00",
-                "comments": [],
-                "subscribed_users": [
-                    {
-                        "spayc_id": 3,
-                        "subscribed_users": 1
-                    }
-                ],
-                "joined_spayc": [
-                    {
-                        "spayc_id": 3,
-                        "joined_users": 3,
-                        "joined_friends": 2
-                    }
-                ]
-            },
-            {
-                "distance": "22.7463734587819",
-                "id": "NDsdaf2NDYzMC45NQFA",
-                "user_id": 51,
-                "name": "Test123",
-                "address": "Community address",
-                "start_date": "2018-01-10T01:00:00+00:00",
-                "end_date": "2018-01-11T11:00:00+00:00",
-                "image": "img.png",
+                "distance": "0",
+                "id": "33",
+                "name": "spaycdev13",
+                "address": "Your address",
+                "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
+                "start_date": "01-11-2019 01:02:00",
+                "end_date": "01-12-2019 01:02:00",
+                "image": "",
                 "type": "Community",
                 "group_type": "Public",
-                "status": "Active",
-                "latitude": 28.535516,
-                "longitude": 77.391026,
-                "created": "2018-01-10T00:00:00+00:00",
-                "modified": "2018-01-10T00:00:00+00:00",
-                "comments": [],
-                "subscribed_users": [],
-                "joined_spayc": []
+                "passcode": "",
+                "subscribed_users": 0,
+                "friends": 0,
+                "joined_spayc_status": null,
+                "joined_users": 0,
+                "total_comments": 0,
+                "total_presents": 0
+            },
+            {
+                "distance": "0",
+                "id": "5",
+                "name": "spaycdev13",
+                "address": "Your address",
+                "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
+                "start_date": "01-11-2019 01:02:00",
+                "end_date": "01-12-2019 01:02:00",
+                "image": "",
+                "type": "Event",
+                "group_type": "Public",
+                "passcode": "s5d4f87sdf4545",
+                "subscribed_users": 1,
+                "friends": 0,
+                "joined_spayc_status": "Pending",
+                "joined_users": 3,
+                "total_comments": 1,
+                "total_presents": 0
             }
         ]
     }

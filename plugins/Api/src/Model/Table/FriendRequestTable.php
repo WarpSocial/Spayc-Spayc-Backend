@@ -130,7 +130,7 @@ class FriendRequestTable extends Table
             $cond['friend_status'] = $status;
         }*/
         $friends = $this->find('all', ['fields'=>['FriendRequest.requested_by', 'FriendRequest.requested_to'], 'conditions'=>[$cond]]);
-        $friend = [0]; //echo $friends->count();exit;
+        $friend = [0];
         if($friends->count()) {
             $friendIds = $friends->toArray();
             $friend = array_unique(array_merge(array_column($friendIds,'requested_by'), array_column($friendIds,'requested_to'))); 
