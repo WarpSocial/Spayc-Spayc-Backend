@@ -465,7 +465,7 @@ class UsersController extends AppController {
         $data['forgot_password_timestamp'] = time();
         $d = $this->Users->updateAll($data, ['email'=>$data['email']]);
         $this->getMailer('Api.User')->send('forgotPassword', [$user]);
-        $response = ['status' => "success", 'message' => __('Reset password link send to your email address.')];
+        $response = ['status' => "success", 'message' => __('Reset password link has been sent to your email address.')];
         $this->set($response);
     }
     

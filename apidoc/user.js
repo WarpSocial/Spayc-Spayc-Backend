@@ -182,7 +182,7 @@ function postUser() { return; }
                         "id": "57",
                         "requested_by": "17",
                         "requested_to": "5",
-                        "requested_status": "Requested",
+                        "requested_status": "Pending",
                         "total_friends": 0
                     },
                     "matrix_room_id": "!asfLdzLnOdGRkdd4dPZWu:localhost",
@@ -392,7 +392,7 @@ function postFriendRequest() { return; }
  
 * @apiParam  {Number}   page            Page number in query string (Optional).
 * @apiParam  {Number}   limit           Records limit in query string (Optional).
-* @apiParam  {String}   friend_status   Status in query string must be any one from the following(Requested, Accepted, 'Declined',Blocked, Unfriend).
+* @apiParam  {String}   friend_status   Status in query string must be any one from the following(Pending, Accepted, 'Declined',Blocked, Unfriend).
  
  
   @apiSuccess {String} status success.
@@ -415,7 +415,7 @@ function postFriendRequest() { return; }
                     "id": "bmRkeTJVYjhwTlQzKzdpeWJwWEMvZz09",
                     "requested_by": 10,
                     "requested_to": 7,
-                    "requested_status": "Requested",
+                    "requested_status": "Pending",
                     "friend_status": null,
                     "matrix_room_id": "room:@848843444"
                 },
@@ -430,7 +430,7 @@ function postFriendRequest() { return; }
                     "id": "NlJpUEx0M016dXBGTjhZdWpWeThBUT09",
                     "requested_by": 10,
                     "requested_to": 8,
-                    "requested_status": "Requested",
+                    "requested_status": "Pending",
                     "friend_status": null,
                     "matrix_room_id": "room:@84854843"
                 },
@@ -622,7 +622,7 @@ function postForgotPassword() { return; }
             "id": "MzNNbkN6V05zQ2c1N0ViMVJJeEVqZz09",
             "requested_by": 10,
             "requested_to": 19,
-            "requested_status": "Requested",
+            "requested_status": "Pending",
             "friend_status": null,
             "total_friends": 2
         },
