@@ -124,7 +124,7 @@ class SpaycsController extends AppController {
                     TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
                 }
                 $this->response->statusCode(201);
-                $response = ['status'=>'success','message'=>__('Your spayc '.ucfirst($data['name']).', has been created.'),'data'=>$data+['id'=>$items->id]];
+                $response = ['status'=>'success','message'=>__('Your sub spayc '.ucfirst($data['name']).', has been created.'),'data'=>$data];
                 /*Event to bind to update the set upload room image */
                 $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
                     'options' => [
