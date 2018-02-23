@@ -230,9 +230,9 @@ class SpaycsController extends AppController {
             }
         ]);
         $spaycs->order(['distance'=>'ASC'])->limit($limit);
-        if($this->request->query('type')=='created') {
+        if($this->request->query('list_by')=='created') {
             $spaycs->where(['Spaycs.user_id'=>$userId]);
-        } else if($this->request->query('type')=='joined') {
+        } else if($this->request->query('list_by')=='joined') {
             $ids = TableRegistry::get("Api.JoinedSpayc")->getJoinedSpaycIds($userId);
             $spaycs->where(['Spaycs.id IN'=>$ids]);
         }

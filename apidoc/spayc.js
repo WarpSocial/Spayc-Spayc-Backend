@@ -114,7 +114,7 @@ function postSpaycs() { return; }
     @apiParam {String}      with_friends    Allow that spayc list with friends or not (Optional).
     @apiParam {String}      latitude        Latitude is required in query string(Required).
     @apiParam {String}      longitude       Longitude is required in query string(Required).
-    @apiParam {String}      type            Type is optional in query string['created', 'joined', 'all'](Optional).
+    @apiParam {String}      list_by         List by is optional in query string[created, joined, all](Optional).
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Spayc lists.

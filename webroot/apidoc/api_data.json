@@ -415,6 +415,13 @@
             "optional": false,
             "field": "longitude",
             "description": "<p>Longitude is required in query string(Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "list_by",
+            "description": "<p>List by is optional in query string<a href=\"Optional\">created, joined, all</a>.</p>"
           }
         ]
       }
