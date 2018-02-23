@@ -594,11 +594,18 @@ class UsersController extends AppController {
         }
         $loggedUser = $this->Auth->user();   
          if(in_array($data['friend_status'], ['Decline','Unfriend'])){
-            if($frObj->deleteAll(['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']])){
+            if($frObj->deleteAll(['OR'=>[
+                ['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']],
+                ['requested_by' => $data['friend_id'],'requested_to'=>$loggedUser['id']]
+            ]])){
                 $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status'])]);
             }
         }
-        $requestedFrnd = $frObj->find()->where(['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']]);
+        $requestedFrnd = $frObj->find()->Where(['OR'=>[
+            ['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']],
+            ['requested_by' => $data['friend_id'],'requested_to'=>$loggedUser['id']]
+            ]]);
+        //debug($requestedFrnd);
         if($requestedFrnd->isEmpty()){
             $newObj = $frObj->newEntity();
             $newObj->requested_by = $loggedUser['id'];
