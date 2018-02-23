@@ -124,7 +124,7 @@ class SpaycsController extends AppController {
                     TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
                 }
                 $this->response->statusCode(201);
-                $response = ['status'=>'success','message'=>__('Your sub spayc '.ucfirst($data['name']).', has been created.'),'data'=>$data];
+                $response = ['status'=>'success','message'=>__('SubSpayc Created Successfully'),'data'=>$data];
                 /*Event to bind to update the set upload room image */
                 $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
                     'options' => [
@@ -135,10 +135,10 @@ class SpaycsController extends AppController {
                 ]);
                 EventManager::instance()->dispatch($event);
             }else{
-                $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be saved. Please, try again.')], 400);
+                $this->restException(['status'=>'failed', 'message'=>__('Subspace could not be saved. Please, try again.')], 400);
             }
         } else {
-            $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be saved. Please, try again.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('Subspace could not be saved. Please, try again.')], 400);
         }
         $this->set($response);
     }

@@ -125,13 +125,13 @@ function postSpaycs() { return; }
     }
  
 @apiSuccess {String} status success.
-@apiSuccess {String} message Your spayc, spaycdev, has been created.
+@apiSuccess {String} message SubSpayc DevsubspacePMB created successfully.
 @apiSuccess {Object} data Spayc details.
 @apiSuccessExample {json} Success-Response: 
     HTTP/1.1 201 OK
 {
     "status": "success",
-    "message": "Your sub spayc DevsubspacePMB, has been created.",
+    "message": "SubSpayc DevsubspacePMB created successfully.",
     "data": {
         "parent_matrix_room_id": "!gERqTLZjHXyDAlCPhC:127.0.0.1",
         "name": "devsubspacePMB",

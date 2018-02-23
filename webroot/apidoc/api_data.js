@@ -427,7 +427,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Your spayc, spaycdev, has been created.</p> "
+            "description": "<p>SubSpayc DevsubspacePMB created successfully.</p> "
           },
           {
             "group": "Success 200",
@@ -441,7 +441,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "    HTTP/1.1 201 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Your sub spayc DevsubspacePMB, has been created.\",\n    \"data\": {\n        \"parent_matrix_room_id\": \"!gERqTLZjHXyDAlCPhC:127.0.0.1\",\n        \"name\": \"devsubspacePMB\",\n        \"description\": \"devspace\",\n        \"group_type\": \"Public\",\n        \"invitee\": \"\",\n        \"passcode\": \"\",\n        \"image\": \"https://spayc-qa.s3.amazonaws.com/room/screenshot_from_2017_12_12_19_55_12_20180223142752.png\",\n        \"status\": \"Active\",\n        \"start_date\": \"03-11-2018 09:16:00\",\n        \"end_date\": \"03-12-2018 09:23:00\",\n        \"latitude\": 53.369,\n        \"longitude\": 25.369,\n        \"type\": \"Community\",\n        \"matrix_token\": \"MDAxN2xvY2F0aW9uIDEyNy4wLjAuMQowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMjZjaWQgdXNlcl9pZCA9IEBkZXZ0ZXN0YToxMjcuMC4wLjEKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSAmMjZfRUI9VlRTej1QblNmCjAwMmZzaWduYXR1cmUgMN05HYWhM71ysg2rTIM2cZUjWny270EnAM8EsILZ1k8K\",\n        \"matrix_room_id\": \"!UoVWeZsYeLqGUHVULq:127.0.0.1\"\n    }\n}",
+          "content": "    HTTP/1.1 201 OK\n{\n    \"status\": \"success\",\n    \"message\": \"SubSpayc DevsubspacePMB created successfully.\",\n    \"data\": {\n        \"parent_matrix_room_id\": \"!gERqTLZjHXyDAlCPhC:127.0.0.1\",\n        \"name\": \"devsubspacePMB\",\n        \"description\": \"devspace\",\n        \"group_type\": \"Public\",\n        \"invitee\": \"\",\n        \"passcode\": \"\",\n        \"image\": \"https://spayc-qa.s3.amazonaws.com/room/screenshot_from_2017_12_12_19_55_12_20180223142752.png\",\n        \"status\": \"Active\",\n        \"start_date\": \"03-11-2018 09:16:00\",\n        \"end_date\": \"03-12-2018 09:23:00\",\n        \"latitude\": 53.369,\n        \"longitude\": 25.369,\n        \"type\": \"Community\",\n        \"matrix_token\": \"MDAxN2xvY2F0aW9uIDEyNy4wLjAuMQowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMjZjaWQgdXNlcl9pZCA9IEBkZXZ0ZXN0YToxMjcuMC4wLjEKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSAmMjZfRUI9VlRTej1QblNmCjAwMmZzaWduYXR1cmUgMN05HYWhM71ysg2rTIM2cZUjWny270EnAM8EsILZ1k8K\",\n        \"matrix_room_id\": \"!UoVWeZsYeLqGUHVULq:127.0.0.1\"\n    }\n}",
           "type": "json"
         }
       ]
