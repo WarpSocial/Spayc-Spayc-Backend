@@ -223,16 +223,16 @@ class SpaycsController extends AppController {
             return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
             },
             'SubscribedUsers' => function($q) {
-                return $q->select(['SubscribedUsers.spayc_id', 'subscribed_users' => $q->func()->count('SubscribedUsers.id')])->group(['SubscribedUsers.spayc_id']);
+                return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
             },
             'Comments' => function($q) {
                 return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
             }
         ]);
         $spaycs->order(['distance'=>'ASC'])->limit($limit);
-        if($this->request->query('type')=='created') {
+        if($this->request->query('list_by')=='created') {
             $spaycs->where(['Spaycs.user_id'=>$userId]);
-        } else if($this->request->query('type')=='joined') {
+        } else if($this->request->query('list_by')=='joined') {
             $ids = TableRegistry::get("Api.JoinedSpayc")->getJoinedSpaycIds($userId);
             $spaycs->where(['Spaycs.id IN'=>$ids]);
         }
@@ -271,11 +271,14 @@ class SpaycsController extends AppController {
                     $status = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.'].status');
                 }
                 $row['joined_spayc_status'] = !empty($status[0])?$status[0]:null;
+                $row['is_joined'] = !empty($status[0])?true:false;
                 $row['joined_users'] = !empty($row['joined_spayc'])?count($row['joined_spayc']):0;
-                
-                //$row['joined_users'] = !empty($row['joined_spayc'][0]['joined_users'])?$row['joined_spayc'][0]['joined_users']:0;
                 unset($row['joined_spayc']);
-                $row['subscribed_users'] = !empty($row['subscribed_users'][0]['subscribed_users'])?$row['subscribed_users'][0]['subscribed_users']:0;
+                if(!empty($row['subscribed_users'])) {
+                    $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');
+                }
+                $row['subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):0;
+                $row['is_subscribed'] = !empty($subUserId[0])?true:false;
                 $row['total_comments'] = !empty($row['comments'][0]['total_comment'])?$row['comments'][0]['total_comment']:0;
                 unset($row['comments']);
                 $row['total_presents'] = 0;
