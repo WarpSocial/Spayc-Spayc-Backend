@@ -129,6 +129,7 @@ class FriendRequestTable extends Table
         /*if(in_array($status, Configure::read('friend_status'))) {
             $cond['friend_status'] = $status;
         }*/
+
         $friends = $this->find('all', ['fields'=>['FriendRequest.requested_by', 'FriendRequest.requested_to'], 'conditions'=>[$cond]]);        
         if($friends->isEmpty()){
             return false;
