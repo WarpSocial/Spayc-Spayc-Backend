@@ -595,7 +595,7 @@ class UsersController extends AppController {
         $loggedUser = $this->Auth->user();   
          if(in_array($data['friend_status'], ['Decline','Unfriend'])){
             if($frObj->deleteAll(['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']])){
-                $this->restException(['status'=>'success', 'message'=>__('Status has been changed successfully')]);
+                $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status'])]);
             }
         }
         $requestedFrnd = $frObj->find()->where(['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']]);
@@ -606,7 +606,7 @@ class UsersController extends AppController {
             $newObj->action_by = $loggedUser['id'];
             $newObj->requested_status = $data['friend_status'];
             if($frObj->save($newObj)){
-                $this->restException(['status'=>'success', 'message'=>__('Friend status updated successfully.'),'data'=>[
+                $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status']),'data'=>[
                     'id'=>$newObj->id,
                     'requested_by'=>$newObj->requested_by,
                     'requested_to'=>$newObj->requested_to,
