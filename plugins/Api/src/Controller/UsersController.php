@@ -595,7 +595,7 @@ class UsersController extends AppController {
         $loggedUser = $this->Auth->user();   
          if(in_array($data['friend_status'], ['Decline','Unfriend'])){
             if($frObj->deleteAll(['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']])){
-                $this->restException(['status'=>'success', 'message'=>__('Status has been changed successfully')]);
+                $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status'])]);
             }
         }
         $requestedFrnd = $frObj->find()->where(['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']]);
@@ -606,7 +606,7 @@ class UsersController extends AppController {
             $newObj->action_by = $loggedUser['id'];
             $newObj->requested_status = $data['friend_status'];
             if($frObj->save($newObj)){
-                $this->restException(['status'=>'success', 'message'=>__('Friend status updated successfully.'),'data'=>[
+                $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status']),'data'=>[
                     'id'=>$newObj->id,
                     'requested_by'=>$newObj->requested_by,
                     'requested_to'=>$newObj->requested_to,
@@ -626,7 +626,7 @@ class UsersController extends AppController {
             $frndRequest->set('action_by',$loggedUser['id']);
             if($frObj->save($frndRequest)){
                 
-                $this->restException(['status'=>'success', 'message'=>__('Friend request send successfully.'),'data'=>[                    
+                $this->restException(['status'=>'success', 'message'=> Configure::read('requestMsg.'.$data['friend_status']),'data'=>[                    
                     'id'=>$frndRequest->id,
                     'requested_by'=>$frndRequest->requested_by,
                     'requested_to'=>$frndRequest->requested_to,
@@ -657,7 +657,7 @@ class UsersController extends AppController {
         $loggedUser = $this->Auth->user();     
          if(in_array($data['friend_status'],['Decline','Unfriend'])){
             if($frObj->deleteAll(['requested_by' => $data['friend_id'],'requested_to'=>$loggedUser['id']])){
-                $this->restException(['status'=>'success', 'message'=>__('Status has been changed successfully')]);
+                $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status'])]);
             }
         }
         $requestedFrnd = $frObj->find()->where(['requested_by' => $data['friend_id'],'requested_to'=>$loggedUser['id']]);        
@@ -672,7 +672,7 @@ class UsersController extends AppController {
         $frndRequest->set('action_by',$loggedUser['id']);
         if($frObj->save($frndRequest)){
 
-            $this->restException(['status'=>'success', 'message'=>__('Friend status updated successfully.'),'data'=>[                    
+            $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status']),'data'=>[                    
                 'id'=>$frndRequest->id,
                 'requested_by'=>$frndRequest->requested_by,
                 'requested_to'=>$frndRequest->requested_to,
@@ -773,19 +773,22 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Method not allowed.')], 405);
         }
         $friendStatus = !empty($this->request->query['friend_status'])?$this->request->query['friend_status']:'Accepted';
-        $status = array_merge(Configure::read('friend_requested_status'), Configure::read('friend_status'));
+        $status = Configure::read('friend_requested_status');
         if(empty($friendStatus) || !in_array(ucfirst($friendStatus), $status)) {
             $this->restException(['status'=>'failed', 'message'=>__('Status is required fields and status must be in('.  implode(',', $status).').')], 400);
         }
         $userId = $this->Auth->user('id');
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, $friendStatus);
+        if(!$friend){
+            $this->restException(["status"=>"success",'message'=>__("Record not found")],204);
+        }
         $friends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username', 'Users.matrix_user_id', 'Users.matrix_access_token'], 'conditions'=>['Users.id IN'=>$friend, 'Users.id !='=>$userId, 'Users.status'=>'Active']]);
         $friends->contain([
             'Requestedby' => function($q) use($userId) {
-                return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_status', 'Requestedby.requested_to', 'Requestedby.friend_status', 'Requestedby.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]], ['OR'=>['friend_status !='=>'Anonymous', 'friend_status IS'=>NULL]]]);
+                return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_status', 'Requestedby.requested_to', 'Requestedby.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
             },
             'Requestedto' => function($q) use($userId) {
-                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.friend_status', 'Requestedto.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]], ['OR'=>['friend_status !='=>'Anonymous', 'friend_status IS'=>NULL]]]);
+                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
             },
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
@@ -813,7 +816,9 @@ class UsersController extends AppController {
         }
         $data = [];
         $data['count'] = $friends->count();
+       
         if($friends->count()) {
+            
             $data['records'] = $friends->toArray();
         } else {
             $this->response->statusCode(204);
