@@ -142,7 +142,9 @@ function postSpaycs() { return; }
                 "subscribed_users": 0,
                 "friends": 0,
                 "joined_spayc_status": null,
+                "is_joined": false,
                 "joined_users": 0,
+                "is_subscribed": false,
                 "total_comments": 0,
                 "total_presents": 0
             },
@@ -161,7 +163,9 @@ function postSpaycs() { return; }
                 "subscribed_users": 1,
                 "friends": 0,
                 "joined_spayc_status": "Pending",
+                "is_joined": false,
                 "joined_users": 3,
+                "is_subscribed": true,
                 "total_comments": 1,
                 "total_presents": 0
             }
