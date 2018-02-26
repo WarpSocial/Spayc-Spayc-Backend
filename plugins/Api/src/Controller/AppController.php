@@ -25,6 +25,13 @@ class AppController extends BaseController {
             'unauthorizedRedirect'=>false,
             'storage' => 'Memory'
          ]);
+         $timezone =  $this->request->env('HTTP_TIMEZONE');
+         if(!empty($timezone)){
+             Configure::write('timezone', $timezone);
+         }else{
+             $this->request->env('HTTP_TIMEZONE','UTC');
+             Configure::write('timezone', 'UTC');
+         }
          $user = $this->Auth->identify();
          if(!empty($user['id'])) {
              $user['id'] = ApiHasher::decrypt($user['id']);
