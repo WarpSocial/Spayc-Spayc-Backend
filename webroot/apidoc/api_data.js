@@ -2635,7 +2635,7 @@ define({ "api": [
         "name": "Private User"
       }
     ],
-    "description": "<p>Search users|spaycs|hashtags details by requesting parameters.</p>",
+    "description": "<p>Search users|spaycs|hashtags details by requesting parameters Note: distance key not came in spayc list in case of no latitude and longitude.</p>",
     "header": {
       "fields": {
         "Header": [

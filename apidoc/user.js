@@ -157,7 +157,7 @@ function postUser() { return; }
  * @apiGroup User
  * @apiPermission Private User
  *
- * @apiDescription Search users|spaycs|hashtags details by requesting parameters.
+ * @apiDescription Search users|spaycs|hashtags details by requesting parameters Note: distance key not came in spayc list in case of no latitude and longitude.
  *
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 

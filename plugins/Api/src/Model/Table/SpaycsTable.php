@@ -218,20 +218,28 @@ class SpaycsTable extends Table {
     }
     
     public function searchSpaycs($request = [], $userId=null) {
-        //To search by kilometers instead of miles, replace 3959 with 6371.
-        $distanceField = '(3959 * acos (cos ( radians(:latitude) )
-            * cos( radians( Spaycs.latitude ) )
-            * cos( radians( Spaycs.longitude )
-            - radians(:longitude) )
-            + sin ( radians(:latitude) )
-            * sin( radians( Spaycs.latitude ) )))';
-        $distance = 25;
-        $spaycs = $this->find()
-            ->select([
-                'distance' => $distanceField, 'id', 'name', 'address'=>'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode'])
-            ->where(["$distanceField <" => $distance, 'status'=>'Active'])
-            ->bind(':latitude', $request['latitude'], 'float')
-            ->bind(':longitude', $request['longitude'], 'float');
+        if(!empty($request['latitude']) && !empty($request['longitude'])) {
+            //To search by kilometers instead of miles, replace 3959 with 6371.
+            $distanceField = '(3959 * acos (cos ( radians(:latitude) )
+                * cos( radians( Spaycs.latitude ) )
+                * cos( radians( Spaycs.longitude )
+                - radians(:longitude) )
+                + sin ( radians(:latitude) )
+                * sin( radians( Spaycs.latitude ) )))';
+            $distance = 25;
+            $spaycs = $this->find()
+                ->select([
+                    'distance' => $distanceField, 'id', 'name', 'address'=>'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode'])
+                ->where(["$distanceField <" => $distance, 'status'=>'Active'])
+                ->bind(':latitude', $request['latitude'], 'float')
+                ->bind(':longitude', $request['longitude'], 'float')
+                ->order(['distance'=>'ASC']);
+        } else {
+            $spaycs = $this->find()
+                ->select(['id', 'name', 'address'=>'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode'])
+                ->where(['status'=>'Active'])
+                ->order(['created'=>'DESC']);
+        }
         $spaycs->contain([
             'JoinedSpayc' => function($q) {
                 return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
@@ -241,7 +249,7 @@ class SpaycsTable extends Table {
             }
         ]);
         $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
-        $spaycs->order(['distance'=>'ASC'])->limit($limit);
+        $spaycs->limit($limit);
         if(!empty($request['keyword'])) {
             $spaycs->where(["Spaycs.name LIKE"=>"%".$request['keyword']."%"]);
         }

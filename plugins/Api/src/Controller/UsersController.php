@@ -212,7 +212,7 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
         $type = !empty($this->request->query['type'])?$this->request->query['type']:'';
-        if(!empty($type) && ($type=='all' || $type=='spaycs')) {
+        if(!empty($type) && ($type=='all' || $type=='spaycs') && !empty($this->request->query['latitude']) && !empty($this->request->query['longitude'])) {
             if(!Utils::isValidLatitude($this->request->query('latitude'))) {
                 $this->restException(['status'=>'failed', 'message'=>__('Latitude is not valid.')], 400);
             }
