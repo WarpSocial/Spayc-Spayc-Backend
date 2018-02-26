@@ -335,7 +335,7 @@ class UsersController extends AppController {
             $alreadyExist = $alreadyExist->first()->toArray();
             $data['id'] = ApiHasher::decrypt($alreadyExist['id']);
             $data['fb_id'] = !empty($data['fb_id'])?$data['fb_id']:$alreadyExist['fb_id'];
-            $data['username'] = !empty($data['username'])?$data['username']:$alreadyExist['username'];
+            $data['username'] = $alreadyExist['username'];
             $data['email'] = !empty($data['email'])?$data['email']:$alreadyExist['email'];
             $data['password'] = $alreadyExist['password'];
             $entity = $this->Users->get($data['id']);
@@ -353,6 +353,8 @@ class UsersController extends AppController {
             if(!$matrix) {
                 $this->restException(['status' => "failed", 'message' => __('Matrix registration failed.')], 401);
             }
+            $items->set("matrix_user_id", $matrix['user_id']);
+            $items->set("matrix_access_token", $matrix['access_token']);
         }
         $saved = $this->Users->save($items);
         $data['id'] = $saved['id'];
