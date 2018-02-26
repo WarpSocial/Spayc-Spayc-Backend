@@ -45,9 +45,9 @@ class User extends Entity {
      *
      * @var array
      */
-    protected $_hidden = [
+    /*protected $_hidden = [
         'password'
-    ];
+    ];*/
 
     protected function _setPassword($password) {
         return ApiHasher::hash($password);

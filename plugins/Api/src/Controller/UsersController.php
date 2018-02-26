@@ -13,6 +13,7 @@ use Api\Auth\ApiHasher;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Api\Model\Entity\UserImage;
+use Cake\Utility\Text;
 /**
  * Users Controller
  *
@@ -336,9 +337,11 @@ class UsersController extends AppController {
             $data['fb_id'] = !empty($data['fb_id'])?$data['fb_id']:$alreadyExist['fb_id'];
             $data['username'] = !empty($data['username'])?$data['username']:$alreadyExist['username'];
             $data['email'] = !empty($data['email'])?$data['email']:$alreadyExist['email'];
+            $data['password'] = $alreadyExist['password'];
             $entity = $this->Users->get($data['id']);
         } else {
             $data['token_verification'] = Security::hash($data['email'], 'sha1', true);
+            $data['password'] = Text::uuid();
             $entity = $this->Users->newEntity();
         }
         $items = $this->Users->patchEntity($entity, $data, ['validate' => 'facebookSignup']);
@@ -346,9 +349,7 @@ class UsersController extends AppController {
             $this->restException(['status' => "failed", 'message' => $this->mapErrors($items->errors())], 400);
         }
         if(empty($data['id'])) {
-            $mdata = $data;
-            $mdata['password'] = base64_encode($data['email']);
-            $matrix = $this->Matrix->register($mdata);
+            $matrix = $this->Matrix->register($data);
             if(!$matrix) {
                 $this->restException(['status' => "failed", 'message' => __('Matrix registration failed.')], 401);
             }
@@ -362,7 +363,7 @@ class UsersController extends AppController {
         }
         $user['id'] = ApiHasher::decrypt($user['id']);
         $mdata['username'] = $data['username'];
-        $mdata['password'] = base64_encode($data['email']);
+        $mdata['password'] = ApiHasher::dehash($items->password);
         $mdata['device_id'] = $data['device_id'];
         //$data_item = \Api\Utils\Utils::escape($mdata);pr($data_item);exit;
         $matrix = (array)$this->Matrix->login($mdata);
