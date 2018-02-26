@@ -356,7 +356,6 @@ class UsersController extends AppController {
         if(!$this->request->is('post')) {
             $this->restException(['status'=>'failed','message'=>__('Method not allowed.')],405);
         }
-        $pk = null;
         $this->loadComponent('Api.Matrix');
         $data = $this->request->getData();
         $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';
@@ -369,13 +368,14 @@ class UsersController extends AppController {
         if($alreadyExist->count()) {
             $alreadyExist = $alreadyExist->first()->toArray();
             $data['id'] = ApiHasher::decrypt($alreadyExist['id']);
-            $pk = $data['id'];
             $data['fb_id'] = !empty($data['fb_id'])?$data['fb_id']:$alreadyExist['fb_id'];
-            $data['username'] = !empty($data['username'])?$data['username']:$alreadyExist['username'];
+            $data['username'] = $alreadyExist['username'];
             $data['email'] = !empty($data['email'])?$data['email']:$alreadyExist['email'];
+            $data['password'] = $alreadyExist['password'];
             $entity = $this->Users->get($data['id']);
         } else {
             $data['token_verification'] = Security::hash($data['email'], 'sha1', true);
+            $data['password'] = Text::uuid();
             $entity = $this->Users->newEntity();
         }
         $items = $this->Users->patchEntity($entity, $data, ['validate' => 'facebookSignup']);
@@ -383,12 +383,12 @@ class UsersController extends AppController {
             $this->restException(['status' => "failed", 'message' => $this->mapErrors($items->errors())], 400);
         }
         if(empty($data['id'])) {
-            $mdata = $data;
-            $mdata['password'] = base64_encode($data['email']);
-            $matrix = $this->Matrix->register($mdata);
+            $matrix = $this->Matrix->register($data);
             if(!$matrix) {
                 $this->restException(['status' => "failed", 'message' => __('Matrix registration failed.')], 401);
             }
+            $items->set("matrix_user_id", $matrix['user_id']);
+            $items->set("matrix_access_token", $matrix['access_token']);
         }
         $saved = $this->Users->save($items);
         $data['id'] = $saved['id'];
@@ -399,7 +399,7 @@ class UsersController extends AppController {
         }
         $user['id'] = ApiHasher::decrypt($user['id']);
         $mdata['username'] = $data['username'];
-        $mdata['password'] = base64_encode($data['email']);
+        $mdata['password'] = ApiHasher::dehash($items->password);
         $mdata['device_id'] = $data['device_id'];
         //$data_item = \Api\Utils\Utils::escape($mdata);pr($data_item);exit;
         $matrix = (array)$this->Matrix->login($mdata);
@@ -411,11 +411,10 @@ class UsersController extends AppController {
         $user['device_id'] = $matrix['device_id'];
         $this->Auth->setUser($user);
         $user = $this->Users->usrLog($user);
-        if($pk == null) {
+        if(!empty($data['image_url'])) {
             TableRegistry::get('Api.UserImages')->uploadFacebookImage($data['image_url'], $this->Auth->user('id'));
         }
         $data = [
-            'id'=>$user['id'],
             'username'=>$user['username'],
             'email'=>$user['email'],
             'gender'=>$user['gender'],
@@ -425,8 +424,6 @@ class UsersController extends AppController {
             'website_url'=>$user['website_url'],
             'address'=>$user['address'],
             'bio_data'=>$user['bio_data'],
-            'image_url'=>$data['image_url'],
-            'order_index'=>1,
             'device_id'=>$user['device_id'],
             'matrix_user_id'=>$user['matrix_user_id'],
             'token'=>$user['token'],
