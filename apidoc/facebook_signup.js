@@ -16,8 +16,8 @@
 * @apiParam {Number} phone              * Phone no of user and accept upto 16 digits (Optional).
 * @apiParam {String} gender             * Gender of user like any one (Male, Femal, Other) (Required).
 * @apiParam {String} device_id          * Device id is required in body (Required).
-* @apiParam {Number} latitude           * Latitude of user address (Required).
-* @apiParam {Number} longitude          * Longitude of user address (Required).
+* @apiParam {String} latitude           * latitude of user address (Optional).
+* @apiParam {String} longitude          * longitude of user address (Optional).
 
 *
 *
@@ -49,6 +49,7 @@
     "status": "success",
     "message": "Saved successfully.",
     "data": {
+        "id": "25",
         "username": "spayc",
         "email": "user@domain.com",
         "gender": "Male",

@@ -32,14 +32,16 @@
  * 
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  *
- * @apiParam {String} username     Username (Required).
- * @apiParam {Date}   dob          Date of birth must in this format MM-DD-YYYY (Optional).
- * @apiParam {String} gender       Gender of user like any one (Male, Femal, Other) (Required).
- * @apiParam {String} country_code Country code of user phone number(Optional).
- * @apiParam {Number} phone        Phone no of user and accept upto 16 digits (Optional).
- * @apiParam {String} address      User address (Optional).
- * @apiParam {String} website_url  Website url (Optional).
- * @apiParam {String} bio_data     Bio data of user (Optional).
+ * @apiParam {String}  username     Username (Required).
+ * @apiParam {Date}    dob          Date of birth must in this format MM-DD-YYYY (Optional).
+ * @apiParam {String}  gender       Gender of user like any one (Male, Femal, Other) (Required).
+ * @apiParam {String}  country_code Country code of user phone number(Optional).
+ * @apiParam {Number}  phone        Phone no of user and accept upto 16 digits (Optional).
+ * @apiParam {String}  address      User address (Optional).
+ * @apiParam {String}  website_url  Website url (Optional).
+ * @apiParam {String}  bio_data     Bio data of user (Optional).
+  * @apiParam {String} latitude   * latitude of user address (Optional).
+ * @apiParam {String}  longitude  * longitude of user address (Optional).
  *
  * @apiExample Example usage:
  *
@@ -52,6 +54,8 @@
  *          "address": "spayc address",
  *          "website_url":"www.spayc.com",
  *          "bio_data":"your bio data",
+ *          "latitude":"XX.00",
+ *          "longitude":"XX.00",
  *       }
  *
  *
@@ -74,6 +78,8 @@
  *          "address": "spayc address",
  *          "website_url":"www.spayc.com",
  *          "bio_data":"your bio data",
+ *          "longitude": "77.391026",
+ *          "latitude": "28.535516"
  *       }
  *   ]
  * }
@@ -99,8 +105,8 @@ function putUser() { return; }
  * @apiParam {String} gender Gender of user like any one (Male, Femal, Other) (Required).
  * @apiParam {String} country_code Country code of user phone number(Optional).
  * @apiParam {Number} phone Phone no of user and accept only 10 digits only (Optional).
- * @apiParam {Number} latitude of user address (Required).
- * @apiParam {Number} longitude of user address (Required).
+ * @apiParam {String} latitude  * latitude of user address (Optional).
+ * @apiParam {String} longitude * longitude of user address (Optional).
  *
  * @apiExample Example usage:
  *
@@ -128,6 +134,7 @@ function putUser() { return; }
  *   "message": "Saved successfully.",
  *   "data": [
  *       {
+ *          "id": "35",
  *          "username": "spaycdev",
  *          "email": "spaycdev@spayc.com",
  *          "gender": "male|female|other",
@@ -154,12 +161,12 @@ function postUser() { return; }
  *
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
- * @apiParam {Number}      page     Page number in query string (Optional).
- * @apiParam {Number}      limit    Records limit in query string (Optional).
- * @apiParam {String}      type     Type should be in (users|spaycs|hashtags|all) (Optional).
- * @apiParam {String}      keyword  Username|Spayc name|Hashtag name in query string to be search (Optional).
- * @apiParam {Number}      latitude of spayc to be search (Required in case of spayc search).
- * @apiParam {Number}      longitude of spayc to be search (Required in case of spayc search).
+ * @apiParam {Number}      page       * Page number in query string (Optional).
+ * @apiParam {Number}      limit      * Records limit in query string (Optional).
+ * @apiParam {String}      type       * Type should be in (users|spaycs|hashtags|all) (Optional).
+ * @apiParam {String}      keyword    * Username|Spayc name|Hashtag name in query string to be search (Optional).
+ * @apiParam {String}      latitude   * Latitude of user address (Optional).
+ * @apiParam {String}      longitude  * Longitude of user address (Optional).
  * 
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Search Lists.

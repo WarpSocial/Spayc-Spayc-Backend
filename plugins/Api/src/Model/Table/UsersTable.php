@@ -178,12 +178,12 @@ class UsersTable extends Table {
             ->notEmpty('gender',__('Gender is required field.'))
             ->inList('gender', Configure::read('gender'),__('Gender must be any one '.implode(',',Configure::read('gender')).'.'));      
         $validator
-                ->requirePresence('longitude', 'create',__('Longitude key is missing.'))
-                ->notEmpty('longitude',__('Please enter longitude.'))
+                //->requirePresence('longitude', 'create',__('Longitude key is missing.'))
+                ->allowEmpty('longitude')
                 ->longitude('longitude',__('Please enter valid longitude.'));        
         $validator
-                ->requirePresence('latitude', 'create',__('Latitude key is missing.'))
-                ->notEmpty('latitude',__('Please enter latitude.'))
+                //->requirePresence('latitude', 'create',__('Latitude key is missing.'))
+                ->allowEmpty('latitude')
                 ->latitude('latitude',__('Please enter valid latitude.'));
         return $validator;
     }
@@ -259,12 +259,12 @@ class UsersTable extends Table {
                 ->notEmpty('device_id', __('Please enter a device id.'))
                 ->maxLength('device_id', 100,__('Device id cannot exceed to 100 characters.'));
         $validator
-                ->requirePresence('longitude', true, __('Longitude key is missing.'))
-                ->notEmpty('longitude',__('Please enter longitude.'))
+                //->requirePresence('longitude', 'create',__('Longitude key is missing.'))
+                ->allowEmpty('longitude')
                 ->longitude('longitude',__('Please enter valid longitude.'));        
         $validator
-                ->requirePresence('latitude', true, __('Latitude key is missing.'))
-                ->notEmpty('latitude',__('Please enter latitude.'))
+                //->requirePresence('latitude', 'create',__('Latitude key is missing.'))
+                ->allowEmpty('latitude')
                 ->latitude('latitude',__('Please enter valid latitude.'));
         return $validator;
     }
@@ -322,11 +322,11 @@ class UsersTable extends Table {
             ->notEmpty('gender',__('Gender is required field.'))
             ->inList('gender', Configure::read('gender'),__('Gender must be any one '.implode(',',Configure::read('gender')).'.'));
         $validator
-                ->requirePresence('longitude', 'create',__('Longitude key is missing.'))
+                //->requirePresence('longitude', 'create',__('Longitude key is missing.'))
                 ->allowEmpty('longitude')
                 ->longitude('longitude',__('Please enter valid longitude.'));        
         $validator
-                ->requirePresence('latitude', 'create',__('Latitude key is missing.'))
+                //->requirePresence('latitude', 'create',__('Latitude key is missing.'))
                 ->allowEmpty('latitude')
                 ->latitude('latitude',__('Please enter valid latitude.'));
         

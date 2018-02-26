@@ -292,14 +292,15 @@ class UsersController extends AppController {
             $this->getMailer('Api.User')->send('signup', [$items]);
             $response = ['status' => "success", 'message' => __('Registration done successfully.'), 'data' =>
                 [
+                    'id'=>$items->id,
                     'username'=>$data['username'],
                     'email'=>$data['email'],
                     'dob'=>$data['dob'],
                     'gender'=>trim($data['gender']),
                     'country_code'=> Utils::getVar('country_code',$data),
                     'phone'=>$data['phone'],
-                    'latitude'=>$data['latitude'],
-                    'longitude'=>$data['longitude']
+                    'latitude'=>  Utils::getVar('latitude',$data),
+                    'longitude'=>Utils::getVar('longitude',$data)
                 ]];
             $this->response->statusCode(201);
         } else {
@@ -416,6 +417,7 @@ class UsersController extends AppController {
             TableRegistry::get('Api.UserImages')->uploadFacebookImage($data['image_url'], $this->Auth->user('id'));
         }
         $data = [
+            'id'=>$user['id'],
             'username'=>$user['username'],
             'email'=>$user['email'],
             'gender'=>$user['gender'],
