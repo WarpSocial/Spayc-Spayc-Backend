@@ -867,3 +867,36 @@ function getRemoveAvatar() { return; }
  * @apiUse UserErrorResponse
  */
  function getFacebookFriends() { return; }
+ /**
+ * @api {post} /update-user-status.json Update User Physical Presence
+ * @apiVersion 0.1.0
+ * @apiName PostUpdateUserStatus
+ * @apiGroup User
+ * @apiPermission required
+ *
+ * @apiDescription Update physical presence of user.
+ * 
+ * @apiHeader {String} token Token must be set in header.
+ *
+ * @apiParam {String} latitude  Current user location latitude.(Required).
+ * @apiParam {String} longitude Current user location longitude.(Required).
+ *
+ * @apiExample Example usage:
+    {
+        "latitude":"45.25895656565656",
+        "longitude":"25.265656565656"
+    }
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Request has been updated successfully.
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+    {
+        "status": "success",
+        "message": "Request has been updated successfully."
+    }
+ *
+ * @apiUse UserErrorResponse
+ */
+function postUpdateUserStatus() { return; }
