@@ -383,19 +383,28 @@ class SpaycsController extends AppController {
                 return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
             }
         ]);
-        $spayc->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend) {
-            return $results->map(function ($row) use($friend) {
+        $spayc->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend, $userId) {
+            return $results->map(function ($row) use($friend, $userId) {
+                $spaycId = ApiHasher::decrypt($row->id);
+                $row['friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
                 if(!empty($row['joined_spayc'])) {
-                    $spaycId = ApiHasher::decrypt($row->id);
-                    $row['joined_spayc'][0]['joined_friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
-                    $row['total_comments'] = !empty($row['comments'][0]['total_comment'])?$row['comments'][0]['total_comment']:0;
-                    $row['total_subscribed_users'] = !empty($row['subscribed_users'][0]['subscribed_users'])?$row['subscribed_users'][0]['subscribed_users']:0;
-                    $row['total_joined_users'] = !empty($row['joined_spayc'][0]['joined_users'])?$row['joined_spayc'][0]['joined_users']:0;
-                    $row['total_joined_friends'] = !empty($row['joined_spayc'][0]['joined_friends'])?$row['joined_spayc'][0]['joined_friends']:0;
-                    unset($row['subscribed_users']);
-                    unset($row['joined_spayc']);
-                    unset($row['comments']);
+                    $status = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.'].status');
                 }
+                $row['joined_spayc_status'] = !empty($status[0])?$status[0]:null;
+                if($userId==$row['user_id']) {
+                    $row['joined_spayc_status'] = 'Approved';
+                }
+                $row['is_joined'] = !empty($status[0])?true:false;
+                $row['joined_users'] = !empty($row['joined_spayc'])?count($row['joined_spayc']):0;
+                unset($row['joined_spayc']);
+                if(!empty($row['subscribed_users'])) {
+                    $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');
+                }
+                $row['subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):0;
+                $row['is_subscribed'] = !empty($subUserId[0])?true:false;
+                $row['total_comments'] = !empty($row['comments'][0]['total_comment'])?$row['comments'][0]['total_comment']:0;
+                unset($row['comments']);
+                $row['total_presents'] = 0;
                 return $row;
             });
         });
