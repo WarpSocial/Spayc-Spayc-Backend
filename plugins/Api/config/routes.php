@@ -20,6 +20,9 @@ Router::plugin(
         $routes->connect('/get-friends', ['controller' => 'Users', 'action' => 'getFriends']);
         $routes->connect('/friend-request', ['controller' => 'Users', 'action' => 'friendRequest']);
         $routes->connect('/friend-response', ['controller' => 'Users', 'action' => 'setFriendResponse']);
+        $routes->connect('/update-user-status', ['controller' => 'Users', 'action' => 'userCurrentStatus']);
+        
+        
         $routes->connect('/subscribe-spayc', ['controller' => 'Spaycs', 'action' => 'subscribeSpayc']);
         $routes->connect('/spayc-details/:id', ['controller' => 'Spaycs', 'action' => 'view'], ['pass'=>['id']]);
         $routes->connect('/facebook-friends', ['controller' => 'Users', 'action' => 'getFacebookFriends']);

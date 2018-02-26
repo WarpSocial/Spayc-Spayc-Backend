@@ -14,8 +14,10 @@ CREATE TABLE users (
     bio_data text NULL,
     fb_id VARCHAR(200),
     fb_access_key  VARCHAR(1000),
-    longitude double precision,
-    latitude double precision,
+    longitude VARCHAR(100) DEFAULT NULL,
+    latitude VARCHAR(100) DEFAULT NULL,
+    current_latitude VARCHAR(100) DEFAULT NULL,
+    current_longitude VARCHAR(100) DEFAULT NULL,
     timezone VARCHAR(100),
     matrix_user_id VARCHAR(100),
     matrix_access_token VARCHAR(1000),
@@ -90,9 +92,9 @@ CREATE TABLE spaycs (
     description text,
     image VARCHAR(255) NULL,
     longitude double precision,
-    latitude double precision,
+    latitude double precision,    
     status row_status DEFAULT 'Inactive'::row_status,
-    matrix_room_id VARCHAR(100) NULL,
+    matrix_room_id VARCHAR(100) NULL,    
     created timestamp NOT NULL,
     modified timestamp,
     PRIMARY KEY (id,user_id,created)
@@ -136,4 +138,18 @@ CREATE TABLE spayc_hashtags (
     PRIMARY KEY (id,created)
 );
 SELECT create_hypertable('spayc_hashtags', 'created');
+CREATE TABLE notifications (
+    id BIGSERIAL NOT NULL,
+    requested_by BIGINT NOT NULL,
+    requested_to BIGINT NOT NULL,
+    notification_type VARCHAR(20) DEFAULT NULL,
+    status VARCHAR(20) DEFAULT NULL,
+    message VARCHAR(200) DEFAULT NULL,
+    created timestamp NOT NULL,
+    modified timestamp,
+    PRIMARY KEY (id,created)
+);
+SELECT create_hypertable('notifications', 'created');
+
+
 

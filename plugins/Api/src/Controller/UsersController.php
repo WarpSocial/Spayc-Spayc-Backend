@@ -1004,4 +1004,41 @@ class UsersController extends AppController {
         $response = ['status'=>'success', 'message'=>__('notification sent')];
         $this->set($response);
     }
+    
+    /**
+     * userCurrentStatus method to update the user current status
+     * @param Double $latitude user current latitude
+     * @param Double $longitude user current longitude
+     * 
+     * @return Object serialize json response with status
+     */
+    
+    public function userCurrentStatus(){
+        if(!$this->request->is(['post'])) {
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
+        }
+        $data  = $this->request->getData();
+        
+        $errors = $this->Users->validateLatLong($data);        
+        if(!empty($errors)) {
+            $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
+        }
+        $user = $this->Auth->user();
+        $query = $this->Users->query()
+                ->update()
+                ->set([
+                    'current_latitude'=>$data['latitude'],
+                    'current_longitude'=>$data['longitude'],
+                    'modified' => date('Y-m-d H:i:s')
+                ])
+                ->where(['id'=>$user['id']])
+                ->execute();
+        if($query){
+            $response = ['status'=>'success', 'message'=>__('Request has been updated successfully.')];
+        }else{
+            $this->response->statusCode(400);
+            $response =['status'=>'failed', 'message'=>__('System failed to update the status.')];
+        }
+        $this->set($response);
+    }
 }

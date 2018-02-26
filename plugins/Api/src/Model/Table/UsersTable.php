@@ -528,4 +528,14 @@ class UsersTable extends Table {
         }
         return $data;
     }
+    public function validateLatLong($data){
+        $validator = new Validator();
+        $validator->requirePresence('latitude', true,__('Latitude key is missing.'))
+                ->notEmpty('latitude', __('Please enter latitude.'))
+                ->latitude('latitude', __('Latitude is not valid.'));
+        $validator->requirePresence('longitude', true,__('Longitude key is missing.'))
+                ->notEmpty('longitude', __('Please enter longitude.'))
+                ->longitude('longitude', __('Longitude is not valid.'));
+        return $validator->errors($data);
+    }
 }
