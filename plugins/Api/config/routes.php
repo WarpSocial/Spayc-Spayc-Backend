@@ -20,6 +20,9 @@ Router::plugin(
         $routes->connect('/get-friends', ['controller' => 'Users', 'action' => 'getFriends']);
         $routes->connect('/friend-request', ['controller' => 'Users', 'action' => 'friendRequest']);
         $routes->connect('/friend-response', ['controller' => 'Users', 'action' => 'setFriendResponse']);
+        $routes->connect('/update-user-status', ['controller' => 'Users', 'action' => 'userCurrentStatus']);
+        
+        
         $routes->connect('/subscribe-spayc', ['controller' => 'Spaycs', 'action' => 'subscribeSpayc']);
         $routes->connect('/spayc-details/:id', ['controller' => 'Spaycs', 'action' => 'view'], ['pass'=>['id']]);
         $routes->connect('/facebook-friends', ['controller' => 'Users', 'action' => 'getFacebookFriends']);
@@ -29,9 +32,13 @@ Router::plugin(
         $routes->connect('/user-profile/:id', ['controller' => 'Users', 'action' => 'viewProfile'], ['pass'=>['id']]);
         $routes->connect('/change-password', ['controller' => 'Users', 'action' => 'changePassword']);
         $routes->connect('/chat-request', ['controller' => 'Users', 'action' => 'directChatRequest']);
+        $routes->connect('/set-profile-image/:id', ['controller' => 'Users', 'action' => 'setProfileImage'], ['pass'=>['id']]);
+        $routes->connect('/chat-room', ['controller' => 'Spaycs', 'action' => 'createChatRoom']);
+        $routes->connect('/create-subspace', ['controller' => 'Spaycs', 'action' => 'createSubSpace']);
         $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
         //$routes->connect('/as', ['controller' => 'Spaycs', 'action' => 'matrixApplicationService']);
-        $routes->connect('/transactions/:id', ['controller' => 'Spaycs', 'action' => 'matrixApplicationService'],['pass'=>'id']);
+        $routes->connect('/transactions/:id', ['controller' => 'Spaycs', 'action' => 'matrixApplicationService'],['pass'=>['id']]);
+        $routes->connect('/remove-avatar/:order', ['controller' => 'Users', 'action' => 'removeAvatar'],['pass'=>['order']]);
         $routes->fallbacks(DashedRoute::class);
     }
 );

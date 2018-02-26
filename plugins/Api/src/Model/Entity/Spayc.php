@@ -3,6 +3,8 @@ namespace Api\Model\Entity;
 
 use Cake\ORM\Entity;
 use Api\Auth\ApiHasher;
+use Cake\I18n\Time;
+use Cake\Core\Configure;
 /**
  * Spayc Entity
  *
@@ -42,5 +44,42 @@ class Spayc extends Entity
     
     protected function _getId($id) {      
         return ApiHasher::encrypt($id);
+    }
+    
+    protected function _setStartDate($stardDate) {
+        $timezone = Configure::read('timezone');
+        if (!empty($stardDate)) {
+            $startdate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$stardDate,$timezone);
+            return $startdate->setTimezone('UTC')->format("Y-m-d H:i:s");
+        } else {
+            return;
+        }
+    }
+    protected function _setEndDate($endDate) {
+        $timezone = Configure::read('timezone');
+        if (!empty($endDate)) {
+            $endDate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$endDate,$timezone);
+            return $endDate->setTimezone('UTC')->format("Y-m-d H:i:s");
+        } else {
+            return;
+        }
+    }
+    protected function _getStartDate($stardDate) {
+        $timezone = Configure::read('timezone');
+        if (!empty($stardDate)) {
+            $sd = new Time($stardDate);
+            return $sd->setTimezone($timezone)->format('m-d-Y H:i:s');
+        } else {
+            return;
+        }
+    }
+    protected function _getEndDate($endDate) {
+        $timezone = Configure::read('timezone');
+        if (!empty($endDate)) {
+            $ed = new Time($endDate);
+            return $ed->setTimezone($timezone)->format('m-d-Y H:i:s');
+        } else {
+            return;
+        }
     }
 }

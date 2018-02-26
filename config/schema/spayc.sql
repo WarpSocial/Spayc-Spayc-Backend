@@ -6,6 +6,7 @@ CREATE TABLE users (
     password VARCHAR(255) NULL,
     gender VARCHAR(50) NULL,
     dob date NULL,
+    country_code VARCHAR(10) NULL,
     phone VARCHAR(20) NULL,
     status row_status DEFAULT 'Pending'::row_status NOT NULL,
     website_url VARCHAR(150) NULL,
@@ -13,8 +14,10 @@ CREATE TABLE users (
     bio_data text NULL,
     fb_id VARCHAR(200),
     fb_access_key  VARCHAR(1000),
-    longitude double precision,
-    latitude double precision,
+    longitude VARCHAR(100) DEFAULT NULL,
+    latitude VARCHAR(100) DEFAULT NULL,
+    current_latitude VARCHAR(100) DEFAULT NULL,
+    current_longitude VARCHAR(100) DEFAULT NULL,
     timezone VARCHAR(100),
     matrix_user_id VARCHAR(100),
     matrix_access_token VARCHAR(1000),
@@ -57,11 +60,12 @@ CREATE TABLE friend_request (
     id BIGSERIAL NOT NULL,
     requested_by BIGINT,
     requested_to BIGINT,
+    blocked_by BIGINT DEFAULT NULL,
     requested_status VARCHAR(15)  DEFAULT 'Requested',
     friend_status VARCHAR(15) DEFAULT NULL,
-    matrix_room_id VARCHAR(255) DEFAULT NULL,
+    matrix_room_id VARCHAR(100) DEFAULT NULL,
     created timestamp NOT NULL,
-    modified timestamp ,
+    modified timestamp,
     PRIMARY KEY (id,requested_by,requested_to,created)
 );
 SELECT create_hypertable('friend_request', 'created');
@@ -88,9 +92,9 @@ CREATE TABLE spaycs (
     description text,
     image VARCHAR(255) NULL,
     longitude double precision,
-    latitude double precision,
+    latitude double precision,    
     status row_status DEFAULT 'Inactive'::row_status,
-    matrix_room_id VARCHAR(100) NULL,
+    matrix_room_id VARCHAR(100) NULL,    
     created timestamp NOT NULL,
     modified timestamp,
     PRIMARY KEY (id,user_id,created)
@@ -134,4 +138,18 @@ CREATE TABLE spayc_hashtags (
     PRIMARY KEY (id,created)
 );
 SELECT create_hypertable('spayc_hashtags', 'created');
+CREATE TABLE notifications (
+    id BIGSERIAL NOT NULL,
+    requested_by BIGINT NOT NULL,
+    requested_to BIGINT NOT NULL,
+    notification_type VARCHAR(20) DEFAULT NULL,
+    status VARCHAR(20) DEFAULT NULL,
+    message VARCHAR(200) DEFAULT NULL,
+    created timestamp NOT NULL,
+    modified timestamp,
+    PRIMARY KEY (id,created)
+);
+SELECT create_hypertable('notifications', 'created');
+
+
 

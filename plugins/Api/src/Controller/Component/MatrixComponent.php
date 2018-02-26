@@ -5,6 +5,7 @@ namespace Api\Controller\Component;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Network\Http\Client;
+use Cake\Event\Event;
 use Cake\Core\Configure;
 use Api\Utils\Utils;
 
@@ -12,6 +13,8 @@ use Api\Utils\Utils;
  * Matrix component
  */
 class MatrixComponent extends Component {
+    
+    public $components = ['Auth'];
 
     /**
      * Default configuration.
@@ -22,6 +25,13 @@ class MatrixComponent extends Component {
         'client'=> 'client/r0',
         'media'=> 'media/v1'
     ];
+    
+     /**
+     * Controller
+     *
+     * @var Controller
+     */
+    protected $Controller = null;
     
     /**
      * initialize function to initialize the current component config with new more config param
@@ -34,6 +44,7 @@ class MatrixComponent extends Component {
         $Matrixconfig = Configure::read('MATRIX');
         $config = !empty($config)?$config:array();
         $this->_config = array_merge($this->_defaultConfig , $Matrixconfig , $config);        
+        $this->Controller = $this->_registry->getController();
     }
     
     /**
@@ -118,8 +129,8 @@ class MatrixComponent extends Component {
      * @param Array $items array contain required field of matrix fields
      * @return false|$data return data if created or false
      */
-    public function createRoom($items=[]){
-        if(empty($items)){
+    public function createRoom($items=[]) {
+        if(empty($items)) {
             return false;
         }
         $validInput = [
@@ -136,7 +147,7 @@ class MatrixComponent extends Component {
                 ],
             'name'=>Utils::getVar('name', $items),
             'preset'=> strtolower($items['group_type']).'_chat',
-            'room_alias_name'=> \Cake\Utility\Inflector::slug($items['name']),
+            'room_alias_name'=> \Cake\Utility\Inflector::slug($items['name'].'_'.\Cake\Utility\Text::uuid()),
             'topic'=> Utils::getVar('description', $items),
             'invite' => !empty($items['invite'])?explode(',',$items['invite']):""
         ];
@@ -163,15 +174,32 @@ class MatrixComponent extends Component {
      * uploadRoomImage to upload room image
      */
     
-    public function uploadRoomImage($filename){
-        $url = $this->config('url') .DS.$this->config('media'). DS.'upload?filename='.$filename;
+    public function uploadMediaImage($data){
+        if(empty($data['image_url'])){
+            return;
+        }        
+        if(strstr($data['image_url'],'http') !== false){
+            $fileInfo = pathinfo($data['image_url']);
+            $filename = $fileInfo['basename'];
+            $contentType = 'image/'.$fileInfo['extension'];
+            $rawfile = $data['image_url'];
+        }else{
+            $filename = $data['image_url']['name'];
+            $contentType = $data['image_url']['type'];
+            $rawfile = $data['image_url']['tmp_name'];
+        }
+        if(empty($data['matrix_token'])){
+            $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
+            //pr($data['token']);die;
+        }
         
-        $http = new Client(['headers' => ['Authorization' => 'Bearer ' . $items['matrix_token']]]);
+        //$body = fopen($data['image_url']['tmp_name'], 'r');        
+        $url = $this->config('url') .DS.$this->config('media'). DS.'upload?access_token='.$data['matrix_token'].'&filename='.urldecode($filename);
+        $http = new Client(['headers' => ['Content-Type' =>$contentType]]);
         $httpResponse = $http->post(
                 $url, 
-                json_encode($validInput), 
+                file_get_contents($rawfile),
                 [
-                    'type'=>'json',
                     'ssl_verify_host' => $this->config('sslverify'), 
                     'ssl_verify_peer' => $this->config('sslverify'),
                     'ssl_verify_host' => $this->config('sslverify'),
@@ -179,8 +207,40 @@ class MatrixComponent extends Component {
                 ]
             );
         $response = json_decode($httpResponse->body,true);
-        #pr($response);die;
+        if(!empty($response['content_uri'])){
+            $this->setAvatarUrl($response['content_uri'],$data);
+        }
         return $response;
+    }
+    
+    public function setAvatarUrl($matrixuri = null,$options){        
+        if(empty($options['matrix_token'])){
+            return;
+        }
+        if(!empty($options['matrix_room_id'])){
+            $options['body'] = ['url'=>$matrixuri];
+            $options['url'] = $this->config('url') .DS.$this->config('client'). DS.'rooms'.DS.$options['matrix_room_id'].DS.'state/m.room.avatar/?access_token='.$options['matrix_token'];
+        }elseif(!empty($options['matrix_user_id'])){
+            $options['body'] = ['avatar_url'=>$matrixuri];
+            $options['url'] = $this->config('url') .DS.$this->config('client'). DS.'profile'.DS. urlencode($options['matrix_user_id']).DS.'avatar_url?access_token='.$options['matrix_token'];
+        }else{
+            return;
+        }
+        
+        $http = new Client();
+        $httpResponse = $http->put(
+                $options['url'], 
+                json_encode($options['body']),
+                [
+                    'type' => 'json',
+                    'ssl_verify_host' => $this->config('sslverify'), 
+                    'ssl_verify_peer' => $this->config('sslverify'),
+                    'ssl_verify_host' => $this->config('sslverify'),
+                    'ssl_verify_peer_name' => $this->config('sslverify')
+                ]
+            );
+        $response = json_decode($httpResponse->body,true);
+        return;
     }
     
     /**

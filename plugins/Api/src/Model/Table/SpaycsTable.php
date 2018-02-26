@@ -99,7 +99,7 @@ class SpaycsTable extends Table {
 
         $validator                
                 ->requirePresence('start_date', 'create',__('Start Date key is missing.'))
-                ->dateTime('start_date','ymd',__('Start date is not in format YYYY-MM-DD H:i:s'))
+                ->dateTime('start_date','mdy',__('Start date is not in format MM-DD-YYYY H:i:s'))
                 ->notEmpty('start_date',__('Start date is required when type is event.'),function($context){
                      return (isset($context['data']['type']) && ($context['data']['type'] =='Event'));
                 })
@@ -107,7 +107,8 @@ class SpaycsTable extends Table {
                     'rule'=> function($value,$context){
                         if(!empty($value)){
                             /* Doesn't exceed 1 year ahead */
-                            $startDate  = new \Cake\I18n\Time($value);
+                            $timezone = Configure::read('timezone');
+                            $startDate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$value,$timezone);
                             return (bool)$startDate->isWithinNext('1 year');
                         }
                     },
@@ -115,17 +116,21 @@ class SpaycsTable extends Table {
                 ]);
         $validator                
                 ->requirePresence('end_date', 'create',__('End Date key is missing.'))
-                ->dateTime('end_date','ymd',__('End date is not in format YYYY-MM-DD H:i:s'))
+                ->dateTime('end_date','mdy',__('End date is not in format MM-DD-YYYY H:i:s'))
                 ->notEmpty('end_date',__('End date is required when type is event.'),function($context){
                      return (isset($context['data']['type']) && ($context['data']['type'] =='Event'));
                 })
                 ->add('end_date','daterange',[
                     'rule'=> function($value,$context){
+                     $timezone = Configure::read('timezone');
                         if(!empty($value) && !empty($context['data']['end_date']) && !empty($context['data']['start_date'])){
                             /* End date must be below of start date */
-                            $startDate  = new \Cake\I18n\Time($context['data']['start_date']);
-                            $endDate  = new \Cake\I18n\Time($value);
-                            return (bool)($startDate < $endDate );
+                            $startDate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$context['data']['start_date'],$timezone);
+                            $endDate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$value,$timezone);
+                            if($endDate->format('H') == '00'){
+                                $endDate->setTime(23,55);
+                            }
+                            return (bool)($startDate <= $endDate );
                         }
                         return true;
                     },
@@ -133,7 +138,7 @@ class SpaycsTable extends Table {
                 ]);
 
         $validator
-                ->requirePresence('passcode', 'create',__('Passcode key is missing.'))
+                //->requirePresence('passcode', 'create',__('Passcode key is missing.'))
                 ->maxLength('passcode', 30,__('Max 30 character is allowed for passcode.'))
                 //->add('passcode', 'unique', ['rule' => 'validateUnique','message'=>'Username must be unique.', 'provider' => 'table'])
                 ->notEmpty('passcode',__('Passcode is required in case of private group type.'),function($context){                    
@@ -166,8 +171,55 @@ class SpaycsTable extends Table {
         
         return $validator;
     }
+    /**
+     * validateSubspace vlaidate create subspace
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validateSubspace($data) {
+        $validator = new Validator();
+        $validator
+                ->requirePresence('parent_matrix_room_id','create', __('Matrix parent room id key is missing.'))
+                ->notEmpty('parent_matrix_room_id',__('Matrix parent room id is required.'));
+        
+        $validator
+                ->requirePresence('name','create', __('Name key is missing.'))
+                ->maxLength('name', 255,'Name text is too long.')
+                ->notEmpty('name',__('Spayc name is required.'));
+
+        $validator
+                ->requirePresence('group_type', 'create',__('Group key is missing.'))
+                ->notEmpty('group_type',__('Group is required field.'))
+                ->inList('group_type', Configure::read('grouptype'),__('Group value must be any one '.implode(',',Configure::read('grouptype')).'.')); 
+
+        $validator
+                //->requirePresence('passcode', 'create',__('Passcode key is missing.'))
+                ->maxLength('passcode', 30,__('Max 30 character is allowed for passcode.'))
+                //->add('passcode', 'unique', ['rule' => 'validateUnique','message'=>'Username must be unique.', 'provider' => 'table'])
+                ->notEmpty('passcode',__('Passcode is required in case of private group type.'),function($context){                    
+                     return (isset($context['data']['group_type']) && ($context['data']['group_type'] =='Private'));
+                });
+
+        $validator
+                ->requirePresence('description', 'create',__('Description key is missing.'))
+                ->maxLength('description', 50,__('Description must be less than 50 characters.'))
+                ->allowEmpty('description');
+        
+        $validator
+                ->allowEmpty('image')
+                ->add('image','extension',[
+                    'rule' => ['extension', ['jpeg', 'png','jpg']],
+                    'message'=>__('Please select only jpg,jpeg,png.')
+                ])
+                ->add('image','size',[
+                    'rule' => ['fileSize', '<=',\Cake\Core\Configure::read('maxupload')],
+                    'message'=>__('Image size must be less than '.\Cake\Core\Configure::read('maxupload').'.')
+                ]);
+         return $validator->errors($data);
+    }
     
-    public function searchSpaycs($request = []) {
+    public function searchSpaycs($request = [], $userId=null) {
         //To search by kilometers instead of miles, replace 3959 with 6371.
         $distanceField = '(3959 * acos (cos ( radians(:latitude) )
             * cos( radians( Spaycs.latitude ) )
@@ -178,18 +230,44 @@ class SpaycsTable extends Table {
         $distance = 25;
         $spaycs = $this->find()
             ->select([
-                'distance' => $distanceField, 'id', 'user_id', 'name', 'address'=>'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'status', 'latitude', 'longitude', 'created', 'modified'
-            ])
+                'distance' => $distanceField, 'id', 'name', 'address'=>'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode'])
             ->where(["$distanceField <" => $distance, 'status'=>'Active'])
             ->bind(':latitude', $request['latitude'], 'float')
             ->bind(':longitude', $request['longitude'], 'float');
+        $spaycs->contain([
+            'JoinedSpayc' => function($q) {
+                return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
+            },
+            'SubscribedUsers' => function($q) {
+                return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
+            }
+        ]);
         $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
         $spaycs->order(['distance'=>'ASC'])->limit($limit);
         if(!empty($request['keyword'])) {
             $spaycs->where(["Spaycs.name LIKE"=>"%".$request['keyword']."%"]);
         }
+        
+        $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($userId) {
+            return $results->map(function ($row) use($userId) {
+                if(!empty($row['joined_spayc'])) {
+                    $status = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.'].status');
+                }
+                $row['joined_spayc_status'] = !empty($status[0])?$status[0]:null;
+                $row['is_joined'] = !empty($status[0])?true:false;
+                $row['joined_users'] = !empty($row['joined_spayc'])?count($row['joined_spayc']):0;
+                unset($row['joined_spayc']);
+                if(!empty($row['subscribed_users'])) {
+                    $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');
+                }
+                $row['subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):0;
+                $row['is_subscribed'] = !empty($subUserId[0])?true:false;
+                return $row;
+            });
+        });
+        
         $page = (!empty($request['page']) && is_numeric($request['page']))?$request['page']:1;
-        if($page < 0){
+        if($page < 0) {
             $page = $page*-1;
             $spaycs->page($page);
         } else {

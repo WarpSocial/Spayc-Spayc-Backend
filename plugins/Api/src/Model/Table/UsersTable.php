@@ -133,6 +133,17 @@ class UsersTable extends Table {
                 ->notEmpty('email',__('Email is required field.'))
                 ->email('email', false, __('Invalid email address.'))                
                 ->add('email', 'unique', ['rule' => 'validateUnique','message'=>__('Email already exist.'), 'provider' => 'table']) ;
+        
+        $validator
+                ->notEmpty('country_code',__('Country code is required field.'),function($context){
+                     return !empty($context['data']['phone']);
+                })
+                ->add('country_code', 'countrycode', [
+                    'rule' => function($value,$context){
+                         return (bool)(preg_match('/^([\+\s\(\)\-]*\d[\+\s\(\)\-]*){1,5}$/',$value));
+                    },
+                    'message'=>__('Country Code is not valid.')
+                    ]);
                 
         
         $validator
@@ -321,6 +332,42 @@ class UsersTable extends Table {
         
         return $validator;
     }
+    /**
+     * friendRequestValidate rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function friendRequestValidate($data) {
+        $validator = new Validator();        
+        $validator
+            ->requirePresence('friend_id', 'create',__('Friend request is required field.'))
+            ->notEmpty('friend_id',__('Friend request is required field.'));
+        
+        $validator
+            ->requirePresence('friend_status', 'create',__('Status is required field.'))    
+            ->notEmpty('friend_status',__('Status is required field.'))
+            ->inList('friend_status', Configure::read('friend_requested_status'),__('Friend status must be any one '.implode(',',Configure::read('friend_requested_status')).'.'));
+        return $validator->errors($data);
+    }
+    /**
+     * friendRequestResponseValidate rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function friendRequestResponseValidate($data) {
+        $validator = new Validator();        
+        $validator
+            ->requirePresence('friend_id', 'create',__('Friend request id is required field.'))
+            ->notEmpty('friend_id',__('Friend request id is required field.'));
+        
+        $validator
+            ->requirePresence('friend_status', 'create',__('Status is required field.'))    
+            ->notEmpty('friend_status',__('Status is required field.'))
+            ->inList('friend_status', Configure::read('friend_requested_status'),__('Friend status must be any one '.implode(',',Configure::read('friend_requested_status')).'.'));
+        return $validator->errors($data);
+    }
     
     /**
      * Default validation rules.
@@ -420,30 +467,43 @@ class UsersTable extends Table {
     }
     
     public function searchUsers($userId = null, $request = []) {
-        $users = $this->find('all', ['fields'=>['Users.id', 'name'=>'Users.username','Users.email','Users.gender','Users.phone','Users.dob','Users.status','Users.website_url','Users.address','Users.bio_data', 'Users.matrix_user_id', 'Users.matrix_access_token', 'Users.created','Users.modified']])->where(['Users.status'=>'Active']);
+        $blockedFriendIds = TableRegistry::get('Api.FriendRequest')->getFriendIdsByStatus($userId, 'Blocked');
+        $cond['Users.status'] = 'Active';
+        if(!empty($blockedFriendIds)) {
+            $cond['Users.id NOT IN'] = $blockedFriendIds;
+        } else {
+            $cond['Users.id !='] = $userId;
+        }
+        $users = $this->find('all', ['fields'=>['Users.id', 'Users.username', 'Users.email', 'Users.matrix_user_id']])->where($cond);
         $users->contain([
-            'Requestedby' => function($q) use($userId) {
-                return $q->select(['Requestedby.id', 'Requestedby.requested_by', 'Requestedby.requested_to', 'Requestedby.requested_status', 'Requestedby.friend_status', 'Requestedby.matrix_room_id'])->Where(['OR'=>['Requestedby.requested_by'=>$userId, 'Requestedby.requested_to'=>$userId]]);
-            },
-            'Requestedto' => function($q) use($userId) {
-                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.friend_status', 'Requestedto.matrix_room_id'])->Where(['OR'=>['Requestedto.requested_by'=>$userId, 'Requestedto.requested_to'=>$userId]]);
-            },
-            'UserImages'=>function($q) {
-                return $q->select(['UserImages.user_id', 'UserImages.image_url']);
-            },
+            /*
             'JoinedSpayc'=>function($q) {
                 return $q->select(['JoinedSpayc.user_id', 'joined_spaycs'=>$q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.user_id']);
             },
             'Spaycs'=>function($q) {
                 return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id']);
+            },*/
+            'Requestedby' => function($q) use($userId) {
+                return $q->select(['Requestedby.id', 'Requestedby.requested_by', 'Requestedby.requested_to', 'Requestedby.requested_status', 'Requestedby.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
+            },
+            'Requestedto' => function($q) use($userId) {
+                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
+            },
+            'UserImages'=>function($q) {
+                return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
             }
+            
         ]);
         $users->formatResults(function (\Cake\Collection\CollectionInterface $results) {
             return $results->map(function ($row) {
                 $uId = ApiHasher::decrypt($row->id);
                 $row['friend'] = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
                 $row['friend'] = !empty($row['requestedby'][0]) && empty($row['friend'])?$row['requestedby'][0]:$row['friend'];
+                $row['matrix_room_id'] = !empty($row['friend']['matrix_room_id'])?$row['friend']['matrix_room_id']:null;
+                unset($row['friend']['matrix_room_id']);
                 $row['friend']['total_friends'] = TableRegistry::get('Api.FriendRequest')->getFriendCountByUserId($uId);
+                $row['image_url'] = !empty($row['user_images'][0]['image_url'])?$row['user_images'][0]['image_url']:'';
+                unset($row['user_images']);
                 unset($row['requestedto']);
                 unset($row['requestedby']);
                 return $row;
@@ -467,5 +527,15 @@ class UsersTable extends Table {
             $data['records'] = $users->toArray();
         }
         return $data;
+    }
+    public function validateLatLong($data){
+        $validator = new Validator();
+        $validator->requirePresence('latitude', true,__('Latitude key is missing.'))
+                ->notEmpty('latitude', __('Please enter latitude.'))
+                ->latitude('latitude', __('Latitude is not valid.'));
+        $validator->requirePresence('longitude', true,__('Longitude key is missing.'))
+                ->notEmpty('longitude', __('Please enter longitude.'))
+                ->longitude('longitude', __('Longitude is not valid.'));
+        return $validator->errors($data);
     }
 }

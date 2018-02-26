@@ -21,7 +21,7 @@
 */
 
 /**
-@api {post} /spaycs.json New SPAYC
+@api {post} /spaycs.json Create Spayc
 @apiVersion 0.1.0
 @apiName PostSpayc
 @apiGroup Spayc
@@ -42,6 +42,7 @@
 @apiParam {String} image            Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
 @apiParam {String} longitude        Langitude from google map (Required).
 @apiParam {String} latitude         Latitude from google map (Required).
+@apiParam {String} invite           Matrix user id is optional in query string(Optional).
 
 @apiExample Example usage:
     {
@@ -55,7 +56,8 @@
         "description":"spayc creating",
         "image":"file.png",
         "longitude":"XX.00.XX",
-        "latitude":"XX.00.XX"
+        "latitude":"XX.00.XX",
+        "invite":"@test2:35.168.119.247, @test3:35.168.119.247"
     }
  
 @apiSuccess {String} status success.
@@ -65,23 +67,27 @@
     HTTP/1.1 201 OK
 {
     "status": "success",
-    "message": "Your spayc, spaycdev, has been created.",
+    "message": "Your spayc, Festive, has been created.",
     "data": {
-        "name": "spaycdev",
-        "location": "Community addrss",
-        "type": "Community",
+        "name": "Festive",
+        "location": "Your address",
+        "type": "Event",
         "group_type": "Public",
-        "start_date": "2018-01-11T11:16:01+00:00",
-        "end_date": "2018-01-12T09:23:01+00:00",
+        "start_date": "2019-01-11T01:02:20+00:00",
+        "end_date": "2019-01-11T01:08:20+00:00",
         "passcode": "",
-        "description": "its about festival #color #festival #abc",
+        "description": "Holi is a festival of color #color #festival",
         "image": "",
-        "user_id": 38,
-        "created": "2018-01-11T09:31:50+00:00",
-        "modified": "2018-01-11T09:31:50+00:00",
-        "longitude":"XX.00.XX",
-        "latitude":"XX.00.XX",
-        "id": "NDQ2NTI2NDYzMC45NQ=="
+        "longitude": 77.209021,
+        "latitude": 28.613939,
+        "invite": "@test2:35.168.119.247",
+        "status": "Active",
+        "matrix_room_id": "!JqhnnrWCtlFTnWlwWL:35.168.119.247",
+        "matrix_room_alias": "#Holi13:35.168.119.247",
+        "user_id": "10",
+        "created": "2018-02-16T11:02:47+00:00",
+        "modified": "2018-02-16T11:02:47+00:00",
+        "id": "95"
     }
 }
 
@@ -89,13 +95,73 @@
  */
 function postSpaycs() { return; }
 /**
+@api {post} /create-subspace.json Create SubSpayc
+@apiVersion 0.1.0
+@apiName PostSubspayc
+@apiGroup Spayc
+@apiPermission private
+
+@apiDescription Create a new sub SPAYC.Sub space type,start_date,end_date,longitude,latitude will same as of parent type.
+
+@apiHeader {String} TOKEN          A registered token must be in header.
+
+@apiParam {String} parent_matrix_room_id    Matrix parent room id (Required).
+@apiParam {String} name             Title of subspace (Required).
+@apiParam {String} group_type       Group type must be any one from the following Public|Private (Required).
+@apiParam {String} passcode         Passcode is required in case of private group type.
+@apiParam {String} description      Description for SPAYC (Optional).
+@apiParam {String} image            Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
+@apiParam {String} invite           Matrix user id must in comma separated if more thant one invitees(Optional).
+
+@apiExample Example usage:
+    {
+        "parent_matrix_room_id": "!gERqTLZjHXyDAlCPhC:127.0.0.1",
+        "name": "devsubspacePMB",
+        "group_type": "Public|Private",
+        "passcode": "s5d4f87sdf4545",
+        "description":"spayc creating",
+        "image":"file.png",
+        "invite":"@test2:35.168.119.247, @test3:35.168.119.247"
+    }
+ 
+@apiSuccess {String} status success.
+@apiSuccess {String} message SubSpayc DevsubspacePMB created successfully.
+@apiSuccess {Object} data Spayc details.
+@apiSuccessExample {json} Success-Response: 
+    HTTP/1.1 201 OK
+{
+    "status": "success",
+    "message": "SubSpayc DevsubspacePMB created successfully.",
+    "data": {
+        "parent_matrix_room_id": "!gERqTLZjHXyDAlCPhC:127.0.0.1",
+        "name": "devsubspacePMB",
+        "description": "devspace",
+        "group_type": "Public",
+        "invitee": "",
+        "passcode": "",
+        "image": "https://spayc-qa.s3.amazonaws.com/room/screenshot_from_2017_12_12_19_55_12_20180223142752.png",
+        "status": "Active",
+        "start_date": "03-11-2018 09:16:00",
+        "end_date": "03-12-2018 09:23:00",
+        "latitude": 53.369,
+        "longitude": 25.369,
+        "type": "Community",
+        "matrix_token": "MDAxN2xvY2F0aW9uIDEyNy4wLjAuMQowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMjZjaWQgdXNlcl9pZCA9IEBkZXZ0ZXN0YToxMjcuMC4wLjEKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSAmMjZfRUI9VlRTej1QblNmCjAwMmZzaWduYXR1cmUgMN05HYWhM71ysg2rTIM2cZUjWny270EnAM8EsILZ1k8K",
+        "matrix_room_id": "!UoVWeZsYeLqGUHVULq:127.0.0.1"
+    }
+}
+
+@apiUse errorResponse
+ */
+function postSubspaycs() { return; }
+/**
  * @api {get} /spaycs.json?page=:page&limit=5&latitude=28.4594965&longitude=77.0266383 Spayc Lists
  * @apiVersion 0.1.0
  * @apiName getSpaycs
  * @apiGroup Spayc
  * @apiPermission private
  *
- * @apiDescription Filter spayc list.
+ * @apiDescription Filter spayc all list, created by logged in user and joined by logged in user using list_by parameter.
  * 
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
@@ -105,9 +171,9 @@ function postSpaycs() { return; }
     @apiParam {Timestamp}   end_date        Spayc end date in query string(1515715200) (Optional).
     @apiParam {String}      group_type      Group type must be any one from the following (Public|Private) (Optional).
     @apiParam {String}      type            Spayc type must be any one from the following (Event|Community) (Optional).
-    @apiParam {String}      with_friends    Allow that spayc list with friends or not (Optional).
-    @apiParam {String}      latitude        Latitude is required in query string(Required).
-    @apiParam {String}      longitude       Longitude is required in query string(Required).
+    @apiParam {String}      latitude        Latitude is required in query string(Optional).
+    @apiParam {String}      longitude       Longitude is required in query string(Optional).
+    @apiParam {String}      list_by         List by is optional in query string(created|joined|all).
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Spayc lists.
@@ -118,103 +184,49 @@ function postSpaycs() { return; }
     "status": "success",
     "message": "Spayc lists.",
     "data": {
-        "count": 4,
+        "count": 22,
         "spaycs": [
             {
-                "distance": "22.7463734587819",
-                "id": "NDQ2NTI2NDYzMC45NQ==",
-                "user_id": 51,
-                "name": "Test",
-                "address": "Event address",
-                "start_date": "2018-01-10T06:00:00+00:00",
-                "end_date": "2018-01-10T06:00:00+00:00",
-                "image": "img.png",
-                "type": "Event",
-                "group_type": "Public",
-                "status": "Active",
-                "latitude": 28.535516,
-                "longitude": 77.391026,
-                "created": "2018-01-10T00:00:00+00:00",
-                "modified": "2018-01-10T00:00:00+00:00",
-                "comments": [
-                    {
-                        "spayc_id": 1,
-                        "total_comment": 1
-                    }
-                ],
-                "subscribed_users": [],
-                "joined_spayc": []
-            },
-            {
-                "distance": "22.7463734587819",
-                "id": "NDQ2N5I2NDY43C45NQ==",
-                "user_id": 51,
-                "name": "Test1",
-                "address": "Event address",
-                "start_date": "2018-01-10T01:00:00+00:00",
-                "end_date": "2018-01-11T11:00:00+00:00",
-                "image": "img.png",
-                "type": "Event",
-                "group_type": "Public",
-                "status": "Active",
-                "latitude": 28.535516,
-                "longitude": 77.391026,
-                "created": "2018-01-10T00:00:00+00:00",
-                "modified": "2018-01-10T00:00:00+00:00",
-                "comments": [],
-                "subscribed_users": [],
-                "joined_spayc": []
-            },
-            {
-                "distance": "22.7463734587819",
-                "id": "NDQ2NTI2NDgfMC45NQ5g",
-                "user_id": 51,
-                "name": "Test12",
-                "address": "Event address",
-                "start_date": "2018-01-10T01:00:00+00:00",
-                "end_date": "2018-01-11T11:00:00+00:00",
-                "image": "img.png",
-                "type": "Event",
-                "group_type": "Private",
-                "status": "Active",
-                "latitude": 28.535516,
-                "longitude": 77.391026,
-                "created": "2018-01-10T00:00:00+00:00",
-                "modified": "2018-01-10T00:00:00+00:00",
-                "comments": [],
-                "subscribed_users": [
-                    {
-                        "spayc_id": 3,
-                        "subscribed_users": 1
-                    }
-                ],
-                "joined_spayc": [
-                    {
-                        "spayc_id": 3,
-                        "joined_users": 3,
-                        "joined_friends": 2
-                    }
-                ]
-            },
-            {
-                "distance": "22.7463734587819",
-                "id": "NDsdaf2NDYzMC45NQFA",
-                "user_id": 51,
-                "name": "Test123",
-                "address": "Community address",
-                "start_date": "2018-01-10T01:00:00+00:00",
-                "end_date": "2018-01-11T11:00:00+00:00",
-                "image": "img.png",
+                "distance": "0",
+                "id": "33",
+                "name": "spaycdev13",
+                "address": "Your address",
+                "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
+                "start_date": "01-11-2019 01:02:00",
+                "end_date": "01-12-2019 01:02:00",
+                "image": "",
                 "type": "Community",
                 "group_type": "Public",
-                "status": "Active",
-                "latitude": 28.535516,
-                "longitude": 77.391026,
-                "created": "2018-01-10T00:00:00+00:00",
-                "modified": "2018-01-10T00:00:00+00:00",
-                "comments": [],
-                "subscribed_users": [],
-                "joined_spayc": []
+                "passcode": "",
+                "subscribed_users": 0,
+                "friends": 0,
+                "joined_spayc_status": null,
+                "is_joined": false,
+                "joined_users": 0,
+                "is_subscribed": false,
+                "total_comments": 0,
+                "total_presents": 0
+            },
+            {
+                "distance": "0",
+                "id": "5",
+                "name": "spaycdev13",
+                "address": "Your address",
+                "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
+                "start_date": "01-11-2019 01:02:00",
+                "end_date": "01-12-2019 01:02:00",
+                "image": "",
+                "type": "Event",
+                "group_type": "Public",
+                "passcode": "s5d4f87sdf4545",
+                "subscribed_users": 1,
+                "friends": 0,
+                "joined_spayc_status": "Pending",
+                "is_joined": false,
+                "joined_users": 3,
+                "is_subscribed": true,
+                "total_comments": 1,
+                "total_presents": 0
             }
         ]
     }
@@ -299,3 +311,47 @@ function postSubscribeSpayc() { return; }
  * @apiUse UserErrorResponse
  */
 function getView() { return; }
+
+/**
+@api {post} /chat-room.json One to One Room
+@apiVersion 0.1.0
+@apiName ChatRoom
+@apiGroup Spayc
+@apiPermission private
+
+@apiDescription Create a new room for one to one chat.
+
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+
+@apiParam {String} invite           Matrix user id is optional in query string(Required).
+
+@apiExample Example usage:
+{
+    "invite":"@test2:35.168.119.247"
+}
+ 
+@apiSuccess {String} status success.
+@apiSuccess {String} message Your room, spaycdev, has been created.
+@apiSuccess {Object} data Spayc details.
+@apiSuccessExample {json} Success-Response: 
+    HTTP/1.1 201 OK
+{
+    "status": "success",
+    "message": "Your room, @test4:35.168.119.247-@test5:35.168.119.247, has been created.",
+    "data": {
+        "invite": "@test4:35.168.119.247",
+        "name": "@test4:35.168.119.247-@shubhash11:35.168.119.247",
+        "group_type": "Private",
+        "matrix_room_id": "!ICbUbLzaoTzIvIoEjf:35.168.119.247",
+        "matrix_room_alias": "#test4-35-168-119-247-shubhash11-35-168-119-247:35.168.119.247",
+        "user_id": "10",
+        "status": "Active",
+        "created": "2018-02-16T14:14:01+00:00",
+        "modified": "2018-02-16T14:14:01+00:00",
+        "id": "99"
+    }
+}
+
+@apiUse errorResponse
+ */
+function postChatRoom() { return; }

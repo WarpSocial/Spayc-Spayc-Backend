@@ -35,6 +35,7 @@
  * @apiParam {String} username     Username (Required).
  * @apiParam {Date}   dob          Date of birth must in this format MM-DD-YYYY (Optional).
  * @apiParam {String} gender       Gender of user like any one (Male, Femal, Other) (Required).
+ * @apiParam {String} country_code Country code of user phone number(Optional).
  * @apiParam {Number} phone        Phone no of user and accept upto 16 digits (Optional).
  * @apiParam {String} address      User address (Optional).
  * @apiParam {String} website_url  Website url (Optional).
@@ -46,6 +47,7 @@
  *          "username":"spayc",
  *          "dob": "12-11-2001",
  *          "gender": "Male|Female|Other",
+ *          "country_code":"+91",
  *          "phone": "XXXXXXXXXX",
  *          "address": "spayc address",
  *          "website_url":"www.spayc.com",
@@ -67,6 +69,7 @@
  *          "username":"spayc",
  *          "dob": "12-11-2001",
  *          "gender": "Male|Female|Other",
+ *          "country_code":"+91",
  *          "phone": "XXXXXXXXXX",
  *          "address": "spayc address",
  *          "website_url":"www.spayc.com",
@@ -94,6 +97,7 @@ function putUser() { return; }
  * @apiParam {String} confirm_password secret password (Required).
  * @apiParam {Date}   dob Date of birth must in in format MM-DD-YYYY (Optional).
  * @apiParam {String} gender Gender of user like any one (Male, Femal, Other) (Required).
+ * @apiParam {String} country_code Country code of user phone number(Optional).
  * @apiParam {Number} phone Phone no of user and accept only 10 digits only (Optional).
  * @apiParam {Number} latitude of user address (Required).
  * @apiParam {Number} longitude of user address (Required).
@@ -106,7 +110,8 @@ function putUser() { return; }
  *          "password": "XXXXXXXXX",
  *          "confirm_password": "XXXXXXXXX",
  *          "gender": "Male|Female|Other",
- *          "phone": "+91 (XXX) (XXXXXXX)",
+ *          "country_code":"+91",
+ *          "phone": "(XXX) (XXXXXXX)",
  *          "dob": "11-12-2000",
  *          "latitude": "XX.XXXXXX",
  *          "longitude": "XX.XXXXXX"
@@ -126,7 +131,8 @@ function putUser() { return; }
  *          "username": "spaycdev",
  *          "email": "spaycdev@spayc.com",
  *          "gender": "male|female|other",
- *          "phone": "+91 (XXX) (XXXXXXX)",
+ *          "country_code":"+91",
+ *          "phone": "(XXX) (XXXXXXX)",
  *          "dob": "11-12-2000",
  *          "latitude": "XX.XXXXXX",
  *          "longitude": "XX.XXXXXX"
@@ -144,7 +150,7 @@ function postUser() { return; }
  * @apiGroup User
  * @apiPermission Private User
  *
- * @apiDescription Search users|spaycs|hashtags details.
+ * @apiDescription Search users|spaycs|hashtags details by requesting parameters.
  *
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
@@ -165,126 +171,89 @@ function postUser() { return; }
     "message": "Search Lists.",
     "data": {
         "users": {
-            "count": 14,
+            "count": 26,
             "records": [
                 {
-                    "id": "MzY3NzI3Njc1LjQ5",
-                    "name": "spayc1",
-                    "email": "spayc1@domain.com",
-                    "gender": "Male",
-                    "phone": "+91 (XXX) (XXXXXXX)",
-                    "dob": "12-11-2000",
-                    "status": "Active",
-                    "website_url": "www.spayc.com",
-                    "address": "spayc address",
-                    "bio_data": "your bio data",
-                    "matrix_user_id": "@test2:35.168.119.247",
-                    "matrix_access_token": "MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyOGNpZCB1c2VyX2lkID0gQHRlc3QyOjM1LjE2OC4xMTkuMjQ3CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gMVJKXjJSTEs3Klc9LmhyQAowMDJmc2lnbmF0dXJlIMyd1A3UtgJZEWcmvehB84AboRIZrFb46AqHTrn4Y2reCg",
-                    "created": "2018-01-17T14:09:52+00:00",
-                    "modified": "2018-01-18T07:43:46+00:00",
-                    "spaycs": [
-                        {
-                            "user_id": 7,
-                            "created_spaycs": 2
-                        }
-                    ],
-                    "joined_spayc": [
-                        {
-                            "user_id": 7,
-                            "joined_spaycs": 2
-                        }
-                    ],
-                    "user_images": [],
+                    "id": "5",
+                    "username": "user1",
+                    "email": "user1@domain.com",
+                    "matrix_user_id": null,
                     "friend": {
-                        "total_friends": 2
-                    }
+                        "id": "57",
+                        "requested_by": "17",
+                        "requested_to": "5",
+                        "requested_status": "Pending",
+                        "total_friends": 0
+                    },
+                    "matrix_room_id": "!asfLdzLnOdGRkdd4dPZWu:localhost",
+                    "image_url": ""
                 },
                 {
-                    "id": "NTI1MzI1MjUwLjc=",
-                    "name": "spayc2",
-                    "email": "spayc2@domain.com",
-                    "gender": "Male",
-                    "phone": "+91 (XXX) (XXXXXXX)",
-                    "dob": "11-12-2000",
-                    "status": "Active",
-                    "website_url": "www.spayc.com",
-                    "address": "your address",
-                    "bio_data": "your bio data",
-                    "matrix_user_id": "@test2:35.168.119.247",
-                    "matrix_access_token": "MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyOGNpZCB1c2VyX2lkID0gQHRlc3QyOjM1LjE2OC4xMTkuMjQ3CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gMVJKXjJSTEs3Klc9LmhyQAowMDJmc2lnbmF0dXJlIMyd1A3UtgJZEWcmvehB84AboRIZrFb46AqHTrn4Y2reCg",
-                    "created": "2018-01-24T13:46:10+00:00",
-                    "modified": "2018-01-29T07:30:01+00:00",
-                    "spaycs": [
-                        {
-                            "user_id": 10,
-                            "created_spaycs": 32
-                        }
-                    ],
-                    "joined_spayc": [],
-                    "user_images": [],
+                    "id": "7",
+                    "username": "user2",
+                    "email": "user2@domain.com",
+                    "matrix_user_id": null,
                     "friend": {
-                        "id": "NTI1MzI1MjUuMDc=",
-                        "requested_by": 10,
-                        "requested_to": 17,
-                        "requested_status": "Accepted",
-                        "friend_status": "Unfriend",
-                        "matrix_room_id": null,
-                        "total_friends": 7
-                    }
+                        "total_friends": 0
+                    },
+                    "matrix_room_id": null,
+                    "image_url": ""
                 }
             ]
         },
         "spaycs": {
-            "count": 10,
+            "count": 22,
             "records": [
                 {
-                    "distance": "12.3020109427781",
-                    "id": "MTczMzU3MzMyNy4zMQ==",
-                    "user_id": 10,
-                    "name": "spaycdev3",
+                    "distance": "15.5999136892407",
+                    "id": "33",
+                    "name": "spaycdev13",
                     "address": "Your address",
-                    "start_date": "2019-01-11T01:02:20+00:00",
-                    "end_date": "2019-01-12T01:02:20+00:00",
+                    "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
+                    "start_date": "01-11-2019 01:02:00",
+                    "end_date": "01-12-2019 01:02:00",
                     "image": "",
                     "type": "Community",
                     "group_type": "Public",
-                    "status": "Active",
-                    "latitude": 28.613939,
-                    "longitude": 77.209021,
-                    "created": "2018-01-25T11:49:48+00:00",
-                    "modified": "2018-01-25T11:49:48+00:00"
+                    "passcode": "",
+                    "subscribed_users": 1,
+                    "joined_spayc_status": null,
+                    "is_joined": false,
+                    "joined_users": 0,
+                    "is_subscribed": false
                 },
                 {
-                    "distance": "12.3020109427781",
-                    "id": "MTY4MTA0MDgwMi4yNA==",
-                    "user_id": 10,
-                    "name": "spaycdev4",
+                    "distance": "15.5999136892407",
+                    "id": "32",
+                    "name": "spaycdev13",
                     "address": "Your address",
-                    "start_date": "2019-01-11T01:02:20+00:00",
-                    "end_date": "2019-01-12T01:02:20+00:00",
+                    "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
+                    "start_date": "01-11-2019 01:02:00",
+                    "end_date": "01-12-2019 01:02:00",
                     "image": "",
                     "type": "Community",
                     "group_type": "Public",
-                    "status": "Active",
-                    "latitude": 28.613939,
-                    "longitude": 77.209021,
-                    "created": "2018-01-25T11:40:10+00:00",
-                    "modified": "2018-01-25T11:40:10+00:00"
+                    "passcode": "",
+                    "subscribed_users": 2,
+                    "joined_spayc_status": null,
+                    "is_joined": false,
+                    "joined_users": 1,
+                    "is_subscribed": false
                 }
             ]
         },
         "hashtags": {
-            "count": 9,
+            "count": 33,
             "records": [
                 {
-                    "id": "MjA0ODc2ODQ3Ny43Mw==",
+                    "id": "41",
                     "name": "color",
-                    "created": "2018-01-31T13:54:20+00:00",
-                    "modified": "2018-01-31T13:54:20+00:00"
+                    "created": "2018-02-01T08:18:00+00:00",
+                    "modified": "2018-02-01T08:18:00+00:00"
                 },
                 {
-                    "id": "MjEwMTMwMTAwMi44",
-                    "name": "festival",
+                    "id": "39",
+                    "name": "festive",
                     "created": "2018-01-31T13:54:20+00:00",
                     "modified": "2018-01-31T13:54:20+00:00"
                 }
@@ -333,6 +302,7 @@ function getView() { return; }
         "email": "spayc@domain.com",
         "gender": "Male",
         "dob": "2000-02-02",
+        "country_code":"",
         "phone": "",
         "website_url": null,
         "address": null,
@@ -377,23 +347,32 @@ function postLogin() { return; }
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  
   @apiParam {String} friend_id Friend id required (friend_id must be an user id)(Required).
+  @apiParam {String} friend_status Friend status and status must be either one from following 'Pending', 'Accepted', 'Blocked','Direct','Decline','Unfriend' (Required).
  
   @apiExample Example usage:
  
     {
-        "friend_id":"NDIwMjYwMjAwLjU2"
+        "friend_id":"NDIwMjYwMjAwLjU2",
+        "friend_status":"Pending"
     }
  
  
   @apiSuccess {String} status success.
-  @apiSuccess {String} message Friend request send successfully..
+  @apiSuccess {String} message Friend request send successfully.
   @apiSuccess {Object} data Null.
   @apiSuccessExample {json} Success-Response: 
         HTTP/1.1 201 OK
-{
-    "status": "success",
-    "message": "Friend request sent successfully."
-}
+        {
+            "status": "success",
+            "message": "Friend request send successfully.",
+            "data": {
+                "id": "9",
+                "requested_by": 2,
+                "requested_to": 3,
+                "requested_status": "Blocked",
+                "action_by": "2"
+            }
+        }
  
   @apiError {String} Friend request already sent.
   @apiUse UserErrorResponse
@@ -413,7 +392,7 @@ function postFriendRequest() { return; }
  
 * @apiParam  {Number}   page            Page number in query string (Optional).
 * @apiParam  {Number}   limit           Records limit in query string (Optional).
-* @apiParam  {String}   friend_status   Status in query string must be any one from the following(Requested, Accepted, 'Declined',Blocked, Unfriend).
+* @apiParam  {String}   friend_status   Status in query string must be any one from the following(Pending, Accepted, 'Declined',Blocked, Unfriend).
  
  
   @apiSuccess {String} status success.
@@ -429,14 +408,14 @@ function postFriendRequest() { return; }
         "records": [
             {
                 "id": "VkR0a3p4anQ2SUxScm85RGhTZTFpZz09",
-                "name": "test",
+                "username": "test",
                 "matrix_user_id": null,
                 "matrix_access_token": null,
                 "friend": {
                     "id": "bmRkeTJVYjhwTlQzKzdpeWJwWEMvZz09",
                     "requested_by": 10,
                     "requested_to": 7,
-                    "requested_status": "Requested",
+                    "requested_status": "Pending",
                     "friend_status": null,
                     "matrix_room_id": "room:@848843444"
                 },
@@ -451,7 +430,7 @@ function postFriendRequest() { return; }
                     "id": "NlJpUEx0M016dXBGTjhZdWpWeThBUT09",
                     "requested_by": 10,
                     "requested_to": 8,
-                    "requested_status": "Requested",
+                    "requested_status": "Pending",
                     "friend_status": null,
                     "matrix_room_id": "room:@84854843"
                 },
@@ -477,13 +456,13 @@ function getFriends() { return; }
   
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  
-* @apiParam  {String}   id       Friend id required field in body.
-* @apiParam  {String}   status   Status is required field and status must be in(Accepted,Declined,Blocked, Unblock, Unfriend).
+* @apiParam  {String}   friend_id       Requested friend id (Required).
+* @apiParam  {String}   friend_status   Friend status must any one from following list 'Pending', 'Accepted', 'Blocked','Direct','Decline','Unfriend' (Required).
    @apiExample Example usage:
  
     {
-        "id":"NDIwMjYwMjAwLjU2",
-        "status":"Accepted"
+        "friend_id":"NDIwMjYwMjAwLjU2",
+        "friend_status":"Accepted"
     }
  
   @apiSuccess {String} status success.
@@ -491,10 +470,17 @@ function getFriends() { return; }
   @apiSuccess {Object} data Null.
   @apiSuccessExample {json} Success-Response: 
        HTTP/1.1 200 OK
-{
-    "status": "success",
-    "message": "Friend status updated successfully."
-}
+        {
+            "status": "success",
+            "message": "Friend status updated successfully.",
+            "data": {
+                "id": "9",
+                "requested_by": 2,
+                "requested_to": 3,
+                "requested_status": "Accepted",
+                "action_by": "3"
+            }
+        }
  
   @apiError {String} Status is required fields and status must be in(Accepted,Declined,Blocked,Unfriend)..
   @apiUse UserErrorResponse
@@ -616,6 +602,7 @@ function postForgotPassword() { return; }
         "email": "test2@gmail.com",
         "gender": "Male",
         "dob": "01-25-1996",
+        "country_code":"+91",
         "phone": "(789)877878",
         "website_url": null,
         "address": null,
@@ -635,7 +622,7 @@ function postForgotPassword() { return; }
             "id": "MzNNbkN6V05zQ2c1N0ViMVJJeEVqZz09",
             "requested_by": 10,
             "requested_to": 19,
-            "requested_status": "Requested",
+            "requested_status": "Pending",
             "friend_status": null,
             "total_friends": 2
         },
@@ -782,3 +769,134 @@ function postChatRequest() { return; }
  * @apiUse UserErrorResponse
  */
 function postProfileImage() { return; }
+
+/**
+ * @api {put} /set-profile-image/:order.json Set Profile Images
+ * @apiVersion 0.1.0
+ * @apiName setProfileImage
+ * @apiGroup User
+ * @apiPermission none
+ *
+ * @apiDescription Set image as default profile pic.
+ *
+ * @apiParam {String} order      Image order index in query string required.
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Profile Profile image set as default.
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Profile image set as default."
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function putSetProfileImage() { return; }
+
+/**
+ * @api {get} /remove-avatar/:order.json Remove Profile Image
+ * @apiVersion 0.1.0
+ * @apiName removeAvatar
+ * @apiGroup User
+ * @apiPermission Logged in user
+ *
+ * @apiDescription Remove profile image. Token must be set in header.if image is default profile image then it will also remove from matrix.
+ *
+ * @apiParam {String} order      Image order index in query string required.
+ *
+ * @apiExample Example usage:
+ *
+    {
+        "status": "success",
+        "message": "Profile image has been removed."
+    }
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Profile image has been removed.
+
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Profile image set as default."
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+
+function getRemoveAvatar() { return; }
+/**
+ * @api {get} /facebook-friends.json?page=:page&limit=:limit Get facebook friends
+ * @apiVersion 0.1.0
+ * @apiName FacebookFriends
+ * @apiGroup User
+ * @apiPermission none
+ *
+ * @apiDescription get facebook friend for suggetion.
+ *
+ * @apiParam {Number} page      Page number is optional in query string default value 1.
+ * @apiParam {Number} limit     Limit is optional in query string default value 5.
+ *
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Facebook friend lists.
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+{
+ "message": "Facebook friend lists.",
+ "data": {
+        "count": 2,
+        "records": [
+            {
+                "id": "7",
+                "username": "user1",
+                "image_url": ""
+            },
+            {
+                "id": "11",
+                "username": "user2",
+                "image_url": ""
+            }
+        ]
+    }
+ *
+ * @apiUse UserErrorResponse
+ */
+ function getFacebookFriends() { return; }
+ /**
+ * @api {post} /update-user-status.json Update User Physical Presence
+ * @apiVersion 0.1.0
+ * @apiName PostUpdateUserStatus
+ * @apiGroup User
+ * @apiPermission required
+ *
+ * @apiDescription Update physical presence of user.
+ * 
+ * @apiHeader {String} token Token must be set in header.
+ *
+ * @apiParam {String} latitude  Current user location latitude.(Required).
+ * @apiParam {String} longitude Current user location longitude.(Required).
+ *
+ * @apiExample Example usage:
+    {
+        "latitude":"45.25895656565656",
+        "longitude":"25.265656565656"
+    }
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Request has been updated successfully.
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+    {
+        "status": "success",
+        "message": "Request has been updated successfully."
+    }
+ *
+ * @apiUse UserErrorResponse
+ */
+function postUpdateUserStatus() { return; }
