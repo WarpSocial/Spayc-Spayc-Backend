@@ -230,7 +230,7 @@ class SpaycsController extends AppController {
         }
         $spaycs = $this->Spaycs->find()
             ->select([
-                'distance' => $distanceField, 'id', 'name', 'address'=>'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode'])
+                'distance' => $distanceField, 'id', 'name', 'address'=>'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode', 'user_id'])
             ->where($cond)
             ->bind(':latitude', $this->request->query('latitude'), 'float')
             ->bind(':longitude', $this->request->query('longitude'), 'float');
@@ -287,6 +287,9 @@ class SpaycsController extends AppController {
                     $status = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.'].status');
                 }
                 $row['joined_spayc_status'] = !empty($status[0])?$status[0]:null;
+                if($userId==$row['user_id']) {
+                    $row['joined_spayc_status'] = 'Approved';
+                }
                 $row['is_joined'] = !empty($status[0])?true:false;
                 $row['joined_users'] = !empty($row['joined_spayc'])?count($row['joined_spayc']):0;
                 unset($row['joined_spayc']);

@@ -40,8 +40,8 @@
  * @apiParam {String}  address      User address (Optional).
  * @apiParam {String}  website_url  Website url (Optional).
  * @apiParam {String}  bio_data     Bio data of user (Optional).
-  * @apiParam {String} latitude   * latitude of user address (Optional).
- * @apiParam {String}  longitude  * longitude of user address (Optional).
+ * @apiParam {String}  latitude   * Latitude of user address (Optional).
+ * @apiParam {String}  longitude  * Longitude of user address (Optional).
  *
  * @apiExample Example usage:
  *
@@ -78,8 +78,8 @@
  *          "address": "spayc address",
  *          "website_url":"www.spayc.com",
  *          "bio_data":"your bio data",
- *          "longitude": "77.391026",
- *          "latitude": "28.535516"
+ *          "longitude": "XX.00",
+ *          "latitude": "XX.00"
  *       }
  *   ]
  * }

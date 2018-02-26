@@ -275,6 +275,8 @@ class UsersController extends AppController {
         $this->loadComponent('Api.Matrix');
         $data = $this->request->getData(); 
         $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';
+        $data['current_latitude'] = Utils::getVar('latitude', $data);
+        $data['current_longitude'] = Utils::getVar('longitude', $data);
         $items = $this->Users->patchEntity($entity, $data);
         if($items->errors()) {
             $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
@@ -380,6 +382,8 @@ class UsersController extends AppController {
             $data['password'] = Text::uuid();
             $entity = $this->Users->newEntity();
         }
+        $data['current_latitude'] = Utils::getVar('latitude', $data);
+        $data['current_longitude'] = Utils::getVar('longitude', $data);
         $items = $this->Users->patchEntity($entity, $data, ['validate' => 'facebookSignup']);
         if($items->errors()) {
             $this->restException(['status' => "failed", 'message' => $this->mapErrors($items->errors())], 400);

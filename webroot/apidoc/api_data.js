@@ -1804,14 +1804,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "latitude",
-            "description": "<ul> <li>latitude of user address (Optional).</li> </ul>"
+            "description": "<ul> <li>Latitude of user address (Optional).</li> </ul>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "longitude",
-            "description": "<ul> <li>longitude of user address (Optional).</li> </ul>"
+            "description": "<ul> <li>Longitude of user address (Optional).</li> </ul>"
           }
         ]
       }
@@ -1852,7 +1852,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "    HTTP/1.1 200 OK\n{\n  \"status\": \"success\",\n  \"message\": \"Saved successfully.\",\n  \"data\": [\n      {\n         \"username\":\"spayc\",\n         \"dob\": \"12-11-2001\",\n         \"gender\": \"Male|Female|Other\",\n         \"country_code\":\"+91\",\n         \"phone\": \"XXXXXXXXXX\",\n         \"address\": \"spayc address\",\n         \"website_url\":\"www.spayc.com\",\n         \"bio_data\":\"your bio data\",\n         \"longitude\": \"77.391026\",\n         \"latitude\": \"28.535516\"\n      }\n  ]\n}",
+          "content": "    HTTP/1.1 200 OK\n{\n  \"status\": \"success\",\n  \"message\": \"Saved successfully.\",\n  \"data\": [\n      {\n         \"username\":\"spayc\",\n         \"dob\": \"12-11-2001\",\n         \"gender\": \"Male|Female|Other\",\n         \"country_code\":\"+91\",\n         \"phone\": \"XXXXXXXXXX\",\n         \"address\": \"spayc address\",\n         \"website_url\":\"www.spayc.com\",\n         \"bio_data\":\"your bio data\",\n         \"longitude\": \"XX.00\",\n         \"latitude\": \"XX.00\"\n      }\n  ]\n}",
           "type": "json"
         }
       ]
