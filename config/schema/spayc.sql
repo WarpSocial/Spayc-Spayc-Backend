@@ -17,7 +17,7 @@ CREATE TABLE users (
     longitude VARCHAR(100) DEFAULT NULL,
     latitude VARCHAR(100) DEFAULT NULL,
     current_latitude VARCHAR(100) DEFAULT NULL,
-    current_longitude VARCHAR(100) DEFAULT NULL,
+    current_longitude VARCHAR(100) DEFAULT NULL, 
     timezone VARCHAR(100),
     matrix_user_id VARCHAR(100),
     matrix_access_token VARCHAR(1000),
