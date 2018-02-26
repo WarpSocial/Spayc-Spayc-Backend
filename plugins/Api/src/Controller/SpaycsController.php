@@ -79,7 +79,7 @@ class SpaycsController extends AppController {
         $this->set($response);
     }
     /**
-     * Add method
+     * createSubSpace method to create subspace
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
@@ -94,7 +94,7 @@ class SpaycsController extends AppController {
         if(!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
-        $entity = $this->Spaycs->find()->where(['id'=>$data['parent_id']]);
+        $entity = $this->Spaycs->find()->where(['matrix_room_id'=>$data['parent_matrix_room_id']]);
         if($entity->isEmpty()){
             $this->restException(['status'=>'failed','message'=>__('Parent space has not been found.')], 400);
         }
@@ -118,30 +118,30 @@ class SpaycsController extends AppController {
         $items->set('user_id', $this->Auth->user('id'));
         if (!$items->errors()) {
             if($this->Spaycs->save($items)){
+              $data['image'] = $items->get('image');
+              $data['matrix_room_id'] = $items->get('matrix_room_id');
                  if(!empty($items['description'])) {
                     TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
                 }
                 $this->response->statusCode(201);
-               // $data += ['id'=>$items=>id,'']
-                $response = ['status'=>'success','message'=>__('Your spayc '.ucfirst($data['name']).', has been created.'),'data'=>$data+['id'=>$items->id]];
+                $response = ['status'=>'success','message'=>__('SubSpayc Created Successfully'),'data'=>$data];
                 /*Event to bind to update the set upload room image */
                 $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
                     'options' => [
                         'matrix_token'=>$data['matrix_token'],
-                        'image'=> $items->image,
+                        'image'=> $items->get('image'),
                         'matrix_room_id'=> $items->matrix_room_id,
                         ]
                 ]);
                 EventManager::instance()->dispatch($event);
             }else{
-                $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be saved. Please, try again.')], 400);
+                $this->restException(['status'=>'failed', 'message'=>__('Subspace could not be saved. Please, try again.')], 400);
             }
         } else {
-            $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be saved. Please, try again.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('Subspace could not be saved. Please, try again.')], 400);
         }
         $this->set($response);
     }
-    
     /**
      * Add method
      *

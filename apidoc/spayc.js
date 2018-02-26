@@ -95,6 +95,66 @@
  */
 function postSpaycs() { return; }
 /**
+@api {post} /create-subspace.json Create SubSpayc
+@apiVersion 0.1.0
+@apiName PostSubspayc
+@apiGroup Spayc
+@apiPermission private
+
+@apiDescription Create a new sub SPAYC.Sub space type,start_date,end_date,longitude,latitude will same as of parent type.
+
+@apiHeader {String} TOKEN          A registered token must be in header.
+
+@apiParam {String} parent_matrix_room_id    Matrix parent room id (Required).
+@apiParam {String} name             Title of subspace (Required).
+@apiParam {String} group_type       Group type must be any one from the following Public|Private (Required).
+@apiParam {String} passcode         Passcode is required in case of private group type.
+@apiParam {String} description      Description for SPAYC (Optional).
+@apiParam {String} image            Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
+@apiParam {String} invite           Matrix user id must in comma separated if more thant one invitees(Optional).
+
+@apiExample Example usage:
+    {
+        "parent_matrix_room_id": "!gERqTLZjHXyDAlCPhC:127.0.0.1",
+        "name": "devsubspacePMB",
+        "group_type": "Public|Private",
+        "passcode": "s5d4f87sdf4545",
+        "description":"spayc creating",
+        "image":"file.png",
+        "invite":"@test2:35.168.119.247, @test3:35.168.119.247"
+    }
+ 
+@apiSuccess {String} status success.
+@apiSuccess {String} message SubSpayc DevsubspacePMB created successfully.
+@apiSuccess {Object} data Spayc details.
+@apiSuccessExample {json} Success-Response: 
+    HTTP/1.1 201 OK
+{
+    "status": "success",
+    "message": "SubSpayc DevsubspacePMB created successfully.",
+    "data": {
+        "parent_matrix_room_id": "!gERqTLZjHXyDAlCPhC:127.0.0.1",
+        "name": "devsubspacePMB",
+        "description": "devspace",
+        "group_type": "Public",
+        "invitee": "",
+        "passcode": "",
+        "image": "https://spayc-qa.s3.amazonaws.com/room/screenshot_from_2017_12_12_19_55_12_20180223142752.png",
+        "status": "Active",
+        "start_date": "03-11-2018 09:16:00",
+        "end_date": "03-12-2018 09:23:00",
+        "latitude": 53.369,
+        "longitude": 25.369,
+        "type": "Community",
+        "matrix_token": "MDAxN2xvY2F0aW9uIDEyNy4wLjAuMQowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMjZjaWQgdXNlcl9pZCA9IEBkZXZ0ZXN0YToxMjcuMC4wLjEKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSAmMjZfRUI9VlRTej1QblNmCjAwMmZzaWduYXR1cmUgMN05HYWhM71ysg2rTIM2cZUjWny270EnAM8EsILZ1k8K",
+        "matrix_room_id": "!UoVWeZsYeLqGUHVULq:127.0.0.1"
+    }
+}
+
+@apiUse errorResponse
+ */
+function postSubspaycs() { return; }
+/**
  * @api {get} /spaycs.json?page=:page&limit=5&latitude=28.4594965&longitude=77.0266383 Spayc Lists
  * @apiVersion 0.1.0
  * @apiName getSpaycs

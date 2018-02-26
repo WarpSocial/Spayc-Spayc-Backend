@@ -178,8 +178,8 @@ class SpaycsTable extends Table {
     public function validateSubspace($data) {
         $validator = new Validator();
         $validator
-                ->requirePresence('parent_id','create', __('Prent id key is missing.'))
-                ->notEmpty('parent_id',__('Prent id is required.'));
+                ->requirePresence('parent_matrix_room_id','create', __('Matrix parent room id key is missing.'))
+                ->notEmpty('parent_matrix_room_id',__('Matrix parent room id is required.'));
         
         $validator
                 ->requirePresence('name','create', __('Name key is missing.'))
