@@ -1,0 +1,86 @@
+/**
+* @api {post} /facebook-signup.json Facebook Sign-up
+* @apiVersion 0.0.1
+* @apiName facebookSignup
+* @apiGroup User
+* @apiPermission None
+*
+* @apiDescription User singup by facebook.
+* 
+* @apiParam {String} fb_id              * Facebook user unique id required in body(Required).
+* @apiParam {String} fb_access_key      * Facebook user access key required in body(Required).
+* @apiParam {String} username           * Username optional in body(Required).
+* @apiParam {String} email              * User email required in body(Required).
+* @apiParam {String} image_url          * User image url optional in body(Optional).
+* @apiParam {String} dob                * Date of birth optional in body MM-DD-YYYY (Optional).
+* @apiParam {Number} phone              * Phone no of user and accept upto 16 digits (Optional).
+* @apiParam {String} gender             * Gender of user like any one (Male, Femal, Other) (Required).
+* @apiParam {String} device_id          * Device id is required in body (Required).
+* @apiParam {Number} latitude           * Latitude of user address (Required).
+* @apiParam {Number} longitude          * Longitude of user address (Required).
+
+*
+*
+* @apiSuccess {Boolean} status true.
+* @apiSuccess {String} message The request is OK.
+* @apiSuccess {Object} data Consumer Object contain details about user.
+*
+* @apiExample Example usage:
+*
+*{
+*    "fb_id":"xxxxxxxxxxxx",
+*    "fb_access_key":"xxxxxxxxxxxxxxxxxxxx",
+*    "username":"spayc",
+*    "email":"user@domainname.com",
+*    "image_url":"https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2018_02_02_12_10_56_20180206133933.png",
+*    "dob":"12-11-2001",
+*    "gender":"Male|Female|Other",
+*    "phone": "XXXXXXXXXX",
+*    "device_id":"xxxxxxxxxxxxxxxxxx",
+*    "latitude": "xx.xxxxx",
+ *   "longitude": "xx.xxxxx"
+*}
+*
+*
+* 
+* @apiSuccessExample {json} Success-Response: 
+*        HTTP/1.1 201 OK
+{
+    "status": "success",
+    "message": "Saved successfully.",
+    "data": {
+        "username": "spayc",
+        "email": "user@domain.com",
+        "gender": "Male",
+        "dob": "11-12-2000",
+        "phone": null,
+        "website_url": null,
+        "address": null,
+        "bio_data": null,
+        "device_id": "xxxxxxxxxxxxxxxxxx",
+        "matrix_user_id": "@spayc11:35.168.119.247",
+        "token": "130d5b5d52f8b283a2705d5aa45ebd15f378a0763f6b369832c2dbe338e2369b",
+        "matrix_token": "MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyZGNpZCB1c2VyX2lkID0gQHNic2hhcm1hMTE6MzUuMTY4LjExOS4yNDcKMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSAzZ2sxO1lJaDpfKzcuIzA4CjAwMmZzaWduYXR1cmUg_yk9Mt0_mur_yf6ZZT6sE7ybmtiMEID2xiDSqwQzLW
+    }
+}
+*
+*
+* @apiError {Object} Error-Response Returns a json Object.
+* @apiError (Error-Response Object){Boolean} status Status.
+* @apiError (Error-Response Object){String} message Message.
+* @apiErrorExample Sample Error-Response:
+
+*   
+*  {
+"status": false,
+"message": "Method not allowed."
+}
+{
+"status": false,
+"message": "Resource not found."
+}
+{
+"status": false,
+"message": "Requested Parameter is not correct"
+}
+*/

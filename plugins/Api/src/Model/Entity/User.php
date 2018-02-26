@@ -3,14 +3,14 @@
 namespace Api\Model\Entity;
 
 use Cake\ORM\Entity;
-
+use Api\Auth\ApiHasher;
 /**
  * User Entity
  *
  * @property int $id
  * @property string $first_name
  * @property string $last_name
- * @property string $user_name
+ * @property string $username
  * @property string $email
  * @property string $password
  * @property \Cake\I18n\FrozenDate $dob
@@ -36,20 +36,8 @@ class User extends Entity {
      * @var array
      */
     protected $_accessible = [
-        'first_name' => true,
-        'last_name' => true,
-        'user_name' => true,
-        'email' => true,
-        'password' => true,
-        'dob' => true,
-        'status' => true,
-        'website_url' => true,
-        'address' => true,
-        'timezone' => true,
-        'token_verification' => true,
-        'created' => true,
-        'modified' => true,
-        'users_logs' => true
+        '*' => true,
+        'id' => false
     ];
 
     /**
@@ -62,11 +50,12 @@ class User extends Entity {
     ];
 
     protected function _setPassword($password) {
-        return (new \Cake\Auth\DefaultPasswordHasher())->hash($password);
+        return ApiHasher::hash($password);
     }
 
     protected function _setDob($dob) {
-        if (!empty($dob)) {
+        if (!empty($dob)) {            
+            $dob = \Cake\I18n\Time::createFromFormat('m-d-Y',$dob);
             return $dob->format("Y-m-d");
         } else {
             return;
@@ -75,10 +64,14 @@ class User extends Entity {
 
     protected function _getDob($dob) {
         if (!empty($dob)) {
-            return (new \Cake\I18n\Time($dob))->format("Y-m-d");
+            return (new \Cake\I18n\Time($dob))->format("m-d-Y");
         } else {
             return;
         }
+    }
+    
+    protected function _getId($id) {      
+        return ApiHasher::encrypt($id);
     }
 
 }
