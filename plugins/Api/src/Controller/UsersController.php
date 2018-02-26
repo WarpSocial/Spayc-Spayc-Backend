@@ -364,9 +364,10 @@ class UsersController extends AppController {
         $data = $this->request->getData();
         $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';
         $data['status'] = 'Active';
-        if(empty($data['email']) or empty($data['fb_id'])) {
-            $this->restException(['status' => "failed", 'message' => __('Email and fb_id are required field.')], 400);
+        if(empty($data['fb_id'])) {
+            $this->restException(['status' => "failed", 'message' => __('fb_id is required field.')], 400);
         }
+        $data['email'] = !empty($data['email'])?$data['email']:null;
         /* find user if already registered */
         $alreadyExist = $this->Users->findByEmailOrFbId($data['email'], $data['fb_id']);
         if($alreadyExist->count()) {
@@ -438,7 +439,9 @@ class UsersController extends AppController {
             ];
         //$response = ['status' => "success", 'message' => 'Login successfully.', 'data'=>$data];
         /*---end login authentication---*/
-        $this->getMailer('Api.User')->send('signup', [$items]);
+        if(!empty($items->email)) {
+            $this->getMailer('Api.User')->send('signup', [$items]);
+        }
         $this->response->statusCode(201);
         $response = ['status' => "success", 'message' => __('Saved successfully.'), 'data' => $data];
         $this->set($response);

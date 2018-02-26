@@ -2,7 +2,7 @@ CREATE TYPE row_status AS ENUM('Active','Inactive','Pending','Approved');
 CREATE TABLE users (
     id BIGSERIAL NOT NULL,
     username VARCHAR(100) NOT NULL,
-    email VARCHAR(150) NOT NULL,
+    email VARCHAR(150) NULL,
     password VARCHAR(255) NULL,
     gender VARCHAR(50) NULL,
     dob date NULL,

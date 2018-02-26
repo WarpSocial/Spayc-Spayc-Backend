@@ -217,10 +217,10 @@ class UsersTable extends Table {
         
         $validator
                 ->email('email',false,__('Email is required field.'))
-                ->requirePresence('email', true, __('Email is required field.'))
+                //->requirePresence('email', true, __('Email is required field.'))
                 ->email('email', false, __('Invalid email address.'))
                 //->add('email', 'unique', ['rule' => 'validateUnique','message'=>'Email has been used.', 'provider' => 'table']) 
-                ->notEmpty('email',__('Email is required field.'));
+                ->allowEmpty('email');
         
         $validator
             ->allowEmpty('dob')
