@@ -13,6 +13,7 @@ use Api\Auth\ApiHasher;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Api\Model\Entity\UserImage;
+use Cake\Utility\Text;
 /**
  * Users Controller
  *
