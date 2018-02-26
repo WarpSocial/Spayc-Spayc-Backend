@@ -107,7 +107,8 @@ class SpaycsTable extends Table {
                     'rule'=> function($value,$context){
                         if(!empty($value)){
                             /* Doesn't exceed 1 year ahead */
-                            $startDate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$value);
+                            $timezone = Configure::read('timezone');
+                            $startDate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$value,$timezone);
                             return (bool)$startDate->isWithinNext('1 year');
                         }
                     },
@@ -121,10 +122,11 @@ class SpaycsTable extends Table {
                 })
                 ->add('end_date','daterange',[
                     'rule'=> function($value,$context){
+                     $timezone = Configure::read('timezone');
                         if(!empty($value) && !empty($context['data']['end_date']) && !empty($context['data']['start_date'])){
                             /* End date must be below of start date */
-                            $startDate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$context['data']['start_date']);
-                            $endDate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$value);
+                            $startDate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$context['data']['start_date'],$timezone);
+                            $endDate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$value,$timezone);
                             if($endDate->format('H') == '00'){
                                 $endDate->setTime(23,55);
                             }

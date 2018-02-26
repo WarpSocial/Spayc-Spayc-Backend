@@ -39,6 +39,7 @@ class SpaycsController extends AppController {
         $data['type'] = !empty($data['type'])?ucfirst($data['type']):'';
         $data['group_type'] = !empty($data['group_type'])?ucfirst($data['group_type']):'';
         $data['status'] = 'Active';
+        //pr(Utils::setUtc($data['start_date'], Configure::read('timezone')));die;
         $entity = $this->Spaycs->newEntity();
         $items = $this->Spaycs->patchEntity($entity, $data);
         if($items->errors()) {
