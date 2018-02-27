@@ -312,7 +312,7 @@ class UsersTable extends Table {
                         $now = new Time('now');
                         $dob = Time::createFromFormat('m-d-Y',$value);
                         $age = $now->diff($dob)->format("%Y");
-                        return ($age > 13);
+                        return ($age >= 13);
                     },
                 'message'=>__('Age must be 13 or greater than 13 year\'s old.'),
             ]);
