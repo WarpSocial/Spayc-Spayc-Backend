@@ -109,7 +109,10 @@ class SpaycsTable extends Table {
                             /* Doesn't exceed 1 year ahead */
                             $timezone = Configure::read('timezone');
                             $startDate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$value,$timezone);
-                            return (bool)$startDate->isWithinNext('1 year');
+                            $currentDate = new \Cake\I18n\Time('now',$timezone);
+                            $now = clone $currentDate;
+                            $currentDate->modify('+1 year')->modify('+1 minute');
+                            return (bool) ($startDate >= $now && $startDate <= $currentDate);
                         }
                     },
                     'message'=>__('Start date can\'t be more than 1 year ahead or any past date.')
