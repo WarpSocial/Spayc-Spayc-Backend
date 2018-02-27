@@ -225,10 +225,10 @@ class SpaycsController extends AppController {
                 - radians(:longitude) )
                 + sin ( radians(:latitude) )
                 * sin( radians( Spaycs.latitude ) )))';
-            $distance = 25;
+            $distance = 0;
             $spaycs = $this->Spaycs->find()
             ->select(['distance' => $distanceField, 'id', 'name', 'address'=>'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode', 'user_id'])
-            ->where(["$distanceField <"=>$distance, 'status'=>'Active'])
+            ->where(["$distanceField >="=>$distance, 'status'=>'Active'])
             ->bind(':latitude', $this->request->query('latitude'), 'float')
             ->bind(':longitude', $this->request->query('longitude'), 'float');
             $spaycs->order(['distance'=>'ASC']);
@@ -392,10 +392,10 @@ class SpaycsController extends AppController {
                 - radians(:longitude) )
                 + sin ( radians(:latitude) )
                 * sin( radians( Spaycs.latitude ) )))';
-            $distance = 25;
+            $distance = 0;
             $spayc = $this->Spaycs->find()
             ->select(['distance' => $distanceField, 'Spaycs.id', 'Spaycs.name', 'address'=>'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type'])
-            ->where(["$distanceField <"=>$distance, 'status'=>'Active'])
+            ->where(["$distanceField >="=>$distance, 'status'=>'Active'])
             ->bind(':latitude', $this->request->query('latitude'), 'float')
             ->bind(':longitude', $this->request->query('longitude'), 'float');
             $spayc->order(['distance'=>'ASC']);
