@@ -174,6 +174,7 @@ function postSubspaycs() { return; }
     @apiParam {String}      latitude        Latitude is required in query string(Optional in case of created, joined).
     @apiParam {String}      longitude       Longitude is required in query string(Optional in case of created, joined).
     @apiParam {String}      list_by         List by is optional in query string(created|joined|all).
+    @apiParam {Number}      user_id         User id  of any user and if id is not available it will get the logged user data(Required).
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Spayc lists.

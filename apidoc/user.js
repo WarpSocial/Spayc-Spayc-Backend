@@ -400,6 +400,7 @@ function postFriendRequest() { return; }
 * @apiParam  {Number}   page            Page number in query string (Optional).
 * @apiParam  {Number}   limit           Records limit in query string (Optional).
 * @apiParam  {String}   friend_status   Status in query string must be any one from the following(Pending, Accepted, 'Declined',Blocked, Unfriend).
+* @apiParam  {Number}   user_id         User id  of any user and if id is not available it will get the logged user data(Required).
  
  
   @apiSuccess {String} status success.

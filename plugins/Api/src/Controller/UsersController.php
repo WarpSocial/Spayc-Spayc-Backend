@@ -273,7 +273,7 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
         $this->loadComponent('Api.Matrix');
-        $data = $this->request->getData(); 
+        $data = $this->request->getData();
         $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';
         $data['current_latitude'] = Utils::getVar('latitude', $data);
         $data['current_longitude'] = Utils::getVar('longitude', $data);
@@ -510,11 +510,11 @@ class UsersController extends AppController {
         $errors = $validator->errors($data_item);
         if($errors) {
             $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($errors)], 400);
-        }
-        if(!empty($this->Auth->user('matrix_user_id')) && !empty($this->Auth->user('matrix_access_token'))) {
+        } 
+        if(!empty($this->Auth->user('UserLogs.matrix_user_id')) && !empty($this->Auth->user('UserLogs.matrix_access_token'))) {
             $this->loadComponent('Api.Matrix');
-            $data_item['matrix_user_id'] = $this->Auth->user('matrix_user_id');
-            $data_item['matrix_access_token'] = $this->Auth->user('matrix_access_token');
+            $data_item['matrix_user_id'] = $this->Auth->user('UserLogs.matrix_user_id');
+            $data_item['matrix_access_token'] = $this->Auth->user('UserLogs.matrix_access_token');
             $matrix = $this->Matrix->changePassword($data_item);
             if($matrix === false) {
                 $this->restException(['status'=>'failed', 'message'=>"Unable to change password on matrix"], 400);
@@ -792,7 +792,8 @@ class UsersController extends AppController {
         if(empty($friendStatus) || !in_array(ucfirst($friendStatus), $status)) {
             $this->restException(['status'=>'failed', 'message'=>__('Status is required fields and status must be in('.  implode(',', $status).').')], 400);
         }
-        $userId = $this->Auth->user('id');
+        //$userId = $this->Auth->user('id');
+        $userId = !empty($this->request->query('user_id'))?$this->request->query('user_id'):$this->Auth->user("id");
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, $friendStatus);
         if(!$friend){
             $this->restException(["status"=>"success",'message'=>__("Record not found")],204);

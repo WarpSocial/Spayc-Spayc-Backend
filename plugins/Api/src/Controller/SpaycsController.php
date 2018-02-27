@@ -204,7 +204,7 @@ class SpaycsController extends AppController {
         if(!$this->request->is('get')) {
             $this->restException(['status'=>'failed','message'=>__('Method not allowed.')], 405);
         }
-        $userId = $this->Auth->user("id");
+        $userId = !empty($this->request->query('user_id'))?$this->request->query('user_id'):$this->Auth->user("id");
         $limit = (!empty($this->request->query('limit')) and is_numeric($this->request->query('limit')))?$this->request->query('limit'):5;
         $page = (!empty($this->request->query('page')) and is_numeric($this->request->query('page')))?$this->request->query('page'):1;
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Accepted');

@@ -254,7 +254,7 @@ class MatrixComponent extends Component {
             'auth'=>['type'=>'m.login.password', 'user'=>$items['matrix_user_id'], 'password'=>$items['old_password']],
             'new_password'=>$items['new_password']
         ]; 
-        $url = $this->config('url') . DS.'account'.DS.'password?access_token='.$items['matrix_access_token'];
+        $url = $this->config('url').DS.$this->config('client') . DS.'account'.DS.'password?access_token='.$items['matrix_access_token'];
         $http = new Client();
         $httpResponse = $http->post(
                 $url, 

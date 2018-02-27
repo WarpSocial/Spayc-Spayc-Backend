@@ -581,6 +581,13 @@ define({ "api": [
             "optional": false,
             "field": "list_by",
             "description": "<p>List by is optional in query string(created|joined|all).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "user_id",
+            "description": "<p>User id  of any user and if id is not available it will get the logged user data(Required).</p>"
           }
         ]
       }
@@ -1216,6 +1223,13 @@ define({ "api": [
             "optional": false,
             "field": "friend_status",
             "description": "<p>Status in query string must be any one from the following(Pending, Accepted, 'Declined',Blocked, Unfriend).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "user_id",
+            "description": "<p>User id  of any user and if id is not available it will get the logged user data(Required).</p>"
           }
         ]
       }
