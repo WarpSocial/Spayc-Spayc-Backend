@@ -231,11 +231,11 @@ class SpaycsTable extends Table {
                 - radians(:longitude) )
                 + sin ( radians(:latitude) )
                 * sin( radians( Spaycs.latitude ) )))';
-            $distance = 25;
+            $distance = 0;
             $spaycs = $this->find()
                 ->select([
                     'distance' => $distanceField, 'id', 'name', 'address'=>'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode'])
-                ->where(["$distanceField <" => $distance, 'status'=>'Active'])
+                ->where(["$distanceField >=" => $distance, 'status'=>'Active'])
                 ->bind(':latitude', $request['latitude'], 'float')
                 ->bind(':longitude', $request['longitude'], 'float')
                 ->order(['distance'=>'ASC']);

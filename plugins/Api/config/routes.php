@@ -24,7 +24,7 @@ Router::plugin(
         
         
         $routes->connect('/subscribe-spayc', ['controller' => 'Spaycs', 'action' => 'subscribeSpayc']);
-        $routes->connect('/spayc-details/:id', ['controller' => 'Spaycs', 'action' => 'view'], ['pass'=>['id']]);
+        $routes->connect('/spayc-details', ['controller' => 'Spaycs', 'action' => 'view']);
         $routes->connect('/facebook-friends', ['controller' => 'Users', 'action' => 'getFacebookFriends']);
         $routes->connect('/reverification', ['controller' => 'Users', 'action' => 'reverification']);
         $routes->connect('/forgot-password', ['controller' => 'Users', 'action' => 'forgotPassword']);
