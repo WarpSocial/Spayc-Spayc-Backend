@@ -161,7 +161,7 @@ function postSubspaycs() { return; }
  * @apiGroup Spayc
  * @apiPermission private
  *
- * @apiDescription Filter spayc all list, created by logged in user and joined by logged in user using list_by parameter.
+ * @apiDescription Filter spayc all list, created by logged in user and joined by logged in user using list_by parameter, distance param not comes in response if lat long not provided in request.
  * 
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
@@ -171,8 +171,8 @@ function postSubspaycs() { return; }
     @apiParam {Timestamp}   end_date        Spayc end date in query string(1515715200) (Optional).
     @apiParam {String}      group_type      Group type must be any one from the following (Public|Private) (Optional).
     @apiParam {String}      type            Spayc type must be any one from the following (Event|Community) (Optional).
-    @apiParam {String}      latitude        Latitude is required in query string(Optional).
-    @apiParam {String}      longitude       Longitude is required in query string(Optional).
+    @apiParam {String}      latitude        Latitude is required in query string(Optional in case of created, joined).
+    @apiParam {String}      longitude       Longitude is required in query string(Optional in case of created, joined).
     @apiParam {String}      list_by         List by is optional in query string(created|joined|all).
  *
  * @apiSuccess {String} status success.
@@ -252,7 +252,7 @@ function getSpaycs() { return; }
   @apiExample Example usage:
  
     {
-        "spayc_id":"NDIwMjYwMjAwLjU2"
+        "spayc_id":"11"
     }
  
  
@@ -272,17 +272,19 @@ function getSpaycs() { return; }
 function postSubscribeSpayc() { return; }
 
 /**
- * @api {get} /spayc-details/:spaceId.json Spayc Details
+ * @api {get} /spayc-details.json?id=:id&latitude=:lat&longitude=:long Spayc Details
  * @apiVersion 0.1.0
  * @apiName spaycDetails
  * @apiGroup Spayc
  * @apiPermission private
  *
- * @apiDescription Spayc details by id.
+ * @apiDescription Spayc details by id and latitude, longitude (distance param not comes in response if lat long not provided in request).
  * 
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
-    @apiParam {String}      spaceId     spayc id in query string (Required).
+    @apiParam {Number}      id              Spayc id in query string (Required).
+    @apiParam {String}      latitude        Latitude is optional in query string(Optional).
+    @apiParam {String}      longitude       Longitude is optional in query string(Optional).
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Spayc Details.
@@ -293,18 +295,17 @@ function postSubscribeSpayc() { return; }
     "status": "success",
     "message": "Spayc Details.",
     "data": {
-        "id": "U3kvaWlJcFREL3R2ZUh0c3RSVkZRdz09",
+        "distance": "0",
+        "id": "32",
         "name": "spaycdev13",
         "address": "Your address",
-        "start_date": "2019-01-11T01:02:20+00:00",
-        "end_date": "2019-01-12T01:02:20+00:00",
         "image": "",
+        "description": "spayc creating",
         "group_type": "Public",
         "type": "Community",
-        "total_comments": 1,
-        "total_subscribed_users": 2,
-        "total_joined_users": 1,
-        "total_joined_friends": 1
+        "friends": 0,
+        "joined_users": 1,
+        "total_comments": 1
     }
 }
  *

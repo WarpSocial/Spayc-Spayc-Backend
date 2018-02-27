@@ -206,35 +206,38 @@ class SpaycsController extends AppController {
         }
         $userId = $this->Auth->user("id");
         $limit = (!empty($this->request->query('limit')) and is_numeric($this->request->query('limit')))?$this->request->query('limit'):5;
-        if(!Utils::isValidLatitude($this->request->query('latitude')) || empty($this->request->query('latitude'))) {
-            $this->restException(['status'=>'failed', 'message'=>__('Latitude is not valid.')], 400);
-        }
-        if(!Utils::isValidLongitude($this->request->query('longitude')) || empty($this->request->query('longitude'))) {
-            $this->restException(['status'=>'failed', 'message'=>__('Longitude is not valid.')], 400);
-        }
         $page = (!empty($this->request->query('page')) and is_numeric($this->request->query('page')))?$this->request->query('page'):1;
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Accepted');
-        //pr($friend);exit;
-        //To search by kilometers instead of miles, replace 3959 with 6371.
-        $distanceField = '(3959 * acos (cos ( radians(:latitude) )
-            * cos( radians( Spaycs.latitude ) )
-            * cos( radians( Spaycs.longitude )
-            - radians(:longitude) )
-            + sin ( radians(:latitude) )
-            * sin( radians( Spaycs.latitude ) )))';
-        $distance = 25;
-        $cond = ['status'=>'Active'];
-        if(empty($this->request->query('list_by')) || !in_array($this->request->query('list_by'), ['created', 'joined'])) {
-            $cond["$distanceField <"] = $distance;
-        } else {
-            $cond["$distanceField >="] = 0;
+        
+        if((empty($this->request->query('list_by')) || !in_array($this->request->query('list_by'), ['created', 'joined'])) || (!empty($this->request->query('latitude')) && !empty($this->request->query('longitude')))) {
+            if(!Utils::isValidLatitude($this->request->query('latitude')) || empty($this->request->query('latitude'))) {
+                $this->restException(['status'=>'failed', 'message'=>__('Latitude is not valid.')], 400);
+            }
+            if(!Utils::isValidLongitude($this->request->query('longitude')) || empty($this->request->query('longitude'))) {
+                $this->restException(['status'=>'failed', 'message'=>__('Longitude is not valid.')], 400);
+            }
         }
-        $spaycs = $this->Spaycs->find()
-            ->select([
-                'distance' => $distanceField, 'id', 'name', 'address'=>'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode', 'user_id'])
-            ->where($cond)
+        if(!empty($this->request->query('latitude')) && !empty($this->request->query('longitude'))) {
+            //To search by kilometers instead of miles, replace 3959 with 6371.
+            $distanceField = '(3959 * acos (cos ( radians(:latitude) )
+                * cos( radians( Spaycs.latitude ) )
+                * cos( radians( Spaycs.longitude )
+                - radians(:longitude) )
+                + sin ( radians(:latitude) )
+                * sin( radians( Spaycs.latitude ) )))';
+            $distance = 25;
+            $spaycs = $this->Spaycs->find()
+            ->select(['distance' => $distanceField, 'id', 'name', 'address'=>'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode', 'user_id'])
+            ->where(["$distanceField <"=>$distance, 'status'=>'Active'])
             ->bind(':latitude', $this->request->query('latitude'), 'float')
             ->bind(':longitude', $this->request->query('longitude'), 'float');
+            $spaycs->order(['distance'=>'ASC']);
+        } else {
+            $spaycs = $this->Spaycs->find()
+            ->select(['id', 'name', 'address'=>'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode', 'user_id'])
+            ->where(['status'=>'Active']);
+            $spaycs->order(['created'=>'DESC']);
+        }
         $spaycs->contain([
             'JoinedSpayc' => function($q) {
                 return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
@@ -246,7 +249,7 @@ class SpaycsController extends AppController {
                 return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
             }
         ]);
-        $spaycs->order(['distance'=>'ASC'])->limit($limit);
+        $spaycs->limit($limit);
         if($this->request->query('list_by')=='created') {
             $spaycs->where(['Spaycs.user_id'=>$userId]);
         } else if($this->request->query('list_by')=='joined') {
@@ -358,54 +361,68 @@ class SpaycsController extends AppController {
      * @return \Cake\Http\Response|void
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null) {
+    public function view() {
         if(!$this->request->is(['get'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
-        if(empty($id)) {
+        if(empty($this->request->query('id'))) {
             $this->restException(['status'=>'failed', 'message'=>__('Spayc id is required field.')], 400);
         }
-        $id = ApiHasher::decrypt($id);
+        $id = ApiHasher::decrypt($this->request->query('id'));
         $exists = $this->Spaycs->exists(['id'=>$id]);
         if(!$exists) {
             $this->restException(['status'=>'failed', 'message'=>__('Invalid spayc id.')], 400);
         }
         $userId = $this->Auth->user('id');
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Accepted');
-        $spayc = $this->Spaycs->find('all', ['fields' => ['Spaycs.id', 'Spaycs.name', 'address'=>'Spaycs.location', 'Spaycs.start_date', 'Spaycs.end_date', 'Spaycs.image', 'Spaycs.matrix_room_id', 'Spaycs.group_type', 'Spaycs.type']])->where(['id'=>$id, 'status'=>'Active']);
+        
+        //$spayc = $this->Spaycs->find('all', ['fields' => ['Spaycs.id', 'Spaycs.name', 'address'=>'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type']])->where(['id'=>$id, 'status'=>'Active']);
+        
+        if(!empty($this->request->query('latitude')) && !empty($this->request->query('longitude'))) {
+            if(!Utils::isValidLatitude($this->request->query('latitude'))) {
+                $this->restException(['status'=>'failed', 'message'=>__('Latitude is not valid.')], 400);
+            }
+            if(!Utils::isValidLongitude($this->request->query('longitude'))) {
+                $this->restException(['status'=>'failed', 'message'=>__('Longitude is not valid.')], 400);
+            }
+            //To search by kilometers instead of miles, replace 3959 with 6371.
+            $distanceField = '(3959 * acos (cos ( radians(:latitude) )
+                * cos( radians( Spaycs.latitude ) )
+                * cos( radians( Spaycs.longitude )
+                - radians(:longitude) )
+                + sin ( radians(:latitude) )
+                * sin( radians( Spaycs.latitude ) )))';
+            $distance = 25;
+            $spayc = $this->Spaycs->find()
+            ->select(['distance' => $distanceField, 'Spaycs.id', 'Spaycs.name', 'address'=>'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type'])
+            ->where(["$distanceField <"=>$distance, 'status'=>'Active'])
+            ->bind(':latitude', $this->request->query('latitude'), 'float')
+            ->bind(':longitude', $this->request->query('longitude'), 'float');
+            $spayc->order(['distance'=>'ASC']);
+        } else {
+            $spayc = $this->Spaycs->find()
+            ->select(['Spaycs.id', 'Spaycs.name', 'address'=>'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type'])
+            ->where(['status'=>'Active']);
+            $spayc->order(['created'=>'DESC']);
+        }
+        
+        
         $spayc->contain([
             'JoinedSpayc' => function($q) {
                 return  $q->select(['JoinedSpayc.spayc_id', 'joined_users' => $q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.spayc_id']);
-            },
-            'SubscribedUsers' => function($q) {
-                return $q->select(['SubscribedUsers.spayc_id', 'subscribed_users' => $q->func()->count('SubscribedUsers.id')])->group(['SubscribedUsers.spayc_id']);
             },
             'Comments' => function($q) {
                 return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
             }
         ]);
-        $spayc->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend, $userId) {
-            return $results->map(function ($row) use($friend, $userId) {
+        $spayc->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend) {
+            return $results->map(function ($row) use($friend) {
                 $spaycId = ApiHasher::decrypt($row->id);
                 $row['friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
-                if(!empty($row['joined_spayc'])) {
-                    $status = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.'].status');
-                }
-                $row['joined_spayc_status'] = !empty($status[0])?$status[0]:null;
-                if($userId==$row['user_id']) {
-                    $row['joined_spayc_status'] = 'Approved';
-                }
-                $row['is_joined'] = !empty($status[0])?true:false;
                 $row['joined_users'] = !empty($row['joined_spayc'])?count($row['joined_spayc']):0;
                 unset($row['joined_spayc']);
-                if(!empty($row['subscribed_users'])) {
-                    $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');
-                }
-                $row['subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):0;
-                $row['is_subscribed'] = !empty($subUserId[0])?true:false;
                 $row['total_comments'] = !empty($row['comments'][0]['total_comment'])?$row['comments'][0]['total_comment']:0;
                 unset($row['comments']);
-                $row['total_presents'] = 0;
                 return $row;
             });
         });

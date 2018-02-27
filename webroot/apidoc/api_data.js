@@ -502,7 +502,7 @@ define({ "api": [
         "name": "private"
       }
     ],
-    "description": "<p>Filter spayc all list, created by logged in user and joined by logged in user using list_by parameter.</p>",
+    "description": "<p>Filter spayc all list, created by logged in user and joined by logged in user using list_by parameter, distance param not comes in response if lat long not provided in request.</p>",
     "header": {
       "fields": {
         "Header": [
@@ -566,14 +566,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "latitude",
-            "description": "<p>Latitude is required in query string(Optional).</p>"
+            "description": "<p>Latitude is required in query string(Optional in case of created, joined).</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "longitude",
-            "description": "<p>Longitude is required in query string(Optional).</p>"
+            "description": "<p>Longitude is required in query string(Optional in case of created, joined).</p>"
           },
           {
             "group": "Parameter",
@@ -665,7 +665,7 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/spayc-details/:spaceId.json",
+    "url": "/spayc-details.json?id=:id&latitude=:lat&longitude=:long",
     "title": "Spayc Details",
     "version": "0.1.0",
     "name": "spaycDetails",
@@ -675,7 +675,7 @@ define({ "api": [
         "name": "private"
       }
     ],
-    "description": "<p>Spayc details by id.</p>",
+    "description": "<p>Spayc details by id and latitude, longitude (distance param not comes in response if lat long not provided in request).</p>",
     "header": {
       "fields": {
         "Header": [
@@ -694,10 +694,24 @@ define({ "api": [
         "Parameter": [
           {
             "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Spayc id in query string (Required).</p>"
+          },
+          {
+            "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "spaceId",
-            "description": "<p>spayc id in query string (Required).</p>"
+            "field": "latitude",
+            "description": "<p>Latitude is optional in query string(Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "longitude",
+            "description": "<p>Longitude is optional in query string(Optional).</p>"
           }
         ]
       }
@@ -731,7 +745,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Spayc Details.\",\n    \"data\": {\n        \"id\": \"U3kvaWlJcFREL3R2ZUh0c3RSVkZRdz09\",\n        \"name\": \"spaycdev13\",\n        \"address\": \"Your address\",\n        \"start_date\": \"2019-01-11T01:02:20+00:00\",\n        \"end_date\": \"2019-01-12T01:02:20+00:00\",\n        \"image\": \"\",\n        \"group_type\": \"Public\",\n        \"type\": \"Community\",\n        \"total_comments\": 1,\n        \"total_subscribed_users\": 2,\n        \"total_joined_users\": 1,\n        \"total_joined_friends\": 1\n    }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Spayc Details.\",\n    \"data\": {\n        \"distance\": \"0\",\n        \"id\": \"32\",\n        \"name\": \"spaycdev13\",\n        \"address\": \"Your address\",\n        \"image\": \"\",\n        \"description\": \"spayc creating\",\n        \"group_type\": \"Public\",\n        \"type\": \"Community\",\n        \"friends\": 0,\n        \"joined_users\": 1,\n        \"total_comments\": 1\n    }\n}",
           "type": "json"
         }
       ]
@@ -740,7 +754,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/spayc-details/:spaceId.json"
+        "url": "http://spayc.com/api/spayc-details.json?id=:id&latitude=:lat&longitude=:long"
       }
     ],
     "error": {
@@ -822,7 +836,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "\n{\n    \"spayc_id\":\"NDIwMjYwMjAwLjU2\"\n}",
+        "content": "\n{\n    \"spayc_id\":\"11\"\n}",
         "type": "json"
       }
     ],
