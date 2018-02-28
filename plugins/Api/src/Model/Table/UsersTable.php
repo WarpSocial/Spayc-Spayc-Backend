@@ -166,12 +166,13 @@ class UsersTable extends Table {
                     ])
                 ->add('dob','custom',[
                     'rule'=>function($value,$context){
-                            $now = new Time('now');
-                            $dob = Time::createFromFormat('m-d-Y',$value);
-                            $age = $now->diff($dob)->format("%Y");
-                            return ($age > 13);
+                            $timezone = Configure::read('timezone');
+                            $now = new Time('now',$timezone);
+                            $dob = Time::createFromFormat('m-d-Y',$value,$timezone);
+                            $age = $now->diff($dob)->format("%Y");                            
+                            return ($age >= 13);
                         },
-                    'message'=>__('Age must be 13 or greater than 13 year\'s old.'),
+                    'message'=>__('ssAge must be 13 or greater than 13 year\'s old.'),
                 ]); 
         $validator
             ->requirePresence('gender', 'create',__('Gender is required field.'))    
@@ -233,10 +234,11 @@ class UsersTable extends Table {
                 ])
             ->add('dob','custom',[
                 'rule'=>function($value,$context){
-                        $now = new Time('now');
-                        $dob = Time::createFromFormat('m-d-Y',$value);
+                        $timezone = Configure::read('timezone');
+                        $now = new Time('now',$timezone);
+                        $dob = Time::createFromFormat('m-d-Y',$value,$timezone);
                         $age = $now->diff($dob)->format("%Y");
-                        return ($age > 13);
+                        return ($age >= 13);                        
                     },
                 'message'=>__('Age must be 13 or greater than 13 year\'s old.'),
             ]);
@@ -309,10 +311,11 @@ class UsersTable extends Table {
                 ])
             ->add('dob','custom',[
                 'rule'=>function($value,$context){
-                        $now = new Time('now');
-                        $dob = Time::createFromFormat('m-d-Y',$value);
+                        $timezone = Configure::read('timezone');
+                        $now = new Time('now',$timezone);
+                        $dob = Time::createFromFormat('m-d-Y',$value,$timezone);
                         $age = $now->diff($dob)->format("%Y");
-                        return ($age >= 13);
+                        return ($age >= 13);                        
                     },
                 'message'=>__('Age must be 13 or greater than 13 year\'s old.'),
             ]);

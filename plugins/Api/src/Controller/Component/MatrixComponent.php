@@ -169,6 +169,42 @@ class MatrixComponent extends Component {
         #pr($response);die;
         return $response;
     }
+    /**
+     * updateRoom method to update room on matrix server
+     * 
+     * @param Array $items array contain required field of matrix fields
+     * @return false|$data return data if created or false
+     */
+    public function updateRoom($matrix_room_id = null,$items=[]) {
+        if(empty($items) || $matrix_room_id == null) {
+            return false;
+        }
+        $validInput = [            
+            'name'=>Utils::getVar('name', $items),
+            'preset'=> strtolower($items['group_type']).'_chat',
+            //'room_alias_name'=> \Cake\Utility\Inflector::slug($items['name'].'_'.\Cake\Utility\Text::uuid()),
+            'topic'=> Utils::getVar('description', $items),
+            //'invite' => !empty($items['invite'])?explode(',',$items['invite']):""
+        ];
+        #pr($validInput);die;
+        $url = $this->config('url') .DS.$this->config('client'). DS.$matrix_room_id.DS.'state/m.room.name/?access_token='.$items['matrix_token'];
+        
+        $http = new Client();
+        $httpResponse = $http->put(
+                $url, 
+                json_encode($validInput), 
+                [
+                    'type'=>'json',
+                    'ssl_verify_host' => $this->config('sslverify'), 
+                    'ssl_verify_peer' => $this->config('sslverify'),
+                    'ssl_verify_host' => $this->config('sslverify'),
+                    'ssl_verify_peer_name' => $this->config('sslverify')
+                ]
+            );
+        $response = json_decode($httpResponse->body,true);
+        pr($response);die;
+        return $response;
+    }
     
     /**
      * uploadRoomImage to upload room image
