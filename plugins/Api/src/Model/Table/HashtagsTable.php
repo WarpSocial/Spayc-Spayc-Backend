@@ -71,7 +71,7 @@ class HashtagsTable extends Table
         $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
         $hashTag->order(['Hashtags.name'=>'ASC'])->limit($limit);
         if(!empty($request['keyword'])) {
-            $hashTag->where(['Hashtags.name LIKE'=>"%".$request['keyword']."%"]);
+            $hashTag->where(['LOWER(Hashtags.name) LIKE'=>"%".strtolower($request['keyword'])."%"]);
         }
         $page = (!empty($request['page']) && is_numeric($request['page']))?$request['page']:1;
         if($page < 0) {
@@ -80,6 +80,7 @@ class HashtagsTable extends Table
         } else {
             $hashTag->page($page);
         }
+        $hashTag->distinct(['Hashtags.name']);
         $data['count'] = $hashTag->count();
         $data['records'] = [];
         if($hashTag->count()) { 

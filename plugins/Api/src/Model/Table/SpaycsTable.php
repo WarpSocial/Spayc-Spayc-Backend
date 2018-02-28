@@ -256,7 +256,7 @@ class SpaycsTable extends Table {
         $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
         $spaycs->limit($limit);
         if(!empty($request['keyword'])) {
-            $spaycs->where(["Spaycs.name LIKE"=>"%".$request['keyword']."%"]);
+            $spaycs->where(["LOWER(Spaycs.name) LIKE"=>"%".strtolower($request['keyword'])."%"]);
         }
         
         $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($userId) {
