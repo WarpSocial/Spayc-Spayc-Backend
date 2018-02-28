@@ -179,13 +179,13 @@ class SpaycsController extends AppController {
                 $this->response->statusCode(201);
                 $response = ['status'=>'success','message'=>__('Your room, '.ucfirst($data['name']).', has been created.'), 'data'=>$items];
                 /*Event to bind to update the set upload room image */
-                $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
+                /*$event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
                     'options' => [
                         'matrix_token'=>$data['matrix_token'],
                         'matrix_room_id'=> $items->matrix_room_id,
                         ]
                 ]);
-                EventManager::instance()->dispatch($event);
+                EventManager::instance()->dispatch($event);*/
             } else {
                 $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be saved. Please, try again.')], 400);
             }
