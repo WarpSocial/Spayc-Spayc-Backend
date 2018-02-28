@@ -541,8 +541,4 @@ class UsersTable extends Table {
                 ->longitude('longitude', __('Longitude is not valid.'));
         return $validator->errors($data);
     }
-    
-    public function findFriends($userid){
-        $query = $this->find()->where();
-    }
 }
