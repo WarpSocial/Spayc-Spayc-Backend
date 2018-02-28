@@ -133,6 +133,9 @@ class MatrixComponent extends Component {
         if(empty($items)) {
             return false;
         }
+        if(empty($items['visibility'])){
+            $items['visibility'] = strtolower($items['group_type']);
+        }
         $validInput = [
             'creation_content'=>[
                 'm.federate'=>false,
@@ -148,9 +151,13 @@ class MatrixComponent extends Component {
             'name'=>Utils::getVar('name', $items),
             'preset'=> strtolower($items['group_type']).'_chat',
             'room_alias_name'=> \Cake\Utility\Inflector::slug($items['name'].'_'.\Cake\Utility\Text::uuid()),
+            'visibility'=> strtolower(Utils::getVar('visibility',$items)),            
             'topic'=> Utils::getVar('description', $items),
             'invite' => !empty($items['invite'])?explode(',',$items['invite']):""
         ];
+        if(!empty($items['is_direct'])){
+            $validInput['is_direct'] = $items['is_direct'];
+        }
         #pr($validInput);die;
         $url = $this->config('url') .DS.$this->config('client'). DS.'createRoom';
         $http = new Client(['headers' => ['Authorization' => 'Bearer ' . $items['matrix_token']]]);
