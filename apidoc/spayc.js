@@ -273,7 +273,7 @@ function getSpaycs() { return; }
 function postSubscribeSpayc() { return; }
 
 /**
- * @api {get} /spayc-details.json?id=:id&latitude=:lat&longitude=:long Spayc Details
+ * @api {get} /spayc-details.json?id=:id&latitude=:lat&longitude=:long About Spayc
  * @apiVersion 0.1.0
  * @apiName spaycDetails
  * @apiGroup Spayc
@@ -307,6 +307,7 @@ function postSubscribeSpayc() { return; }
         "friends": 0,
         "joined_users": 1,
         "total_comments": 1
+        "total_presents": 0
     }
 }
  *

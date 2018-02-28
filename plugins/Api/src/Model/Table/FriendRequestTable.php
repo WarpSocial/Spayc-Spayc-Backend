@@ -168,7 +168,9 @@ class FriendRequestTable extends Table
     public function getFriendCountByUserId($userId = null) {
         $friends = $this->find('all')
             ->select(['FriendRequest.id'])
-            ->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]], ['requested_status'=>'Accepted', 'friend_status IS'=>NULL]]);
+            ->Where([
+                ['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]], 
+                ['requested_status'=>'Accepted']]);
         return $friends->count();
     }
     

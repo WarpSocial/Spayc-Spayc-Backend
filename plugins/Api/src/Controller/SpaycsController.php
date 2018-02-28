@@ -37,7 +37,7 @@ class SpaycsController extends AppController {
         }
         $data = $this->request->getData();
         $data['type'] = !empty($data['type'])?ucfirst($data['type']):'';
-        $data['group_type'] = !empty($data['group_type'])?ucfirst($data['group_type']):'';
+        $data['group_type'] = !empty($data['group_type'])?ucfirst($data['group_type']):'';        
         $data['status'] = 'Active';
         //pr(Utils::setUtc($data['start_date'], Configure::read('timezone')));die;
         $entity = $this->Spaycs->newEntity();
@@ -157,7 +157,7 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>'Invite is required field.'], 400);
         }
         $data['name'] = $data['invite'].'-'.$this->Auth->user('UserLogs.matrix_user_id');
-        $data['group_type'] = 'Private';
+        $data['group_type'] = 'trusted_private';
         $entity = $this->Spaycs->newEntity();
         $items = $this->Spaycs->patchEntity($entity, $data, ['validate'=>false]);
         if($items->errors()) {
@@ -165,12 +165,16 @@ class SpaycsController extends AppController {
         }
         $this->loadComponent('Api.Matrix');
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
-        $matrix = $this->Matrix->createRoom($data);
+        $matrixData = $data;
+        $matrixData['name'] = '';
+        $matrixData['visibility'] = 'private';
+        $matrixData['is_direct'] = true;
+        $matrix = $this->Matrix->createRoom($matrixData);
         if(!empty($matrix['error'])) {
             $this->restException(['status' => "failed", 'message' =>__($matrix['error'])], 400);
         }
         $items->set('matrix_room_id', $matrix['room_id']);
-        $items->set('matrix_room_alias', $matrix['room_alias']);
+        $items->set('matrix_room_alias', Utils::getVar('room_alias', $matrix));
         $items->set('user_id', $this->Auth->user('id'));
         $items->set('status', 'Active');
         if (!$items->errors()) {
@@ -423,6 +427,7 @@ class SpaycsController extends AppController {
                 unset($row['joined_spayc']);
                 $row['total_comments'] = !empty($row['comments'][0]['total_comment'])?$row['comments'][0]['total_comment']:0;
                 unset($row['comments']);
+                $row['total_presents'] = 0;
                 return $row;
             });
         });
@@ -443,24 +448,29 @@ class SpaycsController extends AppController {
      * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function edit($id = null) {
+     public function edit($id = null) {
         if (!$this->request->is(['put','patch','post'])) {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
         }
         $data = $this->request->getData();
         $data['group_type'] = !empty($data['group_type'])?ucfirst($data['group_type']):'';
+        $data['type'] = !empty($data['type'])?ucfirst($data['type']):'';
         if(empty($data['spayc_id'])) {
             $this->restException(['status'=>'failed','message'=>'Spayc id is required.'], 400);
         }
         $entities = $this->Spaycs->find()->where(['id'=>$data['spayc_id']]);
+        
         if($entities->isEmpty()){
             $this->restException(['status'=>'failed','message'=>__('Space has not been found.')], 400);
         }
         $entity = $entities->first();
+        
         $items = $this->Spaycs->patchEntity($entity, $data);        
+        //pr($items);die;
         if(!empty($items->errors())) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
         }
+       
         $this->loadComponent('Api.Matrix');
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
         $matrix = $this->Matrix->updateRoom($entity->matrix_room_id,$data);
