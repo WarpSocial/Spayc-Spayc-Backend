@@ -417,14 +417,22 @@ class SpaycsController extends AppController {
             },
             'Comments' => function($q) {
                 return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
+            },
+            'SubscribedUsers' => function($q) {
+                return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
             }
         ]);
-        $spayc->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend) {
-            return $results->map(function ($row) use($friend) {
+        $spayc->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend, $userId) {
+            return $results->map(function ($row) use($friend, $userId) {
                 $spaycId = ApiHasher::decrypt($row->id);
                 $row['friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
                 $row['joined_users'] = !empty($row['joined_spayc'])?count($row['joined_spayc']):0;
                 unset($row['joined_spayc']);
+                if(!empty($row['subscribed_users'])) {
+                    $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');
+                }
+                $row['subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):0;
+                $row['is_subscribed'] = !empty($subUserId[0])?true:false;
                 $row['total_comments'] = !empty($row['comments'][0]['total_comment'])?$row['comments'][0]['total_comment']:0;
                 unset($row['comments']);
                 $row['total_presents'] = 0;

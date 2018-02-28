@@ -153,5 +153,12 @@ CREATE TABLE notifications (
 );
 SELECT create_hypertable('notifications', 'created');
 
-
-
+CREATE TABLE "notification_types" (
+  "id" BIGSERIAL NOT NULL,
+  "type" VARCHAR(200) NULL,
+  "message" text NULL,
+  "slug" VARCHAR(200) NULL,
+  "created" timestamp NOT NULL,
+  "modified" timestamp NULL
+);
+SELECT create_hypertable('notification_types', 'created');

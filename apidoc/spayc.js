@@ -304,9 +304,11 @@ function postSubscribeSpayc() { return; }
         "description": "spayc creating",
         "group_type": "Public",
         "type": "Community",
+        "subscribed_users": 2,
         "friends": 0,
         "joined_users": 1,
-        "total_comments": 1
+        "is_subscribed": true,
+        "total_comments": 1,
         "total_presents": 0
     }
 }
