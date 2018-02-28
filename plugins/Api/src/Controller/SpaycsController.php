@@ -540,16 +540,23 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>'Record not found.'], 201);
         }
         $spayc = $entity->first();
-        echo $spayc->matrix_room_id;die;
-        $matrix = $this->Matrix->leaveRoom($spayc->matrix_room_id,$user['UserLogs.matrix_access_token']);
-        if(!empty($matrix['error'])) {
-            $this->restException(['status' => "failed", 'message' =>__($matrix['error'])], 400);
+        $this->loadComponent('Api.Matrix');
+        
+        $matrix = $this->Matrix->leaveRoom($spayc->matrix_room_id,$user['UserLogs']['matrix_access_token']);
+        if(!$matrix || !empty($matrix['error'])) {
+            if(empty($matrix['error'])){
+                $this->restException(['status' => "failed", 'message' =>__('Access token not found.')], 400);
+            }else{
+                $this->restException(['status' => "failed", 'message' =>__($matrix['error'])], 400);
+            }
+            
         }
         if ($this->Spaycs->delete($spayc)) {
             $response = ['status'=>'success','message'=>__('The spayc has been deleted.')];
         } else {
             $response = ['status'=>'failed','message'=>__('Spayc could not be deleted.')];
         }
+         $this->set(compact('response'));
     }
     
     public function matrixApplicationService($id = null){
