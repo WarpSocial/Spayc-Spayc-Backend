@@ -157,6 +157,7 @@ class MatrixComponent extends Component {
         ];
         if(!empty($items['is_direct'])){
             $validInput['is_direct'] = $items['is_direct'];
+            unset($validInput['room_alias_name']);
         }
         #pr($validInput);die;
         $url = $this->config('url') .DS.$this->config('client'). DS.'createRoom';
@@ -186,20 +187,40 @@ class MatrixComponent extends Component {
         if(empty($items) || $matrix_room_id == null) {
             return false;
         }
-        $validInput = [            
-            'name'=>Utils::getVar('name', $items),
-            'preset'=> strtolower($items['group_type']).'_chat',
-            //'room_alias_name'=> \Cake\Utility\Inflector::slug($items['name'].'_'.\Cake\Utility\Text::uuid()),
-            'topic'=> Utils::getVar('description', $items),
-            //'invite' => !empty($items['invite'])?explode(',',$items['invite']):""
-        ];
-        #pr($validInput);die;
-        $url = $this->config('url') .DS.$this->config('client'). DS.$matrix_room_id.DS.'state/m.room.name/?access_token='.$items['matrix_token'];
         
         $http = new Client();
-        $httpResponse = $http->put(
-                $url, 
-                json_encode($validInput), 
+        $url = $this->config('url') .DS.$this->config('client'). DS.$matrix_room_id.DS.'state';
+        if(!empty($items['name'])){
+            $http->put(
+                $url.'/m.room.name?access_token='.$items['matrix_token'], 
+                json_encode(['name'=>$items['name']]), 
+                [
+                    'type'=>'json',
+                    'ssl_verify_host' => $this->config('sslverify'), 
+                    'ssl_verify_peer' => $this->config('sslverify'),
+                    'ssl_verify_host' => $this->config('sslverify'),
+                    'ssl_verify_peer_name' => $this->config('sslverify')
+                ]
+            );            
+        }
+        if(!empty($items['description'])){
+            $http->put(
+                $url.'/m.room.topic?access_token='.$items['matrix_token'], 
+                json_encode(['topic'=>$items['description']]), 
+                [
+                    'type'=>'json',
+                    'ssl_verify_host' => $this->config('sslverify'), 
+                    'ssl_verify_peer' => $this->config('sslverify'),
+                    'ssl_verify_host' => $this->config('sslverify'),
+                    'ssl_verify_peer_name' => $this->config('sslverify')
+                ]
+            );            
+        }
+        if(!empty($items['group_type'])){
+            $preset = strtolower($items['group_type']).'_chat';
+            $http->put(
+                $url.'/m.room.preset?access_token='.$items['matrix_token'], 
+                json_encode(['preset'=>$preset]), 
                 [
                     'type'=>'json',
                     'ssl_verify_host' => $this->config('sslverify'), 
@@ -208,6 +229,21 @@ class MatrixComponent extends Component {
                     'ssl_verify_peer_name' => $this->config('sslverify')
                 ]
             );
+            
+            $http->put(
+                $url.'/m.room.visibility?access_token='.$items['matrix_token'], 
+                json_encode(['visibility'=>$items['visibility']]), 
+                [
+                    'type'=>'json',
+                    'ssl_verify_host' => $this->config('sslverify'), 
+                    'ssl_verify_peer' => $this->config('sslverify'),
+                    'ssl_verify_host' => $this->config('sslverify'),
+                    'ssl_verify_peer_name' => $this->config('sslverify')
+                ]
+            ); 
+        }
+        
+        
         $response = json_decode($httpResponse->body,true);
         pr($response);die;
         return $response;

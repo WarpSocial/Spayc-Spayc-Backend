@@ -174,7 +174,7 @@ class SpaycsController extends AppController {
             $this->restException(['status' => "failed", 'message' =>__($matrix['error'])], 400);
         }
         $items->set('matrix_room_id', $matrix['room_id']);
-        $items->set('matrix_room_alias', $matrix['room_alias']);
+        $items->set('matrix_room_alias', Utils::getVar('room_alias', $matrix));
         $items->set('user_id', $this->Auth->user('id'));
         $items->set('status', 'Active');
         if (!$items->errors()) {
