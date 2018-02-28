@@ -354,5 +354,37 @@ class MatrixComponent extends Component {
             return false;
         }        
     }
+    
+    public function leaveRoom($matrix_room_id = null,$matrix_token = null){
+        if(empty($items) || empty($matrix_token)){
+            return false;
+        }
+        
+        //http://172.16.147.130:8008/_matrix/client/r0/rooms/!QALTTGXTszvpepnlcs%3A127.0.0.1/leave?access_token=MDAxN2xvY2F0aW9uIDEyNy4wLjAuMQowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMjVjaWQgdXNlcl9pZCA9IEBkZXZ0ZXN0OjEyNy4wLjAuMQowMDE2Y2lkIHR5cGUgPSBhY2Nlc3MKMDAyMWNpZCBub25jZSA9IHRVRUBoQnBUSlk4U012TkkKMDAyZnNpZ25hdHVyZSDI7Ih4z5X4NwatTnqnPlAJeMkPjWFXmHrjm6oVwO0lJwo
+        
+        // http://localhost:8008/_matrix/client/api/v1/rooms/!ajVURqZcPdNtXNRyta%3A127.0.0.1/leave?access_token=MDAxN2xvY2F0aW9uIDEyNy4wLjAuMQowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMjVjaWQgdXNlcl9pZCA9IEBkZXZ0ZXN0OjEyNy4wLjAuMQowMDE2Y2lkIHR5cGUgPSBhY2Nlc3MKMDAyMWNpZCBub25jZSA9IENIKmMwZmVZVzBWI2dBdjsKMDAyZnNpZ25hdHVyZSCKB7u92u3ctxRK8bBRnYOIKyCSQvYxQ78k8oYpCzQZbwo
+        $http = new Client();
+        $url = $this->config('url') .DS.$this->config('client'). DS.$matrix_room_id.DS.'leave?access_token='.$matrix_token;
+        
+        $httpResponse = $http->post(
+            $url, 
+            json_encode([]), 
+            [
+                'type'=>'json',
+                'ssl_verify_host' => $this->config('sslverify'), 
+                'ssl_verify_peer' => $this->config('sslverify'),
+                'ssl_verify_host' => $this->config('sslverify'),
+                'ssl_verify_peer_name' => $this->config('sslverify')
+            ]
+        ); 
+        
+        $response = json_decode($httpResponse->body,true);
+        pr($response);die;
+        if($httpResponse->isOk()){
+            return $response;
+        }else{
+            return false;
+        }  
+    }
 
 }
