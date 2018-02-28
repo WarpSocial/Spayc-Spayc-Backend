@@ -399,14 +399,14 @@ class SpaycsController extends AppController {
             $distance = 0;
             $spayc = $this->Spaycs->find()
             ->select(['distance' => $distanceField, 'Spaycs.id', 'Spaycs.name', 'address'=>'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type'])
-            ->where(["$distanceField >="=>$distance, 'status'=>'Active'])
+            ->where(["$distanceField >="=>$distance, 'status'=>'Active', 'id'=>$id])
             ->bind(':latitude', $this->request->query('latitude'), 'float')
             ->bind(':longitude', $this->request->query('longitude'), 'float');
             $spayc->order(['distance'=>'ASC']);
         } else {
             $spayc = $this->Spaycs->find()
             ->select(['Spaycs.id', 'Spaycs.name', 'address'=>'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type'])
-            ->where(['status'=>'Active']);
+            ->where(['status'=>'Active', 'id'=>$id]);
             $spayc->order(['created'=>'DESC']);
         }
         
