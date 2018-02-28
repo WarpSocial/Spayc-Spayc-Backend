@@ -515,7 +515,7 @@ class UsersTable extends Table {
         $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
         $users->order(['Users.username'=>'ASC'])->limit($limit);
         if(!empty($request['keyword'])) {
-            $users->where(['Users.username LIKE'=>"%".$request['keyword']."%"]);
+            $users->where(['LOWER(Users.username) LIKE'=>"%".strtolower($request['keyword'])."%"]);
         }
         $page = (!empty($request['page']) && is_numeric($request['page']))?$request['page']:1;
         if($page < 0) {
