@@ -1060,7 +1060,7 @@ class UsersController extends AppController {
         $page = (!empty($this->request->query['page']) && is_numeric($this->request->query['page']))?$this->request->query['page']:1;
         
         $notifications = TableRegistry::get("Api.Notifications")->find()
-            ->select(['id', 'status', 'date_time', 'message'])
+            ->select(['id', 'status', 'date_time', 'message', 'notification_type'])
             ->where(['requested_to'=>$this->Auth->user('id')]);
         $notifications->contain([
             'NotificationTo' => function($q) {
