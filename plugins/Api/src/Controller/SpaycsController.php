@@ -427,6 +427,7 @@ class SpaycsController extends AppController {
                 unset($row['joined_spayc']);
                 $row['total_comments'] = !empty($row['comments'][0]['total_comment'])?$row['comments'][0]['total_comment']:0;
                 unset($row['comments']);
+                $row['total_presents'] = 0;
                 return $row;
             });
         });
