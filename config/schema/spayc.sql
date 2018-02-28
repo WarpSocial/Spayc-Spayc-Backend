@@ -142,6 +142,8 @@ CREATE TABLE notifications (
     id BIGSERIAL NOT NULL,
     requested_by BIGINT NOT NULL,
     requested_to BIGINT NOT NULL,
+    spayc_id BIGINT NULL,
+    date_time timestamp NULL,
     notification_type VARCHAR(20) DEFAULT NULL,
     status VARCHAR(20) DEFAULT NULL,
     message VARCHAR(200) DEFAULT NULL,

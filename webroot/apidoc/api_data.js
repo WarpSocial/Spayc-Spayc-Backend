@@ -2653,6 +2653,110 @@ define({ "api": [
   },
   {
     "type": "get",
+    "url": "/get-notifications.json?page=:page&limit=:limit",
+    "title": "Get Notifications",
+    "version": "0.1.0",
+    "name": "getNotifications",
+    "group": "User",
+    "permission": [
+      {
+        "name": "none"
+      }
+    ],
+    "description": "<p>get all notifications received by loggin user.</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "page",
+            "description": "<p>Page number is optional in query string default value 1.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>Limit is optional in query string default value 5.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Notification Lists..</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Notification Lists.\",\n    \"data\": [\n        {\n            \"id\": \"1\",\n            \"date_time\": \"2018-02-28T15:21:41+00:00\",\n            \"message\": \"Friend request accepted\",\n            \"space_name\": \"spaycdev9\",\n            \"room_id\": \"@matrixdeeee\",\n            \"spayc_image\": \"abc.png\",\n            \"username\": \"username1\",\n            \"user_id\": \"10\",\n            \"user_image\": \"https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2018_02_02_12_10_56_20180207100523_20180216123106.png\",\n            \"is_unread\": true\n        },\n        {\n            \"id\": \"2\",\n            \"date_time\": \"2018-02-28T15:21:41+00:00\",\n            \"message\": \"Friend block\",\n            \"space_name\": null,\n            \"room_id\": null,\n            \"spayc_image\": null,\n            \"username\": \"username2\",\n            \"user_id\": \"9\",\n            \"user_image\": \"https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2018_02_02_12_10_56_20180207100523_20180216123106.png\",\n            \"is_unread\": true\n        }\n    ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/user.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/get-notifications.json?page=:page&limit=:limit"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
     "url": "/users.json?page=:page&limit=:limit&keyword=:keyword&latitude=:latitude&longitude=:longitude",
     "title": "Search Users, Spaycs, Hashtags",
     "version": "0.1.0",

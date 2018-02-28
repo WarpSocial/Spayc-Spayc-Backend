@@ -908,3 +908,56 @@ function getRemoveAvatar() { return; }
  * @apiUse UserErrorResponse
  */
 function postUpdateUserStatus() { return; }
+
+/**
+ * @api {get} /get-notifications.json?page=:page&limit=:limit Get Notifications
+ * @apiVersion 0.1.0
+ * @apiName getNotifications
+ * @apiGroup User
+ * @apiPermission none
+ *
+ * @apiDescription get all notifications received by loggin user.
+ *
+ * @apiParam {Number} page      Page number is optional in query string default value 1.
+ * @apiParam {Number} limit     Limit is optional in query string default value 5.
+ *
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Notification Lists..
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Notification Lists.",
+    "data": [
+        {
+            "id": "1",
+            "date_time": "2018-02-28T15:21:41+00:00",
+            "message": "Friend request accepted",
+            "space_name": "spaycdev9",
+            "room_id": "@matrixdeeee",
+            "spayc_image": "abc.png",
+            "username": "username1",
+            "user_id": "10",
+            "user_image": "https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2018_02_02_12_10_56_20180207100523_20180216123106.png",
+            "is_unread": true
+        },
+        {
+            "id": "2",
+            "date_time": "2018-02-28T15:21:41+00:00",
+            "message": "Friend block",
+            "space_name": null,
+            "room_id": null,
+            "spayc_image": null,
+            "username": "username2",
+            "user_id": "9",
+            "user_image": "https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2018_02_02_12_10_56_20180207100523_20180216123106.png",
+            "is_unread": true
+        }
+    ]
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+ function getNotification() { return; }

@@ -1051,4 +1051,52 @@ class UsersController extends AppController {
         }
         $this->set($response);
     }
+    
+    public function getNotifications() {
+        if(!$this->request->is(['get'])) {
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
+        }
+        $limit = (!empty($this->request->query['limit']) && is_numeric($this->request->query['limit']))?$this->request->query['limit']:5;
+        $page = (!empty($this->request->query['page']) && is_numeric($this->request->query['page']))?$this->request->query['page']:1;
+        
+        $notifications = TableRegistry::get("Api.Notifications")->find()
+            ->select(['id', 'status', 'date_time', 'message'])
+            ->where(['requested_to'=>$this->Auth->user('id')]);
+        $notifications->contain([
+            'NotificationTo' => function($q) {
+                return $q->select(['NotificationTo.id', 'NotificationTo.username'])->contain(['UserImages'=>['fields'=>['user_id', 'image_url'], 'conditions'=>['is_profile'=>'Yes']]]);
+            },
+            'Spaycs' => function($q) {
+                return $q->select(['Spaycs.id', 'Spaycs.name', 'Spaycs.matrix_room_id', 'Spaycs.image']);
+            }
+        ]);
+        $notifications->order(['date_time'=>'DESC']);
+        $notifications->formatResults(function (\Cake\Collection\CollectionInterface $results) {
+            return $results->map(function ($row) {
+                $row['space_name'] = !empty($row['spayc']['name'])?$row['spayc']['name']:null;
+                $row['room_id'] = !empty($row['spayc']['matrix_room_id'])?$row['spayc']['matrix_room_id']:null;
+                $row['spayc_image'] = !empty($row['spayc']['image'])?$row['spayc']['image']:null;
+                $row['username'] = !empty($row['notification_to']['username'])?$row['notification_to']['username']:null;
+                $row['user_id'] = !empty($row['notification_to']['id'])?$row['notification_to']['id']:null;
+                $row['user_image'] = !empty($row['notification_to']['user_images'][0]['image_url'])?$row['notification_to']['user_images'][0]['image_url']:null;
+                $row['is_unread'] = ($row['status']=='Unread')?true:false;
+                unset($row['spayc']);
+                unset($row['status']);
+                unset($row['notification_to']);
+                return $row;
+            });
+        });
+        $notifications->limit($limit);
+        if($page < 0){
+            $page = $page*-1;
+            $notifications->page($page);
+        } else {
+            $notifications->page($page);
+        }
+        if($notifications->isEmpty()) {
+            $this->response->statusCode(204);
+        }
+        $response = ['status'=>'success', 'message'=>__('Notification Lists.'), 'data'=>$notifications];
+        $this->set($response);
+    }
 }
