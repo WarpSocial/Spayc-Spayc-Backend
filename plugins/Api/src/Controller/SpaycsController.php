@@ -534,13 +534,30 @@ class SpaycsController extends AppController {
      */
     public function delete($id = null) {
         $this->request->allowMethod(['post', 'delete']);
-        $spayc = $this->Spaycs->get($id);
-        if ($this->Spaycs->delete($spayc)) {
-            $this->Flash->success(__('The spayc has been deleted.'));
-        } else {
-            $this->Flash->error(__('The spayc could not be deleted. Please, try again.'));
+        $user = $this->Auth->user();
+        $entity = $this->Spaycs->find()->where(['id'=>$id,'user_id'=>$user['id']]);
+        if($entity->isEmpty()){
+            $this->restException(['status'=>'failed','message'=>'Record not found.'], 201);
         }
-        return $this->redirect(['action' => 'index']);
+        $spayc = $entity->first();
+        $this->loadComponent('Api.Matrix');
+        
+        $matrix = $this->Matrix->leaveRoom($spayc->matrix_room_id,$user['UserLogs']['matrix_access_token']);
+//        pr($matrix);die;
+//        if(!$matrix || !empty($matrix['error'])) {
+//            if(empty($matrix['error'])){
+//                $this->restException(['status' => "failed", 'message' =>__('Room not found.')], 400);
+//            }else{
+//                $this->restException(['status' => "failed", 'message' =>__($matrix['error'])], 400);
+//            }
+//            
+//        }
+        if ($this->Spaycs->delete($spayc)) {
+            $response = ['status'=>'success','message'=>__('The spayc has been deleted.')];
+        } else {
+            $response = ['status'=>'failed','message'=>__('Spayc could not be deleted.')];
+        }
+         $this->set(compact('response'));
     }
     
     public function matrixApplicationService($id = null){

@@ -6,6 +6,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Core\Configure;
 
 /**
  * UserImages Model
@@ -63,9 +64,16 @@ class UserImagesTable extends Table {
                     'rule' => ['extension', ['jpeg', 'png', 'jpg']],
                     'message' => __('Please select only jpg,jpeg,png.')
                 ])
-                ->add('image_url["size"]', 'size', [
-                    'rule' => ['fileSize', '<=', \Cake\Core\Configure::read('maxupload')],
-                    'message' => __('Image size must be less than ' . \Cake\Core\Configure::read('maxupload') . '.')
+                ->add('image_url', 'size', [
+                    'rule' => function($value,$context){                    
+                        if($value['error'] == 0){
+                            $sizeLimit =\Cake\Utility\Text::parseFileSize(Configure::read('maxupload'));
+                            //$sizeLimit = 2536;//4793432
+                            return (bool)($value['size'] <= $sizeLimit );
+                        }
+                       //$file = new \Cake\Filesystem\File($value['tmp_name'])
+                    },
+                    'message' => __('Image size must be less than ' . Configure::read('maxupload'). '.')
         ]);
         return $validator;
     }

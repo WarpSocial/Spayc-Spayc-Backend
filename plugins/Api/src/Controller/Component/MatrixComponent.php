@@ -354,5 +354,42 @@ class MatrixComponent extends Component {
             return false;
         }        
     }
+    
+    public function leaveRoom($matrix_room_id = null,$matrix_token = null){
+        if(empty($matrix_room_id) || empty($matrix_token)){
+            echo "one";die;
+        }
+        $roomId  = $this->validRoomId($matrix_room_id);
+        $http = new Client();
+        $url = $this->config('url') .DS.$this->config('client').DS.'rooms'. DS.$roomId.DS.'leave?access_token='.$matrix_token;
+       
+        $httpResponse = $http->post(
+            $url, 
+            json_encode([]), 
+            [
+                'type'=>'json',
+                'ssl_verify_host' => $this->config('sslverify'), 
+                'ssl_verify_peer' => $this->config('sslverify'),
+                'ssl_verify_host' => $this->config('sslverify'),
+                'ssl_verify_peer_name' => $this->config('sslverify')
+            ]
+        ); 
+        
+        $response = json_decode($httpResponse->body,true);
+        if(!empty($response['errcode'])){
+            return $response;
+        }else{
+            return true;
+        }
+        pr($response);die;
+        
+    }
+    
+    public function validRoomId($roomid=null){
+        if($roomid == null){
+            return false;
+        }
+        return '!'.urlencode(substr($roomid,1));
+    }
 
 }
