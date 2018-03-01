@@ -375,7 +375,8 @@ class MatrixComponent extends Component {
             ]
         ); 
         
-        $response = json_decode($httpResponse->body,true);        
+        $response = json_decode($httpResponse->body,true);
+        
     }
     
     public function validRoomId($roomid=null){
