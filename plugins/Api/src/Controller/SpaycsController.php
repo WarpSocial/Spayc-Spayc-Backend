@@ -471,14 +471,14 @@ class SpaycsController extends AppController {
         if($entities->isEmpty()){
             $this->restException(['status'=>'failed','message'=>__('Space has not been found.')], 400);
         }
-        $entity = $entities->first();
         
+        $entity = $entities->first();
+        unset($data['spayc_id']);        
         $items = $this->Spaycs->patchEntity($entity, $data);        
-        //pr($items);die;
+        
         if(!empty($items->errors())) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
         }
-       
         $this->loadComponent('Api.Matrix');
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
         $matrix = $this->Matrix->updateRoom($entity->matrix_room_id,$data);
