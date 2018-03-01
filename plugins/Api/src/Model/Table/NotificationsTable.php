@@ -109,4 +109,12 @@ class NotificationsTable extends Table
 
         return $rules;
     }
+    
+    public function addNotification($data = []) {
+        if(!empty($data)) {
+            $entity = $this->newEntity();
+            $items = $this->patchEntity($entity, $data);
+            $this->save($items);
+        }
+    }
 }

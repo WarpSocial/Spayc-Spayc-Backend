@@ -97,8 +97,25 @@ class PushComponent extends Component {
     
     public function sendPushNotification($data) {
         if(!empty($data['slug'])) {
-            $notificationType = TableRegistry::get("NotificationTypes")->findBySlug($data['slug']);
-            pr($notificationType->isEmpty());exit;
+            $notificationType = TableRegistry::get("Api.NotificationTypes")->findBySlug($data['slug']);
+            if($notificationType->isEmpty()) {
+                return false;
+            }
+            $notificationType = $notificationType->first();
+            $deviceId = TableRegistry::get("Api.UserLogs")->findByUserId($data['requested_to'])->select(['id', 'user_id', 'device_id']);
+            if($deviceId->isEmpty()) {
+                return false;
+            }
+            $deviceId = $deviceId->first();
+            $sent = $this->sendOnIOS($deviceId->device_id, $notificationType->message);
+            if(!$sent) {
+                $data['notification_type'] = $notificationType->type;
+                $data['message'] = $notificationType->message;
+                $data['status'] = 'Unread';
+                $data['date_time'] = date("Y-m-d H:i:s"); 
+                $data['created'] = date("Y-m-d H:i:s");
+                TableRegistry::get("Api.Notifications")->addNotification($data);
+            }
         }
     }
 }

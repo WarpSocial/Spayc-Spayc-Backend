@@ -581,7 +581,6 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
         $data = $this->request->getData();
-        
         $errors = $this->Users->friendRequestValidate($data);
         if(!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
@@ -613,10 +612,12 @@ class UsersController extends AppController {
             $newObj->action_by = $loggedUser['id'];
             $newObj->requested_status = $data['friend_status'];
             if($frObj->save($newObj)) {
-                /*$push['requested_by'] = $loggedUser['id'];
+                //data prepaire for push notification//
+                $push['requested_by'] = $loggedUser['id'];
                 $push['requested_to'] = $data['friend_id'];
                 $push['slug'] = 'friend-request-sent';
-                $this->Push->sendPushNotification($push);*/
+                $push['spayc_id'] = null; //provide spayc id if push related to spayc
+                $this->Push->sendPushNotification($push);
                 $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status']),'data'=>[
                     'id'=>$newObj->id,
                     'requested_by'=>$newObj->requested_by,
