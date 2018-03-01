@@ -5,6 +5,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\ORM\TableRegistry;
 
 /**
  * Notifications Model
@@ -107,5 +108,13 @@ class NotificationsTable extends Table
         //$rules->add($rules->existsIn(['spayc_id'], 'Spaycs'));
 
         return $rules;
+    }
+    
+    public function addNotification($data = []) {
+        if(!empty($data)) {
+            $entity = $this->newEntity();
+            $items = $this->patchEntity($entity, $data);
+            $this->save($items);
+        }
     }
 }

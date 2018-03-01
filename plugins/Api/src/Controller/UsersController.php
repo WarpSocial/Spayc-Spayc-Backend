@@ -28,6 +28,10 @@ class UsersController extends AppController {
      * 
      * @param object $event 
      */
+    public function initialize() {
+        parent::initialize();
+        $this->loadComponent('Api.Push');
+    }
     
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
@@ -470,10 +474,11 @@ class UsersController extends AppController {
         if (!$user) {
             throw new RecordNotFoundException(__('Account not found or already activated. Please read email carefully and try again.'));
         }
-        
+        $this->Flash->success(__('This link has no longer existing.'));
         if ($token != Security::hash($user->email, 'sha1', true)) {
             throw new ForbiddenException(__('Invalid token. Please read email carefully and try again.'));
         }
+        
         $user->status = 'Active';
         if ($this->Users->save($user)) {
             $this->Flash->success(__('Your Account has been successfully activated. You can now log in using the username and password you chose during the registration.'));
@@ -606,7 +611,13 @@ class UsersController extends AppController {
             $newObj->requested_to = $data['friend_id'];
             $newObj->action_by = $loggedUser['id'];
             $newObj->requested_status = $data['friend_status'];
-            if($frObj->save($newObj)){
+            if($frObj->save($newObj)) {
+                //data prepaire for push notification//
+                $push['requested_by'] = $loggedUser['id'];
+                $push['requested_to'] = $data['friend_id'];
+                $push['slug'] = 'friend-request-sent';
+                $push['spayc_id'] = null; //provide spayc id if push related to spayc
+                $this->Push->sendPushNotification($push);
                 $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status']),'data'=>[
                     'id'=>$newObj->id,
                     'requested_by'=>$newObj->requested_by,
@@ -615,7 +626,7 @@ class UsersController extends AppController {
                     'action_by'=>$newObj->action_by
                     ]
                 ]);
-            }else{
+            } else {
                 $this->restException(['status'=>'failed', 'message'=>__('Failed to update friend status.')],400);
             }
         }else{
@@ -685,48 +696,6 @@ class UsersController extends AppController {
         }
     }
     
-    public function directChatRequest() {
-        if (!$this->request->is(['post'])) {
-            $this->restException(['status'=>'failed','message'=>__('Method not allowed.')], 405);
-        }
-        $data = $this->request->getData();
-        if(empty($data['friend_id'])) {
-            $this->restException(['status'=>'failed','message'=>__('Friend id is required field.')], 400);
-        }
-        if(empty($data['matrix_room_id'])) {
-            $this->restException(['status'=>'failed','message'=>__('Matrix room id is required field.')], 400);
-        }
-        $data['friend_id'] = ApiHasher::decrypt($data['friend_id']);
-        $isUserExist = $this->Users->exists(['id'=>$data['friend_id']]);
-        if(!$isUserExist) {
-            $this->restException(['status'=>'failed','message'=>__('Invalid friend id.')], 400);
-        }
-        $frend = TableRegistry::get("Api.FriendRequest");
-        $exists = $frend->find('all', ['conditions'=>['OR'=>[['FriendRequest.requested_to'=>$data['friend_id'], 'FriendRequest.requested_by'=>$this->Auth->user('id')], ['FriendRequest.requested_to'=>$this->Auth->user('id'), 'FriendRequest.requested_by'=>$data['friend_id']]]]])->first();
-        if(!empty($exists) && ($exists->friend_status=='Unfriend')) {
-            $friendReq['friend_status'] = NULL;
-        }
-        $friendReq['matrix_room_id'] = $data['matrix_room_id'];
-        if(empty($exists->id)) {
-            $friendReq['requested_by'] = $this->Auth->user('id');
-            $friendReq['requested_to'] = $data['friend_id'];
-            $friendReq['requested_status'] = 'Anonymous';
-            $friendReq['created'] = date("Y-m-d H:i:s");
-            $entity = $frend->newEntity();
-            $items = $frend->patchEntity($entity, $friendReq);
-            if($items->errors()) {
-                $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
-            }
-            $frend->save($items);
-        } else {
-            $friendReq['modified'] = date("Y-m-d H:i:s");
-            $frend->updateAll($friendReq, ['id'=>ApiHasher::decrypt($exists->id)]);
-        }
-        $this->response->statusCode(201);
-        $response = ['status'=>'success', 'message'=>__('Friend request sent successfully.')];
-        $this->set($response);
-    }
-    
     public function getFriends() {
         if (!$this->request->is(['get'])) {
             $this->restException(['status'=>'failed','message'=>__('Method not allowed.')], 405);
@@ -758,6 +727,8 @@ class UsersController extends AppController {
             return $results->map(function ($row) {
                 $row->friend = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
                 $row->friend = !empty($row['requestedby'][0]) && empty($row->friend)? $row['requestedby'][0] : $row->friend;
+                $row['matrix_room_id'] = !empty($row['friend']['matrix_room_id'])?$row['friend']['matrix_room_id']:null;
+                unset($row['friend']['matrix_room_id']);
                 $row->image_url = !empty($row['user_images'][0]['image_url'])?$row['user_images'][0]['image_url']:'';
                 unset($row['requestedto']);
                 unset($row['requestedby']);
@@ -803,10 +774,10 @@ class UsersController extends AppController {
         $userId = $this->Auth->user('id');
         $user->contain([
             'Requestedby' => function($q) use($userId) {
-                return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_status', 'Requestedby.requested_to', 'Requestedby.friend_status'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]], ['OR'=>['friend_status !='=>'Anonymous', 'friend_status IS'=>NULL]]]);
+                return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_status', 'Requestedby.requested_to', 'Requestedby.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
             },
             'Requestedto' => function($q) use($userId) {
-                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.friend_status'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]], ['OR'=>['friend_status !='=>'Anonymous', 'friend_status IS'=>NULL]]]);
+                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
             },
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.id', 'UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile', 'UserImages.order_index']);
@@ -822,7 +793,9 @@ class UsersController extends AppController {
             return $results->map(function ($row) {
                 $uId = ApiHasher::decrypt($row['id']);
                 $row['friend'] = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
-                $row['friend'] = !empty($row['requestedby'][0]) && empty($row['friend'])?$row['requestedby'][0] : $row['friend'];
+                $row['friend'] = !empty($row['requestedby'][0]) && empty($row['friend'])?$row['requestedby'][0]:$row['friend'];
+                $row['matrix_room_id'] = !empty($row['friend']['matrix_room_id'])?$row['friend']['matrix_room_id']:null;
+                unset($row['friend']['matrix_room_id']);
                 $row['friend']['total_friends'] = TableRegistry::get('Api.FriendRequest')->getFriendCountByUserId($uId);
                 $row['created_spaycs'] = !empty($row['spaycs'][0]['created_spaycs'])? $row['spaycs'][0]['created_spaycs'] : 0;
                 $row['joined_spaycs'] = !empty($row['joined_spayc'][0]['joined_spaycs'])? $row['joined_spayc'][0]['joined_spaycs'] : 0;
@@ -894,7 +867,6 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
         $data = $this->request->getData();
-        $this->loadComponent('Api.Push');
         if(empty($data['notification']['devices'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Notification data not found.')], 400);
         }
@@ -910,7 +882,6 @@ class UsersController extends AppController {
         if(!$this->request->is(['post'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
-        $this->loadComponent('Api.Push');
         $data = $this->request->getData();
         $this->Push->sendOnIOS($data['device_token'], "test push notification for spayc");
         $response = ['status'=>'success', 'message'=>__('notification sent')];

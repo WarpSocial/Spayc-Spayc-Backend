@@ -352,7 +352,7 @@ function postLogin() { return; }
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  
   @apiParam {String} friend_id Friend id required (friend_id must be an user id)(Required).
-  @apiParam {String} friend_status Friend status and status must be either one from following 'Pending', 'Accepted', 'Blocked','Direct','Decline','Unfriend' (Required).
+  @apiParam {String} friend_status Friend status and status must be either one from following 'Pending', 'Accepted', 'Blocked','is_direct','Decline','Unfriend' (Required).
  
   @apiExample Example usage:
  
@@ -413,34 +413,60 @@ function postFriendRequest() { return; }
         "count": 4,
         "records": [
             {
-                "id": "VkR0a3p4anQ2SUxScm85RGhTZTFpZz09",
-                "username": "test",
+                "id": "8",
+                "username": "user3",
                 "matrix_user_id": null,
                 "matrix_access_token": null,
                 "friend": {
-                    "id": "bmRkeTJVYjhwTlQzKzdpeWJwWEMvZz09",
-                    "requested_by": 10,
-                    "requested_to": 7,
-                    "requested_status": "Pending",
-                    "friend_status": null,
-                    "matrix_room_id": "room:@848843444"
+                    "id": "42",
+                    "requested_by": "10",
+                    "requested_to": "8",
+                    "requested_status": "Pending"
                 },
+                "matrix_room_id": null,
                 "image_url": ""
             },
             {
-                "id": "OWxtVWpXalVkaVdWRHVTWUR5amxuZz09",
-                "name": "test2",
+                "id": "9",
+                "username": "user2",
                 "matrix_user_id": null,
                 "matrix_access_token": null,
                 "friend": {
-                    "id": "NlJpUEx0M016dXBGTjhZdWpWeThBUT09",
-                    "requested_by": 10,
-                    "requested_to": 8,
-                    "requested_status": "Pending",
-                    "friend_status": null,
-                    "matrix_room_id": "room:@84854843"
+                    "id": "63",
+                    "requested_by": "10",
+                    "requested_to": "9",
+                    "requested_status": "Pending"
                 },
-                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2017_08_14_18_14_10_20180206133936.png"
+                "matrix_room_id": "!ICbUbLzaoTzIvIoEjf:35.168.119.247",
+                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226075827.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632"
+            },
+            {
+                "id": "17",
+                "username": "user1",
+                "matrix_user_id": null,
+                "matrix_access_token": null,
+                "friend": {
+                    "id": "1",
+                    "requested_by": "10",
+                    "requested_to": "17",
+                    "requested_status": "Pending"
+                },
+                "matrix_room_id": null,
+                "image_url": ""
+            },
+            {
+                "id": "19",
+                "username": "test2",
+                "matrix_user_id": "@test2:35.168.119.247",
+                "matrix_access_token": "MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyOGNpZCB1c2VyX2lkID0gQHRlc3QyOjM1LjE2OC4xMTkuMjQ3CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gMVJKXjJSTEs3Klc9LmhyQAowMDJmc2lnbmF0dXJlIMyd1A3UtgJZEWcmvehB84AboRIZrFb46AqHTrn4Y2reCg",
+                "friend": {
+                    "id": "43",
+                    "requested_by": "10",
+                    "requested_to": "19",
+                    "requested_status": "Accepted"
+                },
+                "matrix_room_id": "kjljkljljll54",
+                "image_url": ""
             }
         ]
     }
@@ -463,7 +489,7 @@ function getFriends() { return; }
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  
 * @apiParam  {String}   friend_id       Requested friend id (Required).
-* @apiParam  {String}   friend_status   Friend status must any one from following list 'Pending', 'Accepted', 'Blocked','Direct','Decline','Unfriend' (Required).
+* @apiParam  {String}   friend_status   Friend status must any one from following list 'Pending', 'Accepted', 'Blocked','is_direct','Decline','Unfriend' (Required).
    @apiExample Example usage:
  
     {
@@ -603,37 +629,59 @@ function postForgotPassword() { return; }
     "status": "success",
     "message": "User profile.",
     "data": {
-        "id": "anM1a0FkWGlWUXBwR1ZDUU9iR09XQT09",
-        "username": "test2",
-        "email": "test2@gmail.com",
-        "gender": "Male",
-        "dob": "01-25-1996",
-        "country_code":"+91",
-        "phone": "(789)877878",
+        "id": "11",
+        "username": "user",
+        "email": "test@domain.com",
+        "gender": "Female",
+        "dob": null,
+        "country_code": null,
+        "phone": "",
         "website_url": null,
         "address": null,
         "bio_data": null,
         "longitude": 77.391026,
         "latitude": 28.535516,
-        "matrix_user_id": "@test2:35.168.119.247",
+        "matrix_user_id": null,
         "user_images": [
             {
-                "user_id": 19,
-                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2017_12_26_15_18_47_20180206133935.png",
+                "id": "55",
+                "user_id": 11,
+                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180223144430.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632",
                 "is_profile": "No",
-                "order_index": 1
+                "order_index": null
+            },
+            {
+                "id": "56",
+                "user_id": 11,
+                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073256.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632",
+                "is_profile": "No",
+                "order_index": null
+            },
+            {
+                "id": "57",
+                "user_id": 11,
+                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073525.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632",
+                "is_profile": "No",
+                "order_index": null
+            },
+            {
+                "id": "58",
+                "user_id": 11,
+                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073548.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632",
+                "is_profile": "No",
+                "order_index": null
             }
         ],
         "friend": {
-            "id": "MzNNbkN6V05zQ2c1N0ViMVJJeEVqZz09",
-            "requested_by": 10,
-            "requested_to": 19,
-            "requested_status": "Pending",
-            "friend_status": null,
-            "total_friends": 2
+            "id": "41",
+            "requested_by": "10",
+            "requested_to": "11",
+            "requested_status": "Requested",
+            "total_friends": 0
         },
-        "created_spaycs": 3,
-        "joined_spaycs": 1
+        "matrix_room_id": null,
+        "created_spaycs": 0,
+        "joined_spaycs": 0
     }
 }
 
@@ -675,39 +723,6 @@ function getUserProfile() { return; }
  * @apiUse UserErrorResponse
  */
 function postChangePassword() { return; }
-
-/**
- * @api {post} /chat-request.json Chat request
- * @apiVersion 0.1.0
- * @apiName chatRequest
- * @apiGroup User
- * @apiPermission none
- *
- * @apiDescription One ot One chat request.
- *
- * @apiParam {String} friend_id         User id to whom you send request(Required).
- * @apiParam {String} matrix_room_id    Matrix room id from matrix (Required).
- *
- * @apiExample Example usage:
- *
- *       {
- *          "friend_id": "anM1a0FkWGlWUXBwR1ZDUU9iR09XQT09"
- *          "matrix_room_id": "room:@000123"
- *       }
- *
- *
- * @apiSuccess {String} status success.
- * @apiSuccess {String} message Friend request sent successfully.
- * @apiSuccessExample {json} Success-Response:
- *      HTTP/1.1 201 OK
-{
-    "status": "success",
-    "message": "Friend request sent successfully."
-}
- *
- * @apiUse UserErrorResponse
- */
-function postChatRequest() { return; }
 
 /**
  * @api {post} /avatars.json Upload Profile Images

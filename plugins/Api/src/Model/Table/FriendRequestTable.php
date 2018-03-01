@@ -187,10 +187,10 @@ class FriendRequestTable extends Table
                 } else {
                     $request['requested_by'] = $userId;
                     $request['requested_to'] = $inviteId;
-                    $request['requested_status'] = 'Anonymous';
+                    $request['requested_status'] = 'is_direct';
                     $entity = $this->newEntity();
                 }
-                $items = $this->patchEntity($entity, $request);
+                $items = $this->patchEntity($entity, $request); 
                 $this->save($items);
             }
         }

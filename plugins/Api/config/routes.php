@@ -27,7 +27,7 @@ Router::plugin(
         $routes->connect('/reset-password/:token/:email', ['controller' => 'Users', 'action' => 'resetPassword', 'ext'=>'html'], ['pass' => ['token', 'email']]);
         $routes->connect('/user-profile/:id', ['controller' => 'Users', 'action' => 'viewProfile'], ['pass'=>['id']]);
         $routes->connect('/change-password', ['controller' => 'Users', 'action' => 'changePassword']);
-        $routes->connect('/chat-request', ['controller' => 'Users', 'action' => 'directChatRequest']);
+        
         $routes->connect('/set-profile-image/:id', ['controller' => 'Users', 'action' => 'setProfileImage'], ['pass'=>['id']]);
         $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
         $routes->connect('/remove-avatar/:order', ['controller' => 'Users', 'action' => 'removeAvatar'],['pass'=>['order']]);
