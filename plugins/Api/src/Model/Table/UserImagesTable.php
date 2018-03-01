@@ -92,6 +92,10 @@ class UserImagesTable extends Table {
     }
     
     public function uploadFacebookImage($fileName, $userId) {
+        $entity = $this->findByUserIdAndIsProfile($userId, 'Yes');
+        if(!$entity->isEmpty()) {
+            return false;
+        }
         $data['user_id'] = $userId;
         $data['is_profile'] = 'Yes';
         $data['order_index'] = 1;
