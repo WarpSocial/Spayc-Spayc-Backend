@@ -40,20 +40,18 @@ class UsersController extends AppController {
         }
         $this->loadModel('Api.UserImages');
         $data  = $this->request->getData();
-        if(!is_array($data)) {
-            $this->restException(['status'=>'failed','message'=>'Invalid requested data format.'], 400);
+        if(empty($data)) {
+            $this->restException(['status'=>'failed','message'=>'Invalid requested data.'], 400);
         }
         $defaultImg  = [];
         $images = [];
         foreach($data as $key=>$img) {
             $exists = $this->UserImages->findByUserIdAndOrderIndex($this->Auth->user('id'), $key);
             $imgData = ['user_id'=>$this->Auth->user('id'), 'image_url'=>$img, 'order_index'=>$key];
-            if($exists->count()) {
-                $entity = $this->UserImages->get($exists->first()->id);
+            if($exists->count()) { 
+                $entity = $exists->first();
+                //$entity = $this->UserImages->get($exists->first()->id);
             } else {
-                /*if($key==1) { 
-                    $imgData['is_profile'] = 'Yes';                    
-                }*/
                 $entity = $this->UserImages->newEntity();
             }
             $items = $this->UserImages->patchEntity($entity, $imgData);
@@ -62,19 +60,7 @@ class UsersController extends AppController {
             }
             $this->UserImages->save($items);
             $images[$key] = $items->image_url;
-            /*if(!empty($items->is_profile) && ($items->is_profile == 'Yes')){
-                $defaultImg = $items;
-            }*/
         }
-        /*if(!empty($defaultImg) ){            
-            //Event to bind to update the set upload room image 
-           $this->loadComponent('Api.Matrix');
-            $this->Matrix->uploadMediaImage([
-                    'matrix_token'=>$this->Auth->user('UserLogs.matrix_access_token'),
-                    'image'=> $defaultImg->image_url,
-                    'matrix_user_id'=> $this->Auth->user('UserLogs.matrix_user_id')
-            ]);
-        }*/
         $response = ['status'=>'success','message'=>__('Profile image uploaded successfully.'),'data'=>$images];
         $this->set($response);
     }
@@ -697,48 +683,6 @@ class UsersController extends AppController {
         }else{
             $this->restException(['status'=>'failed', 'message'=>__('Failed to update friend status.')],400);
         }
-      
-        
-    }
-    public function friendRequest_back() {
-        if (!$this->request->is(['post'])) {
-            $this->restException(['status'=>'failed','message'=>__('Method not allowed.')], 405);
-        }
-        $data = $this->request->getData();
-        if(empty($data['friend_id'])) {
-            $this->restException(['status'=>'failed','message'=>__('Friend id is required field.')], 400);
-        }
-        $data['friend_id'] = ApiHasher::decrypt($data['friend_id']);
-        $isUserExist = $this->Users->exists(['id'=>$data['friend_id']]);
-        if(!$isUserExist) {
-            $this->restException(['status'=>'failed','message'=>__('Invalid friend id.')], 400);
-        }
-        $frend = TableRegistry::get("Api.FriendRequest");
-        $exists = $frend->find('all', ['conditions'=>['OR'=>[['FriendRequest.requested_to'=>$data['friend_id'], 'FriendRequest.requested_by'=>$this->Auth->user('id')], ['FriendRequest.requested_to'=>$this->Auth->user('id'), 'FriendRequest.requested_by'=>$data['friend_id']]]]])->first();
-        if(!empty($exists) && ($exists->friend_status!='Unfriend')) {
-            $friendStatus = !empty($exists->friend_status)?$exists->friend_status:$exists->requested_status;
-            $this->restException(['status'=>'failed', 'message'=>__('Friend request already sent status is '.$friendStatus)], 400);
-        } else if(!empty($exists) && ($exists->friend_status=='Unfriend')) {
-            $friendReq['friend_status'] = NULL;
-            $friendReq['modified'] = date("Y-m-d H:i:s");
-        }
-        $friendReq['requested_by'] = $this->Auth->user('id');
-        $friendReq['requested_to'] = $data['friend_id'];
-        $friendReq['requested_status'] = 'Requested';
-        $friendReq['created'] = date("Y-m-d H:i:s");
-        if(empty($exists->id)){
-            $entity = $frend->newEntity();
-            $items = $frend->patchEntity($entity, $friendReq);
-            if($items->errors()) {
-                $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
-            }
-            $frend->save($items);
-        } else {
-            $frend->updateAll($friendReq,['id'=>ApiHasher::decrypt($exists->id)]);
-        }
-        $this->response->statusCode(201);
-        $response = ['status'=>'success', 'message'=>__('Friend request sent successfully.')];
-        $this->set($response);
     }
     
     public function directChatRequest() {
@@ -840,48 +784,6 @@ class UsersController extends AppController {
             $this->response->statusCode(204);
         }
         $response = ['status'=>'success', 'message'=>__('Friend lists.'), 'data'=>$data];
-        $this->set($response);
-    }
-    
-    public function setFriendResponse_back() {
-        if (!$this->request->is(['put'])) {
-            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
-        }
-        $data = $this->request->getData();
-        if(empty($data['id'])) {
-            $this->restException(['status'=>'failed','message'=>__('Id is required field.')], 400);
-        }
-        $data['id'] = ApiHasher::decrypt($data['id']);
-        $friendStatus = array_merge(Configure::read('friend_requested_status'), Configure::read('friend_status'));
-        if(empty($data['status']) || !in_array(ucfirst($data['status']), $friendStatus)) {
-            $this->restException(['status'=>'failed', 'message'=>__('Status is required fields and status must be in('.  implode(',', $friendStatus).').')], 400);
-        }
-        $status = ucfirst($data['status']);
-        $friendRequest = TableRegistry::get('Api.FriendRequest');
-        
-        $exist = $friendRequest->exists(['id'=>$data['id']]);
-        if(!$exist) {
-            $this->restException(['status'=>'failed', 'message'=>__('Invalid requested id.')], 400);
-        }
-        $entity = $friendRequest->get($data['id']);
-        if(in_array($status, Configure::read('friend_requested_status')) && ($entity->requested_by == $this->Auth->user('id'))) {
-            $this->restException(['status'=>'failed', 'message'=>__("You can\'t change friend request as ".$status )], 400);
-        }
-        if($entity->requested_status!='Accepted' && in_array($status, Configure::read('friend_status'))) {
-            $this->restException(['status'=>'failed', 'message'=>__('Friend requested status should be accepted for '.$status.' status')], 400);
-        }
-        if(in_array($status, Configure::read('friend_requested_status'))) {
-            $friend['requested_status'] = $status;
-        } else if(in_array($status, Configure::read('friend_status'))) {
-            $friend['friend_status'] = ($status=='Unblock')?NULL:$status;
-            $friend['blocked_by'] = ($status=='Blocked')?$this->Auth->user('id'):NULL;
-        }
-        if($status=='Unblock') {
-            $friendRequest->deleteAll(['id'=>$data['id']]);
-        } else {
-            $friendRequest->updateAll($friend, ['id'=>$data['id']]);
-        }
-        $response = ['status'=>'success', 'message'=>__('Friend status updated successfully.')];
         $this->set($response);
     }
     
