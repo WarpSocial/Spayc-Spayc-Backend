@@ -162,3 +162,22 @@ CREATE TABLE "notification_types" (
   "modified" timestamp NULL
 );
 SELECT create_hypertable('notification_types', 'created');
+
+INSERT INTO "notification_types" ("id", "type", "message", "slug", "created", "modified") VALUES
+(1,	'Friend Request Sent',	'Friend Request Sent',	'friend-request-sent',	'2018-02-28 17:27:10.578674',	NULL),
+(2,	'Friend request accepted',	'Friend request accepted',	'friend-request-accepted',	'2018-02-28 17:27:10.578674',	NULL),
+(3,	'Friend block',	'Friend block',	'friend-block',	'2018-02-28 17:27:10.578674',	NULL),
+(4,	'Friend Join spayc',	'Friend Join spayc',	'friend-join-spayc',	'2018-02-28 17:27:10.578674',	NULL),
+(5,	'user join spayc',	'user join spayc',	'user-join-spayc',	'2018-02-28 17:27:10.578674',	NULL),
+(6,	'friend subscribe spayc',	'friend subscribe spayc',	'friend-subscribe-spayc',	'2018-02-28 17:27:10.578674',	NULL),
+(7,	'user subscribe spayc',	'user subscribe spayc',	'user-subscribe-spayc',	'2018-02-28 17:27:10.578674',	NULL),
+(8,	'user like your comment',	'user like your comment',	'user-like-your-comment',	'2018-02-28 17:27:10.578674',	NULL),
+(9,	'friend like your comment',	'friend like your comment',	'friend-like-your-comment',	'2018-02-28 17:27:10.578674',	NULL),
+(10,	'user reply on your comment',	'user reply on your comment',	'user-reply-on-your-comment',	'2018-02-28 17:27:10.578674',	NULL),
+(11,	'friend reply on your comment',	'friend reply on your comment',	'friend-reply-on-your-comment',	'2018-02-28 17:27:10.578674',	NULL),
+(12,	'you beacome admin',	'you beacome admin',	'you-beacome-admin',	'2018-02-28 17:27:10.578674',	NULL),
+(13,	'kick out from spayc',	'kick out from spayc',	'kick-out-from-spayc',	'2018-02-28 17:27:10.578674',	NULL),
+(14,	'spayc active',	'spayc active',	'spayc-active',	'2018-02-28 17:27:10.578674',	NULL),
+(15,	'spayc inative',	'spayc inative',	'spayc-inative',	'2018-02-28 17:27:10.578674',	NULL),
+(16,	'delete spayc',	'delete spayc',	'delete-spayc',	'2018-02-28 17:27:10.578674',	NULL),
+(17,	'Any new space created in 25miles',	'Any new space created in 25miles',	'any-new-space-created-in-25miles',	'2018-02-28 17:27:10.578674',	NULL);
