@@ -51,9 +51,9 @@ class UsersController extends AppController {
             if($exists->count()) {
                 $entity = $this->UserImages->get($exists->first()->id);
             } else {
-                if($key==1) { 
+                /*if($key==1) { 
                     $imgData['is_profile'] = 'Yes';                    
-                }
+                }*/
                 $entity = $this->UserImages->newEntity();
             }
             $items = $this->UserImages->patchEntity($entity, $imgData);
@@ -62,19 +62,19 @@ class UsersController extends AppController {
             }
             $this->UserImages->save($items);
             $images[$key] = $items->image_url;
-            if(!empty($items->is_profile) && ($items->is_profile == 'Yes')){
+            /*if(!empty($items->is_profile) && ($items->is_profile == 'Yes')){
                 $defaultImg = $items;
-            }
+            }*/
         }
-        if(!empty($defaultImg) ){            
-            /*Event to bind to update the set upload room image */
+        /*if(!empty($defaultImg) ){            
+            //Event to bind to update the set upload room image 
            $this->loadComponent('Api.Matrix');
             $this->Matrix->uploadMediaImage([
                     'matrix_token'=>$this->Auth->user('UserLogs.matrix_access_token'),
                     'image'=> $defaultImg->image_url,
                     'matrix_user_id'=> $this->Auth->user('UserLogs.matrix_user_id')
             ]);
-        }
+        }*/
         $response = ['status'=>'success','message'=>__('Profile image uploaded successfully.'),'data'=>$images];
         $this->set($response);
     }

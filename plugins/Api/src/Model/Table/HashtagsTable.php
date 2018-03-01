@@ -67,12 +67,26 @@ class HashtagsTable extends Table
     }
     
     public function searchHashtags($request = []) {
-        $hashTag = $this->find('all', ['fields'=>['Hashtags.id', 'Hashtags.name', 'Hashtags.created', 'Hashtags.modified']]);
+        $hashTag = $this->find('all', ['fields'=>['Hashtags.id', 'Hashtags.name']]);
         $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
         $hashTag->order(['Hashtags.name'=>'ASC'])->limit($limit);
         if(!empty($request['keyword'])) {
             $hashTag->where(['LOWER(Hashtags.name) LIKE'=>"%".strtolower($request['keyword'])."%"]);
         }
+        $hashTag->contain([
+            'SpaycHashtags'=>function($q) {
+                return $q->select(['SpaycHashtags.hashtag_id', 'total_space'=>$q->func()->count('SpaycHashtags.id')])->group(['SpaycHashtags.hashtag_id']);
+            }
+        ]);
+        $hashTag->formatResults(function (\Cake\Collection\CollectionInterface $results) {
+            return $results->map(function ($row) {
+                $hashId = ApiHasher::decrypt($row->id);
+                $row['total_space'] = !empty($row['spayc_hashtags'][0]['total_space'])?$row['spayc_hashtags'][0]['total_space']:0;
+                unset($row['spayc_hashtags']);
+                return $row;
+            });
+        });
+        
         $page = (!empty($request['page']) && is_numeric($request['page']))?$request['page']:1;
         if($page < 0) {
             $page = $page*-1;
