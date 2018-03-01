@@ -7,6 +7,7 @@ use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Network\Http\Client;
 use Cake\Core\Configure;
+use Cake\ORM\TableRegistry;
 use Aws\Sns\SnsClient;
 
 
@@ -91,6 +92,13 @@ class PushComponent extends Component {
             );
         } catch(Exception $e){
             print($e->getMessage());
+        }
+    }
+    
+    public function sendPushNotification($data) {
+        if(!empty($data['slug'])) {
+            $notificationType = TableRegistry::get("NotificationTypes")->findBySlug($data['slug']);
+            pr($notificationType->isEmpty());exit;
         }
     }
 }

@@ -109,10 +109,4 @@ class NotificationsTable extends Table
 
         return $rules;
     }
-    
-    public function sendPushNotification($data) {
-        if(!empty($data['slug'])) {
-            TableRegistry::get();
-        }
-    }
 }

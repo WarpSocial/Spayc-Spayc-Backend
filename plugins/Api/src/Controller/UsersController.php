@@ -28,6 +28,10 @@ class UsersController extends AppController {
      * 
      * @param object $event 
      */
+    public function initialize() {
+        parent::initialize();
+        $this->loadComponent('Api.Push');
+    }
     
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
@@ -577,6 +581,7 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
         $data = $this->request->getData();
+        
         $errors = $this->Users->friendRequestValidate($data);
         if(!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
@@ -611,7 +616,7 @@ class UsersController extends AppController {
                 /*$push['requested_by'] = $loggedUser['id'];
                 $push['requested_to'] = $data['friend_id'];
                 $push['slug'] = 'friend-request-sent';
-                TableRegistry::get("Notifications")->sendPushNotification($push);*/
+                $this->Push->sendPushNotification($push);*/
                 $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status']),'data'=>[
                     'id'=>$newObj->id,
                     'requested_by'=>$newObj->requested_by,
@@ -768,10 +773,10 @@ class UsersController extends AppController {
         $userId = $this->Auth->user('id');
         $user->contain([
             'Requestedby' => function($q) use($userId) {
-                return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_status', 'Requestedby.requested_to'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
+                return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_status', 'Requestedby.requested_to', 'Requestedby.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
             },
             'Requestedto' => function($q) use($userId) {
-                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
+                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
             },
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.id', 'UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile', 'UserImages.order_index']);
@@ -861,7 +866,6 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
         $data = $this->request->getData();
-        $this->loadComponent('Api.Push');
         if(empty($data['notification']['devices'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Notification data not found.')], 400);
         }
@@ -877,7 +881,6 @@ class UsersController extends AppController {
         if(!$this->request->is(['post'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
-        $this->loadComponent('Api.Push');
         $data = $this->request->getData();
         $this->Push->sendOnIOS($data['device_token'], "test push notification for spayc");
         $response = ['status'=>'success', 'message'=>__('notification sent')];
