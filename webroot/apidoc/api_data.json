@@ -1077,7 +1077,7 @@
             "type": "String",
             "optional": false,
             "field": "friend_status",
-            "description": "<p>Friend status and status must be either one from following 'Pending', 'Accepted', 'Blocked','Direct','Decline','Unfriend' (Required).</p>"
+            "description": "<p>Friend status and status must be either one from following 'Pending', 'Accepted', 'Blocked','is_direct','Decline','Unfriend' (Required).</p>"
           }
         ]
       }
@@ -1263,7 +1263,7 @@
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Friend lists.\",\n    \"data\": {\n        \"count\": 4,\n        \"records\": [\n            {\n                \"id\": \"VkR0a3p4anQ2SUxScm85RGhTZTFpZz09\",\n                \"username\": \"test\",\n                \"matrix_user_id\": null,\n                \"matrix_access_token\": null,\n                \"friend\": {\n                    \"id\": \"bmRkeTJVYjhwTlQzKzdpeWJwWEMvZz09\",\n                    \"requested_by\": 10,\n                    \"requested_to\": 7,\n                    \"requested_status\": \"Pending\",\n                    \"friend_status\": null,\n                    \"matrix_room_id\": \"room:@848843444\"\n                },\n                \"image_url\": \"\"\n            },\n            {\n                \"id\": \"OWxtVWpXalVkaVdWRHVTWUR5amxuZz09\",\n                \"name\": \"test2\",\n                \"matrix_user_id\": null,\n                \"matrix_access_token\": null,\n                \"friend\": {\n                    \"id\": \"NlJpUEx0M016dXBGTjhZdWpWeThBUT09\",\n                    \"requested_by\": 10,\n                    \"requested_to\": 8,\n                    \"requested_status\": \"Pending\",\n                    \"friend_status\": null,\n                    \"matrix_room_id\": \"room:@84854843\"\n                },\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2017_08_14_18_14_10_20180206133936.png\"\n            }\n        ]\n    }\n}",
+          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Friend lists.\",\n    \"data\": {\n        \"count\": 4,\n        \"records\": [\n            {\n                \"id\": \"8\",\n                \"username\": \"user3\",\n                \"matrix_user_id\": null,\n                \"matrix_access_token\": null,\n                \"friend\": {\n                    \"id\": \"42\",\n                    \"requested_by\": \"10\",\n                    \"requested_to\": \"8\",\n                    \"requested_status\": \"Pending\"\n                },\n                \"matrix_room_id\": null,\n                \"image_url\": \"\"\n            },\n            {\n                \"id\": \"9\",\n                \"username\": \"user2\",\n                \"matrix_user_id\": null,\n                \"matrix_access_token\": null,\n                \"friend\": {\n                    \"id\": \"63\",\n                    \"requested_by\": \"10\",\n                    \"requested_to\": \"9\",\n                    \"requested_status\": \"Pending\"\n                },\n                \"matrix_room_id\": \"!ICbUbLzaoTzIvIoEjf:35.168.119.247\",\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226075827.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\"\n            },\n            {\n                \"id\": \"17\",\n                \"username\": \"user1\",\n                \"matrix_user_id\": null,\n                \"matrix_access_token\": null,\n                \"friend\": {\n                    \"id\": \"1\",\n                    \"requested_by\": \"10\",\n                    \"requested_to\": \"17\",\n                    \"requested_status\": \"Pending\"\n                },\n                \"matrix_room_id\": null,\n                \"image_url\": \"\"\n            },\n            {\n                \"id\": \"19\",\n                \"username\": \"test2\",\n                \"matrix_user_id\": \"@test2:35.168.119.247\",\n                \"matrix_access_token\": \"MDAxY2xvY2F0aW9uIDM1LjE2OC4xMTkuMjQ3CjAwMTNpZGVudGlmaWVyIGtleQowMDEwY2lkIGdlbiA9IDEKMDAyOGNpZCB1c2VyX2lkID0gQHRlc3QyOjM1LjE2OC4xMTkuMjQ3CjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gMVJKXjJSTEs3Klc9LmhyQAowMDJmc2lnbmF0dXJlIMyd1A3UtgJZEWcmvehB84AboRIZrFb46AqHTrn4Y2reCg\",\n                \"friend\": {\n                    \"id\": \"43\",\n                    \"requested_by\": \"10\",\n                    \"requested_to\": \"19\",\n                    \"requested_status\": \"Accepted\"\n                },\n                \"matrix_room_id\": \"kjljkljljll54\",\n                \"image_url\": \"\"\n            }\n        ]\n    }\n}",
           "type": "json"
         }
       ]
@@ -2112,117 +2112,6 @@
     "sampleRequest": [
       {
         "url": "http://spayc.com/api/change-password.json"
-      }
-    ],
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "Object",
-            "optional": false,
-            "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
-          }
-        ],
-        "Error-Response Object": [
-          {
-            "group": "Error-Response Object",
-            "type": "Boolean",
-            "optional": false,
-            "field": "status",
-            "description": "<p>failed.</p>"
-          },
-          {
-            "group": "Error-Response Object",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>Message.</p>"
-          }
-        ]
-      },
-      "examples": [
-        {
-          "title": "Sample Error-Response:",
-          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
-          "type": "json"
-        }
-      ]
-    }
-  },
-  {
-    "type": "post",
-    "url": "/chat-request.json",
-    "title": "Chat request",
-    "version": "0.1.0",
-    "name": "chatRequest",
-    "group": "User",
-    "permission": [
-      {
-        "name": "none"
-      }
-    ],
-    "description": "<p>One ot One chat request.</p>",
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "friend_id",
-            "description": "<p>User id to whom you send request(Required).</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "matrix_room_id",
-            "description": "<p>Matrix room id from matrix (Required).</p>"
-          }
-        ]
-      }
-    },
-    "examples": [
-      {
-        "title": "Example usage:",
-        "content": "\n{\n   \"friend_id\": \"anM1a0FkWGlWUXBwR1ZDUU9iR09XQT09\"\n   \"matrix_room_id\": \"room:@000123\"\n}",
-        "type": "json"
-      }
-    ],
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "status",
-            "description": "<p>success.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>Friend request sent successfully.</p>"
-          }
-        ]
-      },
-      "examples": [
-        {
-          "title": "Success-Response:",
-          "content": "     HTTP/1.1 201 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Friend request sent successfully.\"\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "filename": "apidoc/user.js",
-    "groupTitle": "User",
-    "sampleRequest": [
-      {
-        "url": "http://spayc.com/api/chat-request.json"
       }
     ],
     "error": {
@@ -3156,7 +3045,7 @@
             "type": "String",
             "optional": false,
             "field": "friend_status",
-            "description": "<p>Friend status must any one from following list 'Pending', 'Accepted', 'Blocked','Direct','Decline','Unfriend' (Required).</p>"
+            "description": "<p>Friend status must any one from following list 'Pending', 'Accepted', 'Blocked','is_direct','Decline','Unfriend' (Required).</p>"
           }
         ]
       }
@@ -3418,7 +3307,7 @@
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"User profile.\",\n    \"data\": {\n        \"id\": \"anM1a0FkWGlWUXBwR1ZDUU9iR09XQT09\",\n        \"username\": \"test2\",\n        \"email\": \"test2@gmail.com\",\n        \"gender\": \"Male\",\n        \"dob\": \"01-25-1996\",\n        \"country_code\":\"+91\",\n        \"phone\": \"(789)877878\",\n        \"website_url\": null,\n        \"address\": null,\n        \"bio_data\": null,\n        \"longitude\": 77.391026,\n        \"latitude\": 28.535516,\n        \"matrix_user_id\": \"@test2:35.168.119.247\",\n        \"user_images\": [\n            {\n                \"user_id\": 19,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2017_12_26_15_18_47_20180206133935.png\",\n                \"is_profile\": \"No\",\n                \"order_index\": 1\n            }\n        ],\n        \"friend\": {\n            \"id\": \"MzNNbkN6V05zQ2c1N0ViMVJJeEVqZz09\",\n            \"requested_by\": 10,\n            \"requested_to\": 19,\n            \"requested_status\": \"Pending\",\n            \"friend_status\": null,\n            \"total_friends\": 2\n        },\n        \"created_spaycs\": 3,\n        \"joined_spaycs\": 1\n    }\n}",
+          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"User profile.\",\n    \"data\": {\n        \"id\": \"11\",\n        \"username\": \"user\",\n        \"email\": \"test@domain.com\",\n        \"gender\": \"Female\",\n        \"dob\": null,\n        \"country_code\": null,\n        \"phone\": \"\",\n        \"website_url\": null,\n        \"address\": null,\n        \"bio_data\": null,\n        \"longitude\": 77.391026,\n        \"latitude\": 28.535516,\n        \"matrix_user_id\": null,\n        \"user_images\": [\n            {\n                \"id\": \"55\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180223144430.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            },\n            {\n                \"id\": \"56\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073256.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            },\n            {\n                \"id\": \"57\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073525.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            },\n            {\n                \"id\": \"58\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073548.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            }\n        ],\n        \"friend\": {\n            \"id\": \"41\",\n            \"requested_by\": \"10\",\n            \"requested_to\": \"11\",\n            \"requested_status\": \"Requested\",\n            \"total_friends\": 0\n        },\n        \"matrix_room_id\": null,\n        \"created_spaycs\": 0,\n        \"joined_spaycs\": 0\n    }\n}",
           "type": "json"
         }
       ]

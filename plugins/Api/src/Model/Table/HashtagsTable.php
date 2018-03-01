@@ -118,7 +118,7 @@ class HashtagsTable extends Table
                 $items = $entity->first();
             } else {
                 $entity = $this->newEntity();
-                $data = ['name'=>strtolower($hash), 'created'=>date('Y-m-d H:i:s')];
+                $data = ['name'=>$hash, 'created'=>date('Y-m-d H:i:s')];
                 $items = $this->patchEntity($entity, $data, ['validate'=>false]);
                 $this->save($items);
             }
