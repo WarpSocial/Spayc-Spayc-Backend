@@ -253,16 +253,14 @@ function postUser() { return; }
             "count": 33,
             "records": [
                 {
-                    "id": "41",
+                    "id": "59",
                     "name": "color",
-                    "created": "2018-02-01T08:18:00+00:00",
-                    "modified": "2018-02-01T08:18:00+00:00"
+                    "total_space": 1
                 },
                 {
-                    "id": "39",
-                    "name": "festive",
-                    "created": "2018-01-31T13:54:20+00:00",
-                    "modified": "2018-01-31T13:54:20+00:00"
+                    "id": "65",
+                    "name": "drink",
+                    "total_space": 1
                 }
             ]
         }

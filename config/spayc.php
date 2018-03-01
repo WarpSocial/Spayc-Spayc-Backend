@@ -14,7 +14,7 @@ return [
         'Decline'=>'Friend status updated successfully.',
     ],
     //'friend_status'=>['Blocked', 'Unfriend', 'Unblock'],
-    'maxupload'=>'2MB',
+    'maxupload'=>'5MB',
     'adminEmail' =>'kiwitech@gmail.com',
     'reverification_subject'=>'Re-Verifiaction',
     'forgotpassword_subject'=>'Forgot Password'

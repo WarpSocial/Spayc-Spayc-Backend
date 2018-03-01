@@ -67,7 +67,6 @@ class UserImagesTable extends Table {
                     'rule' => ['fileSize', '<=', \Cake\Core\Configure::read('maxupload')],
                     'message' => __('Image size must be less than ' . \Cake\Core\Configure::read('maxupload') . '.')
         ]);
-
         return $validator;
     }
 
