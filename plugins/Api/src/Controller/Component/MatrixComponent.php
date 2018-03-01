@@ -376,6 +376,12 @@ class MatrixComponent extends Component {
         ); 
         
         $response = json_decode($httpResponse->body,true);
+        if(!empty($response['errcode'])){
+            return $response;
+        }else{
+            return true;
+        }
+        pr($response);die;
         
     }
     

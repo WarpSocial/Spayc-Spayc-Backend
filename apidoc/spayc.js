@@ -95,6 +95,32 @@
  */
 function postSpaycs() { return; }
 /**
+@api {delete} /spaycs/:room_id.json Delete Space/Subspace
+@apiVersion 0.1.0
+@apiName DeleteSpace
+@apiGroup Spayc
+@apiPermission private
+
+@apiDescription Delete space or subspace with room id.Matrix room also deleted.
+
+@apiHeader {String} TOKEN          A registered token must be in header.
+
+
+@apiSuccess {String} status success.
+@apiSuccess {String} message The spayc has been deleted.
+@apiSuccessExample {json} Success-Response: 
+    HTTP/1.1 201 OK
+{
+    "response": {
+        "status": "success",
+        "message": "The spayc has been deleted."
+    }
+}
+
+@apiUse errorResponse
+ */
+function deleteSpace() { return; }
+/**
 @api {post} /create-subspace.json Create SubSpayc
 @apiVersion 0.1.0
 @apiName PostSubspayc
