@@ -300,14 +300,60 @@ class SpaycsTable extends Table {
         return $data;
     }
     
-    public function spaycMember($spaceid){
-        $query = TableRegistry::get('Users')->find()->contain([
-            'JoinedSpayc'=>function($q)use($spaceid){
-                $q->select(['user_id','status','task_index']);
-                $q->where(['task_index'=>$task_id->task_index]);
-                return $q;
+    public function spaycMember($spaceid = null,$status = null,$page = null,$limit=null){
+        if($spaceid == null){
+            return false;
+        }
+        $spayc = $this->find()->select('id')->where(['matrix_room_id'=>$spaceid])->first();
+        if(empty($spayc)){
+            return false;
+        }
+        $matrix_room_id = $spayc->id;
+        $query = $this->Users->find();
+        $query->select(['Users.id', 'Users.username', 'Users.email', 'Users.gender', 'Users.dob','Users.country_code', 'Users.phone', 'Users.website_url', 'Users.address', 'Users.bio_data', 'Users.longitude', 'Users.latitude', 'Users.matrix_user_id','JoinedSpayc.status']);
+        $query->contain([
+             'UserImages'=>function($q) {
+                return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
             }
         ]);
+        $query->innerJoinWith('JoinedSpayc',function($q)use($matrix_room_id,$status) {
+                $condition = ['JoinedSpayc.spayc_id'=>$matrix_room_id];
+                if($status != null){
+                    $condition['JoinedSpayc.status'] = $status;
+                }
+                return $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status'])
+                        ->where($condition);
+        });       
+ //       debug($query);die;
+        if($limit != null){
+            $query->limit($limit);
+        }
+        if($page != null){
+            $query->page($page);
+        }
+        if($query->isEmpty()){
+            return [];
+        }
+        $result = $query->map(function ($row) {
+            $row->user_id = $row->id;
+            if(!empty($row->_matchingData['JoinedSpayc']->is_admin)){
+                $row->is_admin = $row->_matchingData['JoinedSpayc']->is_admin;
+            }else{
+                $row->is_admin = false;
+            }
+            if(!empty($row->_matchingData['JoinedSpayc']->status)){
+                $row->requested_status = $row->_matchingData['JoinedSpayc']->status;
+            }else{
+                $row->requested_status = "Pending";
+            }
+            $row->is_subscribed = false;
+            $row->physically_present = false;
+            $row->user_images = !empty($row->user_images[0]['image_url'])?$row->user_images[0]['image_url']:"";
+            
+            unset($row->_matchingData,$row->id);
+            return $row;
+        });
+        return $result;
     }
 
 }
