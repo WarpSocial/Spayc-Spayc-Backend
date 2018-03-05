@@ -615,7 +615,7 @@ class UsersController extends AppController {
                 //data prepaire for push notification//
                 $push['requested_by'] = $loggedUser['id'];
                 $push['requested_to'] = $data['friend_id'];
-                $push['slug'] = 'friend-request-sent';
+                $push['slug'] = 'friend-request';
                 $push['spayc_id'] = null; //provide spayc id if push related to spayc
                 $this->Push->sendPushNotification($push);
                 $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status']),'data'=>[
