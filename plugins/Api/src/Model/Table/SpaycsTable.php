@@ -300,7 +300,7 @@ class SpaycsTable extends Table {
         return $data;
     }
     
-    public function spaycMember($spaceid = null,$page = null,$limit=null){
+    public function spaycMember($spaceid = null,$status = null,$page = null,$limit=null){
         if($spaceid == null){
             return false;
         }
@@ -316,14 +316,20 @@ class SpaycsTable extends Table {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
             }
         ]);
-        $query->innerJoinWith('JoinedSpayc',function($q)use($matrix_room_id) {
-                return $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status'])->where(['JoinedSpayc.spayc_id'=>$matrix_room_id]);
-        });        
+        $query->innerJoinWith('JoinedSpayc',function($q)use($matrix_room_id,$status) {
+                $condition = ['JoinedSpayc.spayc_id'=>$matrix_room_id];
+                if($status != null){
+                    $condition['JoinedSpayc.status'] = $status;
+                }
+                return $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status'])
+                        ->where($condition);
+        });       
+ //       debug($query);die;
         if($limit != null){
-            $query->limit(2);
+            $query->limit($limit);
         }
         if($page != null){
-            $query->page(2);
+            $query->page($page);
         }
         if($query->isEmpty()){
             return [];

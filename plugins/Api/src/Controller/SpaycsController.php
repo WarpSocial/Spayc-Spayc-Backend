@@ -582,7 +582,7 @@ class SpaycsController extends AppController {
             $page = 1;
         }
         
-        $query = $this->Spaycs->spaycMember($spaycId);
+        $query = $this->Spaycs->spaycMember($spaycId,$status,$page,$limit);
         if(!empty($query)){
             
         }
