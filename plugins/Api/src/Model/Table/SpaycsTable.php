@@ -7,6 +7,7 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use Cake\Core\Configure;
+use Cake\I18n\Time;
 
 /**
  * Spaycs Model
@@ -99,17 +100,18 @@ class SpaycsTable extends Table {
 
         $validator                
                 ->requirePresence('start_date', 'create',__('Start Date key is missing.'))
-                ->dateTime('start_date','mdy',__('Start date is not in format MM-DD-YYYY H:i:s'))
                 ->notEmpty('start_date',__('Start date is required when type is event.'),function($context){
                      return (isset($context['data']['type']) && ($context['data']['type'] =='Event'));
                 })
+                ->dateTime('start_date','mdy',__('Start date is not in format MM-DD-YYYY H:i:s'))
+                        
                 ->add('start_date','daterange',[
                     'rule'=> function($value,$context){
                         if(!empty($value)){
                             /* Doesn't exceed 1 year ahead */
                             $timezone = Configure::read('timezone');
-                            $startDate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$value,$timezone);
-                            $currentDate = new \Cake\I18n\Time('now',$timezone);
+                            $startDate = Time::createFromFormat('m-d-Y H:i:s',$value,$timezone);
+                            $currentDate = new Time('now',$timezone);
                             $now = clone $currentDate;
                             $currentDate->modify('+1 year')->modify('+1 minute');
                             return (bool) ($startDate >= $now && $startDate <= $currentDate);
@@ -118,18 +120,18 @@ class SpaycsTable extends Table {
                     'message'=>__('Start date can\'t be more than 1 year ahead or any past date.')
                 ]);
         $validator                
-                ->requirePresence('end_date', 'create',__('End Date key is missing.'))
-                ->dateTime('end_date','mdy',__('End date is not in format MM-DD-YYYY H:i:s'))
+                ->requirePresence('end_date', 'create',__('End Date key is missing.'))                
                 ->notEmpty('end_date',__('End date is required when type is event.'),function($context){
                      return (isset($context['data']['type']) && ($context['data']['type'] =='Event'));
                 })
+                ->dateTime('end_date','mdy',__('End date is not in format MM-DD-YYYY H:i:s'))
                 ->add('end_date','daterange',[
                     'rule'=> function($value,$context){
                      $timezone = Configure::read('timezone');
                         if(!empty($value) && !empty($context['data']['end_date']) && !empty($context['data']['start_date'])){
                             /* End date must be below of start date */
-                            $startDate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$context['data']['start_date'],$timezone);
-                            $endDate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$value,$timezone);
+                            $startDate = Time::createFromFormat('m-d-Y H:i:s',$context['data']['start_date'],$timezone);
+                            $endDate = Time::createFromFormat('m-d-Y H:i:s',$value,$timezone);
                             if($endDate->format('H') == '00'){
                                 $endDate->setTime(23,55);
                             }

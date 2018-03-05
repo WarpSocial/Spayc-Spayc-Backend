@@ -190,8 +190,8 @@ class MatrixComponent extends Component {
         
         $http = new Client();
         $url = $this->config('url') .DS.$this->config('client'). DS.$matrix_room_id.DS.'state';
-        if(!empty($items['name'])){
-            $http->put(
+        if(!empty($items['name'])){ 
+            $httpResponse['name'] =   $http->put(
                 $url.'/m.room.name?access_token='.$items['matrix_token'], 
                 json_encode(['name'=>$items['name']]), 
                 [
@@ -201,10 +201,11 @@ class MatrixComponent extends Component {
                     'ssl_verify_host' => $this->config('sslverify'),
                     'ssl_verify_peer_name' => $this->config('sslverify')
                 ]
-            );            
+            );
+            pr($httpResponse['name']->body());
         }
         if(!empty($items['description'])){
-            $http->put(
+            $httpResponse['topic'] =  $http->put(
                 $url.'/m.room.topic?access_token='.$items['matrix_token'], 
                 json_encode(['topic'=>$items['description']]), 
                 [
@@ -218,34 +219,32 @@ class MatrixComponent extends Component {
         }
         if(!empty($items['group_type'])){
             $preset = strtolower($items['group_type']).'_chat';
-            $http->put(
+            $httpResponse['preset'] = $http->put(
                 $url.'/m.room.preset?access_token='.$items['matrix_token'], 
-                json_encode(['preset'=>$preset]), 
-                [
-                    'type'=>'json',
-                    'ssl_verify_host' => $this->config('sslverify'), 
-                    'ssl_verify_peer' => $this->config('sslverify'),
-                    'ssl_verify_host' => $this->config('sslverify'),
-                    'ssl_verify_peer_name' => $this->config('sslverify')
-                ]
-            );
+                    json_encode(['preset'=>$preset]), 
+                    [
+                        'type'=>'json',
+                        'ssl_verify_host' => $this->config('sslverify'), 
+                        'ssl_verify_peer' => $this->config('sslverify'),
+                        'ssl_verify_host' => $this->config('sslverify'),
+                        'ssl_verify_peer_name' => $this->config('sslverify')
+                    ]
+                );
             
-            $http->put(
-                $url.'/m.room.visibility?access_token='.$items['matrix_token'], 
-                json_encode(['visibility'=>$items['visibility']]), 
-                [
-                    'type'=>'json',
-                    'ssl_verify_host' => $this->config('sslverify'), 
-                    'ssl_verify_peer' => $this->config('sslverify'),
-                    'ssl_verify_host' => $this->config('sslverify'),
-                    'ssl_verify_peer_name' => $this->config('sslverify')
-                ]
-            ); 
+            $httpResponse['visibility'] = $http->put(
+                    $url.'/m.room.visibility?access_token='.$items['matrix_token'], 
+                    json_encode(['visibility'=>$items['group_type']]), 
+                    [
+                        'type'=>'json',
+                        'ssl_verify_host' => $this->config('sslverify'), 
+                        'ssl_verify_peer' => $this->config('sslverify'),
+                        'ssl_verify_host' => $this->config('sslverify'),
+                        'ssl_verify_peer_name' => $this->config('sslverify')
+                    ]
+                ); 
         }
-        
-        
-        $response = json_decode($httpResponse->body,true);
-        pr($response);die;
+        //$response = json_decode($httpResponse,true);
+        pj($httpResponse);die;
         return $response;
     }
     
@@ -357,7 +356,7 @@ class MatrixComponent extends Component {
     
     public function leaveRoom($matrix_room_id = null,$matrix_token = null){
         if(empty($matrix_room_id) || empty($matrix_token)){
-            echo "one";die;
+            return false;
         }
         $roomId  = $this->validRoomId($matrix_room_id);
         $http = new Client();
