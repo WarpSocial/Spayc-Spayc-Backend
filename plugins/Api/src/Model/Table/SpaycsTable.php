@@ -191,7 +191,8 @@ class SpaycsTable extends Table {
         $validator
                 ->requirePresence('name','create', __('Name key is missing.'))
                 ->maxLength('name', 255,'Name text is too long.')
-                ->notEmpty('name',__('Spayc name is required.'));
+                ->notEmpty('name',__('Spayc name is required.'))
+                ->notBlank('name',__('Spayc name is required.'));
 
         $validator
                 ->requirePresence('group_type', 'create',__('Group key is missing.'))
@@ -201,10 +202,13 @@ class SpaycsTable extends Table {
         $validator
                 //->requirePresence('passcode', 'create',__('Passcode key is missing.'))
                 ->maxLength('passcode', 30,__('Max 30 character is allowed for passcode.'))
-                //->add('passcode', 'unique', ['rule' => 'validateUnique','message'=>'Username must be unique.', 'provider' => 'table'])
+                ->notBlank('passcode',__('Passcode is required in case of private group type.'),function($context){                    
+                     return (isset($context['data']['group_type']) && ($context['data']['group_type'] =='Private'));
+                })
                 ->notEmpty('passcode',__('Passcode is required in case of private group type.'),function($context){                    
                      return (isset($context['data']['group_type']) && ($context['data']['group_type'] =='Private'));
                 });
+                
 
         $validator
                 ->requirePresence('description', 'create',__('Description key is missing.'))
