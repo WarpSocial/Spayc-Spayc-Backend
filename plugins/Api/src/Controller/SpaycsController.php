@@ -21,6 +21,11 @@ use Cake\Event\EventManager;
  */
 class SpaycsController extends AppController {
     
+    public function initialize() {
+        parent::initialize();
+        $this->loadComponent('Api.Push');
+    }
+    
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
         $this->Auth->allow('matrixApplicationService');
@@ -56,8 +61,23 @@ class SpaycsController extends AppController {
         $items->set('matrix_room_alias',$matrix['room_alias']);
         $items->set('user_id', $this->Auth->user('id'));
         if (!$items->errors()) {
-            if($this->Spaycs->save($items)){
-                 if(!empty($items['description'])) {
+            if($this->Spaycs->save($items)) {
+                //data prepaire for push notification//
+                if(!empty($items['invite'])) {
+                    $invities = explode(',',$items['invite']);
+                    foreach($invities as $invite) {
+                        $requestedTo = TableRegistry::get('Api.Users')->findByMatrixUserId($invite)->select('id');
+                        if(!$requestedTo->isEmpty()) {
+                            $push['requested_by'] = $this->Auth->user('id');
+                            $push['requested_to'] = $requestedTo->first()->id;
+                            $push['slug'] = 'new-spayc';
+                            $push['spayc_id'] = $items['id'];
+                            $push['matrix_room_id'] = $items['matrix_room_id'];
+                            $this->Push->sendPushNotification($push);
+                        }
+                    }
+                }
+                if(!empty($items['description'])) {
                     TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
                 }
                 $this->response->statusCode(201);
