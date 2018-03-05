@@ -78,11 +78,11 @@ class PushComponent extends Component {
             $FinalMessage = json_encode(array('default' => $message,'APNS' => json_encode(array(
                     'aps' => array(
                       'alert' => $message,
-                      'sound'=>'default'
-                      ),
+                      'sound'=>'default',
                       'user_id'=>!empty($data['requested_by'])?$data['requested_by']:null,
                       'matrix_room_id'=>!empty($data['matrix_room_id'])?$data['matrix_room_id']:null,
                       'notification_type'=>!empty($data['notification_type'])?$data['notification_type']:null
+                    )
                     ))
                 ));
             
