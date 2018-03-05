@@ -372,8 +372,9 @@ class SpaycsController extends AppController {
         if(empty($this->request->query('id'))) {
             $this->restException(['status'=>'failed', 'message'=>__('Spayc id is required field.')], 400);
         }
-        $id = ApiHasher::decrypt($this->request->query('id'));
-        $exists = $this->Spaycs->exists(['id'=>$id]);
+        //$id = ApiHasher::decrypt($this->request->query('id'));
+        $id = $this->request->query('id');
+        $exists = $this->Spaycs->exists(['matrix_room_id'=>$id]);
         if(!$exists) {
             $this->restException(['status'=>'failed', 'message'=>__('Invalid spayc id.')], 400);
         }
@@ -398,15 +399,15 @@ class SpaycsController extends AppController {
                 * sin( radians( Spaycs.latitude ) )))';
             $distance = 0;
             $spayc = $this->Spaycs->find()
-            ->select(['distance' => $distanceField, 'Spaycs.id', 'Spaycs.name', 'address'=>'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type'])
-            ->where(["$distanceField >="=>$distance, 'status'=>'Active', 'id'=>$id])
+            ->select(['distance' => $distanceField, 'Spaycs.id', 'Spaycs.name', 'address'=>'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.description','Spaycs.matrix_room_id'])
+            ->where(["$distanceField >="=>$distance, 'status'=>'Active', 'matrix_room_id'=>$id])
             ->bind(':latitude', $this->request->query('latitude'), 'float')
             ->bind(':longitude', $this->request->query('longitude'), 'float');
             $spayc->order(['distance'=>'ASC']);
         } else {
             $spayc = $this->Spaycs->find()
-            ->select(['Spaycs.id', 'Spaycs.name', 'address'=>'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type'])
-            ->where(['status'=>'Active', 'id'=>$id]);
+            ->select(['Spaycs.id', 'Spaycs.name', 'address'=>'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.description','Spaycs.matrix_room_id'])
+            ->where(['status'=>'Active', 'matrix_room_id'=>$id]);
             $spayc->order(['created'=>'DESC']);
         }
         
@@ -564,6 +565,10 @@ class SpaycsController extends AppController {
         $this->autoRender = false;
        // pr($this->request);
        Log::info(json_encode($this->request->data(),JSON_PRETTY_PRINT));
+    }
+    
+    public function spaycMember(){
+        
     }
 
 }

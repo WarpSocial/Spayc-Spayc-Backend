@@ -8,6 +8,7 @@ use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use Cake\Core\Configure;
 use Cake\I18n\Time;
+use Cake\ORM\TableRegistry;
 
 /**
  * Spaycs Model
@@ -297,6 +298,16 @@ class SpaycsTable extends Table {
             $data['records'] = $spaycs->toArray();
         }
         return $data;
+    }
+    
+    public function spaycMember($spaceid){
+        $query = TableRegistry::get('Users')->find()->contain([
+            'JoinedSpayc'=>function($q)use($spaceid){
+                $q->select(['user_id','status','task_index']);
+                $q->where(['task_index'=>$task_id->task_index]);
+                return $q;
+            }
+        ]);
     }
 
 }
