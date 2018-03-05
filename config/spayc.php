@@ -4,6 +4,7 @@ return [
     'gender'=>['Male', 'Female', 'Other'],
     'spayctype'=>['Event', 'Community'],
     'grouptype'=>['Public', 'Private'],
+    'pagelimit'=>5,
     'friend_requested_status'=>['Pending', 'Accepted', 'Blocked','Unblock','is_direct','Decline','Unfriend'],
     'requestMsg'=>[
         'Pending'=>'Friend Request sent Successfully.',
