@@ -386,3 +386,47 @@ function getView() { return; }
 @apiUse errorResponse
  */
 function postChatRoom() { return; }
+/**
+ * @api {get} /spayc-members.json Spayc Member
+ * @apiVersion 0.1.0
+ * @apiName getSpaycMember
+ * @apiGroup Spayc
+ * @apiPermission private
+ *
+ * @apiDescription Spayc member to find the list of users associated with the room as well as also check is this is subscribed or not.Method must be get.
+ * 
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * 
+    @apiParam {Number}      spay_id         Spayc id in query string (Required).
+    @apiParam {String}      latitude        Latitude is optional in query string(Optional).
+    @apiParam {String}      longitude       Longitude is optional in query string(Optional).
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Spayc Details.
+ * @apiSuccess {Object} data Object of Spayc details.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Spayc Details.",
+    "data": {
+        "distance": "0",
+        "id": "32",
+        "name": "spaycdev13",
+        "address": "Your address",
+        "image": "",
+        "description": "spayc creating",
+        "group_type": "Public",
+        "type": "Community",
+        "subscribed_users": 2,
+        "friends": 0,
+        "joined_users": 1,
+        "is_subscribed": true,
+        "total_comments": 1,
+        "total_presents": 0
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function getSpaycMember() { return; }
