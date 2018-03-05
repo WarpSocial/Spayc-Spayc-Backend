@@ -387,43 +387,52 @@ function getView() { return; }
  */
 function postChatRoom() { return; }
 /**
- * @api {get} /spayc-members.json Spayc Member
+ * @api {get} /spayc-members.json List of Spayc Member
  * @apiVersion 0.1.0
  * @apiName getSpaycMember
  * @apiGroup Spayc
  * @apiPermission private
  *
- * @apiDescription Spayc member to find the list of users associated with the room as well as also check is this is subscribed or not.Method must be get.
+ * @apiDescription Spayc member to find the list of users associated with the room.Method must be get.In case of invalid spayc id return ivalid request
  * 
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
-    @apiParam {Number}      spay_id         Spayc id in query string (Required).
-    @apiParam {String}      latitude        Latitude is optional in query string(Optional).
-    @apiParam {String}      longitude       Longitude is optional in query string(Optional).
+    @apiParam {String}      spay_id         Spayc id in query string (Required).
+    @apiParam {String}      status     Status of user, value must be any one from following(Pending|Accepted) (Optional).
+    @apiParam {Digit}      page        Page no(Optional).
+    @apiParam {Digit}      limit       No of record to retrieve(Optional).
  *
  * @apiSuccess {String} status success.
- * @apiSuccess {String} message Spayc Details.
- * @apiSuccess {Object} data Object of Spayc details.
+ * @apiSuccess {String} message List of spayc member.
+ * @apiSuccess {Object} data Object of User details.
  * @apiSuccessExample {json} Success-Response: 
  *      HTTP/1.1 200 OK
 {
-    "status": "success",
-    "message": "Spayc Details.",
-    "data": {
-        "distance": "0",
-        "id": "32",
-        "name": "spaycdev13",
-        "address": "Your address",
-        "image": "",
-        "description": "spayc creating",
-        "group_type": "Public",
-        "type": "Community",
-        "subscribed_users": 2,
-        "friends": 0,
-        "joined_users": 1,
-        "is_subscribed": true,
-        "total_comments": 1,
-        "total_presents": 0
+    "response": {
+        "status": "success",
+        "message": "Spayc Details.",
+        "data": [
+            {
+                "username": "devtest1dddCd",
+                "email": "devtest1dddCd@kiwitech.com",
+                "gender": "Male                                              ",
+                "dob": "02-25-2005",
+                "country_code": null,
+                "phone": "",
+                "website_url": null,
+                "address": null,
+                "bio_data": null,
+                "longitude": "21.253",
+                "latitude": "25.256",
+                "matrix_user_id": "@devtest1dddcd:127.0.0.1",
+                "user_images": "https://spayc-qa.s3.amazonaws.com/profile/4_20180220070221.png",
+                "user_id": "9",
+                "is_admin": false,
+                "requested_status": "Accepted",
+                "is_subscribed": false,
+                "physically_present": false
+            }
+        ]
     }
 }
  *

@@ -606,7 +606,7 @@ class SpaycsController extends AppController {
         if(!empty($query)){
             
         }
-        $response = ['status'=>'success', 'message'=>__('Spayc Details.'), 'data'=>$query];
+        $response = ['status'=>'success', 'message'=>__('List of spayc member.'), 'data'=>$query];
         $this->set(compact('response'));
     }
 
