@@ -567,8 +567,27 @@ class SpaycsController extends AppController {
        Log::info(json_encode($this->request->data(),JSON_PRETTY_PRINT));
     }
     
-    public function spaycMember(){
+    public function spaycMembers(){
+        $spaycId = $this->request->getQuery('spayc_id');
+        $status = $this->request->getQuery('status');
+        $page = $this->request->getQuery('page');
+        $limit = $this->request->getQuery('limit');
+        if(empty($spaycId)){
+             $this->restException(['status'=>'failed','message'=>'Invalid requested data.'], 400);
+        }
+        if(empty($limit)){
+            $limit = Configure::read('pagelimit');
+        }
+        if(empty($page)){
+            $page = 1;
+        }
         
+        $query = $this->Spaycs->spaycMember($spaycId);
+        if(!empty($query)){
+            
+        }
+        $response = ['status'=>'success', 'message'=>__('Spayc Details.'), 'data'=>$query];
+        $this->set(compact('response'));
     }
 
 }

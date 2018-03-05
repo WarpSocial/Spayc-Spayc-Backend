@@ -181,3 +181,6 @@ INSERT INTO "notification_types" ("id", "type", "message", "slug", "created", "m
 (15,	'spayc inative',	'spayc inative',	'spayc-inative',	'2018-02-28 17:27:10.578674',	NULL),
 (16,	'delete spayc',	'delete spayc',	'delete-spayc',	'2018-02-28 17:27:10.578674',	NULL),
 (17,	'Any new space created in 25miles',	'Any new space created in 25miles',	'any-new-space-created-in-25miles',	'2018-02-28 17:27:10.578674',	NULL);
+
+
+ALTER TABLE "joined_spayc" ADD "updated_by" bigint NULL;

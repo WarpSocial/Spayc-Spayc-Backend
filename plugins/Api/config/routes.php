@@ -37,6 +37,7 @@ Router::plugin(
         $routes->connect('/chat-room', ['controller' => 'Spaycs', 'action' => 'createChatRoom']);
         $routes->connect('/create-subspace', ['controller' => 'Spaycs', 'action' => 'createSubSpace']);
         $routes->connect('/spayc-edit',['controller'=>'Spaycs', 'action'=>'edit']);
+        $routes->connect('/spayc-members',['controller'=>'Spaycs', 'action'=>'spaycMembers']);
         $routes->connect('/get-notifications',['controller'=>'Users', 'action'=>'getNotifications']);
         
         //$routes->connect('/as', ['controller' => 'Spaycs', 'action' => 'matrixApplicationService']);
