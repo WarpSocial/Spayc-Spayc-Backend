@@ -946,7 +946,7 @@ function postUpdateUserStatus() { return; }
     "data": [
         {
             "id": "1",
-            "date_time": "2018-02-28T15:21:41+00:00",
+            "date_time": "03-01-2018 18:44:52",
             "message": "Friend request accepted",
             "notification_type": "request accepted",
             "space_name": "spaycdev9",
@@ -959,7 +959,7 @@ function postUpdateUserStatus() { return; }
         },
         {
             "id": "2",
-            "date_time": "2018-02-28T15:21:41+00:00",
+            "date_time": "02-28-2018 20:51:41",
             "message": "Friend block",
             "notification_type": "request accepted",
             "space_name": null,

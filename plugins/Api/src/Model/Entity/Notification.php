@@ -3,6 +3,8 @@ namespace Api\Model\Entity;
 
 use Cake\ORM\Entity;
 use Api\Auth\ApiHasher;
+use Cake\I18n\Time;
+use Cake\Core\Configure;
 
 /**
  * Notification Entity
@@ -39,5 +41,15 @@ class Notification extends Entity
     
     protected function _getId($id) {
         return ApiHasher::encrypt($id);
+    }
+    
+    protected function _getDateTime($date) {
+        $timezone = Configure::read('timezone');
+        if (!empty($date)) {
+            $sd = new Time($date);
+            return $sd->setTimezone($timezone)->format('m-d-Y H:i:s');
+        } else {
+            return;
+        }
     }
 }
