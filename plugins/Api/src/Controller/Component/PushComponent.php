@@ -107,6 +107,9 @@ class PushComponent extends Component {
                 return false;
             }
             $deviceId = $deviceId->first();
+            if($notificationType->slug == 'friend-request') {
+                $notificationType->message = str_replace("<USERNAME>", ucwords($data['username']), $notificationType->message);
+            }
             $sent = $this->sendOnIOS($deviceId->device_id, $notificationType->message);
             if(!$sent) {
                 $data['notification_type'] = $notificationType->type;

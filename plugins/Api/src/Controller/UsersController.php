@@ -586,12 +586,22 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
         $data['friend_id'] = ApiHasher::decrypt($data['friend_id']);
+        
+        $loggedUser = $this->Auth->user();
+        $push['requested_by'] = $loggedUser['id'];
+        $push['requested_to'] = $data['friend_id'];
+        $push['slug'] = 'friend-request';
+        $push['spayc_id'] = null; //provide spayc id if push related to spayc
+        $push['username'] = $loggedUser['username'];
+        $this->Push->sendPushNotification($push);exit;
+                
+                
         $frObj = TableRegistry::get('Api.FriendRequest');
         $spaceUsr = $this->Users->exists(['id'=>$data['friend_id']]);
         if(!$spaceUsr){
              $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
         }
-        $loggedUser = $this->Auth->user();   
+        $loggedUser = $this->Auth->user(); 
          if(in_array($data['friend_status'], ['Decline','Unfriend'])){
             if($frObj->deleteAll(['OR'=>[
                 ['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']],
