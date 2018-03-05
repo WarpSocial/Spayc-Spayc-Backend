@@ -24,6 +24,7 @@ CREATE TABLE users (
     token_verification VARCHAR(255) NULL,
     forgot_password_token VARCHAR(255) NULL,
     forgot_password_timestamp timestamp NULL,
+    is_notify VARCHAR(10) NULL,
     created timestamp NOT NULL,
     modified timestamp,
     primary key (id,created),

@@ -23,15 +23,16 @@ use Cake\Utility\Text;
 class UsersController extends AppController {
     use MailerAwareTrait;
     
+    public function initialize() {
+        parent::initialize();
+        $this->loadComponent('Api.Push');
+    }
+    
     /**
      * beforeFilter overwrite the default function
      * 
      * @param object $event 
      */
-    public function initialize() {
-        parent::initialize();
-        $this->loadComponent('Api.Push');
-    }
     
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
@@ -583,23 +584,13 @@ class UsersController extends AppController {
         $data = $this->request->getData();
         $errors = $this->Users->friendRequestValidate($data);
         if(!empty($errors)) {
-            $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
+            $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($errors)], 400);
         }
         $data['friend_id'] = ApiHasher::decrypt($data['friend_id']);
-        
-        $loggedUser = $this->Auth->user();
-        $push['requested_by'] = $loggedUser['id'];
-        $push['requested_to'] = $data['friend_id'];
-        $push['slug'] = 'friend-request';
-        $push['spayc_id'] = null; //provide spayc id if push related to spayc
-        $push['username'] = $loggedUser['username'];
-        $this->Push->sendPushNotification($push);exit;
-                
-                
         $frObj = TableRegistry::get('Api.FriendRequest');
         $spaceUsr = $this->Users->exists(['id'=>$data['friend_id']]);
         if(!$spaceUsr){
-             $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
         }
         $loggedUser = $this->Auth->user(); 
          if(in_array($data['friend_status'], ['Decline','Unfriend'])){
@@ -624,8 +615,9 @@ class UsersController extends AppController {
             if($frObj->save($newObj)) {
                 //data prepaire for push notification//
                 $push['requested_by'] = $loggedUser['id'];
+                $push['username'] = $loggedUser['username'];
                 $push['requested_to'] = $data['friend_id'];
-                $push['slug'] = 'friend-request';
+                $push['slug'] = ($data['friend_status']=='Pending')?'friend-request':'blocked';
                 $push['spayc_id'] = null; //provide spayc id if push related to spayc
                 $this->Push->sendPushNotification($push);
                 $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status']),'data'=>[
@@ -647,7 +639,13 @@ class UsersController extends AppController {
             $frndRequest->set('requested_status',$data['friend_status']);
             $frndRequest->set('action_by',$loggedUser['id']);
             if($frObj->save($frndRequest)){
-                
+                //data prepaire for push notification//
+                $push['requested_by'] = $loggedUser['id'];
+                $push['username'] = $loggedUser['username'];
+                $push['requested_to'] = $data['friend_id'];
+                $push['slug'] = ($data['friend_status']=='Pending')?'friend-request':'blocked';
+                $push['spayc_id'] = null; //provide spayc id if push related to spayc
+                $this->Push->sendPushNotification($push);
                 $this->restException(['status'=>'success', 'message'=> Configure::read('requestMsg.'.$data['friend_status']),'data'=>[                    
                     'id'=>$frndRequest->id,
                     'requested_by'=>$frndRequest->requested_by,
@@ -682,7 +680,7 @@ class UsersController extends AppController {
                 $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status'])]);
             }
         }
-        $requestedFrnd = $frObj->find()->where(['requested_by' => $data['friend_id'],'requested_to'=>$loggedUser['id']]);        
+        $requestedFrnd = $frObj->find()->where(['requested_by' => $data['friend_id'],'requested_to'=>$loggedUser['id']]);
         if($requestedFrnd->isEmpty()){
             $this->restException(['status'=>'failed', 'message'=>__('Record not found to update status.')], 400);
         }
@@ -692,9 +690,21 @@ class UsersController extends AppController {
        }            
         $frndRequest->set('requested_status',$data['friend_status']);
         $frndRequest->set('action_by',$loggedUser['id']);
-        if($frObj->save($frndRequest)){
-
-            $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status']),'data'=>[                    
+        if($frObj->save($frndRequest)) {
+            //data prepaire for push notification//
+            $push['requested_by'] = $loggedUser['id'];
+            $push['username'] = $loggedUser['username'];
+            $push['requested_to'] = $data['friend_id'];
+            $push['spayc_id'] = null; //provide spayc id if push related to spayc
+            if(($data['friend_status']=='Accepted')) {
+                $push['slug'] = 'friend-added';
+                $this->Push->sendPushNotification($push);
+            } else if($data['friend_status']=='Blocked') {
+                $push['slug'] = 'blocked';
+                $this->Push->sendPushNotification($push);
+            }
+            
+            $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status']),'data'=>[
                 'id'=>$frndRequest->id,
                 'requested_by'=>$frndRequest->requested_by,
                 'requested_to'=>$frndRequest->requested_to,
@@ -980,6 +990,21 @@ class UsersController extends AppController {
             $this->response->statusCode(204);
         }
         $response = ['status'=>'success', 'message'=>__('Notification Lists.'), 'data'=>$notifications];
+        $this->set($response);
+    }
+    
+    public function updateDeviceToken() {
+        if(!$this->request->is(['post'])) {
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
+        }
+        $data = $this->request->getData();
+        if(empty($data['is_notify'])) {
+            $this->restException(['status'=>'failed','message'=>'is_notify is required field.'], 400);
+        }
+        $update['Users']['is_notify'] = $data['is_notify'];
+        $update['UserLogs']['device_id'] = $data['device_token'];
+        $this->Users->UpdateAll($update, ['Users.id'=>$this->Auth->user('id')]);
+        $response = ['status'=>'success', 'message'=>__('Device token updated successfully.')];
         $this->set($response);
     }
 }
