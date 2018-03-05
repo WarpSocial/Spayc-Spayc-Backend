@@ -11,7 +11,7 @@ define({ "api": [
         "name": "private"
       }
     ],
-    "description": "<p>Create a new room for one to one chat.</p>",
+    "description": "<p>Create a new room for one to one chat.</p> ",
     "header": {
       "fields": {
         "Header": [
@@ -20,7 +20,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
           }
         ]
       }
@@ -33,7 +33,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "invite",
-            "description": "<p>Matrix user id is optional in query string(Required).</p>"
+            "description": "<p>Matrix user id is optional in query string(Required).</p> "
           }
         ]
       }
@@ -53,21 +53,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Your room, spaycdev, has been created.</p>"
+            "description": "<p>Your room, spaycdev, has been created.</p> "
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>Spayc details.</p>"
+            "description": "<p>Spayc details.</p> "
           }
         ]
       },
@@ -94,7 +94,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -103,14 +103,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -135,7 +135,7 @@ define({ "api": [
         "name": "private"
       }
     ],
-    "description": "<p>Delete space or subspace with room id.Matrix room also deleted.</p>",
+    "description": "<p>Delete space or subspace with room id.Matrix room also deleted.</p> ",
     "header": {
       "fields": {
         "Header": [
@@ -144,7 +144,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<p>A registered token must be in header.</p>"
+            "description": "<p>A registered token must be in header.</p> "
           }
         ]
       }
@@ -157,14 +157,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>The spayc has been deleted.</p>"
+            "description": "<p>The spayc has been deleted.</p> "
           }
         ]
       },
@@ -191,7 +191,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -200,14 +200,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -232,7 +232,7 @@ define({ "api": [
         "name": "private"
       }
     ],
-    "description": "<p>Create a new SPAYC.</p>",
+    "description": "<p>Create a new SPAYC.</p> ",
     "header": {
       "fields": {
         "Header": [
@@ -241,7 +241,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
           }
         ]
       }
@@ -254,84 +254,84 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "name",
-            "description": "<p>Name title of the spayc (Required).</p>"
+            "description": "<p>Name title of the spayc (Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "location",
-            "description": "<p>Location must be alphanumeric with space (Required).</p>"
+            "description": "<p>Location must be alphanumeric with space (Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "type",
-            "description": "<p>SPAYC type must be any one from the following Event|Community (Required).</p>"
+            "description": "<p>SPAYC type must be any one from the following Event|Community (Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "group_type",
-            "description": "<p>Group type must be any one from the following Public|Private (Required).</p>"
+            "description": "<p>Group type must be any one from the following Public|Private (Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "Datetime",
             "optional": false,
             "field": "start_date",
-            "description": "<p>Start date with time in format YYYY-MM-DD H:i:s (Required).</p>"
+            "description": "<p>Start date with time in format YYYY-MM-DD H:i:s (Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "Datetime",
             "optional": false,
             "field": "end_date",
-            "description": "<p>End date with time in format YYYY-MM-DD H:i:s (Required).</p>"
+            "description": "<p>End date with time in format YYYY-MM-DD H:i:s (Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "passcode",
-            "description": "<p>Passcode is required in case of private group type.</p>"
+            "description": "<p>Passcode is required in case of private group type.</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "description",
-            "description": "<p>Description for SPAYC (Optional).</p>"
+            "description": "<p>Description for SPAYC (Optional).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "image",
-            "description": "<p>Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).</p>"
+            "description": "<p>Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "longitude",
-            "description": "<p>Langitude from google map (Required).</p>"
+            "description": "<p>Langitude from google map (Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "latitude",
-            "description": "<p>Latitude from google map (Required).</p>"
+            "description": "<p>Latitude from google map (Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "invite",
-            "description": "<p>Matrix user id is optional in query string(Optional).</p>"
+            "description": "<p>Matrix user id is optional in query string(Optional).</p> "
           }
         ]
       }
@@ -351,21 +351,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Your spayc, spaycdev, has been created.</p>"
+            "description": "<p>Your spayc, spaycdev, has been created.</p> "
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>Spayc details.</p>"
+            "description": "<p>Spayc details.</p> "
           }
         ]
       },
@@ -392,7 +392,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -401,14 +401,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -433,7 +433,7 @@ define({ "api": [
         "name": "private"
       }
     ],
-    "description": "<p>Create a new sub SPAYC.Sub space type,start_date,end_date,longitude,latitude will same as of parent type.</p>",
+    "description": "<p>Create a new sub SPAYC.Sub space type,start_date,end_date,longitude,latitude will same as of parent type.</p> ",
     "header": {
       "fields": {
         "Header": [
@@ -442,7 +442,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<p>A registered token must be in header.</p>"
+            "description": "<p>A registered token must be in header.</p> "
           }
         ]
       }
@@ -455,49 +455,49 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "parent_matrix_room_id",
-            "description": "<p>Matrix parent room id (Required).</p>"
+            "description": "<p>Matrix parent room id (Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "name",
-            "description": "<p>Title of subspace (Required).</p>"
+            "description": "<p>Title of subspace (Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "group_type",
-            "description": "<p>Group type must be any one from the following Public|Private (Required).</p>"
+            "description": "<p>Group type must be any one from the following Public|Private (Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "passcode",
-            "description": "<p>Passcode is required in case of private group type.</p>"
+            "description": "<p>Passcode is required in case of private group type.</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "description",
-            "description": "<p>Description for SPAYC (Optional).</p>"
+            "description": "<p>Description for SPAYC (Optional).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "image",
-            "description": "<p>Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).</p>"
+            "description": "<p>Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "invite",
-            "description": "<p>Matrix user id must in comma separated if more thant one invitees(Optional).</p>"
+            "description": "<p>Matrix user id must in comma separated if more thant one invitees(Optional).</p> "
           }
         ]
       }
@@ -517,21 +517,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>SubSpayc DevsubspacePMB created successfully.</p>"
+            "description": "<p>SubSpayc DevsubspacePMB created successfully.</p> "
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>Spayc details.</p>"
+            "description": "<p>Spayc details.</p> "
           }
         ]
       },
@@ -558,7 +558,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -567,14 +567,152 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
+    "url": "/spayc-members.json",
+    "title": "List of Spayc Member",
+    "version": "0.1.0",
+    "name": "getSpaycMember",
+    "group": "Spayc",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>Spayc member to find the list of users associated with the room.Method must be get.In case of invalid spayc id return ivalid request</p> ",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "spay_id",
+            "description": "<p>Spayc id in query string (Required).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>Status of user, value must be any one from following(Pending|Accepted) (Optional).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "Digit",
+            "optional": false,
+            "field": "page",
+            "description": "<p>Page no(Optional).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "Digit",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>No of record to retrieve(Optional).</p> "
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p> "
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>List of spayc member.</p> "
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>Object of User details.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"response\": {\n        \"status\": \"success\",\n        \"message\": \"Spayc Details.\",\n        \"data\": [\n            {\n                \"username\": \"devtest1dddCd\",\n                \"email\": \"devtest1dddCd@kiwitech.com\",\n                \"gender\": \"Male                                              \",\n                \"dob\": \"02-25-2005\",\n                \"country_code\": null,\n                \"phone\": \"\",\n                \"website_url\": null,\n                \"address\": null,\n                \"bio_data\": null,\n                \"longitude\": \"21.253\",\n                \"latitude\": \"25.256\",\n                \"matrix_user_id\": \"@devtest1dddcd:127.0.0.1\",\n                \"user_images\": \"https://spayc-qa.s3.amazonaws.com/profile/4_20180220070221.png\",\n                \"user_id\": \"9\",\n                \"is_admin\": false,\n                \"requested_status\": \"Accepted\",\n                \"is_subscribed\": false,\n                \"physically_present\": false\n            }\n        ]\n    }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/spayc.js",
+    "groupTitle": "Spayc",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/spayc-members.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p> "
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p> "
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -599,7 +737,7 @@ define({ "api": [
         "name": "private"
       }
     ],
-    "description": "<p>Filter spayc all list, created by logged in user and joined by logged in user using list_by parameter, distance param not comes in response if lat long not provided in request.</p>",
+    "description": "<p>Filter spayc all list, created by logged in user and joined by logged in user using list_by parameter, distance param not comes in response if lat long not provided in request.</p> ",
     "header": {
       "fields": {
         "Header": [
@@ -608,7 +746,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
           }
         ]
       }
@@ -621,70 +759,70 @@ define({ "api": [
             "type": "Number",
             "optional": false,
             "field": "page",
-            "description": "<p>Page number in query string (Optional).</p>"
+            "description": "<p>Page number in query string (Optional).</p> "
           },
           {
             "group": "Parameter",
             "type": "Number",
             "optional": false,
             "field": "limit",
-            "description": "<p>Limit in query string (Optional).</p>"
+            "description": "<p>Limit in query string (Optional).</p> "
           },
           {
             "group": "Parameter",
             "type": "Timestamp",
             "optional": false,
             "field": "start_date",
-            "description": "<p>Spayc start date in query string(1515542400) (Optional).</p>"
+            "description": "<p>Spayc start date in query string(1515542400) (Optional).</p> "
           },
           {
             "group": "Parameter",
             "type": "Timestamp",
             "optional": false,
             "field": "end_date",
-            "description": "<p>Spayc end date in query string(1515715200) (Optional).</p>"
+            "description": "<p>Spayc end date in query string(1515715200) (Optional).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "group_type",
-            "description": "<p>Group type must be any one from the following (Public|Private) (Optional).</p>"
+            "description": "<p>Group type must be any one from the following (Public|Private) (Optional).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "type",
-            "description": "<p>Spayc type must be any one from the following (Event|Community) (Optional).</p>"
+            "description": "<p>Spayc type must be any one from the following (Event|Community) (Optional).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "latitude",
-            "description": "<p>Latitude is required in query string(Optional in case of created, joined).</p>"
+            "description": "<p>Latitude is required in query string(Optional in case of created, joined).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "longitude",
-            "description": "<p>Longitude is required in query string(Optional in case of created, joined).</p>"
+            "description": "<p>Longitude is required in query string(Optional in case of created, joined).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "list_by",
-            "description": "<p>List by is optional in query string(created|joined|all).</p>"
+            "description": "<p>List by is optional in query string(created|joined|all).</p> "
           },
           {
             "group": "Parameter",
             "type": "Number",
             "optional": false,
             "field": "user_id",
-            "description": "<p>User id  of any user and if id is not available it will get the logged user data(Required).</p>"
+            "description": "<p>User id  of any user and if id is not available it will get the logged user data(Required).</p> "
           }
         ]
       }
@@ -697,21 +835,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Spayc lists.</p>"
+            "description": "<p>Spayc lists.</p> "
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>List of spayc details.</p>"
+            "description": "<p>List of spayc details.</p> "
           }
         ]
       },
@@ -738,7 +876,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -747,14 +885,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -779,7 +917,7 @@ define({ "api": [
         "name": "private"
       }
     ],
-    "description": "<p>Spayc details by id and latitude, longitude (distance param not comes in response if lat long not provided in request).</p>",
+    "description": "<p>Spayc details by id and latitude, longitude (distance param not comes in response if lat long not provided in request).</p> ",
     "header": {
       "fields": {
         "Header": [
@@ -788,7 +926,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
           }
         ]
       }
@@ -801,21 +939,21 @@ define({ "api": [
             "type": "Number",
             "optional": false,
             "field": "id",
-            "description": "<p>Spayc id in query string (Required).</p>"
+            "description": "<p>Spayc id in query string (Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "latitude",
-            "description": "<p>Latitude is optional in query string(Optional).</p>"
+            "description": "<p>Latitude is optional in query string(Optional).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "longitude",
-            "description": "<p>Longitude is optional in query string(Optional).</p>"
+            "description": "<p>Longitude is optional in query string(Optional).</p> "
           }
         ]
       }
@@ -828,21 +966,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Spayc Details.</p>"
+            "description": "<p>Spayc Details.</p> "
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>Object of Spayc details.</p>"
+            "description": "<p>Object of Spayc details.</p> "
           }
         ]
       },
@@ -869,7 +1007,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -878,14 +1016,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -910,7 +1048,7 @@ define({ "api": [
         "name": "Subscribe Spayc"
       }
     ],
-    "description": "<p>Subscribe Spayc.</p>",
+    "description": "<p>Subscribe Spayc.</p> ",
     "header": {
       "fields": {
         "Header": [
@@ -919,7 +1057,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
           }
         ]
       }
@@ -932,7 +1070,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "spayc_id",
-            "description": "<p>Spayc id is required (Required).</p>"
+            "description": "<p>Spayc id is required (Required).</p> "
           }
         ]
       }
@@ -952,21 +1090,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>User Subscribed successfully.</p>"
+            "description": "<p>User Subscribed successfully.</p> "
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>Null.</p>"
+            "description": "<p>Null.</p> "
           }
         ]
       },
@@ -986,14 +1124,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "User",
-            "description": "<p>already subscribed.</p>"
+            "description": "<p>already subscribed.</p> "
           },
           {
             "group": "Error 4xx",
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -1002,14 +1140,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -1041,7 +1179,7 @@ define({ "api": [
         "name": "none"
       }
     ],
-    "description": "<p>get facebook friend for suggetion.</p>",
+    "description": "<p>get facebook friend for suggetion.</p> ",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -1050,14 +1188,14 @@ define({ "api": [
             "type": "Number",
             "optional": false,
             "field": "page",
-            "description": "<p>Page number is optional in query string default value 1.</p>"
+            "description": "<p>Page number is optional in query string default value 1.</p> "
           },
           {
             "group": "Parameter",
             "type": "Number",
             "optional": false,
             "field": "limit",
-            "description": "<p>Limit is optional in query string default value 5.</p>"
+            "description": "<p>Limit is optional in query string default value 5.</p> "
           }
         ]
       }
@@ -1070,14 +1208,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Facebook friend lists.</p>"
+            "description": "<p>Facebook friend lists.</p> "
           }
         ]
       },
@@ -1104,7 +1242,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -1113,14 +1251,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -1145,7 +1283,7 @@ define({ "api": [
         "name": "Private User"
       }
     ],
-    "description": "<p>Add Friend.</p>",
+    "description": "<p>Add Friend.</p> ",
     "header": {
       "fields": {
         "Header": [
@@ -1154,7 +1292,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
           }
         ]
       }
@@ -1167,14 +1305,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "friend_id",
-            "description": "<p>Friend id required (friend_id must be an user id)(Required).</p>"
+            "description": "<p>Friend id required (friend_id must be an user id)(Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "friend_status",
-            "description": "<p>Friend status and status must be either one from following 'Pending', 'Accepted', 'Blocked','is_direct','Decline','Unfriend' (Required).</p>"
+            "description": "<p>Friend status and status must be either one from following &#39;Pending&#39;, &#39;Accepted&#39;, &#39;Blocked&#39;,&#39;is_direct&#39;,&#39;Decline&#39;,&#39;Unfriend&#39; (Required).</p> "
           }
         ]
       }
@@ -1194,21 +1332,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Friend request send successfully.</p>"
+            "description": "<p>Friend request send successfully.</p> "
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>Null.</p>"
+            "description": "<p>Null.</p> "
           }
         ]
       },
@@ -1228,14 +1366,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "Friend",
-            "description": "<p>request already sent.</p>"
+            "description": "<p>request already sent.</p> "
           },
           {
             "group": "Error 4xx",
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -1244,14 +1382,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -1283,7 +1421,7 @@ define({ "api": [
         "name": "Private User"
       }
     ],
-    "description": "<p>Get Friends.</p>",
+    "description": "<p>Get Friends.</p> ",
     "header": {
       "fields": {
         "Header": [
@@ -1292,7 +1430,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
           }
         ]
       }
@@ -1305,28 +1443,28 @@ define({ "api": [
             "type": "Number",
             "optional": false,
             "field": "page",
-            "description": "<p>Page number in query string (Optional).</p>"
+            "description": "<p>Page number in query string (Optional).</p> "
           },
           {
             "group": "Parameter",
             "type": "Number",
             "optional": false,
             "field": "limit",
-            "description": "<p>Records limit in query string (Optional).</p>"
+            "description": "<p>Records limit in query string (Optional).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "friend_status",
-            "description": "<p>Status in query string must be any one from the following(Pending, Accepted, 'Declined',Blocked, Unfriend).</p>"
+            "description": "<p>Status in query string must be any one from the following(Pending, Accepted, &#39;Declined&#39;,Blocked, Unfriend).</p> "
           },
           {
             "group": "Parameter",
             "type": "Number",
             "optional": false,
             "field": "user_id",
-            "description": "<p>User id  of any user and if id is not available it will get the logged user data(Required).</p>"
+            "description": "<p>User id  of any user and if id is not available it will get the logged user data(Required).</p> "
           }
         ]
       }
@@ -1339,21 +1477,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Friend request send successfully.</p>"
+            "description": "<p>Friend request send successfully.</p> "
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>Null.</p>"
+            "description": "<p>Null.</p> "
           }
         ]
       },
@@ -1380,7 +1518,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -1389,14 +1527,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -1421,7 +1559,7 @@ define({ "api": [
         "name": "Private User"
       }
     ],
-    "description": "<p>User login with user name and its password. User get logged in by using username and password including device_id.content-type must be in form-data</p>",
+    "description": "<p>User login with user name and its password.   User get logged in by using username and password including device_id.content-type must be in form-data</p> ",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -1430,21 +1568,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "email",
-            "description": "<p>Email Registered email id (Required).</p>"
+            "description": "<p>Email Registered email id (Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "password",
-            "description": "<p>secret password (Required).</p>"
+            "description": "<p>secret password (Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "device_id",
-            "description": "<p>Device personal id (Required).</p>"
+            "description": "<p>Device personal id (Required).</p> "
           }
         ]
       }
@@ -1464,21 +1602,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Login done successfully.</p>"
+            "description": "<p>Login done successfully.</p> "
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>List of user details.</p>"
+            "description": "<p>List of user details.</p> "
           }
         ]
       },
@@ -1498,14 +1636,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "Sign",
-            "description": "<p>in credentials ain't right, try again buddy.</p>"
+            "description": "<p>in credentials ain&#39;t right, try again buddy.</p> "
           },
           {
             "group": "Error 4xx",
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -1514,14 +1652,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -1553,7 +1691,7 @@ define({ "api": [
         "name": "required"
       }
     ],
-    "description": "<p>Update physical presence of user.</p>",
+    "description": "<p>Update physical presence of user.</p> ",
     "header": {
       "fields": {
         "Header": [
@@ -1562,7 +1700,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "token",
-            "description": "<p>Token must be set in header.</p>"
+            "description": "<p>Token must be set in header.</p> "
           }
         ]
       }
@@ -1575,14 +1713,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "latitude",
-            "description": "<p>Current user location latitude.(Required).</p>"
+            "description": "<p>Current user location latitude.(Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "longitude",
-            "description": "<p>Current user location longitude.(Required).</p>"
+            "description": "<p>Current user location longitude.(Required).</p> "
           }
         ]
       }
@@ -1602,14 +1740,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Request has been updated successfully.</p>"
+            "description": "<p>Request has been updated successfully.</p> "
           }
         ]
       },
@@ -1636,7 +1774,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -1645,14 +1783,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -1677,7 +1815,7 @@ define({ "api": [
         "name": "none"
       }
     ],
-    "description": "<p>Create a new account. Register new user with form-data option.</p>",
+    "description": "<p>Create a new account. Register new user with form-data option.</p> ",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -1686,70 +1824,70 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "username",
-            "description": "<p>Username must be unique and size between 3-30 charecters (Required).</p>"
+            "description": "<p>Username must be unique and size between 3-30 charecters (Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "email",
-            "description": "<p>Email of user must be unique (Required).</p>"
+            "description": "<p>Email of user must be unique (Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "password",
-            "description": "<p>secret password (Required).</p>"
+            "description": "<p>secret password (Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "confirm_password",
-            "description": "<p>secret password (Required).</p>"
+            "description": "<p>secret password (Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "Date",
             "optional": false,
             "field": "dob",
-            "description": "<p>Date of birth must in in format MM-DD-YYYY (Optional).</p>"
+            "description": "<p>Date of birth must in in format MM-DD-YYYY (Optional).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "gender",
-            "description": "<p>Gender of user like any one (Male, Femal, Other) (Required).</p>"
+            "description": "<p>Gender of user like any one (Male, Femal, Other) (Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "country_code",
-            "description": "<p>Country code of user phone number(Optional).</p>"
+            "description": "<p>Country code of user phone number(Optional).</p> "
           },
           {
             "group": "Parameter",
             "type": "Number",
             "optional": false,
             "field": "phone",
-            "description": "<p>Phone no of user and accept only 10 digits only (Optional).</p>"
+            "description": "<p>Phone no of user and accept only 10 digits only (Optional).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "latitude",
-            "description": "<ul> <li>latitude of user address (Optional).</li> </ul>"
+            "description": "<ul> <li>latitude of user address (Optional).</li> </ul> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "longitude",
-            "description": "<ul> <li>longitude of user address (Optional).</li> </ul>"
+            "description": "<ul> <li>longitude of user address (Optional).</li> </ul> "
           }
         ]
       }
@@ -1769,21 +1907,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Registration done successfully.</p>"
+            "description": "<p>Registration done successfully.</p> "
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>List of user details.</p>"
+            "description": "<p>List of user details.</p> "
           }
         ]
       },
@@ -1810,7 +1948,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -1819,14 +1957,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -1851,7 +1989,7 @@ define({ "api": [
         "name": "Private User"
       }
     ],
-    "description": "<p>Update profile of existing user. Update user own profile details with form-data option.</p>",
+    "description": "<p>Update profile of existing user. Update user own profile details with form-data option.</p> ",
     "header": {
       "fields": {
         "Header": [
@@ -1860,7 +1998,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
           }
         ]
       }
@@ -1873,70 +2011,70 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "username",
-            "description": "<p>Username (Required).</p>"
+            "description": "<p>Username (Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "Date",
             "optional": false,
             "field": "dob",
-            "description": "<p>Date of birth must in this format MM-DD-YYYY (Optional).</p>"
+            "description": "<p>Date of birth must in this format MM-DD-YYYY (Optional).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "gender",
-            "description": "<p>Gender of user like any one (Male, Femal, Other) (Required).</p>"
+            "description": "<p>Gender of user like any one (Male, Femal, Other) (Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "country_code",
-            "description": "<p>Country code of user phone number(Optional).</p>"
+            "description": "<p>Country code of user phone number(Optional).</p> "
           },
           {
             "group": "Parameter",
             "type": "Number",
             "optional": false,
             "field": "phone",
-            "description": "<p>Phone no of user and accept upto 16 digits (Optional).</p>"
+            "description": "<p>Phone no of user and accept upto 16 digits (Optional).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "address",
-            "description": "<p>User address (Optional).</p>"
+            "description": "<p>User address (Optional).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "website_url",
-            "description": "<p>Website url (Optional).</p>"
+            "description": "<p>Website url (Optional).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "bio_data",
-            "description": "<p>Bio data of user (Optional).</p>"
+            "description": "<p>Bio data of user (Optional).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "latitude",
-            "description": "<ul> <li>Latitude of user address (Optional).</li> </ul>"
+            "description": "<ul> <li>Latitude of user address (Optional).</li> </ul> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "longitude",
-            "description": "<ul> <li>Longitude of user address (Optional).</li> </ul>"
+            "description": "<ul> <li>Longitude of user address (Optional).</li> </ul> "
           }
         ]
       }
@@ -1956,21 +2094,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Updated successfully.</p>"
+            "description": "<p>Updated successfully.</p> "
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>List of user details.</p>"
+            "description": "<p>List of user details.</p> "
           }
         ]
       },
@@ -1997,7 +2135,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -2006,14 +2144,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -2038,7 +2176,7 @@ define({ "api": [
         "name": "none"
       }
     ],
-    "description": "<p>Send reverification link.</p>",
+    "description": "<p>Send reverification link.</p> ",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -2047,7 +2185,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "email",
-            "description": "<p>User registered email required field.</p>"
+            "description": "<p>User registered email required field.</p> "
           }
         ]
       }
@@ -2067,14 +2205,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Re-verification email sent successfully.</p>"
+            "description": "<p>Re-verification email sent successfully.</p> "
           }
         ]
       },
@@ -2101,7 +2239,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -2110,14 +2248,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -2142,7 +2280,7 @@ define({ "api": [
         "name": "none"
       }
     ],
-    "description": "<p>Change password request.</p>",
+    "description": "<p>Change password request.</p> ",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -2151,21 +2289,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "old_password",
-            "description": "<p>User old password (Required).</p>"
+            "description": "<p>User old password (Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "new_password",
-            "description": "<p>User new password (Required).</p>"
+            "description": "<p>User new password (Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "confirm_password",
-            "description": "<p>Confirm new password (Required).</p>"
+            "description": "<p>Confirm new password (Required).</p> "
           }
         ]
       }
@@ -2185,14 +2323,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Password changed successfully.</p>"
+            "description": "<p>Password changed successfully.</p> "
           }
         ]
       },
@@ -2219,7 +2357,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -2228,14 +2366,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -2260,7 +2398,7 @@ define({ "api": [
         "name": "None"
       }
     ],
-    "description": "<p>User singup by facebook.</p>",
+    "description": "<p>User singup by facebook.</p> ",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -2269,77 +2407,77 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "fb_id",
-            "description": "<ul> <li>Facebook user unique id required in body(Required).</li> </ul>"
+            "description": "<ul> <li>Facebook user unique id required in body(Required).</li> </ul> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "fb_access_key",
-            "description": "<ul> <li>Facebook user access key required in body(Required).</li> </ul>"
+            "description": "<ul> <li>Facebook user access key required in body(Required).</li> </ul> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "username",
-            "description": "<ul> <li>Username optional in body(Required).</li> </ul>"
+            "description": "<ul> <li>Username optional in body(Required).</li> </ul> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "email",
-            "description": "<ul> <li>User email required in body(Required).</li> </ul>"
+            "description": "<ul> <li>User email required in body(Required).</li> </ul> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "image_url",
-            "description": "<ul> <li>User image url optional in body(Optional).</li> </ul>"
+            "description": "<ul> <li>User image url optional in body(Optional).</li> </ul> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "dob",
-            "description": "<ul> <li>Date of birth optional in body MM-DD-YYYY (Optional).</li> </ul>"
+            "description": "<ul> <li>Date of birth optional in body MM-DD-YYYY (Optional).</li> </ul> "
           },
           {
             "group": "Parameter",
             "type": "Number",
             "optional": false,
             "field": "phone",
-            "description": "<ul> <li>Phone no of user and accept upto 16 digits (Optional).</li> </ul>"
+            "description": "<ul> <li>Phone no of user and accept upto 16 digits (Optional).</li> </ul> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "gender",
-            "description": "<ul> <li>Gender of user like any one (Male, Femal, Other) (Required).</li> </ul>"
+            "description": "<ul> <li>Gender of user like any one (Male, Femal, Other) (Required).</li> </ul> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "device_id",
-            "description": "<ul> <li>Device id is required in body (Required).</li> </ul>"
+            "description": "<ul> <li>Device id is required in body (Required).</li> </ul> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "latitude",
-            "description": "<ul> <li>latitude of user address (Optional).</li> </ul>"
+            "description": "<ul> <li>latitude of user address (Optional).</li> </ul> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "longitude",
-            "description": "<ul> <li>longitude of user address (Optional).</li> </ul>"
+            "description": "<ul> <li>longitude of user address (Optional).</li> </ul> "
           }
         ]
       }
@@ -2352,21 +2490,21 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>true.</p>"
+            "description": "<p>true.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>The request is OK.</p>"
+            "description": "<p>The request is OK.</p> "
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>Consumer Object contain details about user.</p>"
+            "description": "<p>Consumer Object contain details about user.</p> "
           }
         ]
       },
@@ -2393,7 +2531,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -2402,14 +2540,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>Status.</p>"
+            "description": "<p>Status.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -2441,7 +2579,7 @@ define({ "api": [
         "name": "none"
       }
     ],
-    "description": "<p>Reset password link to be send at requested email.</p>",
+    "description": "<p>Reset password link to be send at requested email.</p> ",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -2450,7 +2588,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "email",
-            "description": "<p>User registered email required field.</p>"
+            "description": "<p>User registered email required field.</p> "
           }
         ]
       }
@@ -2470,14 +2608,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Reset password link send to your email address.</p>"
+            "description": "<p>Reset password link send to your email address.</p> "
           }
         ]
       },
@@ -2504,7 +2642,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -2513,14 +2651,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -2545,7 +2683,7 @@ define({ "api": [
         "name": "Private User"
       }
     ],
-    "description": "<p>User get logout.</p>",
+    "description": "<p>User get logout.</p> ",
     "header": {
       "fields": {
         "Header": [
@@ -2554,7 +2692,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
           }
         ]
       }
@@ -2567,21 +2705,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Logout successfully.</p>"
+            "description": "<p>Logout successfully.</p> "
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>Null.</p>"
+            "description": "<p>Null.</p> "
           }
         ]
       },
@@ -2608,7 +2746,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -2617,14 +2755,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -2649,7 +2787,7 @@ define({ "api": [
         "name": "none"
       }
     ],
-    "description": "<p>get all notifications received by loggin user.</p>",
+    "description": "<p>get all notifications received by loggin user.</p> ",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -2658,14 +2796,14 @@ define({ "api": [
             "type": "Number",
             "optional": false,
             "field": "page",
-            "description": "<p>Page number is optional in query string default value 1.</p>"
+            "description": "<p>Page number is optional in query string default value 1.</p> "
           },
           {
             "group": "Parameter",
             "type": "Number",
             "optional": false,
             "field": "limit",
-            "description": "<p>Limit is optional in query string default value 5.</p>"
+            "description": "<p>Limit is optional in query string default value 5.</p> "
           }
         ]
       }
@@ -2678,14 +2816,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Notification Lists..</p>"
+            "description": "<p>Notification Lists..</p> "
           }
         ]
       },
@@ -2712,7 +2850,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -2721,14 +2859,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -2753,7 +2891,7 @@ define({ "api": [
         "name": "Private User"
       }
     ],
-    "description": "<p>Search users|spaycs|hashtags details by requesting parameters Note: distance key not came in spayc list in case of no latitude and longitude.</p>",
+    "description": "<p>Search users|spaycs|hashtags details by requesting parameters Note: distance key not came in spayc list in case of no latitude and longitude.</p> ",
     "header": {
       "fields": {
         "Header": [
@@ -2762,7 +2900,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
           }
         ]
       }
@@ -2775,42 +2913,42 @@ define({ "api": [
             "type": "Number",
             "optional": false,
             "field": "page",
-            "description": "<ul> <li>Page number in query string (Optional).</li> </ul>"
+            "description": "<ul> <li>Page number in query string (Optional).</li> </ul> "
           },
           {
             "group": "Parameter",
             "type": "Number",
             "optional": false,
             "field": "limit",
-            "description": "<ul> <li>Records limit in query string (Optional).</li> </ul>"
+            "description": "<ul> <li>Records limit in query string (Optional).</li> </ul> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "type",
-            "description": "<ul> <li>Type should be in (users|spaycs|hashtags|all) (Optional).</li> </ul>"
+            "description": "<ul> <li>Type should be in (users|spaycs|hashtags|all) (Optional).</li> </ul> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "keyword",
-            "description": "<ul> <li>Username|Spayc name|Hashtag name in query string to be search (Optional).</li> </ul>"
+            "description": "<ul> <li>Username|Spayc name|Hashtag name in query string to be search (Optional).</li> </ul> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "latitude",
-            "description": "<ul> <li>Latitude of user address (Optional).</li> </ul>"
+            "description": "<ul> <li>Latitude of user address (Optional).</li> </ul> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "longitude",
-            "description": "<ul> <li>Longitude of user address (Optional).</li> </ul>"
+            "description": "<ul> <li>Longitude of user address (Optional).</li> </ul> "
           }
         ]
       }
@@ -2823,21 +2961,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Search Lists.</p>"
+            "description": "<p>Search Lists.</p> "
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>List of users|spaycs|hashtags details.</p>"
+            "description": "<p>List of users|spaycs|hashtags details.</p> "
           }
         ]
       },
@@ -2864,7 +3002,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -2873,14 +3011,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -2905,7 +3043,7 @@ define({ "api": [
         "name": "none"
       }
     ],
-    "description": "<p>Upload up to 5 image for profile.</p>",
+    "description": "<p>Upload up to 5 image for profile.</p> ",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -2914,7 +3052,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "images",
-            "description": "<p>Images contain up to 5 image object required(index key should be order_index of image if already saved).</p>"
+            "description": "<p>Images contain up to 5 image object required(index key should be order_index of image if already saved).</p> "
           }
         ]
       }
@@ -2934,14 +3072,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Profile image uploaded successfully.</p>"
+            "description": "<p>Profile image uploaded successfully.</p> "
           }
         ]
       },
@@ -2968,7 +3106,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -2977,14 +3115,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -3009,7 +3147,7 @@ define({ "api": [
         "name": "Logged in user"
       }
     ],
-    "description": "<p>Remove profile image. Token must be set in header.if image is default profile image then it will also remove from matrix.</p>",
+    "description": "<p>Remove profile image. Token must be set in header.if image is default profile image then it will also remove from matrix.</p> ",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -3018,7 +3156,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "order",
-            "description": "<p>Image order index in query string required.</p>"
+            "description": "<p>Image order index in query string required.</p> "
           }
         ]
       }
@@ -3038,14 +3176,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Profile image has been removed.</p>"
+            "description": "<p>Profile image has been removed.</p> "
           }
         ]
       },
@@ -3072,7 +3210,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -3081,14 +3219,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -3113,7 +3251,7 @@ define({ "api": [
         "name": "Private User"
       }
     ],
-    "description": "<p>Set Friend Status.</p>",
+    "description": "<p>Set Friend Status.</p> ",
     "header": {
       "fields": {
         "Header": [
@@ -3122,7 +3260,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
           }
         ]
       }
@@ -3135,14 +3273,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "friend_id",
-            "description": "<p>Requested friend id (Required).</p>"
+            "description": "<p>Requested friend id (Required).</p> "
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "friend_status",
-            "description": "<p>Friend status must any one from following list 'Pending', 'Accepted', 'Blocked','is_direct','Decline','Unfriend' (Required).</p>"
+            "description": "<p>Friend status must any one from following list &#39;Pending&#39;, &#39;Accepted&#39;, &#39;Blocked&#39;,&#39;is_direct&#39;,&#39;Decline&#39;,&#39;Unfriend&#39; (Required).</p> "
           }
         ]
       }
@@ -3162,21 +3300,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Friend status updated successfully.</p>"
+            "description": "<p>Friend status updated successfully.</p> "
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>Null.</p>"
+            "description": "<p>Null.</p> "
           }
         ]
       },
@@ -3196,14 +3334,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "Status",
-            "description": "<p>is required fields and status must be in(Accepted,Declined,Blocked,Unfriend)..</p>"
+            "description": "<p>is required fields and status must be in(Accepted,Declined,Blocked,Unfriend)..</p> "
           },
           {
             "group": "Error 4xx",
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -3212,14 +3350,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -3251,7 +3389,7 @@ define({ "api": [
         "name": "none"
       }
     ],
-    "description": "<p>Set image as default profile pic.</p>",
+    "description": "<p>Set image as default profile pic.</p> ",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -3260,7 +3398,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "order",
-            "description": "<p>Image order index in query string required.</p>"
+            "description": "<p>Image order index in query string required.</p> "
           }
         ]
       }
@@ -3273,14 +3411,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Profile Profile image set as default.</p>"
+            "description": "<p>Profile Profile image set as default.</p> "
           }
         ]
       },
@@ -3307,7 +3445,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -3316,14 +3454,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },
@@ -3348,7 +3486,7 @@ define({ "api": [
         "name": "Private User"
       }
     ],
-    "description": "<p>Get user profile.</p>",
+    "description": "<p>Get user profile.</p> ",
     "header": {
       "fields": {
         "Header": [
@@ -3357,7 +3495,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
           }
         ]
       }
@@ -3370,7 +3508,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "userId",
-            "description": "<p>User id required field in query string.</p>"
+            "description": "<p>User id required field in query string.</p> "
           }
         ]
       }
@@ -3383,21 +3521,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p>"
+            "description": "<p>success.</p> "
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>User profile.</p>"
+            "description": "<p>User profile.</p> "
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>Null.</p>"
+            "description": "<p>Null.</p> "
           }
         ]
       },
@@ -3424,7 +3562,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
+            "description": "<p>Returns a json Object.</p> "
           }
         ],
         "Error-Response Object": [
@@ -3433,14 +3571,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p>"
+            "description": "<p>failed.</p> "
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p>"
+            "description": "<p>Message.</p> "
           }
         ]
       },

@@ -450,7 +450,7 @@ class UsersTable extends Table {
         $plain_token = \Api\Utils\Utils::getToken();
         $hasher = new DefaultPasswordHasher();
         $userLogs = TableRegistry::get('UserLogs');
-        
+        $userLogs->deleteAll(['user_id'=>$user['id']]);
         $logItems = $userLogs->newEntity();        
         $logItems->user_id = $user['id'];
         $logItems->last_login = Time::now();

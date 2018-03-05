@@ -386,3 +386,56 @@ function getView() { return; }
 @apiUse errorResponse
  */
 function postChatRoom() { return; }
+/**
+ * @api {get} /spayc-members.json List of Spayc Member
+ * @apiVersion 0.1.0
+ * @apiName getSpaycMember
+ * @apiGroup Spayc
+ * @apiPermission private
+ *
+ * @apiDescription Spayc member to find the list of users associated with the room.Method must be get.In case of invalid spayc id return ivalid request
+ * 
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * 
+    @apiParam {String}      spay_id         Spayc id in query string (Required).
+    @apiParam {String}      status     Status of user, value must be any one from following(Pending|Accepted) (Optional).
+    @apiParam {Digit}      page        Page no(Optional).
+    @apiParam {Digit}      limit       No of record to retrieve(Optional).
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spayc member.
+ * @apiSuccess {Object} data Object of User details.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "response": {
+        "status": "success",
+        "message": "Spayc Details.",
+        "data": [
+            {
+                "username": "devtest1dddCd",
+                "email": "devtest1dddCd@kiwitech.com",
+                "gender": "Male                                              ",
+                "dob": "02-25-2005",
+                "country_code": null,
+                "phone": "",
+                "website_url": null,
+                "address": null,
+                "bio_data": null,
+                "longitude": "21.253",
+                "latitude": "25.256",
+                "matrix_user_id": "@devtest1dddcd:127.0.0.1",
+                "user_images": "https://spayc-qa.s3.amazonaws.com/profile/4_20180220070221.png",
+                "user_id": "9",
+                "is_admin": false,
+                "requested_status": "Accepted",
+                "is_subscribed": false,
+                "physically_present": false
+            }
+        ]
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function getSpaycMember() { return; }
