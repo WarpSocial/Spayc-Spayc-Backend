@@ -52,6 +52,15 @@ class SpaycsTable extends Table {
             'className' => 'Api.Users'
         ]);
         
+        $this->belongsTo('ParentSpaycs', [
+            'className' => 'Spaycs',
+            'foreignKey' => 'parent_id'
+        ]);
+        $this->hasMany('SubSpaycs', [
+            'className' => 'Spaycs',
+            'foreignKey' => 'parent_id'
+            
+        ]);
         $this->hasMany('JoinedSpayc', [
             'foreignKey' => 'spayc_id',
             'className' => 'Api.JoinedSpayc'

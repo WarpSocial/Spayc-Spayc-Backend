@@ -620,8 +620,8 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "spayc_id",
-            "description": "<p>Spayc id in query string (Required).</p>"
+            "field": "room_id",
+            "description": "<p>Spayc matrix id in query string (Required).</p>"
           },
           {
             "group": "Parameter",
@@ -939,7 +939,7 @@ define({ "api": [
             "type": "Number",
             "optional": false,
             "field": "id",
-            "description": "<p>Spayc id in query string (Required).</p>"
+            "description": "<p>Spayc matrix id in query string (Required).</p>"
           },
           {
             "group": "Parameter",
@@ -987,7 +987,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Spayc Details.\",\n    \"data\": {\n        \"id\": \"35\",\n        \"name\": \"spaycdev13\",\n        \"address\": \"Your address\",\n        \"image\": \"\",\n        \"description\": \"spayc creating\",\n        \"group_type\": \"Public\",\n        \"type\": \"Community\",\n        \"start_date\": \"01-11-2019 01:02:20\",\n        \"end_date\": \"01-12-2019 01:02:20\",\n        \"passcode\": \"\",\n        \"matrix_room_id\": \"!asfLdzLnOdGRkdPZWu:localhost\",\n        \"subscribed_users\": 0,\n        \"friends\": 0,\n        \"joined_users\": 0,\n        \"is_subscribed\": false,\n        \"total_comments\": 0,\n        \"total_presents\": 0\n    }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Spayc Details.\",\n    \"data\": {\n        \"id\": \"3\",\n        \"name\": \"devsubspacePMB\",\n        \"address\": \"dfasdf sdf sdfsdfsd\",\n        \"image\": \"https://spayc-qa.s3.amazonaws.com/room/screenshot_from_2017_12_12_19_55_12_20180223141832.png\",\n        \"description\": \"devspace\",\n        \"group_type\": \"Public\",\n        \"type\": \"Community\",\n        \"start_date\": \"03-11-2018 09:16:00\",\n        \"end_date\": \"03-12-2018 09:23:00\",\n        \"passcode\": \"\",\n        \"matrix_room_id\": \"!AHKKnrKlWnBiewiMiB:127.0.0.1\",\n        \"subscribed_users\": 0,\n        \"sub_spaycs\": [\n            {\n                \"id\": 45,\n                \"parent_id\": 3,\n                \"name\": \"devsubspacePMB\",\n                \"address\": null,\n                \"image\": null,\n                \"description\": \"devspace\",\n                \"group_type\": \"Public\",\n                \"type\": \"Community\",\n                \"start_date\": \"2018-03-11T09:16:00+00:00\",\n                \"end_date\": \"2018-03-12T09:23:00+00:00\",\n                \"passcode\": \"\",\n                \"matrix_room_id\": \"!gERdbhptfHdVQrcnse:127.0.0.1\"\n            }\n        ],\n        \"friends\": 0,\n        \"joined_users\": 1,\n        \"is_subscribed\": false,\n        \"total_comments\": 0,\n        \"total_presents\": 0\n    }\n}",
           "type": "json"
         }
       ]

@@ -309,7 +309,7 @@ function postSubscribeSpayc() { return; }
  * 
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
-    @apiParam {Number}      id              Spayc id in query string (Required).
+    @apiParam {Number}      id              Spayc matrix id in query string (Required).
     @apiParam {String}      latitude        Latitude is optional in query string(Optional).
     @apiParam {String}      longitude       Longitude is optional in query string(Optional).
  *
@@ -322,20 +322,36 @@ function postSubscribeSpayc() { return; }
     "status": "success",
     "message": "Spayc Details.",
     "data": {
-        "id": "35",
-        "name": "spaycdev13",
-        "address": "Your address",
-        "image": "",
-        "description": "spayc creating",
+        "id": "3",
+        "name": "devsubspacePMB",
+        "address": "dfasdf sdf sdfsdfsd",
+        "image": "https://spayc-qa.s3.amazonaws.com/room/screenshot_from_2017_12_12_19_55_12_20180223141832.png",
+        "description": "devspace",
         "group_type": "Public",
         "type": "Community",
-        "start_date": "01-11-2019 01:02:20",
-        "end_date": "01-12-2019 01:02:20",
+        "start_date": "03-11-2018 09:16:00",
+        "end_date": "03-12-2018 09:23:00",
         "passcode": "",
-        "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
+        "matrix_room_id": "!AHKKnrKlWnBiewiMiB:127.0.0.1",
         "subscribed_users": 0,
+        "sub_spaycs": [
+            {
+                "id": 45,
+                "parent_id": 3,
+                "name": "devsubspacePMB",
+                "address": null,
+                "image": null,
+                "description": "devspace",
+                "group_type": "Public",
+                "type": "Community",
+                "start_date": "2018-03-11T09:16:00+00:00",
+                "end_date": "2018-03-12T09:23:00+00:00",
+                "passcode": "",
+                "matrix_room_id": "!gERdbhptfHdVQrcnse:127.0.0.1"
+            }
+        ],
         "friends": 0,
-        "joined_users": 0,
+        "joined_users": 1,
         "is_subscribed": false,
         "total_comments": 0,
         "total_presents": 0
@@ -400,10 +416,11 @@ function postChatRoom() { return; }
  * 
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
-    @apiParam {String}     spayc_id   Spayc id in query string (Required).
-    @apiParam {String}     status     Status of user, value must be any one from following(Pending|Accepted) (Optional).
-    @apiParam {Digit}      page       Page no(Optional).
-    @apiParam {Digit}      limit      No of record to retrieve(Optional).
+
+    @apiParam {String}     room_id      Spayc matrix id in query string (Required).
+    @apiParam {String}      status     Status of user, value must be any one from following(Pending|Accepted) (Optional).
+    @apiParam {Digit}      page        Page no(Optional).
+    @apiParam {Digit}      limit       No of record to retrieve(Optional).
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message List of spayc member.

@@ -592,7 +592,19 @@ class UsersController extends AppController {
         if(!$spaceUsr){
             $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
         }
-        $loggedUser = $this->Auth->user(); 
+        $loggedUser = $this->Auth->user();   
+        
+        $requestedFrnd = $frObj->find()->Where(['OR'=>[
+            ['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']],
+            ['requested_by' => $data['friend_id'],'requested_to'=>$loggedUser['id']]
+            ]]);
+        
+        if(!$requestedFrnd->isEmpty() && $data['friend_status'] == 'Unfriend'){
+            $currentStatus = $requestedFrnd->first()->requested_status;
+            if($currentStatus == 'Blocked'){
+                $this->restException(['status'=>'failed', 'message'=>__('User has been blocked.')], 400);
+            }
+        }
          if(in_array($data['friend_status'], ['Decline','Unfriend'])){
             if($frObj->deleteAll(['OR'=>[
                 ['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']],
@@ -601,10 +613,10 @@ class UsersController extends AppController {
                 $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status'])]);
             }
         }
-        $requestedFrnd = $frObj->find()->Where(['OR'=>[
-            ['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']],
-            ['requested_by' => $data['friend_id'],'requested_to'=>$loggedUser['id']]
-            ]]);
+//        $requestedFrnd = $frObj->find()->Where(['OR'=>[
+//            ['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']],
+//            ['requested_by' => $data['friend_id'],'requested_to'=>$loggedUser['id']]
+//            ]]);
         //debug($requestedFrnd);
         if($requestedFrnd->isEmpty()){
             $newObj = $frObj->newEntity();
