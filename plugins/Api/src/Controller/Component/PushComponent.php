@@ -9,6 +9,7 @@ use Cake\Network\Http\Client;
 use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Aws\Sns\SnsClient;
+use Cake\I18n\Time;
 
 
 class PushComponent extends Component {
@@ -76,17 +77,20 @@ class PushComponent extends Component {
             /*End ReCreate EndpointARN*/
             $par["action-loc-key"]="PLAY";
             $par["body"]=$message;
-            $FinalMessage = json_encode(array('default' => $message,'APNS' => json_encode(array(
+            $FinalMessage = json_encode(array('default' => $message, 'APNS_SANDBOX' => json_encode(array(
                     'aps' => array(
                       'alert' => $message,
                       'sound'=>'default',
+                      'badge'=>1,
                       'user_id'=>!empty($data['requested_by'])?$data['requested_by']:null,
                       'matrix_room_id'=>!empty($data['matrix_room_id'])?$data['matrix_room_id']:null,
-                      'notification_type'=>!empty($data['notification_type'])?$data['notification_type']:null
+                      'notification_type'=>!empty($data['notification_type'])?$data['notification_type']:null,
+                      'user_image'=>!empty($data['user_image'])?$data['user_image']:null,
+                      'spayc_image'=>!empty($data['spayc_image'])?$data['spayc_image']:null,
+                      'date_time'=>!empty($data['time'])?$data['time']:null
                     )
                     ))
                 ));
-            
             $this->SnsClient->publish(
                 array(
                 'TargetArn' => $device_token,
@@ -124,6 +128,18 @@ class PushComponent extends Component {
                 $notificationType->message = str_replace("<X>", 5, $notificationType->message);
                 $notificationType->message = str_replace("<SpaycName>", $data['spayc_name'], $notificationType->message);
             }
+            $userImages = TableRegistry::get("Api.UserImages")->findByUserIdAndIsProfile($data['requested_by'], 'Yes');
+            if(!$userImages->isEmpty()) {
+                $data['user_image'] = $userImages->first()->image_url;
+            }
+            $data['date_time'] = date("Y-m-d H:i:s");
+            
+            if (!empty($data['date_time']) && !empty(Configure::read('timezone'))) {
+                $timezone = Configure::read('timezone');
+                $sd = new Time($data['date_time']);
+                $data['time'] = $sd->setTimezone($timezone)->format('m-d-Y H:i:s');
+            }
+            
             $data['device_token'] = $deviceId->device_id;
             $data['notification_type'] = $notificationType->type;
             $sent = false;
@@ -133,7 +149,6 @@ class PushComponent extends Component {
             if($sent) {
                 $data['message'] = $notificationType->message;
                 $data['status'] = 'Unread';
-                $data['date_time'] = date("Y-m-d H:i:s"); 
                 $data['created'] = date("Y-m-d H:i:s");
                 TableRegistry::get("Api.Notifications")->addNotification($data);
             }
