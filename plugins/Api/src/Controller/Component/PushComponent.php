@@ -114,6 +114,9 @@ class PushComponent extends Component {
                 return false;
             }
             $deviceId = $deviceId->first();
+            if(strlen($deviceId->device_id)<64) {
+                return false;
+            }
             if($notificationType->slug == 'friend-request') {
                 $notificationType->message = str_replace("<USERNAME>", ucwords($data['username']), $notificationType->message);
             }
