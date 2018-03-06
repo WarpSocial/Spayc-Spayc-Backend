@@ -620,7 +620,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "spayc_id",
+            "field": "room_id",
             "description": "<p>Spayc matrix id in query string (Required).</p> "
           },
           {
