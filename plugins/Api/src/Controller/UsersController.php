@@ -629,9 +629,14 @@ class UsersController extends AppController {
                 $push['requested_by'] = $loggedUser['id'];
                 $push['username'] = $loggedUser['username'];
                 $push['requested_to'] = $data['friend_id'];
-                $push['slug'] = ($data['friend_status']=='Pending')?'friend-request':'blocked';
                 $push['spayc_id'] = null; //provide spayc id if push related to spayc
-                $this->Push->sendPushNotification($push);
+                if($data['friend_status']=='Pending') {
+                    $push['slug'] = 'friend-request';
+                    $this->Push->sendPushNotification($push);
+                } else if($data['friend_status']=='Blocked') {
+                    $push['slug'] = 'blocked';
+                    $this->Push->sendPushNotification($push);
+                }
                 $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status']),'data'=>[
                     'id'=>$newObj->id,
                     'requested_by'=>$newObj->requested_by,
@@ -655,9 +660,14 @@ class UsersController extends AppController {
                 $push['requested_by'] = $loggedUser['id'];
                 $push['username'] = $loggedUser['username'];
                 $push['requested_to'] = $data['friend_id'];
-                $push['slug'] = ($data['friend_status']=='Pending')?'friend-request':'blocked';
                 $push['spayc_id'] = null; //provide spayc id if push related to spayc
-                $this->Push->sendPushNotification($push);
+                if($data['friend_status']=='Pending') {
+                    $push['slug'] = 'friend-request';
+                    $this->Push->sendPushNotification($push);
+                } else if($data['friend_status']=='Blocked') {
+                    $push['slug'] = 'blocked';
+                    $this->Push->sendPushNotification($push);
+                }
                 $this->restException(['status'=>'success', 'message'=> Configure::read('requestMsg.'.$data['friend_status']),'data'=>[                    
                     'id'=>$frndRequest->id,
                     'requested_by'=>$frndRequest->requested_by,
@@ -968,8 +978,8 @@ class UsersController extends AppController {
             ->select(['id', 'status', 'date_time', 'message', 'notification_type'])
             ->where(['requested_to'=>$this->Auth->user('id')]);
         $notifications->contain([
-            'NotificationTo' => function($q) {
-                return $q->select(['NotificationTo.id', 'NotificationTo.username'])->contain(['UserImages'=>['fields'=>['user_id', 'image_url'], 'conditions'=>['is_profile'=>'Yes']]]);
+            'NotificationBy' => function($q) {
+                return $q->select(['NotificationBy.id', 'NotificationBy.username'])->contain(['UserImages'=>['fields'=>['user_id', 'image_url'], 'conditions'=>['is_profile'=>'Yes']]]);
             },
             'Spaycs' => function($q) {
                 return $q->select(['Spaycs.id', 'Spaycs.name', 'Spaycs.matrix_room_id', 'Spaycs.image']);
@@ -981,13 +991,13 @@ class UsersController extends AppController {
                 $row['space_name'] = !empty($row['spayc']['name'])?$row['spayc']['name']:null;
                 $row['room_id'] = !empty($row['spayc']['matrix_room_id'])?$row['spayc']['matrix_room_id']:null;
                 $row['spayc_image'] = !empty($row['spayc']['image'])?$row['spayc']['image']:null;
-                $row['username'] = !empty($row['notification_to']['username'])?$row['notification_to']['username']:null;
-                $row['user_id'] = !empty($row['notification_to']['id'])?$row['notification_to']['id']:null;
-                $row['user_image'] = !empty($row['notification_to']['user_images'][0]['image_url'])?$row['notification_to']['user_images'][0]['image_url']:null;
+                $row['username'] = !empty($row['notification_by']['username'])?$row['notification_by']['username']:null;
+                $row['user_id'] = !empty($row['notification_by']['id'])?$row['notification_by']['id']:null;
+                $row['user_image'] = !empty($row['notification_by']['user_images'][0]['image_url'])?$row['notification_by']['user_images'][0]['image_url']:null;
                 $row['is_unread'] = ($row['status']=='Unread')?true:false;
                 unset($row['spayc']);
                 unset($row['status']);
-                unset($row['notification_to']);
+                unset($row['notification_by']);
                 return $row;
             });
         });
@@ -1001,7 +1011,9 @@ class UsersController extends AppController {
         if($notifications->isEmpty()) {
             $this->response->statusCode(204);
         }
-        $response = ['status'=>'success', 'message'=>__('Notification Lists.'), 'data'=>$notifications];
+        $data['count'] = $notifications->count();
+        $data['notification'] = $notifications;
+        $response = ['status'=>'success', 'message'=>__('Notification Lists.'), 'data'=>$data];
         $this->set($response);
     }
     
