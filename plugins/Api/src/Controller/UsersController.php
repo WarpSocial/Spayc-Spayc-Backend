@@ -1025,9 +1025,20 @@ class UsersController extends AppController {
         if(empty($data['is_notify'])) {
             $this->restException(['status'=>'failed','message'=>'is_notify is required field.'], 400);
         }
-        $update['Users']['is_notify'] = $data['is_notify'];
-        $update['UserLogs']['device_id'] = $data['device_token'];
-        $this->Users->UpdateAll($update, ['Users.id'=>$this->Auth->user('id')]);
+        $isNotify = ucfirst($data['is_notify']);
+        if(!in_array($isNotify, Configure::read('is_notify'))) {
+            $this->restException(['status'=>'failed','message'=>'is_notify must be in ('.implode(',', Configure::read('is_notify')).').'], 400);
+        }
+        if($isNotify=='On' && empty($data['device_token'])) {
+            $this->restException(['status'=>'failed','message'=>'Device token is required field.'], 400);
+        }
+        if(($isNotify=='On' && !empty($data['device_token'])) && strlen($data['device_token'])<64) {
+            $this->restException(['status'=>'failed','message'=>'Invalid device token'], 400);
+        }
+        $update['users']['is_notify'] = $isNotify;
+        $update['user_logs']['device_id'] = $data['device_token'];
+        $this->Users->UpdateAll(['is_notify'=>$isNotify], ['Users.id'=>$this->Auth->user('id')]);
+        TableRegistry::get('UserLogs')->UpdateAll(['device_id'=>$data['device_token']], ['user_id'=>$this->Auth->user('id')]);
         $response = ['status'=>'success', 'message'=>__('Device token updated successfully.')];
         $this->set($response);
     }

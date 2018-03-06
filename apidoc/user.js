@@ -979,3 +979,37 @@ function postUpdateUserStatus() { return; }
  * @apiUse UserErrorResponse
  */
  function getNotification() { return; }
+ 
+ /**
+ * @api {post} /update-device-token.json Update device token
+ * @apiVersion 0.1.0
+ * @apiName updateDeviceToken
+ * @apiGroup User
+ * @apiPermission required
+ *
+ * @apiDescription Update user device token if push notification turn on and off.
+ * 
+ * @apiHeader {String} token Token must be set in header.
+ *
+ * @apiParam {String} device_token  Device token required field if is_notify is On
+ * @apiParam {String} is_notify     Is notify is required field possible values(On, Off)
+ *
+ * @apiExample Example usage:
+    {
+        "device_token":"666dc243b1ee08bb68cebe64d0875d9f54bab2be090d456a90e0dac608c12ecf",
+        "is_notify":"On"
+    }
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Request has been updated successfully.
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+    {
+        "status": "success",
+        "message": "Device token updated successfully."
+    }
+ *
+ * @apiUse UserErrorResponse
+ */
+function postUpdateUserStatus() { return; }

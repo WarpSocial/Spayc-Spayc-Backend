@@ -16,13 +16,15 @@ use Cake\Event\Event;
 use Cake\Datasource\EntityInterface;
 use Cake\Controller\ComponentRegistry;
 use Api\Controller\Component\MatrixComponent;
+use Api\Controller\Component\PushComponent;
 
 class SpaycListener implements EventListenerInterface {
     
     
     public function implementedEvents() {
         return [
-            'Controller.Spayc.matrixMedia' => 'matrixMedia'
+            'Controller.Spayc.matrixMedia' => 'matrixMedia',
+            'Controller.Spayc.pushNotification' => 'pushNotification'
         ];
     }
     
@@ -37,6 +39,12 @@ class SpaycListener implements EventListenerInterface {
             return;
         }
         $matrix->uploadMediaImage($items);
+        return true;
+    }
+    
+    public function pushNotification(Event $event, $options){
+        $pusher = new PushComponent(new ComponentRegistry());
+        $pusher->sendPushNotification($options);
         return true;
     }
 }
