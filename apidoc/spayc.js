@@ -309,7 +309,7 @@ function postSubscribeSpayc() { return; }
  * 
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
-    @apiParam {Number}      id              Spayc id in query string (Required).
+    @apiParam {Number}      id              Spayc matrix id in query string (Required).
     @apiParam {String}      latitude        Latitude is optional in query string(Optional).
     @apiParam {String}      longitude       Longitude is optional in query string(Optional).
  *
@@ -322,19 +322,22 @@ function postSubscribeSpayc() { return; }
     "status": "success",
     "message": "Spayc Details.",
     "data": {
-        "distance": "0",
-        "id": "32",
-        "name": "spaycdev13",
-        "address": "Your address",
-        "image": "",
-        "description": "spayc creating",
+        "id": "3",
+        "name": "devsubspacePMB",
+        "address": "dfasdf sdf sdfsdfsd",
+        "image": "https://spayc-qa.s3.amazonaws.com/room/screenshot_from_2017_12_12_19_55_12_20180223141832.png",
+        "description": "devspace",
         "group_type": "Public",
         "type": "Community",
-        "subscribed_users": 2,
+        "start_date": "03-11-2018 09:16:00",
+        "end_date": "03-12-2018 09:23:00",
+        "passcode": "",
+        "matrix_room_id": "!AHKKnrKlWnBiewiMiB:127.0.0.1",
+        "subscribed_users": 0,
         "friends": 0,
         "joined_users": 1,
-        "is_subscribed": true,
-        "total_comments": 1,
+        "is_subscribed": false,
+        "total_comments": 0,
         "total_presents": 0
     }
 }
