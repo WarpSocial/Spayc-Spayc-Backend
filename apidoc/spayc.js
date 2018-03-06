@@ -400,7 +400,7 @@ function postChatRoom() { return; }
  * 
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
-    @apiParam {String}     spayc_id      Spayc matrix id in query string (Required).
+    @apiParam {String}     room_id      Spayc matrix id in query string (Required).
     @apiParam {String}      status     Status of user, value must be any one from following(Pending|Accepted) (Optional).
     @apiParam {Digit}      page        Page no(Optional).
     @apiParam {Digit}      limit       No of record to retrieve(Optional).
