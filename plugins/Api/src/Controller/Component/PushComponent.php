@@ -34,6 +34,7 @@ class PushComponent extends Component {
     }
     
     public function sendOnIOS($data, $message){
+        
         try {
             $config = $this->snsConfig;
             $this->SnsClient = SnsClient::factory([

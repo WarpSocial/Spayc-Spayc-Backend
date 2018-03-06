@@ -620,7 +620,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "spay_id",
+            "field": "spayc_id",
             "description": "<p>Spayc id in query string (Required).</p>"
           },
           {
@@ -987,7 +987,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Spayc Details.\",\n    \"data\": {\n        \"distance\": \"0\",\n        \"id\": \"32\",\n        \"name\": \"spaycdev13\",\n        \"address\": \"Your address\",\n        \"image\": \"\",\n        \"description\": \"spayc creating\",\n        \"group_type\": \"Public\",\n        \"type\": \"Community\",\n        \"subscribed_users\": 2,\n        \"friends\": 0,\n        \"joined_users\": 1,\n        \"is_subscribed\": true,\n        \"total_comments\": 1,\n        \"total_presents\": 0\n    }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Spayc Details.\",\n    \"data\": {\n        \"id\": \"35\",\n        \"name\": \"spaycdev13\",\n        \"address\": \"Your address\",\n        \"image\": \"\",\n        \"description\": \"spayc creating\",\n        \"group_type\": \"Public\",\n        \"type\": \"Community\",\n        \"start_date\": \"01-11-2019 01:02:20\",\n        \"end_date\": \"01-12-2019 01:02:20\",\n        \"passcode\": \"\",\n        \"matrix_room_id\": \"!asfLdzLnOdGRkdPZWu:localhost\",\n        \"subscribed_users\": 0,\n        \"friends\": 0,\n        \"joined_users\": 0,\n        \"is_subscribed\": false,\n        \"total_comments\": 0,\n        \"total_presents\": 0\n    }\n}",
           "type": "json"
         }
       ]
@@ -3435,6 +3435,130 @@ define({ "api": [
     "sampleRequest": [
       {
         "url": "http://spayc.com/api/set-profile-image/:order.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/update-device-token.json",
+    "title": "Update device token",
+    "version": "0.1.0",
+    "name": "updateDeviceToken",
+    "group": "User",
+    "permission": [
+      {
+        "name": "required"
+      }
+    ],
+    "description": "<p>Update user device token if push notification turn on and off.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "token",
+            "description": "<p>Token must be set in header.</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "device_token",
+            "description": "<p>Device token required field if is_notify is On</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "is_notify",
+            "description": "<p>Is notify is required field possible values(On, Off)</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "{\n    \"device_token\":\"666dc243b1ee08bb68cebe64d0875d9f54bab2be090d456a90e0dac608c12ecf\",\n    \"is_notify\":\"On\"\n}",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Request has been updated successfully.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": " HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Device token updated successfully.\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/user.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/update-device-token.json"
       }
     ],
     "error": {

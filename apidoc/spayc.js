@@ -322,19 +322,22 @@ function postSubscribeSpayc() { return; }
     "status": "success",
     "message": "Spayc Details.",
     "data": {
-        "distance": "0",
-        "id": "32",
+        "id": "35",
         "name": "spaycdev13",
         "address": "Your address",
         "image": "",
         "description": "spayc creating",
         "group_type": "Public",
         "type": "Community",
-        "subscribed_users": 2,
+        "start_date": "01-11-2019 01:02:20",
+        "end_date": "01-12-2019 01:02:20",
+        "passcode": "",
+        "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
+        "subscribed_users": 0,
         "friends": 0,
-        "joined_users": 1,
-        "is_subscribed": true,
-        "total_comments": 1,
+        "joined_users": 0,
+        "is_subscribed": false,
+        "total_comments": 0,
         "total_presents": 0
     }
 }
@@ -397,10 +400,10 @@ function postChatRoom() { return; }
  * 
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
-    @apiParam {String}      spay_id         Spayc id in query string (Required).
-    @apiParam {String}      status     Status of user, value must be any one from following(Pending|Accepted) (Optional).
-    @apiParam {Digit}      page        Page no(Optional).
-    @apiParam {Digit}      limit       No of record to retrieve(Optional).
+    @apiParam {String}     spayc_id   Spayc id in query string (Required).
+    @apiParam {String}     status     Status of user, value must be any one from following(Pending|Accepted) (Optional).
+    @apiParam {Digit}      page       Page no(Optional).
+    @apiParam {Digit}      limit      No of record to retrieve(Optional).
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message List of spayc member.

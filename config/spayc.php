@@ -14,6 +14,7 @@ return [
         'Unfriend'=>'Friend status updated successfully.',
         'Decline'=>'Friend status updated successfully.',
     ],
+    'is_notify'=>['On', 'Off'],
     //'friend_status'=>['Blocked', 'Unfriend', 'Unblock'],
     'maxupload'=>'5MB',
     'adminEmail' =>'kiwitech@gmail.com',
