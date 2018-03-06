@@ -943,34 +943,37 @@ function postUpdateUserStatus() { return; }
 {
     "status": "success",
     "message": "Notification Lists.",
-    "data": [
-        {
-            "id": "1",
-            "date_time": "03-01-2018 18:44:52",
-            "message": "Friend request accepted",
-            "notification_type": "request accepted",
-            "space_name": "spaycdev9",
-            "room_id": "@matrixdeeee",
-            "spayc_image": "abc.png",
-            "username": "username1",
-            "user_id": "10",
-            "user_image": "https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2018_02_02_12_10_56_20180207100523_20180216123106.png",
-            "is_unread": true
-        },
-        {
-            "id": "2",
-            "date_time": "02-28-2018 20:51:41",
-            "message": "Friend block",
-            "notification_type": "request accepted",
-            "space_name": null,
-            "room_id": null,
-            "spayc_image": null,
-            "username": "username2",
-            "user_id": "9",
-            "user_image": "https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2018_02_02_12_10_56_20180207100523_20180216123106.png",
-            "is_unread": true
-        }
-    ]
+    "data": {
+        "count": 3,
+        "notification": [
+            {
+                "id": "3",
+                "date_time": "03-01-2018 18:44:52",
+                "message": "Friend Request Sent",
+                "notification_type": "Friend Request Sent",
+                "space_name": null,
+                "room_id": null,
+                "spayc_image": null,
+                "username": "dhir",
+                "user_id": "10",
+                "user_image": "https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2018_02_02_12_10_56_20180207100523_20180301064300.png",
+                "is_unread": true
+            },
+            {
+                "id": "1",
+                "date_time": "02-28-2018 20:51:41",
+                "message": "you are added a friend",
+                "notification_type": "request accepted",
+                "space_name": "spaycdev9",
+                "room_id": "@matrixdeeee",
+                "spayc_image": "abc.png",
+                "username": "sbsharma11243",
+                "user_id": "9",
+                "user_image": "https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226075827.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632",
+                "is_unread": true
+            }
+        ]
+    }
 }
  *
  * @apiUse UserErrorResponse
