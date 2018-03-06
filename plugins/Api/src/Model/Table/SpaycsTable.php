@@ -402,7 +402,10 @@ class SpaycsTable extends Table {
             $push['requested_to'] = $val->id;
             $push['slug'] = 'new-spayc';
             $push['spayc_id'] = $spaycId;
+            $push['spayc_name'] = $items['name'];
+            $push['spayc_image'] = $items['image'];
             $push['matrix_room_id'] = $items['matrix_room_id'];
+            $push['distance'] = $this->getSpaycDistanceFromUser($items['latitude'], $items['longitude'], $push['requested_to']);
             $pushNotification->sendPushNotification($push);
         }
         $joinedSpayc = TableRegistry::get('JoinedSpayc');
@@ -411,4 +414,24 @@ class SpaycsTable extends Table {
         return $result;
     }
 
+    public function getSpaycDistanceFromUser($latitude = null, $longitude = null, $userId = null) {
+        $distanceField = '(3959 * acos (cos ( radians(:latitude) )
+                * cos( radians( Users.current_latitude ) )
+                * cos( radians( Users.current_longitude )
+                - radians(:longitude) )
+                + sin ( radians(:latitude) )
+                * sin( radians( Users.current_latitude ) )))';
+            $distance = 0;
+            $users = TableRegistry::get('Users')->find()
+                ->select([
+                    'distance' => $distanceField, 'id'])
+                ->where(["$distanceField >=" => $distance, 'Users.id'=>$userId])
+                ->bind(':latitude', $latitude, 'float')
+                ->bind(':longitude', $longitude, 'float')
+                ->order(['Users.id']);
+            if(!$users->isEmpty()) {
+                return round($users->first()->distance, 2);
+            }
+            return 0;
+    }
 }

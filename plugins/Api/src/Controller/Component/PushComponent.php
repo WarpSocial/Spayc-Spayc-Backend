@@ -125,7 +125,7 @@ class PushComponent extends Component {
                 $notificationType->message = str_replace("<USERNAME>", ucwords($data['username']), $notificationType->message);
             }
             if($notificationType->slug == 'new-spayc') {
-                $notificationType->message = str_replace("<X>", 5, $notificationType->message);
+                $notificationType->message = str_replace("<X>", $data['distance'], $notificationType->message);
                 $notificationType->message = str_replace("<SpaycName>", $data['spayc_name'], $notificationType->message);
             }
             $userImages = TableRegistry::get("Api.UserImages")->findByUserIdAndIsProfile($data['requested_by'], 'Yes');
