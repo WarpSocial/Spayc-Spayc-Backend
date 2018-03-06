@@ -122,6 +122,7 @@ class PushComponent extends Component {
             }
             if($notificationType->slug == 'new-spayc') {
                 $notificationType->message = str_replace("<X>", 5, $notificationType->message);
+                $notificationType->message = str_replace("<SpaycName>", $data['spayc_name'], $notificationType->message);
             }
             $data['device_token'] = $deviceId->device_id;
             $data['notification_type'] = $notificationType->type;

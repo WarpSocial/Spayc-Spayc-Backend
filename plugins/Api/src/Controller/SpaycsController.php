@@ -72,6 +72,7 @@ class SpaycsController extends AppController {
                             $push['requested_to'] = $requestedTo->first()->id;
                             $push['slug'] = 'new-spayc';
                             $push['spayc_id'] = $items['id'];
+                            $push['spayc_name'] = $items['name'];
                             $push['matrix_room_id'] = $items['matrix_room_id'];
                             $this->Push->sendPushNotification($push);
                         }
