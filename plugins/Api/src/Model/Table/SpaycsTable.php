@@ -402,7 +402,10 @@ class SpaycsTable extends Table {
             $push['requested_to'] = $val->id;
             $push['slug'] = 'new-spayc';
             $push['spayc_id'] = $spaycId;
+            $push['spayc_name'] = $items['name'];
+            $push['spayc_image'] = $items['image'];
             $push['matrix_room_id'] = $items['matrix_room_id'];
+            $push['distance'] = $this->getSpaycDistanceFromUser($items['latitude'], $items['longitude'], $push['requested_to']);
             $pushNotification->sendPushNotification($push);
         }
         $joinedSpayc = TableRegistry::get('JoinedSpayc');
