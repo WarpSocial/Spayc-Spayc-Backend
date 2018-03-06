@@ -185,3 +185,4 @@ INSERT INTO "notification_types" ("id", "type", "message", "slug", "created", "m
 
 
 ALTER TABLE "joined_spayc" ADD "updated_by" bigint NULL;
+ALTER TABLE "spaycs" ADD "parent_id" bigint NULL;

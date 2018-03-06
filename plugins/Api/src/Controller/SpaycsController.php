@@ -120,6 +120,7 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Parent space has not been found.')], 400);
         }
         $parentObj = $entity->first();
+        $data['parent_id'] = $parentObj->id;
         $data['start_date'] = $parentObj->start_date;
         $data['end_date'] = $parentObj->end_date;
         $data['latitude'] = $parentObj->latitude;
