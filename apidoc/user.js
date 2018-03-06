@@ -618,7 +618,7 @@ function postForgotPassword() { return; }
   
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
-  * @apiParam {String} userId User id required field in query string.
+  * @apiParam {String} userId use any one either userid or matrix user id as query string in url(required).
  
   @apiSuccess {String} status success.
   @apiSuccess {String} message User profile.

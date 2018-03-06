@@ -807,12 +807,11 @@ class UsersController extends AppController {
         if(empty($id)) {
             $this->restException(['status'=>'failed', 'message'=>__('User id is required field.')], 400);
         }
-        $id = ApiHasher::decrypt($id);
-        $exist = $this->Users->exists(['id'=>$id]);
-        if(!$exist) {
+       
+        $user = $this->Users->find('all', ['fields'=>['Users.id', 'Users.username', 'Users.email', 'Users.gender', 'Users.dob','Users.country_code', 'Users.phone', 'Users.website_url', 'Users.address', 'Users.bio_data', 'Users.longitude', 'Users.latitude', 'Users.matrix_user_id']])->where(['OR'=>['Users.id'=>$id,'Users.matrix_user_id'=>$id]]);
+        if($user->isEmpty()){
             $this->restException(['status'=>'failed', 'message'=>__('Invalid user id')], 400);
         }
-        $user = $this->Users->find('all', ['fields'=>['Users.id', 'Users.username', 'Users.email', 'Users.gender', 'Users.dob','Users.country_code', 'Users.phone', 'Users.website_url', 'Users.address', 'Users.bio_data', 'Users.longitude', 'Users.latitude', 'Users.matrix_user_id']])->where(['Users.id'=>$id]);
         $userId = $this->Auth->user('id');
         $user->contain([
             'Requestedby' => function($q) use($userId) {
