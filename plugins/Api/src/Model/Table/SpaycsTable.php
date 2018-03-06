@@ -9,6 +9,8 @@ use Cake\Validation\Validator;
 use Cake\Core\Configure;
 use Cake\I18n\Time;
 use Cake\ORM\TableRegistry;
+use Cake\Controller\ComponentRegistry;
+use Api\Controller\Component\PushComponent;
 
 /**
  * Spaycs Model
@@ -362,6 +364,50 @@ class SpaycsTable extends Table {
             unset($row->_matchingData,$row->id);
             return $row;
         });
+        return $result;
+    }
+    
+    public function joinedInvite($items = [],$spaycId = null,$adminUser = null){
+        if(empty($items['invite']) || $spaycId == null){
+            //return;
+        }
+        $invite  = explode(',',$items['invite']);
+        $user = TableRegistry::get("Users")->find()->select(['id'])->where(['matrix_user_id IN'=>$invite]);     
+        if($user->isEmpty()){
+            return;
+        }
+        if($adminUser != null){ 
+            $member[] = [
+                'spayc_id'=>$spaycId,
+                'user_id'=>$adminUser,
+                'status' => 'Approved',
+                'updated_by' => $adminUser,
+                'created' => date("Y-m-d H:i:s"),
+                'is_admin'=>1
+            ];
+        }else{
+            $member = [];
+        }
+        $pushNotification = new PushComponent(new ComponentRegistry());
+        foreach($user as $key => $val){
+            $member[] = [
+                'spayc_id'=>$spaycId,
+                'user_id'=>$val->id,
+                'status' => 'Approved',
+                'updated_by' => $adminUser,
+                'created' => date("Y-m-d H:i:s"),
+                'is_admin'=>0
+            ];
+            $push['requested_by'] = $adminUser;
+            $push['requested_to'] = $val->id;
+            $push['slug'] = 'new-spayc';
+            $push['spayc_id'] = $spaycId;
+            $push['matrix_room_id'] = $items['matrix_room_id'];
+            $pushNotification->sendPushNotification($push);
+        }
+        $joinedSpayc = TableRegistry::get('JoinedSpayc');
+        $entities = $joinedSpayc->newEntities($member);
+        $result = $joinedSpayc->saveMany($entities);
         return $result;
     }
 

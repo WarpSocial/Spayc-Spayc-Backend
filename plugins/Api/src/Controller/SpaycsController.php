@@ -44,9 +44,9 @@ class SpaycsController extends AppController {
         $data['type'] = !empty($data['type'])?ucfirst($data['type']):'';
         $data['group_type'] = !empty($data['group_type'])?ucfirst($data['group_type']):'';        
         $data['status'] = 'Active';
-        //pr(Utils::setUtc($data['start_date'], Configure::read('timezone')));die;
+        
         $entity = $this->Spaycs->newEntity();
-        $items = $this->Spaycs->patchEntity($entity, $data);
+        $items = $this->Spaycs->patchEntity($entity, $data,['associated' => ['JoinedSpayc']]);
         if($items->errors()) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
         }
@@ -62,22 +62,9 @@ class SpaycsController extends AppController {
         $items->set('user_id', $this->Auth->user('id'));
         if (!$items->errors()) {
             if($this->Spaycs->save($items)) {
-                //data prepaire for push notification//
+                //Joined the invite to the room//
                 if(!empty($items['invite'])) {
-                    $invities = explode(',',$items['invite']);
-                    foreach($invities as $invite) {
-                        $requestedTo = TableRegistry::get('Api.Users')->findByMatrixUserId($invite)->select('id');
-                        if(!$requestedTo->isEmpty()) {
-                            $push['requested_by'] = $this->Auth->user('id');
-                            $push['requested_to'] = $requestedTo->first()->id;
-                            $push['slug'] = 'new-spayc';
-                            $push['spayc_id'] = $items['id'];
-                            $push['spayc_name'] = $items['name'];
-                            $push['spayc_image'] = $items['image'];
-                            $push['matrix_room_id'] = $items['matrix_room_id'];
-                            $this->Push->sendPushNotification($push);
-                        }
-                    }
+                    $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
                 }
                 if(!empty($items['description'])) {
                     TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
@@ -144,6 +131,10 @@ class SpaycsController extends AppController {
             if($this->Spaycs->save($items)){
               $data['image'] = $items->get('image');
               $data['matrix_room_id'] = $items->get('matrix_room_id');
+              //Joined the invite to the room//
+                if(!empty($items['invite'])) {
+                    $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
+                }
                  if(!empty($items['description'])) {
                     TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
                 }
@@ -202,7 +193,11 @@ class SpaycsController extends AppController {
         $items->set('status', 'Active');
         if (!$items->errors()) {
             if($this->Spaycs->save($items)) {
+                
                 TableRegistry::get('Api.FriendRequest')->updateRoomId($items['invite'], $this->Auth->user('id'), $matrix['room_id']);
+                if(!empty($items['invite'])) {
+                    $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
+                }
                 $this->response->statusCode(201);
                 $response = ['status'=>'success','message'=>__('Your room, '.ucfirst($data['name']).', has been created.'), 'data'=>$items];
                 /*Event to bind to update the set upload room image */
