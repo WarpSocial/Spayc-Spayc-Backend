@@ -621,7 +621,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "spay_id",
-            "description": "<p>Spayc id in query string (Required).</p> "
+            "description": "<p>Spayc matrix id in query string (Required).</p> "
           },
           {
             "group": "Parameter",
