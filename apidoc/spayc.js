@@ -334,6 +334,22 @@ function postSubscribeSpayc() { return; }
         "passcode": "",
         "matrix_room_id": "!AHKKnrKlWnBiewiMiB:127.0.0.1",
         "subscribed_users": 0,
+        "sub_spaycs": [
+            {
+                "id": 45,
+                "parent_id": 3,
+                "name": "devsubspacePMB",
+                "address": null,
+                "image": null,
+                "description": "devspace",
+                "group_type": "Public",
+                "type": "Community",
+                "start_date": "2018-03-11T09:16:00+00:00",
+                "end_date": "2018-03-12T09:23:00+00:00",
+                "passcode": "",
+                "matrix_room_id": "!gERdbhptfHdVQrcnse:127.0.0.1"
+            }
+        ],
         "friends": 0,
         "joined_users": 1,
         "is_subscribed": false,

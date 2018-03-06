@@ -434,6 +434,9 @@ class SpaycsController extends AppController {
         
         
         $spayc->contain([
+            'SubSpaycs' => function($q) {
+                return  $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'address'=>'SubSpaycs.location', 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id']);
+            },
             'JoinedSpayc' => function($q) {
                 return  $q->select(['JoinedSpayc.spayc_id', 'joined_users' => $q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.spayc_id']);
             },
@@ -444,8 +447,9 @@ class SpaycsController extends AppController {
                 return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
             }
         ]);
+        
         $spayc->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend, $userId) {
-            return $results->map(function ($row) use($friend, $userId) {
+            return $results->map(function ($row) use($friend, $userId) {                
                 $spaycId = ApiHasher::decrypt($row->id);
                 $row['friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
                 $row['joined_users'] = !empty($row['joined_spayc'])?count($row['joined_spayc']):0;
