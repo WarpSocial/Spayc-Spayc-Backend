@@ -589,7 +589,7 @@ class SpaycsController extends AppController {
     }
     
     public function spaycMembers(){
-        $spaycId = $this->request->getQuery('spayc_id');
+        $spaycId = $this->request->getQuery('room_id');
         $status = $this->request->getQuery('status');
         $page = $this->request->getQuery('page');
         $limit = $this->request->getQuery('limit');
