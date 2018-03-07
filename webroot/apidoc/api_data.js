@@ -906,6 +906,144 @@ define({ "api": [
     }
   },
   {
+    "type": "post",
+    "url": "/change-role.json",
+    "title": "Make Member As Admin",
+    "version": "0.1.0",
+    "name": "postChangeRole",
+    "group": "Spayc",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>Make existing spayc (Room) member as admin for that spayc.</p> ",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<ul> <li>Current timezone</li> </ul> "
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Intger",
+            "optional": false,
+            "field": "spayc_id",
+            "description": "<p>Existing Spayc id(Required).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "Intger",
+            "optional": false,
+            "field": "user_id",
+            "description": "<p>Existing User id(Required).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "Intger",
+            "optional": false,
+            "field": "status",
+            "description": "<p>Status must be 1 for admin or 0 for remove member from admin role(Required).</p> "
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "{\n    \"spayc_id\":\"xx\",\n    \"user_id\":\"xx\",\n    \"role\":\"1\"\n}",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p> "
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Role has been changed successfully.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "    HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Role has been changed successfully.\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/spayc.js",
+    "groupTitle": "Spayc",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/change-role.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p> "
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p> "
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
     "type": "get",
     "url": "/spayc-details.json?id=:id&latitude=:lat&longitude=:long",
     "title": "About Spayc",

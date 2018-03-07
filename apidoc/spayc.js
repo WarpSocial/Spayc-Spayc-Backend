@@ -460,43 +460,35 @@ function postChatRoom() { return; }
  */
 function getSpaycMember() { return; }
 /**
-@api {post} /change-role.json One to One Room
+@api {post} /change-role.json Make Member As Admin
 @apiVersion 0.1.0
 @apiName postChangeRole
 @apiGroup Spayc
 @apiPermission private
 
-@apiDescription Create a new room for one to one chat.
+@apiDescription Make existing spayc (Room) member as admin for that spayc.
 
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+* @apiHeader {String} TOKEN            * A token send by header as TOKEN
+* @apiHeader {String} timezone            * Current timezone
 
-@apiParam {String} invite           Matrix user id is optional in query string(Required).
+@apiParam {Intger} spayc_id Existing Spayc id(Required).
+@apiParam {Intger} user_id Existing User id(Required).
+@apiParam {Intger} status Status must be 1 for admin or 0 for remove member from admin role(Required).
 
 @apiExample Example usage:
 {
-    "invite":"@test2:35.168.119.247"
+    "spayc_id":"xx",
+    "user_id":"xx",
+    "role":"1"
 }
  
 @apiSuccess {String} status success.
-@apiSuccess {String} message Your room, spaycdev, has been created.
-@apiSuccess {Object} data Spayc details.
+@apiSuccess {String} message Role has been changed successfully.
 @apiSuccessExample {json} Success-Response: 
-    HTTP/1.1 201 OK
+    HTTP/1.1 200 OK
 {
     "status": "success",
-    "message": "Your room, @test4:35.168.119.247-@test5:35.168.119.247, has been created.",
-    "data": {
-        "invite": "@test4:35.168.119.247",
-        "name": "@test4:35.168.119.247-@shubhash11:35.168.119.247",
-        "group_type": "Private",
-        "matrix_room_id": "!ICbUbLzaoTzIvIoEjf:35.168.119.247",
-        "matrix_room_alias": "#test4-35-168-119-247-shubhash11-35-168-119-247:35.168.119.247",
-        "user_id": "10",
-        "status": "Active",
-        "created": "2018-02-16T14:14:01+00:00",
-        "modified": "2018-02-16T14:14:01+00:00",
-        "id": "99"
-    }
+    "message": "Role has been changed successfully."
 }
 
 @apiUse errorResponse
