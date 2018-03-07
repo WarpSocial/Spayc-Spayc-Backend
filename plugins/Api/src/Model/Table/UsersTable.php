@@ -541,7 +541,7 @@ class UsersTable extends Table {
                 ->longitude('longitude', __('Longitude is not valid.'));
         return $validator->errors($data);
     }
-    public function makeAdminValidate($data){
+    public function ValidatechangeRole($data){
         $validator = new Validator();
         $validator->requirePresence('spayc_id', true,__('Spayc id key is missing.'))
                 ->notEmpty('spayc_id', __('Please enter Spayc id.'));

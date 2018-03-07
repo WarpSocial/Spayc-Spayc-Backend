@@ -1048,6 +1048,29 @@ class UsersController extends AppController {
     }
     
     public function changeRole(){
-        
+        if (!$this->request->is('post')) {
+            $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
+        }
+        $data = $this->request->getData();
+        $errors = $this->Users->ValidatechangeRole($data);
+        if(!empty($errors)) {
+            $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
+        }
+        $jsModel = TableRegistry::get('JoinedSpayc');
+        $entities = $jsModel->find()->where(['spayc_id'=>$data['spayc_id'],'user_id'=>$data['user_id']]);
+        if($entities->isEmpty()){
+            $this->restException(['status'=>'failed','message'=>__('User has not joined the spayc.')], 400);
+        }
+        $entity = $entities->first();
+        $entity->is_admin = $data['role'];
+        $entity->modified = new \Cake\I18n\Time();
+        $entity->updated_by = $this->Auth->user('id');
+        if($jsModel->save($entity)){
+            $response = ['status'=>'success','message'=>__('Role has been changed successfully.')];
+        }else{
+            $this->response->statusCode(400);
+            $response = ['status'=>'failed','message'=>__('System failed to change the role.')];
+        }
+        $this->set($response);
     }
 }

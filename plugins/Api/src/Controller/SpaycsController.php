@@ -317,7 +317,7 @@ class SpaycsController extends AppController {
                     $row['joined_spayc_status'] = 'Approved';
                 }
                 $row['is_joined'] = !empty($status[0])?true:false;
-                $row['joined_users'] = !empty($row['joined_spayc'])?$row['joined_spayc'][0]['joined_users']:0;
+                $row['joined_users'] =  !empty($row['joined_spayc'])?count($row['joined_spayc']):0;
                 unset($row['joined_spayc']);
                 if(!empty($row['subscribed_users'])) {
                     $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');

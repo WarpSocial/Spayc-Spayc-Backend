@@ -31,15 +31,16 @@ Router::plugin(
         $routes->connect('/set-profile-image/:id', ['controller' => 'Users', 'action' => 'setProfileImage'], ['pass'=>['id']]);
         $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
         $routes->connect('/remove-avatar/:order', ['controller' => 'Users', 'action' => 'removeAvatar'],['pass'=>['order']]);
+        $routes->connect('/get-notifications',['controller'=>'Users', 'action'=>'getNotifications']);
         
         $routes->connect('/subscribe-spayc', ['controller' => 'Spaycs', 'action' => 'subscribeSpayc']);
         $routes->connect('/spayc-details', ['controller' => 'Spaycs', 'action' => 'view']);        
         $routes->connect('/chat-room', ['controller' => 'Spaycs', 'action' => 'createChatRoom']);
         $routes->connect('/create-subspace', ['controller' => 'Spaycs', 'action' => 'createSubSpace']);
         $routes->connect('/spayc-edit',['controller'=>'Spaycs', 'action'=>'edit']);
-        $routes->connect('/spayc-members',['controller'=>'Spaycs', 'action'=>'spaycMembers']);
-        $routes->connect('/get-notifications',['controller'=>'Users', 'action'=>'getNotifications']);
+        $routes->connect('/spayc-members',['controller'=>'Spaycs', 'action'=>'spaycMembers']);        
         $routes->connect('/update-device-token', ['controller'=>'Users', 'action'=>'updateDeviceToken']);
+        $routes->connect('/change-role', ['controller'=>'Users', 'action'=>'changeRole']);
         
         //$routes->connect('/as', ['controller' => 'Spaycs', 'action' => 'matrixApplicationService']);
         $routes->connect('/transactions/:id', ['controller' => 'Spaycs', 'action' => 'matrixApplicationService'],['pass'=>['id']]);
