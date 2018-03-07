@@ -809,16 +809,14 @@ class UsersController extends AppController {
         }
        
         $user = $this->Users->find('all', ['fields'=>['Users.id', 'Users.username', 'Users.email', 'Users.gender', 'Users.dob','Users.country_code', 'Users.phone', 'Users.website_url', 'Users.address', 'Users.bio_data', 'Users.longitude', 'Users.latitude', 'Users.matrix_user_id']])->where(['OR'=>['Users.id'=>$id,'Users.matrix_user_id'=>$id]]);
-        if($user->isEmpty()){
-            $this->restException(['status'=>'failed', 'message'=>__('Invalid user id')], 400);
-        }
+
         $userId = $this->Auth->user('id');
         $user->contain([
-            'Requestedby' => function($q) use($userId) {
-                return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_status', 'Requestedby.requested_to', 'Requestedby.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
+            'Requestedby' => function($q) use($id) {
+                return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_status', 'Requestedby.requested_to', 'Requestedby.matrix_room_id'])->Where([['OR'=>['requested_by'=>$id, 'requested_to'=>$id]]]);
             },
-            'Requestedto' => function($q) use($userId) {
-                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
+            'Requestedto' => function($q) use($id) {
+                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.matrix_room_id'])->Where([['OR'=>['requested_by'=>$id, 'requested_to'=>$id]]]);
             },
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.id', 'UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile', 'UserImages.order_index']);
@@ -830,6 +828,7 @@ class UsersController extends AppController {
                 return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id']);
             }
         ]);
+        
         $user->formatResults(function (\Cake\Collection\CollectionInterface $results) {
             return $results->map(function ($row) {
                 $uId = ApiHasher::decrypt($row['id']);
@@ -847,9 +846,9 @@ class UsersController extends AppController {
                 return $row;
             });
         });
-        if($user->count()) {
-            $user = $user->first()->toArray();
-        }
+        if($user->isEmpty()){
+            $this->restException(['status'=>'failed', 'message'=>__('Invalid user id')], 400);
+        }       
         $response = ['status'=>'success', 'message'=>__('User profile.'), 'data'=>$user];
         $this->set($response);
     }
