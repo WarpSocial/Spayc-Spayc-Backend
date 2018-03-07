@@ -854,8 +854,8 @@ class UsersController extends AppController {
         });
         if($user->isEmpty()){
             $this->restException(['status'=>'failed', 'message'=>__('Invalid user id')], 400);
-        }       
-        $response = ['status'=>'success', 'message'=>__('User profile.'), 'data'=>$user];
+        }
+        $response = ['status'=>'success', 'message'=>__('User profile.'), 'data'=> $user->first()];
         $this->set($response);
     }
     
@@ -1045,5 +1045,9 @@ class UsersController extends AppController {
         TableRegistry::get('UserLogs')->UpdateAll(['device_id'=>$data['device_token']], ['user_id'=>$this->Auth->user('id')]);
         $response = ['status'=>'success', 'message'=>__('Device token updated successfully.')];
         $this->set($response);
+    }
+    
+    public function changeRole(){
+        
     }
 }
