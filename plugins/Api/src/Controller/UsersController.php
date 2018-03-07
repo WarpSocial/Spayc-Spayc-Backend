@@ -636,6 +636,9 @@ class UsersController extends AppController {
                 } else if($data['friend_status']=='Blocked') {
                     $push['slug'] = 'blocked';
                     $this->Push->sendPushNotification($push);
+                }elseif(($data['friend_status']=='Accepted')) {
+                    $push['slug'] = 'friend-added';
+                    $this->Push->sendPushNotification($push);
                 }
                 $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status']),'data'=>[
                     'id'=>$newObj->id,
@@ -666,6 +669,9 @@ class UsersController extends AppController {
                     $this->Push->sendPushNotification($push);
                 } else if($data['friend_status']=='Blocked') {
                     $push['slug'] = 'blocked';
+                    $this->Push->sendPushNotification($push);
+                }elseif(($data['friend_status']=='Accepted')) {
+                    $push['slug'] = 'friend-added';
                     $this->Push->sendPushNotification($push);
                 }
                 $this->restException(['status'=>'success', 'message'=> Configure::read('requestMsg.'.$data['friend_status']),'data'=>[                    
