@@ -429,7 +429,7 @@ class SpaycsController extends AppController {
                 return  $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'address'=>'SubSpaycs.location', 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id']);
             },
             'JoinedSpayc' => function($q) {
-                return  $q->select(['JoinedSpayc.spayc_id', 'joined_users' => $q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.spayc_id']);
+                return  $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
             },
             'Comments' => function($q) {
                 return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
@@ -443,7 +443,15 @@ class SpaycsController extends AppController {
             return $results->map(function ($row) use($friend, $userId) {                
                 $spaycId = ApiHasher::decrypt($row->id);
                 $row['friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
-                $row['joined_users'] = !empty($row['joined_spayc'])?$row['joined_spayc'][0]['joined_users']:0;
+                //pj($row['joined_spayc']);die;
+                if(!empty($row['joined_spayc'])) {
+                    $status = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.'].status');
+                }
+                $row['joined_spayc_status'] = !empty($status[0])?$status[0]:null;
+                if($userId==$row['user_id']) {
+                    $row['joined_spayc_status'] = 'Approved';
+                }
+                $row['joined_users'] =!empty($row['joined_spayc'])?count($row['joined_spayc']):0;
                 unset($row['joined_spayc']);
                 if(!empty($row['subscribed_users'])) {
                     $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');

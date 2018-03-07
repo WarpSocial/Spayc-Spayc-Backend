@@ -357,11 +357,12 @@ class SpaycsTable extends Table {
             }else{
                 $row->requested_status = "Pending";
             }
+            
             $row->is_subscribed = false;
             $row->physically_present = false;
-            $row->user_images = !empty($row->user_images[0]['image_url'])?$row->user_images[0]['image_url']:"";
+            $row->image_url = !empty($row->user_images[0]['image_url'])?$row->user_images[0]['image_url']:"";
             
-            unset($row->_matchingData);
+            unset($row->_matchingData,$row->user_images);
             return $row;
         });
         return ['count'=>$count,'records'=>$result];
