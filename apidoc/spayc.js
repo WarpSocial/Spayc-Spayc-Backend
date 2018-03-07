@@ -459,3 +459,46 @@ function postChatRoom() { return; }
  * @apiUse UserErrorResponse
  */
 function getSpaycMember() { return; }
+/**
+@api {post} /change-role.json One to One Room
+@apiVersion 0.1.0
+@apiName postChangeRole
+@apiGroup Spayc
+@apiPermission private
+
+@apiDescription Create a new room for one to one chat.
+
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+
+@apiParam {String} invite           Matrix user id is optional in query string(Required).
+
+@apiExample Example usage:
+{
+    "invite":"@test2:35.168.119.247"
+}
+ 
+@apiSuccess {String} status success.
+@apiSuccess {String} message Your room, spaycdev, has been created.
+@apiSuccess {Object} data Spayc details.
+@apiSuccessExample {json} Success-Response: 
+    HTTP/1.1 201 OK
+{
+    "status": "success",
+    "message": "Your room, @test4:35.168.119.247-@test5:35.168.119.247, has been created.",
+    "data": {
+        "invite": "@test4:35.168.119.247",
+        "name": "@test4:35.168.119.247-@shubhash11:35.168.119.247",
+        "group_type": "Private",
+        "matrix_room_id": "!ICbUbLzaoTzIvIoEjf:35.168.119.247",
+        "matrix_room_alias": "#test4-35-168-119-247-shubhash11-35-168-119-247:35.168.119.247",
+        "user_id": "10",
+        "status": "Active",
+        "created": "2018-02-16T14:14:01+00:00",
+        "modified": "2018-02-16T14:14:01+00:00",
+        "id": "99"
+    }
+}
+
+@apiUse errorResponse
+ */
+function postChangeRole() { return; }

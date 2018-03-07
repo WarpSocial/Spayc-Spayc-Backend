@@ -612,7 +612,7 @@ class SpaycsController extends AppController {
             $this->response->statusCode(204);
             $response = ['status'=>'success', 'message'=>__('List of spayc member.'), 'data'=>[]];
         }else{
-            $response = ['status'=>'success', 'message'=>__('List of spayc member.'), 'data'=>$query];
+            $response = ['status'=>'success', 'message'=>__('List of spayc member.'), 'data'=>$query->toArray()];
         }
         
         $this->set(compact('response'));
