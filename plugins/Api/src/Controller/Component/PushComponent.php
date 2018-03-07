@@ -133,13 +133,13 @@ class PushComponent extends Component {
             if(!$userImages->isEmpty()) {
                 $data['user_image'] = $userImages->first()->image_url;
             }
-            $data['date_time'] = new Time('now','UTC');
-            if (!empty($data['date_time']) && !empty(Configure::read('timezone'))) {
-                $timezone = Configure::read('timezone');
+            $timezone = Configure::read('timezone');
+            $userInputTime = new Time('now',$timezone);
+            $data['date_time']= (new Time($userInputTime, $timezone))->setTimezone('UTC')->format("m-d-Y H:i:s");
+            if (!empty($data['date_time']) && !empty(Configure::read('timezone'))) {                
                 $sd = new Time($data['date_time']);
-                $data['time'] = $sd->setTimezone($timezone);
+                $data['time'] = $sd->setTimezone($timezone)->format('m-d-Y H:i:s');
             }
-            
             $data['device_token'] = $deviceId->device_id;
             $data['notification_type'] = $notificationType->type;
             $sent = false;
