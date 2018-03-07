@@ -432,7 +432,7 @@ function postChatRoom() { return; }
     "message": "List of spayc member.",
     "data": {
         "count": 4,
-        "users": [
+        "records": [
             {
                 "username": "devtestAA",
                 "email": "devtestAA@kiwitech.com",

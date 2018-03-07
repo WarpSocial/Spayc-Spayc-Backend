@@ -319,7 +319,7 @@ class SpaycsTable extends Table {
         if(empty($spayc)){
             return false;
         }
-        
+        $loggedUser = Configure::read('auth');
         $matrix_room_id = $spayc->id;
         $query = $this->Users->find();
         $query->select(['Users.id', 'Users.username', 'Users.email', 'Users.gender', 'Users.dob','Users.country_code', 'Users.phone', 'Users.website_url', 'Users.address', 'Users.bio_data', 'Users.longitude', 'Users.latitude', 'Users.matrix_user_id','JoinedSpayc.status']);
@@ -328,8 +328,8 @@ class SpaycsTable extends Table {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
             }
         ]);
-        $query->innerJoinWith('JoinedSpayc',function($q)use($matrix_room_id,$status) {
-                $condition = ['JoinedSpayc.spayc_id'=>$matrix_room_id];
+        $query->innerJoinWith('JoinedSpayc',function($q)use($matrix_room_id,$status,$loggedUser) {
+                $condition = ['JoinedSpayc.spayc_id'=>$matrix_room_id,'JoinedSpayc.user_id !='=>$loggedUser['id']];
                 if($status != null){
                     $condition['JoinedSpayc.status'] = $status;
                 }
@@ -347,7 +347,6 @@ class SpaycsTable extends Table {
             return [];
         }
         $result = $query->map(function ($row) {
-            $row->user_id = $row->id;
             if(!empty($row->_matchingData['JoinedSpayc']->is_admin)){
                 $row->is_admin = $row->_matchingData['JoinedSpayc']->is_admin;
             }else{
@@ -362,7 +361,7 @@ class SpaycsTable extends Table {
             $row->physically_present = false;
             $row->user_images = !empty($row->user_images[0]['image_url'])?$row->user_images[0]['image_url']:"";
             
-            unset($row->_matchingData,$row->id);
+            unset($row->_matchingData);
             return $row;
         });
         return ['count'=>$count,'records'=>$result];
