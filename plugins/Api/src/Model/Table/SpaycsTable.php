@@ -365,7 +365,7 @@ class SpaycsTable extends Table {
             unset($row->_matchingData,$row->id);
             return $row;
         });
-        return ['count'=>$count,'users'=>$result];
+        return ['count'=>$count,'records'=>$result];
     }
     
     public function joinedInvite($items = [],$spaycId = null,$adminUser = null){
