@@ -553,9 +553,12 @@ class SpaycsController extends AppController {
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function delete($id = null) {
+        if($id == null){
+            $id = $this->request->query('id');
+        }
         $this->request->allowMethod(['post', 'delete']);
         $user = $this->Auth->user();
-        $entity = $this->Spaycs->find()->where(['id'=>$id,'user_id'=>$user['id']]);
+        $entity = $this->Spaycs->find()->where(['OR'=>['id'=>$id,'matrix_room_id'=>$id],'user_id'=>$user['id']]);
         if($entity->isEmpty()){
             $this->restException(['status'=>'failed','message'=>'Record not found.'], 201);
         }

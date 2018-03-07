@@ -125,7 +125,7 @@ define({ "api": [
   },
   {
     "type": "delete",
-    "url": "/spaycs/:room_id.json",
+    "url": "/spaycs/delete.json?id=:room_id",
     "title": "Delete Space/Subspace",
     "version": "0.1.0",
     "name": "DeleteSpace",
@@ -145,6 +145,19 @@ define({ "api": [
             "optional": false,
             "field": "TOKEN",
             "description": "<p>A registered token must be in header.</p> "
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Either spayc id or matrix room id(Required).</p> "
           }
         ]
       }
@@ -180,7 +193,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/spaycs/:room_id.json"
+        "url": "http://spayc.com/api/spaycs/delete.json?id=:room_id"
       }
     ],
     "error": {

@@ -95,7 +95,7 @@
  */
 function postSpaycs() { return; }
 /**
-@api {delete} /spaycs/:room_id.json Delete Space/Subspace
+@api {delete} /spaycs/delete.json?id=:room_id Delete Space/Subspace
 @apiVersion 0.1.0
 @apiName DeleteSpace
 @apiGroup Spayc
@@ -105,6 +105,7 @@ function postSpaycs() { return; }
 
 @apiHeader {String} TOKEN          A registered token must be in header.
 
+@apiParam {String} id        Either spayc id or matrix room id(Required).
 
 @apiSuccess {String} status success.
 @apiSuccess {String} message The spayc has been deleted.

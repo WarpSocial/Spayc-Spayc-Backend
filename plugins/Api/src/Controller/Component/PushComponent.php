@@ -107,19 +107,20 @@ class PushComponent extends Component {
     }
     
     public function sendPushNotification($data) {
-        if(!empty($data['slug'])) {
+        if(!empty($data['slug'])) { 
             $notificationType = TableRegistry::get("Api.NotificationTypes")->findBySlug($data['slug']);
             if($notificationType->isEmpty()) {
                 return false;
             }
+           
             $notificationType = $notificationType->first();
             $deviceId = TableRegistry::get("Api.UserLogs")->findByUserId($data['requested_to'])->select(['id', 'user_id', 'device_id']);
             if($deviceId->isEmpty()) {
-                return false;
+                //return false;
             }
             $deviceId = $deviceId->first();
             if(strlen($deviceId->device_id)<64) {
-                return false;
+                //return false;
             }
             if($notificationType->slug == 'friend-request') {
                 $notificationType->message = str_replace("<USERNAME>", ucwords($data['username']), $notificationType->message);
@@ -132,7 +133,7 @@ class PushComponent extends Component {
             if(!$userImages->isEmpty()) {
                 $data['user_image'] = $userImages->first()->image_url;
             }
-            $data['date_time'] = date("Y-m-d H:i:s");
+            $data['date_time'] = (new Time('now','UTC'))->format("Y-m-d H:i:s");
             
             if (!empty($data['date_time']) && !empty(Configure::read('timezone'))) {
                 $timezone = Configure::read('timezone');

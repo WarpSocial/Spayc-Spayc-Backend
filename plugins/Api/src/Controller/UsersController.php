@@ -630,7 +630,7 @@ class UsersController extends AppController {
                 $push['username'] = $loggedUser['username'];
                 $push['requested_to'] = $data['friend_id'];
                 $push['spayc_id'] = null; //provide spayc id if push related to spayc
-                if($data['friend_status']=='Pending') {
+                if($data['friend_status']=='Pending') { 
                     $push['slug'] = 'friend-request';
                     $this->Push->sendPushNotification($push);
                 } else if($data['friend_status']=='Blocked') {
