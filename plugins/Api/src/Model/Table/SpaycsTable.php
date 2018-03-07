@@ -368,45 +368,43 @@ class SpaycsTable extends Table {
     }
     
     public function joinedInvite($items = [],$spaycId = null,$adminUser = null){
-        if(empty($items['invite']) || $spaycId == null){
-            //return;
-        }
-        $invite  = explode(',',$items['invite']);
-        $user = TableRegistry::get("Users")->find()->select(['id'])->where(['matrix_user_id IN'=>$invite]);     
-        if($user->isEmpty()){
+        if($adminUser == null || $spaycId == null){
             return;
         }
-        if($adminUser != null){ 
-            $member[] = [
-                'spayc_id'=>$spaycId,
-                'user_id'=>$adminUser,
-                'status' => 'Approved',
-                'updated_by' => $adminUser,
-                'created' => date("Y-m-d H:i:s"),
-                'is_admin'=>1
-            ];
-        }else{
-            $member = [];
-        }
-        $pushNotification = new PushComponent(new ComponentRegistry());
-        foreach($user as $key => $val){
-            $member[] = [
-                'spayc_id'=>$spaycId,
-                'user_id'=>$val->id,
-                'status' => 'Approved',
-                'updated_by' => $adminUser,
-                'created' => date("Y-m-d H:i:s"),
-                'is_admin'=>0
-            ];
-            $push['requested_by'] = $adminUser;
-            $push['requested_to'] = $val->id;
-            $push['slug'] = 'new-spayc';
-            $push['spayc_id'] = $spaycId;
-            $push['spayc_name'] = $items['name'];
-            $push['spayc_image'] = $items['image'];
-            $push['matrix_room_id'] = $items['matrix_room_id'];
-            $push['distance'] = $this->getSpaycDistanceFromUser($items['latitude'], $items['longitude'], $push['requested_to']);
-            $pushNotification->sendPushNotification($push);
+        $member[] = [
+            'spayc_id'=>$spaycId,
+            'user_id'=>$adminUser,
+            'status' => 'Approved',
+            'updated_by' => $adminUser,
+            'created' => date("Y-m-d H:i:s"),
+            'is_admin'=>1
+        ];
+        if(!empty($items['invite'])) {
+            $invite  = explode(',',$items['invite']);
+            $user = TableRegistry::get("Users")->find()->select(['id'])->where(['matrix_user_id IN'=>$invite]);     
+            if($user->isEmpty()){
+                return;
+            }
+            $pushNotification = new PushComponent(new ComponentRegistry());
+            foreach($user as $key => $val){
+                $member[] = [
+                    'spayc_id'=>$spaycId,
+                    'user_id'=>$val->id,
+                    'status' => 'Approved',
+                    'updated_by' => $adminUser,
+                    'created' => date("Y-m-d H:i:s"),
+                    'is_admin'=>0
+                ];
+                $push['requested_by'] = $adminUser;
+                $push['requested_to'] = $val->id;
+                $push['slug'] = 'new-spayc';
+                $push['spayc_id'] = $spaycId;
+                $push['spayc_name'] = $items['name'];
+                $push['spayc_image'] = $items['image'];
+                $push['matrix_room_id'] = $items['matrix_room_id'];
+                $push['distance'] = $this->getSpaycDistanceFromUser($items['latitude'], $items['longitude'], $push['requested_to']);
+                $pushNotification->sendPushNotification($push);
+            }
         }
         $joinedSpayc = TableRegistry::get('JoinedSpayc');
         $entities = $joinedSpayc->newEntities($member);

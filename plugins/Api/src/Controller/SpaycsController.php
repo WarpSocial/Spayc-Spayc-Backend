@@ -63,9 +63,7 @@ class SpaycsController extends AppController {
         if (!$items->errors()) {
             if($this->Spaycs->save($items)) {
                 //Joined the invite to the room//
-                if(!empty($items['invite'])) {
-                    $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
-                }
+                $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
                 if(!empty($items['description'])) {
                     TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
                 }
@@ -132,9 +130,7 @@ class SpaycsController extends AppController {
               $data['image'] = $items->get('image');
               $data['matrix_room_id'] = $items->get('matrix_room_id');
               //Joined the invite to the room//
-                if(!empty($items['invite'])) {
-                    $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
-                }
+                $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
                  if(!empty($items['description'])) {
                     TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
                 }
@@ -195,9 +191,7 @@ class SpaycsController extends AppController {
             if($this->Spaycs->save($items)) {
                 
                 TableRegistry::get('Api.FriendRequest')->updateRoomId($items['invite'], $this->Auth->user('id'), $matrix['room_id']);
-                if(!empty($items['invite'])) {
-                    $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
-                }
+                $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
                 $this->response->statusCode(201);
                 $response = ['status'=>'success','message'=>__('Your room, '.ucfirst($data['name']).', has been created.'), 'data'=>$items];
                 /*Event to bind to update the set upload room image */
