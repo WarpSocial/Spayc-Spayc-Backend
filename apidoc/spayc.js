@@ -428,13 +428,14 @@ function postChatRoom() { return; }
  * @apiSuccessExample {json} Success-Response: 
  *      HTTP/1.1 200 OK
 {
-    "response": {
-        "status": "success",
-        "message": "Spayc Details.",
-        "data": [
+    "status": "success",
+    "message": "List of spayc member.",
+    "data": {
+        "count": 4,
+        "users": [
             {
-                "username": "devtest1dddCd",
-                "email": "devtest1dddCd@kiwitech.com",
+                "username": "devtestAA",
+                "email": "devtestAA@kiwitech.com",
                 "gender": "Male                                              ",
                 "dob": "02-25-2005",
                 "country_code": null,
@@ -444,11 +445,31 @@ function postChatRoom() { return; }
                 "bio_data": null,
                 "longitude": "21.253",
                 "latitude": "25.256",
-                "matrix_user_id": "@devtest1dddcd:127.0.0.1",
-                "user_images": "https://spayc-qa.s3.amazonaws.com/profile/4_20180220070221.png",
-                "user_id": "9",
-                "is_admin": false,
-                "requested_status": "Accepted",
+                "matrix_user_id": "@devtestaa:127.0.0.1",
+                "user_images": "https://spayc-qa.s3.amazonaws.com/profile/4_20180220071137.png",
+                "user_id": "10",
+                "is_admin": 0,
+                "requested_status": "Approved",
+                "is_subscribed": false,
+                "physically_present": false
+            },
+            {
+                "username": "devtestAB",
+                "email": "devtestAB@kiwitech.com",
+                "gender": "Male                                              ",
+                "dob": "02-25-2005",
+                "country_code": null,
+                "phone": "",
+                "website_url": null,
+                "address": null,
+                "bio_data": null,
+                "longitude": "21.253",
+                "latitude": "25.256",
+                "matrix_user_id": "@devtestab:127.0.0.1",
+                "user_images": "",
+                "user_id": "11",
+                "is_admin": 0,
+                "requested_status": "Approved",
                 "is_subscribed": false,
                 "physically_present": false
             }

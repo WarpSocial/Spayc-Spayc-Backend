@@ -346,9 +346,8 @@ class SpaycsTable extends Table {
         if($query->isEmpty()){
             return [];
         }
-        $result = $query->map(function ($row)use($count) {
+        $result = $query->map(function ($row) {
             $row->user_id = $row->id;
-            $row->total_count = $count;
             if(!empty($row->_matchingData['JoinedSpayc']->is_admin)){
                 $row->is_admin = $row->_matchingData['JoinedSpayc']->is_admin;
             }else{
@@ -366,7 +365,7 @@ class SpaycsTable extends Table {
             unset($row->_matchingData,$row->id);
             return $row;
         });
-        return $result;
+        return ['count'=>$count,'users'=>$result];
     }
     
     public function joinedInvite($items = [],$spaycId = null,$adminUser = null){
