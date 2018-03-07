@@ -311,7 +311,7 @@ class SpaycsTable extends Table {
         return $data;
     }
     
-    public function spaycMember($spaceid = null,$status = null,$page = null,$limit=null){
+    public function spaycMember($spaceid = null,$status = null,$page = null,$limit=null){ 
         if($spaceid == null){
             return false;
         }
@@ -319,6 +319,7 @@ class SpaycsTable extends Table {
         if(empty($spayc)){
             return false;
         }
+        
         $matrix_room_id = $spayc->id;
         $query = $this->Users->find();
         $query->select(['Users.id', 'Users.username', 'Users.email', 'Users.gender', 'Users.dob','Users.country_code', 'Users.phone', 'Users.website_url', 'Users.address', 'Users.bio_data', 'Users.longitude', 'Users.latitude', 'Users.matrix_user_id','JoinedSpayc.status']);
@@ -332,10 +333,10 @@ class SpaycsTable extends Table {
                 if($status != null){
                     $condition['JoinedSpayc.status'] = $status;
                 }
-                return $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status'])
+                return $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin'])
                         ->where($condition);
-        });       
- //       debug($query);die;
+        });
+       $count = $query->count();
         if($limit != null){
             $query->limit($limit);
         }
@@ -345,12 +346,13 @@ class SpaycsTable extends Table {
         if($query->isEmpty()){
             return [];
         }
-        $result = $query->map(function ($row) {
+        $result = $query->map(function ($row)use($count) {
             $row->user_id = $row->id;
+            $row->total_count = $count;
             if(!empty($row->_matchingData['JoinedSpayc']->is_admin)){
                 $row->is_admin = $row->_matchingData['JoinedSpayc']->is_admin;
             }else{
-                $row->is_admin = false;
+                $row->is_admin = 0;
             }
             if(!empty($row->_matchingData['JoinedSpayc']->status)){
                 $row->requested_status = $row->_matchingData['JoinedSpayc']->status;

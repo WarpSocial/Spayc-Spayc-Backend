@@ -600,8 +600,8 @@ class SpaycsController extends AppController {
         if(empty($page)){
             $page = 1;
         }
-        
         $query = $this->Spaycs->spaycMember($spaycId,$status,$page,$limit);
+        
         if(!$query){
             $this->response->statusCode(204);
             $response = ['status'=>'success', 'message'=>__('List of spayc member.'), 'data'=>[]];
@@ -609,7 +609,7 @@ class SpaycsController extends AppController {
             $response = ['status'=>'success', 'message'=>__('List of spayc member.'), 'data'=>$query];
         }
         
-        $this->set(compact('response'));
+        $this->set($response);
     }
 
 }

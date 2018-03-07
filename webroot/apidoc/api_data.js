@@ -628,7 +628,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>Status of user, value must be any one from following(Pending|Accepted) (Optional).</p> "
+            "description": "<p>Status of user, value must be any one from following(Pending|Approved) (Optional).</p> "
           },
           {
             "group": "Parameter",
