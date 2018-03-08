@@ -64,9 +64,6 @@ class NotificationsTable extends Table
     public function validationDefault(Validator $validator)
     {
         $validator
-            ->allowEmpty('id', 'create');
-
-        $validator
             ->requirePresence('requested_by', 'create')
             ->notEmpty('requested_by');
 
@@ -76,7 +73,7 @@ class NotificationsTable extends Table
 
         $validator
             ->scalar('notification_type')
-            ->maxLength('notification_type', 20)
+            ->maxLength('notification_type', 100)
             ->allowEmpty('notification_type');
 
         $validator
@@ -89,10 +86,7 @@ class NotificationsTable extends Table
             ->maxLength('message', 200)
             ->allowEmpty('message');
 
-        $validator
-            ->dateTime('date_time')
-            ->allowEmpty('date_time');
-
+        
         return $validator;
     }
 
@@ -111,7 +105,7 @@ class NotificationsTable extends Table
     }
     
     public function addNotification($data = []) {
-        if(!empty($data)) {
+        if(!empty($data)) {            
             $entity = $this->newEntity();
             $items = $this->patchEntity($entity, $data);
             $this->save($items);

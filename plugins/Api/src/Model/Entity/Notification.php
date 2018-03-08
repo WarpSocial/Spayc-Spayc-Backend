@@ -53,6 +53,16 @@ class Notification extends Entity
         }
     }
     
+    protected function _setDateTime($endDate) {
+        $timezone = Configure::read('timezone');
+        if (!empty($endDate)) {
+            $endDate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$endDate,$timezone);
+            return $endDate->setTimezone('UTC')->format("Y-m-d H:i:s");
+        } else {
+            return;
+        }
+    }
+    
 //    protected function _setDateTime($datetime) {
 //        $timezone = Configure::read('timezone');
 //        if (!empty($datetime)) {
