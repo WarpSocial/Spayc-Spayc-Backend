@@ -139,6 +139,7 @@ class PushComponent extends Component {
             $data['time'] =  $data['date_time'];
             $data['device_token'] = $deviceId->device_id;
             $data['notification_type'] = $notificationType->type;
+            pr($data);die;
             $sent = false;
             if(!empty($data['device_token'])) {
                 $sent = $this->sendOnIOS($data, $notificationType->message);

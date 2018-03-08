@@ -299,7 +299,6 @@ class SpaycsController extends AppController {
         } else {
             $spaycs->page($page);
         }
-        
         $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend,$userId){
             return $results->map(function ($row) use($friend,$userId) {
                 $spaycId = ApiHasher::decrypt($row->id);
