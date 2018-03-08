@@ -244,14 +244,14 @@ class SpaycsController extends AppController {
             $distance = 0;
             $spaycs = $this->Spaycs->find()
             ->select(['distance' => $distanceField, 'id', 'name', 'address'=>'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode', 'user_id'])
-            ->where(["$distanceField >="=>$distance, 'status'=>'Active'])
+            ->where(["$distanceField >="=>$distance, 'status'=>'Active','parent_id IS'=>null])
             ->bind(':latitude', $this->request->query('latitude'), 'float')
             ->bind(':longitude', $this->request->query('longitude'), 'float');
             $spaycs->order(['distance'=>'ASC']);
         } else {
             $spaycs = $this->Spaycs->find()
             ->select(['id', 'name', 'address'=>'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode', 'user_id'])
-            ->where(['status'=>'Active']);
+            ->where(['status'=>'Active','parent_id IS'=>null]);
             $spaycs->order(['created'=>'DESC']);
         }
         $spaycs->contain([
@@ -299,6 +299,7 @@ class SpaycsController extends AppController {
         } else {
             $spaycs->page($page);
         }
+        
         $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend,$userId){
             return $results->map(function ($row) use($friend,$userId) {
                 $spaycId = ApiHasher::decrypt($row->id);

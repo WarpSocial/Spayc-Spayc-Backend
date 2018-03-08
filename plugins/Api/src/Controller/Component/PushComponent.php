@@ -136,10 +136,7 @@ class PushComponent extends Component {
             $timezone = Configure::read('timezone');
             $userInputTime = new Time('now',$timezone);
             $data['date_time']= (new Time($userInputTime, $timezone))->setTimezone('UTC')->format("m-d-Y H:i:s");
-            if (!empty($data['date_time']) && !empty(Configure::read('timezone'))) {                
-                $sd = new Time($data['date_time']);
-                $data['time'] = $sd->setTimezone($timezone)->format('m-d-Y H:i:s');
-            }
+            $data['time'] =  $data['date_time'];
             $data['device_token'] = $deviceId->device_id;
             $data['notification_type'] = $notificationType->type;
             $sent = false;
