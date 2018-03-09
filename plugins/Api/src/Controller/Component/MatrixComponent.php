@@ -244,7 +244,7 @@ class MatrixComponent extends Component {
                 ); 
         }
         //$response = json_decode($httpResponse,true);
-        pj($httpResponse);die;
+        
         return $response;
     }
     
@@ -416,14 +416,6 @@ class MatrixComponent extends Component {
         return '!'.urlencode(substr($roomid,1));
     }
     
-    public function errorMsg($errorCode){
-        $messages = [
-            'M_FORBIDDEN'=>'You are not invited to this room',
-        ];
-        if(array_key_exists($errorCode, $messages)){
-            return $messages[$errorCode];
-        }
-        
-    }
+   
 
 }
