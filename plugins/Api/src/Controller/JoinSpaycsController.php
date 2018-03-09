@@ -29,18 +29,22 @@ class JoinSpaycsController extends AppController {
         }
         $data = $this->request->getData();
         $jsModel = TableRegistry::get('Api.JoinedSpayc');
+        $user = $this->Auth->user();
+        $data['user_id'] = $user['id'];
+        $data['matrix_token'] = $user['UserLogs']['matrix_access_token'];        
+        $data['matrix_user_id'] = $user['UserLogs']['matrix_user_id'];        
         $errors = $jsModel->ValidateJoinSpayc($data);
         if(!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
         $spaycs = TableRegistry::get('Spaycs')->find()->where(['id'=>$data['spayc_id']]);
-        if($spayc->isEmpty()){
+        if($spaycs->isEmpty()){
             $this->restException(['status'=>'failed','message'=>__('Spayc is not exist.')], 400);
         }
         $spayc = $spaycs->first();
+        $data['matrix_room_id'] = $spayc->matrix_room_id;
         if(($spayc->group_type == 'Private') && empty($data['passcode'])){
             $data['status'] = 'Pending';
-            //$this->restException(['status'=>'failed','message'=>__('Passcode is required for Private.')], 400);
         }elseif(($spayc->group_type == 'Private') && ($spayc->passcode != $data['passcode'])){
             $this->restException(['status'=>'failed','message'=>__('Passcode is not valid.')], 400);
         }
@@ -54,19 +58,26 @@ class JoinSpaycsController extends AppController {
             $entity->modified = new \Cake\I18n\Time();
             $entity->updated_by = $this->Auth->user('id');
         }else{
-            $entity = $entities->first();
-            pj($entity->spayc);die;
+            $entity = $entities->first();           
             $entity->status = $data['status'];
             $entity->modified = new \Cake\I18n\Time();
             $entity->updated_by = $this->Auth->user('id');
         }
-        //$jsModel->getConnection()->begin();
+        $jsModel->getConnection()->begin();
         if($jsModel->save($entity,['checkRules' => false, 'atomic' => false])){
-            $this->Matrix->joinRoom($data);
-            //$jsModel->getConnection()->commit();
-            $response = ['status'=>'success','message'=>__('User has been '.$data['status'].' successfully.')];
+            if(!empty($data['passcode'])){                
+                $data['status'] = 'Invite';
+            }
+            if($this->Matrix->joinRoom($data)){
+                $jsModel->getConnection()->commit();
+                $response = ['status'=>'success','message'=>__('User has been '.$data['status'].' successfully.')];
+            }else{
+                $jsModel->getConnection()->rollback();
+                $this->response->statusCode(400);
+                $response = ['status'=>'failed','message'=>__('System failed to '.$data['status'].'.')];
+            }            
         }else{
-            //$jsModel->getConnection()->rollback();
+            $jsModel->getConnection()->rollback();
             $this->response->statusCode(400);
             $response = ['status'=>'failed','message'=>__('System failed to '.$data['status'].'.')];
         }

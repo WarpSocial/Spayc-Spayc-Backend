@@ -381,17 +381,30 @@ class MatrixComponent extends Component {
             return true;
         }
     }
-    public function joinRoom($data = [],$matrixRoomId = null,$accessToken = null){
-        if(empty($data) || empty($matrixRoomId) || empty($accessToken)){
+    public function joinRoom($data = []){
+        if(empty($data['status']) || empty($data['matrix_token']) || empty($data['matrix_room_id'])){
             return false;
         }
-        $roomId  = $this->validRoomId($matrixRoomId);
+        if($data['status'] == 'Pending'){
+            return true;
+        }
+        $postData = [];
+        $roomId  = $this->validRoomId($data['matrix_room_id']);
         $http = new Client();
-        $url = $this->config('url') .DS.$this->config('client').DS.'join'. DS.$roomId.'?access_token='.$accessToken;
+        if($data['status'] == 'Joined'){
+            $url = $this->config('url') .DS.$this->config('client').DS.'join'. DS.$roomId.'?access_token='.$data['matrix_token'];
+        }elseif($data['status'] == 'Invite'){
+            return true;
+            $url = $this->config('url') .DS.$this->config('client').DS.'rooms'. DS.$roomId.DS.'invite?access_token='.$data['matrix_token'];
+            $postData = ['user_id'=>$data['matrix_user_id']];
+        }else{
+            return true;
+            $url = $this->config('url') .DS.$this->config('client').DS.'rooms'. DS.$roomId.DS.'leave?access_token='.$data['matrix_token'];
+        }
        
         $httpResponse = $http->post(
             $url, 
-            json_encode([]), 
+            json_encode($postData), 
             [
                 'type'=>'json',
                 'ssl_verify_host' => $this->config('sslverify'), 
@@ -403,9 +416,11 @@ class MatrixComponent extends Component {
         
         $response = json_decode($httpResponse->body,true);
         if(!empty($response['errcode'])){
-            return $response;
-        }else{
+            return $this->errorMsg($response['errcode']);
+        }elseif(!empty($response['room_id'])){
             return true;
+        }else{
+            return false;
         }
     }
     
@@ -418,10 +433,12 @@ class MatrixComponent extends Component {
     
     public function errorMsg($errorCode){
         $messages = [
-            'M_FORBIDDEN'=>'You are not invited to this room',
+            'M_FORBIDDEN'=>__('You are not invited to this room'),
         ];
         if(array_key_exists($errorCode, $messages)){
             return $messages[$errorCode];
+        }else{
+            return __('Third party system error.');
         }
         
     }

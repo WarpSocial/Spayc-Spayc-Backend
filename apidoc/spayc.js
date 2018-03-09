@@ -496,7 +496,7 @@ function getSpaycMember() { return; }
 
 @apiParam {Intger} spayc_id Existing Spayc id(Required).
 @apiParam {Intger} user_id Existing User id(Required).
-@apiParam {Intger} status Status must be 1 for admin or 0 for remove member from admin role(Required).
+@apiParam {Intger} role Status must be 1 for admin or 0 for remove member from admin role(Required).
 
 @apiExample Example usage:
 {
@@ -517,3 +517,38 @@ function getSpaycMember() { return; }
 @apiUse errorResponse
  */
 function postChangeRole() { return; }
+/**
+@api {post} /join-spayc.json Join spayc
+@apiVersion 0.1.0
+@apiName postJoinSpayc
+@apiGroup Spayc
+@apiPermission private
+
+@apiDescription Join public and private spayc.For private spayc required passcode to join the spayc directly but due to some technical problem this will not work rest request will be proccessed.In case of private room if passcode is available status must be Joined else status will be Pending.
+
+* @apiHeader {String} TOKEN            * A token send by header as TOKEN
+* @apiHeader {String} timezone            * Current timezone
+
+@apiParam {Intger} spayc_id Existing Spayc id(Required).
+@apiParam {Intger} user_id Logged user only.(Required).
+@apiParam {Intger} status Status must be any one Joined,Pending (Required).
+
+@apiExample Example usage:
+{
+	"spayc_id":"66",
+	"user_id":"10",
+	"status":"Joined"
+}
+ 
+@apiSuccess {String} status success.
+@apiSuccess {String} message User has been {status} successfully.
+@apiSuccessExample {json} Success-Response: 
+    HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "User has been {status} successfully."
+}
+
+@apiUse errorResponse
+ */
+function postJoinSpayc() { return; }
