@@ -96,7 +96,7 @@ class JoinedSpaycTable extends Table {
         $ids = [0];
         if ($spaycId->count()) {
             $spaycIds = $spaycId->toArray();
-            $ids = array_column($spaycIds, 'spayc_id');
+            $ids = \Cake\Utility\Hash::extract($spaycIds, '{n}.spayc_id');
         }
         return $ids;
     }
