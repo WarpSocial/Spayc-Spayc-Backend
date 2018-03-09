@@ -380,8 +380,33 @@ class MatrixComponent extends Component {
         }else{
             return true;
         }
-        pr($response);die;
+    }
+    public function joinRoom($data = [],$matrixRoomId = null,$accessToken = null){
+        if(empty($data) || empty($matrixRoomId) || empty($accessToken)){
+            return false;
+        }
+        $roomId  = $this->validRoomId($matrixRoomId);
+        $http = new Client();
+        $url = $this->config('url') .DS.$this->config('client').DS.'join'. DS.$roomId.'?access_token='.$accessToken;
+       
+        $httpResponse = $http->post(
+            $url, 
+            json_encode([]), 
+            [
+                'type'=>'json',
+                'ssl_verify_host' => $this->config('sslverify'), 
+                'ssl_verify_peer' => $this->config('sslverify'),
+                'ssl_verify_host' => $this->config('sslverify'),
+                'ssl_verify_peer_name' => $this->config('sslverify')
+            ]
+        ); 
         
+        $response = json_decode($httpResponse->body,true);
+        if(!empty($response['errcode'])){
+            return $response;
+        }else{
+            return true;
+        }
     }
     
     public function validRoomId($roomid=null){
@@ -389,6 +414,16 @@ class MatrixComponent extends Component {
             return false;
         }
         return '!'.urlencode(substr($roomid,1));
+    }
+    
+    public function errorMsg($errorCode){
+        $messages = [
+            'M_FORBIDDEN'=>'You are not invited to this room',
+        ];
+        if(array_key_exists($errorCode, $messages)){
+            return $messages[$errorCode];
+        }
+        
     }
 
 }

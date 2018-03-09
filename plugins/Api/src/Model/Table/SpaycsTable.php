@@ -375,9 +375,10 @@ class SpaycsTable extends Table {
         $member[] = [
             'spayc_id'=>$spaycId,
             'user_id'=>$adminUser,
-            'status' => 'Approved',
+            'status' => 'Joined',
             'updated_by' => $adminUser,
             'created' => date("Y-m-d H:i:s"),
+            'modified' => date("Y-m-d H:i:s"),
             'is_admin'=>1
         ];
         if(!empty($items['invite'])) {
@@ -391,9 +392,10 @@ class SpaycsTable extends Table {
                 $member[] = [
                     'spayc_id'=>$spaycId,
                     'user_id'=>$val->id,
-                    'status' => 'Approved',
+                    'status' => 'Joined',
                     'updated_by' => $adminUser,
                     'created' => date("Y-m-d H:i:s"),
+                    'modified' => date("Y-m-d H:i:s"),
                     'is_admin'=>0
                 ];
                 $push['requested_by'] = $adminUser;

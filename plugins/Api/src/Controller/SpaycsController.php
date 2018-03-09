@@ -308,7 +308,7 @@ class SpaycsController extends AppController {
                 }
                 $row['joined_spayc_status'] = !empty($status[0])?$status[0]:null;
                 if($userId==$row['user_id']) {
-                    $row['joined_spayc_status'] = 'Approved';
+                    $row['joined_spayc_status'] = 'Joined';
                 }
                 $row['is_joined'] = !empty($status[0])?true:false;
                 $row['joined_users'] =  !empty($row['joined_spayc'])?count($row['joined_spayc']):0;
@@ -449,7 +449,7 @@ class SpaycsController extends AppController {
                 }
                 $row['joined_spayc_status'] = !empty($status[0])?$status[0]:null;
                 if($userId==$row['user_id']) {
-                    $row['joined_spayc_status'] = 'Approved';
+                    $row['joined_spayc_status'] = 'Joined';
                 }
                 $row['joined_users'] =!empty($row['joined_spayc'])?count($row['joined_spayc']):0;
                 unset($row['joined_spayc']);
