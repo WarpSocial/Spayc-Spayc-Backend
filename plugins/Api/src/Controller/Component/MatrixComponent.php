@@ -189,7 +189,7 @@ class MatrixComponent extends Component {
         }
         
         $http = new Client();
-        $url = $this->config('url') .DS.$this->config('client'). DS.$matrix_room_id.DS.'state';
+        $url = $this->config('url') .DS.$this->config('client').'/rooms'. DS.$matrix_room_id.DS.'state';
         if(!empty($items['name'])){ 
             $httpResponse['name'] =   $http->put(
                 $url.'/m.room.name?access_token='.$items['matrix_token'], 
@@ -202,7 +202,7 @@ class MatrixComponent extends Component {
                     'ssl_verify_peer_name' => $this->config('sslverify')
                 ]
             );
-            pr($httpResponse['name']->body());
+            //pr($httpResponse['name']->body());die;
         }
         if(!empty($items['description'])){
             $httpResponse['topic'] =  $http->put(
@@ -215,7 +215,7 @@ class MatrixComponent extends Component {
                     'ssl_verify_host' => $this->config('sslverify'),
                     'ssl_verify_peer_name' => $this->config('sslverify')
                 ]
-            );            
+            );
         }
         if(!empty($items['group_type'])){
             $preset = strtolower($items['group_type']).'_chat';
@@ -233,7 +233,7 @@ class MatrixComponent extends Component {
             
             $httpResponse['visibility'] = $http->put(
                     $url.'/m.room.visibility?access_token='.$items['matrix_token'], 
-                    json_encode(['visibility'=>$items['group_type']]), 
+                    json_encode(['visibility'=> strtolower($items['group_type'])]), 
                     [
                         'type'=>'json',
                         'ssl_verify_host' => $this->config('sslverify'), 
@@ -243,8 +243,14 @@ class MatrixComponent extends Component {
                     ]
                 ); 
         }
-        //$response = json_decode($httpResponse,true);
-        pj($httpResponse);die;
+        $response = [];
+        foreach ($httpResponse as $opt=>$res){
+            $response[$opt] = json_decode($res->body,true);
+            if(!empty($response[$opt]['errcode'])){
+                return false;
+            }
+            
+        }
         return $response;
     }
     

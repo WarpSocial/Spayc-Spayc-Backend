@@ -94,6 +94,81 @@
 @apiUse errorResponse
  */
 function postSpaycs() { return; }
+/*
+@api {post} /spayc-edit.json Edit Spayc|Subspayc
+@apiVersion 0.1.0
+@apiName PostEditSpayc
+@apiGroup Spayc
+@apiPermission private
+
+@apiDescription Update spayc or subspayc.
+
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+
+@apiParam {String} spayc_id         id either spayc id or matrix room id (Required).
+@apiParam {String} name             Name title of the spayc (Required).
+@apiParam {String} location         Location must be alphanumeric with space (Required).
+@apiParam {String} type             SPAYC type must be any one from the following Event|Community (Required).
+@apiParam {String} group_type       Group type must be any one from the following Public|Private (Required).
+@apiParam {Datetime} start_date     Start date with time in format YYYY-MM-DD H:i:s (Required).
+@apiParam {Datetime} end_date       End date with time in format YYYY-MM-DD H:i:s (Required).
+@apiParam {String} passcode         Passcode is required in case of private group type.
+@apiParam {String} description      Description for SPAYC (Optional).
+@apiParam {String} image            Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
+@apiParam {String} longitude        Langitude from google map (Required).
+@apiParam {String} latitude         Latitude from google map (Required).
+@apiParam {String} invite           Matrix user id is optional in query string(Optional).
+
+@apiExample Example usage:
+    {
+        "name": "spaycdev",
+        "location": "Community addrss",
+        "type": "Event|Community",
+        "group_type": "Public|Private",
+        "start_date": "01-11-2019 01:02:20",
+        "end_date": "01-12-2019 01:02:20",
+        "passcode": "s5d4f87sdf4545",
+        "description":"spayc creating",
+        "image":"file.png",
+        "longitude":"XX.00.XX",
+        "latitude":"XX.00.XX",
+        "invite":"@test2:35.168.119.247, @test3:35.168.119.247"
+    }
+ 
+@apiSuccess {String} status success.
+@apiSuccess {String} message The spayc has been updated successfully.
+@apiSuccess {Object} data Spayc details.
+@apiSuccessExample {json} Success-Response: 
+    HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "The spayc has been updated successfully.",
+    "data": {
+        "name": "Festive",
+        "location": "Your address",
+        "type": "Event",
+        "group_type": "Public",
+        "start_date": "2019-01-11T01:02:20+00:00",
+        "end_date": "2019-01-11T01:08:20+00:00",
+        "passcode": "",
+        "description": "Holi is a festival of color #color #festival",
+        "image": "",
+        "longitude": 77.209021,
+        "latitude": 28.613939,
+        "invite": "@test2:35.168.119.247",
+        "status": "Active",
+        "matrix_room_id": "!JqhnnrWCtlFTnWlwWL:35.168.119.247",
+        "matrix_room_alias": "#Holi13:35.168.119.247",
+        "user_id": "10",
+        "created": "2018-02-16T11:02:47+00:00",
+        "modified": "2018-02-16T11:02:47+00:00",
+        "id": "95"
+    }
+}
+@apiError {String} Invalid spayc  id.
+@apiUse errorResponse
+ */
+function postEditSpaycs() { return; }
 /**
 @api {delete} /spaycs/delete.json?id=:room_id Delete Space/Subspace
 @apiVersion 0.1.0

@@ -420,9 +420,9 @@ class SpaycsTable extends Table {
                 $pushNotification->sendPushNotification($push);
             }
         }
-        $joinedSpayc = TableRegistry::get('JoinedSpayc');
+        $joinedSpayc = TableRegistry::get('Api.JoinedSpayc');
         $entities = $joinedSpayc->newEntities($member);
-        $result = $joinedSpayc->saveMany($entities);
+        $result = $joinedSpayc->saveMany($entities,['checkRules' => false, 'atomic' => false]);
         return $result;
     }
 

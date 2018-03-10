@@ -540,7 +540,7 @@ class SpaycsController extends AppController {
      */
      public function edit($id = null) {
         if (!$this->request->is(['put','patch','post'])) {
-            $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
+            $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);
         }
         $data = $this->request->getData();
         $data['group_type'] = !empty($data['group_type'])?ucfirst($data['group_type']):'';
@@ -548,10 +548,10 @@ class SpaycsController extends AppController {
         if(empty($data['spayc_id'])) {
             $this->restException(['status'=>'failed','message'=>'Spayc id is required.'], 400);
         }
-        $entities = $this->Spaycs->find()->where(['id'=>$data['spayc_id']]);
+        $entities = $this->Spaycs->find()->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
         
         if($entities->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>__('Space has not been found.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Invalid spayc id.')], 400);
         }
         
         $entity = $entities->first();
@@ -564,19 +564,16 @@ class SpaycsController extends AppController {
         $this->loadComponent('Api.Matrix');
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
         $matrix = $this->Matrix->updateRoom($entity->matrix_room_id,$data);
-        if(!empty($matrix['error'])) {
-            $this->restException(['status' => "failed", 'message' =>__($matrix['error'])], 400);
+        if(!$matrix) {
+            $this->restException(['status' => "failed", 'message' =>__('Third party updation failed.')], 400);
         }
-        //$items->set('matrix_room_id',$matrix['room_id']);
-        //$items->set('matrix_room_alias',$matrix['room_alias']);
-        //$items->set('user_id', $this->Auth->user('id'));
         
-        if($this->Spaycs->save($items)){
-             if(!empty($items['description'])) {
-                TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
-            }
-            $this->response->statusCode(201);
-            $response = ['status'=>'success','message'=>__('Your spayc '.ucfirst($data['name']).', has been created.'),'data'=>$items];
+        if($items['description'] != $entity->description) {
+            TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
+        }
+        
+        if($this->Spaycs->save($items)){             
+            $response = ['status'=>'success','message'=>__('The spayc has been updated successfully.'),'data'=>$items];
             /*Event to bind to update the set upload room image */
             $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
                 'options' => [
@@ -587,24 +584,9 @@ class SpaycsController extends AppController {
             ]);
             EventManager::instance()->dispatch($event);
         }else{
-            $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be saved. Please, try again.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be updated. Please, try again.')], 400);
         }
-        $this->set($response);
-        die;
-        $spayc = $this->Spaycs->get($id, [
-            'contain' => []
-        ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $spayc = $this->Spaycs->patchEntity($spayc, $this->request->getData());
-            if ($this->Spaycs->save($spayc)) {
-                $this->Flash->success(__('The spayc has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The spayc could not be saved. Please, try again.'));
-        }
-        $users = $this->Spaycs->Users->find('list', ['limit' => 200]);
-        $this->set(compact('spayc', 'users'));
+        $this->set($response);        
     }
 
     /**
