@@ -622,5 +622,76 @@ class SpaycsController extends AppController {
         
         $this->set($response);
     }
+    
+    public function viewSubSpaycs(){
+        $subspayc = $this->request->getQuery('spayc_id',null);
+        $user = $this->Auth->user();
+        if(empty($subspayc)){
+             $this->restException(['status'=>'failed','message'=>'Sub-spayc is required.'], 400);
+        }
+        $lat = $this->request->getQuery('latitude',null);
+        $long = $this->request->getQuery('longitude',null);
+        $page = $this->request->getQuery('page',1);
+        $limit = $this->request->getQuery('limit',Configure::read('pagelimit'));
+        $userId = $this->request->getQuery('user_id',$user['id']);
+        if(strstr($subspayc,':')){
+            $parentSpayc = $this->Spaycs->findByMatrixRoomId($subspayc)->first();
+            if(empty($parentSpayc)){
+                $this->restException(['status'=>'failed','message'=>'Invalid subspayc id.'], 400);
+            }
+            $subspayc = $parentSpayc->id;
+        }
+        
+        $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Accepted');
+        $query = $this->Spaycs->find()
+                ->select(['Spaycs.id', 'Spaycs.name', 'address'=>'Spaycs.location', 'Spaycs.matrix_room_id', 'Spaycs.start_date', 'Spaycs.end_date', 'Spaycs.image', 'Spaycs.type', 'Spaycs.group_type', 'Spaycs.passcode','Spaycs.user_id'])
+                ->where(['status'=>'Active','parent_id'=>$subspayc])                
+                ->contain([
+                    'JoinedSpayc' => function($q) {
+                        return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
+                    },
+                    'SubscribedUsers' => function($q) {
+                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
+                    },
+                    'Comments' => function($q) {
+                        return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);                        
+                    }
+                ]);
+        if($lat != null && $long != null){
+            $distance = $this->Spaycs->distanceInMiles;
+            $query->select(['distance'=>$distance])
+                    ->bind(':lat', $lat, 'float')
+                    ->bind(':long', $long, 'float')
+                    ->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
+        }else{
+            $query->select(['distance'=>0])
+                    ->order(['created'=>'DESC']);
+        }
+        $query->limit($limit)->page($page);
+        
+        $result = $query->map(function ($row)use($friend,$userId) {
+                $spaycId = ApiHasher::decrypt($row->id);
+                $row->friends = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
+                if(!empty($row->joined_spayc)) {
+                    $status = \Cake\Utility\Hash::extract($row->joined_spayc,'{n}[user_id='.$userId.'].status');
+                }
+                $row['joined_spayc_status'] = !empty($status[0])?$status[0]:null;
+                if($userId==$row->user_id) {
+                    $row->joined_spayc_status = 'Approved';
+                }
+                $row->is_joined = !empty($status[0])?true:false;
+                $row->joined_users =  !empty($row->joined_spayc)?count($row->joined_spayc):0;
+                if(!empty($row->subscribed_users)) {
+                    $subUserId = \Cake\Utility\Hash::extract($row->subscribed_users,'{n}[user_id='.$userId.']');
+                }
+                $row->subscribed_users = !empty($row->subscribed_users)?count($row->subscribed_users):0;
+                $row->is_subscribed = !empty($subUserId[0])?true:false;
+                $row->total_comments = !empty($row->comments[0]['total_comment'])?$row->comments[0]['total_comment']:0;
+                unset($row->joined_spayc,$row->comments);
+                return $row;
+            });
+        $response = ['status'=>'success','message'=>'List of subspayc.','data'=>$result];
+        $this->set($response);
+    }
 
 }

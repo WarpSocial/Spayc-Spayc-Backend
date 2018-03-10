@@ -517,3 +517,57 @@ function getSpaycMember() { return; }
 @apiUse errorResponse
  */
 function postChangeRole() { return; }
+/**
+ * @api {get} /subspaycs.json?spayc_id=:id&page=:page&limit=:limit&latitude=:latitude&longitude=:longitude Sub-Spayc Lists
+ * @apiVersion 0.1.0
+ * @apiName getSubSpaycs
+ * @apiGroup Spayc
+ * @apiPermission private
+ *
+ * @apiDescription Get all sub spaycs for spayc.If user_id key is not available then proccess will be mapped with logged user id.Argument will be as query string.
+ * 
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * 
+    @apiParam {String}      spayc_id        Parent spayc id either spayc id or matrix room id (Required).
+    @apiParam {Number}      page            Page number in query string (Optional).
+    @apiParam {Number}      limit           Limit in query string (Optional).
+    @apiParam {String}      latitude        Latitude of current user (Optional).
+    @apiParam {String}      longitude       Longitude of current user (Optional).
+    @apiParam {Number}      user_id         If user id is not available, logged user id will used to proccess the request(Optional).
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of subspayc.
+ * @apiSuccess {Object} data List of subspayc.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "List of subspayc.",
+    "data": [
+        {
+            "id": "95",
+            "name": "My Sub 8 March",
+            "address": null,
+            "matrix_room_id": "!xLfsiKaFDCBlLNyuAi:spayc-dev.kiwireader.com",
+            "start_date": "03-07-2018 18:32:16",
+            "end_date": "04-07-2018 18:32:34",
+            "image": null,
+            "type": "Event",
+            "group_type": "Public",
+            "passcode": "",
+            "user_id": 6,
+            "distance": "8266.679",
+            "subscribed_users": 0,
+            "friends": 0,
+            "joined_spayc_status": null,
+            "is_joined": false,
+            "joined_users": 0,
+            "is_subscribed": false,
+            "total_comments": 0
+        }
+    ]
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function getSubSpaycs() { return; }

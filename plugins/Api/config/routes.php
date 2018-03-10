@@ -38,7 +38,9 @@ Router::plugin(
         $routes->connect('/chat-room', ['controller' => 'Spaycs', 'action' => 'createChatRoom']);
         $routes->connect('/create-subspace', ['controller' => 'Spaycs', 'action' => 'createSubSpace']);
         $routes->connect('/spayc-edit',['controller'=>'Spaycs', 'action'=>'edit']);
-        $routes->connect('/spayc-members',['controller'=>'Spaycs', 'action'=>'spaycMembers']);        
+        $routes->connect('/spayc-members',['controller'=>'Spaycs', 'action'=>'spaycMembers']);
+        $routes->connect('/subspaycs', ['controller'=>'Spaycs', 'action'=>'viewSubSpaycs']);
+        
         $routes->connect('/update-device-token', ['controller'=>'Users', 'action'=>'updateDeviceToken']);
         $routes->connect('/change-role', ['controller'=>'Users', 'action'=>'changeRole']);
         
