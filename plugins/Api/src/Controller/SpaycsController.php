@@ -338,35 +338,89 @@ class SpaycsController extends AppController {
         $this->set($response);
     }
 
+    /**
+     * unSubscribeSpayc method to unsubscribe the user from the spayc
+     * 
+     * @param String|Number $spayc_id Either spayc id or matrix room id
+     * @return Object Json object
+     */
     public function subscribeSpayc() {
         if (!$this->request->is(['post'])) {
             $this->restException(['status'=>'failed','message'=>__('Method not allowed.')], 405);
         }
         $data = $this->request->getData();
+        $scModel = TableRegistry::get('Api.SubscribedUsers');
+        $user = $this->Auth->user();
+        $data['user_id'] = $user['id'];
         if(empty($data['spayc_id'])) {
             $this->restException(['status'=>'failed','message'=>__('Spayc id is required fields.')], 400);
         }
         $data['spayc_id'] = ApiHasher::decrypt($data['spayc_id']);
-        $isExist = $this->Spaycs->exists(['id'=>$data['spayc_id']]);
-        if(!$isExist) {
-            $this->restException(['status'=>'failed','message'=>__('Invalid spayc Id.')], 400);
+        $spaycs = TableRegistry::get('Spaycs')->find('all',['fields'=>['id','matrix_room_id']])->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
+        if($spaycs->isEmpty()){
+            $this->restException(['status'=>'failed','message'=>__('Invalid spayc id.')], 400);
         }
-        $subscribers = TableRegistry::get("Api.SubscribedUsers");
-        $exists = $subscribers->exists(['spayc_id'=>$data['spayc_id'], 'user_id'=>$this->Auth->user('id')]);
-        if($exists) {
-            $this->restException(['status'=>'failed', 'message'=>__('User already subscribed.')], 400);
+        $spayc = $spaycs->first();
+        $entities = $scModel->find('all',['field'=>['id','user_id','spayc_id','status']])->where(['spayc_id'=>$spayc->id,'user_id'=>$data['user_id']]);
+        if($entities->isEmpty()){
+            $entity = $scModel->newEntity();
+            $entity->user_id = $data['user_id'];
+            $entity->spayc_id = $spayc->id;
+            $entity->status = 'Active';
+            $entity->modified = new \Cake\I18n\Time();
+            $entity->created = new \Cake\I18n\Time();            
+        }else{
+            $entity = $entities->first();
+            if($entity->status == 'Active'){
+                $this->restException(['status'=>'failed','message'=>__('User has been already subscribed.')], 400);
+            }
+            $entity->status = 'Active';
+            $entity->modified = new \Cake\I18n\Time();
+        }        
+        if($scModel->save($entity,['checkRules' => false, 'atomic' => false])){
+            $response = ['status'=>'success','message'=>__('User has been subcribed successfully.')];
+        }else{
+            $response = ['status'=>'failed','message'=>__('System failed to subscribe the user.')];
         }
-        $subscribe['user_id'] = $this->Auth->user('id');
-        $subscribe['spayc_id'] = $data['spayc_id'];
-        $subscribe['status'] = 'Active';
-        $entity = $subscribers->newEntity();
-        $items = $subscribers->patchEntity($entity, $subscribe);
-        if($items->errors()) {
-            $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
+        $this->set($response);
+    }
+    
+    /**
+     * unSubscribeSpayc method to unsubscribe the user from the spayc
+     * 
+     * @param String|Number $spayc_id Either spayc id or matrix room id
+     * @return Object Json object
+     */
+    public function unSubscribeSpayc(){
+        if (!$this->request->is('post')) {
+            $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
         }
-        $subscribers->save($items);
-        $this->response->statusCode(201);
-        $response = ['status'=>'success','message'=>__('User Subscribed successfully.')];
+        $data = $this->request->getData();
+        $scModel = TableRegistry::get('Api.SubscribedUsers');
+        $user = $this->Auth->user();
+        $data['user_id'] = $user['id'];
+        
+        if(empty($data['spayc_id'])) {
+            $this->restException(['status'=>'failed','message'=>__('Spayc id is required fields.')], 400);
+        }
+        $spaycs = TableRegistry::get('Spaycs')->find()->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
+        if($spaycs->isEmpty()){
+            $this->restException(['status'=>'failed','message'=>__('Invalid spayc id.')], 400);
+        }
+        $spayc = $spaycs->first();
+        $entities = $scModel->find('all',['field'=>['id','user_id','spayc_id','status']])->where(['spayc_id'=>$spayc->id,'user_id'=>$data['user_id']]);        
+        if($entities->isEmpty()){
+            $this->restException(['status'=>'failed','message'=>__('User has not yet subscribed.')], 400);
+        }
+        $entity = $entities->first();           
+        $entity->status = 'Inactive';
+        $entity->modified = new \Cake\I18n\Time();
+        $entity->updated_by = $this->Auth->user('id');
+        if($scModel->save($entity,['checkRules' => false, 'atomic' => false])){
+            $response = ['status'=>'success','message'=>__('User has been unsubcribed successfully.')];
+        }else{
+            $response = ['status'=>'failed','message'=>__('System failed to unsubscribe the user.')];
+        }
         $this->set($response);
     }
     

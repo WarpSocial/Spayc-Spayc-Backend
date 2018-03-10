@@ -34,6 +34,7 @@ Router::plugin(
         $routes->connect('/get-notifications',['controller'=>'Users', 'action'=>'getNotifications']);
         
         $routes->connect('/subscribe-spayc', ['controller' => 'Spaycs', 'action' => 'subscribeSpayc']);
+        $routes->connect('/unsubscribe-spayc', ['controller' => 'Spaycs', 'action' => 'unSubscribeSpayc']);
         $routes->connect('/spayc-details', ['controller' => 'Spaycs', 'action' => 'view']);        
         $routes->connect('/chat-room', ['controller' => 'Spaycs', 'action' => 'createChatRoom']);
         $routes->connect('/create-subspace', ['controller' => 'Spaycs', 'action' => 'createSubSpace']);

@@ -263,24 +263,23 @@ function postSubspaycs() { return; }
  * @apiUse UserErrorResponse
  */
 function getSpaycs() { return; }
-
 /**
- @api {post} /subscribe-spayc.json Subscribe Spayc
+ @api {post} /subscribe-spayc.json Subscribe a Spayc
   @apiVersion 0.1.0
   @apiName subscribeSpayc
   @apiGroup Spayc
-  @apiPermission Subscribe Spayc
+  @apiPermission Private
  
-  @apiDescription Subscribe Spayc.
+  @apiDescription User has been subscribed a spayc by providing the existing spayc id.
   
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN            * A token must be in header
  
-  @apiParam {String} spayc_id Spayc id is required (Required).
+  @apiParam {String} spayc_id Id either spayc id or matrix room id (Required).
  
   @apiExample Example usage:
  
     {
-        "spayc_id":"11"
+        "spayc_id":"XXXXX"
     }
  
  
@@ -298,7 +297,40 @@ function getSpaycs() { return; }
   @apiUse UserErrorResponse
 */
 function postSubscribeSpayc() { return; }
-
+/**
+ @api {post} /unsubscribe-spayc.json UnSubscribe a Spayc
+  @apiVersion 0.1.0
+  @apiName postUnSubscribeSpayc
+  @apiGroup Spayc
+  @apiPermission Private
+ 
+  @apiDescription User has been un-subscribed a spayc by providing the existing spayc id.
+  
+ * @apiHeader {String} TOKEN            * A token must be in header
+ 
+  @apiParam {String} spayc_id Id either spayc id or matrix room id (Required).
+ 
+  @apiExample Example usage:
+ 
+    {
+        "spayc_id":"XXXXX"
+    }
+ 
+ 
+  @apiSuccess {String} status success.
+  @apiSuccess {String} message User has been unsubcribed successfully.
+  @apiSuccess {Object} data Null.
+  @apiSuccessExample {json} Success-Response:
+       HTTP/1.1 201 OK
+{
+    "status": "success",
+    "message": "User has been unsubcribed successfully."
+}
+ 
+  @apiError {String} User has not yet subscribed.
+  @apiUse UserErrorResponse
+*/
+function postUnSubscribeSpayc() { return; }
 /**
  * @api {get} /spayc-details.json?id=:id&latitude=:lat&longitude=:long About Spayc
  * @apiVersion 0.1.0
