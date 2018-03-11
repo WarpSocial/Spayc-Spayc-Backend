@@ -27,6 +27,8 @@ Router::plugin(
         $routes->connect('/reset-password/:token/:email', ['controller' => 'Users', 'action' => 'resetPassword', 'ext'=>'html'], ['pass' => ['token', 'email']]);
         $routes->connect('/user-profile/:id', ['controller' => 'Users', 'action' => 'viewProfile'], ['pass'=>['id']]);
         $routes->connect('/change-password', ['controller' => 'Users', 'action' => 'changePassword']);
+        $routes->connect('/update-device-token', ['controller'=>'Users', 'action'=>'updateDeviceToken']);
+        $routes->connect('/change-role', ['controller'=>'Users', 'action'=>'changeRole']);
         
         $routes->connect('/set-profile-image/:id', ['controller' => 'Users', 'action' => 'setProfileImage'], ['pass'=>['id']]);
         $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
@@ -36,14 +38,17 @@ Router::plugin(
         $routes->connect('/change-role', ['controller'=>'Users', 'action'=>'changeRole']);
         
         $routes->connect('/subscribe-spayc', ['controller' => 'Spaycs', 'action' => 'subscribeSpayc']);
+        $routes->connect('/unsubscribe-spayc', ['controller' => 'Spaycs', 'action' => 'unSubscribeSpayc']);
         $routes->connect('/spayc-details', ['controller' => 'Spaycs', 'action' => 'view']);        
         $routes->connect('/chat-room', ['controller' => 'Spaycs', 'action' => 'createChatRoom']);
         $routes->connect('/create-subspace', ['controller' => 'Spaycs', 'action' => 'createSubSpace']);
         $routes->connect('/spayc-edit',['controller'=>'Spaycs', 'action'=>'edit']);
-        $routes->connect('/spayc-members',['controller'=>'Spaycs', 'action'=>'spaycMembers']);        
+        $routes->connect('/spayc-members',['controller'=>'Spaycs', 'action'=>'spaycMembers']);
+        $routes->connect('/subspaycs', ['controller'=>'Spaycs', 'action'=>'viewSubSpaycs']);
         
         
         $routes->connect('/join-spayc', ['controller'=>'JoinSpaycs', 'action'=>'joinSpayc']);
+        
         
         //$routes->connect('/as', ['controller' => 'Spaycs', 'action' => 'matrixApplicationService']);
         $routes->connect('/transactions/:id', ['controller' => 'Spaycs', 'action' => 'matrixApplicationService'],['pass'=>['id']]);

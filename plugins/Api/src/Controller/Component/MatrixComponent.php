@@ -148,11 +148,12 @@ class MatrixComponent extends Component {
                 'latitude'=> Utils::getVar('latitude', $items),
                 'longitude'=> Utils::getVar('longitude', $items)
                 ],
-            'name'=>Utils::getVar('name', $items),
+            'name'=>Utils::getVar('name', $items),            
             'preset'=> strtolower($items['group_type']).'_chat',
             'room_alias_name'=> \Cake\Utility\Inflector::slug($items['name'].'_'.\Cake\Utility\Text::uuid()),
             'visibility'=> strtolower(Utils::getVar('visibility',$items)),            
             'topic'=> Utils::getVar('description', $items),
+            //'join_rule'=>'public',
             'invite' => !empty($items['invite'])?explode(',',$items['invite']):""
         ];
         if(!empty($items['is_direct'])){
@@ -175,6 +176,11 @@ class MatrixComponent extends Component {
             );
         $response = json_decode($httpResponse->body,true);
         #pr($response);die;
+        if(empty($items['is_direct']) && ($items['visibility'] == 'private') && empty($response['error'])){
+            /** Join Rules in case of private room */
+            $joinRulesInput = ['matrix_token'=>$items['matrix_token'],'join_rule'=>'public'];
+            $this->updateRoom($response['room_id'],$joinRulesInput);
+        }
         return $response;
     }
     /**
@@ -189,7 +195,7 @@ class MatrixComponent extends Component {
         }
         
         $http = new Client();
-        $url = $this->config('url') .DS.$this->config('client'). DS.$matrix_room_id.DS.'state';
+        $url = $this->config('url') .DS.$this->config('client').'/rooms'. DS.$matrix_room_id.DS.'state';
         if(!empty($items['name'])){ 
             $httpResponse['name'] =   $http->put(
                 $url.'/m.room.name?access_token='.$items['matrix_token'], 
@@ -202,7 +208,7 @@ class MatrixComponent extends Component {
                     'ssl_verify_peer_name' => $this->config('sslverify')
                 ]
             );
-            pr($httpResponse['name']->body());
+            //pr($httpResponse['name']->body());die;
         }
         if(!empty($items['description'])){
             $httpResponse['topic'] =  $http->put(
@@ -215,7 +221,7 @@ class MatrixComponent extends Component {
                     'ssl_verify_host' => $this->config('sslverify'),
                     'ssl_verify_peer_name' => $this->config('sslverify')
                 ]
-            );            
+            );
         }
         if(!empty($items['group_type'])){
             $preset = strtolower($items['group_type']).'_chat';
@@ -233,7 +239,7 @@ class MatrixComponent extends Component {
             
             $httpResponse['visibility'] = $http->put(
                     $url.'/m.room.visibility?access_token='.$items['matrix_token'], 
-                    json_encode(['visibility'=>$items['group_type']]), 
+                    json_encode(['visibility'=> strtolower($items['group_type'])]), 
                     [
                         'type'=>'json',
                         'ssl_verify_host' => $this->config('sslverify'), 
@@ -243,8 +249,27 @@ class MatrixComponent extends Component {
                     ]
                 ); 
         }
-        //$response = json_decode($httpResponse,true);
-        
+        if(!empty($items['join_rule'])){
+            $httpResponse['join_rule'] = $http->put(
+                $url.'/m.room.join_rules?access_token='.$items['matrix_token'], 
+                json_encode(['join_rule'=>'public']), 
+                [
+                    'type'=>'json',
+                    'ssl_verify_host' => $this->config('sslverify'), 
+                    'ssl_verify_peer' => $this->config('sslverify'),
+                    'ssl_verify_host' => $this->config('sslverify'),
+                    'ssl_verify_peer_name' => $this->config('sslverify')
+                ]
+            ); 
+            
+        }
+        $response = [];
+        foreach ($httpResponse as $opt=>$res){
+            $response[$opt] = json_decode($res->body,true);
+            if(!empty($response[$opt]['errcode'])){
+                return false;
+            }            
+        }
         return $response;
     }
     
