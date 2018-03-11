@@ -235,6 +235,221 @@ define({ "api": [
   },
   {
     "type": "post",
+    "url": "/spayc-edit.json",
+    "title": "Edit Spayc|Subspayc",
+    "version": "0.1.0",
+    "name": "PostEditSpayc",
+    "group": "Spayc",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>Update spayc or subspayc.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "spayc_id",
+            "description": "<p>id either spayc id or matrix room id (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Name title of the spayc (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "location",
+            "description": "<p>Location must be alphanumeric with space (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "type",
+            "description": "<p>SPAYC type must be any one from the following Event|Community (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "group_type",
+            "description": "<p>Group type must be any one from the following Public|Private (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Datetime",
+            "optional": false,
+            "field": "start_date",
+            "description": "<p>Start date with time in format YYYY-MM-DD H:i:s (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Datetime",
+            "optional": false,
+            "field": "end_date",
+            "description": "<p>End date with time in format YYYY-MM-DD H:i:s (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "passcode",
+            "description": "<p>Passcode is required in case of private group type.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "description",
+            "description": "<p>Description for SPAYC (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "image",
+            "description": "<p>Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "longitude",
+            "description": "<p>Langitude from google map (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "latitude",
+            "description": "<p>Latitude from google map (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "invite",
+            "description": "<p>Matrix user id is optional in query string(Optional).</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "{\n    \"name\": \"spaycdev\",\n    \"location\": \"Community addrss\",\n    \"type\": \"Event|Community\",\n    \"group_type\": \"Public|Private\",\n    \"start_date\": \"01-11-2019 01:02:20\",\n    \"end_date\": \"01-12-2019 01:02:20\",\n    \"passcode\": \"s5d4f87sdf4545\",\n    \"description\":\"spayc creating\",\n    \"image\":\"file.png\",\n    \"longitude\":\"XX.00.XX\",\n    \"latitude\":\"XX.00.XX\",\n    \"invite\":\"@test2:35.168.119.247, @test3:35.168.119.247\"\n}",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>The spayc has been updated successfully.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>Spayc details.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "    HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"The spayc has been updated successfully.\",\n    \"data\": {\n        \"name\": \"Festive\",\n        \"location\": \"Your address\",\n        \"type\": \"Event\",\n        \"group_type\": \"Public\",\n        \"start_date\": \"2019-01-11T01:02:20+00:00\",\n        \"end_date\": \"2019-01-11T01:08:20+00:00\",\n        \"passcode\": \"\",\n        \"description\": \"Holi is a festival of color #color #festival\",\n        \"image\": \"\",\n        \"longitude\": 77.209021,\n        \"latitude\": 28.613939,\n        \"invite\": \"@test2:35.168.119.247\",\n        \"status\": \"Active\",\n        \"matrix_room_id\": \"!JqhnnrWCtlFTnWlwWL:35.168.119.247\",\n        \"matrix_room_alias\": \"#Holi13:35.168.119.247\",\n        \"user_id\": \"10\",\n        \"created\": \"2018-02-16T11:02:47+00:00\",\n        \"modified\": \"2018-02-16T11:02:47+00:00\",\n        \"id\": \"95\"\n    }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "String",
+            "optional": false,
+            "field": "Invalid",
+            "description": "<p>spayc  id.</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/spayc.js",
+    "groupTitle": "Spayc",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/spayc-edit.json"
+      }
+    ]
+  },
+  {
+    "type": "post",
     "url": "/spaycs.json",
     "title": "Create Spayc",
     "version": "0.1.0",

@@ -94,7 +94,7 @@
 @apiUse errorResponse
  */
 function postSpaycs() { return; }
-/*
+/**
 @api {post} /spayc-edit.json Edit Spayc|Subspayc
 @apiVersion 0.1.0
 @apiName PostEditSpayc
