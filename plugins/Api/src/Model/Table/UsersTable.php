@@ -449,7 +449,7 @@ class UsersTable extends Table {
         }
         $plain_token = \Api\Utils\Utils::getToken();
         $hasher = new DefaultPasswordHasher();
-        $userLogs = TableRegistry::get('UserLogs');
+        $userLogs = TableRegistry::get('Api.UserLogs');
         $userLogs->deleteAll(['user_id'=>$user['id']]);
         $logItems = $userLogs->newEntity();        
         $logItems->user_id = $user['id'];
@@ -462,7 +462,7 @@ class UsersTable extends Table {
         $logItems->login_status = 1;
         $logItems->created = Time::now();
         $logItems->modified = Time::now();
-        if ($userLogs->save($logItems)) {
+        if ($userLogs->save($logItems,['checkRules'=>false,'atomic'=>false])) {
             return $user+['token'=>$plain_token];
         }else{
             return false;
