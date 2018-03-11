@@ -28,6 +28,8 @@ use Api\Controller\Component\PushComponent;
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class SpaycsTable extends Table {
+    
+    public $distanceInMiles = null;
 
     /**
      * Initialize method
@@ -80,6 +82,17 @@ class SpaycsTable extends Table {
             'joinType' => 'INNER',
             'className' => 'Api.SpaycHashtags'
         ]);
+        
+        /* Earth radius in miles 3959 */
+        $sphericalCosineField = "(3959 * ACOS(
+            COS(RADIANS(:lat)) *
+            COS(RADIANS(Spaycs.latitude)) *
+            COS( RADIANS(Spaycs.longitude) - RADIANS(:long) ) +
+            SIN(RADIANS(:lat)) *
+            SIN(RADIANS(Spaycs.longitude))
+        ))";
+        /* for postgresql cast is required else for mysql not*/
+        $this->distanceInMiles = "ROUND( CAST($sphericalCosineField AS numeric), 3)";
     }
 
     /**
@@ -409,9 +422,9 @@ class SpaycsTable extends Table {
                 $pushNotification->sendPushNotification($push);
             }
         }
-        $joinedSpayc = TableRegistry::get('JoinedSpayc');
+        $joinedSpayc = TableRegistry::get('Api.JoinedSpayc');
         $entities = $joinedSpayc->newEntities($member);
-        $result = $joinedSpayc->saveMany($entities);
+        $result = $joinedSpayc->saveMany($entities,['checkRules' => false, 'atomic' => false]);
         return $result;
     }
 
