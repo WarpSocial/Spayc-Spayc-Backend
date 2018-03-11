@@ -1056,7 +1056,7 @@ class UsersController extends AppController {
         if(!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
-        $jsModel = TableRegistry::get('JoinedSpayc');
+        $jsModel = TableRegistry::get('Api.JoinedSpayc');
         $entities = $jsModel->find()->where(['spayc_id'=>$data['spayc_id'],'user_id'=>$data['user_id']]);
         if($entities->isEmpty()){
             $this->restException(['status'=>'failed','message'=>__('User has not joined the spayc.')], 400);

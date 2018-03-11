@@ -360,4 +360,23 @@ class Utils {
             
         }
     }
+    
+    public static function toUtc(){
+        $timezone = Configure::read('timezone');
+        if (!empty($stardDate)) {
+            $startdate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$stardDate,$timezone);
+            return $startdate->setTimezone('UTC')->format("Y-m-d H:i:s");
+        } else {
+            return;
+        }
+    }
+    public static function toClient(){
+        $timezone = Configure::read('timezone');
+        if (!empty($stardDate)) {
+            $sd = new Time($stardDate);
+            return $sd->setTimezone($timezone)->format('m-d-Y H:i:s');
+        } else {
+            return;
+        }
+    }
 }
