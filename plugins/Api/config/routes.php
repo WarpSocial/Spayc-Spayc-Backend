@@ -50,7 +50,7 @@ Router::plugin(
         $routes->connect('/join-spayc', ['controller'=>'JoinSpaycs', 'action'=>'joinSpayc']);
         
         
-        //$routes->connect('/as', ['controller' => 'Spaycs', 'action' => 'matrixApplicationService']);
+        
         $routes->connect('/transactions/:id', ['controller' => 'Spaycs', 'action' => 'matrixApplicationService'],['pass'=>['id']]);
         
         $routes->fallbacks(DashedRoute::class);
