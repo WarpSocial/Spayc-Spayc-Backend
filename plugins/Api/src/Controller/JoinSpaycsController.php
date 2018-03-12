@@ -66,9 +66,22 @@ class JoinSpaycsController extends AppController {
         $jsModel->getConnection()->begin();
         if($jsModel->save($entity,['checkRules' => false, 'atomic' => false])){
             if(!empty($data['passcode'])){                
-                $data['status'] = 'Invite';
+                $data['status'] = 'Joined';
             }
             if($this->Matrix->joinRoom($data)){
+//                $push = [
+//                    'requested_by'=>$user['id'],
+//                    'requested_to'=>$user['id'],
+//                ];
+//                $push['requested_by'] = $adminUser;
+//                $push['requested_to'] =  $data['user_id'];
+//                $push['slug'] = 'user-joined-your-spayc';
+//                $push['spayc_id'] =  $data['spayc_id'];
+//                $push['spayc_name'] = $items['name'];
+//                $push['spayc_image'] = $items['image'];
+//                $push['matrix_room_id'] = $items['matrix_room_id'];
+//                $push['distance'] = $this->getSpaycDistanceFromUser($items['latitude'], $items['longitude'], $push['requested_to']);
+//                $pushNotification->sendPushNotification($push);
                 $jsModel->getConnection()->commit();
                 $response = ['status'=>'success','message'=>__('User has been '.$data['status'].' successfully.')];
             }else{

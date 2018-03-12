@@ -74,7 +74,7 @@ CREATE TABLE joined_spayc (
     id BIGSERIAL NOT NULL,
     spayc_id BIGINT  NOT NULL,
     user_id BIGINT NOT NULL,
-    status row_status DEFAULT 'Pending'::row_status NOT NULL,
+    status VARCHAR(20) DEFAULT 'Pending',
     created timestamp NOT NULL,
     modified timestamp,
     PRIMARY KEY (id,spayc_id,user_id,created)

@@ -136,6 +136,10 @@ class MatrixComponent extends Component {
         if(empty($items['visibility'])){
             $items['visibility'] = strtolower($items['group_type']);
         }
+        if(empty($items['is_direct'])){
+            $items['visibility'] = 'public';
+            $items['group_type'] = 'public';
+        }
         $validInput = [
             'creation_content'=>[
                 'm.federate'=>false,
@@ -150,7 +154,7 @@ class MatrixComponent extends Component {
                 ],
             'name'=>Utils::getVar('name', $items),            
             'preset'=> strtolower($items['group_type']).'_chat',
-            'room_alias_name'=> \Cake\Utility\Inflector::slug($items['name'].'[]'.microtime(true)),
+            'room_alias_name'=> \Cake\Utility\Inflector::slug($items['name'].'_'.microtime(true)),
             'visibility'=> strtolower(Utils::getVar('visibility',$items)),            
             'topic'=> Utils::getVar('description', $items),
             //'join_rule'=>'public',
@@ -176,11 +180,22 @@ class MatrixComponent extends Component {
             );
         $response = json_decode($httpResponse->body,true);
         #pr($response);die;
-        if(empty($items['is_direct']) && ($items['visibility'] == 'private') && empty($response['error'])){
-            /** Join Rules in case of private room */
-            $joinRulesInput = ['matrix_token'=>$items['matrix_token'],'join_rule'=>'public'];
-            $this->updateRoom($response['room_id'],$joinRulesInput);
+        if(empty($items['is_direct']) && empty($response['error']) && !empty($items['invite'])){
+            $joinees = explode(',',$items['invite']);
+            foreach($joinees as $ke => $mid){
+                $joinData = [
+                    'status'=>'Joined',
+                    'matrix_room_id'=>$response['room_id'],
+                    'matrix_token'=>$items['matrix_token']
+                ];
+                $this->joinRoom($joinData);
+            }
         }
+//        if(empty($items['is_direct']) && ($items['visibility'] == 'private') && empty($response['error'])){
+//            /** Join Rules in case of private room */
+//            $joinRulesInput = ['matrix_token'=>$items['matrix_token'],'join_rule'=>'public'];
+//            $this->updateRoom($response['room_id'],$joinRulesInput);
+//        }
         return $response;
     }
     /**
