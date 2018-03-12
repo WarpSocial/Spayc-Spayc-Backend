@@ -116,11 +116,11 @@ class PushComponent extends Component {
             $notificationType = $notificationType->first();
             $deviceId = TableRegistry::get("Api.UserLogs")->findByUserId($data['requested_to'])->select(['id', 'user_id', 'device_id']);
             if($deviceId->isEmpty()) {
-                //return false;
+                return false;
             }
             $deviceId = $deviceId->first();
             if(strlen($deviceId->device_id)<64) {
-                //return false;
+                return false;
             }
             if($notificationType->slug == 'friend-request') {
                 $notificationType->message = str_replace("<USERNAME>", ucwords($data['username']), $notificationType->message);
@@ -139,7 +139,6 @@ class PushComponent extends Component {
             $data['time'] =  $data['date_time'];
             $data['device_token'] = $deviceId->device_id;
             $data['notification_type'] = $notificationType->type;
-            pr($data);die;
             $sent = false;
             if(!empty($data['device_token'])) {
                 $sent = $this->sendOnIOS($data, $notificationType->message);
