@@ -11,6 +11,7 @@ use Cake\I18n\Time;
 use Cake\ORM\TableRegistry;
 use Cake\Controller\ComponentRegistry;
 use Api\Controller\Component\PushComponent;
+use Api\Controller\Component\MatrixComponent;
 
 /**
  * Spaycs Model
@@ -396,11 +397,12 @@ class SpaycsTable extends Table {
         ];
         if(!empty($items['invite'])) {
             $invite  = explode(',',$items['invite']);
-            $user = TableRegistry::get("Users")->find()->select(['id'])->where(['matrix_user_id IN'=>$invite]);     
+            $user = TableRegistry::get("Users")->find()->select(['id','matrix_access_token'])->where(['matrix_user_id IN'=>$invite]);     
             if($user->isEmpty()){
                 return;
             }
             $pushNotification = new PushComponent(new ComponentRegistry());
+            $matrix = new MatrixComponent(new ComponentRegistry());
             foreach($user as $key => $val){
                 $member[] = [
                     'spayc_id'=>$spaycId,
@@ -411,6 +413,13 @@ class SpaycsTable extends Table {
                     'modified' => date("Y-m-d H:i:s"),
                     'is_admin'=>0
                 ];
+                $joinData = [
+                    'status'=>'Joined',
+                    'matrix_room_id'=>$items['matrix_room_id'],
+                    'matrix_token'=>$val->matrix_access_token
+                ];
+                
+                $matrix->joinRoom($joinData);
                 $push['requested_by'] = $adminUser;
                 $push['requested_to'] = $val->id;
                 $push['slug'] = 'new-spayc';
@@ -419,7 +428,7 @@ class SpaycsTable extends Table {
                 $push['spayc_image'] = $items['image'];
                 $push['matrix_room_id'] = $items['matrix_room_id'];
                 $push['distance'] = $this->getSpaycDistanceFromUser($items['latitude'], $items['longitude'], $push['requested_to']);
-                $pushNotification->sendPushNotification($push);
+                //$pushNotification->sendPushNotification($push);
             }
         }
         $joinedSpayc = TableRegistry::get('JoinedSpayc');

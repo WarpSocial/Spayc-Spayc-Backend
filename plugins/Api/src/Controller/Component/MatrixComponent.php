@@ -180,17 +180,17 @@ class MatrixComponent extends Component {
             );
         $response = json_decode($httpResponse->body,true);
         #pr($response);die;
-        if(empty($items['is_direct']) && empty($response['error']) && !empty($items['invite'])){
-            $joinees = explode(',',$items['invite']);
-            foreach($joinees as $ke => $mid){
-                $joinData = [
-                    'status'=>'Joined',
-                    'matrix_room_id'=>$response['room_id'],
-                    'matrix_token'=>$items['matrix_token']
-                ];
-                $this->joinRoom($joinData);
-            }
-        }
+//        if(empty($items['is_direct']) && !empty($response['room_id']) && !empty($items['invite'])){
+//            $joinees = explode(',',$items['invite']);
+//            foreach($joinees as $ke => $mid){
+//                $joinData = [
+//                    'status'=>'Joined',
+//                    'matrix_room_id'=>$response['room_id'],
+//                    'matrix_token'=>$items['matrix_token']
+//                ];
+//                $this->joinRoom($joinData);
+//            }
+//        }
 //        if(empty($items['is_direct']) && ($items['visibility'] == 'private') && empty($response['error'])){
 //            /** Join Rules in case of private room */
 //            $joinRulesInput = ['matrix_token'=>$items['matrix_token'],'join_rule'=>'public'];
@@ -431,7 +431,7 @@ class MatrixComponent extends Component {
         $postData = [];
         $roomId  = $this->validRoomId($data['matrix_room_id']);
         $http = new Client();
-        if($data['status'] == 'Joined'){
+        if($data['status'] == 'Joined'){ 
             $url = $this->config('url') .DS.$this->config('client').DS.'join'. DS.$roomId.'?access_token='.$data['matrix_token'];
         }elseif($data['status'] == 'Invite'){
             return true;
@@ -441,7 +441,6 @@ class MatrixComponent extends Component {
             return true;
             $url = $this->config('url') .DS.$this->config('client').DS.'rooms'. DS.$roomId.DS.'leave?access_token='.$data['matrix_token'];
         }
-       
         $httpResponse = $http->post(
             $url, 
             json_encode($postData), 
