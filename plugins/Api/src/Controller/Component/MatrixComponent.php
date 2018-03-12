@@ -164,7 +164,7 @@ class MatrixComponent extends Component {
             $validInput['is_direct'] = $items['is_direct'];
             unset($validInput['room_alias_name']);
         }
-        #pr($validInput);die;
+       #pr($validInput);die;
         $url = $this->config('url') .DS.$this->config('client'). DS.'createRoom';
         $http = new Client(['headers' => ['Authorization' => 'Bearer ' . $items['matrix_token']]]);
         $httpResponse = $http->post(

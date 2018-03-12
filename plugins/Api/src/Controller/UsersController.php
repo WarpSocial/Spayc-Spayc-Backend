@@ -810,6 +810,7 @@ class UsersController extends AppController {
         if(!$this->request->is(['get'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
+        $loggedUser = $this->Auth->user();
         if(empty($id)) {
             $this->restException(['status'=>'failed', 'message'=>__('User id is required field.')], 400);
         }
@@ -818,12 +819,15 @@ class UsersController extends AppController {
 
         $userId = $this->Auth->user('id');
         $user->contain([
-            'Requestedby' => function($q) use($id) {
-                return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_status', 'Requestedby.requested_to', 'Requestedby.matrix_room_id'])->Where([['OR'=>['requested_by'=>$id, 'requested_to'=>$id]]]);
+             'Requestedby' => function($q) use($id,$loggedUser) {
+                return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_status', 'Requestedby.requested_to', 'Requestedby.matrix_room_id'])->Where(['OR'=>[
+            ['requested_by' => $loggedUser['id'],'requested_to'=>$id],
+            ['requested_by' => $id,'requested_to'=>$loggedUser['id']]
+            ]]);
             },
-            'Requestedto' => function($q) use($id) {
-                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.matrix_room_id'])->Where([['OR'=>['requested_by'=>$id, 'requested_to'=>$id]]]);
-            },
+//            'Requestedto' => function($q) use($id) {
+//                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.matrix_room_id'])->Where([['OR'=>['requested_by'=>$id, 'requested_to'=>$id]]]);
+//            },
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.id', 'UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile', 'UserImages.order_index']);
             },
@@ -838,17 +842,15 @@ class UsersController extends AppController {
         $user->formatResults(function (\Cake\Collection\CollectionInterface $results) {
             return $results->map(function ($row) {
                 $uId = ApiHasher::decrypt($row['id']);
-                $row['friend'] = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
-                $row['friend'] = !empty($row['requestedby'][0]) && empty($row['friend'])?$row['requestedby'][0]:$row['friend'];
+                //$row['friend'] = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
+                //$row['friend'] = !empty($row['requestedby'][0]) && empty($row['friend'])?$row['requestedby'][0]:$row['friend'];
+                $row['friend'] = !empty($row['requestedby'][0])?$row['requestedby'][0]:[];
                 $row['matrix_room_id'] = !empty($row['friend']['matrix_room_id'])?$row['friend']['matrix_room_id']:null;
                 unset($row['friend']['matrix_room_id']);
                 $row['friend']['total_friends'] = TableRegistry::get('Api.FriendRequest')->getFriendCountByUserId($uId);
                 $row['created_spaycs'] = !empty($row['spaycs'][0]['created_spaycs'])? $row['spaycs'][0]['created_spaycs'] : 0;
                 $row['joined_spaycs'] = !empty($row['joined_spayc'][0]['joined_spaycs'])? $row['joined_spayc'][0]['joined_spaycs'] : 0;
-                unset($row['spaycs']);
-                unset($row['joined_spayc']);
-                unset($row['requestedto']);
-                unset($row['requestedby']);
+                unset($row['joined_spayc'],$row['requestedto'],$row['requestedby'],$row['spaycs']);
                 return $row;
             });
         });
