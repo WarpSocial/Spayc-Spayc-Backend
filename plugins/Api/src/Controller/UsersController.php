@@ -831,7 +831,7 @@ class UsersController extends AppController {
                 return $q->select(['JoinedSpayc.user_id', 'joined_spaycs'=>$q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.user_id']);
             },
             'Spaycs'=>function($q) {
-                return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id']);
+                return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id'])->where(['Spaycs.group_type !='=>'trusted_private' ]);
             }
         ]);
         
