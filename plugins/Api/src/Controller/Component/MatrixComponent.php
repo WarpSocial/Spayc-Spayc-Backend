@@ -150,7 +150,7 @@ class MatrixComponent extends Component {
                 ],
             'name'=>Utils::getVar('name', $items),            
             'preset'=> strtolower($items['group_type']).'_chat',
-            'room_alias_name'=> \Cake\Utility\Inflector::slug($items['name'].'_'.\Cake\Utility\Text::uuid()),
+            'room_alias_name'=> \Cake\Utility\Inflector::slug($items['name'].'[]'.microtime(true)),
             'visibility'=> strtolower(Utils::getVar('visibility',$items)),            
             'topic'=> Utils::getVar('description', $items),
             //'join_rule'=>'public',

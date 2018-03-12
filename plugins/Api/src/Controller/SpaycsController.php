@@ -726,7 +726,7 @@ class SpaycsController extends AppController {
                 unset($row->joined_spayc,$row->comments);
                 return $row;
             });
-        $response = ['status'=>'success','message'=>'List of subspayc.','data'=>$result];
+        $response = ['status'=>'success','message'=>'List of subspayc.','parent_spayc_id'=>$subspayc,'data'=>$result];
         $this->set($response);
     }
 
