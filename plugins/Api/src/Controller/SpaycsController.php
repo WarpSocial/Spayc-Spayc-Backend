@@ -191,6 +191,7 @@ class SpaycsController extends AppController {
             if($this->Spaycs->save($items)) {
                 
                 TableRegistry::get('Api.FriendRequest')->updateRoomId($items['invite'], $this->Auth->user('id'), $matrix['room_id']);
+                $items['is_direct'] = true;
                 $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
                 $this->response->statusCode(201);
                 $response = ['status'=>'success','message'=>__('Your room, '.ucfirst($data['name']).', has been created.'), 'data'=>$items];
@@ -251,7 +252,7 @@ class SpaycsController extends AppController {
         } else {
             $spaycs = $this->Spaycs->find()
             ->select(['id', 'name', 'address'=>'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode', 'user_id'])
-            ->where(['status'=>'Active','parent_id IS'=>null]);
+            ->where(['status'=>'Active','parent_id IS'=>null,'Spaycs.group_type !='=>'trusted_private']);
             $spaycs->order(['created'=>'DESC']);
         }
         $spaycs->contain([
