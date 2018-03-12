@@ -432,7 +432,7 @@ class SpaycsTable extends Table {
             }
         }
         /*In direct chat no need take the record */
-        if($items['is_direct']){ die("kdls");
+        if($items['is_direct']){ 
             return true;
         }
         $joinedSpayc = TableRegistry::get('JoinedSpayc');
