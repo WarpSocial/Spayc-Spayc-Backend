@@ -622,6 +622,8 @@ class SpaycsController extends AppController {
 //            
 //        }
         if ($this->Spaycs->delete($spayc)) {
+            TableRegistry::get('Api.JoinedSpayc')->deleteAll(['spayc_id' => $spayc->id]);
+            TableRegistry::get('Api.SubscribedUsers')->deleteAll(['spayc_id' => $spayc->id]);
             $response = ['status'=>'success','message'=>__('The spayc has been deleted.')];
         } else {
             $response = ['status'=>'failed','message'=>__('Spayc could not be deleted.')];

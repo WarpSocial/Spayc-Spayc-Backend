@@ -475,20 +475,34 @@ class UsersController extends AppController {
         if (!$user) {
             throw new RecordNotFoundException(__('Account not found or already activated. Please read email carefully and try again.'));
         }
-        $this->Flash->success(__('This link has no longer existing.'));
         if ($token != Security::hash($user->email, 'sha1', true)) {
             throw new ForbiddenException(__('Invalid token. Please read email carefully and try again.'));
         }
-        
-        $user->status = 'Active';
-        if ($this->Users->save($user)) {
-            $this->Flash->success(__('Your Account has been successfully activated. You can now log in using the username and password you chose during the registration.'));
-            //return $this->redirect(['action' => 'login']);    
-        } else {
-            $this->Flash->success(__('This link has no longer existing.'));
-            //return $this->redirect(['action' => 'login']);    
+        $status = '';
+        if($this->request->is('post')){
+            $data = $this->request->getData();
+            if(empty($data['password']) || empty($data['confirm_password'])){
+                $this->Flash->error(__('All fields are required.'));
+            }elseif($data['password'] != $data['confirm_password']){
+                $this->Flash->error(__('Password not matched.'));
+            }else{ 
+                $user->status = 'Active';
+                $user->password = ApiHasher::hash($data['password']);
+                if ($this->Users->save($user)) {
+                    $status = 'done';
+                    $this->Flash->success(__('Your new password has been reset successfully.'));
+                    //return $this->redirect(['action' => 'login']);    
+                } else {
+                    $status = 'failed';
+                    $this->Flash->success(__('System rejected to update the password.'));
+                    //return $this->redirect(['action' => 'login']);    
+                }
+            }
+            
         }
+        
         $this->set(compact('user'));
+        $this->set(compact('status'));
         $this->render('Users/reset_password',false);
     }
     

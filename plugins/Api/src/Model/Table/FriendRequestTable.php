@@ -198,7 +198,7 @@ class FriendRequestTable extends Table
     
     public function myFriend($selfId,$frndId){
         $friend = $this->find()
-                ->select(['id','requested_by', 'requested_status', 'requested_to','matrix_room_id'])
+                ->select(['id','requested_by', 'requested_status', 'requested_to','matrix_room_id','action_by'])
                 ->Where(['OR'=>[
                     ['requested_by' => $selfId,'requested_to'=>$frndId],
                     ['requested_by' => $frndId,'requested_to'=>$selfId]

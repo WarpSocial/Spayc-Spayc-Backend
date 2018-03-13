@@ -20,11 +20,24 @@
           <div class="logo-wrap">
             <?php echo $this->Html->image('logo-gr.png', ['alt' => 'Spayc']);?>
           </div>
+            <?php
+            if($status == 'done'){
+              ?>
+            <div class="success-reset-password">
+            <div class="logo-wrap hide">
+                <?php echo $this->Html->image('logo-gr.png', ['alt' => 'Spayc']);?>
+            </div>
+            <span>Your password has been reset successfully.</span>
+          </div>
+            <?php
+            }else{
+            ?>
           <?php echo $this->Form->create('Users', [
     'context' => ['validator' => 'reset'],'class'=>['reset-password']
 ]);?>
             <h4>Reset Password</h4>
             <p class="mb-30">Enter new password and confirm it.</p>
+            <p><?php echo $this->Flash->render() ?></p>
             <div class="form-group">
                 <!--label class="form-label" for="password">New Password</label>
                 <input type="password" name="password" class="form-control form-input " id="password"-->
@@ -45,12 +58,7 @@
               
             </div>
           <?php echo $this->Form->end();?>
-          <div class="success-reset-password hide">
-            <div class="logo-wrap hide">
-                <?php echo $this->Html->image('logo-gr.png', ['alt' => 'Spayc']);?>
-            </div>
-            <span>Your password has been reset successfully.</span>
-          </div>
+            <?php } ?>
         </div>
     </section>
     <!--=============== javascript=================-->
