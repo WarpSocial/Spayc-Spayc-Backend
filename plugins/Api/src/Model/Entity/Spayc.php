@@ -67,8 +67,8 @@ class Spayc extends Entity
     protected function _getStartDate($stardDate) {
         $timezone = Configure::read('timezone');
         if (!empty($stardDate)) {
-            $sd = new Time($stardDate,$timezone);
-            return $sd->format('m-d-Y H:i:s');
+            $sd = new Time($stardDate);
+            return $sd->setTimezone($timezone)->format('m-d-Y H:i:s');
         } else {
             return;
         }
@@ -76,8 +76,8 @@ class Spayc extends Entity
     protected function _getEndDate($endDate) {
         $timezone = Configure::read('timezone');
         if (!empty($endDate)) {
-            $ed = new Time($endDate,$timezone);
-            return $ed->format('m-d-Y H:i:s');
+            $ed = new Time($endDate);
+            return $ed->setTimezone($timezone)->format('m-d-Y H:i:s');
         } else {
             return;
         }
