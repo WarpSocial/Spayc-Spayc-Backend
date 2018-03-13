@@ -46,7 +46,7 @@ class Notification extends Entity
     protected function _getDateTime($date) {
         $timezone = Configure::read('timezone');
         if (!empty($date)) {
-            $sd = new Time($date);
+            $sd = new Time($date,$timezone);
             return $sd->setTimezone($timezone)->format('m-d-Y H:i:s');
         } else {
             return;

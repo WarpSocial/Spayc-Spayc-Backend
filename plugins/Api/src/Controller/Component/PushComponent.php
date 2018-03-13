@@ -135,15 +135,19 @@ class PushComponent extends Component {
             }
             $timezone = Configure::read('timezone');
             $userInputTime = new Time('now',$timezone);
-            $data['date_time']= (new Time($userInputTime, $timezone))->setTimezone('UTC')->format("m-d-Y H:i:s");
+            //$userInputTime = new \DateTime("now", new \DateTimeZone('America/New_York') );
+            //echo $userInputTime->format('Y-m-d H:i:s');
+            $data['date_time']= (new Time($userInputTime, $timezone))->format("m-d-Y H:i:s");
             $data['time'] =  $data['date_time'];
             $data['device_token'] = $deviceId->device_id;
             $data['notification_type'] = $notificationType->type;
+            //pr($data);die;
             $sent = false;
             if(!empty($data['device_token'])) {
                 $sent = $this->sendOnIOS($data, $notificationType->message);
             }
             if($sent) {
+                $data['date_time'] = (new Time($userInputTime, $timezone))->setTimezone('UTC')->format("m-d-Y H:i:s");
                 $data['message'] = $notificationType->message;
                 $data['status'] = 'Unread';
                 $data['created'] = date("Y-m-d H:i:s");
