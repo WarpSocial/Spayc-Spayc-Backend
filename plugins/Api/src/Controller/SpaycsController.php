@@ -246,7 +246,7 @@ class SpaycsController extends AppController {
             $distance = 0;
             $spaycs = $this->Spaycs->find()
             ->select(['distance' => $distanceField, 'id', 'name', 'address'=>'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode', 'user_id'])
-            ->where(["$distanceField >="=>$distance, 'status'=>'Active','parent_id IS'=>null])
+            ->where(["$distanceField >="=>$distance, 'status'=>'Active','parent_id IS'=>null,'Spaycs.group_type !='=>'trusted_private'])
             ->bind(':latitude', $this->request->query('latitude'), 'float')
             ->bind(':longitude', $this->request->query('longitude'), 'float');
             $spaycs->order(['distance'=>'ASC']);
@@ -674,12 +674,20 @@ class SpaycsController extends AppController {
         $page = $this->request->getQuery('page',1);
         $limit = $this->request->getQuery('limit',Configure::read('pagelimit'));
         $userId = $this->request->getQuery('user_id',$user['id']);
+        $parentMatrixId = null;
         if(strstr($subspayc,':')){
             $parentSpayc = $this->Spaycs->findByMatrixRoomId($subspayc)->first();
             if(empty($parentSpayc)){
                 $this->restException(['status'=>'failed','message'=>'Invalid subspayc id.'], 400);
             }
             $subspayc = $parentSpayc->id;
+            $parentMatrixId = $parentSpayc->matrix_room_id;
+        }else{
+            $parentSpayc = $this->Spaycs->get($subspayc);
+            if(empty($parentSpayc)){
+                $this->restException(['status'=>'failed','message'=>'Invalid subspayc id.'], 400);
+            }
+            $parentMatrixId = $parentSpayc->matrix_room_id;
         }
         
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Accepted');
@@ -730,7 +738,7 @@ class SpaycsController extends AppController {
                 unset($row->joined_spayc,$row->comments);
                 return $row;
             });
-        $response = ['status'=>'success','message'=>'List of subspayc.','parent_spayc_id'=>$subspayc,'data'=>$result];
+        $response = ['status'=>'success','message'=>'List of subspayc.','parent_spayc_id'=>$parentMatrixId,'data'=>$result];
         $this->set($response);
     }
 
