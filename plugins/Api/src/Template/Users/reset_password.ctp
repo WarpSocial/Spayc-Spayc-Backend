@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <?=  $this->Html->meta('favicon.ico','favicon.ico',['type' => 'icon']); ?>
     <title>Spayc Reset Password</title>
     <!--===============stylesheet=================-->
     <?=$this->Html->css('bootstrap.min.css');?>
@@ -41,13 +41,13 @@
             <div class="form-group">
                 <!--label class="form-label" for="password">New Password</label>
                 <input type="password" name="password" class="form-control form-input " id="password"-->
-                <?php echo $this->Form->control('password', ['type'=>'password', 'id'=>'password', 'class'=>['form-control', 'form-input'], 'placeholder'=>'New Password', 'label'=>false]);?>
+                <?php echo $this->Form->control('password', ['type'=>'password', 'class'=>['form-control', 'form-input'], 'placeholder'=>'New Password', 'label'=>false]);?>
                 <small class="hint">Hint: Requires at least 1 number and 1 letter.</small>
 
             </div>
             <div class="form-group confirm-password">
               <!--label class="form-label" for="confirm-password">Confirm New Password</label-->
-              <?php echo $this->Form->control('confirm_password', ['type'=>'password', 'id'=>'password', 'class'=>['form-control', 'form-input'], 'placeholder'=>'Confirm New Password', 'label'=>false]);?>
+              <?php echo $this->Form->control('confirm_password', ['type'=>'password', 'class'=>['form-control', 'form-input'], 'placeholder'=>'Confirm New Password', 'label'=>false]);?>
             </div>
 
             <div class="mt-10 d-flex justify-content-between align-items-center">
@@ -62,7 +62,8 @@
         </div>
     </section>
     <!--=============== javascript=================-->
-    <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script type="text/javascript" src="js/theme.js"></script>
+    <?=$this->Html->script('jquery.min');?>
+    <?=$this->Html->script('bootstrap.min');?>
+    <?=$this->Html->script('app');?>
   </body>
 </html>

@@ -705,8 +705,8 @@ function getUserProfile() { return; }
  * @apiExample Example usage:
  *
  *       {
- *          "old_password": "password@123"
- *          "new_password": "newPassword@123"
+ *          "old_password": "password@123",
+ *          "new_password": "newPassword@123",
  *          "confirm_password": "newPassword@123"
  *       }
  *

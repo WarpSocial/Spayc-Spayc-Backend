@@ -477,7 +477,7 @@ class UsersController extends AppController {
         }
         if ($token != Security::hash($user->email, 'sha1', true)) {
             throw new ForbiddenException(__('Invalid token. Please read email carefully and try again.'));
-        }
+        }        
         $status = '';
         if($this->request->is('post')){
             $data = $this->request->getData();
@@ -619,14 +619,14 @@ class UsersController extends AppController {
                 $this->restException(['status'=>'failed', 'message'=>__('User has been blocked.')], 400);
             }
         }
-         if(in_array($data['friend_status'], ['Decline','Unfriend'])){
-            if($frObj->deleteAll(['OR'=>[
-                ['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']],
-                ['requested_by' => $data['friend_id'],'requested_to'=>$loggedUser['id']]
-            ]])){
-                $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status'])]);
-            }
-        }
+//         if(in_array($data['friend_status'], ['Decline','Unfriend'])){
+//            if($frObj->deleteAll(['OR'=>[
+//                ['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']],
+//                ['requested_by' => $data['friend_id'],'requested_to'=>$loggedUser['id']]
+//            ]])){
+//                $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status'])]);
+//            }
+//        }
 //        $requestedFrnd = $frObj->find()->Where(['OR'=>[
 //            ['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']],
 //            ['requested_by' => $data['friend_id'],'requested_to'=>$loggedUser['id']]

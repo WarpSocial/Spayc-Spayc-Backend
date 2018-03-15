@@ -103,7 +103,7 @@ function postSpaycs() { return; }
 
 @apiDescription Update spayc or subspayc.
 
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+@apiHeader {String} TOKEN           A token send by header as TOKEN
 
 @apiParam {String} spayc_id         id either spayc id or matrix room id (Required).
 @apiParam {String} name             Name title of the spayc (Required).
@@ -121,6 +121,7 @@ function postSpaycs() { return; }
 
 @apiExample Example usage:
     {
+        "spayc_id": "XXXXXXX",
         "name": "spaycdev",
         "location": "Community addrss",
         "type": "Event|Community",
