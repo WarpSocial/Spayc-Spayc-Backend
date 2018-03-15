@@ -63,7 +63,7 @@ class AppController extends BaseController {
      * $data
      */
     public function restException($data=[], $code=200){        
-        Log::info($data);
+        Log::info($data);        
         $this->response->type('json');
         $this->response->statusCode($code);
         $this->response->body(json_encode($data)); 

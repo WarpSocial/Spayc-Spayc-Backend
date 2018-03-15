@@ -111,7 +111,7 @@ class JoinedSpaycTable extends Table {
                 ->notEmpty('user_id', __('Please enter User id.'));
         $validator->requirePresence('status', true,__('status key is missing.'))
                 ->notEmpty('status', __('Please enter role.'))
-                ->inList('status', ['Joined',"Banned"],__('Role must be either Joined or Banned.'));
+                ->inList('status', ['Joined',"Banned","Pending"],__('Role must be either Joined or Banned.'));
         return $validator->errors($data);
     }
 

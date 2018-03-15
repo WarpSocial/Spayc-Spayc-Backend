@@ -223,50 +223,46 @@ class SpaycsController extends AppController {
         }
         $userId = !empty($this->request->query('user_id'))?$this->request->query('user_id'):$this->Auth->user("id");
         $loggedUser = $this->Auth->user('id');
+        
         $limit = (!empty($this->request->query('limit')) and is_numeric($this->request->query('limit')))?$this->request->query('limit'):5;
         $page = (!empty($this->request->query('page')) and is_numeric($this->request->query('page')))?$this->request->query('page'):1;
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Accepted');
+        $lat = $this->request->getQuery('latitude',null);
+        $long = $this->request->getQuery('longitude',null);
         
-        if((empty($this->request->query('list_by')) || !in_array($this->request->query('list_by'), ['created', 'joined'])) || (!empty($this->request->query('latitude')) && !empty($this->request->query('longitude')))) {
-            if(!Utils::isValidLatitude($this->request->query('latitude')) || empty($this->request->query('latitude'))) {
+        if((empty($this->request->query('list_by')) || !in_array($this->request->query('list_by'), ['created', 'joined'])) || (!empty($lat) && !empty($long))) {
+            if(!Utils::isValidLatitude($lat)) {
                 $this->restException(['status'=>'failed', 'message'=>__('Latitude is not valid.')], 400);
             }
-            if(!Utils::isValidLongitude($this->request->query('longitude')) || empty($this->request->query('longitude'))) {
+            if(!Utils::isValidLongitude($long)) {
                 $this->restException(['status'=>'failed', 'message'=>__('Longitude is not valid.')], 400);
             }
         }
-        if(!empty($this->request->query('latitude')) && !empty($this->request->query('longitude'))) {
-            //To search by kilometers instead of miles, replace 3959 with 6371.
-            $distanceField = '(3959 * acos (cos ( radians(:latitude) )
-                * cos( radians( Spaycs.latitude ) )
-                * cos( radians( Spaycs.longitude )
-                - radians(:longitude) )
-                + sin ( radians(:latitude) )
-                * sin( radians( Spaycs.latitude ) )))';
-            $distance = 0;
-            $spaycs = $this->Spaycs->find()
-            ->select(['distance' => $distanceField, 'id', 'name', 'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode', 'user_id'])
-            ->where(["$distanceField >="=>$distance, 'status'=>'Active','parent_id IS'=>null,'Spaycs.group_type !='=>'trusted_private'])
-            ->bind(':latitude', $this->request->query('latitude'), 'float')
-            ->bind(':longitude', $this->request->query('longitude'), 'float');
-            $spaycs->order(['distance'=>'ASC']);
-        } else {
-            $spaycs = $this->Spaycs->find()
-            ->select(['id', 'name', 'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode', 'user_id'])
-            ->where(['status'=>'Active','parent_id IS'=>null,'Spaycs.group_type !='=>'trusted_private']);
-            $spaycs->order(['created'=>'DESC']);
-        }
-        $spaycs->contain([
-            'JoinedSpayc' => function($q) {
-                return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
-            },
-            'SubscribedUsers' => function($q) {
-                return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
-            },
-            'Comments' => function($q) {
-                return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
-            }
-        ]);
+        $spaycs = $this->Spaycs->find();
+        $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id'])
+            ->where(['status'=>'Active','parent_id IS'=>null,'Spaycs.group_type !='=>'trusted_private'])
+            ->contain([                    
+                'JoinedSpayc' => function($q) {
+                    return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
+                },
+                'SubscribedUsers' => function($q) {
+                    return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
+                },
+                'Comments' => function($q) {
+                    return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
+                }
+            ]);
+         if($lat != null && $long != null){
+            $distance = $this->Spaycs->distanceInMiles;
+            $spaycs->select(['distance'=>$distance])
+                    ->bind(':lat', $lat, 'float')
+                    ->bind(':long', $long, 'float')
+                    ->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
+        }else{
+            $spaycs->select(['distance'=>0])
+                    ->order(['created'=>'DESC']);
+        } 
+        
         $spaycs->limit($limit);
         if($this->request->query('list_by')=='created') {
             $spaycs->where(['Spaycs.user_id'=>$userId]);
@@ -329,9 +325,9 @@ class SpaycsController extends AppController {
         
         //pr($spaycs->toArray());die;
         $newQuery = clone $spaycs;
-        $data['count'] = $newQuery->count();
+        $data['count'] = $newQuery->all()->count();
         $data['spaycs'] = [];
-        if($spaycs->count()) {
+        if(!$spaycs->isEmpty()) {
             $data['spaycs'] = $spaycs->toArray();
         } else {
             $this->response->statusCode(204);
@@ -433,67 +429,58 @@ class SpaycsController extends AppController {
      * @return \Cake\Http\Response|void
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view() {
+    public function view() { 
         if(!$this->request->is(['get'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
         if(empty($this->request->query('id'))) {
             $this->restException(['status'=>'failed', 'message'=>__('Spayc id is required field.')], 400);
         }
+        $lat = $this->request->getQuery('latitude',null);
+        $long = $this->request->getQuery('longitude',null);
         //$id = ApiHasher::decrypt($this->request->query('id'));
         $id = $this->request->query('id');
-        $exists = $this->Spaycs->exists(['matrix_room_id'=>$id]);
+        if($lat != null && !Utils::isValidLatitude($lat)) {
+            $this->restException(['status'=>'failed', 'message'=>__('Latitude is not valid.')], 400);
+        }
+        if($long != null && !Utils::isValidLongitude($long)) {
+            $this->restException(['status'=>'failed', 'message'=>__('Longitude is not valid.')], 400);
+        }
+        
+        $exists = $this->Spaycs->exists(['OR'=>['matrix_room_id'=>$id,'id'=>$id]]);
         if(!$exists) {
             $this->restException(['status'=>'failed', 'message'=>__('Invalid spayc id.')], 400);
         }
         $userId = $this->Auth->user('id');
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Accepted');
         
-        //$spayc = $this->Spaycs->find('all', ['fields' => ['Spaycs.id', 'Spaycs.name', 'address'=>'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type']])->where(['id'=>$id, 'status'=>'Active']);
-        
-        if(!empty($this->request->query('latitude')) && !empty($this->request->query('longitude'))) {
-            if(!Utils::isValidLatitude($this->request->query('latitude'))) {
-                $this->restException(['status'=>'failed', 'message'=>__('Latitude is not valid.')], 400);
-            }
-            if(!Utils::isValidLongitude($this->request->query('longitude'))) {
-                $this->restException(['status'=>'failed', 'message'=>__('Longitude is not valid.')], 400);
-            }
-            //To search by kilometers instead of miles, replace 3959 with 6371.
-            $distanceField = '(3959 * acos (cos ( radians(:latitude) )
-                * cos( radians( Spaycs.latitude ) )
-                * cos( radians( Spaycs.longitude )
-                - radians(:longitude) )
-                + sin ( radians(:latitude) )
-                * sin( radians( Spaycs.latitude ) )))';
-            $distance = 0;
-            $spayc = $this->Spaycs->find()
-            ->select(['distance' => $distanceField, 'Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.description','Spaycs.matrix_room_id'])
-            ->where(["$distanceField >="=>$distance, 'status'=>'Active', 'matrix_room_id'=>$id])
-            ->bind(':latitude', $this->request->query('latitude'), 'float')
-            ->bind(':longitude', $this->request->query('longitude'), 'float');
-            $spayc->order(['distance'=>'ASC']);
-        } else {
-            $spayc = $this->Spaycs->find()
-            ->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.description','Spaycs.matrix_room_id'])
-            ->where(['status'=>'Active', 'matrix_room_id'=>$id]);
-            $spayc->order(['created'=>'DESC']);
-        }
-        
-        
-        $spayc->contain([
-            'SubSpaycs' => function($q) {
-                return  $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'SubSpaycs.location', 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id']);
-            },
-            'JoinedSpayc' => function($q) {
-                return  $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
-            },
-            'Comments' => function($q) {
-                return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
-            },
-            'SubscribedUsers' => function($q) {
-                return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
-            }
-        ]);
+        $spayc = $this->Spaycs->find();
+        $spayc->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id'])
+                ->where(['status'=>'Active', 'OR'=>['matrix_room_id'=>$id,'id'=>$id]])
+                ->contain([
+                    'SubSpaycs' => function($q) {
+                        return  $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'SubSpaycs.location', 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id']);
+                    },
+                    'JoinedSpayc' => function($q) {
+                        return  $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
+                    },
+                    'Comments' => function($q) {
+                        return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
+                    },
+                    'SubscribedUsers' => function($q) {
+                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
+                    }
+                ]);
+        if($lat != null && $long != null){
+            $distance = $this->Spaycs->distanceInMiles;
+            $spayc->select(['distance'=>$distance])
+                    ->bind(':lat', $lat, 'float')
+                    ->bind(':long', $long, 'float')
+                    ->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
+        }else{
+            $spayc->select(['distance'=>0])
+                    ->order(['created'=>'DESC']);
+        }        
         
         $spayc->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend, $userId) {
             return $results->map(function ($row) use($friend, $userId) {                
@@ -604,7 +591,9 @@ class SpaycsController extends AppController {
         }
         $this->request->allowMethod(['post', 'delete']);
         $user = $this->Auth->user();
-        $entity = $this->Spaycs->find()->where(['OR'=>['id'=>$id,'matrix_room_id'=>$id],'user_id'=>$user['id']]);
+        $entity = $this->Spaycs->find()
+                ->where(['OR'=>['id'=>$id,'matrix_room_id'=>$id],'user_id'=>$user['id']])
+                ->contain('SubSpaycs');
         if($entity->isEmpty()){
             $this->restException(['status'=>'failed','message'=>'Record not found.'], 201);
         }
@@ -621,9 +610,12 @@ class SpaycsController extends AppController {
 //            }
 //            
 //        }
+        $child = \Cake\Utility\Hash::extract($spayc->sub_spaycs, '{n}.id');
+        array_push($child,$spayc->id);     
         if ($this->Spaycs->delete($spayc)) {
-            TableRegistry::get('Api.JoinedSpayc')->deleteAll(['spayc_id' => $spayc->id]);
-            TableRegistry::get('Api.SubscribedUsers')->deleteAll(['spayc_id' => $spayc->id]);
+            TableRegistry::get('Api.JoinedSpayc')->deleteAll(['spayc_id IN' => $child]);
+            TableRegistry::get('Api.SubscribedUsers')->deleteAll(['spayc_id IN' => $child]);
+            TableRegistry::get('Api.SpaycHashtags')->deleteAll(['spayc_id IN' => $child]);
             $response = ['status'=>'success','message'=>__('The spayc has been deleted.')];
         } else {
             $response = ['status'=>'failed','message'=>__('Spayc could not be deleted.')];
@@ -682,7 +674,7 @@ class SpaycsController extends AppController {
             }
             $subspayc = $parentSpayc->id;
             $parentMatrixId = $parentSpayc->matrix_room_id;
-        }else{
+        }else{ 
             $parentSpayc = $this->Spaycs->get($subspayc);
             if(empty($parentSpayc)){
                 $this->restException(['status'=>'failed','message'=>'Invalid subspayc id.'], 400);

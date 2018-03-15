@@ -58,42 +58,43 @@ class SpaycsTable extends Table {
         ]);
         
         $this->belongsTo('ParentSpaycs', [
+            'dependent' => true,
             'className' => 'Spaycs',
             'foreignKey' => 'parent_id'
         ]);
         $this->hasMany('SubSpaycs', [
+            'dependent' => true,
             'className' => 'Spaycs',
             'foreignKey' => 'parent_id'
             
         ]);
         $this->hasMany('JoinedSpayc', [
+            'dependent' => true,
             'foreignKey' => 'spayc_id',
             'className' => 'Api.JoinedSpayc'
         ]);
         $this->hasMany('SubscribedUsers', [
+            'dependent' => true,
             'foreignKey' => 'spayc_id',
             'className' => 'Api.SubscribedUsers'
         ]);
         $this->hasMany('Comments', [
+            'dependent' => true,
             'foreignKey' => 'spayc_id',
             'className' => 'Api.Comments'
         ]);
         $this->hasMany('SpaycHashtags', [
+            'dependent' => true,
             'foreignKey' => 'spayc_id',
             'joinType' => 'INNER',
             'className' => 'Api.SpaycHashtags'
         ]);
         
         /* Earth radius in miles 3959 */
-        $sphericalCosineField = "(3959 * ACOS(
-            COS(RADIANS(:lat)) *
-            COS(RADIANS(Spaycs.latitude)) *
-            COS( RADIANS(Spaycs.longitude) - RADIANS(:long) ) +
-            SIN(RADIANS(:lat)) *
-            SIN(RADIANS(Spaycs.longitude))
-        ))";
         /* for postgresql cast is required else for mysql not*/
-        $this->distanceInMiles = "ROUND( CAST($sphericalCosineField AS numeric), 3)";
+        $this->distanceInMiles = "(3963.0 * ACOS(
+        (SIN(RADIANS(:lat)) * SIN(RADIANS(Spaycs.latitude))) +
+        (COS(RADIANS(:lat)) * COS(RADIANS(Spaycs.latitude)) * COS(RADIANS(Spaycs.longitude) - RADIANS(:long)) )))";
     }
 
     /**
