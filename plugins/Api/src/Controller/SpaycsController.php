@@ -245,14 +245,14 @@ class SpaycsController extends AppController {
                 * sin( radians( Spaycs.latitude ) )))';
             $distance = 0;
             $spaycs = $this->Spaycs->find()
-            ->select(['distance' => $distanceField, 'id', 'name', 'address'=>'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode', 'user_id'])
+            ->select(['distance' => $distanceField, 'id', 'name', 'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode', 'user_id'])
             ->where(["$distanceField >="=>$distance, 'status'=>'Active','parent_id IS'=>null,'Spaycs.group_type !='=>'trusted_private'])
             ->bind(':latitude', $this->request->query('latitude'), 'float')
             ->bind(':longitude', $this->request->query('longitude'), 'float');
             $spaycs->order(['distance'=>'ASC']);
         } else {
             $spaycs = $this->Spaycs->find()
-            ->select(['id', 'name', 'address'=>'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode', 'user_id'])
+            ->select(['id', 'name', 'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode', 'user_id'])
             ->where(['status'=>'Active','parent_id IS'=>null,'Spaycs.group_type !='=>'trusted_private']);
             $spaycs->order(['created'=>'DESC']);
         }
@@ -467,14 +467,14 @@ class SpaycsController extends AppController {
                 * sin( radians( Spaycs.latitude ) )))';
             $distance = 0;
             $spayc = $this->Spaycs->find()
-            ->select(['distance' => $distanceField, 'Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'address'=>'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.description','Spaycs.matrix_room_id'])
+            ->select(['distance' => $distanceField, 'Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.description','Spaycs.matrix_room_id'])
             ->where(["$distanceField >="=>$distance, 'status'=>'Active', 'matrix_room_id'=>$id])
             ->bind(':latitude', $this->request->query('latitude'), 'float')
             ->bind(':longitude', $this->request->query('longitude'), 'float');
             $spayc->order(['distance'=>'ASC']);
         } else {
             $spayc = $this->Spaycs->find()
-            ->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'address'=>'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.description','Spaycs.matrix_room_id'])
+            ->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.description','Spaycs.matrix_room_id'])
             ->where(['status'=>'Active', 'matrix_room_id'=>$id]);
             $spayc->order(['created'=>'DESC']);
         }
@@ -482,7 +482,7 @@ class SpaycsController extends AppController {
         
         $spayc->contain([
             'SubSpaycs' => function($q) {
-                return  $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'address'=>'SubSpaycs.location', 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id']);
+                return  $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'SubSpaycs.location', 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id']);
             },
             'JoinedSpayc' => function($q) {
                 return  $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
@@ -692,7 +692,7 @@ class SpaycsController extends AppController {
         
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Accepted');
         $query = $this->Spaycs->find()
-                ->select(['Spaycs.id', 'Spaycs.name', 'address'=>'Spaycs.location', 'Spaycs.matrix_room_id', 'Spaycs.start_date', 'Spaycs.end_date', 'Spaycs.image', 'Spaycs.type', 'Spaycs.group_type', 'Spaycs.passcode','Spaycs.user_id'])
+                ->select(['Spaycs.id', 'Spaycs.name', 'Spaycs.location', 'Spaycs.matrix_room_id', 'Spaycs.start_date', 'Spaycs.end_date', 'Spaycs.image', 'Spaycs.type', 'Spaycs.group_type', 'Spaycs.passcode','Spaycs.user_id'])
                 ->where(['status'=>'Active','parent_id'=>$subspayc])                
                 ->contain([
                     'JoinedSpayc' => function($q) {

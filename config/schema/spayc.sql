@@ -77,6 +77,7 @@ CREATE TABLE joined_spayc (
     status VARCHAR(20) DEFAULT 'Pending',
     created timestamp NOT NULL,
     modified timestamp,
+    updated_by BIGINT NOT NULL,
     PRIMARY KEY (id,spayc_id,user_id,created)
 );
 SELECT create_hypertable('joined_spayc', 'created');
