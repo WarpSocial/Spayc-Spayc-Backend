@@ -327,29 +327,18 @@ class UsersController extends AppController {
         $user = $this->Users->findByEmail($email)->first();
         if (!empty($user)) {
             if ($user->status == 'Active') {
-                $this->Flash->success(__('Your Account has been already activated. You can now log in using the username and password you chose during the registration'));
+                $this->Flash->error(__('Your Account has been already activated. You can now log in using the username and password you chose during the registration'));
             }else{
                 if ($token != Security::hash($user->email, 'sha1', true)) {
-                    
+                    $this->Flash->error(__('Invalid token. Please read email carefully and try again.'));
+                }else{
+                     $user->status = 'Active';
+                     if ($this->Users->save($user)) {
+                         $this->Flash->success(__('Your Account has been successfully activated. You can now log in using the username and password you chose during the registration.'));
+                    } else {
+                        $this->Flash->success(__('This link has no longer existing.'));
+                    }
                 }
-                $this->Flash->success(__('Your Account has been already activated. You can now log in using the username and password you chose during the registration'));
-            }
-            throw new \Cake\Datasource\Exception\RecordNotFoundException(__('Account not found or already activated. Please read email carefully and try again.'));
-        }
-        if ($user->status == 'Active') {
-            $this->Flash->success(__('Your Account has been already activated. You can now log in using the username and password you chose during the registration'));
-            //return $this->redirect('/');
-        } else {
-            if ($token != Security::hash($user->email, 'sha1', true)) {
-                throw new \Cake\Network\Exception\ForbiddenException(__('Invalid token. Please read email carefully and try again.'));
-            }
-            $user->status = 'Active';
-            if ($this->Users->save($user)) {
-                $this->Flash->success(__('Your Account has been successfully activated. You can now log in using the username and password you chose during the registration.'));
-                //return $this->redirect(['action' => 'login']);    
-            } else {
-                $this->Flash->success(__('This link has no longer existing.'));
-                //return $this->redirect(['action' => 'login']);    
             }
             $this->set(compact('user'));
             $this->render('Users/verify_account',false);
@@ -483,7 +472,7 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Email does not exists.')], 400);
         }
         $user = $user->first();
-        $data['forgot_password_token'] = Security::hash($data['email'], 'sha1', true);
+        $user['forgot_password_token'] = $data['forgot_password_token'] = Security::hash($data['email'], 'sha1', true);
         $data['forgot_password_timestamp'] = time();
         $d = $this->Users->updateAll($data, ['email'=>$data['email']]);
         $this->getMailer('Api.User')->send('forgotPassword', [$user]);

@@ -32,8 +32,7 @@
             <?php
             }else{
             ?>
-          <?php echo $this->Form->create('Users', [
-    'context' => ['validator' => 'reset'],'class'=>['reset-password']
+          <?php echo $this->Form->create('Users', ['id'=>'resetpaswd-frm','context' => ['validator' => 'reset'],'class'=>['reset-password']
 ]);?>
             <h4>Reset Password</h4>
             <p class="mb-30">Enter new password and confirm it.</p>
@@ -52,7 +51,8 @@
 
             <div class="mt-10 d-flex justify-content-between align-items-center">
               <!--button type="submit" class="button btn-w-100">Save</button-->
-              <?php echo $this->Form->button('Save', ['type'=>'submit', 'class'=>['button', 'btn-w-100']]);?>
+              <?php echo $this->Form->button('Save', ['type'=>'submit','id'=>'reset-btn', 'class'=>['button', 'btn-w-100']]);?>
+              <small class="chint"></small>
               <!--option-->
               <!--input type="submit" value="Save" class="hide"-->
               
@@ -65,5 +65,25 @@
     <?=$this->Html->script('jquery.min');?>
     <?=$this->Html->script('bootstrap.min');?>
     <?=$this->Html->script('app');?>
+    <script type="text/javascript">
+        $('#resetpaswd-frm').submit(function(e){        
+           if($.trim($('#password').val())==''){
+               $('#password').addClass('intput-alert');
+               $('.hint').text('Requires at least 1 number and 1 letter.');
+               $('#password').focus();
+               return false;
+           }
+           if($.trim($('#confirm-password').val())==''){
+               $('#confirm-password').addClass('input-alert');
+               $('#confirm-password').focus();
+               return false;
+           }
+           if(($('#password').val()) != ($('#confirm-password').val())){
+               $('.chint').text('Password not matched.');
+               $('#confirm-password').focus();
+               return false;
+           }         
+       });
+    </script>
   </body>
 </html>

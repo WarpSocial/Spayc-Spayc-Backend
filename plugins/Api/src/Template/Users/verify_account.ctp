@@ -19,17 +19,14 @@
         <div class="forgot-password-box forgot-password-web">
           <div class="logo-wrap">
             <?php echo $this->Html->image('logo-gr.png', ['alt' => 'Spayc']);?>
+              <h4>Account Verification</h4>
           </div>
-            <?php
-            if($status == 'done'){
-              ?>
-            <div class="success-reset-password">
+            <div class="success-reset-password">                
             <div class="logo-wrap hide">
                 <?php echo $this->Html->image('logo-gr.png', ['alt' => 'Spayc']);?>
             </div>
-            <span>Your password has been reset successfully.</span>
+            <span> <?= $this->Flash->render() ?></span>
           </div>
-            <?php } ?>
         </div>
     </section>
     <!--=============== javascript=================-->
