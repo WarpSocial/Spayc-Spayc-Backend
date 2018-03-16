@@ -565,10 +565,13 @@ class UsersController extends AppController {
         $data = $this->request->getData();
         $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';
         $entity = $this->Users->get($id);
+        $username = $entity->username;
         $items = $this->Users->patchEntity($entity, $data, ['validate' =>'UpdateUser']);
         if($items->errors()){
             $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
         }
+        $items->set('username',$username);
+        $items->set('display_name',$data['username']);
         if ($this->Users->save($items)) {
             $response = ['status' => "success", 'message' => __('Updated successfully.'), 'data' => $data];
         } else {
