@@ -63,7 +63,7 @@ class MatrixComponent extends Component {
         }
         $validInput = [
             'type'=>'m.login.password',
-            'user'=>preg_replace('/[\s\.\-\@\#]/','_',$items['username']),
+            'user'=>$items['username'],
             'password'=>$items['password'],
             'device_id'=>$items['device_id']
         ]; 
@@ -98,12 +98,13 @@ class MatrixComponent extends Component {
         $validInput = [
             'auth'=>['type'=>'m.login.dummy'],
             'bind_email'=>false,
-            'initial_device_display_name'=>$items['username'],
-            'username'=>preg_replace('/[\s\.\-\@\#]/','_',$items['username']),
-            'password'=>$items['password']
+            'initial_device_display_name'=>$items['display_name'],
+            'username'=>$items['username'],
+            'password'=>$items['password'],
         ]; 
         $url = $this->config('url') .DS.$this->config('client'). DS.'register';
         $http = new Client();
+        //pr($validInput);
         $httpResponse = $http->post(
                 $url, 
                 json_encode($validInput), 
@@ -116,7 +117,7 @@ class MatrixComponent extends Component {
                 ]
             );
         $response = json_decode($httpResponse->body,true);
-        #pr($response);die;
+        //pr($response);die;
         if($httpResponse->isOk()){
             return $response;
         }else{
@@ -198,6 +199,10 @@ class MatrixComponent extends Component {
 //        }
         return $response;
     }
+    
+    /**
+     * 
+     */
     /**
      * updateRoom method to update room on matrix server
      * 
