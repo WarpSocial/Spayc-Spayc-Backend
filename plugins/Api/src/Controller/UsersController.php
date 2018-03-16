@@ -272,6 +272,9 @@ class UsersController extends AppController {
         if($items->errors()) {
             $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
         }
+        $data['display_name'] = $data['username'];
+        $data['username'] = \Cake\Utility\Inflector::slug($data['username']).'_'.time();
+        $items->set('username',$data['username']);
         $matrix = $this->Matrix->register($data);
         if(!$matrix) {       
             $this->restException(['status' => "failed", 'message' => __('Matrix registration failed.')], 401);
