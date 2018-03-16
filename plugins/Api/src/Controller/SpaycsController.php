@@ -508,7 +508,8 @@ class SpaycsController extends AppController {
             });
         });
         $data = [];
-        if($spayc->count()) {
+        
+        if(!$spayc->isEmpty()) {
             $data = $spayc->first();            
             if($data->user_id == $userId){
                 $data->is_admin = 1;
