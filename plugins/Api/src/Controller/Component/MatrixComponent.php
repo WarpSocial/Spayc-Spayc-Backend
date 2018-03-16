@@ -104,7 +104,6 @@ class MatrixComponent extends Component {
         ]; 
         $url = $this->config('url') .DS.$this->config('client'). DS.'register';
         $http = new Client();
-        //pr($validInput);
         $httpResponse = $http->post(
                 $url, 
                 json_encode($validInput), 
@@ -117,12 +116,42 @@ class MatrixComponent extends Component {
                 ]
             );
         $response = json_decode($httpResponse->body,true);
-        //pr($response);die;
-        if($httpResponse->isOk()){
+        if($httpResponse->isOk()){            
+            $response['status'] = 'success';
+            $this->displayName($items['display_name'],$response['user_id'],$response['access_token']);
+        }else{
+            $response['status'] = 'failed';
+            $response['message'] = $this->errorMsg($response['errcode']);
+        }
+        return $response;
+    }
+    
+    /*update display name*/
+    public function displayName($name=null,$matrixUserId=null,$matrixToken=null){
+        if(empty($matrixUserId) || empty($matrixToken) || empty($name)){
+            return false;
+        }
+        $http = new Client();
+        $profileId = urlencode($matrixUserId);
+        $url = $this->config('url') .DS.$this->config('client').DS.'profile'. DS.$profileId.DS.'displayname?access_token='.$matrixToken;
+        $httpResponse = $http->put(
+            $url, 
+            json_encode(['displayname'=>$name]), 
+            [
+                'type'=>'json',
+                'ssl_verify_host' => $this->config('sslverify'), 
+                'ssl_verify_peer' => $this->config('sslverify'),
+                'ssl_verify_host' => $this->config('sslverify'),
+                'ssl_verify_peer_name' => $this->config('sslverify')
+            ]
+        ); 
+        
+        $response = json_decode($httpResponse->body,true);
+        if(!empty($response['errcode'])){
             return $response;
         }else{
-            return false;
-        }        
+            return true;
+        }
     }
     /**
      * createRoom method to create room on matrix server
@@ -478,11 +507,12 @@ class MatrixComponent extends Component {
     public function errorMsg($errorCode){
         $messages = [
             'M_FORBIDDEN'=>__('You are not invited to this room'),
+            'M_UNRECOGNIZED'=>__('Invalid request')
         ];
         if(array_key_exists($errorCode, $messages)){
             return $messages[$errorCode];
         }else{
-            return __('Third party system error.');
+            return __('Invalid request.');
         }
         
     }

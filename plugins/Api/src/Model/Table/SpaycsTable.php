@@ -337,7 +337,7 @@ class SpaycsTable extends Table {
         $loggedUser = Configure::read('auth');
         $matrix_room_id = $spayc->id;
         $query = $this->Users->find();
-        $query->select(['Users.id', 'Users.username', 'Users.email', 'Users.gender', 'Users.dob','Users.country_code', 'Users.phone', 'Users.website_url', 'Users.address', 'Users.bio_data', 'Users.longitude', 'Users.latitude', 'Users.matrix_user_id','JoinedSpayc.status']);
+        $query->select(['Users.id', 'Users.username','Users.display_name', 'Users.email', 'Users.gender', 'Users.dob','Users.country_code', 'Users.phone', 'Users.website_url', 'Users.address', 'Users.bio_data', 'Users.longitude', 'Users.latitude', 'Users.matrix_user_id','JoinedSpayc.status']);
         $query->contain([
              'UserImages'=>function($q) {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
@@ -361,6 +361,7 @@ class SpaycsTable extends Table {
         if($query->isEmpty()){
             return [];
         }
+        
         $result = $query->map(function ($row) {
             if(!empty($row->_matchingData['JoinedSpayc']->is_admin)){
                 $row->is_admin = $row->_matchingData['JoinedSpayc']->is_admin;
@@ -429,7 +430,7 @@ class SpaycsTable extends Table {
                 $push['spayc_image'] = $items['image'];
                 $push['matrix_room_id'] = $items['matrix_room_id'];
                 $push['distance'] = $this->getSpaycDistanceFromUser($items['latitude'], $items['longitude'], $push['requested_to']);
-                //$pushNotification->sendPushNotification($push);
+                $pushNotification->sendPushNotification($push);
             }
         }
         /*In direct chat no need take the record */
@@ -438,7 +439,7 @@ class SpaycsTable extends Table {
         }
         $joinedSpayc = TableRegistry::get('JoinedSpayc');
         $entities = $joinedSpayc->newEntities($member);
-        $result = $joinedSpayc->saveMany($entities,['checkRules' => false]);
+        $result = $joinedSpayc->saveMany($entities,['checkRules' => false,'atomic'=>false]);
         return $result;
     }
 

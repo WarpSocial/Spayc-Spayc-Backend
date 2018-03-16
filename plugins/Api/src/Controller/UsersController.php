@@ -278,8 +278,8 @@ class UsersController extends AppController {
         $items->set('username',$data['username']);
         $items->set('display_name',$data['display_name']);
         $matrix = $this->Matrix->register($data);
-        if(!$matrix) {       
-            $this->restException(['status' => "failed", 'message' => __('Matrix registration failed.')], 401);
+        if($matrix['status'] == 'failed') {       
+            $this->restException(['status' => "failed", 'message' => $matrix['message']], 401);
         }            
         $items->set('status', 'Active');        
         $items->set('token_verification', Security::hash($data['email'], 'sha1', true));
@@ -361,7 +361,7 @@ class UsersController extends AppController {
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
     */
-    public function facebookSignup() {
+    public function facebookSignup() {         
         if(!$this->request->is('post')) {
             $this->restException(['status'=>'failed','message'=>__('Method not allowed.')],405);
         }
@@ -429,6 +429,11 @@ class UsersController extends AppController {
         $user = $this->Users->usrLog($user);
         if(!empty($data['image_url'])) {
             TableRegistry::get('Api.UserImages')->uploadFacebookImage($data['image_url'], $this->Auth->user('id'));
+             $this->Matrix->uploadMediaImage([
+                'image_url'=>$data['image_url'],
+                'matrix_token'=>$user['matrix_access_token'],
+                'matrix_user_id'=>$user['matrix_user_id']
+                ]);
         }
         $data = [
             'id'=>$user['id'],
@@ -570,6 +575,7 @@ class UsersController extends AppController {
         if($items->errors()){
             $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
         }
+        /* At the time of update username will not update and maintain the prev username by swaping the value*/
         $items->set('username',$username);
         $items->set('display_name',$data['username']);
         if ($this->Users->save($items)) {
@@ -853,20 +859,10 @@ class UsersController extends AppController {
         if(empty($id)) {
             $this->restException(['status'=>'failed', 'message'=>__('User id is required field.')], 400);
         }
-       
         $user = $this->Users->find('all', ['fields'=>['Users.id', 'Users.username','Users.display_name', 'Users.email', 'Users.gender', 'Users.dob','Users.country_code', 'Users.phone', 'Users.website_url', 'Users.address', 'Users.bio_data', 'Users.longitude', 'Users.latitude', 'Users.matrix_user_id']])->where(['OR'=>['Users.id'=>$id,'Users.matrix_user_id'=>$id]]);
 
         $userId = $this->Auth->user('id');
         $user->contain([
-//             'Requestedby' => function($q) use($id,$loggedUser) {
-//                return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_status', 'Requestedby.requested_to', 'Requestedby.matrix_room_id'])->Where(['OR'=>[
-//            ['requested_by' => $loggedUser['id'],'requested_to'=>$id],
-//            ['requested_by' => $id,'requested_to'=>$loggedUser['id']]
-//            ]]);
-//            },
-//            'Requestedto' => function($q) use($id) {
-//                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.matrix_room_id'])->Where([['OR'=>['requested_by'=>$id, 'requested_to'=>$id]]]);
-//            },
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.id', 'UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile', 'UserImages.order_index']);
             },
@@ -874,10 +870,10 @@ class UsersController extends AppController {
                 return $q->select(['JoinedSpayc.user_id', 'joined_spaycs'=>$q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.user_id']);
             },
             'Spaycs'=>function($q) {
-                return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id'])->where(['Spaycs.group_type !='=>'trusted_private' ]);
+                return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id'])->where(['Spaycs.group_type !='=>'trusted_private','Spaycs.parent_id IS'=>null ]);
             }
         ]);
-        
+        //pj($user);die;
         $user->formatResults(function (\Cake\Collection\CollectionInterface $results)use($loggedUser) {
             return $results->map(function ($row)use($loggedUser) {
                 $uId = ApiHasher::decrypt($row['id']);
@@ -890,7 +886,18 @@ class UsersController extends AppController {
                 unset($row['friend']['matrix_room_id']);
                 $row['friend']['total_friends'] = TableRegistry::get('Api.FriendRequest')->getFriendCountByUserId($uId);
                 $row['created_spaycs'] = !empty($row['spaycs'][0]['created_spaycs'])? $row['spaycs'][0]['created_spaycs'] : 0;
-                $row['joined_spaycs'] = !empty($row['joined_spayc'][0]['joined_spaycs'])? $row['joined_spayc'][0]['joined_spaycs'] : 0;
+                
+                if(!empty($row['joined_spayc'][0]['joined_spaycs'])){
+                    if($row['joined_spayc'][0]['joined_spaycs'] > 0){
+                        $row['joined_spaycs'] = $row['joined_spayc'][0]['joined_spaycs'] - 1;
+                    }else{
+                        $row['joined_spaycs'] = 0;
+                    }
+                }else{
+                    $row['joined_spaycs'] = 0;
+                }
+                
+                
                 unset($row['joined_spayc'],$row['requestedto'],$row['requestedby'],$row['spaycs']);
                 return $row;
             });
