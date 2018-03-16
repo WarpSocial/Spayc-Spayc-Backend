@@ -104,7 +104,7 @@ class UsersTable extends Table {
                 ->add('username', 'unique', ['rule' => 'validateUnique','message'=>__('Username already exist.'), 'provider' => 'table'])
                  ->add("username",'custom',[
                     'rule'=>function($value,$context){
-                        return (bool)(preg_match('/^[\w\s\.-@#]+$/', $value));
+                        return (bool)(preg_match('/^[\w\s\.\_\-\@\#]+$/', $value));
                     },
                     'message'=>__('Username is not valid.'),
                 ]);
@@ -211,7 +211,7 @@ class UsersTable extends Table {
                 ->add('username', 'unique', ['rule' => 'validateUnique','message'=>__('Username already exist.'), 'provider' => 'table'])
                  ->add("username",'custom',[
                     'rule'=>function($value,$context){
-                        return (bool)(preg_match('/^[\w\s\.-@#]+$/', $value));
+                        return (bool)(preg_match('/^[\w\s\.\_\-\@\#]+$/', $value));
                     },
                     'message'=>__('Username is not valid.'),
                 ]);
@@ -477,7 +477,7 @@ class UsersTable extends Table {
         } else {
             $cond['Users.id !='] = $userId;
         }
-        $users = $this->find('all', ['fields'=>['Users.id', 'Users.username', 'Users.email', 'Users.matrix_user_id']])->where($cond);
+        $users = $this->find('all', ['fields'=>['Users.id', 'Users.username','Users.display_name', 'Users.email', 'Users.matrix_user_id']])->where($cond);
         $users->contain([
             /*
             'JoinedSpayc'=>function($q) {

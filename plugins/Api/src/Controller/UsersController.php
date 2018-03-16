@@ -173,6 +173,7 @@ class UsersController extends AppController {
         $data = [
             'id'=>  ApiHasher::encrypt($user['id']),
             'username'=>$user['username'],
+            'display_name'=>$user['display_name'],
             'email'=>$user['email'],
             'gender'=>$user['gender'],
             'dob'=>(new \Cake\I18n\Time($user['dob']))->format("Y-m-d"),
@@ -324,15 +325,23 @@ class UsersController extends AppController {
             throw new NotFoundException(__('Missing required information. Please read email carefully and try again.'));
         }
         $user = $this->Users->findByEmail($email)->first();
-        if (!$user) {
-            throw new RecordNotFoundException(__('Account not found or already activated. Please read email carefully and try again.'));
+        if (!empty($user)) {
+            if ($user->status == 'Active') {
+                $this->Flash->success(__('Your Account has been already activated. You can now log in using the username and password you chose during the registration'));
+            }else{
+                if ($token != Security::hash($user->email, 'sha1', true)) {
+                    
+                }
+                $this->Flash->success(__('Your Account has been already activated. You can now log in using the username and password you chose during the registration'));
+            }
+            throw new \Cake\Datasource\Exception\RecordNotFoundException(__('Account not found or already activated. Please read email carefully and try again.'));
         }
         if ($user->status == 'Active') {
             $this->Flash->success(__('Your Account has been already activated. You can now log in using the username and password you chose during the registration'));
             //return $this->redirect('/');
         } else {
             if ($token != Security::hash($user->email, 'sha1', true)) {
-                throw new ForbiddenException(__('Invalid token. Please read email carefully and try again.'));
+                throw new \Cake\Network\Exception\ForbiddenException(__('Invalid token. Please read email carefully and try again.'));
             }
             $user->status = 'Active';
             if ($this->Users->save($user)) {
@@ -424,6 +433,7 @@ class UsersController extends AppController {
         $data = [
             'id'=>$user['id'],
             'username'=>$user['username'],
+            'display_name'=>$user['display_name'],
             'email'=>$user['email'],
             'gender'=>$user['gender'],
             'dob'=>(new \Cake\I18n\Time($user['dob']))->format("Y-m-d"),
@@ -651,6 +661,7 @@ class UsersController extends AppController {
                 //data prepaire for push notification//
                 $push['requested_by'] = $loggedUser['id'];
                 $push['username'] = $loggedUser['username'];
+                $push['display_name'] = $loggedUser['display_name'];
                 $push['requested_to'] = $data['friend_id'];
                 $push['spayc_id'] = null; //provide spayc id if push related to spayc
                 if($data['friend_status']=='Pending') { 
@@ -685,6 +696,7 @@ class UsersController extends AppController {
                 //data prepaire for push notification//
                 $push['requested_by'] = $loggedUser['id'];
                 $push['username'] = $loggedUser['username'];
+                $push['display_name'] = $loggedUser['display_name'];
                 $push['requested_to'] = $data['friend_id'];
                 $push['spayc_id'] = null; //provide spayc id if push related to spayc
                 if($data['friend_status']=='Pending') {
@@ -745,6 +757,7 @@ class UsersController extends AppController {
             //data prepaire for push notification//
             $push['requested_by'] = $loggedUser['id'];
             $push['username'] = $loggedUser['username'];
+            $push['display_name'] = $loggedUser['display_name'];
             $push['requested_to'] = $data['friend_id'];
             $push['spayc_id'] = null; //provide spayc id if push related to spayc
             if(($data['friend_status']=='Accepted')) {
@@ -782,7 +795,7 @@ class UsersController extends AppController {
         if(!$friend){
             $this->restException(["status"=>"success",'message'=>__("Record not found")],204);
         }
-        $friends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username', 'Users.matrix_user_id', 'Users.matrix_access_token'], 'conditions'=>['Users.id IN'=>$friend, 'Users.id !='=>$userId, 'Users.status'=>'Active']]);
+        $friends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username','Users.display_name', 'Users.matrix_user_id', 'Users.matrix_access_token'], 'conditions'=>['Users.id IN'=>$friend, 'Users.id !='=>$userId, 'Users.status'=>'Active']]);
         $friends->contain([
             'Requestedby' => function($q) use($userId) {
                 return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_status', 'Requestedby.requested_to', 'Requestedby.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
@@ -838,7 +851,7 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('User id is required field.')], 400);
         }
        
-        $user = $this->Users->find('all', ['fields'=>['Users.id', 'Users.username', 'Users.email', 'Users.gender', 'Users.dob','Users.country_code', 'Users.phone', 'Users.website_url', 'Users.address', 'Users.bio_data', 'Users.longitude', 'Users.latitude', 'Users.matrix_user_id']])->where(['OR'=>['Users.id'=>$id,'Users.matrix_user_id'=>$id]]);
+        $user = $this->Users->find('all', ['fields'=>['Users.id', 'Users.username','Users.display_name', 'Users.email', 'Users.gender', 'Users.dob','Users.country_code', 'Users.phone', 'Users.website_url', 'Users.address', 'Users.bio_data', 'Users.longitude', 'Users.latitude', 'Users.matrix_user_id']])->where(['OR'=>['Users.id'=>$id,'Users.matrix_user_id'=>$id]]);
 
         $userId = $this->Auth->user('id');
         $user->contain([
@@ -902,7 +915,7 @@ class UsersController extends AppController {
                 if(!empty($friend['id'])) { $friendIds[] = $friend['id']; }
             }
         }
-        $spaycFriends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username'], 'conditions'=>['Users.fb_id IN'=>$friendIds, 'Users.id !='=>$this->Auth->user('id')]]);
+        $spaycFriends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username','Users.display_name'], 'conditions'=>['Users.fb_id IN'=>$friendIds, 'Users.id !='=>$this->Auth->user('id')]]);
         $spaycFriends->contain([
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
@@ -1010,7 +1023,7 @@ class UsersController extends AppController {
             ->where(['requested_to'=>$this->Auth->user('id')]);
         $notifications->contain([
             'NotificationBy' => function($q) {
-                return $q->select(['NotificationBy.id', 'NotificationBy.username'])->contain(['UserImages'=>['fields'=>['user_id', 'image_url'], 'conditions'=>['is_profile'=>'Yes']]]);
+                return $q->select(['NotificationBy.id', 'NotificationBy.username','NotificationBy.display_name'])->contain(['UserImages'=>['fields'=>['user_id', 'image_url'], 'conditions'=>['is_profile'=>'Yes']]]);
             },
             'Spaycs' => function($q) {
                 return $q->select(['Spaycs.id', 'Spaycs.name', 'Spaycs.matrix_room_id', 'Spaycs.image']);
@@ -1023,6 +1036,7 @@ class UsersController extends AppController {
                 $row['room_id'] = !empty($row['spayc']['matrix_room_id'])?$row['spayc']['matrix_room_id']:null;
                 $row['spayc_image'] = !empty($row['spayc']['image'])?$row['spayc']['image']:null;
                 $row['username'] = !empty($row['notification_by']['username'])?$row['notification_by']['username']:null;
+                $row['display_name'] = !empty($row['notification_by']['display_name'])?$row['notification_by']['display_name']:null;
                 $row['user_id'] = !empty($row['notification_by']['id'])?$row['notification_by']['id']:null;
                 $row['user_image'] = !empty($row['notification_by']['user_images'][0]['image_url'])?$row['notification_by']['user_images'][0]['image_url']:null;
                 $row['is_unread'] = ($row['status']=='Unread')?true:false;
