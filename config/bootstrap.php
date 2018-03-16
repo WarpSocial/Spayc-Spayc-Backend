@@ -217,3 +217,4 @@ if (Configure::read('debug')) {
 }
 
 Plugin::load('Api', ['bootstrap' => true, 'routes' => true]);
+Configure::load('admin');

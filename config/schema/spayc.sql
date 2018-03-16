@@ -189,3 +189,16 @@ INSERT INTO "notification_types" ("id", "type", "message", "slug", "created", "m
 ALTER TABLE "joined_spayc" ADD "updated_by" bigint NULL;
 ALTER TABLE "spaycs" ADD "parent_id" bigint NULL;
 ALTER TABLE "joined_spayc" ADD "is_admin" smallint NOT NULL DEFAULT '0';
+
+-- 15-march 2018 for admin  --
+CREATE TABLE roles (
+   id BIGSERIAL NOT NULL,
+   title VARCHAR(50) NULL, 
+   primary key (id)
+);
+INSERT INTO roles (id, title) VALUES (1, 'Admin');
+ALTER TABLE "users" ADD "role_id" integer DEFAULT NULL;
+INSERT INTO "users" ("id", "username", "email", "password", "gender", "dob", "phone", "status", "website_url", "address", "bio_data", "fb_id", "fb_access_key", "longitude", "latitude", "timezone", "matrix_user_id", "matrix_access_token", "created", "modified", "token_verification", "forgot_password_token", "forgot_password_timestamp", "country_code", "is_notify", "current_latitude", "current_longitude", "role_id") VALUES
+('56',  'admin',    'ankur.gupta@kiwitech.com', 'ODIyZDBkN2MxYWVlOTcxZTZhNmMxNjhjZTNjMGQ3ZGMyYzk2ODY4MzM3MDQ3MDZmOTZhMTM0YjU1MzA1YmYzYnwyLmLenyaqlsnztYhQTM8dc+OpkWpoF/jvMx9EELyk', 'Male', NULL, NULL, 'Active',   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   '2018-03-15 15:40:41',  '2018-03-15 15:40:41',  NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,'1');
+
+
