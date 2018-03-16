@@ -94,3 +94,31 @@ DELETE FROM users;
 DELETE FROM users_in_public_rooms;
 -- user reference
 DELETE FROM users_who_share_rooms;
+
+DROP TABLE "comments";
+DROP TABLE "friend_request";
+DROP TABLE "hashtags";
+DROP TABLE "joined_spayc";
+DROP TABLE "notifications";
+DROP TABLE "notification_types";
+DROP TABLE "spayc_hashtags";
+DROP TABLE "spaycs";
+DROP TABLE "subscribed_users";
+DROP TABLE "user_images";
+DROP TABLE "user_logs";
+DROP TABLE "users";
+
+DROP SEQUENCE "comments_id_seq";
+DROP SEQUENCE "friend_request_id_seq";
+DROP SEQUENCE "hashtags_id_seq";
+DROP SEQUENCE "joined_spayc_id_seq";
+DROP SEQUENCE "notifications_id_seq";
+DROP SEQUENCE "notification_types_id_seq";
+DROP SEQUENCE "spayc_hashtags_id_seq";
+DROP SEQUENCE "spaycs_id_seq";
+DROP SEQUENCE "subscribed_users_id_seq";
+DROP SEQUENCE "user_images_id_seq";
+DROP SEQUENCE "user_logs_id_seq";
+DROP SEQUENCE "users_id_seq";
+
+

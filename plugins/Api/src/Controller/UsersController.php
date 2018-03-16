@@ -275,6 +275,7 @@ class UsersController extends AppController {
         $data['display_name'] = $data['username'];
         $data['username'] = \Cake\Utility\Inflector::slug($data['username']).'_'.time();
         $items->set('username',$data['username']);
+        $items->set('display_name',$data['display_name']);
         $matrix = $this->Matrix->register($data);
         if(!$matrix) {       
             $this->restException(['status' => "failed", 'message' => __('Matrix registration failed.')], 401);
@@ -290,6 +291,7 @@ class UsersController extends AppController {
                 [
                     'id'=>$items->id,
                     'username'=>$data['username'],
+                    'display_name'=>$data['display_name'],
                     'email'=>$data['email'],
                     'dob'=>$data['dob'],
                     'gender'=>trim($data['gender']),
@@ -316,7 +318,7 @@ class UsersController extends AppController {
      * 
      */
     
-    public function verifyAccount($token = null, $email = null) {
+    public function verifyAccount($token = null, $email = null) { 
         
         if (!$token || !$email) {
             throw new NotFoundException(__('Missing required information. Please read email carefully and try again.'));
@@ -368,6 +370,7 @@ class UsersController extends AppController {
             $alreadyExist = $alreadyExist->first()->toArray();
             $data['id'] = ApiHasher::decrypt($alreadyExist['id']);
             $data['fb_id'] = !empty($data['fb_id'])?$data['fb_id']:$alreadyExist['fb_id'];
+            $data['display_name'] = $alreadyExist['display_name'];
             $data['username'] = $alreadyExist['username'];
             $data['email'] = !empty($data['email'])?$data['email']:$alreadyExist['email'];
             $data['password'] = $alreadyExist['password'];
@@ -375,6 +378,8 @@ class UsersController extends AppController {
         } else {
             $data['token_verification'] = Security::hash($data['email'], 'sha1', true);
             $data['password'] = Text::uuid();
+            $data['display_name'] = $data['username'];
+            $data['username'] = \Cake\Utility\Inflector::slug($data['username']).'_'.time();
             $entity = $this->Users->newEntity();
         }
         $data['current_latitude'] = Utils::getVar('latitude', $data);
@@ -384,6 +389,7 @@ class UsersController extends AppController {
             $this->restException(['status' => "failed", 'message' => $this->mapErrors($items->errors())], 400);
         }
         if(empty($data['id'])) {
+            
             $matrix = $this->Matrix->register($data);
             if(!$matrix) {
                 $this->restException(['status' => "failed", 'message' => __('Matrix registration failed.')], 401);

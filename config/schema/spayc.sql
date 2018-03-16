@@ -1,167 +1,185 @@
-CREATE TYPE row_status AS ENUM('Active','Inactive','Pending','Approved');
+-- CREATE TYPE row_status AS ENUM('Active','Inactive','Pending','Approved');
+DROP TABLE "comments";
+DROP TABLE "friend_request";
+DROP TABLE "hashtags";
+DROP TABLE "joined_spayc";
+DROP TABLE "notifications";
+DROP TABLE "notification_types";
+DROP TABLE "spayc_hashtags";
+DROP TABLE "spaycs";
+DROP TABLE "subscribed_users";
+DROP TABLE "user_images";
+DROP TABLE "user_logs";
+DROP TABLE "users";
+
 CREATE TABLE users (
     id BIGSERIAL NOT NULL,
-    username VARCHAR(100) NOT NULL,
-    email VARCHAR(150) NULL,
-    password VARCHAR(255) NULL,
-    gender VARCHAR(50) NULL,
-    dob date NULL,
-    country_code VARCHAR(10) NULL,
-    phone VARCHAR(20) NULL,
-    status row_status DEFAULT 'Pending'::row_status NOT NULL,
-    website_url VARCHAR(150) NULL,
-    address text NULL,
-    bio_data text NULL,
-    fb_id VARCHAR(200),
-    fb_access_key  VARCHAR(1000),
-    longitude double precision NULL,
-    latitude double precision NULL,
-    current_latitude double precision NULL,
-    current_longitude double precision NULL, 
-    timezone VARCHAR(100),
-    matrix_user_id VARCHAR(100),
-    matrix_access_token VARCHAR(1000),
-    token_verification VARCHAR(255) NULL,
-    forgot_password_token VARCHAR(255) NULL,
-    forgot_password_timestamp timestamp NULL,
-    is_notify VARCHAR(10) NULL,
-    created timestamp NOT NULL,
-    modified timestamp,
+    "username" character varying(100) NOT NULL,
+    "display_name" character varying(100) NULL,
+    "email" character varying(150),
+    "password" character varying(255),
+    "gender" character varying(50),
+    "dob" date,
+    "phone" character varying(20),
+    "status" row_status DEFAULT 'Pending' NOT NULL,
+    "website_url" character varying(150),
+    "address" text,
+    "bio_data" text,
+    "fb_id" character varying(200),
+    "fb_access_key" character varying(1000),
+    "longitude" double precision,
+    "latitude" double precision,
+    "timezone" character varying(100),
+    "matrix_user_id" character varying(100),
+    "matrix_access_token" character varying(1000),
+    "created" timestamp NOT NULL,
+    "modified" timestamp,
+    "token_verification" character varying(255),
+    "forgot_password_token" character varying(255),
+    "forgot_password_timestamp" timestamp,
+    "country_code" character varying(10),
+    "is_notify" character varying(10),
+    "current_latitude" double precision,
+    "current_longitude" double precision,
     primary key (id,created),
     unique (username,email,created)
 );
 SELECT create_hypertable('users', 'created');
 CREATE TABLE user_logs (
     id BIGSERIAL NOT NULL,
-    user_id bigint NOT NULL,
-    token VARCHAR(255) NOT NULL,
-    plain_token VARCHAR(255) NOT NULL,
-    device_id VARCHAR(255),
-    matrix_access_token VARCHAR(1000),
-    matrix_user_id VARCHAR(255),
-    login_status integer DEFAULT 0 NOT NULL,
-    last_login timestamp NOT NULL,
-    created timestamp NOT NULL,
-    modified timestamp,
+    "user_id" bigint NOT NULL,
+    "token" character varying(255) NOT NULL,
+    "plain_token" character varying(255) NOT NULL,
+    "device_id" character varying(255),
+    "matrix_access_token" character varying(1000),
+    "matrix_user_id" character varying(255),
+    "login_status" integer DEFAULT 0 NOT NULL,
+    "last_login" timestamp NOT NULL,
+    "created" timestamp NOT NULL,
+    "modified" timestamp,
     PRIMARY KEY(id,user_id,created)
 );
 SELECT create_hypertable('user_logs', 'created');
 CREATE TABLE comments (
     id BIGSERIAL NOT NULL,
-    spayc_id BIGINT ,
-    user_id BIGINT,
-    comment text,
-    status row_status DEFAULT 'Pending'::row_status NOT NULL,
-    created timestamp NOT NULL,
-    modified timestamp NOT NULL,
+    "spayc_id" bigint NOT NULL,
+    "user_id" bigint NOT NULL,
+    "comment" text,
+    "status" row_status DEFAULT 'Pending' NOT NULL,
+    "created" timestamp NOT NULL,
+    "modified" timestamp NOT NULL,
     PRIMARY KEY(id,spayc_id,user_id,created)
 );
 SELECT create_hypertable('comments', 'created');
 CREATE TABLE friend_request (
-    id BIGSERIAL NOT NULL,
-    requested_by BIGINT,
-    requested_to BIGINT,
-    blocked_by BIGINT DEFAULT NULL,
-    requested_status VARCHAR(15)  DEFAULT 'Requested',
-    friend_status VARCHAR(15) DEFAULT NULL,
-    matrix_room_id VARCHAR(100) DEFAULT NULL,
-    created timestamp NOT NULL,
-    modified timestamp,
+    "id" BIGSERIAL NOT NULL,
+    "requested_by" bigint NOT NULL,
+    "requested_to" bigint NOT NULL,
+    "requested_status" character varying(15) DEFAULT 'Requested',
+    "friend_status" character varying(15) DEFAULT NULL,
+    "created" timestamp NOT NULL,
+    "modified" timestamp,
+    "matrix_room_id" character varying(255),
+    "blocked_by" bigint,
+    "action_by" bigint,
     PRIMARY KEY (id,requested_by,requested_to,created)
 );
 SELECT create_hypertable('friend_request', 'created');
 CREATE TABLE joined_spayc (
-    id BIGSERIAL NOT NULL,
-    spayc_id BIGINT  NOT NULL,
-    user_id BIGINT NOT NULL,
-    status VARCHAR(20) DEFAULT 'Pending',
-    created timestamp NOT NULL,
-    modified timestamp,
-    updated_by BIGINT NOT NULL,
+    "id" BIGSERIAL NOT NULL,
+    "spayc_id" BIGINT  NOT NULL,
+    "user_id" BIGINT NOT NULL,
+    "status" VARCHAR(20) DEFAULT 'Pending',
+    "created" timestamp NOT NULL,
+    "modified" timestamp,
+    "updated_by" BIGINT NOT NULL,
+    "is_admin" smallint DEFAULT 0 NOT NULL,
     PRIMARY KEY (id,spayc_id,user_id,created)
 );
 SELECT create_hypertable('joined_spayc', 'created');
 CREATE TABLE spaycs (
-    id BIGSERIAL NOT NULL,
-    user_id BIGINT NOT NULL,
-    name VARCHAR(100) NULL,
-    location VARCHAR(255) NULL,
-    type VARCHAR(20) DEFAULT 'Event',
-    group_type VARCHAR(20) DEFAULT 'Public',
-    start_date timestamp NULL,
-    end_date timestamp NULL,
-    passcode VARCHAR(30) NULL,
-    description text,
-    image VARCHAR(255) NULL,
-    longitude double precision,
-    latitude double precision,    
-    status row_status DEFAULT 'Inactive'::row_status,
-    matrix_room_id VARCHAR(100) NULL,    
-    created timestamp NOT NULL,
-    modified timestamp,
+    "id" BIGSERIAL NOT NULL,
+    "user_id" bigint NOT NULL,
+    "name" character varying(100),
+    "location" character varying(255),
+    "type" character varying(20) DEFAULT 'Event',
+    "group_type" character varying(20) DEFAULT 'Public',
+    "start_date" timestamp,
+    "end_date" timestamp,
+    "passcode" character varying(30),
+    "description" text,
+    "image" character varying(255),
+    "longitude" double precision,
+    "latitude" double precision,
+    "status" row_status DEFAULT 'Inactive',
+    "matrix_room_id" character varying(100),
+    "created" timestamp NOT NULL,
+    "modified" timestamp,
+    "parent_id" bigint,
     PRIMARY KEY (id,user_id,created)
 );
 SELECT create_hypertable('spaycs', 'created');
 CREATE TABLE subscribed_users (
-    id BIGSERIAL NOT NULL,
-    spayc_id BIGINT  NOT NULL,
-    user_id BIGINT NOT NULL,
-    status row_status DEFAULT 'Inactive'::row_status,
-    created timestamp without time zone NOT NULL,
-    modified timestamp,
+    "id" BIGSERIAL NOT NULL,
+    "spayc_id" bigint NOT NULL,
+    "user_id" bigint NOT NULL,
+    "status" row_status DEFAULT 'Inactive',
+    "created" timestamp NOT NULL,
+    "modified" timestamp,
     PRIMARY KEY (id,spayc_id,user_id,created)
 );
 SELECT create_hypertable('subscribed_users', 'created');
 CREATE TABLE user_images (
-    id BIGSERIAL NOT NULL,
-    user_id BIGINT NOT NULL,
-    image_url VARCHAR(255),
-    is_profile VARCHAR(10) DEFAULT 'No',
-    order_index SMALLINT NULL,
-    created timestamp NOT NULL,
-    modified timestamp,
+    "id" BIGSERIAL NOT NULL,
+    "user_id" bigint NOT NULL,
+    "image_url" character varying(255),
+    "created" timestamp NOT NULL,
+    "modified" timestamp,
+    "is_profile" character varying(10) DEFAULT 'No' NOT NULL,
+    "order_index" smallint,
     PRIMARY KEY (id,user_id,created)
 );
 SELECT create_hypertable('user_images', 'created');
 CREATE TABLE hashtags (
-    id BIGSERIAL NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    created timestamp NOT NULL,
-    modified timestamp,
+    "id" BIGSERIAL NOT NULL,
+    "name" character varying(255) NOT NULL,
+    "created" timestamp NOT NULL,
+    "modified" timestamp,
     PRIMARY KEY (id,created)
 );
 SELECT create_hypertable('hashtags', 'created');
 CREATE TABLE spayc_hashtags (
-    id BIGSERIAL NOT NULL,
-    spayc_id BIGINT NOT NULL,
-    hashtag_id BIGINT NOT NULL,
-    created timestamp NOT NULL,
-    modified timestamp,
+    "id" BIGSERIAL NOT NULL,
+    "spayc_id" bigint NOT NULL,
+    "hashtag_id" bigint NOT NULL,
+    "created" timestamp NOT NULL,
+    "modified" timestamp,
     PRIMARY KEY (id,created)
 );
 SELECT create_hypertable('spayc_hashtags', 'created');
 CREATE TABLE notifications (
-    id BIGSERIAL NOT NULL,
-    requested_by BIGINT NOT NULL,
-    requested_to BIGINT NOT NULL,
-    spayc_id BIGINT NULL,
-    date_time timestamp NULL,
-    notification_type VARCHAR(20) DEFAULT NULL,
-    status VARCHAR(20) DEFAULT NULL,
-    message VARCHAR(200) DEFAULT NULL,
-    created timestamp NOT NULL,
-    modified timestamp,
+    "id" BIGSERIAL NOT NULL,
+    "requested_by" bigint NOT NULL,
+    "requested_to" bigint NOT NULL,
+    "notification_type" character varying(50) DEFAULT NULL,
+    "status" character varying(20) DEFAULT NULL,
+    "message" character varying(200) DEFAULT NULL,
+    "created" timestamp NOT NULL,
+    "modified" timestamp,
+    "date_time" timestamp,
+    "spayc_id" bigint,
     PRIMARY KEY (id,created)
 );
 SELECT create_hypertable('notifications', 'created');
 
 CREATE TABLE "notification_types" (
-  "id" BIGSERIAL NOT NULL,
-  "type" VARCHAR(200) NULL,
-  "message" text NULL,
-  "slug" VARCHAR(200) NULL,
-  "created" timestamp NOT NULL,
-  "modified" timestamp NULL
+    "id" BIGSERIAL NOT NULL,
+    "type" character varying(200),
+    "message" text,
+    "slug" character varying(200),
+    "created" timestamp NOT NULL,
+    "modified" timestamp,
+    PRIMARY KEY (id,created)
 );
 SELECT create_hypertable('notification_types', 'created');
 
@@ -185,7 +203,3 @@ INSERT INTO "notification_types" ("id", "type", "message", "slug", "created", "m
 (14,	'Someone commented',	'<USERNAME> has commented, <COMMENT> in your spayc, <SpaycName>',	'someone-commented',	'2018-02-28 17:27:10.578674',	NULL),
 (17,	'New Spayc',	'<SpaycName> spayc has been created within <X> miles of you',	'new-spayc',	'2018-02-28 17:27:10.578674',	NULL);
 
-
-ALTER TABLE "joined_spayc" ADD "updated_by" bigint NULL;
-ALTER TABLE "spaycs" ADD "parent_id" bigint NULL;
-ALTER TABLE "joined_spayc" ADD "is_admin" smallint NOT NULL DEFAULT '0';

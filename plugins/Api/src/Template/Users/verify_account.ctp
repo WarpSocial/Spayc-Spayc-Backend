@@ -1,33 +1,40 @@
 <?php ?>
 <!DOCTYPE html>
-<html>
-    <head>
 <?= $this->Html->charset() ?>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Email Verification    </title>
-<?= $this->Html->meta('icon') ?>
-        <?= $this->Html->css('base.css') ?>
-        <?= $this->Html->css('cake.css') ?>
-        <?= $this->Html->css('home.css') ?>
-        <link href="https://fonts.googleapis.com/css?family=Raleway:500i|Roboto:300,400,700|Roboto+Mono" rel="stylesheet">
-    </head>
-    <body class="home">
-        <div class="row">
-            <div class="columns large-12">
-                <div class="ctp-warning alert text-center">
-                    <div id="accountverification">
-                        <div class="row">
-                            <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
-                                <h2>Your email address verification.</h2>
-                                <p><?= $this->Flash->render() ?></p>
-                                <div class="pull-right">
-                                    
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <?=  $this->Html->meta('favicon.ico','favicon.ico',['type' => 'icon']); ?>
+    <title>Account verification</title>
+    <!--===============stylesheet=================-->
+    <?=$this->Html->css('bootstrap.min.css');?>
+    <?=$this->Html->css('style.css');?>
+  </head>
+
+ <body>
+    <!--=============content section===========-->
+    <section class="forgot-password-wrapper">
+        <!--================forgot password=====================-->
+        <div class="forgot-password-box forgot-password-web">
+          <div class="logo-wrap">
+            <?php echo $this->Html->image('logo-gr.png', ['alt' => 'Spayc']);?>
+          </div>
+            <?php
+            if($status == 'done'){
+              ?>
+            <div class="success-reset-password">
+            <div class="logo-wrap hide">
+                <?php echo $this->Html->image('logo-gr.png', ['alt' => 'Spayc']);?>
             </div>
+            <span>Your password has been reset successfully.</span>
+          </div>
+            <?php } ?>
         </div>
-    </body>
+    </section>
+    <!--=============== javascript=================-->
+    <?=$this->Html->script('jquery.min');?>
+    <?=$this->Html->script('bootstrap.min');?>
+    <?=$this->Html->script('app');?>
+  </body>
 </html>
