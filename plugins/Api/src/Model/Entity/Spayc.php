@@ -50,6 +50,7 @@ class Spayc extends Entity
         $timezone = Configure::read('timezone');
         if (!empty($stardDate)) {
             $startdate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$stardDate,$timezone);
+            #pr($startdate->setTimezone('UTC')->format("Y-m-d H:i:s"));die;
             return $startdate->setTimezone('UTC')->format("Y-m-d H:i:s");
         } else {
             return;
