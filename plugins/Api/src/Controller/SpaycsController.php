@@ -46,7 +46,7 @@ class SpaycsController extends AppController {
         $data['status'] = 'Active';
         
         $entity = $this->Spaycs->newEntity();
-        $items = $this->Spaycs->patchEntity($entity, $data,['associated' => ['JoinedSpayc']]);
+        $items = $this->Spaycs->patchEntity($entity, $data);
         if($items->errors()) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
         }
@@ -60,6 +60,7 @@ class SpaycsController extends AppController {
         $items->set('matrix_room_id',$matrix['room_id']);
         $items->set('matrix_room_alias',$matrix['room_alias']);
         $items->set('user_id', $this->Auth->user('id'));
+        
         if (!$items->errors()) {
             if($this->Spaycs->save($items)) {
                 //Joined the invite to the room//
@@ -562,14 +563,17 @@ class SpaycsController extends AppController {
             TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
         }
         
-        if($this->Spaycs->save($items)){             
+        if($this->Spaycs->save($items)){  
+            $items = $items->toArray();
+            $items['start_date']=  Utils::toClient($items['start_date']);
+            $items['end_date'] = Utils::toClient($items['end_date']);
             $response = ['status'=>'success','message'=>__('The spayc has been updated successfully.'),'data'=>$items];
             /*Event to bind to update the set upload room image */
             $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
                 'options' => [
                     'matrix_token'=>$data['matrix_token'],
-                    'image'=> $items->image,
-                    'matrix_room_id'=> $items->matrix_room_id,
+                    'image'=> $items['image'],
+                    'matrix_room_id'=> $items['matrix_room_id'],
                     ]
             ]);
             EventManager::instance()->dispatch($event);
@@ -589,7 +593,7 @@ class SpaycsController extends AppController {
     public function delete($id = null) {
         if($id == null){
             $id = $this->request->query('id');
-        }
+        } 
         $this->request->allowMethod(['post', 'delete']);
         $user = $this->Auth->user();
         $entity = $this->Spaycs->find()

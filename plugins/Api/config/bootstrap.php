@@ -12,7 +12,6 @@ try {
     exit($e->getMessage() . "\n");
 }
 Configure::write('Error.exceptionRenderer','Api\Error\ApiExceptionRenderer');
-//pr(Configure::read('Error.exceptionRenderer'));die;
 EventManager::instance()->on(new SpaycListener());
 //Log::config('api', [
 //            'className' => 'Api\Log\Engine\ApiLog.Api',

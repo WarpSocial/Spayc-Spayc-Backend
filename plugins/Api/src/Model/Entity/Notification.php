@@ -1,4 +1,5 @@
 <?php
+
 namespace Api\Model\Entity;
 
 use Cake\ORM\Entity;
@@ -22,8 +23,7 @@ use Cake\Core\Configure;
  *
  * @property \Api\Model\Entity\Spayc $spayc
  */
-class Notification extends Entity
-{
+class Notification extends Entity {
 
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
@@ -38,31 +38,31 @@ class Notification extends Entity
         '*' => true,
         'id' => false
     ];
-    
+
     protected function _getId($id) {
         return ApiHasher::encrypt($id);
     }
-    
-    protected function _getDateTime($date) {
-        $timezone = Configure::read('timezone');
-        if (!empty($date)) {
-            $sd = new Time($date,$timezone);
-            return $sd->setTimezone($timezone)->format('m-d-Y H:i:s');
-        } else {
-            return;
-        }
-    }
-    
+
+//    protected function _getDateTime($date) {
+//        $timezone = Configure::read('timezone');
+//        if (!empty($date)) {
+//            $sd = new Time($date, $timezone);
+//            return $sd->setTimezone($timezone)->format('m-d-Y H:i:s');
+//        } else {
+//            return;
+//        }
+//    }
+
     protected function _setDateTime($datetime) {
         $timezone = Configure::read('timezone');
         if (!empty($datetime)) {
-            $datetime = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$datetime,$timezone);
+            $datetime = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s', $datetime, $timezone);
             return $datetime->setTimezone('UTC')->format("Y-m-d H:i:s");
         } else {
             return;
         }
     }
-    
+
 //    protected function _setDateTime($datetime) {
 //        $timezone = Configure::read('timezone');
 //        if (!empty($datetime)) {

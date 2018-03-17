@@ -1031,6 +1031,7 @@ class UsersController extends AppController {
         $notifications->order(['date_time'=>'DESC']);
         $notifications->formatResults(function (\Cake\Collection\CollectionInterface $results) {
             return $results->map(function ($row) {
+                $row['date_time'] = Utils::toClient($row['date_time']);
                 $row['space_name'] = !empty($row['spayc']['name'])?$row['spayc']['name']:null;
                 $row['room_id'] = !empty($row['spayc']['matrix_room_id'])?$row['spayc']['matrix_room_id']:null;
                 $row['spayc_image'] = !empty($row['spayc']['image'])?$row['spayc']['image']:null;
@@ -1039,9 +1040,7 @@ class UsersController extends AppController {
                 $row['user_id'] = !empty($row['notification_by']['id'])?$row['notification_by']['id']:null;
                 $row['user_image'] = !empty($row['notification_by']['user_images'][0]['image_url'])?$row['notification_by']['user_images'][0]['image_url']:null;
                 $row['is_unread'] = ($row['status']=='Unread')?true:false;
-                unset($row['spayc']);
-                unset($row['status']);
-                unset($row['notification_by']);
+                unset($row['spayc'],$row['status'],$row['notification_by']);
                 return $row;
             });
         });

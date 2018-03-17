@@ -19,7 +19,7 @@ class ApiExceptionRenderer extends ExceptionRenderer {
         ];
         $this->controller->set($response);
         $this->controller->set('_serialize',['status','message','url']);
-
+        //$this->controller->set('_serialize',true);
         return parent::_outputMessage($template);
     }
 

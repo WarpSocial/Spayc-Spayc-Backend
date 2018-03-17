@@ -361,20 +361,20 @@ class Utils {
         }
     }
     
-    public static function toUtc(){
+    public static function toUtc($datetime){
         $timezone = Configure::read('timezone');
-        if (!empty($stardDate)) {
-            $startdate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$stardDate,$timezone);
-            return $startdate->setTimezone('UTC')->format("Y-m-d H:i:s");
+        if (!empty($datetime)) {            
+            $parseDate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$datetime,$timezone);
+            return $parseDate->setTimezone(new \DateTimeZone('UTC'))->format("Y-m-d H:i:s");
         } else {
             return;
         }
     }
-    public static function toClient(){
+    public static function toClient($datetime){
         $timezone = Configure::read('timezone');
-        if (!empty($stardDate)) {
-            $sd = new Time($stardDate);
-            return $sd->setTimezone($timezone)->format('m-d-Y H:i:s');
+        if (!empty($datetime)) {
+            $sd = new Time($datetime,'UTC');
+            return $sd->setTimezone(new \DateTimeZone($timezone))->format('m-d-Y H:i:s');
         } else {
             return;
         }
