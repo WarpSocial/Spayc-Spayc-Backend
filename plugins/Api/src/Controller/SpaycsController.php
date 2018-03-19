@@ -80,7 +80,7 @@ class SpaycsController extends AppController {
                 ]);
                 EventManager::instance()->dispatch($event);
             }else{
-                $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be saved. Please, try again.')], 400);
+                $this->restException(['status'=>'failed', 'message'=>__('The spayc couldDFS455HER45555dddadf55af444 not be saved. Please, try again.')], 400);
             }
         } else {
             $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be saved. Please, try again.')], 400);
