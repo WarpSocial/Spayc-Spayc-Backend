@@ -123,7 +123,7 @@ class PushComponent extends Component {
                 return false;
             }
             if($notificationType->slug == 'friend-request') {
-                $notificationType->message = str_replace("<USERNAME>", ucwords($data['username']), $notificationType->message);
+                $notificationType->message = str_replace("<USERNAME>", ucwords($data['display_name']), $notificationType->message);
             }
             if($notificationType->slug == 'new-spayc') {
                 $notificationType->message = str_replace("<X>", $data['distance'], $notificationType->message);
