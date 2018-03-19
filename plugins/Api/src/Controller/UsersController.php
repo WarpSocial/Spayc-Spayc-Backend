@@ -787,30 +787,36 @@ class UsersController extends AppController {
         if(empty($friendStatus) || !in_array(ucfirst($friendStatus), $status)) {
             $this->restException(['status'=>'failed', 'message'=>__('Status is required fields and status must be in('.  implode(',', $status).').')], 400);
         }
-        //$userId = $this->Auth->user('id');
-        $userId = !empty($this->request->query('user_id'))?$this->request->query('user_id'):$this->Auth->user("id");
+        $loggedUser = $this->Auth->user();
+        $userId = !empty($this->request->query('user_id'))?$this->request->query('user_id'):$loggedUser['id'];
+        
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, $friendStatus);
         if(!$friend){
             $this->restException(["status"=>"success",'message'=>__("Record not found")],204);
         }
         $friends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username','Users.display_name', 'Users.matrix_user_id', 'Users.matrix_access_token'], 'conditions'=>['Users.id IN'=>$friend, 'Users.id !='=>$userId, 'Users.status'=>'Active']]);
         $friends->contain([
-            'Requestedby' => function($q) use($userId) {
+            /*'Requestedby' => function($q) use($userId) {
                 return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_status', 'Requestedby.requested_to', 'Requestedby.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
             },
             'Requestedto' => function($q) use($userId) {
                 return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
-            },
+            },*/
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
             }
         ]);
-        $friends->formatResults(function (\Cake\Collection\CollectionInterface $results) {
-            return $results->map(function ($row) {
-                $row->friend = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
+        $friends->formatResults(function (\Cake\Collection\CollectionInterface $results) use($loggedUser) {
+            return $results->map(function ($row) use($loggedUser) {
+                /*$row->friend = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
                 $row->friend = !empty($row['requestedby'][0]) && empty($row->friend)? $row['requestedby'][0] : $row->friend;
                 $row['matrix_room_id'] = !empty($row['friend']['matrix_room_id'])?$row['friend']['matrix_room_id']:null;
+                unset($row['friend']['matrix_room_id']);*/
+                $uId = ApiHasher::decrypt($row['id']);
+                $row['friend'] = TableRegistry::get('Api.FriendRequest')->myFriend($uId, $loggedUser['id']);
+                $row['matrix_room_id'] = !empty($row['friend']['matrix_room_id'])?$row['friend']['matrix_room_id']:null;
                 unset($row['friend']['matrix_room_id']);
+                
                 $row->image_url = !empty($row['user_images'][0]['image_url'])?$row['user_images'][0]['image_url']:'';
                 unset($row['requestedto']);
                 unset($row['requestedby']);
@@ -869,8 +875,7 @@ class UsersController extends AppController {
                 //$row['friend'] = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
                 //$row['friend'] = !empty($row['requestedby'][0]) && empty($row['friend'])?$row['requestedby'][0]:$row['friend'];
                 //$row['friend'] = !empty($row['requestedby'][0])?$row['requestedby'][0]:[];
-                 $row['friend'] = TableRegistry::get('Api.FriendRequest')->myFriend($uId,$loggedUser['id']);
-                
+                $row['friend'] = TableRegistry::get('Api.FriendRequest')->myFriend($uId,$loggedUser['id']);
                 $row['matrix_room_id'] = !empty($row['friend']['matrix_room_id'])?$row['friend']['matrix_room_id']:null;
                 unset($row['friend']['matrix_room_id']);
                 $row['friend']['total_friends'] = TableRegistry::get('Api.FriendRequest')->getFriendCountByUserId($uId);
