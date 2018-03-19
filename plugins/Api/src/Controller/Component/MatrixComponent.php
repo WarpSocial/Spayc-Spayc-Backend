@@ -210,17 +210,17 @@ class MatrixComponent extends Component {
             );
         $response = json_decode($httpResponse->body,true);
         #pr($response);die;
-//        if(empty($items['is_direct']) && !empty($response['room_id']) && !empty($items['invite'])){
-//            $joinees = explode(',',$items['invite']);
-//            foreach($joinees as $ke => $mid){
-//                $joinData = [
-//                    'status'=>'Joined',
-//                    'matrix_room_id'=>$response['room_id'],
-//                    'matrix_token'=>$items['matrix_token']
-//                ];
-//                $this->joinRoom($joinData);
-//            }
-//        }
+        if(empty($items['is_direct']) && !empty($response['room_id']) && !empty($items['invite'])){
+            $joinees = explode(',',$items['invite']);
+            foreach($joinees as $ke => $mid){
+                $joinData = [
+                    'status'=>'Joined',
+                    'matrix_room_id'=>$response['room_id'],
+                    'matrix_token'=>$items['matrix_token']
+                ];
+                $this->joinRoom($joinData);
+            }
+        }
 //        if(empty($items['is_direct']) && ($items['visibility'] == 'private') && empty($response['error'])){
 //            /** Join Rules in case of private room */
 //            $joinRulesInput = ['matrix_token'=>$items['matrix_token'],'join_rule'=>'public'];
