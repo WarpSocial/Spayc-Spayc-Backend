@@ -275,7 +275,7 @@ class SpaycsTable extends Table {
         } else {
             $spaycs = $this->find()
                 ->select(['id', 'name', 'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode'])
-                ->where(['status'=>'Active'])
+                ->where(['Spaycs.status'=>'Active', 'Spaycs.group_type !='=>'trusted_private'])
                 ->order(['created'=>'DESC']);
         }
         $spaycs->contain([
