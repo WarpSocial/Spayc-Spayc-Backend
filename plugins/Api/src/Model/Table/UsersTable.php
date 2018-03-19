@@ -554,4 +554,5 @@ class UsersTable extends Table {
                 ->inList('role', [0,1],__('Role must be either o or 1.'));
         return $validator->errors($data);
     }
+    
 }
