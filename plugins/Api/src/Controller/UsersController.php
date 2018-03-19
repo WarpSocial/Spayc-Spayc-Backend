@@ -350,7 +350,7 @@ class UsersController extends AppController {
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
     */
-    public function facebookSignup() {         
+    public function facebookSignup() {
         if(!$this->request->is('post')) {
             $this->restException(['status'=>'failed','message'=>__('Method not allowed.')],405);
         }
