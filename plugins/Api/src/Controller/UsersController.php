@@ -583,7 +583,9 @@ class UsersController extends AppController {
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function delete($id = null) {
-        $this->request->allowMethod(['post', 'delete']);
+        if (!$this->request->is(['post', 'delete'])) {
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
+        }
         $user = $this->Users->get($id);
         $user->status= 'trash';
         if ($this->Users->update($user)) {
@@ -595,6 +597,9 @@ class UsersController extends AppController {
     }
     
     public function logout() {
+        if (!$this->request->is(['get'])) {
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
+        }
         $this->loadModel('UserLogs');
         //$user = $this->Auth->user();
         $token = $this->request->env('HTTP_TOKEN');
