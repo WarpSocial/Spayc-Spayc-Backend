@@ -1,4 +1,4 @@
-jQuery(document).ready(function ($) {
+jQuery(document).ready(function ($) {  
     $('.show-password').on('click', function () {                    
         var attrObj = $(this).parent("div").find('input');
         if (attrObj.attr('type') == 'text') { 
@@ -17,17 +17,17 @@ jQuery(document).ready(function ($) {
 
         if ($.trim($('#email').val()) == '') {            
             $('#email').addClass('incorrect-alert');
-            $('#emailError').text('Please enter your email.');
+            $('#emailError').text(errorSuccessMessage['2']);
             return false;
         }
         if (!pattern.test($.trim($('#email').val()))) {
             $('#email').addClass('incorrect-alert');
-            $('#emailError').text('Please enter your valid email.');
+            $('#emailError').text(errorSuccessMessage['3']);
             return false;
         }
         if ($.trim($('#password').val()) == '') {
             $('#password').addClass('incorrect-alert');
-            $('#passwordError').text('Please enter your password.');
+            $('#passwordError').text(errorSuccessMessage['4']);
             return false;
         }
     });
@@ -37,7 +37,7 @@ jQuery(document).ready(function ($) {
         var re = pattern.test($.trim($('#email').val()));
         $('#emailError').text('');
         if(!re){
-            $('#emailError').text('Please enter your email.');
+            $('#emailError').text(errorSuccessMessage['2']);
             return false;
         }
     });
@@ -50,13 +50,13 @@ jQuery(document).ready(function ($) {
         if ($.trim(email.val()) == '') { 
             err = 1;           
             email.addClass('incorrect-alert');
-            $('#ForgetPasswordFrm #emailError').text('Please enter your email.');
+            $('#ForgetPasswordFrm #emailError').text(errorSuccessMessage['2']);
             return false;
         }
         if (!pattern.test($.trim($('#ForgetPasswordFrm #email').val()))) {
             err = 1;
             email.addClass('incorrect-alert');
-            $('#ForgetPasswordFrm #emailError').text('Please enter your valid email.');
+            $('#ForgetPasswordFrm #emailError').text(errorSuccessMessage['3']);
             return false;
         }
         if(err==0){
@@ -89,13 +89,13 @@ jQuery(document).ready(function ($) {
            $('input').removeClass('incorrect-alert');
            if($.trim($('#old_password').val())==''){
                $('#old_password').addClass('incorrect-alert');
-               $('#oldpasswordError').text('Please enter current password.');
+               $('#oldpasswordError').text(errorSuccessMessage['10']);
                $('#old_password').focus();
                return false;
            }
            if($.trim($('#new_password').val())==''){
                $('#new_password').addClass('incorrect-alert');
-               $('#passwordError').text('Please enter new password.');
+               $('#passwordError').text(errorSuccessMessage['18']);
                $('#new_password').focus();
                return false;
            }
@@ -106,19 +106,49 @@ jQuery(document).ready(function ($) {
            // }
            if(($('#old_password').val()) == ($('#new_password').val())){
                $('#new_password').addClass('incorrect-alert');
-               $('#passwordError').text('Current password & new password cannot be same.');
+               $('#passwordError').text(errorSuccessMessage['11']);
                $('#new_password').focus();
                return false;
            }
            if($.trim($('#confirm_password').val())==''){
                $('#confirm_password').addClass('incorrect-alert');
-               $('#confirmpasswordError').text('Please enter confirm password.');
+               $('#confirmpasswordError').text(errorSuccessMessage['20']);
                $('#confirm_password').focus();
                return false;
            }
            if(($('#confirm_password').val()) != ($('#new_password').val())){
                $('#confirm_password').addClass('incorrect-alert');
-               $('#confirmpasswordError').text('The passwords entered do not match.');
+               $('#confirmpasswordError').text(errorSuccessMessage['12']);
+               $('#confirm_password').focus();
+               return false;
+           }
+       });
+
+    $('#reset_password_form').submit(function(e){              
+           $('.input-alert').text('');
+           $('input').removeClass('incorrect-alert');
+           
+           if($.trim($('#new_password').val())==''){
+               $('#new_password').addClass('incorrect-alert');
+               $('#passwordError').text(errorSuccessMessage['18']);
+               $('#new_password').focus();
+               return false;
+           }
+           // if($.trim($('#new_password').val()).length < 6){
+           //     $('#passwordError').text('Your password must be at least 6 characters.');
+           //     $('#new_password').focus();
+           //     return false;
+           // }
+          
+           if($.trim($('#confirm_password').val())==''){
+               $('#confirm_password').addClass('incorrect-alert');
+               $('#confirmpasswordError').text(errorSuccessMessage['20']);
+               $('#confirm_password').focus();
+               return false;
+           }
+           if(($('#confirm_password').val()) != ($('#new_password').val())){
+               $('#confirm_password').addClass('incorrect-alert');
+               $('#confirmpasswordError').text(errorSuccessMessage['12']);
                $('#confirm_password').focus();
                return false;
            }

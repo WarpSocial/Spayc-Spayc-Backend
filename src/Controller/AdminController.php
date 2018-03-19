@@ -33,7 +33,7 @@ class AdminController extends AppController
     public function initialize()
     {
         parent::initialize();        
-        $this->viewBuilder()->layout('admin');       
+        $this->viewBuilder()->layout('admin'); 
         $this->loadComponent('Flash');        
         $this->loadComponent('Auth', [
             'authenticate' => [
@@ -69,6 +69,9 @@ class AdminController extends AppController
     public function beforeFilter(Event $event)
     {
         $this->base_url = Router::url('/', true);
+        $this->errorSuccessMessage = Configure::read('ERRORANDSUCCESSMSG');
+        $this->errorRequiredMessage = Configure::read('ERRORANDREQUIREDMSG');
+        $this->set('error_success_message', json_encode($this->errorSuccessMessage));
         $this->set('base_url', $this->base_url);
         $this->set('base_url_admin', $this->base_url.'admin/'); 
         $authUser='';        

@@ -8,11 +8,11 @@ use Cake\View\Exception\MissingTemplateException;
 use Cake\Routing\Router;
 use Cake\Event\Event;
 use Cake\Core\Configure;
-use Cake\Auth\DefaultPasswordHasher;
 use Cake\ORM\TableRegistry;
 use Cake\Mailer\Email;
 use Cake\Mailer\MailerAwareTrait;
 use Api\Auth\ApiHasher;
+use Cake\Utility\Security;
 
 /**
  * Users Controller
@@ -21,14 +21,14 @@ use Api\Auth\ApiHasher;
  */
 class UsersController extends AdminController
 {
-
+    use MailerAwareTrait;
     public function initialize() {
         parent::initialize();        
     }
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
-        $this->Auth->allow(['login', 'logout','forgotPassword']);
+        $this->Auth->allow(['login', 'logout','forgotPassword', 'resetPassword']);
     }
 
     /**
@@ -134,20 +134,20 @@ class UsersController extends AdminController
     }
     
     public function login() {
-        $this->set('title', 'Admin Panel');
+        $this->set('title', 'Admin Panel');        
         if ($this->request->is('post')) {
             $data_item = $this->request->data;
             $error = array();
             if (!isset($data_item['email'])) {
-                $error['email'] = ['_required' => "email is required"];
+                $error['email'] = ['_required' => $this->errorRequiredMessage['1']];
             }
             if (!isset($data_item['password'])) {
-                $error['password'] = ['_required' => "password is required"];
+                $error['password'] = ['_required' => $this->errorRequiredMessage['2']];
             }
             if (empty($error)) {
                 $hasher = new DefaultPasswordHasher();
                 $user_query = $this->Users->find('all', [
-                    'conditions' => ['Users.email' => $this->request->data['email'],
+                    'conditions' => ['Users.email' => trim($data_item['email']),
                         'Users.role_id' => ROLE_ADMIN
                     ],
                     'limit' => '1'
@@ -155,16 +155,16 @@ class UsersController extends AdminController
                 $user = $user_query->first();                            
                 if ($user) {              
                     if (!ApiHasher::check(trim($data_item['password']), $user->password)) {                       
-                        $this->Flash->error(__('Invalid email or password.'));
+                        $this->Flash->error(__($this->errorSuccessMessage['32']));
                     }else{                       
                         $this->Auth->setUser($user);                        
                         return $this->redirect($this->Auth->redirectUrl());
                     }               
                 } else {
-                    $this->Flash->error(__('Invalid email or password.'));
+                    $this->Flash->error(__($this->errorSuccessMessage['32']));
                 }
             } else {
-                $this->Flash->error(__('Enter email and password.'));
+                $this->Flash->error(__($this->errorSuccessMessage['33']));
             }
         }                
         $user= $this->Users->newEntity();
@@ -181,13 +181,13 @@ class UsersController extends AdminController
             $data_item = $this->request->data;
             $error = array();
             if (!isset($data_item['old_password'])) {
-               $error['old_password'] = ['_required' => "current password is required"];
+               $error['old_password'] = ['_required' => $this->errorRequiredMessage['3']];
             }
             if (!isset($data_item['new_password'])) {
-               $error['new_password'] = ['_required' => "new password is required"];
+               $error['new_password'] = ['_required' => $this->errorRequiredMessage['4']];
             }
             if (!isset($data_item['confirm_password'])) {
-               $error['confirm_password'] = ['_required' => "confirm password is required"];
+               $error['confirm_password'] = ['_required' => $this->errorRequiredMessage['5']];
             }
             if (empty($error)) {
                 $admin_object = $this->Users->find('all', ['conditions' => ['Users.role_id' => ROLE_ADMIN]]);
@@ -198,10 +198,10 @@ class UsersController extends AdminController
                         return $this->redirect(['action' => 'success']);
                     }
                 } else {
-                    $this->Flash->error(__('Invalid current password.'));
+                    $this->Flash->error(__($this->errorSuccessMessage['34']));
                 }
             } else {
-                $this->Flash->error(__('All fields are required.'));
+                $this->Flash->error(__($this->errorRequiredMessage['6']));
             }
         }
     }
@@ -222,9 +222,9 @@ class UsersController extends AdminController
             $data_item = $this->request->data;           
             $error = array();
             if (!isset($data_item['email'])) {
-                $error = "Email is required";
+                $error = $this->errorRequiredMessage['1'];
             } else if (!filter_var($data_item['email'], FILTER_VALIDATE_EMAIL)) {
-                $error = "Please enter your valid email.";
+                $error = $this->errorSuccessMessage['3'];
             }
             if (empty($error)) {
                 $users_query = $this->Users->find('all', [
@@ -236,10 +236,13 @@ class UsersController extends AdminController
                 //debug($users_query);
                 $user = $users_query->first();                
                 if ($user) {
-                    
-                   $result_arr = ['result' => true, 'message' => 'Password changed successfully.'];
+                    $data['forgot_password_token'] = Security::hash($user['email'], 'sha1', true);
+                    $data['forgot_password_timestamp'] = time();
+                    $d = $this->Users->updateAll($data, ['email'=>$user['email']]);
+                    $this->getMailer('User')->send('forgotPassword', [$user]);
+                   $result_arr = ['result' => true, 'message' => $this->errorSuccessMessage['35']];
                 } else {
-                    $result_arr = ['result' => false, 'message' => 'Invalid email id.'];
+                    $result_arr = ['result' => false, 'message' => $this->errorSuccessMessage['3']];
                 }
             } else {                
                 $result_arr = ['result' => false, 'message' => $error];
@@ -247,6 +250,52 @@ class UsersController extends AdminController
             echo json_encode($result_arr);
             die;
         }
+    }
+
+    public function resetPassword($token=null, $email=null) {    
+        $this->set('title', 'Reset password');        
+        if (!$token || !$email) {            
+            $this->Flash->error(__($this->errorRequiredMessage['7']));
+            return $this->redirect(['action' => 'login']);  
+        }
+        $user = $this->Users->find('all', [
+                    'conditions' => 
+                            ['Users.email' => trim($email),
+                             'Users.role_id' => ROLE_ADMIN
+                            ],
+                    'limit' => '1'
+                ])->first();                  
+        if (!$user) {
+            $this->Flash->error(__($this->errorSuccessMessage['36']));
+            return $this->redirect(['action' => 'login']); 
+        }
+        if ($token != Security::hash($user->email, 'sha1', true)) {            
+            $this->Flash->error(__($this->errorSuccessMessage['37']));
+            return $this->redirect(['action' => 'login']); 
+        }        
+        $status = '';              
+        if ($this->request->is('post')) {           
+            $data = $this->request->getData();                        
+            // if(empty($data['password']) || empty($data['confirm_password'])){
+            //     $this->Flash->error(__('All fields are required.'));
+            // }elseif($data['password'] != $data['confirm_password']){
+            //     $this->Flash->error(__('Password not matched.'));
+            // }else{ 
+            //     $user->status = 'Active';
+            //     $user->password = ApiHasher::hash($data['password']);
+            //     if ($this->Users->save($user)) {
+            //         $status = 'done';
+            //         $this->Flash->success(__('Your new password has been reset successfully.'));
+            //         return $this->redirect(['action' => 'login']);    
+            //     } else {
+            //         $status = 'failed';
+            //         $this->Flash->success(__('System rejected to update the password.'));
+            //         return $this->redirect(['action' => 'login']);    
+            //     }
+            // }
+            
+        }        
+        $this->set(compact('user','status'));        
     }
 
 

@@ -1,4 +1,3 @@
-<?= $this->Html->script('admin/user'); ?>
 <main class="login-page">
       <div class="login-wrapper">
         <div class="image-screen"></div>
@@ -38,5 +37,6 @@
         </div>
       </div>
     </main>
-  <?php echo $this->element('admin/signin/success');?>
+<?php echo $this->element('admin/signin/success');?>
 <?php echo $this->element('admin/signin/forgot_password');?>
+<?php echo $this->Html->script('admin/user'); ?>

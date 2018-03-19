@@ -1,5 +1,4 @@
- <?= $this->Html->script('admin/user'); ?>
- <section class="content-wrapper f-password-wrap">
+  <section class="content-wrapper f-password-wrap">
       <!--============= change password ===================-->
       <div class="d-flex justify-content-center align-items-center w-100">
         <div class="change-password-wrapper">         
@@ -45,3 +44,4 @@
             </div>
         </div>
     </section>
+    <?= $this->Html->script('admin/user'); ?>

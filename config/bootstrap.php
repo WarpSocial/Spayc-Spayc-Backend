@@ -217,4 +217,4 @@ if (Configure::read('debug')) {
 }
 
 Plugin::load('Api', ['bootstrap' => true, 'routes' => true]);
-Configure::load('admin');
+Configure::load('common_constant');

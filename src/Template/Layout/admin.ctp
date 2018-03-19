@@ -7,8 +7,10 @@ echo $this->element('admin/head');
 ?>
 
 <script type="text/javascript">
-var BASE_URL_ADMIN = '<?php echo $base_url; ?>admin/';
-var BASE_URL = '<?php echo $base_url; ?>';
+var base_url = '<?php echo $base_url; ?>';
+var base_url_admin = '<?php echo $base_url; ?>admin/';
+var errorSuccessMessage = '<?=$error_success_message?>';
+errorSuccessMessage = JSON.parse(errorSuccessMessage);
 </script>
 <?php
 echo $this->element('admin/footer',['authUser' => $authUser]);
