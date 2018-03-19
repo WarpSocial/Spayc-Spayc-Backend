@@ -1,4 +1,6 @@
-<?php ?>
+<?php 
+$input = $this->request->getData();
+?>
 <!DOCTYPE html>
 <?= $this->Html->charset() ?>
 <html lang="en">
@@ -47,6 +49,9 @@
             <span>Your password has been reset successfully.</span>
           </div>
             <?php
+            }elseif($status == 'error'){
+               // echo '<h4>Reset Password</h4>';
+                echo '<p class="mb-30">'.$this->Flash->render().'</p>';
             }else{
             ?>
           <?php echo $this->Form->create('Users', ['id'=>'resetpaswd-frm','context' => ['validator' => 'reset'],'class'=>['reset-password']
@@ -54,16 +59,22 @@
             <h4>Reset Password</h4>
             <p class="mb-30">Enter new password and confirm it.</p>
             <p><?php echo $this->Flash->render() ?></p>
-            <div class="form-group">
-                <label class="form-label" for="password">New Password</label>
-                <!--input type="password" name="password" class="form-control form-input " id="password"-->
-                <?php echo $this->Form->control('password', ['type'=>'password', 'class'=>['form-control', 'form-input'], 'label'=>false]);?>
+            <?php
+                $pinputClass = !empty($input['password'])?'form-control form-input filled':"form-control form-input";
+                $cpinputClass = !empty($input['confirm_password'])?'form-control form-input filled':"form-control form-input";
+                $cfocused = !empty($input['password'])?'focused':"";
+                $cpfocused = !empty($input['confirm_password'])?'focused':"";
+                ?>
+            <div class="form-group <?= $cfocused ?>">
+                <label class="form-label <?= $cfocused ?>" for="password">New Password</label>
+                
+                <?php echo $this->Form->control('password', ['type'=>'password', 'class'=>$pinputClass, 'label'=>false]);?>
                 <small class="hint">Hint: Requires at least 1 number and 1 letter.</small>
 
             </div>
-            <div class="form-group confirm-password">
-              <label class="form-label" for="confirm-password">Confirm New Password</label>
-              <?php echo $this->Form->control('confirm_password', ['type'=>'password', 'class'=>['form-control', 'form-input'], 'label'=>false]);?>
+            <div class="form-group confirm-password <?= $cfocused ?>">
+              <label class="form-label <?= $cpfocused ?>" for="confirm-password">Confirm New Password</label>
+              <?php echo $this->Form->control('confirm_password', ['type'=>'password', 'class'=>$cpinputClass, 'label'=>false]);?>
                <small class="chint"></small>
             </div>
 

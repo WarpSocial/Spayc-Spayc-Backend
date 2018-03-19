@@ -17,7 +17,7 @@ CREATE TABLE users (
     "username" character varying(100) NOT NULL,
     "display_name" character varying(100) NULL,
     "email" character varying(150),
-    "password" character varying(255),
+    "password" character varying(1000),
     "gender" character varying(50),
     "dob" date,
     "phone" character varying(20),

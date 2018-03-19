@@ -403,7 +403,11 @@ class MatrixComponent extends Component {
             return false;
         }
         $validInput = [
-            'auth'=>['type'=>'m.login.password', 'user'=>$items['matrix_user_id'], 'password'=>$items['old_password']],
+            'auth'=>[
+                'type'=>'m.login.password', 
+                'user'=>$items['matrix_user_id'], 
+                'password'=>$items['old_password']
+            ],
             'new_password'=>$items['new_password']
         ]; 
         $url = $this->config('url').DS.$this->config('client') . DS.'account'.DS.'password?access_token='.$items['matrix_access_token'];
@@ -420,7 +424,6 @@ class MatrixComponent extends Component {
                 ]
             );
         $response = json_decode($httpResponse->body,true);
-        #pr($response);die;
         if($httpResponse->isOk()){
             return $response;
         }else{

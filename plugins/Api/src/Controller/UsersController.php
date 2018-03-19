@@ -481,39 +481,53 @@ class UsersController extends AppController {
     }
     
     public function resetPassword($token, $email) {
+        $status = 'success';
         if (!$token || !$email) {
             throw new NotFoundException(__('Missing required information. Please read email carefully and try again.'));
         }
         $user = $this->Users->findByEmail($email)->first();
         if (!$user) {
-            throw new RecordNotFoundException(__('Account not found or already activated. Please read email carefully and try again.'));
+            $status = 'error';
+            $this->Flash->error(__('Failed to reset the password.'));            
+        }elseif(empty($user->forgot_password_token)){
+            $status = 'error';
+            $this->Flash->error(__('Password reset link has either expired or invalid.'));
         }
         if ($token != Security::hash($user->email, 'sha1', true)) {
-            throw new ForbiddenException(__('Invalid token. Please read email carefully and try again.'));
+            $status = 'error';
+            $this->Flash->error(__('Password reset link has either expired or invalid.'));
         }        
-        $status = '';
-        if($this->request->is('post')){
+        if($this->request->is('post') && ($status == 'success')){
             $data = $this->request->getData();
             if(empty($data['password']) || empty($data['confirm_password'])){
                 $this->Flash->error(__('All fields are required.'));
             }elseif($data['password'] != $data['confirm_password']){
                 $this->Flash->error(__('Password not matched.'));
             }else{ 
+                $previousPassword = ApiHasher::dehash($user->password);
                 $user->status = 'Active';
-                $user->password = ApiHasher::hash($data['password']);
+                $user->password = $data['password'];
+                $user->forgot_password_token = null;
                 if ($this->Users->save($user)) {
+                    $matrixData = [
+                        'old_password' => $previousPassword,
+                        'new_password' => $data['password'],
+                        'matrix_user_id' => $user->matrix_user_id,
+                        'matrix_access_token' => $user->matrix_access_token,
+                    ];
+                    //pr($matrixData);die;
+                    $this->loadComponent('Api.Matrix');
+                    $this->Matrix->changePassword($matrixData);
                     $status = 'done';
                     $this->Flash->success(__('Your new password has been reset successfully.'));
                     //return $this->redirect(['action' => 'login']);    
                 } else {
                     $status = 'failed';
-                    $this->Flash->success(__('System rejected to update the password.'));
+                    $this->Flash->error(__('Failed to reset the password.'));
                     //return $this->redirect(['action' => 'login']);    
                 }
-            }
-            
-        }
-        
+            }            
+        }        
         $this->set(compact('user'));
         $this->set(compact('status'));
         $this->render('Users/reset_password',false);
