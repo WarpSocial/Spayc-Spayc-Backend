@@ -835,10 +835,9 @@ class UsersController extends AppController {
                 $row['friend'] = TableRegistry::get('Api.FriendRequest')->myFriend($uId, $loggedUser['id']);
                 $row['matrix_room_id'] = !empty($row['friend']['matrix_room_id'])?$row['friend']['matrix_room_id']:null;
                 unset($row['friend']['matrix_room_id']);
-                
                 $row->image_url = !empty($row['user_images'][0]['image_url'])?$row['user_images'][0]['image_url']:'';
-                unset($row['requestedto']);
-                unset($row['requestedby']);
+                //unset($row['requestedto']);
+                //unset($row['requestedby']);
                 unset($row['user_images']);
                 return $row;
             });
@@ -1055,7 +1054,7 @@ class UsersController extends AppController {
         $notifications->order(['date_time'=>'DESC']);
         $notifications->formatResults(function (\Cake\Collection\CollectionInterface $results) {
             return $results->map(function ($row) {
-                $row['date_time'] = Utils::toClient($row['date_time']);
+                
                 $row['space_name'] = !empty($row['spayc']['name'])?$row['spayc']['name']:null;
                 $row['room_id'] = !empty($row['spayc']['matrix_room_id'])?$row['spayc']['matrix_room_id']:null;
                 $row['spayc_image'] = !empty($row['spayc']['image'])?$row['spayc']['image']:null;

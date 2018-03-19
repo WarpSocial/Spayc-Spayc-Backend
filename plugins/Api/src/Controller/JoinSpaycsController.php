@@ -69,10 +69,7 @@ class JoinSpaycsController extends AppController {
                 $data['status'] = 'Joined';
             }
             if($this->Matrix->joinRoom($data)){
-//                $push = [
-//                    'requested_by'=>$user['id'],
-//                    'requested_to'=>$user['id'],
-//                ];
+                
 //                $push['requested_by'] = $adminUser;
 //                $push['requested_to'] =  $data['user_id'];
 //                $push['slug'] = 'user-joined-your-spayc';
@@ -82,6 +79,7 @@ class JoinSpaycsController extends AppController {
 //                $push['matrix_room_id'] = $items['matrix_room_id'];
 //                $push['distance'] = $this->getSpaycDistanceFromUser($items['latitude'], $items['longitude'], $push['requested_to']);
 //                $pushNotification->sendPushNotification($push);
+                
                 $jsModel->getConnection()->commit();
                 $response = ['status'=>'success','message'=>__('User has been '.$data['status'].' successfully.')];
             }else{

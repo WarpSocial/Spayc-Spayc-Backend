@@ -43,15 +43,19 @@ class Notification extends Entity {
         return ApiHasher::encrypt($id);
     }
 
-//    protected function _getDateTime($date) {
-//        $timezone = Configure::read('timezone');
-//        if (!empty($date)) {
-//            $sd = new Time($date, $timezone);
-//            return $sd->setTimezone($timezone)->format('m-d-Y H:i:s');
-//        } else {
-//            return;
-//        }
-//    }
+    protected function _getDateTime($date) {
+        $request = new \Cake\Http\ServerRequest();
+        if($this->isNew() || strstr($request->getRequestTarget(),'edit')) {
+             return $date;
+         }
+        $timezone = Configure::read('timezone');
+        if (!empty($date)) {
+            $sd = new Time($date, 'UTC');
+            return $sd->setTimezone($timezone)->format('m-d-Y H:i:s');
+        } else {
+            return;
+        }
+    }
 
     protected function _setDateTime($datetime) {
         $timezone = Configure::read('timezone');
