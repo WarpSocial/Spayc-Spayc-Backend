@@ -57,7 +57,7 @@ class Notification extends Entity {
         }
     }
 
-    protected function _setDateTime($datetime) {
+    /*protected function _setDateTime($datetime) {
         $timezone = Configure::read('timezone');
         if (!empty($datetime)) {
             $datetime = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s', $datetime, $timezone);
@@ -65,7 +65,7 @@ class Notification extends Entity {
         } else {
             return;
         }
-    }
+    }*/
 
 //    protected function _setDateTime($datetime) {
 //        $timezone = Configure::read('timezone');

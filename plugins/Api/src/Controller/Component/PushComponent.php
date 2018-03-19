@@ -137,8 +137,7 @@ class PushComponent extends Component {
             $userInputTime = new Time('now',$timezone);
             //$userInputTime = new \DateTime("now", new \DateTimeZone('America/New_York') );
             //echo $userInputTime->format('Y-m-d H:i:s');
-            $data['date_time']= $userInputTime->format("m-d-Y H:i:s");
-            $data['time'] =  $data['date_time'];
+            $data['time'] =  $userInputTime->format("m-d-Y H:i:s");
             $data['device_token'] = $deviceId->device_id;
             $data['notification_type'] = $notificationType->type;
             //pr($data);die;
@@ -147,10 +146,10 @@ class PushComponent extends Component {
                 $sent = $this->sendOnIOS($data, $notificationType->message);
             }
             if($sent) {
-                $data['date_time'] = (new Time($userInputTime, $timezone))->setTimezone('UTC')->format("m-d-Y H:i:s");
+                $data['date_time'] = (new Time($userInputTime, $timezone))->setTimezone('UTC')->format("Y-m-d H:i:s");
                 $data['message'] = $notificationType->message;
                 $data['status'] = 'Unread';
-                $data['created'] = date("Y-m-d H:i:s");
+                $data['created'] = date("Y-m-d H:i:s"); //pr($data);exit;
                 TableRegistry::get("Api.Notifications")->addNotification($data);
             }
         }

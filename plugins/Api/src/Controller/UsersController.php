@@ -667,7 +667,8 @@ class UsersController extends AppController {
 //            ['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']],
 //            ['requested_by' => $data['friend_id'],'requested_to'=>$loggedUser['id']]
 //            ]]);
-        //debug($requestedFrnd);
+        //debug($requestedFrnd->toArray());die;
+        
         if($requestedFrnd->isEmpty()){
             $newObj = $frObj->newEntity();
             $newObj->requested_by = $loggedUser['id'];
@@ -706,7 +707,11 @@ class UsersController extends AppController {
             $frndRequest = $requestedFrnd->first();            
             if($data['friend_status'] == $frndRequest->requested_status){
                 $this->restException(['status'=>'failed', 'message'=>__('Friend request already sent with same status.')], 400);
-           }            
+            }  
+            if($frndRequest->requested_status=='Unfriend') {
+                $frndRequest->set('requested_by', $loggedUser['id']);
+                $frndRequest->set('requested_to', $data['friend_id']);
+            }
             $frndRequest->set('requested_status',$data['friend_status']);
             $frndRequest->set('action_by',$loggedUser['id']);
             if($frObj->save($frndRequest)){
