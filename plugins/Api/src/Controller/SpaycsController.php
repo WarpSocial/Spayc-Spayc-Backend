@@ -590,7 +590,7 @@ class SpaycsController extends AppController {
      * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null) {
+    public function delete($id = null) {       
         if($id == null){
             $id = $this->request->query('id');
         } 

@@ -69,7 +69,7 @@ class Spayc extends Entity
     }
     protected function _getStartDate($stardDate) {
         $request = new \Cake\Http\ServerRequest();
-         if($this->isNew() || strstr($request->getRequestTarget(),'edit')) { die("dkls");
+         if($this->isNew() || strstr($request->getRequestTarget(),'edit')) {
              return $stardDate;
          }
         $timezone = Configure::read('timezone');

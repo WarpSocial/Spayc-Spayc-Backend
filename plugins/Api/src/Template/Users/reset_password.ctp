@@ -10,8 +10,25 @@
     <!--===============stylesheet=================-->
     <?=$this->Html->css('bootstrap.min.css');?>
     <?=$this->Html->css('style.css');?>
+    <style>
+        .form-group input.form-control.reset-alert {
+            border-color: red;
+        }
+        .chint {
+            position: absolute;
+            color: red;
+            bottom: 9px;
+            font-size: 11px;
+        }
+        .red-alert {
+            color :red !important;
+        }
+        .error-alert {
+            position: relative;
+        }
+    </style>
   </head>
-
+  
  <body>
     <!--=============content section===========-->
     <section class="forgot-password-wrapper">
@@ -38,21 +55,21 @@
             <p class="mb-30">Enter new password and confirm it.</p>
             <p><?php echo $this->Flash->render() ?></p>
             <div class="form-group">
-                <!--label class="form-label" for="password">New Password</label>
-                <input type="password" name="password" class="form-control form-input " id="password"-->
-                <?php echo $this->Form->control('password', ['type'=>'password', 'class'=>['form-control', 'form-input'], 'placeholder'=>'New Password', 'label'=>false]);?>
+                <label class="form-label" for="password">New Password</label>
+                <!--input type="password" name="password" class="form-control form-input " id="password"-->
+                <?php echo $this->Form->control('password', ['type'=>'password', 'class'=>['form-control', 'form-input'], 'label'=>false]);?>
                 <small class="hint">Hint: Requires at least 1 number and 1 letter.</small>
 
             </div>
             <div class="form-group confirm-password">
-              <!--label class="form-label" for="confirm-password">Confirm New Password</label-->
-              <?php echo $this->Form->control('confirm_password', ['type'=>'password', 'class'=>['form-control', 'form-input'], 'placeholder'=>'Confirm New Password', 'label'=>false]);?>
+              <label class="form-label" for="confirm-password">Confirm New Password</label>
+              <?php echo $this->Form->control('confirm_password', ['type'=>'password', 'class'=>['form-control', 'form-input'], 'label'=>false]);?>
+               <small class="chint"></small>
             </div>
 
             <div class="mt-10 d-flex justify-content-between align-items-center">
               <!--button type="submit" class="button btn-w-100">Save</button-->
-              <?php echo $this->Form->button('Save', ['type'=>'submit','id'=>'reset-btn', 'class'=>['button', 'btn-w-100']]);?>
-              <small class="chint"></small>
+              <?php echo $this->Form->button('Save', ['type'=>'submit','id'=>'reset-btn', 'class'=>['button', 'btn-w-100']]);?>             
               <!--option-->
               <!--input type="submit" value="Save" class="hide"-->
               
@@ -68,17 +85,18 @@
     <script type="text/javascript">
         $('#resetpaswd-frm').submit(function(e){        
            if($.trim($('#password').val())==''){
-               $('#password').addClass('intput-alert');
+               $('#password').addClass('reset-alert');
                $('.hint').text('Requires at least 1 number and 1 letter.');
                $('#password').focus();
                return false;
            }
            if($.trim($('#confirm-password').val())==''){
-               $('#confirm-password').addClass('input-alert');
+               $('#confirm-password').addClass('reset-alert');
                $('#confirm-password').focus();
                return false;
            }
            if(($('#password').val()) != ($('#confirm-password').val())){
+               $('#confirm-password').addClass('reset-alert');
                $('.chint').text('Password not matched.');
                $('#confirm-password').focus();
                return false;
