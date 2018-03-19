@@ -901,7 +901,7 @@ class UsersController extends AppController {
                 
                 if(!empty($row['joined_spayc'][0]['joined_spaycs'])){
                     if($row['joined_spayc'][0]['joined_spaycs'] > 0){
-                        $row['joined_spaycs'] = $row['joined_spayc'][0]['joined_spaycs'] - 1;
+                        $row['joined_spaycs'] = $row['joined_spayc'][0]['joined_spaycs'];
                     }else{
                         $row['joined_spaycs'] = 0;
                     }
