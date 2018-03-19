@@ -1075,9 +1075,9 @@ class UsersController extends AppController {
         if($isNotify=='On' && empty($data['device_token'])) {
             $this->restException(['status'=>'failed','message'=>'Device token is required field.'], 400);
         }
-        if(($isNotify=='On' && !empty($data['device_token'])) && strlen($data['device_token'])<64) {
+        /*if(($isNotify=='On' && !empty($data['device_token'])) && strlen($data['device_token'])<64) {
             $this->restException(['status'=>'failed','message'=>'Invalid device token'], 400);
-        }
+        }*/
         $update['users']['is_notify'] = $isNotify;
         $update['user_logs']['device_id'] = $data['device_token'];
         $this->Users->UpdateAll(['is_notify'=>$isNotify], ['Users.id'=>$this->Auth->user('id')]);
