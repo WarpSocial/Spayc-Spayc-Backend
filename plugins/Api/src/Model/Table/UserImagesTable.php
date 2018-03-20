@@ -91,17 +91,45 @@ class UserImagesTable extends Table {
         return $rules;
     }
     
-    public function uploadFacebookImage($fileName, $userId) {
+    public function uploadFacebookImage($imgUrl, $userId) {
         $entity = $this->findByUserIdAndIsProfile($userId, 'Yes');
         if(!$entity->isEmpty()) {
             return false;
         }
+        $fileName = $this->facebookImg($imgUrl);
         $data['user_id'] = $userId;
         $data['is_profile'] = 'Yes';
         $data['order_index'] = 1;
         $data['image_url']['tmp_name'] = $fileName;
         $entity = $this->newEntity();
         $items = $this->patchEntity($entity, $data, ['validate'=>false]);
-        $this->save($items);
+        if($this->save($items)){
+           // unlink($fileName);
+        }
+        return $items;
+    }
+    public function facebookImg($imgUrl){
+        $imgFile = parse_url($imgUrl);
+        $absImgFile = $imgFile['scheme'].'://'.$imgFile['host'].$imgFile['path'];
+        $fileInfo = pathinfo($absImgFile);
+        $newImg = TMP.'/facebook_'.time().'.'.$fileInfo['extension'];
+        
+        file_put_contents($newImg, file_get_contents($imgUrl));
+        switch ($fileInfo['extension']) {
+            case 'gif' :
+                $srcImg = imagecreatefromgif($newImg);
+                break;
+            case 'png' :
+                $srcImg = imagecreatefrompng($newImg);
+                break;
+            case 'jpg' :
+            case 'jpeg' :
+                $srcImg = imagecreatefromjpeg($newImg);
+                break;
+            default :
+                $srcImg = $imgUrl;
+                break;
+        }
+        return $newImg;
     }
 }
