@@ -1,4 +1,5 @@
 <?php
+
 namespace Api\Model\Table;
 
 use Cake\ORM\Query;
@@ -22,8 +23,7 @@ use Cake\Validation\Validator;
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class SpaycHashtagsTable extends Table
-{
+class SpaycHashtagsTable extends Table {
 
     /**
      * Initialize method
@@ -31,8 +31,7 @@ class SpaycHashtagsTable extends Table
      * @param array $config The configuration for the Table.
      * @return void
      */
-    public function initialize(array $config)
-    {
+    public function initialize(array $config) {
         parent::initialize($config);
 
         $this->setTable('spayc_hashtags');
@@ -46,7 +45,7 @@ class SpaycHashtagsTable extends Table
             'joinType' => 'INNER',
             'className' => 'Api.Spaycs'
         ]);
-        
+
         $this->belongsTo('Hashtags', [
             'foreignKey' => 'hashtag_id',
             'joinType' => 'INNER',
@@ -60,10 +59,9 @@ class SpaycHashtagsTable extends Table
      * @param \Cake\Validation\Validator $validator Validator instance.
      * @return \Cake\Validation\Validator
      */
-    public function validationDefault(Validator $validator)
-    {
+    public function validationDefault(Validator $validator) {
         $validator
-            ->allowEmpty('id', 'create');
+                ->allowEmpty('id', 'create');
 
         return $validator;
     }
@@ -75,11 +73,11 @@ class SpaycHashtagsTable extends Table
      * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
      * @return \Cake\ORM\RulesChecker
      */
-    public function buildRules(RulesChecker $rules)
-    {
+    public function buildRules(RulesChecker $rules) {
         $rules->add($rules->existsIn(['spayc_id'], 'Spaycs'));
         $rules->add($rules->existsIn(['hashtag_id'], 'Hashtags'));
 
         return $rules;
     }
+
 }

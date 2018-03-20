@@ -214,15 +214,35 @@ class UsersController extends AppController {
         }
         $userId = $this->Auth->user('id');
         if(!empty($type) && $type=='users') {
-            $data['users'] = $this->Users->searchUsers($this->Auth->user('id'), $this->request->query);
+            $allUsers = $this->Users->searchUsers($this->Auth->user('id'), $this->request->query);
+            if($allUsers['count'] > 0){
+                $data['users'] = $allUsers;
+            }
         } else if(!empty($type) && $type=='spaycs') {
-            $data['spaycs'] = TableRegistry::get('Api.Spaycs')->searchSpaycs($this->request->query, $userId);
+            $allSpaycs = TableRegistry::get('Api.Spaycs')->searchSpaycs($this->request->query, $userId);
+            if($allSpaycs['count'] > 0){
+                $data['spaycs'] = $allSpaycs;
+            }
         } else if(!empty($type) && $type=='hashtags') {
-            $data['hashtags'] = TableRegistry::get('Api.Hashtags')->searchHashtags($this->request->query);
+            $hashTagSpayc = TableRegistry::get('Api.Hashtags')->searchHashtags($this->request->query);
+            if($hashTagSpayc['count'] >0){
+                $data['hashtags'] = $hashTagSpayc;
+            }
+            
         } else {
-            $data['users'] = $this->Users->searchUsers($this->Auth->user('id'), $this->request->query);
-            $data['spaycs'] = TableRegistry::get('Api.Spaycs')->searchSpaycs($this->request->query, $userId);
-            $data['hashtags'] = TableRegistry::get('Api.Hashtags')->searchHashtags($this->request->query);
+            $allUsers = $this->Users->searchUsers($this->Auth->user('id'), $this->request->query);
+            if($allUsers['count'] > 0){
+                $data['users'] = $allUsers;
+            }
+            $allSpaycs = TableRegistry::get('Api.Spaycs')->searchSpaycs($this->request->query, $userId);
+            if($allSpaycs['count'] > 0){
+                $data['spaycs'] = $allSpaycs;
+            }
+            $hashTagSpayc = TableRegistry::get('Api.Hashtags')->searchHashtags($this->request->query);
+            if($hashTagSpayc['count'] >0){
+                $data['hashtags'] = $hashTagSpayc;
+            }
+            
         }
         if(empty($data['users']['records']) && empty($data['spaycs']['records']) && empty($data['hashtags']['records'])) {
             $this->response->statusCode(204);
@@ -884,34 +904,19 @@ class UsersController extends AppController {
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.id', 'UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile', 'UserImages.order_index']);
             },
-            'JoinedSpayc'=>function($q) {
-                return $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id']);
-            },
+//            'JoinedSpayc'=>function($q) {
+//                return $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id']);
+//            },
             'Spaycs'=>function($q) {
-                return $q->select(['Spaycs.user_id','Spaycs.id','Spaycs.parent_id'])->where(['Spaycs.group_type !='=>'trusted_private']);
+                return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id'])->where(['Spaycs.group_type !='=>'trusted_private','Spaycs.parent_id IS'=>null ]);
             }
         ]);
         //pj($user);die;
         $user->formatResults(function (\Cake\Collection\CollectionInterface $results)use($loggedUser) {
             return $results->map(function ($row)use($loggedUser) {
                 $uId = ApiHasher::decrypt($row['id']);
-                //$this->Users->removeSubspaycFromSpayc
-                $js = 0;$sp = 0;
-                $joinedSpayce = \Cake\Utility\Hash::extract($row->joined_spayc, '{n}.spayc_id');
-                if(!empty($row->spaycs)){
-                    foreach($row->spaycs as $srow){
-                        if(empty($srow['parent_id'])){
-                            $sp++;
-                        }else{
-                            if(!in_array($srow['id'], $joinedSpayce)){
-                                $js++;
-                            }
-                        }
-                    }
-                }
-                //echo $js.'1<br>15'.$sp;die;
-                $row['joined_spaycs'] = $js;
-                $row['created_spaycs'] = $sp;
+                $row['joined_spaycs'] = count($this->Users->findJoinedSpayc($loggedUser['id']));
+                $row['created_spaycs'] = !empty($row['spaycs'][0]['created_spaycs'])? $row['spaycs'][0]['created_spaycs'] : 0;
                 $row['friend'] = TableRegistry::get('Api.FriendRequest')->myFriend($uId,$loggedUser['id']);
                 $row['matrix_room_id'] = !empty($row['friend']['matrix_room_id'])?$row['friend']['matrix_room_id']:null;
                 unset($row['friend']['matrix_room_id']);

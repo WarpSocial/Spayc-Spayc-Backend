@@ -155,7 +155,7 @@ class SpaycsController extends AppController {
         $this->set($response);
     }
     /**
-     * Add method
+     * createChatRoom method for oneandone chat
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
@@ -450,7 +450,7 @@ class SpaycsController extends AppController {
         
         $exists = $this->Spaycs->exists(['OR'=>['matrix_room_id'=>$id,'id'=>$id]]);
         if(!$exists) {
-            $this->restException(['status'=>'failed', 'message'=>__('Invalid spayc id.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('This spayc is no longer exist.')], 400);
         }
         $userId = $this->Auth->user('id');
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Accepted');
@@ -590,11 +590,13 @@ class SpaycsController extends AppController {
      * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null) {       
+    public function delete($id = null) {  
+        if (!$this->request->is(['post','delete'])) {
+            $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);
+        }
         if($id == null){
             $id = $this->request->query('id');
         } 
-        $this->request->allowMethod(['post', 'delete']);
         $user = $this->Auth->user();
         $entity = $this->Spaycs->find()
                 ->where(['OR'=>['id'=>$id,'matrix_room_id'=>$id],'user_id'=>$user['id']])
@@ -675,14 +677,14 @@ class SpaycsController extends AppController {
         if(strstr($subspayc,':')){
             $parentSpayc = $this->Spaycs->findByMatrixRoomId($subspayc)->first();
             if(empty($parentSpayc)){
-                $this->restException(['status'=>'failed','message'=>'Invalid subspayc id.'], 400);
+                $this->restException(['status'=>'failed','message'=>'This subspayc is no longer exist.'], 400);
             }
             $subspayc = $parentSpayc->id;
             $parentMatrixId = $parentSpayc->matrix_room_id;
         }else{ 
             $parentSpayc = $this->Spaycs->get($subspayc);
             if(empty($parentSpayc)){
-                $this->restException(['status'=>'failed','message'=>'Invalid subspayc id.'], 400);
+                $this->restException(['status'=>'failed','message'=>'This subspayc is no longer exist.'], 400);
             }
             $parentMatrixId = $parentSpayc->matrix_room_id;
         }
