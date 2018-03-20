@@ -555,4 +555,15 @@ class UsersTable extends Table {
         return $validator->errors($data);
     }
     
+    public function findJoinedSpayc($userid){
+        $joinedSpayc = TableRegistry::get('Api.JoinedSpayc')->find()
+                ->contain('Spaycs')
+                ->where(['JoinedSpayc.user_id'=>1,'Spaycs.parent_id IS'=>null]);
+        if($joinedSpayc->isEmpty()){
+            return [];
+        }else{
+            return $joinedSpayc->toArray();
+        }
+    }
+    
 }

@@ -430,7 +430,10 @@ class SpaycsTable extends Table {
                 $push['spayc_image'] = $items['image'];
                 $push['matrix_room_id'] = $items['matrix_room_id'];
                 $push['distance'] = $this->getSpaycDistanceFromUser($items['latitude'], $items['longitude'], $push['requested_to']);
-                $pushNotification->sendPushNotification($push);
+                if(!$items['is_direct']){
+                    /*In direct chat no need to send the notification */
+                    $pushNotification->sendPushNotification($push);
+                }
             }
         }
         /*In direct chat no need take the record */
