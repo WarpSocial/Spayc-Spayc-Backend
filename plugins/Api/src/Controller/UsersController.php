@@ -912,10 +912,10 @@ class UsersController extends AppController {
             }
         ]);
         //pj($user);die;
-        $user->formatResults(function (\Cake\Collection\CollectionInterface $results)use($loggedUser) {
-            return $results->map(function ($row)use($loggedUser) {
+        $user->formatResults(function (\Cake\Collection\CollectionInterface $results)use($loggedUser,$id) {
+            return $results->map(function ($row)use($loggedUser,$id) {
                 $uId = ApiHasher::decrypt($row['id']);
-                $row['joined_spaycs'] = count($this->Users->findJoinedSpayc($loggedUser['id']));
+                $row['joined_spaycs'] = count($this->Users->findJoinedSpayc($id));
                 $row['created_spaycs'] = !empty($row['spaycs'][0]['created_spaycs'])? $row['spaycs'][0]['created_spaycs'] : 0;
                 $row['friend'] = TableRegistry::get('Api.FriendRequest')->myFriend($uId,$loggedUser['id']);
                 $row['matrix_room_id'] = !empty($row['friend']['matrix_room_id'])?$row['friend']['matrix_room_id']:null;
