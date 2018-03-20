@@ -350,7 +350,7 @@ class UsersController extends AppController {
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
     */
-    public function facebookSignup() {         
+    public function facebookSignup() {
         if(!$this->request->is('post')) {
             $this->restException(['status'=>'failed','message'=>__('Method not allowed.')],405);
         }
@@ -885,36 +885,37 @@ class UsersController extends AppController {
                 return $q->select(['UserImages.id', 'UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile', 'UserImages.order_index']);
             },
             'JoinedSpayc'=>function($q) {
-                return $q->select(['JoinedSpayc.user_id', 'joined_spaycs'=>$q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.user_id']);
+                return $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id']);
             },
             'Spaycs'=>function($q) {
-                return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id'])->where(['Spaycs.group_type !='=>'trusted_private','Spaycs.parent_id IS'=>null ]);
+                return $q->select(['Spaycs.user_id','Spaycs.id','Spaycs.parent_id'])->where(['Spaycs.group_type !='=>'trusted_private']);
             }
         ]);
         //pj($user);die;
         $user->formatResults(function (\Cake\Collection\CollectionInterface $results)use($loggedUser) {
             return $results->map(function ($row)use($loggedUser) {
                 $uId = ApiHasher::decrypt($row['id']);
-                //$row['friend'] = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
-                //$row['friend'] = !empty($row['requestedby'][0]) && empty($row['friend'])?$row['requestedby'][0]:$row['friend'];
-                //$row['friend'] = !empty($row['requestedby'][0])?$row['requestedby'][0]:[];
+                //$this->Users->removeSubspaycFromSpayc
+                $js = 0;$sp = 0;
+                $joinedSpayce = \Cake\Utility\Hash::extract($row->joined_spayc, '{n}.spayc_id');
+                if(!empty($row->spaycs)){
+                    foreach($row->spaycs as $srow){
+                        if(empty($srow['parent_id'])){
+                            $sp++;
+                        }else{
+                            if(!in_array($srow['id'], $joinedSpayce)){
+                                $js++;
+                            }
+                        }
+                    }
+                }
+                //echo $js.'1<br>15'.$sp;die;
+                $row['joined_spaycs'] = $js;
+                $row['created_spaycs'] = $sp;
                 $row['friend'] = TableRegistry::get('Api.FriendRequest')->myFriend($uId,$loggedUser['id']);
                 $row['matrix_room_id'] = !empty($row['friend']['matrix_room_id'])?$row['friend']['matrix_room_id']:null;
                 unset($row['friend']['matrix_room_id']);
                 $row['friend']['total_friends'] = TableRegistry::get('Api.FriendRequest')->getFriendCountByUserId($uId);
-                $row['created_spaycs'] = !empty($row['spaycs'][0]['created_spaycs'])? $row['spaycs'][0]['created_spaycs'] : 0;
-                
-                if(!empty($row['joined_spayc'][0]['joined_spaycs'])){
-                    if($row['joined_spayc'][0]['joined_spaycs'] > 0){
-                        $row['joined_spaycs'] = $row['joined_spayc'][0]['joined_spaycs'];
-                    }else{
-                        $row['joined_spaycs'] = 0;
-                    }
-                }else{
-                    $row['joined_spaycs'] = 0;
-                }
-                
-                
                 unset($row['joined_spayc'],$row['requestedto'],$row['requestedby'],$row['spaycs']);
                 return $row;
             });
