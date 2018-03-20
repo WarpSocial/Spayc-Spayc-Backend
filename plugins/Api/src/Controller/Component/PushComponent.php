@@ -77,7 +77,6 @@ class PushComponent extends Component {
             /*End ReCreate EndpointARN*/
             $par["action-loc-key"]="PLAY";
             $par["body"]=$message;
-             //APNS
             $FinalMessage = json_encode(array('default' => $message, 'APNS_SANDBOX' => json_encode(array(
                     'aps' => array(
                       'alert' => $message,
