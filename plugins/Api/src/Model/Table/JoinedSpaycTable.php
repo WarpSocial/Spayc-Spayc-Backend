@@ -101,6 +101,16 @@ class JoinedSpaycTable extends Table {
         return $ids;
     }
     
+    public function getJoinedUserIds($spaycId = null) {
+        $userId = $this->find("all", ['fields' => ['id', 'user_id'], 'conditions' => ['spayc_id' => $spaycId]]);
+        $ids = [0];
+        if ($userId->count()) {
+            $userIds = $userId->toArray();
+            $ids = \Cake\Utility\Hash::extract($userIds, '{n}.user_id');
+        }
+        return $ids;
+    }
+    
     public function ValidateJoinSpayc($data){
         $validator = new Validator();
         $validator->requirePresence('spayc_id', true,__('Spayc id key is missing.'))
