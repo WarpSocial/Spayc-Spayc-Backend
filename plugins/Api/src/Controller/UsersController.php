@@ -646,7 +646,6 @@ class UsersController extends AppController {
         $this->set($response);
     }
     
-    
     public function friendRequest() {
         if (!$this->request->is(['post'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);

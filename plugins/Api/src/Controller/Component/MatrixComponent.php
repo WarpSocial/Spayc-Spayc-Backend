@@ -500,6 +500,49 @@ class MatrixComponent extends Component {
         }
     }
     
+    public function banMember($data = []) {
+        return true;
+        if(empty($data['status']) || empty($data['matrix_token']) || empty($data['matrix_room_id'])){
+            return false;
+        }
+        if($data['status'] == 'Pending'){
+            return true;
+        }
+        $postData = [];
+        $roomId  = $this->validRoomId($data['matrix_room_id']);
+        $http = new Client();
+        if($data['status'] == 'Joined'){ 
+            $url = $this->config('url') .DS.$this->config('client').DS.'join'. DS.$roomId.'?access_token='.$data['matrix_token'];
+        }elseif($data['status'] == 'Invite'){
+            return true;
+            $url = $this->config('url') .DS.$this->config('client').DS.'rooms'. DS.$roomId.DS.'invite?access_token='.$data['matrix_token'];
+            $postData = ['user_id'=>$data['matrix_user_id']];
+        }else{
+            return true;
+            $url = $this->config('url') .DS.$this->config('client').DS.'rooms'. DS.$roomId.DS.'leave?access_token='.$data['matrix_token'];
+        }
+        $httpResponse = $http->post(
+            $url, 
+            json_encode($postData), 
+            [
+                'type'=>'json',
+                'ssl_verify_host' => $this->config('sslverify'), 
+                'ssl_verify_peer' => $this->config('sslverify'),
+                'ssl_verify_host' => $this->config('sslverify'),
+                'ssl_verify_peer_name' => $this->config('sslverify')
+            ]
+        ); 
+        
+        $response = json_decode($httpResponse->body,true);
+        if(!empty($response['errcode'])){
+            return $this->errorMsg($response['errcode']);
+        }elseif(!empty($response['room_id'])){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    
     public function validRoomId($roomid=null){
         if($roomid == null){
             return false;

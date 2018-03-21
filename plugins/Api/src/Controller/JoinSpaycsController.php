@@ -177,4 +177,63 @@ class JoinSpaycsController extends AppController {
         }
         $this->set($response);
     }
+    
+    public function banSpaycMember() {
+        if (!$this->request->is('post')) {
+            $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
+        }
+        $data = $this->request->getData();
+        $data['status'] = ucfirst($data['status']);
+        if(!empty($data['status']) && $data['status']!='Banned') {
+            $this->restException(['status'=>'failed','message'=>__('Status must be Banned.')], 400);
+        }
+        $jsModel = TableRegistry::get('Api.JoinedSpayc');
+        $user = $this->Auth->user();
+        $data['matrix_token'] = $user['UserLogs']['matrix_access_token'];        
+        $data['matrix_user_id'] = $user['UserLogs']['matrix_user_id'];        
+        $errors = $jsModel->ValidateJoinSpayc($data);
+        if(!empty($errors)) {
+            $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
+        }
+        
+        
+        $spaycs = TableRegistry::get('Spaycs')->find()->where(['id'=>$data['spayc_id']]);
+        if($spaycs->isEmpty()) {
+            $this->restException(['status'=>'failed','message'=>__('Spayc is not exist.')], 400);
+        }
+        $spayc = $spaycs->first();
+        $data['matrix_room_id'] = $spayc->matrix_room_id;
+        $isAdmin = $jsModel->find('all', ['field'=>['id', 'role']])->where(['JoinedSpayc.spayc_id'=>$data['spayc_id'],'JoinedSpayc.user_id'=>$user['id']]);
+        if($isAdmin->isEmpty()) {
+            $this->restException(['status'=>'failed','message'=>__('You are not authorised to ban this user.')], 400);
+        }
+        $entities = $jsModel->find('all',['field'=>['id','user_id','spayc_id','status', 'role']])->where(['JoinedSpayc.spayc_id'=>$data['spayc_id'],'JoinedSpayc.user_id'=>$data['user_id']]);
+        if($entities->isEmpty()) {
+            $this->restException(['status'=>'failed', 'message'=>__('User is not joined yet.')], 400);
+        }
+        $isAdmin = $isAdmin->first();
+        $entity = $entities->first();
+        if($isAdmin['role'] <= $entity['role']) {
+            $this->restException(['status'=>'failed', 'message'=>__('You are not authorised to ban this user.')], 400);
+        }
+        $entity->status = $data['status'];
+        $entity->modified = new \Cake\I18n\Time();
+        $entity->updated_by = $user['id'];
+        $jsModel->getConnection()->begin();
+        if($jsModel->save($entity,['checkRules' => false, 'atomic' => false])) {
+            if($this->Matrix->banMember($data)) {
+                $jsModel->getConnection()->commit();
+                $response = ['status'=>'success','message'=>__('User has been '.$data['status'].' successfully.')];
+            } else {
+                $jsModel->getConnection()->rollback();
+                $this->response->statusCode(400);
+                $response = ['status'=>'failed','message'=>__('System failed to '.$data['status'].'.')];
+            }            
+        } else {
+            $jsModel->getConnection()->rollback();
+            $this->response->statusCode(400);
+            $response = ['status'=>'failed','message'=>__('System failed to '.$data['status'].'.')];
+        }
+        $this->set($response);
+    }
 }

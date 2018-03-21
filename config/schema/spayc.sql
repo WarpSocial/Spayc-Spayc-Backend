@@ -93,7 +93,7 @@ CREATE TABLE joined_spayc (
     "created" timestamp NOT NULL,
     "modified" timestamp,
     "updated_by" BIGINT NOT NULL,
-    "is_admin" smallint DEFAULT 0 NOT NULL,
+    "role" smallint DEFAULT NULL,
     PRIMARY KEY (id,spayc_id,user_id,created)
 );
 SELECT create_hypertable('joined_spayc', 'created');

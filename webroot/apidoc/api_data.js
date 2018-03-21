@@ -1287,6 +1287,144 @@ define({ "api": [
   },
   {
     "type": "post",
+    "url": "/ban-spayc-member.json",
+    "title": "Ban Spayc Member",
+    "version": "0.1.0",
+    "name": "postBanSpaycMember",
+    "group": "Spayc",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>Admin can ban spayc joined member and super admin can ban admin and spayc member also.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<ul> <li>Current timezone</li> </ul>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Intger",
+            "optional": false,
+            "field": "spayc_id",
+            "description": "<p>Existing Spayc id(Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Intger",
+            "optional": false,
+            "field": "user_id",
+            "description": "<p>Member id of joined spayc(Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>Status must be any one Banned (Required).</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "{\n    \"spayc_id\":\"66\",\n    \"user_id\":\"9\",\n    \"status\":\"Joined\"\n}",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>User has been {status} successfully.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "    HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"User has been {status} successfully.\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/spayc.js",
+    "groupTitle": "Spayc",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/ban-spayc-member.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
     "url": "/change-role.json",
     "title": "Make Member As Admin",
     "version": "0.1.0",
@@ -1468,10 +1606,17 @@ define({ "api": [
           },
           {
             "group": "Parameter",
-            "type": "Intger",
+            "type": "String",
             "optional": false,
             "field": "status",
             "description": "<p>Status must be any one Joined,Pending (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "passcode",
+            "description": "<p>passcode is required in case of private spayc (Optional).</p>"
           }
         ]
       }
@@ -1599,10 +1744,17 @@ define({ "api": [
           },
           {
             "group": "Parameter",
-            "type": "Intger",
+            "type": "String",
             "optional": false,
             "field": "status",
             "description": "<p>Status must be any one Joined,Pending (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "passcode",
+            "description": "<p>Passcode is required in case of private sub spayc (Optional).</p>"
           }
         ]
       }
@@ -1610,7 +1762,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "{\n\t\"spayc_id\":\"66\",\n\t\"status\":\"Joined\"\n}",
+        "content": "{\n\t\"spayc_id\":\"66\",\n\t\"status\":\"Joined\",\n        \"passcode\":\"code\"\n}",
         "type": "json"
       }
     ],
