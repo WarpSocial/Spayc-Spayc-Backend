@@ -176,9 +176,9 @@ class UsersController extends AdminController
             $data = $this->request->getData();  
             $validator = new \Cake\Validation\Validator();
             $validator = $this->Users->validationChangePassword($validator, $user->id);
-            $error = $validator->errors($data);
+            $error = $validator->errors($data);            
             if (empty($error)) {
-                $user->password = ApiHasher::hash($data_item['new_password']);
+                $user->password = ApiHasher::hash(trim($data['new_password']));
                 if ($this->Users->save($user)) {
                     return $this->redirect(['action' => 'success']);
                 } else {                    
