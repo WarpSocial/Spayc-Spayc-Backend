@@ -5,6 +5,14 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Event\Event;
+use Cake\I18n\Time;
+use Cake\Auth\DefaultPasswordHasher;
+use Cake\ORM\TableRegistry;
+use Cake\Core\Configure;
+use Api\Utils;
+use Api\Auth\ApiHasher;
+
 
 /**
  * Users Model
@@ -38,10 +46,41 @@ class UsersTable extends Table
 
         $this->setTable('users');
         $this->setDisplayField('id');
-        $this->setPrimaryKey(['id', 'created']);
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
-        
+
+        $this->hasMany('UserLogs', [
+            'foreignKey' => 'user_id'
+        ]);
+        $this->hasMany('UserImages', [
+            'foreignKey' => 'user_id'           
+        ]);
+        $this->hasMany('JoinedSpayc', [
+            'foreignKey' => 'user_id'            
+        ]);
+        $this->hasMany('SubscribedUsers', [
+            'foreignKey' => 'user_id'
+        ]);        
+        $this->hasMany('Requestedby', [
+            'foreignKey' => 'requested_by',
+            'joinType' => 'INNER'
+        ]);
+        $this->hasMany('Requestedto', [
+            'foreignKey' => 'requested_to',
+            'joinType' => 'INNER'
+        ]);        
+        $this->hasMany('FriendRequest', [
+            'foreignKey' => 'requested_by',
+            'targetForeignKey'=>'requested_to',
+            'joinType' => 'INNER'
+        ]);        
+        $this->hasMany('Users', [
+            'foreignKey' => 'user_id'
+        ]);
+        $this->hasMany('Spaycs', [
+            'foreignKey' => 'user_id'
+        ]);
         $this->belongsTo('Roles', [
             'foreignKey' => 'role_id'
         ]);
@@ -160,6 +199,80 @@ class UsersTable extends Table
             ->numeric('current_longitude')
             ->allowEmpty('current_longitude');
 
+        return $validator;
+    }
+
+    public function validationResetPassword(Validator $validator) {
+        
+        $validator
+                ->requirePresence('new_password', 'create',__('New password is required field.'))
+                ->notEmpty('new_password',__('New password is required field.'))
+                ->add("new_password",'custom',[
+                    'rule'=>function($value,$context) {
+                        if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,30}$/', $value)){
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    },
+                    'message'=>__('New password must contain 8-30 character length, at least one letter and one number.'),
+                ]);                
+        $validator
+                ->requirePresence('confirm_password', 'create', __('Confirm password is required field.'))
+                ->notEmpty('confirm_password', __('Confirm password is required field.'))
+                ->sameAs('confirm_password', 'new_password',__('New password and confirm password should be matched, try again please!'));
+        
+        return $validator;
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationChangePassword(Validator $validator, $userId = null) {
+        
+        $validator
+                ->requirePresence('old_password', 'create',__('Old password is required field.'))
+                ->notEmpty('old_password',__('Old password is required field.'))
+                ->add('old_password','custom', [
+                    'rule'=>function($value, $context) use($userId) {
+                        $password = $this->get($userId, ['fields'=>'password']);
+                        if (!ApiHasher::check($value, $password['password'])) {
+                            return false;
+                        }
+                        return true;
+                    },
+                    'message'=>__('Old passwords don\'t match, try again please!'),
+                ]);
+        
+        $validator
+                ->requirePresence('new_password', 'create',__('New password is required field.'))
+                ->notEmpty('new_password',__('New password is required field.'))
+                ->add("new_password",'custom',[
+                    'rule'=>function($value,$context) {
+                        if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,30}$/', $value)){
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    },
+                    'message'=>__('New password must contain 8-30 character length, at least one letter and one number.'),
+                ])
+                ->add('new_password', 'custom', [
+                    'rule' => function($value, $context) {
+                        if ($value === $context['data']['old_password']) {
+                            return false;
+                        }
+                        return true;
+                    },
+                    'message' => 'New password and old password should not be same, try again please!']);
+        $validator
+                ->requirePresence('confirm_password', 'create', __('Confirm password is required field.'))
+                ->notEmpty('confirm_password', __('Confirm password is required field.'))
+                ->sameAs('confirm_password', 'new_password',__('New password and confirm password should be matched, try again please!'));
+        
         return $validator;
     }
 

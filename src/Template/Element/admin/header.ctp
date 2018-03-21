@@ -1,5 +1,7 @@
  <?php
 use Cake\Routing\Router;
+$controller_name = $this->request->param('controller');
+$controller_action = $this->request->param('action');
 ?>
  <header class="fixed-header">
       <!--============navigation===============-->
@@ -13,7 +15,7 @@ use Cake\Routing\Router;
           </a>
           <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav ml-auto">
-              <li class="nav-item active">
+              <li class="nav-item <?php echo (($controller_name=='Users') && ($controller_action=='manageUser')) ? 'active' : '';?>">
                 <a class="nav-link" href="<?php echo Router::url(['action' => 'manage-user','controller' =>'Users']);?>">Manage Users</a>
               </li>
               <li class="nav-item">

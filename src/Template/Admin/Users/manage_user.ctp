@@ -11,12 +11,15 @@
         <div class="container">
           <div class="filter-wrapper">
             <!--============search dropdown========-->
-            <div class="search">
+             <form name="userFilterFrm" id="userFilterFrm" method="get" autocomplete="off">
+              <div class="search">
               <div class="form-group">
-                <input type="text" class="search-box" placeholder="Search">
-                <span class="clear-search hide"></span>
+                <input type="text" class="form-control" placeholder="Search" name="keyword" value="<?php echo $this->request->query('keyword'); ?>">
+                <span class="clear-search hide" id="clear-search"></span>
               </div>
             </div>
+            </form>
+           
             <div class="filter-by ml-auto">
               <h4>Fillter by</h4>
               <!--============filter dropdown========-->
@@ -429,3 +432,4 @@
         </ul>
       </div>
 </section>
+<?php echo $this->Html->script(['admin/admin-manage-user.js']); ?>

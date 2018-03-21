@@ -6,7 +6,7 @@
           <div class="login-box">            
              <!-- <span class="error-alert error-login-page hide">Invalid email and password.</span> -->             
              <span class="error-login-page"><?= $this->Flash->render(); ?></span>
-             <?php echo $this->Form->create($user, ['url' => ['controller' => 'users', 'action' => 'reset-password'],'id'=>'reset_password_form','autocomplete' => 'off','novalidate'=>'novalidate']); ?>
+             <?php echo $this->Form->create('', ['id'=>'reset_password_form','autocomplete' => 'off','novalidate'=>'novalidate']); ?>
 
               <h1>Reset Password</h1>
               <!-- <p class="mb-30">Login to continue to spayc admin.</p> -->

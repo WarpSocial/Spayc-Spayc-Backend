@@ -80,7 +80,13 @@ class AdminController extends AppController
         }  
         $this->set(['authUser'=>$authUser]);
     }  
-
+    
+    public $paginate = [
+        'limit' => PAGINATION_LIMIT,
+        'order' => [
+            'created' => 'desc'
+        ]
+    ];
    
     
 }

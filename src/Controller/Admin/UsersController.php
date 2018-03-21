@@ -13,6 +13,7 @@ use Cake\Mailer\Email;
 use Cake\Mailer\MailerAwareTrait;
 use Api\Auth\ApiHasher;
 use Cake\Utility\Security;
+use Cake\Validation\Validator;
 
 /**
  * Users Controller
@@ -28,7 +29,7 @@ class UsersController extends AdminController
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
-        $this->Auth->allow(['login', 'logout','forgotPassword', 'resetPassword']);
+        $this->Auth->allow(['login', 'logout','forgotPassword', 'resetPassword','getUserObj']);
     }
 
     /**
@@ -144,15 +145,8 @@ class UsersController extends AdminController
             if (!isset($data_item['password'])) {
                 $error['password'] = ['_required' => $this->errorRequiredMessage['2']];
             }
-            if (empty($error)) {
-                $hasher = new DefaultPasswordHasher();
-                $user_query = $this->Users->find('all', [
-                    'conditions' => ['Users.email' => trim($data_item['email']),
-                        'Users.role_id' => ROLE_ADMIN
-                    ],
-                    'limit' => '1'
-                ]);                
-                $user = $user_query->first();                            
+            if (empty($error)) {                                     
+                $user = $this->getUserObj($data_item['email'])->first();
                 if ($user) {              
                     if (!ApiHasher::check(trim($data_item['password']), $user->password)) {                       
                         $this->Flash->error(__($this->errorSuccessMessage['32']));
@@ -177,33 +171,26 @@ class UsersController extends AdminController
 
     public function changePassword() {
         $this->set('title', 'Change Password');
-        if ($this->request->is('post')) {
-            $data_item = $this->request->data;
-            $error = array();
-            if (!isset($data_item['old_password'])) {
-               $error['old_password'] = ['_required' => $this->errorRequiredMessage['3']];
-            }
-            if (!isset($data_item['new_password'])) {
-               $error['new_password'] = ['_required' => $this->errorRequiredMessage['4']];
-            }
-            if (!isset($data_item['confirm_password'])) {
-               $error['confirm_password'] = ['_required' => $this->errorRequiredMessage['5']];
-            }
+        $user = $this->Users->get($this->Auth->user('id'));
+        if ($this->request->is('post')) {         
+            $data = $this->request->getData();  
+            $validator = new \Cake\Validation\Validator();
+            $validator = $this->Users->validationChangePassword($validator, $user->id);
+            $error = $validator->errors($data);
             if (empty($error)) {
-                $admin_object = $this->Users->find('all', ['conditions' => ['Users.role_id' => ROLE_ADMIN]]);
-                $admin_detail = $admin_object->first();                       
-                if (ApiHasher::check(trim($data_item['old_password']), $admin_detail->password)) {
-                    $admin_detail->password = ApiHasher::hash($data_item['new_password']);
-                    if ($this->Users->save($admin_detail)) {
-                        return $this->redirect(['action' => 'success']);
-                    }
-                } else {
-                    $this->Flash->error(__($this->errorSuccessMessage['34']));
+                $user->password = ApiHasher::hash($data_item['new_password']);
+                if ($this->Users->save($user)) {
+                    return $this->redirect(['action' => 'success']);
+                } else {                    
+                    $this->Flash->success(__($this->errorSuccessMessage['40']));
+                    return $this->redirect($this->referer());    
                 }
             } else {
                 $this->Flash->error(__($this->errorRequiredMessage['6']));
+                return $this->redirect($this->referer());   
             }
         }
+        $this->set(compact('user'));
     }
 
     public function success() {
@@ -212,6 +199,22 @@ class UsersController extends AdminController
 
     public function manageUser() {
         $this->set('title', 'Manage User');
+        $cond=array();
+        //$cond['AND']=['Users.role_id !='=> ROLE_ADMIN];
+        // $cond['AND']=['Users.id !='=> $this->Auth->user("id")];        
+        // $keyword=($this->request->query('keyword'))?trim($this->request->query('keyword')):'';
+        // if ($this->request->is('post')) {
+        //     $keyword=$this->request->data['keyword'];
+        // }        
+        // if(!empty($keyword)){
+        //     $cond['OR']=['username LIKE' => "%".$keyword."%",'email LIKE' => "%".$keyword."%"];
+        // }
+
+        // $query=$this->Users->find('all',['conditions'=>$cond]);  
+        // $users = $this->paginate($query);
+        // pr($users);die;
+        // $this->set(compact('users','keyword'));
+        // $this->set('_serialize', ['users']);
     }
 
     public function forgotPassword() {
@@ -226,19 +229,13 @@ class UsersController extends AdminController
             } else if (!filter_var($data_item['email'], FILTER_VALIDATE_EMAIL)) {
                 $error = $this->errorSuccessMessage['3'];
             }
-            if (empty($error)) {
-                $users_query = $this->Users->find('all', [
-                    'conditions' => ['Users.email' =>trim($data_item['email']),
-                        'Users.role_id' => ROLE_ADMIN
-                    ],
-                    'limit' => '1'
-                ]);
-                //debug($users_query);
-                $user = $users_query->first();                
+            if (empty($error)) {                  
+                $user = $this->getUserObj($data_item['email'])->first();
+                //debug($user);
                 if ($user) {
-                    $data['forgot_password_token'] = Security::hash($user['email'], 'sha1', true);
+                    $data['forgot_password_token'] = Security::hash($user->email, 'sha1', true);
                     $data['forgot_password_timestamp'] = time();
-                    $d = $this->Users->updateAll($data, ['email'=>$user['email']]);
+                    $d = $this->Users->updateAll($data, ['email'=>$user->email]);
                     $this->getMailer('User')->send('forgotPassword', [$user]);
                    $result_arr = ['result' => true, 'message' => $this->errorSuccessMessage['35']];
                 } else {
@@ -252,19 +249,13 @@ class UsersController extends AdminController
         }
     }
 
-    public function resetPassword($token=null, $email=null) {    
+    public function resetPassword($token, $email) {    
         $this->set('title', 'Reset password');        
         if (!$token || !$email) {            
             $this->Flash->error(__($this->errorRequiredMessage['7']));
             return $this->redirect(['action' => 'login']);  
         }
-        $user = $this->Users->find('all', [
-                    'conditions' => 
-                            ['Users.email' => trim($email),
-                             'Users.role_id' => ROLE_ADMIN
-                            ],
-                    'limit' => '1'
-                ])->first();                  
+        $user = $this->getUserObj($email)->first();          
         if (!$user) {
             $this->Flash->error(__($this->errorSuccessMessage['36']));
             return $this->redirect(['action' => 'login']); 
@@ -272,37 +263,48 @@ class UsersController extends AdminController
         if ($token != Security::hash($user->email, 'sha1', true)) {            
             $this->Flash->error(__($this->errorSuccessMessage['37']));
             return $this->redirect(['action' => 'login']); 
+        } 
+        if ($token != $user->forgot_password_token) {            
+            $this->Flash->error(__($this->errorSuccessMessage['38']));
+            return $this->redirect(['action' => 'login']); 
+        }                
+        if ($this->request->is('post')) {
+            $data = $this->request->getData();  
+            $validator = new \Cake\Validation\Validator();
+            $validator = $this->Users->validationResetPassword($validator);
+            $errors = $validator->errors($data);  
+            if (!$errors) {
+                $user->forgot_password_token = null;
+                $user->forgot_password_timestamp = null;                
+                $user->password = ApiHasher::hash($data['new_password']);
+                if ($this->Users->save($user)) {                    
+                    $this->Flash->success(__($this->errorSuccessMessage['21']));
+                    return $this->redirect(['action' => 'login']);    
+                } else {                    
+                    $this->Flash->success(__($this->errorSuccessMessage['40']));
+                    return $this->redirect(['action' => 'login']);    
+                }
+            } else {           
+                $this->Flash->error(__(array_values(array_values($errors)[0])[0]));
+                return $this->redirect(['action' => 'resetPassword',$token,$email]);
+            }
         }        
-        $status = '';              
-        if ($this->request->is('post')) {           
-            $data = $this->request->getData();                        
-            // if(empty($data['password']) || empty($data['confirm_password'])){
-            //     $this->Flash->error(__('All fields are required.'));
-            // }elseif($data['password'] != $data['confirm_password']){
-            //     $this->Flash->error(__('Password not matched.'));
-            // }else{ 
-            //     $user->status = 'Active';
-            //     $user->password = ApiHasher::hash($data['password']);
-            //     if ($this->Users->save($user)) {
-            //         $status = 'done';
-            //         $this->Flash->success(__('Your new password has been reset successfully.'));
-            //         return $this->redirect(['action' => 'login']);    
-            //     } else {
-            //         $status = 'failed';
-            //         $this->Flash->success(__('System rejected to update the password.'));
-            //         return $this->redirect(['action' => 'login']);    
-            //     }
-            // }
-            
-        }        
-        $this->set(compact('user','status'));        
+        $this->set(compact('user'));        
     }
 
-
-
-
-
-
+    public function getUserObj($email){        
+        $obj = '';
+        if(isset($email) && !empty($email)) {
+            $obj = $this->Users->find('all', [
+                    'conditions' => 
+                            ['Users.email' => trim($email),
+                             'Users.role_id' => ROLE_ADMIN
+                            ],
+                    'limit' => '1'
+                ]);
+        }
+        return $obj;
+    }
 
 
 }

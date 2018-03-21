@@ -4,7 +4,7 @@
         <div class="change-password-wrapper">         
                 <div class="forgot-password-box">
                 <span class="error-login-page"><?= $this->Flash->render(); ?></span>
-                    <?php echo $this->Form->create('', ['url' => ['controller' => 'users', 'action' => 'change_password'],'id'=>'change_password_form','autocomplete' => 'off','novalidate'=>'novalidate']); ?>
+                    <?php echo $this->Form->create('', ['id'=>'change_password_form','autocomplete' => 'off','novalidate'=>'novalidate', 'role' => 'form']); ?>
                         <h1 class="mb-30">Change Password</h1>
                         <div class="form-group">                      
                         <div class="password-wrap">                           

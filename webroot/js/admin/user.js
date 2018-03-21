@@ -1,4 +1,10 @@
-jQuery(document).ready(function ($) {  
+jQuery(document).ready(function ($) {    
+    $('input').bind("keypress click", function () {
+      if($(this).hasClass('incorrect-alert')){
+        $(this).removeClass('incorrect-alert');  
+        $(this).parent().parent().find('.input-alert').text('')
+      }
+    });
     $('.show-password').on('click', function () {                    
         var attrObj = $(this).parent("div").find('input');
         if (attrObj.attr('type') == 'text') { 
@@ -10,6 +16,8 @@ jQuery(document).ready(function ($) {
         }
     });
     var pattern = /^([a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+(\.[a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)*|"((([ \t]*\r\n)?[ \t]+)?([\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\\[\x01-\x09\x0b\x0c\x0d-\x7f\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))*(([ \t]*\r\n)?[ \t]+)?")@(([a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.)+([a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.?$/i;
+    var passwordPattern = /^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,30}?$/i;
+
     //var err=0;
     $('#adminLogin').submit(function () {        
         $('.input-alert').text('');
@@ -28,16 +36,6 @@ jQuery(document).ready(function ($) {
         if ($.trim($('#password').val()) == '') {
             $('#password').addClass('incorrect-alert');
             $('#passwordError').text(errorSuccessMessage['4']);
-            return false;
-        }
-    });
-    
-    $('#ForgetPassword').submit(function(){
-        var pattern = /^([a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+(\.[a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)*|"((([ \t]*\r\n)?[ \t]+)?([\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\\[\x01-\x09\x0b\x0c\x0d-\x7f\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))*(([ \t]*\r\n)?[ \t]+)?")@(([a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.)+([a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.?$/i;
-        var re = pattern.test($.trim($('#email').val()));
-        $('#emailError').text('');
-        if(!re){
-            $('#emailError').text(errorSuccessMessage['2']);
             return false;
         }
     });
@@ -84,7 +82,7 @@ jQuery(document).ready(function ($) {
            
     }); 
 
-    $('#change_password_form').submit(function(e){        
+    $('#change_password_form').submit(function(e){  
            $('.input-alert').text('');
            $('input').removeClass('incorrect-alert');
            if($.trim($('#old_password').val())==''){
@@ -99,11 +97,12 @@ jQuery(document).ready(function ($) {
                $('#new_password').focus();
                return false;
            }
-           // if($.trim($('#new_password').val()).length < 6){
-           //     $('#passwordError').text('Your password must be at least 6 characters.');
-           //     $('#new_password').focus();
-           //     return false;
-           // }
+           if (!passwordPattern.test($.trim($('#new_password').val()))) {
+              $('#new_password').addClass('incorrect-alert');
+              $('#passwordError').text(errorSuccessMessage['39']);
+              $('#new_password').focus();
+              return false;
+           }
            if(($('#old_password').val()) == ($('#new_password').val())){
                $('#new_password').addClass('incorrect-alert');
                $('#passwordError').text(errorSuccessMessage['11']);
@@ -134,12 +133,12 @@ jQuery(document).ready(function ($) {
                $('#new_password').focus();
                return false;
            }
-           // if($.trim($('#new_password').val()).length < 6){
-           //     $('#passwordError').text('Your password must be at least 6 characters.');
-           //     $('#new_password').focus();
-           //     return false;
-           // }
-          
+           if (!passwordPattern.test($.trim($('#new_password').val()))) {
+              $('#new_password').addClass('incorrect-alert');
+              $('#passwordError').text(errorSuccessMessage['39']);
+              $('#new_password').focus();
+              return false;
+           }
            if($.trim($('#confirm_password').val())==''){
                $('#confirm_password').addClass('incorrect-alert');
                $('#confirmpasswordError').text(errorSuccessMessage['20']);

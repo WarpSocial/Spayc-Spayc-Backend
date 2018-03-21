@@ -2,6 +2,7 @@
 /* Admin constant and messages */
 define('ROLE_ADMIN',1);
 define('SITE_TITLE','spayc');
+define('PAGINATION_LIMIT',20);
 $config =array();
 $config['CMS']= [
                   1=>'Access denied.',
@@ -57,6 +58,11 @@ $config['ERRORANDSUCCESSMSG'] = [
     35=>'Your password has been changed successfully.',
     36=>'Account not found. Please read email carefully and try again',
     37=>'Invalid token. Please read email carefully and try again.',
+    38=>'Invalid token, This token has been already used.',
+    39=>'New password must contain 8-30 character length, at least one letter and one number.',
+    40=>'System rejected to update the password.',
+    41=>'Invalid user.',
+
 ];
 
 $config['ERRORANDREQUIREDMSG']=[
