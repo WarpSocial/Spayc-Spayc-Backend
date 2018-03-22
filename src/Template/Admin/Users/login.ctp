@@ -19,7 +19,7 @@
               <div class="form-group">                
                 <div class="password-wrap">
                   <!-- <input type="password" class="form-control" id="password"> -->
-                  <?= $this->Form->input('password',['class'=>'form-control','label'=>'Password', 'maxlength'=> '100']); ?>                   
+                  <?= $this->Form->input('password',['class'=>'form-control','label'=>'Password', 'maxlength'=> '30']); ?>                   
                   <span class="show-password">Show</span>                
                   <small class="input-alert" id="passwordError"></small>
                 </div>

@@ -91,122 +91,29 @@ class UsersTable extends Table
      *
      * @param \Cake\Validation\Validator $validator Validator instance.
      * @return \Cake\Validation\Validator
-     */
-    public function validationDefault(Validator $validator)
-    {
+     */   
+    public function validationLogin($data) {
+        $validator = new \Cake\Validation\Validator(); 
         $validator
-            ->allowEmpty('id', 'create');
-
-        $validator
-            ->scalar('username')
-            ->maxLength('username', 100)
-            ->requirePresence('username', 'create')
-            ->notEmpty('username');
-
-        $validator
-            ->email('email')
-            ->allowEmpty('email');
-
-        $validator
-            ->scalar('password')
-            ->maxLength('password', 255)
-            ->allowEmpty('password');
-
-        $validator
-            ->scalar('gender')
-            ->maxLength('gender', 50)
-            ->allowEmpty('gender');
-
-        $validator
-            ->date('dob')
-            ->allowEmpty('dob');
-
-        $validator
-            ->scalar('phone')
-            ->maxLength('phone', 20)
-            ->allowEmpty('phone');
-
-        $validator
-            ->scalar('status')
-            ->requirePresence('status', 'create')
-            ->notEmpty('status');
-
-        $validator
-            ->scalar('website_url')
-            ->maxLength('website_url', 150)
-            ->allowEmpty('website_url');
-
-        $validator
-            ->scalar('address')
-            ->allowEmpty('address');
-
-        $validator
-            ->scalar('bio_data')
-            ->allowEmpty('bio_data');
-
-        $validator
-            ->scalar('fb_access_key')
-            ->maxLength('fb_access_key', 1000)
-            ->allowEmpty('fb_access_key');
-
-        $validator
-            ->numeric('longitude')
-            ->allowEmpty('longitude');
-
-        $validator
-            ->numeric('latitude')
-            ->allowEmpty('latitude');
-
-        $validator
-            ->scalar('timezone')
-            ->maxLength('timezone', 100)
-            ->allowEmpty('timezone');
-
-        $validator
-            ->scalar('matrix_access_token')
-            ->maxLength('matrix_access_token', 1000)
-            ->allowEmpty('matrix_access_token');
-
-        $validator
-            ->scalar('token_verification')
-            ->maxLength('token_verification', 255)
-            ->allowEmpty('token_verification');
-
-        $validator
-            ->scalar('forgot_password_token')
-            ->maxLength('forgot_password_token', 255)
-            ->allowEmpty('forgot_password_token');
-
-        $validator
-            ->dateTime('forgot_password_timestamp')
-            ->allowEmpty('forgot_password_timestamp');
-
-        $validator
-            ->scalar('country_code')
-            ->maxLength('country_code', 10)
-            ->allowEmpty('country_code');
-
-        $validator
-            ->scalar('is_notify')
-            ->maxLength('is_notify', 10)
-            ->allowEmpty('is_notify');
-
-        $validator
-            ->numeric('current_latitude')
-            ->allowEmpty('current_latitude');
-
-        $validator
-            ->numeric('current_longitude')
-            ->allowEmpty('current_longitude');
-
-        return $validator;
+                ->requirePresence('email', true, __('Please enter your email.'))
+                ->notEmpty('email', __('Please enter your email.'))
+                ->requirePresence('password', true, __('Please enter your password.'))
+                ->notEmpty('password', __('Please enter your password.'));
+        $error = $validator->errors($data);    
+        return $error;
     }
 
-    public function validationResetPassword(Validator $validator) {
-        
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */   
+    public function validationResetPassword($data) {
+        $validator = new \Cake\Validation\Validator(); 
         $validator
-                ->requirePresence('new_password', 'create',__('New password is required field.'))
-                ->notEmpty('new_password',__('New password is required field.'))
+                ->requirePresence('new_password', 'create',__('Please enter new password.'))
+                ->notEmpty('new_password',__('Please enter new password.'))
                 ->add("new_password",'custom',[
                     'rule'=>function($value,$context) {
                         if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,30}$/', $value)){
@@ -218,11 +125,12 @@ class UsersTable extends Table
                     'message'=>__('New password must contain 8-30 character length, at least one letter and one number.'),
                 ]);                
         $validator
-                ->requirePresence('confirm_password', 'create', __('Confirm password is required field.'))
-                ->notEmpty('confirm_password', __('Confirm password is required field.'))
+                ->requirePresence('confirm_password', 'create', __('Confirm Please enter your password.'))
+                ->notEmpty('confirm_password', __('Confirm Please enter your password.'))
                 ->sameAs('confirm_password', 'new_password',__('New password and confirm password should be matched, try again please!'));
         
-        return $validator;
+        $error = $validator->errors($data);    
+        return $error;
     }
 
     /**
@@ -231,14 +139,14 @@ class UsersTable extends Table
      * @param \Cake\Validation\Validator $validator Validator instance.
      * @return \Cake\Validation\Validator
      */
-    public function validationChangePassword(Validator $validator, $userId = null) {
-        
+    public function validationChangePassword($data) {
+        $validator = new \Cake\Validation\Validator();
         $validator
-                ->requirePresence('old_password', 'create',__('Old password is required field.'))
-                ->notEmpty('old_password',__('Old password is required field.'))
+                ->requirePresence('old_password', 'create',__('Please enter your current password.'))
+                ->notEmpty('old_password',__('Please enter your current password.'))
                 ->add('old_password','custom', [
-                    'rule'=>function($value, $context) use($userId) {
-                        $password = $this->get($userId, ['fields'=>'password']);
+                    'rule'=>function($value, $context) use($data) {
+                        $password = $this->get($data['userId'], ['fields'=>'password']);
                         if (!ApiHasher::check($value, $password['password'])) {
                             return false;
                         }
@@ -248,8 +156,8 @@ class UsersTable extends Table
                 ]);
         
         $validator
-                ->requirePresence('new_password', 'create',__('New password is required field.'))
-                ->notEmpty('new_password',__('New password is required field.'))
+                ->requirePresence('new_password', 'create',__('Please enter new password.'))
+                ->notEmpty('new_password',__('Please enter new password.'))
                 ->add("new_password",'custom',[
                     'rule'=>function($value,$context) {
                         if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,30}$/', $value)){
@@ -267,13 +175,14 @@ class UsersTable extends Table
                         }
                         return true;
                     },
-                    'message' => 'New password and old password should not be same, try again please!']);
+                    'message' => 'New password and current password should not be same, try again please!']);
         $validator
-                ->requirePresence('confirm_password', 'create', __('Confirm password is required field.'))
-                ->notEmpty('confirm_password', __('Confirm password is required field.'))
+                ->requirePresence('confirm_password', 'create', __('Confirm Please enter your password.'))
+                ->notEmpty('confirm_password', __('Confirm Please enter your password.'))
                 ->sameAs('confirm_password', 'new_password',__('New password and confirm password should be matched, try again please!'));
         
-        return $validator;
+        $error = $validator->errors($data);    
+        return $error;
     }
 
     /**

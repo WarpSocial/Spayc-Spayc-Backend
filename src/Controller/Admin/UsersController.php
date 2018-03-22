@@ -136,19 +136,14 @@ class UsersController extends AdminController
     
     public function login() {
         $this->set('title', 'Admin Panel');        
-        if ($this->request->is('post')) {
-            $data_item = $this->request->data;
-            $error = array();
-            if (!isset($data_item['email'])) {
-                $error['email'] = ['_required' => $this->errorRequiredMessage['1']];
-            }
-            if (!isset($data_item['password'])) {
-                $error['password'] = ['_required' => $this->errorRequiredMessage['2']];
-            }
-            if (empty($error)) {                                     
-                $user = $this->getUserObj($data_item['email'])->first();
+        $user= $this->Users->newEntity();
+        if ($this->request->is(['post','put'])) { 
+            $data = $this->request->getData();
+            $errors = $this->Users->validationLogin($data);
+            if (empty($errors)) {                                     
+                $user = $this->getUserObj($data['email'])->first();
                 if ($user) {              
-                    if (!ApiHasher::check(trim($data_item['password']), $user->password)) {                       
+                    if (!ApiHasher::check(trim($data['password']), $user->password)) {                       
                         $this->Flash->error(__($this->errorSuccessMessage['32']));
                     }else{                       
                         $this->Auth->setUser($user);                        
@@ -158,12 +153,12 @@ class UsersController extends AdminController
                     $this->Flash->error(__($this->errorSuccessMessage['32']));
                 }
             } else {
-                $this->Flash->error(__($this->errorSuccessMessage['33']));
+                $user->errors($errors);
             }
-        }                
-        $user= $this->Users->newEntity();
+        }
         $this->set(compact('user'));
     }
+
     public function logout()
     {        
         return $this->redirect($this->Auth->logout());
@@ -171,23 +166,20 @@ class UsersController extends AdminController
 
     public function changePassword() {
         $this->set('title', 'Change Password');
-        $user = $this->Users->get($this->Auth->user('id'));
-        if ($this->request->is('post')) {         
-            $data = $this->request->getData();  
-            $validator = new \Cake\Validation\Validator();
-            $validator = $this->Users->validationChangePassword($validator, $user->id);
-            $error = $validator->errors($data);            
-            if (empty($error)) {
+        $user = $this->Users->get($this->Auth->user('id'));                
+        if ($this->request->is(['post','put'])) {          
+            $data = $this->request->getData();
+            $data['userId'] = $user->id;
+            $errors = $this->Users->validationChangePassword($data);            
+            if (empty($errors)) {
                 $user->password = ApiHasher::hash(trim($data['new_password']));
                 if ($this->Users->save($user)) {
                     return $this->redirect(['action' => 'success']);
                 } else {                    
                     $this->Flash->success(__($this->errorSuccessMessage['40']));
-                    return $this->redirect($this->referer());    
                 }
             } else {
-                $this->Flash->error(__($this->errorRequiredMessage['6']));
-                return $this->redirect($this->referer());   
+                $user->errors($errors);
             }
         }
         $this->set(compact('user'));
@@ -199,22 +191,24 @@ class UsersController extends AdminController
 
     public function manageUser() {
         $this->set('title', 'Manage User');
-        $cond=array();
-        //$cond['AND']=['Users.role_id !='=> ROLE_ADMIN];
-        // $cond['AND']=['Users.id !='=> $this->Auth->user("id")];        
-        // $keyword=($this->request->query('keyword'))?trim($this->request->query('keyword')):'';
+        
+        $keyword=($this->request->query('keyword'))?trim($this->request->query('keyword')):'';
         // if ($this->request->is('post')) {
         //     $keyword=$this->request->data['keyword'];
         // }        
-        // if(!empty($keyword)){
-        //     $cond['OR']=['username LIKE' => "%".$keyword."%",'email LIKE' => "%".$keyword."%"];
-        // }
+        
+        $query=$this->Users->find()
+            ->where(['Users.role_id IS'=> null]);
 
-        // $query=$this->Users->find('all',['conditions'=>$cond]);  
-        // $users = $this->paginate($query);
-        // pr($users);die;
-        // $this->set(compact('users','keyword'));
-        // $this->set('_serialize', ['users']);
+
+        if(!empty($keyword)){
+               $query->where(['username LIKE' => "%".$keyword."%",'email LIKE' => "%".$keyword."%"]);
+        }            
+        pj($query);die;
+        $users = $this->paginate($query);
+        pr($users);die;
+        $this->set(compact('users','keyword'));
+        $this->set('_serialize', ['users']);
     }
 
     public function forgotPassword() {
@@ -225,13 +219,12 @@ class UsersController extends AdminController
             $data_item = $this->request->data;           
             $error = array();
             if (!isset($data_item['email'])) {
-                $error = $this->errorRequiredMessage['1'];
+                $error = $this->errorSuccessMessage['3'];
             } else if (!filter_var($data_item['email'], FILTER_VALIDATE_EMAIL)) {
                 $error = $this->errorSuccessMessage['3'];
             }
             if (empty($error)) {                  
                 $user = $this->getUserObj($data_item['email'])->first();
-                //debug($user);
                 if ($user) {
                     $data['forgot_password_token'] = Security::hash($user->email, 'sha1', true);
                     $data['forgot_password_timestamp'] = time();
@@ -252,7 +245,7 @@ class UsersController extends AdminController
     public function resetPassword($token, $email) {    
         $this->set('title', 'Reset password');        
         if (!$token || !$email) {            
-            $this->Flash->error(__($this->errorRequiredMessage['7']));
+            $this->Flash->error(__($this->errorSuccessMessage['42']));
             return $this->redirect(['action' => 'login']);  
         }
         $user = $this->getUserObj($email)->first();          
@@ -268,11 +261,9 @@ class UsersController extends AdminController
             $this->Flash->error(__($this->errorSuccessMessage['38']));
             return $this->redirect(['action' => 'login']); 
         }                
-        if ($this->request->is('post')) {
-            $data = $this->request->getData();  
-            $validator = new \Cake\Validation\Validator();
-            $validator = $this->Users->validationResetPassword($validator);
-            $errors = $validator->errors($data);  
+        if ($this->request->is(['post','put'])) {   
+            $data = $this->request->getData();               
+            $errors = $this->Users->validationResetPassword($data);             
             if (!$errors) {
                 $user->forgot_password_token = null;
                 $user->forgot_password_timestamp = null;                
@@ -281,12 +272,11 @@ class UsersController extends AdminController
                     $this->Flash->success(__($this->errorSuccessMessage['21']));
                     return $this->redirect(['action' => 'login']);    
                 } else {                    
-                    $this->Flash->success(__($this->errorSuccessMessage['40']));
+                    $this->Flash->error(__($this->errorSuccessMessage['40']));
                     return $this->redirect(['action' => 'login']);    
                 }
-            } else {           
-                $this->Flash->error(__(array_values(array_values($errors)[0])[0]));
-                return $this->redirect(['action' => 'resetPassword',$token,$email]);
+            } else {     
+                $user->errors($errors);      
             }
         }        
         $this->set(compact('user'));        

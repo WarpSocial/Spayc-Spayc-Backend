@@ -4,22 +4,6 @@ define('ROLE_ADMIN',1);
 define('SITE_TITLE','spayc');
 define('PAGINATION_LIMIT',20);
 $config =array();
-$config['CMS']= [
-                  1=>'Access denied.',
-                  2=>'Email or password is incorrect.',
-                  3=>'Successfully saved.',
-                  4=>'Successfully updated.',
-                  5=>'Email does not exist.',
-                  6=>'Unable to save. Please try again.',
-                  7=>'We have sent the reset password link to your registered email.',
-                  8=>'Successfully deleted.',
-                  9=>'Unable to delete. Please try again.',
-                  10=>'Please complete all the required fields.',
-                  11=>'Image height and width should be 54 x 54.',
-                  12=>'Already exist. Please try again with another name.',
-                  13=>'Please select at least one organization.',
-                  14=>'Please complete all the required fields.',
-                ];
 $config['ERRORANDSUCCESSMSG'] = [
     1=>'You log out successfully.',
     2=>'Please enter your email.',
@@ -32,7 +16,7 @@ $config['ERRORANDSUCCESSMSG'] = [
     9=>'Thank you, a temporary password has been sent to your email.',
     10=>'Please enter your current password.',
     11=>'Current password and new password cannot be same.',
-    12=>'Oops! New passwords do not match.',
+    12=>'Passwords do not match, try again please!',
     13=>'Password must have 8 characters and 1 number.',
     14=>'Please create a previously unused password.',
     15=>'Are you sure you want to leave this section without responding or click PROCEED WITHOUT COMPLETING THIS STAGE.',
@@ -62,15 +46,6 @@ $config['ERRORANDSUCCESSMSG'] = [
     39=>'New password must contain 8-30 character length, at least one letter and one number.',
     40=>'System rejected to update the password.',
     41=>'Invalid user.',
+    42=>'Missing required information. Please read email carefully and try again.',
 
-];
-
-$config['ERRORANDREQUIREDMSG']=[
-    1=>'Email is required.',
-    2=>'Password is required',
-    3=>'Current password is required.',
-    4=>'New password is required.',
-    5=>'Confirm password is required.',
-    6=>'All fields are required.',
-    7=>'Missing required information. Please read email carefully and try again.',
 ];

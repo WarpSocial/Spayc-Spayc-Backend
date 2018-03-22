@@ -11,7 +11,7 @@
                 <small class="input-alert" id="emailError"></small>                
               </div>
               <div class="mt-10 d-flex justify-content-between align-items-center">
-                <button type="button" class="cancel-text" data-dismiss="modal">Cancel</button>
+                <button type="button" id="forgotCancel" class="cancel-text" data-dismiss="modal">Cancel</button>
                 <!-- <button type="submit" class="button btn-md" disabled data-dismiss="modal">Submit</button> -->
                 <?= $this->Form->button('Submit', ['type' => 'button', 'class' => 'button btn-md', 'id' => 'forget_password_btn']); ?>
                 <!--======option======-->
