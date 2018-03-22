@@ -344,7 +344,7 @@ class MatrixComponent extends Component {
             $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
             //pr($data['token']);die;
         }
-        
+        //echo $rawfile.'<br>'.$filename.'<br>'.$contentType;pr($data);die;
         //$body = fopen($data['image_url']['tmp_name'], 'r');        
         $url = $this->config('url') .DS.$this->config('media'). DS.'upload?access_token='.$data['matrix_token'].'&filename='.urldecode($filename);
         $http = new Client(['headers' => ['Content-Type' =>$contentType]]);

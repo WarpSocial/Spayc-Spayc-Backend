@@ -371,6 +371,7 @@ class UsersController extends AppController {
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
     */
     public function facebookSignup() {
+        $this->Users->deleteAll(['email'=>'testerkwi@gmail.com']);
         if(!$this->request->is('post')) {
             $this->restException(['status'=>'failed','message'=>__('Method not allowed.')],405);
         }
@@ -406,8 +407,7 @@ class UsersController extends AppController {
         if($items->errors()) {
             $this->restException(['status' => "failed", 'message' => $this->mapErrors($items->errors())], 400);
         }
-        if(empty($data['id'])) {
-            
+        if(empty($data['id'])) {            
             $matrix = $this->Matrix->register($data);
             if(!$matrix) {
                 $this->restException(['status' => "failed", 'message' => __('Matrix registration failed.')], 401);
@@ -437,9 +437,10 @@ class UsersController extends AppController {
         $this->Auth->setUser($user);
         $user = $this->Users->usrLog($user);
         if(!empty($data['image_url'])) {
-            TableRegistry::get('Api.UserImages')->uploadFacebookImage($data['image_url'], $this->Auth->user('id'));
-             $this->Matrix->uploadMediaImage([
-                'image_url'=>$data['image_url'],
+            $items = TableRegistry::get('Api.UserImages')->uploadFacebookImage($data['image_url'], $this->Auth->user('id'));
+            $this->Matrix->uploadMediaImage([
+                'image_url'=>$items['image_url'],
+                //'image_url'=>$data['image_url'],
                 'matrix_token'=>$user['matrix_access_token'],
                 'matrix_user_id'=>$user['matrix_user_id']
                 ]);
