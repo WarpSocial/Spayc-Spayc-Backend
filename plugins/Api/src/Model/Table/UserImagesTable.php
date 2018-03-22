@@ -104,7 +104,7 @@ class UserImagesTable extends Table {
         $entity = $this->newEntity();
         $items = $this->patchEntity($entity, $data, ['validate'=>false]);
         if($this->save($items)){
-           // unlink($fileName);
+           unlink($fileName);
         }
         return $items;
     }
