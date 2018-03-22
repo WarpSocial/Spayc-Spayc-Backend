@@ -14,7 +14,7 @@
              <form name="userFilterFrm" id="userFilterFrm" method="get" autocomplete="off">
               <div class="search">
               <div class="form-group">
-                <input type="text" class="form-control" placeholder="Search" name="keyword" value="<?php echo $this->request->query('keyword'); ?>">
+                <input type="text" class="form-control" placeholder="Search" id="keyword" name="keyword" value="<?php echo $this->request->query('keyword'); ?>">
                 <span class="clear-search hide" id="clear-search"></span>
               </div>
             </div>
@@ -104,21 +104,27 @@
             <div class="head-text flex-basis10"><span class="table-filter">Registration Date</span></div>
             <div class="head-text flex-basis6"><span class="blank"></span></div>
           </div>
+
+          <?php
+            if(count($users) > 0){            
+            foreach($users as $user){
+          ?>
           <!--==============table data====================-->
           <div class="table-row">
             <div class="table-data flex-basis15 text-left">
-              <span class="user-name">Daniel Lloyd</span>
-              <span class="ell">daniel@yahoo.com</span>
-              <span class="user-contact">+1 329-245-2716</span>
+              <span class="user-name"><?= !empty($user->username)?h(ucwords($user->username)):BLANK ?></span>
+              <span class="ell"><?= !empty($user->email)?h($user->email):BLANK ?></span>
+              <span class="user-contact"><?= !empty($user->phone)?h($user->country_code).'&nbsp;'.h($user->phone):BLANK; ?>
+              </span>
             </div>
             <div class="table-data flex-basis11">
-              <span>Female</span>
+              <span><?= !empty($user->gender)?h($user->gender):BLANK ?></span>
             </div>
             <div class="table-data flex-basis11">
-              <span>Nov 10, 1991</span>
+              <span><?= !empty($this->dateFormat($user->dob))?$this->dateFormat($user->dob):BLANK ?></span>
             </div>
             <div class="table-data flex-basis15 text-left">
-              <span>7358 Schmeler Greens</span>
+              <span><?= !empty($user->address)?h($user->address):BLANK ?></span>
             </div>
             <div class="table-data flex-basis9">
               <span>10</span>
@@ -133,7 +139,7 @@
               <span>10</span>
             </div>
             <div class="table-data flex-basis10">
-              <span>Apr 12, 2017</span>
+              <span><?= !empty($this->dateFormat($user->created))?$this->dateFormat($user->created):BLANK ?></span>
             </div>
             <!--table dropdown-->
             <div class="table-data flex-basis6">
@@ -149,277 +155,12 @@
               </div>
             </div>
           </div>
-          <!--==============table data====================-->
-          <div class="table-row">
-            <div class="table-data flex-basis15 text-left">
-              <span class="user-name">Daniel Lloyd</span>
-              <span class="ell">daniel@yahoo.com</span>
-              <span class="user-contact">+1 329-245-2716</span>
-            </div>
-            <div class="table-data flex-basis11">
-              <span>Female</span>
-            </div>
-            <div class="table-data flex-basis11">
-              <span>Nov 10, 1991</span>
-            </div>
-            <div class="table-data flex-basis15 text-left">
-              <span>7358 Schmeler Greens</span>
-            </div>
-            <div class="table-data flex-basis9">
-              <span>10</span>
-            </div>
-            <div class="table-data flex-basis9">
-              <span>15</span>
-            </div>
-            <div class="table-data flex-basis10">
-              <span>105</span>
-            </div>
-            <div class="table-data flex-basis14">
-              <span>10</span>
-            </div>
-            <div class="table-data flex-basis10">
-              <span>Apr 12, 2017</span>
-            </div>
-            <!--table dropdown-->
-            <div class="table-data flex-basis6">
-              <div class="dropdown table-view-dropdown">
-                <div class="table-dropdown"  id="table-data-dropdown" data-toggle="dropdown">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-                <div class="dropdown-menu" aria-labelledby="table-data-dropdown">
-                  <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!--==============table data====================-->
-          <div class="table-row">
-            <div class="table-data flex-basis15 text-left">
-              <span class="user-name">Daniel Lloyd</span>
-              <span class="ell">daniel@yahoo.com</span>
-              <span class="user-contact">+1 329-245-2716</span>
-            </div>
-            <div class="table-data flex-basis11">
-              <span>Female</span>
-            </div>
-            <div class="table-data flex-basis11">
-              <span>Nov 10, 1991</span>
-            </div>
-            <div class="table-data flex-basis15 text-left">
-              <span>7358 Schmeler Greens</span>
-            </div>
-            <div class="table-data flex-basis9">
-              <span>10</span>
-            </div>
-            <div class="table-data flex-basis9">
-              <span>15</span>
-            </div>
-            <div class="table-data flex-basis10">
-              <span>105</span>
-            </div>
-            <div class="table-data flex-basis14">
-              <span>10</span>
-            </div>
-            <div class="table-data flex-basis10">
-              <span>Apr 12, 2017</span>
-            </div>
-            <!--table dropdown-->
-            <div class="table-data flex-basis6">
-              <div class="dropdown table-view-dropdown">
-                <div class="table-dropdown"  id="table-data-dropdown" data-toggle="dropdown">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-                <div class="dropdown-menu" aria-labelledby="table-data-dropdown">
-                  <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!--==============table data====================-->
-          <div class="table-row">
-            <div class="table-data flex-basis15 text-left">
-              <span class="user-name">Daniel Lloyd</span>
-              <span class="ell">daniel@yahoo.com</span>
-              <span class="user-contact">+1 329-245-2716</span>
-            </div>
-            <div class="table-data flex-basis11">
-              <span>Female</span>
-            </div>
-            <div class="table-data flex-basis11">
-              <span>Nov 10, 1991</span>
-            </div>
-            <div class="table-data flex-basis15 text-left">
-              <span>7358 Schmeler Greens</span>
-            </div>
-            <div class="table-data flex-basis9">
-              <span>10</span>
-            </div>
-            <div class="table-data flex-basis9">
-              <span>15</span>
-            </div>
-            <div class="table-data flex-basis10">
-              <span>105</span>
-            </div>
-            <div class="table-data flex-basis14">
-              <span>10</span>
-            </div>
-            <div class="table-data flex-basis10">
-              <span>Apr 12, 2017</span>
-            </div>
-            <!--table dropdown-->
-            <div class="table-data flex-basis6">
-              <div class="dropdown table-view-dropdown">
-                <div class="table-dropdown"  id="table-data-dropdown" data-toggle="dropdown">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-                <div class="dropdown-menu" aria-labelledby="table-data-dropdown">
-                  <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!--==============table data====================-->
-          <div class="table-row">
-            <div class="table-data flex-basis15 text-left">
-              <span class="user-name">Daniel Lloyd</span>
-              <span class="ell">daniel@yahoo.com</span>
-              <span class="user-contact">+1 329-245-2716</span>
-            </div>
-            <div class="table-data flex-basis11">
-              <span>Female</span>
-            </div>
-            <div class="table-data flex-basis11">
-              <span>Nov 10, 1991</span>
-            </div>
-            <div class="table-data flex-basis15 text-left">
-              <span>7358 Schmeler Greens</span>
-            </div>
-            <div class="table-data flex-basis9">
-              <span>10</span>
-            </div>
-            <div class="table-data flex-basis9">
-              <span>15</span>
-            </div>
-            <div class="table-data flex-basis10">
-              <span>105</span>
-            </div>
-            <div class="table-data flex-basis14">
-              <span>10</span>
-            </div>
-            <div class="table-data flex-basis10">
-              <span>Apr 12, 2017</span>
-            </div>
-            <!--table dropdown-->
-            <div class="table-data flex-basis6">
-              <div class="dropdown table-view-dropdown">
-                <div class="table-dropdown"  id="table-data-dropdown" data-toggle="dropdown">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-                <div class="dropdown-menu" aria-labelledby="table-data-dropdown">
-                  <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!--==============table data====================-->
-          <div class="table-row">
-            <div class="table-data flex-basis15 text-left">
-              <span class="user-name">Daniel Lloyd</span>
-              <span class="ell">daniel@yahoo.com</span>
-              <span class="user-contact">+1 329-245-2716</span>
-            </div>
-            <div class="table-data flex-basis11">
-              <span>Female</span>
-            </div>
-            <div class="table-data flex-basis11">
-              <span>Nov 10, 1991</span>
-            </div>
-            <div class="table-data flex-basis15 text-left">
-              <span>7358 Schmeler Greens</span>
-            </div>
-            <div class="table-data flex-basis9">
-              <span>10</span>
-            </div>
-            <div class="table-data flex-basis9">
-              <span>15</span>
-            </div>
-            <div class="table-data flex-basis10">
-              <span>105</span>
-            </div>
-            <div class="table-data flex-basis14">
-              <span>10</span>
-            </div>
-            <div class="table-data flex-basis10">
-              <span>Apr 12, 2017</span>
-            </div>
-            <!--table dropdown-->
-            <div class="table-data flex-basis6">
-              <div class="dropdown table-view-dropdown">
-                <div class="table-dropdown"  id="table-data-dropdown" data-toggle="dropdown">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-                <div class="dropdown-menu" aria-labelledby="table-data-dropdown">
-                  <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!--==============table data====================-->
-          <div class="table-row">
-            <div class="table-data flex-basis15 text-left">
-              <span class="user-name">Daniel Lloyd</span>
-              <span class="ell">daniel@yahoo.com</span>
-              <span class="user-contact">+1 329-245-2716</span>
-            </div>
-            <div class="table-data flex-basis11">
-              <span>Female</span>
-            </div>
-            <div class="table-data flex-basis11">
-              <span>Nov 10, 1991</span>
-            </div>
-            <div class="table-data flex-basis15 text-left">
-              <span>7358 Schmeler Greens</span>
-            </div>
-            <div class="table-data flex-basis9 curser">
-              <span>10</span>
-            </div>
-            <div class="table-data flex-basis9">
-              <span>15</span>
-            </div>
-            <div class="table-data flex-basis10">
-              <span>105</span>
-            </div>
-            <div class="table-data flex-basis14">
-              <span>10</span>
-            </div>
-            <div class="table-data flex-basis10">
-              <span>Apr 12, 2017</span>
-            </div>
-            <!--table dropdown-->
-            <div class="table-data flex-basis6">
-              <div class="dropdown table-view-dropdown">
-                <div class="table-dropdown"  id="table-data-dropdown" data-toggle="dropdown">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-                <div class="dropdown-menu" aria-labelledby="table-data-dropdown">
-                  <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+          <?php
+           }
+          } else {
+            //echo "no record found";
+          }
+          ?>
         <!--===========pagination========-->
         <ul class="pagination table-pagination">
           <li><a href="#" class="prev"></a></li>

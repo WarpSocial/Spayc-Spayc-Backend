@@ -200,13 +200,11 @@ class UsersController extends AdminController
         $query=$this->Users->find()
             ->where(['Users.role_id IS'=> null]);
 
-
         if(!empty($keyword)){
                $query->where(['username LIKE' => "%".$keyword."%",'email LIKE' => "%".$keyword."%"]);
-        }            
-        pj($query);die;
-        $users = $this->paginate($query);
-        pr($users);die;
+        }          
+        $users = $this->paginate($query);    
+        //pr($users);die;
         $this->set(compact('users','keyword'));
         $this->set('_serialize', ['users']);
     }

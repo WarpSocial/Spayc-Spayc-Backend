@@ -41,4 +41,21 @@ class AppView extends View
         ];
         $this->Form->setTemplates($errorTemplates);
     }
+
+    
+    public function dateFormat($dateTime,$format=DATEFORMAT_DISPLAY) {
+        if(empty($dateTime)){
+            return;
+        }
+        if($dateTime instanceof \Cake\I18n\Time){
+            $date = $dateTime->format(DATEFORMAT_DISPLAY);
+        } elseif($dateTime instanceof \DateTime) {
+            $date = $dateTime->format(DATEFORMAT_DISPLAY);
+        } else {
+            $date = (new \Cake\I18n\Time($dateTime))->format(DATEFORMAT_DISPLAY);
+        }
+        return $date;
+    }
+
+
 }

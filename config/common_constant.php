@@ -3,6 +3,8 @@
 define('ROLE_ADMIN',1);
 define('SITE_TITLE','spayc');
 define('PAGINATION_LIMIT',20);
+define('DATEFORMAT_DISPLAY','M d, Y');
+define('BLANK','--');
 $config =array();
 $config['ERRORANDSUCCESSMSG'] = [
     1=>'You log out successfully.',
