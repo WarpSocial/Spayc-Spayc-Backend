@@ -24,6 +24,7 @@ class SpaycsController extends AppController {
     public function initialize() {
         parent::initialize();
         $this->loadComponent('Api.Push');
+        $this->loadComponent('Api.Matrix');
     }
     
     public function beforeFilter(\Cake\Event\Event $event) {
@@ -50,7 +51,7 @@ class SpaycsController extends AppController {
         if($items->errors()) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
         }
-        $this->loadComponent('Api.Matrix');
+        
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
         
         $matrix = $this->Matrix->createRoom($data);
@@ -108,6 +109,9 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Parent space has not been found.')], 400);
         }
         $parentObj = $entity->first();
+        if(!empty($parentObj->parent_id)){
+            $this->restException(['status'=>'failed','message'=>__('Not allowd to create subspayc of subspayc.')], 400);
+        }
         $data['parent_id'] = $parentObj->id;
         $data['start_date'] = $parentObj->start_date;
         $data['end_date'] = $parentObj->end_date;
@@ -116,7 +120,7 @@ class SpaycsController extends AppController {
         $data['type'] = $parentObj->type;
         $items = $this->Spaycs->newEntity($data,['validate'=>false]);
         
-        $this->loadComponent('Api.Matrix');
+        
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
         
         $matrix = $this->Matrix->createRoom($data);
@@ -174,7 +178,7 @@ class SpaycsController extends AppController {
         if($items->errors()) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
         }
-        $this->loadComponent('Api.Matrix');
+        
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
         $matrixData = $data;
         $matrixData['name'] = '';
@@ -513,7 +517,7 @@ class SpaycsController extends AppController {
         if(!$spayc->isEmpty()) {
             $data = $spayc->first();            
             if($data->user_id == $userId){
-                $data->is_admin = 1;
+                $data->role = 2;
             }
         } else {
             $this->response->statusCode(204);
@@ -552,7 +556,7 @@ class SpaycsController extends AppController {
         if(!empty($items->errors())) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
         }
-        $this->loadComponent('Api.Matrix');
+        
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
         $matrix = $this->Matrix->updateRoom($entity->matrix_room_id,$data);
         if(!$matrix) {
@@ -605,20 +609,12 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>'Record not found.'], 404);
         }
         $spayc = $entity->first();
-        $this->loadComponent('Api.Matrix');
         
-        $matrix = $this->Matrix->leaveRoom($spayc->matrix_room_id,$user['UserLogs']['matrix_access_token']);
-//        pr($matrix);die;
-//        if(!$matrix || !empty($matrix['error'])) {
-//            if(empty($matrix['error'])){
-//                $this->restException(['status' => "failed", 'message' =>__('Room not found.')], 400);
-//            }else{
-//                $this->restException(['status' => "failed", 'message' =>__($matrix['error'])], 400);
-//            }
-//            
-//        }
-        $child = \Cake\Utility\Hash::extract($spayc->sub_spaycs, '{n}.id');
-        array_push($child,$spayc->id);     
+        $matrixRoomIds = \Cake\Utility\Hash::extract($spayc->sub_spaycs, '{n}.matrix_room_id');
+        array_push($matrixRoomIds, $spayc->matrix_room_id);
+        $child = \Cake\Utility\Hash::extract($spayc->sub_spaycs, '{n}.id');        
+        array_push($child,$spayc->id);  
+        $this->Matrix->deleteRoom($matrixRoomIds);
         if ($this->Spaycs->delete($spayc)) {
             TableRegistry::get('Api.JoinedSpayc')->deleteAll(['spayc_id IN' => $child]);
             TableRegistry::get('Api.SubscribedUsers')->deleteAll(['spayc_id IN' => $child]);
@@ -637,6 +633,9 @@ class SpaycsController extends AppController {
     }
     
     public function spaycMembers(){
+        if (!$this->request->is(['get'])) {
+            $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);
+        }
         $spaycId = $this->request->getQuery('room_id');
         $status = $this->request->getQuery('status');
         $page = $this->request->getQuery('page');
@@ -663,6 +662,9 @@ class SpaycsController extends AppController {
     }
     
     public function viewSubSpaycs(){
+        if (!$this->request->is(['get'])) {
+            $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);
+        }
         $subspayc = $this->request->getQuery('spayc_id',null);
         $user = $this->Auth->user();
         if(empty($subspayc)){
@@ -739,6 +741,20 @@ class SpaycsController extends AppController {
             });
         $response = ['status'=>'success','message'=>'List of subspayc.','parent_spayc_id'=>$parentMatrixId,'data'=>$result];
         $this->set($response);
+    }
+    
+    /**
+     * physicalPresentSpayces method to get the spayces which is within 1 miles
+     */
+    
+    public function physicalPresentSpayces(){
+        if (!$this->request->is(['get'])) {
+            $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);
+        }
+        $user = $this->Auth->user();
+        $userLat = $user['current_latitude'];
+        $userLong = $user['current_longitude'];
+        
     }
 
 }

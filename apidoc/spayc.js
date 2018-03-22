@@ -704,9 +704,9 @@ function postJoinSubSpayc() { return; }
 @apiGroup Spayc
 @apiPermission private
 
-@apiDescription Admin can ban spayc joined member and super admin can ban admin and spayc member also.
+@apiDescription super admin or admin can ban spayc member who has not rights of admin and super admin could ban admin privileges member too.
 
-* @apiHeader {String} TOKEN            * A token send by header as TOKEN
+* @apiHeader {String} TOKEN            * Token required in header
 * @apiHeader {String} timezone            * Current timezone
 
 @apiParam {Intger} spayc_id Existing Spayc id(Required).

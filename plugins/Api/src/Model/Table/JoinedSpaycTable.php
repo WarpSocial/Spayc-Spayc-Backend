@@ -111,7 +111,7 @@ class JoinedSpaycTable extends Table {
         return $ids;
     }
     
-    public function ValidateJoinSpayc($data){
+    public function ValidateStatus($data,$status){
         $validator = new Validator();
         $validator->requirePresence('spayc_id', true,__('Spayc id key is missing.'))
                 ->notEmpty('spayc_id', __('Please enter Spayc id.'));
@@ -121,8 +121,7 @@ class JoinedSpaycTable extends Table {
                 ->notEmpty('user_id', __('Please enter User id.'));
         $validator->requirePresence('status', true,__('status key is missing.'))
                 ->notEmpty('status', __('Please enter role.'))
-                ->inList('status', ['Joined',"Banned","Pending"],__('Role must be either Joined or Banned.'));
+                ->inList('status', $status,__('Role should be '. implode(' or ',$status)));
         return $validator->errors($data);
     }
-
 }

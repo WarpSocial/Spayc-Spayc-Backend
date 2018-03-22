@@ -159,7 +159,7 @@ class MatrixComponent extends Component {
      * @param Array $items array contain required field of matrix fields
      * @return false|$data return data if created or false
      */
-    public function createRoom($items=[]) {
+    public function createRoom($items=[]) {        
         if(empty($items)) {
             return false;
         }
@@ -192,7 +192,11 @@ class MatrixComponent extends Component {
         ];
         if(!empty($items['is_direct'])){
             $validInput['is_direct'] = $items['is_direct'];
-            unset($validInput['room_alias_name']);
+            $validInput['room_alias_name'] = 'direct_'.$validInput['room_alias_name'];
+        }elseif(!empty($items['parent_matrix_room_id'])){
+            $validInput['room_alias_name'] = 'subspayc_'.$validInput['room_alias_name'];
+        }else{
+            $validInput['room_alias_name'] = 'parentspayc_'.$validInput['room_alias_name'];
         }
        #pr($validInput);die;
         $url = $this->config('url') .DS.$this->config('client'). DS.'createRoom';
@@ -501,26 +505,16 @@ class MatrixComponent extends Component {
     }
     
     public function banMember($data = []) {
-        return true;
-        if(empty($data['status']) || empty($data['matrix_token']) || empty($data['matrix_room_id'])){
+        if(empty($data['matrix_user_id']) || empty($data['matrix_token']) || empty($data['matrix_room_id'])){
             return false;
         }
-        if($data['status'] == 'Pending'){
-            return true;
-        }
-        $postData = [];
+        $postData = [
+            'reason'=>'User not interested',
+            'user_id'=>$data['matrix_user_id']
+        ];
         $roomId  = $this->validRoomId($data['matrix_room_id']);
         $http = new Client();
-        if($data['status'] == 'Joined'){ 
-            $url = $this->config('url') .DS.$this->config('client').DS.'join'. DS.$roomId.'?access_token='.$data['matrix_token'];
-        }elseif($data['status'] == 'Invite'){
-            return true;
-            $url = $this->config('url') .DS.$this->config('client').DS.'rooms'. DS.$roomId.DS.'invite?access_token='.$data['matrix_token'];
-            $postData = ['user_id'=>$data['matrix_user_id']];
-        }else{
-            return true;
-            $url = $this->config('url') .DS.$this->config('client').DS.'rooms'. DS.$roomId.DS.'leave?access_token='.$data['matrix_token'];
-        }
+        $url = $this->config('url') .DS.$this->config('client').DS.'rooms'. DS.$roomId.DS.'ban?access_token='.$data['matrix_token'];
         $httpResponse = $http->post(
             $url, 
             json_encode($postData), 
@@ -536,10 +530,8 @@ class MatrixComponent extends Component {
         $response = json_decode($httpResponse->body,true);
         if(!empty($response['errcode'])){
             return $this->errorMsg($response['errcode']);
-        }elseif(!empty($response['room_id'])){
-            return true;
         }else{
-            return false;
+            return true;
         }
     }
     
@@ -553,13 +545,56 @@ class MatrixComponent extends Component {
     public function errorMsg($errorCode){
         $messages = [
             'M_FORBIDDEN'=>__('You are not invited to this room'),
-            'M_UNRECOGNIZED'=>__('Invalid request')
+            'M_UNRECOGNIZED'=>__('Invalid request'),
+            'M_BAD_STATE'=>__('Cannot ban user who was banned')
         ];
         if(array_key_exists($errorCode, $messages)){
             return $messages[$errorCode];
         }else{
             return __('Invalid request.');
-        }
+        }        
+    }
+    
+    public function deleteRoom($roomId){
+        $conn = \Cake\Datasource\ConnectionManager::get('matrix');
+        $results = $conn->execute('Select * from rooms LIMIT 10')->fetchAll('assoc');;
+        pj($results);die;
+        die();
+        $conn->transactional(function ($conn)use($roomId) {
+            $conn->delete('event_forward_extremities',['room_id IN'=>$roomId]);
+            $conn->delete('event_backward_extremities',['room_id IN'=>$roomId]);
+            $conn->delete('event_edges',['room_id IN'=>$roomId]);
+            $conn->delete('room_depth',['room_id IN'=>$roomId]);
+            $conn->delete('state_forward_extremities',['room_id IN'=>$roomId]);
+            $conn->delete('events',['room_id IN'=>$roomId]);
+            $conn->delete('event_json',['room_id IN'=>$roomId]);
+            $conn->delete('state_events',['room_id IN'=>$roomId]);
+            $conn->delete('current_state_events',['room_id IN'=>$roomId]);
+            $conn->delete('room_memberships',['room_id IN'=>$roomId]);
+            $conn->delete('feedback',['room_id IN'=>$roomId]);
+            $conn->delete('topics',['room_id IN'=>$roomId]);
+            $conn->delete('room_names',['room_id IN'=>$roomId]);
+            $conn->delete('rooms',['room_id IN'=>$roomId]);
+            $conn->delete('room_hosts',['room_id IN'=>$roomId]);
+            $conn->delete('room_aliases',['room_id IN'=>$roomId]);
+            $conn->delete('state_groups',['room_id IN'=>$roomId]);
+            $conn->delete('state_groups_state',['room_id IN'=>$roomId]);
+            $conn->delete('receipts_graph',['room_id IN'=>$roomId]);
+            $conn->delete('receipts_linearized',['room_id IN'=>$roomId]);
+            $conn->delete('guest_access',['room_id IN'=>$roomId]);
+            $conn->delete('history_visibility',['room_id IN'=>$roomId]);
+            $conn->delete('room_tags',['room_id IN'=>$roomId]);
+            $conn->delete('room_tags_revisions',['room_id IN'=>$roomId]);
+            $conn->delete('room_account_data',['room_id IN'=>$roomId]);
+            $conn->delete('event_push_actions',['room_id IN'=>$roomId]);
+            $conn->delete('local_invites',['room_id IN'=>$roomId]);
+            $conn->delete('pusher_throttle',['room_id IN'=>$roomId]);
+            $conn->delete('event_reports',['room_id IN'=>$roomId]);
+            $conn->delete('public_room_list_stream',['room_id IN'=>$roomId]);
+            $conn->delete('stream_ordering_to_exterm',['room_id IN'=>$roomId]);
+            $conn->delete('event_auth',['room_id IN'=>$roomId]);
+            $conn->delete('appservice_room_list',['room_id IN'=>$roomId]);
+        });
         
     }
 
