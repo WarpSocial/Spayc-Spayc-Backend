@@ -140,6 +140,7 @@ class SpaycsController extends AppController {
                     TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
                 }
                 $this->response->statusCode(201);
+                $data['id'] = $items->id;
                 $response = ['status'=>'success','message'=>__('SubSpayc Created Successfully'),'data'=>$data];
                 /*Event to bind to update the set upload room image */
                 $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
@@ -699,7 +700,8 @@ class SpaycsController extends AppController {
                         return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin']);
                     },
                     'SubscribedUsers' => function($q) {
-                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
+                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])
+                                ->where(['SubscribedUsers.status'=>'Active']);
                     },
                     'Comments' => function($q) {
                         return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);                        

@@ -287,9 +287,9 @@ class UsersController extends AppController {
         $this->loadComponent('Api.Matrix');
         $data = $this->request->getData();
         $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';
-        $data['current_latitude'] = Utils::getVar('latitude', $data);
-        $data['current_longitude'] = Utils::getVar('longitude', $data);
-        $items = $this->Users->patchEntity($entity, $data);
+        $data['physical_location']['current_latitude'] = Utils::getVar('latitude', $data);
+        $data['physical_location']['current_longitude'] = Utils::getVar('longitude', $data);
+        $items = $this->Users->patchEntity($entity, $data,['associated'=>['PhysicalLocation']]);
         if($items->errors()) {
             $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
         }
@@ -306,7 +306,9 @@ class UsersController extends AppController {
         $items->set('matrix_user_id', $matrix['user_id']);
         $items->set('matrix_access_token', $matrix['access_token']);
         #echo $data['token_verification'];die;
-        if ($this->Users->save($items)) {           
+        if ($this->Users->save($items)) {
+            //$pl = TableRegistry::get('Api.PhysicalLocation')->newEntity();
+            //->save($items);
             $this->getMailer('Api.User')->send('signup', [$items]);
             $response = ['status' => "success", 'message' => __('Registration done successfully.'), 'data' =>
                 [
@@ -401,9 +403,10 @@ class UsersController extends AppController {
             $data['username'] = \Cake\Utility\Inflector::slug($data['username']).'_'.time();
             $entity = $this->Users->newEntity();
         }
-        $data['current_latitude'] = Utils::getVar('latitude', $data);
-        $data['current_longitude'] = Utils::getVar('longitude', $data);
-        $items = $this->Users->patchEntity($entity, $data, ['validate' => 'facebookSignup']);
+        $data['physical_location']['current_latitude'] = Utils::getVar('latitude', $data);
+        $data['physical_location']['current_longitude'] = Utils::getVar('longitude', $data);
+        $items = $this->Users->patchEntity($entity, $data,['validate' => 'facebookSignup','associated'=>['PhysicalLocation']]);
+        
         if($items->errors()) {
             $this->restException(['status' => "failed", 'message' => $this->mapErrors($items->errors())], 400);
         }
@@ -1020,20 +1023,33 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
         $data  = $this->request->getData();
-        
         $errors = $this->Users->validateLatLong($data);        
         if(!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
+        $lat = $data['latitude'];
+        $long = $data['longitude'];
         $user = $this->Auth->user();
-        $query = $this->Users->query()
+        $distance = str_replace(':long',$long,str_replace(':lat', $lat, $this->Users->Spaycs->distanceInMiles));
+        
+        $query = TableRegistry::get('Api.JoinedSpayc')->find()
+                ->select(['JoinedSpayc.id','JoinedSpayc.user_id','JoinedSpayc.spayc_id'])
+                ->contain(['Spaycs'=>function($q)use($distance){
+                    $miles= Configure::read('miles');
+                    return $q->select(['distance'=>$distance])->where([$distance.' <='=>$miles]);
+                            
+                }])
+                ->where(['JoinedSpayc.user_id'=>$user['id']]);
+      
+        pj($query->toArray());die;
+        $query = $this->Users->PhysicalLocation->query()
                 ->update()
                 ->set([
                     'current_latitude'=>$data['latitude'],
                     'current_longitude'=>$data['longitude'],
                     'modified' => date('Y-m-d H:i:s')
                 ])
-                ->where(['id'=>$user['id']])
+                ->where(['user_id'=>$user['id']])
                 ->execute();
         if($query){
             $response = ['status'=>'success', 'message'=>__('Request has been updated successfully.')];

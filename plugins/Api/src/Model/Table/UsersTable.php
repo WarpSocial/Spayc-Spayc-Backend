@@ -57,6 +57,10 @@ class UsersTable extends Table {
             'foreignKey' => 'user_id',
             'className' => 'Api.JoinedSpayc'
         ]);
+        $this->hasOne('PhysicalLocation', [
+            'foreignKey' => 'user_id',
+            'className' => 'Api.PhysicalLocation'
+        ]);
         $this->hasMany('SubscribedUsers', [
             'foreignKey' => 'user_id',
             'className' => 'Api.SubscribedUsers'

@@ -11,6 +11,7 @@ DROP TABLE "subscribed_users";
 DROP TABLE "user_images";
 DROP TABLE "user_logs";
 DROP TABLE "users";
+DROP TABLE "physical_location";
 
 CREATE TABLE users (
     id BIGSERIAL NOT NULL,
@@ -171,6 +172,16 @@ CREATE TABLE notifications (
     PRIMARY KEY (id,created)
 );
 SELECT create_hypertable('notifications', 'created');
+
+CREATE TABLE physical_location (
+    "id" BIGSERIAL NOT NULL,
+    "user_id" BIGINT NOT NULL,
+    "current_latitude" double precision,
+    "current_longitude" double precision,
+    "created" timestamp DEFAULT NULL,
+    "modified" timestamp DEFAULT NULL,
+    PRIMARY KEY (id,user_id)
+);
 
 CREATE TABLE "notification_types" (
     "id" BIGSERIAL NOT NULL,

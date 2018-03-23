@@ -5,6 +5,7 @@ return [
     'spayctype'=>['Event', 'Community'],
     'grouptype'=>['Public', 'Private'],
     'pagelimit'=>5,
+    'miles'=>1,
     'friend_requested_status'=>['Pending', 'Accepted', 'Blocked','Unblock','is_direct','Decline','Unfriend'],
     'requestMsg'=>[
         'Pending'=>'Friend Request sent Successfully.',
