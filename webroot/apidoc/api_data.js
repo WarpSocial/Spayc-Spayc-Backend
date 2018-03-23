@@ -1286,6 +1286,144 @@ define({ "api": [
     }
   },
   {
+    "type": "get",
+    "url": "/physical-present-spaycs.json?page=:page&limit=:limit&latitude=:latitude&longitude=:longitude",
+    "title": "Physically Present Spayces",
+    "version": "0.1.0",
+    "name": "getnearAboutSpayces",
+    "group": "Spayc",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>Get list of spayces which is near about that logged user.Listing will be ordered on distance and if distance will be same then on created.</p> ",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "page",
+            "description": "<p>Page number in query string (Optional).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>Limit in query string (Optional).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "latitude",
+            "description": "<p>Latitude of current user (Optional).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "longitude",
+            "description": "<p>Longitude of current user (Optional).</p> "
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p> "
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>List of Spaycs.</p> "
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>List of Spaycs.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"List of Spaycs.\",\n    \"data\": [\n        {\n            \"id\": \"95\",\n            \"name\": \"My Sub 8 March\",\n            \"location\": null,\n            \"matrix_room_id\": \"!xLfsiKaFDCBlLNyuAi:spayc-dev.kiwireader.com\",\n            \"start_date\": \"03-07-2018 18:32:16\",\n            \"end_date\": \"04-07-2018 18:32:34\",\n            \"image\": null,\n            \"type\": \"Event\",\n            \"group_type\": \"Public\",\n            \"passcode\": \"\",\n            \"user_id\": 6,\n            \"distance\": \"8266.679\",\n            \"subscribed_users\": 0,\n            \"friends\": 0,\n            \"joined_spayc_status\": null,\n            \"is_joined\": false,\n            \"joined_users\": 0,\n            \"is_subscribed\": false,\n            \"total_comments\": 0\n        }\n    ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/spayc.js",
+    "groupTitle": "Spayc",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/physical-present-spaycs.json?page=:page&limit=:limit&latitude=:latitude&longitude=:longitude"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p> "
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p> "
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
     "type": "post",
     "url": "/ban-spayc-member.json",
     "title": "Ban Spayc Member",
