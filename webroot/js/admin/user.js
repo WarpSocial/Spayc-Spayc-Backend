@@ -83,7 +83,7 @@ jQuery(document).ready(function ($) {
     $('#forgotCancel').on('click', function () { 
       $('.input-alert').text('');
       $('input').removeClass('incorrect-alert');
-      $('#ForgetPasswordFrm #email').val('');
+      $("#ForgetPasswordFrm input[name='email']").val('');
     }); 
 
     $('#change_password_form').submit(function(e){  

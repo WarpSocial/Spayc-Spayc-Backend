@@ -38,20 +38,7 @@ class User extends Entity {
         '*' => true,
         'id' => false
     ];
-
-    /**
-     * Fields that are excluded from JSON versions of the entity.
-     *
-     * @var array
-     */
-    /*protected $_hidden = [
-        'password'
-    ];*/
-
-    protected function _setPassword($password) {
-        return ApiHasher::hash($password);
-    }
-
+    
     protected function _setDob($dob) {
         if (!empty($dob)) {            
             $dob = \Cake\I18n\Time::createFromFormat('m-d-Y',$dob);

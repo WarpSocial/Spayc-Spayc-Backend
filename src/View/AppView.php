@@ -37,7 +37,7 @@ class AppView extends View
     public function initialize()
     {
         $errorTemplates = [
-         'error' => '<div class="input-alert">{{content}}</div>',
+         'error' => '<small class="input-alert">{{content}}</small>',
         ];
         $this->Form->setTemplates($errorTemplates);
     }
