@@ -4,14 +4,14 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * Role Entity
+ * Hashtag Entity
  *
  * @property int $id
- * @property string $title
- *
- * @property \App\Model\Entity\User[] $users
+ * @property string $name
+ * @property \Cake\I18n\FrozenTime $created
+ * @property \Cake\I18n\FrozenTime $modified
  */
-class Role extends Entity
+class Hashtag extends Entity
 {
 
     /**

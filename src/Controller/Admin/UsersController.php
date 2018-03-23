@@ -198,27 +198,40 @@ class UsersController extends AdminController
         
         $keyword=($this->request->query('keyword'))?trim($this->request->query('keyword')):'';
         $query=$this->Users->find()
-            ->where(['Users.role_id IS'=> null]);
-            // ->contain([            
-            //     'JoinedSpayc'=>function($q) {
-            //         return $q->select(['JoinedSpayc.user_id', 'joined_spaycs'=>$q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.user_id']);
-            //     },
-            //     'Spaycs'=>function($q) {
-            //         return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id'])->where(['Spaycs.group_type !='=>'trusted_private' ]);
-            //     },
-            //     'Requestedby' => function($q) use($id,$loggedUser) {
-            //        return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_status', 'Requestedby.requested_to', 'Requestedby.matrix_room_id'])->Where(['requested_status'=>FRIEND_REQUESTED_STATUS]);
-            //     },
-            //    'Requestedto' => function($q) use($id) {
-            //        return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.matrix_room_id'])->Where(['requested_status'=>FRIEND_REQUESTED_STATUS]);
-            //     }
-            // ]);  
+            ->where(['Users.role_id IS'=> null])
+            ->contain([            
+                'JoinedSpayc'=>function($q) {
+                    return $q->select(['JoinedSpayc.user_id', 'joined_spaycs'=>$q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.user_id']);
+                },
+                'Spaycs'=>function($q) {
+                    return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id'])->where(['Spaycs.group_type !='=>'trusted_private' ]);
+                },
+                // 'Requestedby' => function($q) {
+                //    return $q->select(['Requestedby.requested_by','totalBy'=>$q->func()->count('Requestedby.id')])->group(['Requestedby.user_id'])->Where(['requested_status'=>FRIEND_REQUESTED_STATUS]);
+                // },
+                'Requestedby' => function($q) {
+                   return $q->select(['Requestedby.requested_by','count' => $q->func()->count('Requestedby.id')])->group(['Requestedby.requested_by'])->Where(['requested_status'=>FRIEND_REQUESTED_STATUS]);
+                },
+               
+                'Requestedto' => function($q) {
+                   return $q->select(['Requestedto.requested_to','count' => $q->func()->count('Requestedto.id')])->group(['Requestedto.requested_to'])->Where(['requested_status'=>FRIEND_REQUESTED_STATUS]);
+                }
+              
+            ]);  
+
+        $query->formatResults(function (\Cake\Collection\CollectionInterface $results) {
+            return $results->map(function ($row) {
+                $row->friend = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
+                $row->friend = !empty($row['requestedby'][0]) && empty($row->friend)? $row['requestedby'][0] : $row->friend;
+                return $row;
+            });
+        });
 
         if(!empty($keyword)){
             $query->where(['OR' => [['username LIKE' => "%".$keyword."%"], ['email LIKE' => "%".$keyword."%"]]]);
         } 
         $users = $this->paginate($query);    
-        //pr($users);die;
+        pr($users);die;
         $this->set(compact('users','keyword'));
         $this->set('_serialize', ['users']);
     }

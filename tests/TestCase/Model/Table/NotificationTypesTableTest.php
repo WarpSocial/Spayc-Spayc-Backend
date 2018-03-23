@@ -1,22 +1,22 @@
 <?php
 namespace App\Test\TestCase\Model\Table;
 
-use App\Model\Table\UserImagesTable;
+use App\Model\Table\NotificationTypesTable;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Model\Table\UserImagesTable Test Case
+ * App\Model\Table\NotificationTypesTable Test Case
  */
-class UserImagesTableTest extends TestCase
+class NotificationTypesTableTest extends TestCase
 {
 
     /**
      * Test subject
      *
-     * @var \App\Model\Table\UserImagesTable
+     * @var \App\Model\Table\NotificationTypesTable
      */
-    public $UserImages;
+    public $NotificationTypes;
 
     /**
      * Fixtures
@@ -24,17 +24,7 @@ class UserImagesTableTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'app.user_images',
-        'app.users',
-        'app.user_logs',
-        'app.joined_spayc',
-        'app.spaycs',
-        'app.matrix_rooms',
-        'app.subscribed_users',
-        'app.requestedby',
-        'app.requestedto',
-        'app.friend_request',
-        'app.roles'
+        'app.notification_types'
     ];
 
     /**
@@ -45,8 +35,8 @@ class UserImagesTableTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $config = TableRegistry::exists('UserImages') ? [] : ['className' => UserImagesTable::class];
-        $this->UserImages = TableRegistry::get('UserImages', $config);
+        $config = TableRegistry::exists('NotificationTypes') ? [] : ['className' => NotificationTypesTable::class];
+        $this->NotificationTypes = TableRegistry::get('NotificationTypes', $config);
     }
 
     /**
@@ -56,7 +46,7 @@ class UserImagesTableTest extends TestCase
      */
     public function tearDown()
     {
-        unset($this->UserImages);
+        unset($this->NotificationTypes);
 
         parent::tearDown();
     }
@@ -77,16 +67,6 @@ class UserImagesTableTest extends TestCase
      * @return void
      */
     public function testValidationDefault()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
-
-    /**
-     * Test buildRules method
-     *
-     * @return void
-     */
-    public function testBuildRules()
     {
         $this->markTestIncomplete('Not implemented yet.');
     }

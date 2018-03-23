@@ -4,25 +4,32 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * UserLog Entity
+ * Spayc Entity
  *
  * @property int $id
  * @property int $user_id
- * @property string $token
- * @property string $plain_token
- * @property string $device_id
- * @property string $matrix_access_token
- * @property string $matrix_user_id
- * @property int $login_status
- * @property \Cake\I18n\FrozenTime $last_login
+ * @property string $name
+ * @property string $location
+ * @property string $type
+ * @property string $group_type
+ * @property \Cake\I18n\FrozenTime $start_date
+ * @property \Cake\I18n\FrozenTime $end_date
+ * @property string $passcode
+ * @property string $description
+ * @property string $image
+ * @property float $longitude
+ * @property float $latitude
+ * @property string $status
+ * @property string $matrix_room_id
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
+ * @property int $parent_id
  *
  * @property \App\Model\Entity\User $user
- * @property \App\Model\Entity\Device $device
- * @property \App\Model\Entity\MatrixUser $matrix_user
+ * @property \App\Model\Entity\MatrixRoom $matrix_room
+ * @property \App\Model\Entity\ParentSpayc $parent_spayc
  */
-class UserLog extends Entity
+class Spayc extends Entity
 {
 
     /**
@@ -37,14 +44,5 @@ class UserLog extends Entity
     protected $_accessible = [
         '*' => true,
         'id' => false
-    ];
-
-    /**
-     * Fields that are excluded from JSON versions of the entity.
-     *
-     * @var array
-     */
-    protected $_hidden = [
-        'token'
     ];
 }

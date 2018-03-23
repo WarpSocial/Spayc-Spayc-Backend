@@ -1,22 +1,22 @@
 <?php
 namespace App\Test\TestCase\Model\Table;
 
-use App\Model\Table\UserImagesTable;
+use App\Model\Table\SpaycsTable;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Model\Table\UserImagesTable Test Case
+ * App\Model\Table\SpaycsTable Test Case
  */
-class UserImagesTableTest extends TestCase
+class SpaycsTableTest extends TestCase
 {
 
     /**
      * Test subject
      *
-     * @var \App\Model\Table\UserImagesTable
+     * @var \App\Model\Table\SpaycsTable
      */
-    public $UserImages;
+    public $Spaycs;
 
     /**
      * Fixtures
@@ -24,17 +24,17 @@ class UserImagesTableTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'app.user_images',
+        'app.spaycs',
         'app.users',
         'app.user_logs',
+        'app.user_images',
         'app.joined_spayc',
-        'app.spaycs',
-        'app.matrix_rooms',
         'app.subscribed_users',
         'app.requestedby',
         'app.requestedto',
         'app.friend_request',
-        'app.roles'
+        'app.roles',
+        'app.matrix_rooms'
     ];
 
     /**
@@ -45,8 +45,8 @@ class UserImagesTableTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $config = TableRegistry::exists('UserImages') ? [] : ['className' => UserImagesTable::class];
-        $this->UserImages = TableRegistry::get('UserImages', $config);
+        $config = TableRegistry::exists('Spaycs') ? [] : ['className' => SpaycsTable::class];
+        $this->Spaycs = TableRegistry::get('Spaycs', $config);
     }
 
     /**
@@ -56,7 +56,7 @@ class UserImagesTableTest extends TestCase
      */
     public function tearDown()
     {
-        unset($this->UserImages);
+        unset($this->Spaycs);
 
         parent::tearDown();
     }

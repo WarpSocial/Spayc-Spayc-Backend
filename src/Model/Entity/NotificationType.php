@@ -4,14 +4,16 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * Role Entity
+ * NotificationType Entity
  *
  * @property int $id
- * @property string $title
- *
- * @property \App\Model\Entity\User[] $users
+ * @property string $type
+ * @property string $message
+ * @property string $slug
+ * @property \Cake\I18n\FrozenTime $created
+ * @property \Cake\I18n\FrozenTime $modified
  */
-class Role extends Entity
+class NotificationType extends Entity
 {
 
     /**

@@ -64,16 +64,19 @@ class UsersTable extends Table
         ]);        
         $this->hasMany('Requestedby', [
             'foreignKey' => 'requested_by',
-            'joinType' => 'INNER'
+            'joinType' => 'INNER',
+            'className' => 'FriendRequest'
         ]);
         $this->hasMany('Requestedto', [
             'foreignKey' => 'requested_to',
-            'joinType' => 'INNER'
+            'joinType' => 'INNER',
+            'className' => 'FriendRequest'
         ]);        
         $this->hasMany('FriendRequest', [
             'foreignKey' => 'requested_by',
             'targetForeignKey'=>'requested_to',
-            'joinType' => 'INNER'
+            'joinType' => 'INNER',
+            'className' => 'FriendRequest'
         ]);        
         $this->hasMany('Users', [
             'foreignKey' => 'user_id'

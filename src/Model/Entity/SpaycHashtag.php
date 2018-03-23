@@ -4,14 +4,18 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * Role Entity
+ * SpaycHashtag Entity
  *
  * @property int $id
- * @property string $title
+ * @property int $spayc_id
+ * @property int $hashtag_id
+ * @property \Cake\I18n\FrozenTime $created
+ * @property \Cake\I18n\FrozenTime $modified
  *
- * @property \App\Model\Entity\User[] $users
+ * @property \App\Model\Entity\Spayc $spayc
+ * @property \App\Model\Entity\Hashtag $hashtag
  */
-class Role extends Entity
+class SpaycHashtag extends Entity
 {
 
     /**

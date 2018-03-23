@@ -1,22 +1,22 @@
 <?php
 namespace App\Test\TestCase\Model\Table;
 
-use App\Model\Table\UserImagesTable;
+use App\Model\Table\SpaycHashtagsTable;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Model\Table\UserImagesTable Test Case
+ * App\Model\Table\SpaycHashtagsTable Test Case
  */
-class UserImagesTableTest extends TestCase
+class SpaycHashtagsTableTest extends TestCase
 {
 
     /**
      * Test subject
      *
-     * @var \App\Model\Table\UserImagesTable
+     * @var \App\Model\Table\SpaycHashtagsTable
      */
-    public $UserImages;
+    public $SpaycHashtags;
 
     /**
      * Fixtures
@@ -24,17 +24,19 @@ class UserImagesTableTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'app.user_images',
+        'app.spayc_hashtags',
+        'app.spaycs',
         'app.users',
         'app.user_logs',
+        'app.user_images',
         'app.joined_spayc',
-        'app.spaycs',
-        'app.matrix_rooms',
         'app.subscribed_users',
         'app.requestedby',
         'app.requestedto',
         'app.friend_request',
-        'app.roles'
+        'app.matrix_rooms',
+        'app.roles',
+        'app.hashtags'
     ];
 
     /**
@@ -45,8 +47,8 @@ class UserImagesTableTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $config = TableRegistry::exists('UserImages') ? [] : ['className' => UserImagesTable::class];
-        $this->UserImages = TableRegistry::get('UserImages', $config);
+        $config = TableRegistry::exists('SpaycHashtags') ? [] : ['className' => SpaycHashtagsTable::class];
+        $this->SpaycHashtags = TableRegistry::get('SpaycHashtags', $config);
     }
 
     /**
@@ -56,7 +58,7 @@ class UserImagesTableTest extends TestCase
      */
     public function tearDown()
     {
-        unset($this->UserImages);
+        unset($this->SpaycHashtags);
 
         parent::tearDown();
     }

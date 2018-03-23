@@ -4,14 +4,22 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * Role Entity
+ * FriendRequest Entity
  *
  * @property int $id
- * @property string $title
+ * @property int $requested_by
+ * @property int $requested_to
+ * @property string $requested_status
+ * @property string $friend_status
+ * @property \Cake\I18n\FrozenTime $created
+ * @property \Cake\I18n\FrozenTime $modified
+ * @property string $matrix_room_id
+ * @property int $blocked_by
+ * @property int $action_by
  *
- * @property \App\Model\Entity\User[] $users
+ * @property \App\Model\Entity\MatrixRoom $matrix_room
  */
-class Role extends Entity
+class FriendRequest extends Entity
 {
 
     /**

@@ -1,22 +1,22 @@
 <?php
 namespace App\Test\TestCase\Model\Table;
 
-use App\Model\Table\UserImagesTable;
+use App\Model\Table\NotificationsTable;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Model\Table\UserImagesTable Test Case
+ * App\Model\Table\NotificationsTable Test Case
  */
-class UserImagesTableTest extends TestCase
+class NotificationsTableTest extends TestCase
 {
 
     /**
      * Test subject
      *
-     * @var \App\Model\Table\UserImagesTable
+     * @var \App\Model\Table\NotificationsTable
      */
-    public $UserImages;
+    public $Notifications;
 
     /**
      * Fixtures
@@ -24,16 +24,17 @@ class UserImagesTableTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'app.user_images',
+        'app.notifications',
+        'app.spaycs',
         'app.users',
         'app.user_logs',
+        'app.user_images',
         'app.joined_spayc',
-        'app.spaycs',
-        'app.matrix_rooms',
         'app.subscribed_users',
         'app.requestedby',
         'app.requestedto',
         'app.friend_request',
+        'app.matrix_rooms',
         'app.roles'
     ];
 
@@ -45,8 +46,8 @@ class UserImagesTableTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $config = TableRegistry::exists('UserImages') ? [] : ['className' => UserImagesTable::class];
-        $this->UserImages = TableRegistry::get('UserImages', $config);
+        $config = TableRegistry::exists('Notifications') ? [] : ['className' => NotificationsTable::class];
+        $this->Notifications = TableRegistry::get('Notifications', $config);
     }
 
     /**
@@ -56,7 +57,7 @@ class UserImagesTableTest extends TestCase
      */
     public function tearDown()
     {
-        unset($this->UserImages);
+        unset($this->Notifications);
 
         parent::tearDown();
     }

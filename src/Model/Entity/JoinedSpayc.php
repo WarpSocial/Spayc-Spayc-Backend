@@ -4,14 +4,21 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * Role Entity
+ * JoinedSpayc Entity
  *
  * @property int $id
- * @property string $title
+ * @property int $spayc_id
+ * @property int $user_id
+ * @property string $status
+ * @property \Cake\I18n\FrozenTime $created
+ * @property \Cake\I18n\FrozenTime $modified
+ * @property int $updated_by
+ * @property int $is_admin
  *
- * @property \App\Model\Entity\User[] $users
+ * @property \App\Model\Entity\Spayc $spayc
+ * @property \App\Model\Entity\User $user
  */
-class Role extends Entity
+class JoinedSpayc extends Entity
 {
 
     /**

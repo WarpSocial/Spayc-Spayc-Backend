@@ -4,14 +4,19 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * Role Entity
+ * UserImage Entity
  *
  * @property int $id
- * @property string $title
+ * @property int $user_id
+ * @property string $image_url
+ * @property \Cake\I18n\FrozenTime $created
+ * @property \Cake\I18n\FrozenTime $modified
+ * @property string $is_profile
+ * @property int $order_index
  *
- * @property \App\Model\Entity\User[] $users
+ * @property \App\Model\Entity\User $user
  */
-class Role extends Entity
+class UserImage extends Entity
 {
 
     /**
