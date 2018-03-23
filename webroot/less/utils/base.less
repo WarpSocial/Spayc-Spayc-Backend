@@ -1,0 +1,279 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: @Poppins;
+  background: @base-background;
+	font-size: @basesize;
+	font-weight: @light;
+  color: @font-base;
+	overflow-x: hidden;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: @Poppins;
+}
+p{
+  font-size: @basesize;
+}
+button, input, optgroup, select, textarea {
+  font-family: @Poppins;
+  &:focus{
+    outline: none;
+  }
+}
+form {
+  width: 100%;
+}
+label {
+  margin-bottom: 0;
+}
+a:not([href]):not([tabindex]) {
+  color: @white;
+}
+.form-group {
+  margin: 0;
+  padding-bottom: 30px;
+  position: relative;
+  input.form-control {
+  height: 32px;
+  border: 0;
+  border-bottom: 1px solid @border-color;
+  border-radius: 0;
+  padding: 0;
+  font-family: @Poppins;
+  .rem-calc(13);
+    &:focus {
+      border-color: @border-color;
+    }
+  }
+  input.incorrect-alert {
+    border-color: @red;
+    &:focus {
+      border-color: @red;
+    }
+  }
+  .input-alert {
+    position: absolute;
+    display: block;
+    .rem-calc(11);
+    color: @red;
+    opacity: .8;
+    bottom: 0;
+    line-height: 11px;
+    height: 24px;
+  }
+}
+
+/*===================================
+*   button class
+===================================*/
+.btn-sm {
+  width: @btn-sm;
+}
+.btn-md {
+  width: @btn-md;
+}
+.btn-lg-lg {
+  width: @btn-lg;
+}
+/*===================================
+*   alert classes
+===================================*/
+.error-alert {
+  min-width: 330px;
+  height: 35px;
+  line-height: 35px;
+  opacity: 0.8;
+  padding: 0 20px;
+  position: relative;
+  background: @danger-alert-background;
+  color: @danger-alert-color;
+  border: solid 1px @danger-alert-border;
+  text-align: center;
+  .rem-calc(12);
+  display: block;
+}
+.error-login-page {
+  width: ~"calc(100% - 100px)";
+  top: 25px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.error-forgot-password-page {
+    width: ~"calc(100% - 100px)";
+    top: -40px;
+    position: absolute;
+}
+.header-alert{
+  bottom: -17px;
+}
+/*===================================
+*   success classes
+===================================*/
+.success-alert {
+  min-width: 330px;
+  height: 35px;
+  line-height: 35px;
+  opacity: 0.8;
+  padding: 0 30px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background: @success-alert-background;
+  color: @success-alert-color;
+  border: solid 1px @success-alert-border;
+  text-align: center;
+  .rem-calc(12);
+}
+.error-alert.error-login-page {
+  width: ~"calc(100% - 100px)";
+  top: 25px;
+}
+.error-alert.error-forgot-password-page {
+    width: ~"calc(100% - 100px)";
+    top: -40px;
+}
+.success-alert.header-alert{
+  bottom: -17px;
+}
+
+/*=================================
+*   content section
+=================================*/
+.content-wrapper{
+  .flex-display(flex);
+  .flex-wrap(wrap);
+  height: auto;
+  min-height: ~"calc(100vh - 192px)";
+  padding-top: 130px;
+
+}
+.content-wrapper.content-filter{
+  min-height: ~"calc(100vh - 294px)";
+}
+.content-wrapper.f-password-wrap{
+  min-height: ~"calc(100vh - 62px)";
+  padding-top: 65px;
+}
+
+/*==================================
+*   no data afound
+==================================*/
+.no-data-wrapper {
+  width: 100%;
+  .flex-display(flex);
+  .align-items(center);
+  .justify-content(center);
+  .flex-wrap(wrap);
+  .no-data{
+    text-align: center;
+    h2{
+      .rem-calc(20);
+      color: @blue;
+      display: block;
+      font-weight: @light;
+    }
+    p{
+      .rem-calc(14);
+      color: @blue;
+      display: block;
+      width: 241px;
+      height: auto;
+    }
+  }
+}
+/*============custom radio button============*/
+input[type=radio] {
+  width: 28px;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  display: none;
+}
+input[type=radio] + span {
+  width: 100%;
+  height: auto;
+  display: inline-block;
+  .rem-calc(12);
+  padding-left: 22px;
+  background: url('../images/radio-btn.png') no-repeat 0% 50%;
+  line-height: 17px;
+
+}
+input[type=radio]:checked + span {
+  width: 100%;
+  height: auto;
+  display: inline-block;
+  .rem-calc(12);
+  padding-left: 22px;
+  background: url('../images/radio-btn-active.png') no-repeat 0% 50%;
+  line-height: 17px;
+}
+/*===============keywords==================*/
+.keywords {
+  span {
+    width: auto;
+    height: 24px;
+    line-height: 24px;
+    padding:  0 25px 0 10px;
+    background: @keyword-bg;
+    margin:2px;
+    .rem-calc(11);
+    text-align: left;
+    font-weight: 400;
+    display: inline-block;
+    .border-radius(24px);
+    color:@keyword-color;
+    position: relative;
+    .close-keyword {
+      width: 8px;
+      height: 8px;
+      background: url('../images/close.png') no-repeat center center;
+      background-size: 8px;
+      display: inline-block;
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      margin-top: -4px;
+      opacity: .9;
+      cursor: pointer;
+    }
+  }
+}
+
+
+/*======================================
+* loader
+======================================*/
+.loader {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  background: rgba(0, 0, 0, .7);
+  display:block;
+  .loader-icon {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    border: 2px solid @white;
+    border-left-color: @blue;
+    .border-radius(50%);
+    left: 50%;
+    top: 50%;
+    margin-left: -20px;
+    margin-top: -20px;
+    animation: rotate 1s infinite linear;
+    box-sizing: border-box;
+  }
+  @keyframes rotate {
+    100% {
+      transform: rotate(1turn);
+    }
+  }
+  &.p-absolute {
+    position: absolute;
+  }
+}

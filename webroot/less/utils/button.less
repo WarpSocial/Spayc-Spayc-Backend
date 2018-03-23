@@ -1,0 +1,20 @@
+.button {
+  height: 44px;
+  line-height: 44px;
+  .border-radius (24px);
+  display: inline-block;
+  .linear-gradient_(89deg, #136f86, #231f20);
+  color: @green;
+  border: 0;
+  .rem-calc(14);
+  font-weight: @light;
+  cursor: pointer;
+  padding:0;
+  &:focus{
+    outline: 0;
+  }
+}
+button:disabled, input:disabled {
+  color: @disabled;
+  cursor: not-allowed;
+}
