@@ -467,7 +467,7 @@ class SpaycsController extends AppController {
                         return  $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'SubSpaycs.location', 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id']);
                     },
                     'JoinedSpayc' => function($q) {
-                        return  $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
+                        return  $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin']);
                     },
                     'Comments' => function($q) {
                         return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
@@ -493,32 +493,31 @@ class SpaycsController extends AppController {
                 $row['friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
                 //pj($row['joined_spayc']);die;
                 if(!empty($row['joined_spayc'])) {
-                    $status = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.'].status');
+                    $joinedStatus = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.']');
                 }
-                $row['joined_spayc_status'] = !empty($status[0])?$status[0]:null;
-//                if($userId==$row['user_id']) {
-//                    $row['joined_spayc_status'] = 'Joined';
-//                }
+                
+                 if(!empty($joinedStatus[0])){
+                    $row['joined_spayc_status'] = $joinedStatus[0]['status'];
+                    $row['is_admin'] = $joinedStatus[0]['is_admin'];
+                }else{
+                    $row['joined_spayc_status'] = null;
+                    $row['is_admin'] = null;
+                }
                 $row['joined_users'] =!empty($row['joined_spayc'])?count($row['joined_spayc']):0;
-                unset($row['joined_spayc']);
                 if(!empty($row['subscribed_users'])) {
                     $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');
                 }
                 $row['subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):0;
                 $row['is_subscribed'] = !empty($subUserId[0])?true:false;
                 $row['total_comments'] = !empty($row['comments'][0]['total_comment'])?$row['comments'][0]['total_comment']:0;
-                unset($row['comments']);
+                unset($row['comments'],$row['joined_spayc']);
                 $row['total_presents'] = 0;
                 return $row;
             });
         });
-        $data = [];
-        
+        $data = [];        
         if(!$spayc->isEmpty()) {
-            $data = $spayc->first();            
-            if($data->user_id == $userId){
-                $data->role = 2;
-            }
+            $data = $spayc->first();                        
         } else {
             $this->response->statusCode(204);
         }

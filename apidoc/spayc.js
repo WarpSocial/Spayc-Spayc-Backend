@@ -462,6 +462,7 @@ function postUnSubscribeSpayc() { return; }
         "friends": 0,
         "joined_spayc_status": "Joined",
         "joined_users": 1,
+        "is_admin": 1,
         "is_subscribed": false,
         "total_comments": 0,
         "total_presents": 0
@@ -632,7 +633,7 @@ function postChangeRole() { return; }
 @apiGroup Spayc
 @apiPermission private
 
-@apiDescription Join public and private spayc.For private spayc required passcode to join the spayc directly but due to some technical problem this will not work rest request will be proccessed.In case of private room if passcode is available status must be Joined else status will be Pending.
+@apiDescription Join public and private spayc.For private spayc required passcode to join the spayc directly.In case of private room if passcode is available status must be Joined else status will be Pending.
 
 * @apiHeader {String} TOKEN            * A token send by header as TOKEN
 * @apiHeader {String} timezone         * Current timezone
@@ -667,7 +668,7 @@ function postJoinSpayc() { return; }
 @apiGroup Spayc
 @apiPermission private
 
-@apiDescription Join public and private sub spayc.For private sub spayc required passcode to join the sub spayc directly but due to some technical problem this will not work rest request will be proccessed.In case of private room if passcode is available status must be Joined else status will be Pending.
+@apiDescription Join public and private sub spayc.For private sub spayc required passcode to join the sub spayc directly.In case of private room if passcode is available status must be Joined else status will be Pending.
 
 * @apiHeader {String} TOKEN            * A token send by header as TOKEN
 * @apiHeader {String} timezone            * Current timezone

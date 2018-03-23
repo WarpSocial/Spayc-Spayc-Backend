@@ -395,7 +395,7 @@ class SpaycsTable extends Table {
             'updated_by' => $adminUser,
             'created' => date("Y-m-d H:i:s"),
             'modified' => date("Y-m-d H:i:s"),
-            'is_admin'=>1
+            'is_admin'=>2 /* 2 for super admin */
         ];
         if(!empty($items['invite'])) {
             $invite  = explode(',',$items['invite']);
