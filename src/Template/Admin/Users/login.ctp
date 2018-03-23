@@ -22,7 +22,7 @@
               </div>
 
               <div class="mt-10 d-flex justify-content-between align-items-center">
-                <button type="button" class="forgot-password-text" data-toggle="modal" data-target="#forgotPassword">Forgot Password?</button>               
+                <button type="button" class="forgot-password-text" data-toggle="modal" data-target="#forgotPassword">Forgot Password?</button>
                  <?= $this->Form->button('Sign In', ['type' => 'submit','class'=>'button btn-md']); ?>               
                 <!--option-->
                 <!-- <a href="#" class="hide forgot-password-text" data-toggle="modal" data-target="#forgotPassword">Forgot Password?</a>-->
@@ -32,6 +32,6 @@
         </div>
       </div>
     </main>
-<?php echo $this->element('admin/signin/success');?>
+<?php echo $this->element('admin/signin/success',['loginUrl'=>$base_url_admin]);?>
 <?php echo $this->element('admin/signin/forgot_password');?>
 <?php echo $this->Html->script('admin/user'); ?>

@@ -135,7 +135,10 @@ class UsersController extends AdminController
     }
     
     public function login() {
-        $this->set('title', 'Admin Panel');        
+        $this->set('title', 'Admin Panel'); 
+        if($this->Auth->user('id')){
+            return $this->redirect($this->Auth->redirectUrl());       
+        }
         $user= $this->Users->newEntity();
         if ($this->request->is(['post','put'])) { 
             $data = $this->request->getData();
@@ -156,6 +159,7 @@ class UsersController extends AdminController
                 $user->errors($errors);
             }
         }
+        $this->set('base_url_admin',$this->base_url_admin);
         $this->set(compact('user'));
     }
 
@@ -193,18 +197,13 @@ class UsersController extends AdminController
         $this->set('title', 'Manage User');
         
         $keyword=($this->request->query('keyword'))?trim($this->request->query('keyword')):'';
-        // if ($this->request->is('post')) {
-        //     $keyword=$this->request->data['keyword'];
-        // }        
-        
         $query=$this->Users->find()
             ->where(['Users.role_id IS'=> null]);
-
         if(!empty($keyword)){
-               $query->where(['username LIKE' => "%".$keyword."%",'email LIKE' => "%".$keyword."%"]);
+            $query->where(['OR' => [['username LIKE' => "%".$keyword."%"], ['email LIKE' => "%".$keyword."%"]]]);
         }          
         $users = $this->paginate($query);    
-        //pr($users);die;
+        //pr($query);die;
         $this->set(compact('users','keyword'));
         $this->set('_serialize', ['users']);
     }

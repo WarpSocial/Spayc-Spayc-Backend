@@ -67,8 +67,8 @@ jQuery(document).ready(function ($) {
                success:function(data){                
                    if (data.result) {     
                         $( "#forgotCancel").trigger('click');                    
-                        $('#forgotPassword').modal('toggle');
-                        $('#success').modal('toggle');
+                        //$('#forgotPassword').modal('toggle');
+                        $('#success').modal({show: true});
                     } else { 
                         //email.val('');
                         $('#ForgetPasswordFrm #email').addClass('incorrect-alert');

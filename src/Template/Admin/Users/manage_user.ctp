@@ -9,23 +9,23 @@
         <!--===========filter================-->
       <div class="filters">
         <div class="container">
+      <form name="userFilterFrm" id="userFilterFrm" method="get" autocomplete="off">
           <div class="filter-wrapper">
             <!--============search dropdown========-->
-             <form name="userFilterFrm" id="userFilterFrm" method="get" autocomplete="off">
               <div class="search">
               <div class="form-group">
                 <input type="text" class="form-control" placeholder="Search" id="keyword" name="keyword" value="<?php echo $this->request->query('keyword'); ?>">
                 <span class="clear-search hide" id="clear-search"></span>
               </div>
             </div>
-            </form>
+            
            
             <div class="filter-by ml-auto">
               <h4>Fillter by</h4>
               <!--============filter dropdown========-->
               <div class="filter-box">
                 <div class="dropp-header js-dropp-action filter-sm">
-                  <span class="dropp-header__title js-value ell">Gender </span>
+                  <span class="dropp-header__title js-value ell" id="user_type">Gender </span>
                   <i class="icon icon-down-filter"></i>
                 </div>
                 <div class="dropp-body">
@@ -87,21 +87,26 @@
                 <button class="reset-filter">Reset</button>
             </div>
           </div>
+          </form>
         </div>
       </div>
       <!--============= table head ===================-->
       <div class="container">
         <div class="table-wrapper">
           <div class="table-head">
-            <div class="head-text flex-basis15 text-left"><span class="table-filter">User Info</span></div>
-            <div class="head-text flex-basis11"><span class="table-filter">Gender</span></div>
-            <div class="head-text flex-basis11"><span class="table-filter">Date of Birth</span></div>
+            <div class="head-text flex-basis15 text-left">
+            <span class="table-filter"><?php echo $this->Paginator->sort('username','User Info');?></span>
+            </div>
+            <div class="head-text flex-basis11">
+              <span class="table-filter"><?php echo $this->Paginator->sort('gender','Gender');?></span>
+            </div>
+            <div class="head-text flex-basis11"><span class="table-filter"><?php echo $this->Paginator->sort('dob','Date of Birth');?></span></div>
             <div class="head-text flex-basis15 text-left"><span>Location</span></div>
             <div class="head-text flex-basis9"><span>Spaycs Joined</span></div>
             <div class="head-text flex-basis9"><span>Spaycs Created</span></div>
             <div class="head-text flex-basis10"><span>Friends</span></div>
             <div class="head-text flex-basis14"><span>Advertisements</span></div>
-            <div class="head-text flex-basis10"><span class="table-filter">Registration Date</span></div>
+            <div class="head-text flex-basis10"><span class="table-filter"><?php echo $this->Paginator->sort('created','Registration Date');?></span></div>
             <div class="head-text flex-basis6"><span class="blank"></span></div>
           </div>
 
@@ -171,6 +176,16 @@
           <li><a href="#">5</a></li>
           <li><a class="next" href="#"></a></li>
         </ul>
+        <?php if($this->Paginator->params()['pageCount'] > 1) { ?>
+          <div class="text-center">
+            <div class="pagination table-pagination">
+              <?= $this->Paginator->prev('< ') ?>
+              <?= $this->Paginator->numbers(array('modulus' => 6)) ?>
+              <?= $this->Paginator->next(' >') ?>
+            </div>
+          </div>
+        <?php } ?>
+
       </div>
 </section>
 <?php echo $this->Html->script(['admin/admin-manage-user.js']); ?>
