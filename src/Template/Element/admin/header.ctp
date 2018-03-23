@@ -11,8 +11,8 @@ $controller_action = $this->request->param('action');
             <span class="navbar-toggler-icon"></span>
           </button>
           <a class="navbar-brand" href="#">
-            <img src="images/logo.png" alt="" title=""/>
-          </a>
+            <?php echo $this->Html->image("logo.png", ["alt" => ""]); ?>
+            </a>
           <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav ml-auto">
               <li class="nav-item <?php echo (($controller_name=='Users') && ($controller_action=='manageUser')) ? 'active' : '';?>">

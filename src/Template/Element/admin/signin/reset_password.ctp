@@ -1,6 +1,9 @@
 <div class="modal" id="resetPasswordModal">
 	<div class="modal-dialog" role="dialog">
 		<div class="modal-content">
+				<div class ="loader">
+					<div class="loader-icon"></div>
+				</div>
 			<span class="icon-close modal-close"></span>
 			<div class="signup-header">
 				<p>RESET PASSWORD</p>
