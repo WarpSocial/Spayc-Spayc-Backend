@@ -4,3 +4,7 @@
     left: 0;
     z-index: 1;
 }
+.modal a.button:hover, .modal a.button:hover{
+	color: #49ff00;
+	text-decoration: none;
+}

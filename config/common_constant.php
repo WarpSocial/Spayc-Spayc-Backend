@@ -4,6 +4,7 @@ define('ROLE_ADMIN',1);
 define('SITE_TITLE','spayc');
 define('PAGINATION_LIMIT',20);
 define('DATEFORMAT_DISPLAY','M d, Y');
+define('FRIEND_REQUESTED_STATUS','Accepted');
 define('BLANK','--');
 $config =array();
 $config['ERRORANDSUCCESSMSG'] = [

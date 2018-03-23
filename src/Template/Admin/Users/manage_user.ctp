@@ -167,7 +167,7 @@
           }
           ?>
         <!--===========pagination========-->
-        <ul class="pagination table-pagination">
+       <!--  <ul class="pagination table-pagination">
           <li><a href="#" class="prev"></a></li>
           <li><a href="#" class="active">1</a></li>
           <li><a href="#">2</a></li>
@@ -175,15 +175,13 @@
           <li><a href="#">4</a></li>
           <li><a href="#">5</a></li>
           <li><a class="next" href="#"></a></li>
-        </ul>
+        </ul> -->
         <?php if($this->Paginator->params()['pageCount'] > 1) { ?>
-          <div class="text-center">
-            <div class="pagination table-pagination">
+            <ul class="pagination table-pagination">
               <?= $this->Paginator->prev('< ') ?>
-              <?= $this->Paginator->numbers(array('modulus' => 6)) ?>
+              <?= $this->Paginator->numbers(array('modulus' => 4)) ?>
               <?= $this->Paginator->next(' >') ?>
-            </div>
-          </div>
+            </ul>
         <?php } ?>
 
       </div>
