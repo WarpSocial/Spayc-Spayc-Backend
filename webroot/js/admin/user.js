@@ -5,11 +5,8 @@ jQuery(document).ready(function ($) {
         $(this).parent().parent().find('.input-alert').text('')
       }
     });
-    // $(document).on("click", ".aaa", function(){
-    //   $("#cmnPoupUp").modal('hide');
-      
-    // }); 
-         
+    
+             
     $(document).on("click", ".pop", function(){
       var className = $(this).attr('name');
       if (typeof className !== typeof undefined && className !== false) {

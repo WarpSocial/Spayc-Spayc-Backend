@@ -5,6 +5,7 @@ define('SITE_TITLE','spayc');
 define('PAGINATION_LIMIT',20);
 define('DATEFORMAT_DISPLAY','M d, Y');
 define('FRIEND_REQUESTED_STATUS','Accepted');
+define('BLANK_COUNT',0);
 define('BLANK','--');
 $config =array();
 $config['ERRORANDSUCCESSMSG'] = [

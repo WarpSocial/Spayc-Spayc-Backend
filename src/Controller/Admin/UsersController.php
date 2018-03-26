@@ -194,7 +194,7 @@ class UsersController extends AdminController
         $this->set('base_url_admin',$this->base_url_admin);
     }
 
-    public function manageUser() {
+    public function manageUsers() {
         $this->set('title', 'Manage User');
         
         $keyword=($this->request->query('keyword'))?trim($this->request->query('keyword')):'';
@@ -205,25 +205,22 @@ class UsersController extends AdminController
                     return $q->select(['JoinedSpayc.user_id', 'joined_spaycs'=>$q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.user_id']);
                 },
                 'Spaycs'=>function($q) {
-                    return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id'])->where(['Spaycs.group_type !='=>'trusted_private' ]);
+                    return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id']);
                 },
-                // 'Requestedby' => function($q) {
-                //    return $q->select(['Requestedby.requested_by','totalBy'=>$q->func()->count('Requestedby.id')])->group(['Requestedby.user_id'])->Where(['requested_status'=>FRIEND_REQUESTED_STATUS]);
-                // },
                 'Requestedby' => function($q) {
-                   return $q->select(['Requestedby.requested_by','count' => $q->func()->count('Requestedby.id')])->group(['Requestedby.requested_by'])->Where(['requested_status'=>FRIEND_REQUESTED_STATUS]);
+                   return $q->select(['Requestedby.requested_by','count' => $q->func()->count('Requestedby.id')])->group(['Requestedby.requested_by'])->Where(['Requestedby.requested_status'=>FRIEND_REQUESTED_STATUS]);
                 },
-               
                 'Requestedto' => function($q) {
-                   return $q->select(['Requestedto.requested_to','count' => $q->func()->count('Requestedto.id')])->group(['Requestedto.requested_to'])->Where(['requested_status'=>FRIEND_REQUESTED_STATUS]);
+                   return $q->select(['Requestedto.requested_to','count' => $q->func()->count('Requestedto.id')])->group(['Requestedto.requested_to'])->Where(['Requestedto.requested_status'=>FRIEND_REQUESTED_STATUS]);
                 }
               
             ]);  
-
         $query->formatResults(function (\Cake\Collection\CollectionInterface $results) {
-            return $results->map(function ($row) {
-                $row->friend = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
-                $row->friend = !empty($row['requestedby'][0]) && empty($row->friend)? $row['requestedby'][0] : $row->friend;
+            return $results->map(function ($row) {                
+                $row->friend = !empty($row['requestedto'][0]['count'])? $row['requestedto'][0]['count'] : BLANK_COUNT;
+                $row->friend += !empty($row['requestedby'][0]['count'])? $row['requestedby'][0]['count'] : BLANK_COUNT;
+                unset($row['requestedby']);
+                unset($row['requestedto']);
                 return $row;
             });
         });
@@ -232,7 +229,7 @@ class UsersController extends AdminController
             $query->where(['OR' => [['username LIKE' => "%".$keyword."%"], ['email LIKE' => "%".$keyword."%"]]]);
         } 
         $users = $this->paginate($query);    
-        pr($users);die;
+        //pr($users);die;
         $this->set(compact('users','keyword'));
         $this->set('_serialize', ['users']);
     }
