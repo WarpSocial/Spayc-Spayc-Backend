@@ -50,5 +50,6 @@ $config['ERRORANDSUCCESSMSG'] = [
     40=>'System rejected to update the password.',
     41=>'Invalid user.',
     42=>'Missing required information. Please read email carefully and try again.',
+    43=>'Not a registered email.',
 
 ];

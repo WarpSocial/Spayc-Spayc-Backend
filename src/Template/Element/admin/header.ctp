@@ -41,6 +41,4 @@ $controller_action = $this->request->param('action');
         </div>
       </nav>      
   </header>
-        <div class ="loader hide">
-					<div class="loader-icon"></div>
-				</div>
+        

@@ -29,7 +29,7 @@ class UsersController extends AdminController
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
-        $this->Auth->allow(['login', 'logout','forgotPassword', 'resetPassword','getUserObj']);
+        $this->Auth->allow(['login', 'logout','forgotPassword', 'resetPassword','getUserObj', 'success']);
     }
 
     /**
@@ -191,6 +191,7 @@ class UsersController extends AdminController
 
     public function success() {
         $this->set('title', 'Change Password');
+        $this->set('base_url_admin',$this->base_url_admin);
     }
 
     public function manageUser() {
@@ -240,7 +241,7 @@ class UsersController extends AdminController
         $this->set('title', 'Forgot password'); 
         $this->viewBuilder()->layout('');
         $this->autoRender = false;
-        if ($this->request->is('ajax')) {
+        if ($this->request->is('post')) {
             $data_item = $this->request->data;           
             $error = array();
             if (!isset($data_item['email'])) {
@@ -257,13 +258,15 @@ class UsersController extends AdminController
                     $this->getMailer('User')->send('forgotPassword', [$user]);
                    $result_arr = ['result' => true, 'message' => $this->errorSuccessMessage['35']];
                 } else {
-                    $result_arr = ['result' => false, 'message' => $this->errorSuccessMessage['3']];
+                    $result_arr = ['result' => false, 'message' => $this->errorSuccessMessage['43']];
                 }
             } else {                
                 $result_arr = ['result' => false, 'message' => $error];
             }
             echo json_encode($result_arr);
             die;
+        } else {
+            $this->render('forgotPassword');
         }
     }
 
