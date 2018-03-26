@@ -6,6 +6,12 @@ jQuery(document).ready(function ($) {
       }
     });
     
+    if(!$('.error-alert').hasClass('hide') && ($('.error-alert').text().length > 0)){
+      $('.error-alert').delay(5000).fadeOut('slow', function () {
+        $('.error-alert').text('');
+        $('.error-alert').hide();
+      });
+    }
              
     $(document).on("click", ".pop", function(){
       var className = $(this).attr('name');

@@ -13,7 +13,7 @@
         </div>
     </div>
 </section>
-<?php } else { ?>
+<?php } else if(!$authUser && empty($page)){ ?>
 <div class="modal-body">              
   <?php echo $this->Html->image("success.png", ["alt" => "success", 'class' =>'success-reset mb-20']); ?>
   <p>
@@ -24,4 +24,18 @@
   <button type="button" class="button btn-md hide" data-dismiss="modal">ok</button>
    <a href="<?php echo $base_url_admin;?>" class="button btn-md">ok</a>
 </div>
+<?php } else if(!empty($page)) { ?>
+<main class="login-page">
+  <div class="login-wrapper">
+    <div class="image-screen"></div>
+    <div class="login-screen">
+      <div class="update-password-wrap">
+        <?php echo $this->Html->image("success.png", ["alt" => "success", 'class' =>'success-reset mb-20']); ?>
+        <p>New password has been<br /> updated successfully.</p>
+        <button type="submit" class="button btn-md hide" disabled>Proceed</button>
+        <a href="<?php echo $base_url_admin;?>" class="button btn-md">Proceed</a>
+      </div>  
+    </div>
+  </div>
+</main>
 <?php } ?>

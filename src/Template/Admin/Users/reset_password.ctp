@@ -6,7 +6,7 @@
              <div class="error-login-page"><?= $this->Flash->render(); ?></div>
              <?php echo $this->Form->create($user, ['id'=>'reset_password_form','autocomplete' => 'off','novalidate'=>'novalidate']); ?>
               <h1>Reset Password</h1>
-              <p class="mb-30">&nbsp;</p>
+              <p class="mb-30">Please enter a new password in the fields below.</p>
               
               <div class="form-group">                
                 <div class="password-wrap">                           

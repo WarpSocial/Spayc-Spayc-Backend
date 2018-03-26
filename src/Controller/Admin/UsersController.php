@@ -189,9 +189,10 @@ class UsersController extends AdminController
         $this->set(compact('user'));
     }
 
-    public function success() {
-        $this->set('title', 'Change Password');
-        $this->set('base_url_admin',$this->base_url_admin);
+    public function success($page = null) {
+        //$this->set('title', 'Change Password');
+        //$this->set('base_url_admin',$this->base_url_admin);
+        $this->set(['title' => 'Change Password','base_url_admin'=>$this->base_url_admin,'page' => $page]);
     }
 
     public function manageUsers() {
@@ -293,9 +294,8 @@ class UsersController extends AdminController
                 $user->forgot_password_token = null;
                 $user->forgot_password_timestamp = null;                
                 $user->password = ApiHasher::hash($data['new_password']);
-                if ($this->Users->save($user)) {                    
-                    $this->Flash->success(__($this->errorSuccessMessage['21']));
-                    return $this->redirect(['action' => 'login']);    
+                if ($this->Users->save($user)) {
+                    return $this->redirect(['action' => 'success','login']);    
                 } else {                    
                     $this->Flash->error(__($this->errorSuccessMessage['40']));
                     return $this->redirect(['action' => 'login']);    
