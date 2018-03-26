@@ -231,7 +231,7 @@ class UsersController extends AdminController
             $query->where(['OR' => [['username LIKE' => "%".$keyword."%"], ['email LIKE' => "%".$keyword."%"]]]);
         } 
         $users = $this->paginate($query);    
-        pr($users);die;
+        //pr($users);die;
         $this->set(compact('users','keyword'));
         $this->set('_serialize', ['users']);
     }
