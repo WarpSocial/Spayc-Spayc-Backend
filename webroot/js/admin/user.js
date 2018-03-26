@@ -55,10 +55,8 @@ jQuery(document).ready(function ($) {
         }
         return true;
     });
-
-
-    //$('#forget_password_btn').on('click', function (e) { 
-      $(document).on('click', '#forget_password_btn', function (e) {     
+   
+    $(document).on('submit', '#ForgetPasswordFrm', function (e) {       
         $('.input-alert').text('');
         $('.error-forgot-password-page').addClass('hide');
         $('input').removeClass('incorrect-alert');        
@@ -102,6 +100,7 @@ jQuery(document).ready(function ($) {
               ajax_error(e);
             }
            });
+          e.preventDefault();
         }  
     }); 
 

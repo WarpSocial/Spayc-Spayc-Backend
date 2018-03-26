@@ -52,5 +52,6 @@ $config['ERRORANDSUCCESSMSG'] = [
     41=>'Invalid user.',
     42=>'Missing required information. Please read email carefully and try again.',
     43=>'Not a registered email.',
+    44=>'A link to reset your password has been sent to your work email',
 
 ];

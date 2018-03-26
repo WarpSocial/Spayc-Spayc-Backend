@@ -245,7 +245,7 @@ class UsersController extends AdminController
         $this->set('title', 'Forgot password'); 
         $this->viewBuilder()->layout('');
         $this->autoRender = false;
-        if ($this->request->is('post')) {
+        if ($this->request->is('post')) {            
             $data_item = $this->request->data;           
             $error = array();
             if (!isset($data_item['email'])) {
@@ -260,7 +260,7 @@ class UsersController extends AdminController
                     $data['forgot_password_timestamp'] = time();
                     $d = $this->Users->updateAll($data, ['email'=>$user->email]);
                     $this->getMailer('User')->send('forgotPassword', [$user]);
-                   $result_arr = ['result' => true, 'message' => $this->errorSuccessMessage['35']];
+                   $result_arr = ['result' => true, 'message' => $this->errorSuccessMessage['44']];
                 } else {
                     $result_arr = ['result' => false, 'message' => $this->errorSuccessMessage['43']];
                 }
