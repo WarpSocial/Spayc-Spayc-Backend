@@ -508,8 +508,8 @@ input[type=radio]:checked + span {
     transform: rotate(1turn);
   }
 }
-.loader.show {
-  display: block;
+.loader.show-loader {
+  display: block !important;
 }
 /*========================================
 *     border
@@ -1342,6 +1342,12 @@ input:disabled {
 .table-wrapper .table-head .head-text span.table-filter a {
   color: #1a4c59;
   text-decoration: none;
+}
+.table-wrapper .table-head .head-text span.sort-asc:after {
+  background: url('../images/filter-up.png') no-repeat center center;
+}
+.table-wrapper .table-head .head-text span.sort-desc:after {
+  background: url('../images/filter-down.png') no-repeat center center;
 }
 .table-wrapper .table-row {
   width: 100%;
