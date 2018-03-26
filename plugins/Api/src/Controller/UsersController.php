@@ -1053,16 +1053,16 @@ class UsersController extends AppController {
                           ->execute();
              }
          }
-        $query = $this->Users->PhysicalLocation->query()
-                ->update()
-                ->set([
-                    'current_latitude'=>$data['latitude'],
-                    'current_longitude'=>$data['longitude'],
-                    'modified' => date('Y-m-d H:i:s')
-                ])
-                ->where(['user_id'=>$user['id']])
-                ->execute();
-        if($query){
+         $ple = $this->Users->PhysicalLocation->findByUserId($user['id']);
+         if($ple->isEmpty()){
+             $pl = $this->Users->PhysicalLocation->newEntity();
+             $pl->set('user_id',$user['id']);
+         }else{
+             $pl = $ple->first();             
+         }
+         $pl->set('current_latitude',$data['latitude']);
+         $pl->set('current_longitude',$data['longitude']);
+        if($this->Users->PhysicalLocation->save($pl,['validate'=>false,'checkRules'=>false,'atomic'=>false])){
             $response = ['status'=>'success', 'message'=>__('Request has been updated successfully.')];
         }else{
             $this->response->statusCode(400);

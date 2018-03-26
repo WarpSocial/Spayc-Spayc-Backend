@@ -32,6 +32,7 @@ class PhysicalLocation extends Entity
         'current_longitude' => true,
         'modified' => true,
         'updated_by' => true,
-        'user' => true
+        'user' => true,
+        'id'=>true
     ];
 }
