@@ -92,9 +92,13 @@ class SpaycsTable extends Table {
         
         /* Earth radius in miles 3959 */
         /* for postgresql cast is required else for mysql not*/
-        $this->distanceInMiles = "(3963.0 * ACOS(
-        (SIN(RADIANS(:lat)) * SIN(RADIANS(Spaycs.latitude))) +
-        (COS(RADIANS(:lat)) * COS(RADIANS(Spaycs.latitude)) * COS(RADIANS(Spaycs.longitude) - RADIANS(:long)) )))";
+        $this->distanceInMiles = "(3958.756 * ACOS(
+            COS(RADIANS(:lat)) *
+            COS(RADIANS(Spaycs.latitude)) *
+            COS( RADIANS(Spaycs.longitude) - RADIANS(:long) ) +
+            SIN(RADIANS(:lat)) *
+            SIN(RADIANS(Spaycs.latitude))
+        ) )";
     }
 
     /**

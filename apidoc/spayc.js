@@ -795,7 +795,7 @@ function getSubSpaycs() { return; }
  @apiGroup Spayc
  @apiPermission private
 
- @apiDescription Get list of spayces which is near about that logged user.Listing will be ordered on distance and if distance will be same then on created.
+ @apiDescription Get list of spayces which user has been joined and spayces must be with 1 miles.Spaycs must not be expired according to the spayc end date.Listing will be ordered on distance and if distance will be same then on created.
  
  @apiHeader {String} TOKEN            * A token send by header as TOKEN
  

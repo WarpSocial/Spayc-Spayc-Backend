@@ -1027,21 +1027,32 @@ class UsersController extends AppController {
         if(!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
-        $lat = $data['latitude'];
-        $long = $data['longitude'];
+        $lat = (float)$data['latitude'];
+        $long = (float)$data['longitude'];
         $user = $this->Auth->user();
-        $distance = str_replace(':long',$long,str_replace(':lat', $lat, $this->Users->Spaycs->distanceInMiles));
-        
-        $query = TableRegistry::get('Api.JoinedSpayc')->find()
-                ->select(['JoinedSpayc.id','JoinedSpayc.user_id','JoinedSpayc.spayc_id'])
+        $distance = "ROUND( CAST({$this->Users->Spaycs->distanceInMiles} AS numeric), 3)";       
+        $jsModel = TableRegistry::get('Api.JoinedSpayc');
+        $jsquery = $jsModel->find()
+                ->select(['JoinedSpayc.id','JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.distance'])
                 ->contain(['Spaycs'=>function($q)use($distance){
                     $miles= Configure::read('miles');
-                    return $q->select(['distance'=>$distance])->where([$distance.' <='=>$miles]);
+                    return $q->select(['distance'=>$distance]);
                             
                 }])
+                ->bind(':lat', $lat, 'float')
+                ->bind(':long', $long, 'float')
                 ->where(['JoinedSpayc.user_id'=>$user['id']]);
-      
-        pj($query->toArray());die;
+                //pj($query->toArray());die;
+        if(!$jsquery->isEmpty()){
+            $result = $jsquery->toArray();
+             foreach($result as $row){
+                 $jsModel->query()
+                          ->update()
+                          ->set(['distance' => $row->distance])
+                          ->where(['user_id' => $row->user_id,'spayc_id'=>$row->spayc_id])
+                          ->execute();
+             }
+         }
         $query = $this->Users->PhysicalLocation->query()
                 ->update()
                 ->set([
