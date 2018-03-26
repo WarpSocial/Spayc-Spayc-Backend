@@ -557,9 +557,6 @@ class MatrixComponent extends Component {
     
     public function deleteRoom($roomId){
         $conn = \Cake\Datasource\ConnectionManager::get('matrix');
-        $results = $conn->execute('Select * from rooms LIMIT 10')->fetchAll('assoc');;
-        pj($results);die;
-        die();
         $conn->transactional(function ($conn)use($roomId) {
             $conn->delete('event_forward_extremities',['room_id IN'=>$roomId]);
             $conn->delete('event_backward_extremities',['room_id IN'=>$roomId]);

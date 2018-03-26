@@ -795,7 +795,7 @@ function getSubSpaycs() { return; }
  @apiGroup Spayc
  @apiPermission private
 
- @apiDescription Get list of spayces which is near about that logged user.Listing will be ordered on distance and if distance will be same then on created.
+ @apiDescription Get list of spayces which user has been joined and spayces must be within 1 miles.Spaycs must not be expired according to the spayc end date.Listing will be ordered on distance and if distance will be same then on created.
  
  @apiHeader {String} TOKEN            * A token send by header as TOKEN
  
@@ -807,6 +807,58 @@ function getSubSpaycs() { return; }
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message List of Spaycs.
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "List of Spaycs.",
+    "data": [
+        {
+            "id": "95",
+            "name": "My Sub 8 March",
+            "location": null,
+            "matrix_room_id": "!xLfsiKaFDCBlLNyuAi:spayc-dev.kiwireader.com",
+            "start_date": "03-07-2018 18:32:16",
+            "end_date": "04-07-2018 18:32:34",
+            "image": null,
+            "type": "Event",
+            "group_type": "Public",
+            "passcode": "",
+            "user_id": 6,
+            "distance": "8266.679",
+            "subscribed_users": 0,
+            "friends": 0,
+            "joined_spayc_status": null,
+            "is_joined": false,
+            "joined_users": 0,
+            "is_subscribed": false,
+            "total_comments": 0
+        }
+    ]
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function getnearAboutSpayces() { return; }
+/**
+ @api {get} /public-spaycs.json?page=:page&limit=:limit Public and Joined Spayces
+ @apiVersion 0.1.0
+ @apiName getPublicSpaycs
+ @apiGroup Spayc
+ @apiPermission private
+
+ @apiDescription Get list of spayces which user has been joined and spayces must be within 1 miles.Spaycs must not be expired according to the spayc end date.Listing will be ordered on distance and if distance will be same then on created.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ @apiHeader {String} timezone         * User time zone
+ 
+ @apiParam {Number}      page            Page number in query string (Optional).
+ @apiParam {Number}      limit           Limit in query string (Optional).
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
  * @apiSuccess {Object} data List of Spaycs.
  * @apiSuccessExample {json} Success-Response: 
  *      HTTP/1.1 200 OK

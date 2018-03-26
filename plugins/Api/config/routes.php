@@ -46,6 +46,8 @@ Router::plugin(
         $routes->connect('/spayc-members',['controller'=>'Spaycs', 'action'=>'spaycMembers']);
         $routes->connect('/subspaycs', ['controller'=>'Spaycs', 'action'=>'viewSubSpaycs']);
         $routes->connect('/physical-present-spaycs', ['controller'=>'Spaycs', 'action'=>'nearAboutSpayces']);
+        $routes->connect('/public-spaycs', ['controller'=>'Spaycs', 'action'=>'publicSpayc']);
+        
         $routes->connect('/join-spayc', ['controller'=>'JoinSpaycs', 'action'=>'joinSpayc']);
         $routes->connect('/join-sub-spayc', ['controller'=>'JoinSpaycs', 'action'=>'joinSubSpayc']);
         $routes->connect('/ban-spayc-member', ['controller'=>'JoinSpaycs', 'action'=>'banSpaycMember']);
