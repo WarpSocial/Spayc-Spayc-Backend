@@ -934,5 +934,90 @@ class SpaycsController extends AppController {
         $response = ['status'=>'success','message'=>'List of spaycs.','data'=>$result];
         $this->set($response);
     }
+    /**
+     * hashTagSpayc method to get the public and joined spayces
+     * End point hastag-spaycs
+     */
+    
+    public function hashTagSpayc(){
+        if (!$this->request->is(['get'])) {
+            $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);
+        }
+        $user = $this->Auth->user();
+        $pquery = TableRegistry::get('Api.PhysicalLocation')->findByUserId($user['id']);
+        if(!$pquery->isEmpty()){
+            $lat = $pquery->current_latitude;
+            $long = $pquery->current_longitude;
+        }else{
+            $lat = $user['latitude'];
+            $long = $user['longitude'];
+        }
+        $page = $this->request->getQuery('page',1);
+        $limit = $this->request->getQuery('limit',Configure::read('pagelimit'));
+        
+        $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($user['id'], 'Accepted');
+        $distance = Configure::read('miles');
+        $joinedSpayces = TableRegistry::get('Api.JoinedSpayc')->find()->where(['JoinedSpayc.user_id'=>(int)$user['id'],'distance <='=>$distance]);
+        if($joinedSpayces->isEmpty()){
+             $this->restException(['status'=>'failed','message'=>'Record not found.'], 404);
+        }
+        $ids = \Cake\Utility\Hash::extract($joinedSpayces->toArray(), '{n}.spayc_id');
+        $date = (new Time('now', Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i:s");
+        $spaycs = $this->Spaycs->find();
+        $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id'])
+            ->where(['status'=>'Active','parent_id IS'=>null,'Spaycs.group_type ='=>'Public','Spaycs.id IN'=>$ids])
+            ->contain([
+                    'JoinedSpayc' => function($q)use($user) {
+                        return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin']);
+                    },
+                    'SubscribedUsers' => function($q) {
+                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
+                    },
+                    'Comments' => function($q) {
+                        return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);                        
+                    }
+                ]);
+      
+        if(!empty($lat) && !empty($long)){
+            $distance = $this->Spaycs->distanceInMiles;
+            $spaycs->select(['distance'=>$distance])
+                    ->bind(':lat', $lat, 'float')
+                    ->bind(':long', $long, 'float')
+                    ->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
+        }else{
+            $spaycs->select(['distance'=>0])
+                    ->order(['created'=>'DESC']);
+        }
+        $spaycs->limit($limit)->page($page);
+        $result = $spaycs->map(function ($row)use($friend,$user) {
+                $spaycId = ApiHasher::decrypt($row->id);
+                $row->friends = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
+                if(!empty($row->joined_spayc)) {
+                    $joinedStatus = \Cake\Utility\Hash::extract($row->joined_spayc,'{n}[user_id='.$user['id'].']');
+                }
+                $row->is_joined = false;
+                if(!empty($joinedStatus[0])){
+                    $row->joined_spayc_status = $joinedStatus[0]['status'];
+                    if($row->joined_spayc_status == 'Joined'){
+                        $row->is_joined = true;
+                    }
+                    $row->is_admin = $joinedStatus[0]['is_admin'];
+                }else{
+                    $row->joined_spayc_status = null;
+                    $row->is_admin = null;
+                } 
+                $row->joined_users =  !empty($row->joined_spayc)?count($row->joined_spayc):0;
+                if(!empty($row->subscribed_users)) {
+                    $subUserId = \Cake\Utility\Hash::extract($row->subscribed_users,'{n}[user_id='.$user['id'].']');
+                }
+                $row->subscribed_users = !empty($row->subscribed_users)?count($row->subscribed_users):0;
+                $row->is_subscribed = !empty($subUserId[0])?true:false;
+                $row->total_comments = !empty($row->comments[0]['total_comment'])?$row->comments[0]['total_comment']:0;
+                unset($row->joined_spayc,$row->comments);
+                return $row;
+            });
+        $response = ['status'=>'success','message'=>'List of spaycs.','data'=>$result];
+        $this->set($response);
+    }
 
 }
