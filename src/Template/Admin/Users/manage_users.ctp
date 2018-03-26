@@ -180,9 +180,9 @@
         </ul> -->
         <?php if($this->Paginator->params()['pageCount'] > 1) { ?>
             <ul class="pagination table-pagination">
-              <?= $this->Paginator->prev('<') ?>
+              <?= $this->Paginator->prev('',['escape' => false]) ?>
               <?= $this->Paginator->numbers(array('modulus' => 4)) ?>
-              <?= $this->Paginator->next(' >') ?>
+              <?= $this->Paginator->next('',['escape' => false]) ?>
             </ul>
         <?php } ?>
 
