@@ -85,10 +85,10 @@ jQuery(document).ready(function ($) {
                dataType:'JSON',
                async: false,             
               beforeSend: function () {
-                $(".loader").show();
+                $(".loader").addClass('show');
               },
                success:function(data){        
-                  $(".loader").hide();        
+                  $(".loader").removeClass('show');        
                    if (data.result) {     
                         $( "#forgotCancel").trigger('click'); 
                         openPopup(UserUrls.Success);                   
