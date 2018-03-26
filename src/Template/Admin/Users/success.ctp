@@ -26,17 +26,19 @@
      <a href="<?php echo $base_url_admin;?>" class="button btn-md">ok</a>
    </div>
 </div>
-<?php } else if(!empty($page)) { ?>
+<?php } else if(!$authUser && !empty($page)) { ?>
 <main class="login-page">
   <div class="login-wrapper">
     <div class="image-screen"></div>
     <div class="login-screen">
+    <div class="login-box">       
       <div class="update-password-wrap">
         <?php echo $this->Html->image("success.png", ["alt" => "success", 'class' =>'success-reset mb-20']); ?>
         <p>New password has been<br /> updated successfully.</p>
         <button type="submit" class="button btn-md hide" disabled>Proceed</button>
         <a href="<?php echo $base_url_admin;?>" class="button btn-md">Proceed</a>
       </div>  
+      </div>
     </div>
   </div>
 </main>

@@ -195,6 +195,9 @@ class UsersController extends AdminController
         if(!$this->Auth->user('id')){
             $this->viewBuilder()->layout('');
         }
+        if(!empty($page)){
+            $this->viewBuilder()->layout('admin');
+        }
         $this->set(['title' => 'Change Password','base_url_admin'=>$this->base_url_admin,'page' => $page]);
     }
 
