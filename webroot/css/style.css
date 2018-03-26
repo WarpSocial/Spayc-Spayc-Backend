@@ -285,6 +285,9 @@ a:not([href]):not([tabindex]) {
 .btn-lg-lg {
   width: 200px;
 }
+.btn-xs {
+  width: 118px;
+}
 /*===================================
 *   alert classes
 ===================================*/
