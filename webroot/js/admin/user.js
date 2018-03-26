@@ -5,6 +5,23 @@ jQuery(document).ready(function ($) {
         $(this).parent().parent().find('.input-alert').text('')
       }
     });
+    
+    if(!$('.error-alert').hasClass('hide') && ($('.error-alert').text().length > 0)){
+      $('.error-alert').delay(5000).fadeOut('slow', function () {
+        $('.error-alert').text('');
+        $('.error-alert').hide();
+      });
+    }
+    
+    $(document).on("click", ".pop", function(){
+      var className = $(this).attr('name');
+      if (typeof className !== typeof undefined && className !== false) {
+        className=$(this).attr('name');
+      }else{
+        className='';
+      }
+      openPopup($(this).attr('page'),className);
+    });  
     $('.show-password').on('click', function () {                    
         var attrObj = $(this).parent("div").find('input');
         if (attrObj.attr('type') == 'text') { 
@@ -39,8 +56,11 @@ jQuery(document).ready(function ($) {
         return true;
     });
 
-    $('#forget_password_btn').on('click', function (e) {         
+
+    //$('#forget_password_btn').on('click', function (e) { 
+      $(document).on('click', '#forget_password_btn', function (e) {     
         $('.input-alert').text('');
+        $('.error-forgot-password-page').addClass('hide');
         $('input').removeClass('incorrect-alert');        
         var email = $("#ForgetPasswordFrm input[name='email']");
         err=0; 
@@ -60,22 +80,27 @@ jQuery(document).ready(function ($) {
         if(err==0){           
         $.ajax({
                type:'POST',
-               url:$("#ForgetPasswordFrm").prop('action'),
+               url:UserUrls.ForgotPassword,
                data: {email: email.val()},
                dataType:'JSON',
-               async: false,
-               success:function(data){                
+               async: false,             
+              beforeSend: function () {
+                $(".loader").show();
+              },
+               success:function(data){        
+                  $(".loader").hide();        
                    if (data.result) {     
-                        $( "#forgotCancel").trigger('click');                    
-                        //$('#forgotPassword').modal('toggle');
-                        $('#success').modal({show: true});
+                        $( "#forgotCancel").trigger('click'); 
+                        openPopup(UserUrls.Success);                   
                     } else { 
-                        //email.val('');
-                        $('#ForgetPasswordFrm #email').addClass('incorrect-alert');
-                        $('#ForgetPasswordFrm #emailError').text(data.message);
-
+                      $('.error-forgot-password-page').text(data.message);
+                      $('.error-forgot-password-page').removeClass('hide');
                     }
-               }
+               },
+               error: function (e,x,t) {
+              $(".loader").hide();
+              ajax_error(e);
+            }
            });
         }  
     }); 

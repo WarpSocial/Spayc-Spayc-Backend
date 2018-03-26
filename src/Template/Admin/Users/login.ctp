@@ -1,3 +1,5 @@
+<?php use Cake\Routing\Router;
+?>
 <main class="login-page">
       <div class="login-wrapper">
         <div class="image-screen"></div>
@@ -22,16 +24,19 @@
               </div>
 
               <div class="mt-10 d-flex justify-content-between align-items-center">
-                <button type="button" class="forgot-password-text" data-toggle="modal" data-target="#forgotPassword">Forgot Password?</button>
+                <!-- <button type="button" class="forgot-password-text" data-toggle="modal" data-target="#forgotPassword">Forgot Password?</button> -->
+                <a class="pop forgot-password-text" page="<?php echo Router::url(['_name' => 'forgotPassword']);?>">Forgot Password?</a>
+
                  <?= $this->Form->button('Sign In', ['type' => 'submit','class'=>'button btn-md']); ?>               
                 <!--option-->
-                <!-- <a href="#" class="hide forgot-password-text" data-toggle="modal" data-target="#forgotPassword">Forgot Password?</a>-->
+                <!--  <a href="#" class="hide forgot-password-text" data-toggle="modal" data-target="#forgotPassword">Forgot Password?</a> -->
+               
               </div>
              <?php echo $this->Form->end();?>
           </div>         
         </div>
       </div>
     </main>
-<?php echo $this->element('admin/signin/success',['loginUrl'=>$base_url_admin]);?>
-<?php echo $this->element('admin/signin/forgot_password');?>
+<?php //echo $this->element('admin/signin/success',['loginUrl'=>$base_url_admin]);?>
+<?php //echo $this->element('admin/signin/forgot_password');?>
 <?php echo $this->Html->script('admin/user'); ?>

@@ -29,7 +29,7 @@ class UsersController extends AdminController
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
-        $this->Auth->allow(['login', 'logout','forgotPassword', 'resetPassword','getUserObj']);
+        $this->Auth->allow(['login', 'logout','forgotPassword', 'resetPassword','getUserObj', 'success']);
     }
 
     /**
@@ -189,11 +189,16 @@ class UsersController extends AdminController
         $this->set(compact('user'));
     }
 
-    public function success() {
-        $this->set('title', 'Change Password');
+    public function success($page = null) {
+        //$this->set('title', 'Change Password');
+        //$this->set('base_url_admin',$this->base_url_admin);
+        if(!$this->Auth->user('id')){
+            $this->viewBuilder()->layout('');
+        }
+        $this->set(['title' => 'Change Password','base_url_admin'=>$this->base_url_admin,'page' => $page]);
     }
 
-    public function manageUser() {
+    public function manageUsers() {
         $this->set('title', 'Manage User');
         
         $keyword=($this->request->query('keyword'))?trim($this->request->query('keyword')):'';
@@ -204,25 +209,22 @@ class UsersController extends AdminController
                     return $q->select(['JoinedSpayc.user_id', 'joined_spaycs'=>$q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.user_id']);
                 },
                 'Spaycs'=>function($q) {
-                    return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id'])->where(['Spaycs.group_type !='=>'trusted_private' ]);
+                    return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id']);
                 },
-                // 'Requestedby' => function($q) {
-                //    return $q->select(['Requestedby.requested_by','totalBy'=>$q->func()->count('Requestedby.id')])->group(['Requestedby.user_id'])->Where(['requested_status'=>FRIEND_REQUESTED_STATUS]);
-                // },
                 'Requestedby' => function($q) {
-                   return $q->select(['Requestedby.requested_by','count' => $q->func()->count('Requestedby.id')])->group(['Requestedby.requested_by'])->Where(['requested_status'=>FRIEND_REQUESTED_STATUS]);
+                   return $q->select(['Requestedby.requested_by','count' => $q->func()->count('Requestedby.id')])->group(['Requestedby.requested_by'])->Where(['Requestedby.requested_status'=>FRIEND_REQUESTED_STATUS]);
                 },
-               
                 'Requestedto' => function($q) {
-                   return $q->select(['Requestedto.requested_to','count' => $q->func()->count('Requestedto.id')])->group(['Requestedto.requested_to'])->Where(['requested_status'=>FRIEND_REQUESTED_STATUS]);
+                   return $q->select(['Requestedto.requested_to','count' => $q->func()->count('Requestedto.id')])->group(['Requestedto.requested_to'])->Where(['Requestedto.requested_status'=>FRIEND_REQUESTED_STATUS]);
                 }
               
             ]);  
-
         $query->formatResults(function (\Cake\Collection\CollectionInterface $results) {
-            return $results->map(function ($row) {
-                $row->friend = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
-                $row->friend = !empty($row['requestedby'][0]) && empty($row->friend)? $row['requestedby'][0] : $row->friend;
+            return $results->map(function ($row) {                
+                $row->friend = !empty($row['requestedto'][0]['count'])? $row['requestedto'][0]['count'] : BLANK_COUNT;
+                $row->friend += !empty($row['requestedby'][0]['count'])? $row['requestedby'][0]['count'] : BLANK_COUNT;
+                unset($row['requestedby']);
+                unset($row['requestedto']);
                 return $row;
             });
         });
@@ -240,7 +242,7 @@ class UsersController extends AdminController
         $this->set('title', 'Forgot password'); 
         $this->viewBuilder()->layout('');
         $this->autoRender = false;
-        if ($this->request->is('ajax')) {
+        if ($this->request->is('post')) {
             $data_item = $this->request->data;           
             $error = array();
             if (!isset($data_item['email'])) {
@@ -257,13 +259,15 @@ class UsersController extends AdminController
                     $this->getMailer('User')->send('forgotPassword', [$user]);
                    $result_arr = ['result' => true, 'message' => $this->errorSuccessMessage['35']];
                 } else {
-                    $result_arr = ['result' => false, 'message' => $this->errorSuccessMessage['3']];
+                    $result_arr = ['result' => false, 'message' => $this->errorSuccessMessage['43']];
                 }
             } else {                
                 $result_arr = ['result' => false, 'message' => $error];
             }
             echo json_encode($result_arr);
             die;
+        } else {
+            $this->render('forgotPassword');
         }
     }
 
@@ -293,9 +297,8 @@ class UsersController extends AdminController
                 $user->forgot_password_token = null;
                 $user->forgot_password_timestamp = null;                
                 $user->password = ApiHasher::hash($data['new_password']);
-                if ($this->Users->save($user)) {                    
-                    $this->Flash->success(__($this->errorSuccessMessage['21']));
-                    return $this->redirect(['action' => 'login']);    
+                if ($this->Users->save($user)) {
+                    return $this->redirect(['action' => 'success','login']);    
                 } else {                    
                     $this->Flash->error(__($this->errorSuccessMessage['40']));
                     return $this->redirect(['action' => 'login']);    

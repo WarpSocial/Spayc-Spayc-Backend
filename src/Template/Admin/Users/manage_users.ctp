@@ -1,3 +1,9 @@
+<?php use Cake\Routing\Router;
+  $userCount = false;
+ if(count($users) > 0) {
+    $userCount = true;
+ }
+?>
 <!--=============breadcrumbs==============-->      
       <div class="breadcrumbs">
         <div class="container">
@@ -7,6 +13,7 @@
       </div>
 <section class="content-wrapper content-filter">
         <!--===========filter================-->
+      <?php if ($userCount) {?>  
       <div class="filters">
         <div class="container">
       <form name="userFilterFrm" id="userFilterFrm" method="get" autocomplete="off">
@@ -91,8 +98,8 @@
         </div>
       </div>
       <!--============= table head ===================-->
-      <div class="container">
-        <div class="table-wrapper">
+      <div class="container">        
+        <div class="table-wrapper">      
           <div class="table-head">
             <div class="head-text flex-basis15 text-left">
             <span class="table-filter"><?php echo $this->Paginator->sort('username','User Info');?></span>
@@ -109,63 +116,58 @@
             <div class="head-text flex-basis10"><span class="table-filter"><?php echo $this->Paginator->sort('created','Registration Date');?></span></div>
             <div class="head-text flex-basis6"><span class="blank"></span></div>
           </div>
-
-          <?php
-            if(count($users) > 0){            
-            foreach($users as $user){
-          ?>
+          <?php foreach($users as $user) { ?>
           <!--==============table data====================-->
-          <div class="table-row">
-            <div class="table-data flex-basis15 text-left">
-              <span class="user-name"><?= !empty($user->username)?h(ucwords($user->username)):BLANK ?></span>
-              <span class="ell"><?= !empty($user->email)?h($user->email):BLANK ?></span>
-              <span class="user-contact"><?= !empty($user->phone)?h($user->country_code).'&nbsp;'.h($user->phone):BLANK; ?>
-              </span>
-            </div>
-            <div class="table-data flex-basis11">
-              <span><?= !empty($user->gender)?h($user->gender):BLANK ?></span>
-            </div>
-            <div class="table-data flex-basis11">
-              <span><?= !empty($this->dateFormat($user->dob))?$this->dateFormat($user->dob):BLANK ?></span>
-            </div>
-            <div class="table-data flex-basis15 text-left">
-              <span><?= !empty($user->address)?h($user->address):BLANK ?></span>
-            </div>
-            <div class="table-data flex-basis9">
-              <span>10</span>
-            </div>
-            <div class="table-data flex-basis9">
-              <span>15</span>
-            </div>
-            <div class="table-data flex-basis10">
-              <span>105</span>
-            </div>
-            <div class="table-data flex-basis14">
-              <span>10</span>
-            </div>
-            <div class="table-data flex-basis10">
-              <span><?= !empty($this->dateFormat($user->created))?$this->dateFormat($user->created):BLANK ?></span>
-            </div>
-            <!--table dropdown-->
-            <div class="table-data flex-basis6">
-              <div class="dropdown table-view-dropdown">
-                <div class="table-dropdown"  id="table-data-dropdown" data-toggle="dropdown">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-                <div class="dropdown-menu" aria-labelledby="table-data-dropdown">
-                  <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
+            <div class="table-row">
+              <div class="table-data flex-basis15 text-left">
+                <span class="user-name"><?= !empty($user->username)?h(ucwords($user->username)):BLANK ?></span>
+                <span class="ell"><?= !empty($user->email)?h($user->email):BLANK ?></span>
+                <span class="user-contact"><?= !empty($user->phone)?h($user->country_code).'&nbsp;'.h($user->phone):BLANK; ?>
+                </span>
+              </div>
+              <div class="table-data flex-basis11">
+                <span><?= !empty($user->gender)?h($user->gender):BLANK ?></span>
+              </div>
+              <div class="table-data flex-basis11">
+                <span><?= !empty($this->dateFormat($user->dob))?$this->dateFormat($user->dob):BLANK ?></span>
+              </div>
+              <div class="table-data flex-basis15 text-left">
+                <span><?= !empty($user->address)?h($user->address):BLANK ?></span>
+              </div>
+              <div class="table-data flex-basis9">
+                <span><?= !empty($user->joined_spayc[0]->joined_spaycs)?h($user->joined_spayc[0]->joined_spaycs):BLANK_COUNT ?></span>
+              </div>
+              <div class="table-data flex-basis9">
+                <span><?= !empty($user->spaycs[0]->created_spaycs)?h($user->spaycs[0]->created_spaycs):BLANK_COUNT ?></span>
+              </div>
+              <div class="table-data flex-basis10">
+                <span><?= !empty($user->friend)?h($user->friend):BLANK_COUNT ?></span>
+              </div>
+              <div class="table-data flex-basis14">
+                <span><?= BLANK_COUNT ?></span>
+              </div>
+              <div class="table-data flex-basis10">
+                <span><?= !empty($this->dateFormat($user->created))?$this->dateFormat($user->created):BLANK ?></span>
+              </div>
+              <!--table dropdown-->
+              <div class="table-data flex-basis6">
+                <div class="dropdown table-view-dropdown">
+                  <div class="table-dropdown"  id="table-data-dropdown" data-toggle="dropdown">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                  <div class="dropdown-menu" aria-labelledby="table-data-dropdown">
+                    <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
           <?php
            }
-          } else {
-            //echo "no record found";
-          }
           ?>
+         
+        
         <!--===========pagination========-->
        <!--  <ul class="pagination table-pagination">
           <li><a href="#" class="prev"></a></li>
@@ -178,12 +180,22 @@
         </ul> -->
         <?php if($this->Paginator->params()['pageCount'] > 1) { ?>
             <ul class="pagination table-pagination">
-              <?= $this->Paginator->prev('< ') ?>
+              <?= $this->Paginator->prev('<') ?>
               <?= $this->Paginator->numbers(array('modulus' => 4)) ?>
               <?= $this->Paginator->next(' >') ?>
             </ul>
         <?php } ?>
 
+      </div>      
+    </div>
+    <?php }  else { ?>
+      <div class="no-data-wrapper">
+        <div class="no-data no-user" >
+            <?php echo $this->Html->image("no-user.png", ["alt" => "", 'class' =>'mb-30' ]); ?>
+            <h2>No Users Found!</h2>
+            <p>Seems like no user has created the account yet!</p>
+        </div>
       </div>
+    <?php } ?>
 </section>
 <?php echo $this->Html->script(['admin/admin-manage-user.js']); ?>

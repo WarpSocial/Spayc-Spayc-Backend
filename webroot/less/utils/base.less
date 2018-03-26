@@ -45,6 +45,12 @@ a:not([href]):not([tabindex]) {
       border-color: @border-color;
     }
   }
+  &.form-group-reset {
+  padding-bottom :40px;
+    .input-alert {
+      bottom :4px;
+    }
+  }
   input.incorrect-alert {
     border-color: @red;
     &:focus {
@@ -161,6 +167,7 @@ a:not([href]):not([tabindex]) {
 ==================================*/
 .no-data-wrapper {
   width: 100%;
+  height: ~"calc(100vh - 225px)";
   .flex-display(flex);
   .align-items(center);
   .justify-content(center);
@@ -251,9 +258,9 @@ input[type=radio]:checked + span {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 10;
+  z-index: 9999;
   background: rgba(0, 0, 0, .7);
-  display:block;
+  display:none;
   .loader-icon {
     width: 40px;
     height: 40px;

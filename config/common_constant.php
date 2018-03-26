@@ -5,12 +5,13 @@ define('SITE_TITLE','spayc');
 define('PAGINATION_LIMIT',20);
 define('DATEFORMAT_DISPLAY','M d, Y');
 define('FRIEND_REQUESTED_STATUS','Accepted');
+define('BLANK_COUNT',0);
 define('BLANK','--');
 $config =array();
 $config['ERRORANDSUCCESSMSG'] = [
     1=>'You log out successfully.',
     2=>'Please enter your email.',
-    3=>'Please enter your valid email.',
+    3=>'Email is not correct.',
     4=>'Please enter your password.',    
     5=>'Password must contain a minimum of 8 characters and 1 number.',
     6=>'Oops! The work email or password is incorrect.',
@@ -19,7 +20,7 @@ $config['ERRORANDSUCCESSMSG'] = [
     9=>'Thank you, a temporary password has been sent to your email.',
     10=>'Please enter your current password.',
     11=>'Current password and new password cannot be same.',
-    12=>'Passwords do not match, try again please!',
+    12=>'Passwords do not match. Try again?',
     13=>'Password must have 8 characters and 1 number.',
     14=>'Please create a previously unused password.',
     15=>'Are you sure you want to leave this section without responding or click PROCEED WITHOUT COMPLETING THIS STAGE.',
@@ -39,16 +40,17 @@ $config['ERRORANDSUCCESSMSG'] = [
     29=>'Please make sure to fill out all the required fields correctly',  
     30=>'Blank space not allowed.',        
     31=>'Please enter a numeric value only.', 
-    32=>'Invalid email or password.',   
+    32=>'Invalid email and password.',   
     33=>'Please enter your email and password.',   
     34=>'Oops! Current passwords do not match.',
     35=>'Your password has been changed successfully.',
     36=>'Account not found. Please read email carefully and try again',
     37=>'Invalid token. Please read email carefully and try again.',
     38=>'Invalid token, This token has been already used.',
-    39=>'New password must contain 8-30 character length, at least one letter and one number.',
+    39=>'Password must contain 8-30 character length, at least one letter and one number.',
     40=>'System rejected to update the password.',
     41=>'Invalid user.',
     42=>'Missing required information. Please read email carefully and try again.',
+    43=>'Not a registered email.',
 
 ];

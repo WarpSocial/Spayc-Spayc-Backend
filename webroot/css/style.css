@@ -251,6 +251,12 @@ a:not([href]):not([tabindex]) {
 .form-group input.form-control:focus {
   border-color: #d7d7d7;
 }
+.form-group.form-group-reset {
+  padding-bottom: 40px;
+}
+.form-group.form-group-reset .input-alert {
+  bottom: 4px;
+}
 .form-group input.incorrect-alert {
   border-color: #eb5656;
 }
@@ -369,6 +375,7 @@ a:not([href]):not([tabindex]) {
 ==================================*/
 .no-data-wrapper {
   width: 100%;
+  height: calc(100vh - 225px);
   display: -webkit-flex;
   display: -moz-flex;
   display: -ms-flexbox;
@@ -473,9 +480,9 @@ input[type=radio]:checked + span {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 10;
+  z-index: 9999;
   background: rgba(0, 0, 0, 0.7);
-  display: block;
+  display: none;
 }
 .loader .loader-icon {
   width: 40px;
@@ -979,6 +986,15 @@ input:disabled {
   font-weight: 400;
   color: #092d42;
 }
+.login-box a,
+.forgot-password-box a {
+  color: #49ff00;
+  text-decoration: none;
+}
+.login-box a:hover,
+.forgot-password-box a:hover {
+  color: #49ff00;
+}
 .login-box .forgot-password-text,
 .forgot-password-box .forgot-password-text,
 .login-box .cancel-text,
@@ -1030,6 +1046,10 @@ input:disabled {
   width: 100%;
   display: block;
   text-align: center;
+}
+.login-box a.forgot-password-text,
+.forgot-password-box a.forgot-password-text {
+  color: #1a4c59;
 }
 /*=================================
 *  forgot password
@@ -1426,27 +1446,27 @@ input:disabled {
   box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.1);
   text-decoration: none;
 }
-.table-pagination li a.next {
+.table-pagination li.next a {
   width: 14px;
   background: url('../images/pagination-arrow-right.png') no-repeat center right;
   box-shadow: none;
 }
-.table-pagination li a.next:hover {
+.table-pagination li.next a:hover {
   background: url('../images/pagination-arrow-right.png') no-repeat center right;
 }
-.table-pagination li a.prev {
+.table-pagination li.prev a {
   width: 14px;
   background: url('../images/pagination-arrow-left.png') no-repeat center left;
   box-shadow: none;
 }
-.table-pagination li a.prev:hover {
+.table-pagination li.prev a:hover {
   background: url('../images/pagination-arrow-left.png') no-repeat center left;
 }
-.table-pagination li a:hover {
+.table-pagination li:hover a {
   background: #1a4c59;
   color: #ffffff;
 }
-.table-pagination li a.active {
+.table-pagination li.active a {
   background: #1a4c59;
   color: #ffffff;
 }
