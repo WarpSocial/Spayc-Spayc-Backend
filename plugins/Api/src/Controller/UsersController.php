@@ -36,7 +36,7 @@ class UsersController extends AppController {
     
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
-        $this->Auth->allow(['login', 'add', 'facebookSignup', 'forgotPassword', 'reverification', 'verifyAccount', 'resetPassword']);
+        $this->Auth->allow(['login', 'add', 'facebookSignup', 'forgotPassword', 'reverification', 'verifyAccount', 'resetPassword', 'pushNotification']);
     }
     
     public function avatars() {
@@ -989,15 +989,24 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
         $data = $this->request->getData();
+        $pushData['post_value'] = json_encode($data);
+        $pushData['created'] = date("Y-m-d H:i:s");
+        $pusher = TableRegistry::get("Api.PusherData");
+        $push = $pusher->newEntity();
+        $item = $pusher->patchEntity($push, $pushData);
+        $pusher->save($item);
         if(empty($data['notification']['devices'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Notification data not found.')], 400);
         }
         $message = !empty($data['notification']['content']['body'])?$data['notification']['content']['body']:'';
         foreach($data['notification']['devices'] as $key=>$device) {
             if(!empty($device['pushkey']) && !empty($message)) {
-                $this->Push->sendOnIOS($device['pushkey'], $message);
+                $send['device_token'] = $device['pushkey'];
+                $this->Push->sendOnIOS($send, $message);
             }
         }
+        $response = ['status'=>'success', 'message'=>__('notification sent')];
+        $this->set($response);
     }
     
     public function testPushnotification() {
