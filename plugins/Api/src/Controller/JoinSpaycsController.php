@@ -151,7 +151,7 @@ class JoinSpaycsController extends AppController {
                 $jsModel->getConnection()->commit();
                 $friends = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($user['id'], 'Accepted');
                 //$userIds = $jsModel->getJoinedUserIds($data['spayc_id']);
-                if(in_array($spayc->user_id, $friends)) {
+                if($friends && in_array($spayc->user_id, $friends)) {
                     $push['slug'] = 'friend-join-spayc';
                 } else {
                     $push['slug'] = 'user-joined-your-spayc';
