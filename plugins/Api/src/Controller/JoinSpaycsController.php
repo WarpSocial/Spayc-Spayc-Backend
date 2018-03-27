@@ -112,7 +112,7 @@ class JoinSpaycsController extends AppController {
         $data['user_id'] = $user['id'];
         $data['matrix_token'] = $user['UserLogs']['matrix_access_token'];        
         $data['matrix_user_id'] = $user['UserLogs']['matrix_user_id'];        
-        $errors = $jsModel->ValidateJoinSpayc($data,['Pending','Joined']);
+        $errors = $jsModel->ValidateStatus($data, ['Pending','Joined']);
         if(!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
