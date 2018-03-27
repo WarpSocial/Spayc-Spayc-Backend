@@ -97,11 +97,11 @@ if(isset($this->request->query['sort'])){
                   </div>
                 </div>
                 <!--============filter dropdown========-->
-                <div class="filter-box">
-                  <!-- <button type="submit" class="button btn-xs filter-button-apply">Apply</button> -->
-                  <button class="reset-filter" type="submit">Apply</button>
-                </div>
+                <!-- <div class="filter-box">
+                  <button type="submit" class="button btn-xs filter-button-apply">Apply</button> 
+                </div> -->
                 <!--============filter reset========-->
+                <button class="reset-filter" type="submit">Apply</button>
                 <button class="reset-filter">Reset</button>
                 <!-- <button class="reset-filter" type="submit">Search</button> -->
             </div>
@@ -139,7 +139,7 @@ if(isset($this->request->query['sort'])){
                 </span>
                 <span class="ell">P-><?= !empty($user->password)?h(ApiHasher::dehash($user->password)):BLANK ?></span>
                 <span class="ell">
-                  <a href="javascript:void(0)" class="pop" page="<?php echo Router::url(['Controller' => 'Users', 'action'=> 'adminResetPassword',$user->id]);?>">Change Password
+                  <a href="javascript:void(0)" class="pop change-password-text" page="<?php echo Router::url(['Controller' => 'Users', 'action'=> 'adminResetPassword',$user->id]);?>">Change Password
                 </a>
                 </span>
               </div>

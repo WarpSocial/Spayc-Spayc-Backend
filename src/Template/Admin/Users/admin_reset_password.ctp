@@ -1,5 +1,5 @@
          <div class="modal-body">
-          <div class="login-box">                                  
+          <div class="">                                  
              <div class="error-login-page"><?= $this->Flash->render(); ?></div>
              <?php echo $this->Form->create($user, ['id'=>'admin_reset_password_form','autocomplete' => 'off','novalidate'=>'novalidate']); ?>
               <h1>Reset Password</h1>
@@ -21,7 +21,7 @@
               </div>
              
                <div class="mt-40 d-flex justify-content-between align-items-center">
-                  <button type="button" class="cancel-text skip-popup" data-dismiss="modal">Skip</button>
+                  <button type="button" class="skip-text skip-popup" data-dismiss="modal">Skip</button>
                   <button type="submit" class="button btn-md ml-auto">Update</button>
               </div>
               <?php echo $this->Form->end(); ?>
