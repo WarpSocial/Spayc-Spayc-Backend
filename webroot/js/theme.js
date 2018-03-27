@@ -13,8 +13,8 @@ $(function () {
       $('.dropp-body,.js-dropp-action').removeClass('js-open');
     });
     // get the value of checked input radio and display as dropp title
-    $('input[name="dropp"]').change(function() {
-      var value = $("input[name='dropp']:checked").val();
+    $('input[name="gender"]').change(function() {
+      var value = $("input[name='gender']:checked").val();
       $(this).parents('.filter-box').find('.js-value').text(value);
     });
 

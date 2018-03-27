@@ -40,13 +40,13 @@ if(isset($this->request->query['sort'])){
         <!--===========filter================-->
       <?php if ($userCount) {?>  
       <div class="filters">
-        <div class="container">
-      <form name="userFilterFrm" id="userFilterFrm" method="get" autocomplete="off">
+        <div class="container">    
+      <?php echo $this->Form->create('',['id'=>'userFilterFrm','type'=>'get', 'autocomplete' => 'off','novalidate'=>'novalidate']); ?>
           <div class="filter-wrapper">
             <!--============search dropdown========-->
               <div class="search">
-              <div class="form-group">
-                <input type="text" class="form-control" placeholder="Search" id="keyword" name="keyword" value="<?php echo $this->request->query('keyword'); ?>">
+              <div class="form-group">                
+                <?= $this->Form->input('keyword',['type'=>'text', 'class'=>'form-control','label'=>false, 'placeholder'=>'Search', 'value'=> $this->request->query('keyword')]); ?>
                 <span class="clear-search hide" id="clear-search"></span>
               </div>
             </div>
@@ -63,15 +63,15 @@ if(isset($this->request->query['sort'])){
                 <div class="dropp-body">
                   <div class="dropp-body-wrap">
                     <label for="optA" class="custom-label">
-                      <input type="radio" id="optA" name="dropp" value="All"/>
+                      <input type="radio" id="optA" name="gender" value="All"/>
                       <span class="ell">All</span>
                     </label>
                     <label for="optB" class="custom-label">
-                      <input type="radio" id="optB" name="dropp" value="Male"/>
+                      <input type="radio" id="optB" name="gender" value="Male"/>
                       <span class="ell">Male</span>
                     </label>
                     <label for="optC" class="custom-label">
-                      <input type="radio" id="optC" name="dropp" value="Female"/>
+                      <input type="radio" id="optC" name="gender" value="Female"/>
                       <span class="ell">Female</span>
                     </label>
                   </div>
@@ -99,14 +99,12 @@ if(isset($this->request->query['sort'])){
                 <!--============filter dropdown========-->
                 <div class="filter-box">
                   <!-- <button type="submit" class="button btn-xs filter-button-apply">Apply</button> -->
-                  <button class="reset-filter" type="submit">Apply</button>
-                </div>
-                <!--============filter reset========-->
-                <button class="reset-filter">Reset</button>
-                <!-- <button class="reset-filter" type="submit">Search</button> -->
+                  <?= $this->Form->button('Apply', ['type' => 'submit','class'=>'reset-filter']); ?> 
+                </div>                            
+                <?= $this->Form->button('Reset', ['type' => 'button','class'=>'reset-filter']); ?>                 
             </div>
           </div>
-          </form>
+         <?php echo $this->Form->end();?>
         </div>
       </div>
       <!--============= table head ===================-->

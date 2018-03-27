@@ -16,6 +16,7 @@
 
 	$('#clear-search').on('click',function(){  			
 		$('#keyword').val('');
+		$('#clear-search').addClass('hide');
 		//window.location.replace(base_url_admin+'users/manage-user');
 	});
 
