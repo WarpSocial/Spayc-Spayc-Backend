@@ -768,6 +768,7 @@ class SpaycsController extends AppController {
         $user = $this->Auth->user();
         $pquery = TableRegistry::get('Api.PhysicalLocation')->findByUserId($user['id']);
         if(!$pquery->isEmpty()){
+            $pquery = $pquery->first();
             $userLat = $pquery->current_latitude;
             $userLong = $pquery->current_longitude;
         }else{
@@ -861,6 +862,7 @@ class SpaycsController extends AppController {
         $user = $this->Auth->user();
         $pquery = TableRegistry::get('Api.PhysicalLocation')->findByUserId($user['id']);
         if(!$pquery->isEmpty()){
+            $pquery = $pquery->first();
             $lat = $pquery->current_latitude;
             $long = $pquery->current_longitude;
         }else{
@@ -872,12 +874,12 @@ class SpaycsController extends AppController {
         
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($user['id'], 'Accepted');
         $distance = Configure::read('miles');
-        $joinedSpayces = TableRegistry::get('Api.JoinedSpayc')->find()->where(['JoinedSpayc.user_id'=>(int)$user['id'],'distance <='=>$distance]);
+        $joinedSpayces = TableRegistry::get('Api.JoinedSpayc')->find()->where(['JoinedSpayc.user_id'=>(int)$user['id']]);
         if($joinedSpayces->isEmpty()){
              $this->restException(['status'=>'failed','message'=>'Record not found.'], 404);
         }
         $ids = \Cake\Utility\Hash::extract($joinedSpayces->toArray(), '{n}.spayc_id');
-        $date = (new Time('now', Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i:s");
+        
         $spaycs = $this->Spaycs->find();
         $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id'])
             ->where(['status'=>'Active','parent_id IS'=>null,'Spaycs.group_type ='=>'Public','Spaycs.id IN'=>$ids])
