@@ -1,7 +1,7 @@
          <div class="modal-body">
           <div class="login-box">                                  
              <div class="error-login-page"><?= $this->Flash->render(); ?></div>
-             <?php echo $this->Form->create($user, ['id'=>'reset_password_form','autocomplete' => 'off','novalidate'=>'novalidate']); ?>
+             <?php echo $this->Form->create($user, ['id'=>'admin_reset_password_form','autocomplete' => 'off','novalidate'=>'novalidate']); ?>
               <h1>Reset Password</h1>
               <p class="mb-50">Please enter a new password in the fields below.</p>
               
@@ -19,12 +19,12 @@
                     <small class="input-alert" id="confirmpasswordError"></small>
                 </div>
               </div>
-
+             
                <div class="mt-40 d-flex justify-content-between align-items-center">
+                  <button type="button" class="cancel-text skip-popup" data-dismiss="modal">Skip</button>
                   <button type="submit" class="button btn-md ml-auto">Update</button>
               </div>
               <?php echo $this->Form->end(); ?>
           </div>   
           </div>         
       
-<?php echo $this->Html->script('admin/user'); ?>

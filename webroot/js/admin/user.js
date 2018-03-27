@@ -181,4 +181,66 @@ jQuery(document).ready(function ($) {
            }
        });
 
+       $(document).on('submit', '#admin_reset_password_form', function (e) {    
+
+        $('.input-alert').text('');        
+        $('input').removeClass('incorrect-alert');  
+        form = $("form#admin_reset_password_form");  
+        err=0; 
+           if($.trim($('#new_password').val())==''){
+               err = 1;
+               $('#new_password').addClass('incorrect-alert');
+               $('#passwordError').text(errorSuccessMessage['18']);
+               $('#new_password').focus();
+               return false;
+           }
+           if (!passwordPattern.test($.trim($('#new_password').val()))) {
+              err = 1;
+              $('#new_password').addClass('incorrect-alert');
+              $('#passwordError').text(errorSuccessMessage['39']);
+              $('#new_password').focus();
+              return false;
+           }
+           if($.trim($('#confirm_password').val())==''){
+               err = 1;
+               $('#confirm_password').addClass('incorrect-alert');
+               $('#confirmpasswordError').text(errorSuccessMessage['20']);
+               $('#confirm_password').focus();
+               return false;
+           }
+           if(($('#confirm_password').val()) != ($('#new_password').val())){
+               err = 1;
+               $('#confirm_password').addClass('incorrect-alert');
+               $('#confirmpasswordError').text(errorSuccessMessage['12']);
+               $('#confirm_password').focus();
+               return false;
+           }         
+        if(err==0){           
+        $.ajax({
+               type:'POST',
+               url:form.prop('action'),
+               data: form.serialize(),
+               dataType:'JSON',
+               async: true,             
+              beforeSend: function () {
+                $(".loader").addClass('show-loader');
+              },
+               success:function(data){        
+                  $(".loader").removeClass('show-loader');        
+                   if (data.result) {     
+                        $( ".skip-popup").trigger('click'); 
+                    } else { 
+                      $('.error-forgot-password-page').text(data.message);
+                      $('.error-forgot-password-page').removeClass('hide');
+                    }
+               },
+               error: function (e,x,t) {
+              $(".loader").hide();
+              ajax_error(e);
+            }
+           });
+          e.preventDefault();
+        }  
+    }); 
+
 });
