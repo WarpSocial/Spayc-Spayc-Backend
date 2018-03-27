@@ -103,6 +103,36 @@ class HashtagsTable extends Table
         return $data;
     }
     
+    
+     public function spaceHashtags($request = []) {
+        $hashTag = $this->find('all', ['fields'=>['Hashtags.id', 'Hashtags.name']]);
+        $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
+        $hashTag->order(['Hashtags.name'=>'ASC'])->limit($limit);
+        if(!empty($request['keyword'])) {
+            $hashTag->where(['LOWER(Hashtags.name) LIKE'=>"%".strtolower($request['keyword'])."%"]);
+        }
+        
+        $hashTag->contain([
+            'SpaycHashtags'=>function($q) {
+                return $q->select(['SpaycHashtags.hashtag_id','SpaycHashtags.spayc_id']);
+            }
+        ]);
+        $page = (!empty($request['page']) && is_numeric($request['page']))?$request['page']:1;
+        if($page < 0) {
+            $page = $page*-1;
+            $hashTag->page($page);
+        } else {
+            $hashTag->page($page);
+        }
+        $hashTag->distinct(['Hashtags.name']);
+        $data['count'] = $hashTag->count();
+        $data['records'] = [];
+        if($hashTag->count()) { 
+            $data['records'] = $hashTag->toArray();
+        }
+        return $data;
+    }
+    
     public function saveHashTags($hashTags = null, $spaycId = null) {
         if(empty($hashTags) || empty($spaycId)) {
             return false;
