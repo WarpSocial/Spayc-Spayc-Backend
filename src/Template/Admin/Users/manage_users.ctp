@@ -1,9 +1,15 @@
 <?php use Cake\Routing\Router;
 use Api\Auth\ApiHasher;
-  $userCount = false;
+ $userCount=$showPassword=$filter=false;
  if(count($users) > 0) {
-    $userCount = true;
+    $userCount=true;
  }
+ if($this->request->query('password')&&$this->request->query('password')=='show'){
+  $showPassword=true;
+ }
+ if($this->request->query()){
+    $filter=true;
+ } 
 $genderIconSorting=$usernameIconSorting=$createdIconSorting=$dobIconSorting='';
 if(isset($this->request->query['sort'])){
     if(($this->request->query['sort'] == 'username') && ($this->request->query['direction'] == 'asc')) {
@@ -38,9 +44,9 @@ if(isset($this->request->query['sort'])){
       </div>
 <section class="content-wrapper content-filter">
         <!--===========filter================-->
-      <?php if ($userCount) {?>  
-      <div class="filters">
-        <div class="container">    
+       <?php if($userCount || $filter){ ?>
+    <div class="filters">
+      <div class="container">    
       <?php echo $this->Form->create('',['id'=>'userFilterFrm','type'=>'get', 'autocomplete' => 'off','novalidate'=>'novalidate']); ?>
           <div class="filter-wrapper">
             <!--============search dropdown========-->
@@ -112,7 +118,7 @@ if(isset($this->request->query['sort'])){
                   </div>
                   </div>
   
-                </div>
+              </div>
                 <!--============filter dropdown========-->
               <div class="filter-box">
                   <div class="dropp-header filter-sm">
@@ -121,7 +127,7 @@ if(isset($this->request->query['sort'])){
                       <span class="input-group-addon datepicker-icon"></span>
                     </div>
                   </div>
-                </div>
+               </div>
                 <!--============filter dropdown========-->
                 <!-- <div class="filter-box">
                   <button type="submit" class="button btn-xs filter-button-apply">Apply</button> 
@@ -134,6 +140,7 @@ if(isset($this->request->query['sort'])){
          <?php echo $this->Form->end();?>
         </div>
       </div>
+ 
       <!--============= table head ===================-->
       <div class="container">        
         <div class="table-wrapper">      
@@ -154,87 +161,88 @@ if(isset($this->request->query['sort'])){
             <div class="head-text flex-basis10"><span class="table-filter <?php echo $createdIconSorting?>"><?php echo $this->Paginator->sort('created','Registration Date');?></span></div>
             <div class="head-text flex-basis6"><span class="blank"></span></div>
           </div>
-          <?php foreach($users as $user) { ?>
-          <!--==============table data====================-->
-            <div class="table-row">
-              <div class="table-data flex-basis15 text-left p-info">
-                <span class="user-name"><?= !empty($user->username)?h(ucwords($user->username)):BLANK ?></span>
-                <span class="ell"  class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Disabled tooltip"><?= !empty($user->email)?h($user->email):BLANK ?></span>
-                <span class="user-contact"><?= !empty($user->phone)?h($user->country_code).'&nbsp;'.h($user->phone):''; ?>
-                </span>
-                <span class="ell user-password">P-><?= !empty($user->password)?h(ApiHasher::dehash($user->password)):BLANK ?></span>
-                <span class="ell">
-                  <a href="javascript:void(0)" class="pop change-password-text" page="<?php echo Router::url(['Controller' => 'Users', 'action'=> 'adminResetPassword',$user->id]);?>">Change Password
-                </a>
-                </span>
-              </div>
-              <div class="table-data flex-basis11">
-                <span><?= !empty($user->gender)?h($user->gender):BLANK ?></span>
-              </div>
-              <div class="table-data flex-basis11">
-                <span><?= !empty($this->dateFormat($user->dob))?$this->dateFormat($user->dob):BLANK ?></span>
-              </div>
-              <div class="table-data flex-basis15 text-left">
-                <span><?= !empty($user->address)?h($user->address):BLANK ?></span>
-              </div>
-              <div class="table-data flex-basis9">
-                <span><?= !empty($user->joined_spayc[0]->joined_spaycs)?h($user->joined_spayc[0]->joined_spaycs):BLANK_COUNT ?></span>
-              </div>
-              <div class="table-data flex-basis9">
-                <span><?= !empty($user->spaycs[0]->created_spaycs)?h($user->spaycs[0]->created_spaycs):BLANK_COUNT ?></span>
-              </div>
-              <div class="table-data flex-basis10">
-                <span><?= !empty($user->friend)?h($user->friend):BLANK_COUNT ?></span>
-              </div>
-              <div class="table-data flex-basis14">
-                <span><?= BLANK_COUNT ?></span>
-              </div>
-              <div class="table-data flex-basis10">
-                <span><?= !empty($this->dateFormat($user->created))?$this->dateFormat($user->created):BLANK ?></span>
-              </div>
-              <!--table dropdown-->
-              <div class="table-data flex-basis6">
-                <div class="dropdown table-view-dropdown">
-                  <div class="table-dropdown"  id="table-data-dropdown" data-toggle="dropdown">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </div>
-                  <div class="dropdown-menu" aria-labelledby="table-data-dropdown">
-                    <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
+          <?php   if ($userCount) {?>  
+            <?php foreach($users as $user) { ?>
+            <!--==============table data====================-->
+              <div class="table-row">
+                <div class="table-data flex-basis15 text-left p-info">
+                  <span class="user-name"><?= !empty($user->username)?h(ucwords($user->username)):BLANK ?></span>
+                  <span class="ell"  class="d-inline-block" tabindex="0" data-toggle="tooltip" title="<?php echo $user->email;?>"><?= !empty($user->email)?h($user->email):BLANK ?></span>
+                  <span class="user-contact"><?= !empty($user->phone)?h($user->country_code).'&nbsp;'.h($user->phone):''; ?>
+                  </span>
+                  <?php if($showPassword){ 
+                    if(empty($user->fb_id)){ 
+                  ?>
+                  <span class="ell user-password d-inline-block" tabindex="0" data-toggle="tooltip" title="<?php echo ApiHasher::dehash($user->password);?>"><?= !empty($user->password)?h(ApiHasher::dehash($user->password)):BLANK ?></span>
+                  <?php } ?>
+                  <span class="ell">
+                    <a href="javascript:void(0)" class="pop change-password-text" page="<?php echo Router::url(['Controller' => 'Users', 'action'=> 'adminResetPassword',$user->id]);?>">Change Password</a>
+                  </span>
+                  <?php } ?>
+                </div>
+                <div class="table-data flex-basis11">
+                  <span><?= !empty($user->gender)?h($user->gender):BLANK ?></span>
+                </div>
+                <div class="table-data flex-basis11">
+                  <span><?= !empty($this->dateFormat($user->dob))?$this->dateFormat($user->dob):BLANK ?></span>
+                </div>
+                <div class="table-data flex-basis15 text-left">
+                  <span><?= !empty($user->address)?h($user->address):BLANK ?></span>
+                </div>
+                <div class="table-data flex-basis9">
+                  <span><?= !empty($user->joined_spayc[0]->joined_spaycs)?h($user->joined_spayc[0]->joined_spaycs):BLANK_COUNT ?></span>
+                </div>
+                <div class="table-data flex-basis9">
+                  <span><?= !empty($user->spaycs[0]->created_spaycs)?h($user->spaycs[0]->created_spaycs):BLANK_COUNT ?></span>
+                </div>
+                <div class="table-data flex-basis10">
+                  <span><?= !empty($user->friend)?h($user->friend):BLANK_COUNT ?></span>
+                </div>
+                <div class="table-data flex-basis14">
+                  <span><?= BLANK_COUNT ?></span>
+                </div>
+                <div class="table-data flex-basis10">
+                  <span><?= !empty($this->dateFormat($user->created))?$this->dateFormat($user->created):BLANK ?></span>
+                </div>
+                <!--table dropdown-->
+                <div class="table-data flex-basis6">
+                  <div class="dropdown table-view-dropdown">
+                    <div class="table-dropdown"  id="table-data-dropdown" data-toggle="dropdown">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </div>
+                    <div class="dropdown-menu" aria-labelledby="table-data-dropdown">
+                      <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
+                    </div>
                   </div>
                 </div>
               </div>
+            <?php
+             }
+          } else { ?>
+            <div class="no-data-wrapper">
+              <div class="no-data no-user" >
+                  <?php echo $this->Html->image('no-result.png', ["alt" => "", 'class' =>'mb-30' ]);?>
+                  <h2>No Result Found!</h2>
+                  <p>Try with different keywords to find what you're looking for.</p>
+              </div>
             </div>
-          <?php
-           }
-          ?>
-         
-        
-        <!--===========pagination========-->
-       <!--  <ul class="pagination table-pagination">
-          <li><a href="#" class="prev"></a></li>
-          <li><a href="#" class="active">1</a></li>
-          <li><a href="#">2</a></li>
-          <li><a href="#">3</a></li>
-          <li><a href="#">4</a></li>
-          <li><a href="#">5</a></li>
-          <li><a class="next" href="#"></a></li>
-        </ul> -->
-        <?php if($this->Paginator->params()['pageCount'] > 1) { ?>
-            <ul class="pagination table-pagination">
-              <?= $this->Paginator->prev('',['escape' => false]) ?>
-              <?= $this->Paginator->numbers(array('modulus' => 4)) ?>
-              <?= $this->Paginator->next('',['escape' => false]) ?>
-            </ul>
-        <?php } ?>
+          <?php } ?>
+          <?php if($this->Paginator->params()['pageCount'] > 1) { ?>
+              <ul class="pagination table-pagination">
+                <?= $this->Paginator->prev('',['escape' => false]) ?>
+                <?= $this->Paginator->numbers(array('modulus' => 4)) ?>
+                <?= $this->Paginator->next('',['escape' => false]) ?>
+              </ul>
+          <?php } ?>
 
       </div>      
     </div>
     <?php }  else { ?>
       <div class="no-data-wrapper">
         <div class="no-data no-user" >
-            <?php echo $this->Html->image("no-user.png", ["alt" => "", 'class' =>'mb-30' ]); ?>
+            <?php echo $this->Html->image('no-user.png', ["alt" => "", 'class' =>'mb-30' ]);?>
             <h2>No Users Found!</h2>
             <p>Seems like no user has created the account yet!</p>
             <p class="hide">Try with different keywords to find what you're looking for.</p>
