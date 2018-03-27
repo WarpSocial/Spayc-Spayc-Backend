@@ -330,6 +330,32 @@ class UsersController extends AdminController
         $this->set(compact('user'));        
     }
 
+    public function adminResetPassword($id) {
+
+        $this->viewBuilder()->layout('');
+        if (empty($id)) {
+            return $this->redirect(['action' => 'manageUsers']);  
+        }        
+        $user = $this->Users->get($id);  
+        if ($this->request->is(['post','put'])) {   
+            $data = $this->request->getData();  
+            $errors = $this->Users->validationResetPassword($data);             
+            if (!$errors) {                        
+                $user->password = ApiHasher::hash($data['new_password']);
+                if ($this->Users->save($user)) {
+                    $result_arr = ['result' => true, 'message' => $this->errorSuccessMessage['27']];
+                    //return $this->redirect(['action' => 'success','login']);    
+                } 
+            } else {     
+                $user->errors($errors);     
+                $result_arr = ['result' => false, 'message' => $errors]; 
+            }
+            echo json_encode($result_arr);
+            die;
+        }
+        $this->set(compact('user'));
+    }
+
     public function getUserObj($email){        
         $obj = '';
         if(isset($email) && !empty($email)) {

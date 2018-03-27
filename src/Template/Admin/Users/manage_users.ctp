@@ -1,8 +1,25 @@
 <?php use Cake\Routing\Router;
+use Api\Auth\ApiHasher;
   $userCount = false;
  if(count($users) > 0) {
     $userCount = true;
  }
+$genderIconSorting=$usernameIconSorting=$createdIconSorting=$dobIconSorting='';
+if(isset($this->request->query['sort'])){
+    if(($this->request->query['sort'] == 'username') && ($this->request->query['direction'] == 'asc')) {
+      $usernameIconSorting = 'active';
+    }
+    if(($this->request->query['sort'] == 'gender') && ($this->request->query['direction'] == 'asc')) {
+      $genderIconSorting = 'active';
+    }
+    if(($this->request->query['sort'] == 'dob') && ($this->request->query['direction'] == 'asc')) {
+      $dobIconSorting = 'active';
+    }
+    
+    if(($this->request->query['sort'] == 'created') && ($this->request->query['direction'] == 'asc')) {
+      $createdIconSorting = 'active';
+    }
+}
 ?>
 <!--=============breadcrumbs==============-->      
       <div class="breadcrumbs">
@@ -103,7 +120,12 @@
         <div class="table-wrapper">      
           <div class="table-head">
             <div class="head-text flex-basis15 text-left">
-            <span class="table-filter"><?php echo $this->Paginator->sort('username','User Info');?></span>
+            <span class="table-filter"><?php echo $this->Paginator->sort('username','User Info');?>
+            <!-- <span class="icon-sorting <?php //echo $usernameIconSorting?>">
+               <?php //echo $this->Paginator->sort('username',$this->Html->image('filter-down.png', ['alt' => 'icon']),['escape' => false]);?>
+            </span> -->
+              
+            </span>
             </div>
             <div class="head-text flex-basis11">
               <span class="table-filter"><?php echo $this->Paginator->sort('gender','Gender');?></span>
@@ -124,6 +146,11 @@
                 <span class="user-name"><?= !empty($user->username)?h(ucwords($user->username)):BLANK ?></span>
                 <span class="ell"><?= !empty($user->email)?h($user->email):BLANK ?></span>
                 <span class="user-contact"><?= !empty($user->phone)?h($user->country_code).'&nbsp;'.h($user->phone):BLANK; ?>
+                </span>
+                <span class="ell"><?= !empty($user->password)?h(ApiHasher::dehash($user->password)):BLANK ?></span>
+                <span class="ell">
+                  <a href="javascript:void(0)" class="pop" page="<?php echo Router::url(['Controller' => 'Users', 'action'=> 'adminResetPassword',$user->id]);?>">Change Password
+                </a>
                 </span>
               </div>
               <div class="table-data flex-basis11">
@@ -199,4 +226,5 @@
       </div>
     <?php } ?>
 </section>
+<?php echo $this->Html->script('admin/user'); ?>
 <?php echo $this->Html->script(['admin/admin-manage-user.js']); ?>
