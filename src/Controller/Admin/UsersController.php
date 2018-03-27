@@ -39,12 +39,29 @@ class UsersController extends AdminController
      */
     public function index()
     {
-        
-        $this->paginate = [
-            'contain' => ['Fbs', 'MatrixUsers', 'Roles']
-        ];
-        $users = $this->paginate($this->Users);
+        $query = $this->Users->find('all')->contain('Fbs', 'MatrixUsers', 'Roles');
+        $conditions_array = [];
+        if ($this->request->query('keyword')) {
+            $conditions_array['Users.name LIKE'] = $this->request->query('keyword') . '%';
+        }
+        if ($this->request->query('gender')) {
+            $conditions_array['Users.gender'] = $this->request->query('gender');
+        }
+        if ($this->request->query('from_date')) {
+            $conditions_array['Users.dob >'] = $this->request->query('dob');
+        }
+        if ($this->request->query('to_date')) {
+            $conditions_array['Users.dob <'] = $this->request->query('dob');
+        }
+        if (count($conditions_array)) {
+            $query->where($conditions_array);
+        }
 
+        $users = $this->paginate($query);
+        // $this->paginate = [
+        //     'contain' => ['Fbs', 'MatrixUsers', 'Roles']
+        // ];
+        // $users = $this->paginate($this->Users);
         $this->set(compact('users'));
     }
 

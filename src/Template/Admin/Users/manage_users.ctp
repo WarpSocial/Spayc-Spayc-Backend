@@ -98,10 +98,11 @@ if(isset($this->request->query['sort'])){
                 </div>
                 <!--============filter dropdown========-->
                 <div class="filter-box">
-                  <button type="submit" class="button btn-xs filter-button-apply">Apply</button>
+                  <!-- <button type="submit" class="button btn-xs filter-button-apply">Apply</button> -->
                 </div>
                 <!--============filter reset========-->
                 <button class="reset-filter">Reset</button>
+                <button class="reset-filter" type="submit">Search</button>
             </div>
           </div>
           </form>
