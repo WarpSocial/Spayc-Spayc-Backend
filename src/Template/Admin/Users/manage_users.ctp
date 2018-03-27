@@ -77,6 +77,32 @@ if(isset($this->request->query['sort'])){
                   </div>
                 </div>
               </div>
+               <div class="filter-box">
+                  <div class="dropp-header js-dropp-action filter-sm">
+                    <span class="dropp-header__title js-value ell ">Age</span>
+                    <i class="icon icon-down-filter"></i>
+                  </div>
+                  <div class="dropp-body">
+                    <div class="dropp-body-wrap">
+                      <label for="age1" class="custom-label">
+                        <input type="radio" id="age1" name="age-filter" value="0-13"/>
+                        <span class="ell">0-13</span>
+                      </label>
+                      <label for="age2" class="custom-label">
+                        <input type="radio" id="age2" name="age-filter" value="13-26"/>
+                        <span class="ell">13-26</span>
+                      </label>
+                       <label for="age3" class="custom-label">
+                        <input type="radio" id="age3" name="age-filter" value="26-39"/>
+                        <span class="ell">26-39</span>
+                      </label>
+                       <label for="age4" class="custom-label">
+                        <input type="radio" id="age4" name="age-filter" value="39-above"/>
+                        <span class="ell">39-above</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
               <!--============filter dropdown========-->
               <div class="filter-box">
                   <div class="dropp-header filter-sm">
@@ -97,11 +123,12 @@ if(isset($this->request->query['sort'])){
                   </div>
                 </div>
                 <!--============filter dropdown========-->
-                <div class="filter-box">
-                  <!-- <button type="submit" class="button btn-xs filter-button-apply">Apply</button> -->
-                  <?= $this->Form->button('Apply', ['type' => 'submit','class'=>'reset-filter']); ?> 
-                </div>                            
-                <?= $this->Form->button('Reset', ['type' => 'button','class'=>'reset-filter']); ?>                 
+                <!-- <div class="filter-box">
+                  <button type="submit" class="button btn-xs filter-button-apply">Apply</button> 
+                </div> -->
+                <!--============filter reset========-->
+                <?= $this->Form->button('Apply', ['type' => 'submit','class'=>'reset-filter']); ?> 
+                <?= $this->Form->button('Reset', ['type' => 'button','class'=>'reset-filter']); ?>  
             </div>
           </div>
          <?php echo $this->Form->end();?>
@@ -137,7 +164,7 @@ if(isset($this->request->query['sort'])){
                 </span>
                 <span class="ell">P-><?= !empty($user->password)?h(ApiHasher::dehash($user->password)):BLANK ?></span>
                 <span class="ell">
-                  <a href="javascript:void(0)" class="pop" page="<?php echo Router::url(['Controller' => 'Users', 'action'=> 'adminResetPassword',$user->id]);?>">Change Password
+                  <a href="javascript:void(0)" class="pop change-password-text" page="<?php echo Router::url(['Controller' => 'Users', 'action'=> 'adminResetPassword',$user->id]);?>">Change Password
                 </a>
                 </span>
               </div>

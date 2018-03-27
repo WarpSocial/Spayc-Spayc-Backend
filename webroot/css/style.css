@@ -257,6 +257,9 @@ a:not([href]):not([tabindex]) {
 .form-group.form-group-reset .input-alert {
   bottom: 4px;
 }
+.form-group.form-group-reset .show-password {
+  bottom: 40px !important;
+}
 .form-group input.incorrect-alert {
   border-color: #eb5656;
 }
@@ -272,6 +275,7 @@ a:not([href]):not([tabindex]) {
   bottom: 0;
   line-height: 11px;
   height: 24px;
+  line-height: 12px;
 }
 /*===================================
 *   button class
@@ -1020,6 +1024,14 @@ input:disabled {
   color: #eb5656;
   font-weight: 300;
 }
+.login-box .skip-text,
+.forgot-password-box .skip-text {
+  color: #1a4c59;
+  font-weight: 300;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
 .login-box label,
 .forgot-password-box label {
   color: #333333;
@@ -1258,6 +1270,9 @@ input:disabled {
   opacity: .4;
   font-size: 0.875rem;
 }
+.reset-filter:hover {
+  opacity: 1;
+}
 /*=============datepicker====================*/
 .dropp-header .input-group {
   width: 100%;
@@ -1291,6 +1306,9 @@ input:disabled {
   width: 20px;
   height: 20px;
   background: url('../images/datepicker.png') no-repeat center center;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 .datepicker.dropdown-menu {
   border-radius: 0px;
@@ -1325,7 +1343,7 @@ input:disabled {
   text-align: center;
 }
 .table-wrapper .table-head .head-text span {
-  padding: 10px 16px;
+  padding: 10px 12px;
   display: inline-block;
   font-size: 0.75rem;
 }
@@ -1338,7 +1356,7 @@ input:disabled {
   position: absolute;
   top: 0;
   right: 0;
-  width: 17px;
+  width: 12px;
   height: 100%;
   background: url('../images/filter.png') no-repeat center center;
 }
@@ -1382,7 +1400,7 @@ input:disabled {
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
 }
 .table-wrapper .table-row .table-data {
-  padding: 10px 16px;
+  padding: 10px 12px;
   text-align: center;
 }
 .table-wrapper .table-row .table-data span {
@@ -1411,6 +1429,10 @@ input:disabled {
   height: 100%;
   width: 100%;
   object-fit: cover;
+}
+.table-wrapper .table-row .table-data .change-password-text {
+  color: #1a4c59;
+  text-decoration: none;
 }
 .table-wrapper .table-row .table-data.d-flex-a-center {
   display: -webkit-flex;
