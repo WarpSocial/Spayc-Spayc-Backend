@@ -357,6 +357,83 @@ class UsersTable extends Table {
             ->inList('friend_status', Configure::read('friend_requested_status'),__('Friend status must be any one '.implode(',',Configure::read('friend_requested_status')).'.'));
         return $validator->errors($data);
     }
+    
+    /**
+     * requestAcceptDeclinedValidate rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function requestAcceptDeclinedValidate($data) {
+        $validator = new Validator();        
+        $validator
+            ->requirePresence('friend_id', 'create',__('Friend id is required field.'))
+            ->notEmpty('friend_id',__('Friend request is required field.'));
+        
+        $validator
+            ->requirePresence('friend_status', 'create',__('Status is required field.'))    
+            ->notEmpty('friend_status',__('Status is required field.'))
+            ->inList('friend_status', Configure::read('accept_decline_status'),__('Friend status must be any one '.implode(',',Configure::read('accept_decline_status')).'.'));
+        return $validator->errors($data);
+    }
+    
+    /**
+     * requestBlockedValidate rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function requestBlockedValidate($data) {
+        $validator = new Validator();        
+        $validator
+            ->requirePresence('friend_id', 'create',__('Friend id is required field.'))
+            ->notEmpty('friend_id',__('Friend request is required field.'));
+        
+        $validator
+            ->requirePresence('friend_status', 'create',__('Status is required field.'))    
+            ->notEmpty('friend_status',__('Status is required field.'))
+            ->inList('friend_status', Configure::read('block_status'),__('Friend status must be '.implode(',',Configure::read('block_status')).'.'));
+        return $validator->errors($data);
+    }
+    
+    /**
+     * requestUnblockedValidate rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function requestUnblockedValidate($data) {
+        $validator = new Validator();        
+        $validator
+            ->requirePresence('friend_id', 'create',__('Friend id is required field.'))
+            ->notEmpty('friend_id',__('Friend request is required field.'));
+        
+        $validator
+            ->requirePresence('friend_status', 'create',__('Status is required field.'))    
+            ->notEmpty('friend_status',__('Status is required field.'))
+            ->inList('friend_status', Configure::read('unblock_status'),__('Friend status must be '.implode(',',Configure::read('unblock_status')).'.'));
+        return $validator->errors($data);
+    }
+    
+    /**
+     * requestUnfriendValidate rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function requestUnfriendValidate($data) {
+        $validator = new Validator();        
+        $validator
+            ->requirePresence('friend_id', 'create',__('Friend id is required field.'))
+            ->notEmpty('friend_id',__('Friend request is required field.'));
+        
+        $validator
+            ->requirePresence('friend_status', 'create',__('Status is required field.'))    
+            ->notEmpty('friend_status',__('Status is required field.'))
+            ->inList('friend_status', Configure::read('unfriend_status'),__('Friend status must be '.implode(',',Configure::read('unfriend_status')).'.'));
+        return $validator->errors($data);
+    }
+    
     /**
      * friendRequestResponseValidate rules.
      *

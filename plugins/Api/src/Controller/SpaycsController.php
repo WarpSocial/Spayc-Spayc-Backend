@@ -259,10 +259,10 @@ class SpaycsController extends AppController {
                 }
             ]);
          if($lat != null && $long != null){
-            $distance = $this->Spaycs->distanceInMiles;
+            $distance = str_replace(':long',$long,str_replace(':lat',$lat,$this->Spaycs->distanceInMiles));
             $spaycs->select(['distance'=>$distance])
-                    ->bind(':lat', $lat, 'float')
-                    ->bind(':long', $long, 'float')
+                    //->bind(':lat', $lat, 'float')
+                    //->bind(':long', $long, 'float')
                     ->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
         }else{
             $spaycs->select(['distance'=>0])
@@ -334,8 +334,8 @@ class SpaycsController extends AppController {
         });
         
         //pr($spaycs->toArray());die;
-        $newQuery = clone $spaycs;
-        $data['count'] = $newQuery->all()->count();
+        //$newQuery = clone $spaycs;
+        $data['count'] = $spaycs->count();
         $data['spaycs'] = [];
         if(!$spaycs->isEmpty()) {
             $data['spaycs'] = $spaycs->toArray();

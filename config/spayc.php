@@ -7,6 +7,10 @@ return [
     'pagelimit'=>5,
     'miles'=>1,
     'friend_requested_status'=>['Pending', 'Accepted', 'Blocked','Unblock','is_direct','Decline','Unfriend'],
+    'accept_decline_status'=>['Accepted', 'Decline'],
+    'block_status'=>['Blocked'],
+    'unblock_status'=>['Unblock'],
+    'unfriend_status'=>['Unfriend'],
     'requestMsg'=>[
         'Pending'=>'Friend Request sent Successfully.',
         'Accepted'=>'Friend added successfully.',

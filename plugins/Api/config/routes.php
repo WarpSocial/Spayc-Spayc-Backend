@@ -19,6 +19,10 @@ Router::plugin(
         $routes->connect('/verify/:token/:email', ['controller' => 'Users', 'action' => 'verifyAccount','ext'=>'html'], ['pass' => ['token', 'email']]);
         $routes->connect('/get-friends', ['controller' => 'Users', 'action' => 'getFriends']);
         $routes->connect('/friend-request', ['controller' => 'Users', 'action' => 'friendRequest']);
+        $routes->connect('/request-accept-declined', ['controller' => 'Users', 'action' => 'requestAcceptDeclined']);
+        $routes->connect('/block-friend', ['controller' => 'Users', 'action' => 'blockFriend']);
+        $routes->connect('/unblock-friend', ['controller' => 'Users', 'action' => 'unblockFriend']);
+        $routes->connect('/unfriend-request', ['controller' => 'Users', 'action' => 'unfriendRequest']);
         $routes->connect('/friend-response', ['controller' => 'Users', 'action' => 'setFriendResponse']);
         $routes->connect('/update-user-status', ['controller' => 'Users', 'action' => 'userCurrentStatus']);
         $routes->connect('/facebook-friends', ['controller' => 'Users', 'action' => 'getFacebookFriends']);
