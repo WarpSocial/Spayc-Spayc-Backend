@@ -35,5 +35,8 @@ $(function () {
       buttonWidth: 250,
       enableFiltering: true
     });
-
+    //[Tooltip]==================
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
   });

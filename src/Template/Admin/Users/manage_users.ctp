@@ -138,7 +138,7 @@ if(isset($this->request->query['sort'])){
       <div class="container">        
         <div class="table-wrapper">      
           <div class="table-head">
-            <div class="head-text flex-basis15 text-left">
+            <div class="head-text flex-basis15 text-left p-info">
             <span class="table-filter <?php echo $usernameIconSorting?>"><?php echo $this->Paginator->sort('username','User Info');?>
             </span>
             </div>
@@ -157,12 +157,12 @@ if(isset($this->request->query['sort'])){
           <?php foreach($users as $user) { ?>
           <!--==============table data====================-->
             <div class="table-row">
-              <div class="table-data flex-basis15 text-left">
+              <div class="table-data flex-basis15 text-left p-info">
                 <span class="user-name"><?= !empty($user->username)?h(ucwords($user->username)):BLANK ?></span>
-                <span class="ell"><?= !empty($user->email)?h($user->email):BLANK ?></span>
-                <span class="user-contact"><?= !empty($user->phone)?h($user->country_code).'&nbsp;'.h($user->phone):BLANK; ?>
+                <span class="ell"  class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Disabled tooltip"><?= !empty($user->email)?h($user->email):BLANK ?></span>
+                <span class="user-contact"><?= !empty($user->phone)?h($user->country_code).'&nbsp;'.h($user->phone):''; ?>
                 </span>
-                <span class="ell">P-><?= !empty($user->password)?h(ApiHasher::dehash($user->password)):BLANK ?></span>
+                <span class="ell user-password">P-><?= !empty($user->password)?h(ApiHasher::dehash($user->password)):BLANK ?></span>
                 <span class="ell">
                   <a href="javascript:void(0)" class="pop change-password-text" page="<?php echo Router::url(['Controller' => 'Users', 'action'=> 'adminResetPassword',$user->id]);?>">Change Password
                 </a>
@@ -237,6 +237,7 @@ if(isset($this->request->query['sort'])){
             <?php echo $this->Html->image("no-user.png", ["alt" => "", 'class' =>'mb-30' ]); ?>
             <h2>No Users Found!</h2>
             <p>Seems like no user has created the account yet!</p>
+            <p class="hide">Try with different keywords to find what you're looking for.</p>
         </div>
       </div>
     <?php } ?>
