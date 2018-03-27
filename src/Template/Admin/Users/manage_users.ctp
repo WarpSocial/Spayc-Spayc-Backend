@@ -72,7 +72,7 @@
                   </div>
                 </div>
                 <!--============filter dropdown========-->
-                <div class="filter-box">
+                <div class="filter-box hide">
                   <div class="dropp-header js-dropp-action filter-sm">
                     <span class="dropp-header__title js-value ell ">Location</span>
                     <i class="icon icon-down-filter"></i>
@@ -92,6 +92,7 @@
                 </div>
                 <!--============filter reset========-->
                 <button class="reset-filter">Reset</button>
+                <button class="reset-filter" type="submit">Search</button>
             </div>
           </div>
           </form>
