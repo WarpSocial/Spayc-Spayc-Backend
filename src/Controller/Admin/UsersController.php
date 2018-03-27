@@ -256,9 +256,10 @@ class UsersController extends AdminController
             if (empty($error)) {                  
                 $user = $this->getUserObj($data_item['email'])->first();
                 if ($user) {
-                    $data['forgot_password_token'] = Security::hash($user->email, 'sha1', true);
+                    $data['forgot_password_token'] = Security::hash($user->email.strtotime("now"), 'sha1', true);
                     $data['forgot_password_timestamp'] = time();
-                    $d = $this->Users->updateAll($data, ['email'=>$user->email]);
+                    $this->Users->updateAll($data, ['email'=>$user->email]);
+                    $user =$this->Users->get($user->id);
                     $this->getMailer('User')->send('forgotPassword', [$user]);
                    $result_arr = ['result' => true, 'message' => $this->errorSuccessMessage['44']];
                 } else {
@@ -276,21 +277,17 @@ class UsersController extends AdminController
 
     public function resetPassword($token, $email) {    
         $this->set('title', 'Reset password');        
-        if (!$token || !$email) {            
+        if (!$token || !$email) {  
             $this->Flash->error(__($this->errorSuccessMessage['42']));
             return $this->redirect(['action' => 'login']);  
         }
-        $user = $this->getUserObj($email)->first();          
+        $user = $this->getUserObj($email)->first(); 
         if (!$user) {
             $this->Flash->error(__($this->errorSuccessMessage['36']));
             return $this->redirect(['action' => 'login']); 
-        }
-        if ($token != Security::hash($user->email, 'sha1', true)) {            
+        }        
+        if ($token != $user->forgot_password_token) {   
             $this->Flash->error(__($this->errorSuccessMessage['37']));
-            return $this->redirect(['action' => 'login']); 
-        } 
-        if ($token != $user->forgot_password_token) {            
-            $this->Flash->error(__($this->errorSuccessMessage['38']));
             return $this->redirect(['action' => 'login']); 
         }                
         if ($this->request->is(['post','put'])) {   

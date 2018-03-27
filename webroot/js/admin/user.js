@@ -81,12 +81,12 @@ jQuery(document).ready(function ($) {
                url:UserUrls.ForgotPassword,
                data: {email: email.val()},
                dataType:'JSON',
-               async: false,             
+               async: true,             
               beforeSend: function () {
-                $(".loader").addClass('show');
+                $(".loader").addClass('show-loader');
               },
                success:function(data){        
-                  $(".loader").removeClass('show');        
+                  $(".loader").removeClass('show-loader');        
                    if (data.result) {     
                         $( "#forgotCancel").trigger('click'); 
                         openPopup(UserUrls.Success);                   

@@ -7,17 +7,25 @@ use Api\Auth\ApiHasher;
 $genderIconSorting=$usernameIconSorting=$createdIconSorting=$dobIconSorting='';
 if(isset($this->request->query['sort'])){
     if(($this->request->query['sort'] == 'username') && ($this->request->query['direction'] == 'asc')) {
-      $usernameIconSorting = 'active';
+      $usernameIconSorting = 'sort-asc';
+    } else if(($this->request->query['sort'] == 'username') && ($this->request->query['direction'] == 'desc')) {
+      $usernameIconSorting = 'sort-desc';
     }
     if(($this->request->query['sort'] == 'gender') && ($this->request->query['direction'] == 'asc')) {
-      $genderIconSorting = 'active';
+      $genderIconSorting = 'sort-asc';
+    } else if(($this->request->query['sort'] == 'gender') && ($this->request->query['direction'] == 'desc')) {
+      $genderIconSorting = 'sort-desc';
     }
     if(($this->request->query['sort'] == 'dob') && ($this->request->query['direction'] == 'asc')) {
-      $dobIconSorting = 'active';
+      $dobIconSorting = 'sort-asc';
+    } else if(($this->request->query['sort'] == 'dob') && ($this->request->query['direction'] == 'desc')) {
+      $dobIconSorting = 'sort-desc';
     }
     
     if(($this->request->query['sort'] == 'created') && ($this->request->query['direction'] == 'asc')) {
-      $createdIconSorting = 'active';
+      $createdIconSorting = 'sort-asc';
+    } else if(($this->request->query['sort'] == 'created') && ($this->request->query['direction'] == 'desc')) {
+      $createdIconSorting = 'sort-desc';
     }
 }
 ?>
@@ -90,22 +98,7 @@ if(isset($this->request->query['sort'])){
                 </div>
                 <!--============filter dropdown========-->
                 <div class="filter-box">
-                  <div class="dropp-header js-dropp-action filter-sm">
-                    <span class="dropp-header__title js-value ell ">Location</span>
-                    <i class="icon icon-down-filter"></i>
-                  </div>
-                  <div class="dropp-body">
-                    <div class="dropp-body-wrap">
-                      <label for="locationA" class="custom-label">
-                        <input type="radio" id="locationA" name="dropp" value="Location 1"/>
-                        <span class="ell">Location 1</span>
-                      </label>
-                      <label for="locationB" class="custom-label">
-                        <input type="radio" id="locationB" name="dropp" value="Location 2"/>
-                        <span class="ell">Location 2</span>
-                      </label>
-                    </div>
-                  </div>
+                  <button type="submit" class="button btn-xs filter-button-apply">Apply</button>
                 </div>
                 <!--============filter reset========-->
                 <button class="reset-filter">Reset</button>
@@ -119,23 +112,19 @@ if(isset($this->request->query['sort'])){
         <div class="table-wrapper">      
           <div class="table-head">
             <div class="head-text flex-basis15 text-left">
-            <span class="table-filter"><?php echo $this->Paginator->sort('username','User Info');?>
-            <!-- <span class="icon-sorting <?php //echo $usernameIconSorting?>">
-               <?php //echo $this->Paginator->sort('username',$this->Html->image('filter-down.png', ['alt' => 'icon']),['escape' => false]);?>
-            </span> -->
-              
+            <span class="table-filter <?php echo $usernameIconSorting?>"><?php echo $this->Paginator->sort('username','User Info');?>
             </span>
             </div>
             <div class="head-text flex-basis11">
-              <span class="table-filter"><?php echo $this->Paginator->sort('gender','Gender');?></span>
+              <span class="table-filter <?php echo $genderIconSorting?>"><?php echo $this->Paginator->sort('gender','Gender');?></span>
             </div>
-            <div class="head-text flex-basis11"><span class="table-filter"><?php echo $this->Paginator->sort('dob','Date of Birth');?></span></div>
+            <div class="head-text flex-basis11"><span class="table-filter <?php echo $dobIconSorting?>"><?php echo $this->Paginator->sort('dob','Date of Birth');?></span></div>
             <div class="head-text flex-basis15 text-left"><span>Location</span></div>
             <div class="head-text flex-basis9"><span>Spaycs Joined</span></div>
             <div class="head-text flex-basis9"><span>Spaycs Created</span></div>
             <div class="head-text flex-basis10"><span>Friends</span></div>
             <div class="head-text flex-basis14"><span>Advertisements</span></div>
-            <div class="head-text flex-basis10"><span class="table-filter"><?php echo $this->Paginator->sort('created','Registration Date');?></span></div>
+            <div class="head-text flex-basis10"><span class="table-filter <?php echo $createdIconSorting?>"><?php echo $this->Paginator->sort('created','Registration Date');?></span></div>
             <div class="head-text flex-basis6"><span class="blank"></span></div>
           </div>
           <?php foreach($users as $user) { ?>

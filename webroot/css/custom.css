@@ -8,3 +8,7 @@
 	color: #49ff00;
 	text-decoration: none;
 }
+.filter-button-apply {
+    bottom: 4px;
+    position: relative;
+}
