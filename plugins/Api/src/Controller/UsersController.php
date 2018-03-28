@@ -1378,12 +1378,17 @@ class UsersController extends AppController {
         $response = ['status'=>'success', 'message'=>__('Device token updated successfully.')];
         $this->set($response);
     }
+    /**
+     * changeRole method to make user as admin
+     * @endpoint change-role.json
+     */
     
     public function changeRole(){
         if (!$this->request->is('post')) {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
         }
         $data = $this->request->getData();
+        $user = $this->Auth->user();
         $errors = $this->Users->ValidatechangeRole($data);
         if(!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
@@ -1391,14 +1396,25 @@ class UsersController extends AppController {
         $jsModel = TableRegistry::get('Api.JoinedSpayc');
         $entities = $jsModel->find()->where(['spayc_id'=>$data['spayc_id'],'user_id'=>$data['user_id']]);
         if($entities->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>__('User has not joined the spayc.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('User has not joined this spayc.')], 400);
         }
         $entity = $entities->first();
+        if($entity->is_admin == $data['role']){
+            $this->restException(['status'=>'failed','message'=>__('User has already been admin.')], 400);
+        }
+        
         $entity->is_admin = $data['role'];
         $entity->modified = new \Cake\I18n\Time();
         $entity->updated_by = $this->Auth->user('id');
         if($jsModel->save($entity)){
-            $response = ['status'=>'success','message'=>__('Role has been changed successfully.')];
+            $push['requested_by'] = $user['id'];
+            $push['username'] = $user['username'];
+            $push['display_name'] = $user['display_name'];
+            $push['requested_to'] = $data['user_id'];
+            $push['spayc_id'] = null; //provide spayc id if push related to spayc
+            $push['slug'] = 'admin-asigned';
+            $this->Push->sendPushNotification($push);
+            $response = ['status'=>'success','message'=>__('User has been assigned as admin successfully.')];
         }else{
             $this->response->statusCode(400);
             $response = ['status'=>'failed','message'=>__('System failed to change the role.')];
