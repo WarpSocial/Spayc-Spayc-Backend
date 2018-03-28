@@ -1,19 +1,19 @@
-<?php 
+<?php
 $ageArr = unserialize(USER_AGE);
 $genderArr = unserialize(USER_GENDER);
 ?>
 <div class="filters">
-  <div class="container">    
+  <div class="container">
     <?php echo $this->Form->create('',['id'=>'userFilterFrm','type'=>'get', 'autocomplete' => 'off','novalidate'=>'novalidate']); ?>
           <div class="filter-wrapper">
             <!--============search dropdown========-->
               <div class="search">
-	              <div class="form-group">                
+	              <div class="form-group">
 	                <?= $this->Form->input('keyword',['type'=>'text', 'class'=>'form-control','label'=>false, 'placeholder'=>'Search', 'value'=> $this->request->query('keyword')]); ?>
 	                <span class="clear-search hide" id="clear-search"></span>
 	              </div>
-            	</div>            
-           
+            	</div>
+
               <div class="filter-by ml-auto">
               	<h4>Fillter by</h4>
              		<!--============filter dropdown========-->
@@ -24,7 +24,7 @@ $genderArr = unserialize(USER_GENDER);
 	                </div>
 	                <div class="dropp-body">
 	                  <div class="dropp-body-wrap">
-                      <?php 
+                      <?php
                     $html='';
                     foreach ($genderArr as $key => $value) {
                         $checked = '';
@@ -48,7 +48,7 @@ $genderArr = unserialize(USER_GENDER);
                   </div>
                   <div class="dropp-body">
                     <div class="dropp-body-wrap">
-                    <?php 
+                    <?php
                     $html='';
                     foreach ($ageArr as $key => $value) {
                         $checked = '';
@@ -67,17 +67,17 @@ $genderArr = unserialize(USER_GENDER);
               </div>
               <!--============filter dropdown========-->
               <div class="filter-box">
-                  <div class="dropp-header filter-sm">
+                  <div class="dropp-header filter-sm datepicker-box">
                     <div class="input-group date datepicker">
                       <?= $this->Form->input('from_date',['type'=>'text', 'placeholder'=> 'From Date', 'class'=>'from-date', 'value'=> $this->request->query('from_date'), 'readonly'=>true, 'label'=>false,'templates' => ['inputContainer' => '{{content}}']]); ?>
                       <span class="input-group-addon datepicker-icon"></span>
                   </div>
                   </div>
-  
+
               </div>
                 <!--============filter dropdown========-->
               <div class="filter-box">
-                  <div class="dropp-header filter-sm">
+                  <div class="dropp-header filter-sm datepicker-box">
                     <div 	class="input-group date datepicker">
                        <?= $this->Form->input('to_date',['type'=>'text', 'placeholder'=> 'To Date', 'class'=>'to-date', 'value'=> $this->request->query('to_date'), 'readonly'=>true, 'label'=>false,'templates' => ['inputContainer' => '{{content}}'] ]); ?>
                       <span class="input-group-addon datepicker-icon"></span>
@@ -86,10 +86,10 @@ $genderArr = unserialize(USER_GENDER);
                </div>
                 <!--============filter dropdown========-->
                 <!-- <div class="filter-box">
-                  <button type="submit" class="button btn-xs filter-button-apply">Apply</button> 
+                  <button type="submit" class="button btn-xs filter-button-apply">Apply</button>
                 </div> -->
-                <?= $this->Form->button('Apply', ['type' => 'submit','class'=>'reset-filter']); ?> 
-                <?= $this->Form->button('Reset', ['type' => 'button', 'id'=>'filter-reset', 'class'=>'reset-filter']); ?>  
+                <?= $this->Form->button('Apply', ['type' => 'submit','class'=>'reset-filter']); ?>
+                <?= $this->Form->button('Reset', ['type' => 'button', 'id'=>'filter-reset', 'class'=>'reset-filter']); ?>
             </div>
           </div>
     <?php echo $this->Form->end();?>
