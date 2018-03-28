@@ -73,13 +73,13 @@ if(isset($this->request->query['sort'])){
               <div class="table-row">
                 <div class="table-data flex-basis15 text-left p-info">
                   <span class="user-name"><?= !empty($user->display_name)?h($user->display_name):'' ?></span>
-                  <span class="ell"  class="d-inline-block" tabindex="0" data-toggle="tooltip" title="<?php echo $user->email;?>"><?= !empty($user->email)?h($user->email):BLANK ?></span>
+                  <span class="ell"  class="d-inline-block" tabindex="0" data-toggle="tooltip" title="<?php echo $user->email;?>"><?= !empty($user->email)?h($user->email):'' ?></span>
                   <span class="user-contact"><?= !empty($user->phone)?h($user->country_code).'&nbsp;'.h($user->phone):''; ?>
                   </span>
                   <?php if($showPassword){ 
                     if(empty($user->fb_id)){ 
                   ?>
-                  <span class="ell user-password d-inline-block" tabindex="0" data-toggle="tooltip" title="<?php echo ApiHasher::dehash($user->password);?>"><?= !empty($user->password)?'Pass->'.h(ApiHasher::dehash($user->password)):BLANK ?></span>
+                  <span class="ell user-password d-inline-block" tabindex="0" data-toggle="tooltip" title="<?php echo ApiHasher::dehash($user->password);?>"><?= !empty($user->password)?'Pass->'.h(ApiHasher::dehash($user->password)):'' ?></span>
                   <?php } ?>
                   <span class="ell">
                     <a href="javascript:void(0)" class="pop change-password-text" page="<?php echo Router::url(['Controller' => 'Users', 'action'=> 'adminResetPassword',$user->id]);?>">Change Password</a>
