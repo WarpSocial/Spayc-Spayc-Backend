@@ -50,8 +50,7 @@ class SpaycsController extends AppController {
         $items = $this->Spaycs->patchEntity($entity, $data);
         if($items->errors()) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
-        }
-        
+        }        
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
         
         $matrix = $this->Matrix->createRoom($data);
@@ -100,15 +99,22 @@ class SpaycsController extends AppController {
         $data = $this->request->getData();
         $data['group_type'] = !empty($data['group_type'])?ucfirst($data['group_type']):'';
         $data['status'] = 'Active';
+        $user = $this->Auth->user();
         $errors = $this->Spaycs->validateSubspace($data);
         if(!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
-        $entity = $this->Spaycs->find()->where(['matrix_room_id'=>$data['parent_matrix_room_id']]);
+        $entity = $this->Spaycs->find()->contain('JoinedSpayc',function($q)use($user){
+            return $q->where(['user_id'=>$user['id']]);
+        })->where(['matrix_room_id'=>$data['parent_matrix_room_id']]);        
         if($entity->isEmpty()){
             $this->restException(['status'=>'failed','message'=>__('Parent space has not been found.')], 400);
         }
+        
         $parentObj = $entity->first();
+        if(empty($parentObj->joined_spayc)){
+            $this->restException(['status'=>'failed','message'=>__('You don\'t have sufficient right to create subspace.')], 400);
+        }
         if(!empty($parentObj->parent_id)){
             $this->restException(['status'=>'failed','message'=>__('Not allowd to create subspayc of subspayc.')], 400);
         }
@@ -439,7 +445,7 @@ class SpaycsController extends AppController {
      * @return \Cake\Http\Response|void
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view() { 
+    public function view() {
         if(!$this->request->is(['get'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
@@ -469,7 +475,8 @@ class SpaycsController extends AppController {
                 ->where(['status'=>'Active', 'OR'=>['matrix_room_id'=>$id,'id'=>$id]])
                 ->contain([
                     'SubSpaycs' => function($q) {
-                        return  $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'SubSpaycs.location', 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id']);
+                    $exp = $q->newExpr()->addCase($q->newExpr()->add(['location IS NULL']),"");
+                        return  $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'location'=>$exp, 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id']);
                     },
                     'JoinedSpayc' => function($q) {
                         return  $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin']);
@@ -481,6 +488,7 @@ class SpaycsController extends AppController {
                         return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
                     }
                 ]);
+               
         if($lat != null && $long != null){
             $distance = $this->Spaycs->distanceInMiles;
             $spayc->select(['distance'=>$distance])
@@ -517,8 +525,8 @@ class SpaycsController extends AppController {
                     $row['joined_spayc_status'] = $joinedStatus[0]['status'];
                     $row['is_admin'] = $joinedStatus[0]['is_admin'];
                 }else{
-                    $row['joined_spayc_status'] = null;
-                    $row['is_admin'] = null;
+                    $row['joined_spayc_status'] = '';
+                    $row['is_admin'] = '';
                 }
                 $row['joined_users'] =!empty($row['joined_spayc'])?count($row['joined_spayc']):0;
                 if(!empty($row['subscribed_users'])) {
@@ -749,8 +757,8 @@ class SpaycsController extends AppController {
                     }
                     $row->is_admin = $joinedStatus[0]['is_admin'];
                 }else{
-                    $row->joined_spayc_status = null;
-                    $row->is_admin = null;
+                    $row->joined_spayc_status = '';
+                    $row->is_admin = '';
                 }                
                 $row->joined_users =  !empty($row->joined_spayc)?count($row->joined_spayc):0;
                 if(!empty($row->subscribed_users)) {
@@ -843,8 +851,8 @@ class SpaycsController extends AppController {
                     }
                     $row->is_admin = $joinedStatus[0]['is_admin'];
                 }else{
-                    $row->joined_spayc_status = null;
-                    $row->is_admin = null;
+                    $row->joined_spayc_status = '';
+                    $row->is_admin = '';
                 } 
                 $row->joined_users =  !empty($row->joined_spayc)?count($row->joined_spayc):0;
                 if(!empty($row->subscribed_users)) {
@@ -929,8 +937,8 @@ class SpaycsController extends AppController {
                     }
                     $row->is_admin = $joinedStatus[0]['is_admin'];
                 }else{
-                    $row->joined_spayc_status = null;
-                    $row->is_admin = null;
+                    $row->joined_spayc_status = '';
+                    $row->is_admin = '';
                 } 
                 $row->joined_users =  !empty($row->joined_spayc)?count($row->joined_spayc):0;
                 if(!empty($row->subscribed_users)) {
@@ -1023,8 +1031,8 @@ class SpaycsController extends AppController {
                     }
                     $row->is_admin = $joinedStatus[0]['is_admin'];
                 }else{
-                    $row->joined_spayc_status = null;
-                    $row->is_admin = null;
+                    $row->joined_spayc_status = '';
+                    $row->is_admin = '';
                 } 
                 $row->joined_users =  !empty($row->joined_spayc)?count($row->joined_spayc):0;
                 if(!empty($row->subscribed_users)) {
