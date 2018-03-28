@@ -53,7 +53,6 @@ class JoinSpaycsController extends AppController {
         
         $entities = $jsModel->find('all',['field'=>['id','user_id','spayc_id','status']])->where(['JoinedSpayc.spayc_id'=>$data['spayc_id'],'JoinedSpayc.user_id'=>$data['user_id']]);  
         $plQuery = TableRegistry::get('Api.PhysicalLocation')->findByUserId($data['user_id'])->first();
-        
         if($entities->isEmpty()){
             $entity = $jsModel->newEntity();
             $entity->user_id = $data['user_id'];
@@ -68,7 +67,7 @@ class JoinSpaycsController extends AppController {
             $entity->updated_by = $user['id'];
         }
         if(!empty($plQuery)){
-            $entity->distance = Utils::distanceBetweenTwoPoints($plQuery->current_latitude, $plQuery->current_longitude, $spayc->latitude,$spayc->longitude);
+            $entity->distance = Utils::distance($plQuery->current_latitude, $plQuery->current_longitude, $spayc->latitude,$spayc->longitude);
         }
         $jsModel->getConnection()->begin();
         if($jsModel->save($entity,['checkRules' => false, 'atomic' => false])){
@@ -147,6 +146,12 @@ class JoinSpaycsController extends AppController {
             $entity->modified = new \Cake\I18n\Time();
             $entity->updated_by = $user['id'];
         }
+        
+        $plQuery = TableRegistry::get('Api.PhysicalLocation')->findByUserId($data['user_id'])->first();
+         if(!empty($plQuery)){
+            $entity->distance = Utils::distance($plQuery->current_latitude, $plQuery->current_longitude, $spayc->latitude,$spayc->longitude);
+        }
+        
         $jsModel->getConnection()->begin();
         if($jsModel->save($entity,['checkRules' => false, 'atomic' => false])){
             if(!empty($data['passcode'])){                

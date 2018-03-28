@@ -382,7 +382,7 @@ class Utils {
     }
 
     public static function distance($lat1=null, $lon1=null, $lat2=null, $lon2=null, $unit='M') {
-        #echo $lat1.'<br>'.$lon1.'<br>'.$lat2.'<br>'.$lon2;die;
+        //echo $lat1.'<br>'.$lon1.'<br>'.$lat2.'<br>'.$lon2;die;
         if(empty($lat1) || empty($lon1) || empty($lat2) || empty($lon2)){
             return null;
         }
