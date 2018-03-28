@@ -4,9 +4,14 @@ define('ROLE_ADMIN',1);
 define('SITE_TITLE','spayc');
 define('PAGINATION_LIMIT',20);
 define('DATEFORMAT_DISPLAY','M d, Y');
+define('DATEFORMAT','Y-m-d');
 define('FRIEND_REQUESTED_STATUS','Accepted');
 define('BLANK_COUNT',0);
 define('BLANK','--');
+$user_gender=array('1'=>'All','2'=>'Male','3'=>'Female','4'=>'Others');
+$user_age=array('1'=>'1-13','2'=>'13-26','3'=>'26-39','4'=>'39-52','5'=>'52-65','6'=>'65-above');
+define('USER_GENDER', serialize($user_gender));
+define('USER_AGE', serialize($user_age));
 $config =array();
 $config['ERRORANDSUCCESSMSG'] = [
     1=>'You log out successfully.',

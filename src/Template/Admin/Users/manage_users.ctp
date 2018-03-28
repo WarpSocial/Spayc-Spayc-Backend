@@ -12,9 +12,9 @@ use Api\Auth\ApiHasher;
  } 
 $genderIconSorting=$usernameIconSorting=$createdIconSorting=$dobIconSorting='';
 if(isset($this->request->query['sort'])){
-    if(($this->request->query['sort'] == 'username') && ($this->request->query['direction'] == 'asc')) {
+    if(($this->request->query['sort'] == 'email') && ($this->request->query['direction'] == 'asc')) {
       $usernameIconSorting = 'sort-asc';
-    } else if(($this->request->query['sort'] == 'username') && ($this->request->query['direction'] == 'desc')) {
+    } else if(($this->request->query['sort'] == 'email') && ($this->request->query['direction'] == 'desc')) {
       $usernameIconSorting = 'sort-desc';
     }
     if(($this->request->query['sort'] == 'gender') && ($this->request->query['direction'] == 'asc')) {
@@ -45,108 +45,14 @@ if(isset($this->request->query['sort'])){
 <section class="content-wrapper content-filter">
         <!--===========filter================-->
        <?php if($userCount || $filter){ ?>
-    <div class="filters">
-      <div class="container">    
-      <?php echo $this->Form->create('',['id'=>'userFilterFrm','type'=>'get', 'autocomplete' => 'off','novalidate'=>'novalidate']); ?>
-          <div class="filter-wrapper">
-            <!--============search dropdown========-->
-              <div class="search">
-              <div class="form-group">                
-                <?= $this->Form->input('keyword',['type'=>'text', 'class'=>'form-control','label'=>false, 'placeholder'=>'Search', 'value'=> $this->request->query('keyword')]); ?>
-                <span class="clear-search hide" id="clear-search"></span>
-              </div>
-            </div>
-            
-           
-            <div class="filter-by ml-auto">
-              <h4>Fillter by</h4>
-              <!--============filter dropdown========-->
-              <div class="filter-box">
-                <div class="dropp-header js-dropp-action filter-sm">
-                  <span class="dropp-header__title js-value ell" id="user_type">Gender </span>
-                  <i class="icon icon-down-filter"></i>
-                </div>
-                <div class="dropp-body">
-                  <div class="dropp-body-wrap">
-                    <label for="optA" class="custom-label">
-                      <input type="radio" id="optA" name="gender" value="All"/>
-                      <span class="ell">All</span>
-                    </label>
-                    <label for="optB" class="custom-label">
-                      <input type="radio" id="optB" name="gender" value="Male"/>
-                      <span class="ell">Male</span>
-                    </label>
-                    <label for="optC" class="custom-label">
-                      <input type="radio" id="optC" name="gender" value="Female"/>
-                      <span class="ell">Female</span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-               <div class="filter-box">
-                  <div class="dropp-header js-dropp-action filter-sm">
-                    <span class="dropp-header__title js-value ell ">Age</span>
-                    <i class="icon icon-down-filter"></i>
-                  </div>
-                  <div class="dropp-body">
-                    <div class="dropp-body-wrap">
-                      <label for="age1" class="custom-label">
-                        <input type="radio" id="age1" name="age-filter" value="0-13"/>
-                        <span class="ell">0-13</span>
-                      </label>
-                      <label for="age2" class="custom-label">
-                        <input type="radio" id="age2" name="age-filter" value="13-26"/>
-                        <span class="ell">13-26</span>
-                      </label>
-                       <label for="age3" class="custom-label">
-                        <input type="radio" id="age3" name="age-filter" value="26-39"/>
-                        <span class="ell">26-39</span>
-                      </label>
-                       <label for="age4" class="custom-label">
-                        <input type="radio" id="age4" name="age-filter" value="39-above"/>
-                        <span class="ell">39-above</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              <!--============filter dropdown========-->
-              <div class="filter-box">
-                  <div class="dropp-header filter-sm">
-                    <div id="datepicker2" class="input-group date">
-                      <input class="from-date" type="text"  placeholder="From Date" />
-                      <span class="input-group-addon datepicker-icon"></span>
-                  </div>
-                  </div>
-  
-              </div>
-                <!--============filter dropdown========-->
-              <div class="filter-box">
-                  <div class="dropp-header filter-sm">
-                    <div id="datepicker" class="input-group date">
-                      <input class="from-date" type="text"  placeholder="To Date" />
-                      <span class="input-group-addon datepicker-icon"></span>
-                    </div>
-                  </div>
-               </div>
-                <!--============filter dropdown========-->
-                <!-- <div class="filter-box">
-                  <button type="submit" class="button btn-xs filter-button-apply">Apply</button> 
-                </div> -->
-                <!--============filter reset========-->
-                <?= $this->Form->button('Apply', ['type' => 'submit','class'=>'reset-filter']); ?> 
-                <?= $this->Form->button('Reset', ['type' => 'button','class'=>'reset-filter']); ?>  
-            </div>
-          </div>
-         <?php echo $this->Form->end();?>
-        </div>
-      </div>
+       <?php echo $this->element('admin/user-filter');?>
  
       <!--============= table head ===================-->
       <div class="container">        
         <div class="table-wrapper">      
           <div class="table-head">
             <div class="head-text flex-basis15 text-left p-info">
-            <span class="table-filter <?php echo $usernameIconSorting?>"><?php echo $this->Paginator->sort('username','User Info');?>
+            <span class="table-filter <?php echo $usernameIconSorting?>"><?php echo $this->Paginator->sort('email','User Info');?>
             </span>
             </div>
             <div class="head-text flex-basis11">
@@ -166,7 +72,7 @@ if(isset($this->request->query['sort'])){
             <!--==============table data====================-->
               <div class="table-row">
                 <div class="table-data flex-basis15 text-left p-info">
-                  <span class="user-name"><?= !empty($user->username)?h(ucwords($user->username)):BLANK ?></span>
+                  <span class="user-name"><?= !empty($user->display_name)?h($user->display_name):'' ?></span>
                   <span class="ell"  class="d-inline-block" tabindex="0" data-toggle="tooltip" title="<?php echo $user->email;?>"><?= !empty($user->email)?h($user->email):BLANK ?></span>
                   <span class="user-contact"><?= !empty($user->phone)?h($user->country_code).'&nbsp;'.h($user->phone):''; ?>
                   </span>

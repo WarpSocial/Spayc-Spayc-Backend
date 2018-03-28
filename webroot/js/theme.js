@@ -17,13 +17,13 @@ $(function () {
       var value = $("input[name='gender']:checked").val();
       $(this).parents('.filter-box').find('.js-value').text(value);
     });
-    $('input[name="age-filter"]').change(function() {
-      var value = $("input[name='age-filter']:checked").val();
+    $('input[name="age_filter"]').change(function() {
+      var value = $("input[name='age_filter']:checked").next('span').text();
       $(this).parents('.filter-box').find('.js-value').text(value);
     });
 
     //[datepicker]========
-    $("#datepicker").datepicker({
+    $(".datepicker").datepicker({
       autoclose: true,
       todayHighlight: false,
       placeholder:true
