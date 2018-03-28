@@ -789,7 +789,7 @@ function postBanSpaycMember() { return; }
  */
 function getSubSpaycs() { return; }
 /**
- @api {get} /physical-present-spaycs.json?page=:page&limit=:limit&latitude=:latitude&longitude=:longitude Physically Present Spayces
+ @api {get} /physical-present-spaycs.json?latitude=:latitude&longitude=:longitude Communication Center Spayces
  @apiVersion 0.1.0
  @apiName getnearAboutSpayces
  @apiGroup Spayc
@@ -842,13 +842,13 @@ function getSubSpaycs() { return; }
  */
 function getnearAboutSpayces() { return; }
 /**
- @api {get} /public-spaycs.json?page=:page&limit=:limit Public and Joined Spayces
+ @api {get} /public-spaycs.json?page=:page&limit=:limit Advertisement Spayces
  @apiVersion 0.1.0
  @apiName getPublicSpaycs
  @apiGroup Spayc
  @apiPermission private
 
- @apiDescription Get list of spayces which user has been joined and spayces must be within 1 miles.Spaycs must not be expired according to the spayc end date.Listing will be ordered on distance and if distance will be same then on created.
+ @apiDescription Get list of public and joined spayces.Spaycs must not be expired according to the spayc end date.Listing will be ordered on created.
  
  @apiHeader {String} TOKEN            * A token send by header as TOKEN
  @apiHeader {String} timezone         * User time zone
@@ -892,4 +892,4 @@ function getnearAboutSpayces() { return; }
  *
  * @apiUse UserErrorResponse
  */
-function getnearAboutSpayces() { return; }
+function getPublicSpaycs() { return; }

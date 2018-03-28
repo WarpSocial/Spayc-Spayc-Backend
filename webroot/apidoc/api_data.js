@@ -1646,7 +1646,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/public-spaycs.json?page=:page&limit=:limit",
-    "title": "Public and Joined Spayces",
+    "title": "Advertisement Spayces",
     "version": "0.1.0",
     "name": "getPublicSpaycs",
     "group": "Spayc",
@@ -1655,7 +1655,7 @@ define({ "api": [
         "name": "private"
       }
     ],
-    "description": "<p>Get list of spayces which user has been joined and spayces must be within 1 miles.Spaycs must not be expired according to the spayc end date.Listing will be ordered on distance and if distance will be same then on created.</p>",
+    "description": "<p>Get list of public and joined spayces.Spaycs must not be expired according to the spayc end date.Listing will be ordered on created.</p>",
     "header": {
       "fields": {
         "Header": [
@@ -2246,8 +2246,8 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/physical-present-spaycs.json?page=:page&limit=:limit&latitude=:latitude&longitude=:longitude",
-    "title": "Physically Present Spayces",
+    "url": "/physical-present-spaycs.json?latitude=:latitude&longitude=:longitude",
+    "title": "Communication Center Spayces",
     "version": "0.1.0",
     "name": "getnearAboutSpayces",
     "group": "Spayc",
@@ -2342,7 +2342,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/physical-present-spaycs.json?page=:page&limit=:limit&latitude=:latitude&longitude=:longitude"
+        "url": "http://spayc.com/api/physical-present-spaycs.json?latitude=:latitude&longitude=:longitude"
       }
     ],
     "error": {
