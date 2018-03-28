@@ -42,6 +42,15 @@ $(function () {
       $(this).parents('.filter-box').find('.js-value').text(value);
     });
 
+    $('body').mouseup(function(e){
+        var subject = $(".dropp-body");
+        if(!subject.is(e.target)&&subject.has(e.target).length==0){
+            $('.js-dropp-action').removeClass('js-open');
+            $('.js-dropp-action').next('.dropp-body').removeClass('js-open');
+        }
+
+    });
+
     //[datepicker]========
     $(".datepicker").datepicker({
       autoclose: true,

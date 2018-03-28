@@ -6,7 +6,7 @@
     .filter-wrapper {
         .flex-display(flex);
         .justify-content(flex-start);
-        
+
         .filter-by {
             .flex-display(flex);
             .justify-content(flex-start);
@@ -122,6 +122,13 @@
     .dropp-body.js-open {
         display: block;
     }
+    .datepicker-box {
+      padding: 0;
+      .datepicker {
+        min-height: 36px;
+        padding: 0;
+      }
+    }
 }
 /*==================search box====================*/
 .search {
@@ -163,16 +170,17 @@
             border: 0;
             height: auto;
             font-family: @Poppins;
-            &::-webkit-input-placeholder { 
+            cursor: pointer;
+            &::-webkit-input-placeholder {
                 color: @black;
             }
-            &::-moz-placeholder { 
+            &::-moz-placeholder {
                 color: @black;
             }
-            &:-ms-input-placeholder { 
+            &:-ms-input-placeholder {
                 color: @black;
             }
-            &:-moz-placeholder { 
+            &:-moz-placeholder {
                 color: @black;
             }
         }
