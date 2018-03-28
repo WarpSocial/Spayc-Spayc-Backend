@@ -359,6 +359,25 @@ class UsersTable extends Table {
     }
     
     /**
+     * addFriendValidate rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function addFriendValidate($data) {
+        $validator = new Validator();        
+        $validator
+            ->requirePresence('friend_id', 'create',__('Friend request is required field.'))
+            ->notEmpty('friend_id',__('Friend request is required field.'));
+        
+        $validator
+            ->requirePresence('friend_status', 'create',__('Status is required field.'))    
+            ->notEmpty('friend_status',__('Status is required field.'))
+            ->inList('friend_status', Configure::read('add_friend'),__('Friend status must be '.implode(',',Configure::read('add_friend')).'.'));
+        return $validator->errors($data);
+    }
+    
+    /**
      * requestAcceptDeclinedValidate rules.
      *
      * @param \Cake\Validation\Validator $validator Validator instance.

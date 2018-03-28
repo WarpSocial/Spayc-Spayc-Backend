@@ -718,7 +718,7 @@ function postJoinSubSpayc() { return; }
 {
     "spayc_id":"66",
     "user_id":"9",
-    "status":"Joined"
+    "status":"Banned"
 }
  
 @apiSuccess {String} status success.

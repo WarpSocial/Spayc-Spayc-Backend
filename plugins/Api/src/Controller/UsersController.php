@@ -770,6 +770,99 @@ class UsersController extends AppController {
         }
     }
     
+    
+    public function addFriend() {
+        if (!$this->request->is(['post'])) {
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
+        }
+        $data = $this->request->getData();
+        $errors = $this->Users->addFriendValidate($data);
+        if(!empty($errors)) {
+            $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($errors)], 400);
+        }
+        $data['friend_id'] = ApiHasher::decrypt($data['friend_id']);
+        $frObj = TableRegistry::get('Api.FriendRequest');
+        $spaceUsr = $this->Users->exists(['id'=>$data['friend_id']]);
+        if(!$spaceUsr){
+            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
+        }
+        $loggedUser = $this->Auth->user();   
+        
+        $requestedFrnd = $frObj->find()->Where(['OR'=>[
+            ['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']],
+            ['requested_by' => $data['friend_id'],'requested_to'=>$loggedUser['id']]
+            ]]);
+        
+        if(!$requestedFrnd->isEmpty()){
+            $currentStatus = $requestedFrnd->first()->requested_status;
+            if(in_array($currentStatus, ['Pending', 'Accepted', 'Blocked'])) {
+                $this->restException(['status'=>'failed', 'message'=>__('Friend request already sent status is '.$currentStatus.'.')], 400);
+            }
+        }
+        if($requestedFrnd->isEmpty()){
+            $newObj = $frObj->newEntity();
+            $newObj->requested_by = $loggedUser['id'];
+            $newObj->requested_to = $data['friend_id'];
+            $newObj->action_by = $loggedUser['id'];
+            $newObj->requested_status = $data['friend_status'];
+            if($frObj->save($newObj)) {
+                //data prepaire for push notification//
+                $push['requested_by'] = $loggedUser['id'];
+                $push['username'] = $loggedUser['username'];
+                $push['display_name'] = $loggedUser['display_name'];
+                $push['requested_to'] = $data['friend_id'];
+                $push['spayc_id'] = null; //provide spayc id if push related to spayc
+                if($data['friend_status']=='Pending') { 
+                    $push['slug'] = 'friend-request';
+                    $this->Push->sendPushNotification($push);
+                }
+                $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status']),'data'=>[
+                    'id'=>$newObj->id,
+                    'requested_by'=>$newObj->requested_by,
+                    'requested_to'=>$newObj->requested_to,
+                    'requested_status'=>$newObj->requested_status,
+                    'action_by'=>$newObj->action_by
+                    ]
+                ]);
+            } else {
+                $this->restException(['status'=>'failed', 'message'=>__('Failed to update friend status.')],400);
+            }
+        }else{
+            $frndRequest = $requestedFrnd->first();            
+            if($data['friend_status'] == $frndRequest->requested_status){
+                $this->restException(['status'=>'failed', 'message'=>__('Friend request already sent with same status.')], 400);
+            }  
+            //if($frndRequest->requested_status=='Unfriend' || $frndRequest->requested_status=='Decline') {
+            if(in_array($currentStatus, ['Unblock', 'is_direct', 'Decline', 'Unfriend'])) {
+                $frndRequest->set('requested_by', $loggedUser['id']);
+                $frndRequest->set('requested_to', $data['friend_id']);
+            }
+            $frndRequest->set('requested_status',$data['friend_status']);
+            $frndRequest->set('action_by',$loggedUser['id']);
+            if($frObj->save($frndRequest)){
+                //data prepaire for push notification//
+                $push['requested_by'] = $loggedUser['id'];
+                $push['username'] = $loggedUser['username'];
+                $push['display_name'] = $loggedUser['display_name'];
+                $push['requested_to'] = $data['friend_id'];
+                $push['spayc_id'] = null; //provide spayc id if push related to spayc
+                if($data['friend_status']=='Pending') {
+                    $push['slug'] = 'friend-request';
+                    $this->Push->sendPushNotification($push);
+                }
+                $this->restException(['status'=>'success', 'message'=> Configure::read('requestMsg.'.$data['friend_status']),'data'=>[                    
+                    'id'=>$frndRequest->id,
+                    'requested_by'=>$frndRequest->requested_by,
+                    'requested_to'=>$frndRequest->requested_to,
+                    'requested_status'=>$frndRequest->requested_status,
+                    'action_by'=>$frndRequest->action_by
+                ]]);
+            }else{
+                $this->restException(['status'=>'failed', 'message'=>__('Failed to update friend status.')],400);
+            }
+        }
+    }
+    
     public function requestAcceptDeclined() {
         if(!$this->request->is(['post'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
