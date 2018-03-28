@@ -14,6 +14,7 @@ use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Api\Model\Entity\UserImage;
 use Cake\Utility\Text;
+use Cake\Utility\Hash;
 /**
  * Users Controller
  *
@@ -1399,11 +1400,25 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
         $jsModel = TableRegistry::get('Api.JoinedSpayc');
-        $entities = $jsModel->find()->where(['spayc_id'=>$data['spayc_id'],'user_id'=>$data['user_id']]);
+        $entities = $jsModel->find()->where(['spayc_id'=>$data['spayc_id'],'user_id IN'=>[$data['user_id'],$user['id']]]);
         if($entities->isEmpty()){
             $this->restException(['status'=>'failed','message'=>__('User has not joined this spayc.')], 400);
         }
-        $entity = $entities->first();
+        $adminEntity = Hash::extract($entities->toArray(), '{n}[user_id='.$user['id'].']');
+        $userEntity = Hash::extract($entities->toArray(), '{n}[user_id='.$data['user_id'].']');
+        if(empty($adminEntity[0])){
+            $this->restException(['status'=>'failed','message'=>__('You are not joined with this spayc.')], 400);
+        }
+        if(empty($userEntity[0])){
+            $this->restException(['status'=>'failed','message'=>__('user is not joined with this spayc.')], 400);
+        }
+        if($adminEntity[0]['is_admin'] <= 0){
+            $this->restException(['status'=>'failed','message'=>__('You have no privileges to make someone admin.')], 400);
+        }
+        if($userEntity[0]['is_admin'] == 1){
+            $this->restException(['status'=>'failed','message'=>__('User has already admin privileges.')], 400);
+        }
+        $entity = $userEntity[0];
         if($entity->is_admin == $data['role']){
             $this->restException(['status'=>'failed','message'=>__('User has already been admin.')], 400);
         }
@@ -1416,7 +1431,7 @@ class UsersController extends AppController {
             $push['username'] = $user['username'];
             $push['display_name'] = $user['display_name'];
             $push['requested_to'] = $data['user_id'];
-            $push['spayc_id'] = null; //provide spayc id if push related to spayc
+            $push['spayc_id'] = $data['spayc_id']; //provide spayc id if push related to spayc
             $push['slug'] = 'admin-asigned';
             $this->Push->sendPushNotification($push);
             $response = ['status'=>'success','message'=>__('User has been assigned as admin successfully.')];
