@@ -392,58 +392,71 @@ class SpaycsTable extends Table {
         if($adminUser == null || $spaycId == null){
             return;
         }
-        $member[] = [
-            'spayc_id'=>$spaycId,
-            'user_id'=>$adminUser,
-            'status' => 'Joined',
-            'updated_by' => $adminUser,
-            'created' => date("Y-m-d H:i:s"),
-            'modified' => date("Y-m-d H:i:s"),
-            'is_admin'=>2 /* 2 for super admin */
-        ];
+        $adminMatrixUserId = Configure::read('auth.UserLogs.matrix_user_id');
+
         if(!empty($items['invite'])) {
-            $invite  = explode(',',$items['invite']);
-            $user = TableRegistry::get("Users")->find()->select(['id','matrix_access_token'])->where(['matrix_user_id IN'=>$invite]);     
-            if($user->isEmpty()){
-                return;
+            $items['invite'] = $adminMatrixUserId.','.$items['invite'];
+        }else{
+            $items['invite'] = $adminMatrixUserId;
+        }
+        
+        $invite  = explode(',',$items['invite']);
+        $user = TableRegistry::get("Api.Users")->find()->contain(['PhysicalLocation'])->select(['id','matrix_access_token','PhysicalLocation.current_latitude','PhysicalLocation.current_longitude'])->where(['matrix_user_id IN'=>$invite]);
+        if($user->isEmpty()){
+            return;
+        }            
+        $pushNotification = new PushComponent(new ComponentRegistry());
+        $matrix = new MatrixComponent(new ComponentRegistry());
+        foreach($user as $key => $val){
+            if(!empty($val->physical_location)){
+                $lat = $val->physical_location['current_latitude'];
+                $long = $val->physical_location['current_longitude'];
+                $distance = \Api\Utils\Utils::distance($lat,$long,$items['latitude'],$items['longitude']);
+            }else{
+                $distance = null;
             }
-            $pushNotification = new PushComponent(new ComponentRegistry());
-            $matrix = new MatrixComponent(new ComponentRegistry());
-            foreach($user as $key => $val){
-                $member[] = [
-                    'spayc_id'=>$spaycId,
-                    'user_id'=>$val->id,
-                    'status' => 'Joined',
-                    'updated_by' => $adminUser,
-                    'created' => date("Y-m-d H:i:s"),
-                    'modified' => date("Y-m-d H:i:s"),
-                    'is_admin'=>0
-                ];
-                $joinData = [
-                    'status'=>'Joined',
-                    'matrix_room_id'=>$items['matrix_room_id'],
-                    'matrix_token'=>$val->matrix_access_token
-                ];
-                
+            $member[] = [
+                'spayc_id'=>$spaycId,
+                'user_id'=>$val->id,
+                'status' => 'Joined',
+                'updated_by' => $adminUser,
+                'created' => date("Y-m-d H:i:s"),
+                'modified' => date("Y-m-d H:i:s"),
+                'distance' => $distance,
+                'is_admin'=>($val->id != $adminUser)?0:2
+            ];
+
+            $joinData = [
+                'status'=>'Joined',
+                'matrix_room_id'=>$items['matrix_room_id'],
+                'matrix_token'=>$val->matrix_access_token
+            ];
+            if($val->id != $adminUser){
                 $matrix->joinRoom($joinData);
-                $push['requested_by'] = $adminUser;
-                $push['requested_to'] = $val->id;
-                $push['slug'] = 'new-spayc';
-                $push['spayc_id'] = $spaycId;
-                $push['spayc_name'] = $items['name'];
-                $push['spayc_image'] = $items['image'];
-                $push['matrix_room_id'] = $items['matrix_room_id'];
-                $push['distance'] = $this->getSpaycDistanceFromUser($items['latitude'], $items['longitude'], $push['requested_to']);
-                if(!$items['is_direct']){
-                    /*In direct chat no need to send the notification */
+            }
+            $push['requested_by'] = $adminUser;
+            $push['requested_to'] = $val->id;
+            $push['slug'] = 'new-spayc';
+            $push['spayc_id'] = $spaycId;
+            $push['spayc_name'] = $items['name'];
+            $push['spayc_image'] = $items['image'];
+            $push['matrix_room_id'] = $items['matrix_room_id'];
+            $push['distance'] = $this->getSpaycDistanceFromUser($items['latitude'], $items['longitude'], $push['requested_to']);
+            if(!$items['is_direct']){
+                if(($val->id != $adminUser)){ 
                     $pushNotification->sendPushNotification($push);
                 }
+                /*In direct chat no need to send the notification */
+
             }
         }
+        
+        
         /*In direct chat no need take the record */
         if($items['is_direct']){ 
             return true;
         }
+       
         $joinedSpayc = TableRegistry::get('JoinedSpayc');
         $entities = $joinedSpayc->newEntities($member);
         $result = $joinedSpayc->saveMany($entities,['checkRules' => false,'atomic'=>false]);

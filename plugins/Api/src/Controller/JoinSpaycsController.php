@@ -51,7 +51,9 @@ class JoinSpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Passcode is not valid.')], 400);
         }
         
-        $entities = $jsModel->find('all',['field'=>['id','user_id','spayc_id','status']])->where(['JoinedSpayc.spayc_id'=>$data['spayc_id'],'JoinedSpayc.user_id'=>$data['user_id']]);        
+        $entities = $jsModel->find('all',['field'=>['id','user_id','spayc_id','status']])->where(['JoinedSpayc.spayc_id'=>$data['spayc_id'],'JoinedSpayc.user_id'=>$data['user_id']]);  
+        $plQuery = TableRegistry::get('Api.PhysicalLocation')->findByUserId($data['user_id'])->first();
+        
         if($entities->isEmpty()){
             $entity = $jsModel->newEntity();
             $entity->user_id = $data['user_id'];
@@ -64,6 +66,9 @@ class JoinSpaycsController extends AppController {
             $entity->status = $data['status'];
             $entity->modified = new \Cake\I18n\Time();
             $entity->updated_by = $user['id'];
+        }
+        if(!empty($plQuery)){
+            $entity->distance = Utils::distanceBetweenTwoPoints($plQuery->current_latitude, $plQuery->current_longitude, $spayc->latitude,$spayc->longitude);
         }
         $jsModel->getConnection()->begin();
         if($jsModel->save($entity,['checkRules' => false, 'atomic' => false])){

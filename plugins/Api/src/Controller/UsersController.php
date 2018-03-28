@@ -286,10 +286,8 @@ class UsersController extends AppController {
         }
         $this->loadComponent('Api.Matrix');
         $data = $this->request->getData();
-        $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';
-        $data['physical_location']['current_latitude'] = Utils::getVar('latitude', $data);
-        $data['physical_location']['current_longitude'] = Utils::getVar('longitude', $data);
-        $items = $this->Users->patchEntity($entity, $data,['associated'=>['PhysicalLocation']]);
+        $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';       
+        $items = $this->Users->patchEntity($entity, $data);
         if($items->errors()) {
             $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
         }
