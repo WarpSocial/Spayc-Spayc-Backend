@@ -61,7 +61,10 @@ class JoinSpaycsController extends AppController {
             $entity->modified = new \Cake\I18n\Time();
             $entity->updated_by = $user['id'];
         }else{
-            $entity = $entities->first();           
+            $entity = $entities->first();
+            if(strtolower($entity->status) == strtolower($data['status'])){
+                $this->restException(['status'=>'failed','message'=>__('User has been already '.strtolower($data['status']).'.')], 400);
+            }
             $entity->status = $data['status'];
             $entity->modified = new \Cake\I18n\Time();
             $entity->updated_by = $user['id'];
@@ -141,7 +144,10 @@ class JoinSpaycsController extends AppController {
             $entity->modified = new \Cake\I18n\Time();
             $entity->updated_by = $user['id'];
         }else{
-            $entity = $entities->first();           
+            $entity = $entities->first();
+            if(strtolower($entity->status) == strtolower($data['status'])){
+                $this->restException(['status'=>'failed','message'=>__('User has been already '.strtolower($data['status']).'.')], 400);
+            }
             $entity->status = $data['status'];
             $entity->modified = new \Cake\I18n\Time();
             $entity->updated_by = $user['id'];
