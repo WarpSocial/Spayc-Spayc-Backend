@@ -503,8 +503,17 @@ class SpaycsController extends AppController {
                     $physicalPresent = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[distance <='.$miles.']');
                     $present = count($physicalPresent);
                 }
-                
-                 if(!empty($joinedStatus[0])){
+                if(!empty($row['sub_spaycs'])) {
+                    foreach($row['sub_spaycs'] as $key=>$subSpayc) {
+                        if(!empty($subSpayc->start_date)) {
+                            $sd = new Time($subSpayc->start_date,'UTC');
+                            $row['sub_spaycs'][$key]['start_date'] = $sd->setTimezone(Configure::read('timezone'))->format('m-d-Y H:i:s');              }
+                        if(!empty($subSpayc->end_date)) {
+                            $sd = new Time($subSpayc->end_date,'UTC');
+                            $row['sub_spaycs'][$key]['end_date'] = $sd->setTimezone(Configure::read('timezone'))->format('m-d-Y H:i:s');                }
+                    }
+                }
+                if(!empty($joinedStatus[0])){
                     $row['joined_spayc_status'] = $joinedStatus[0]['status'];
                     $row['is_admin'] = $joinedStatus[0]['is_admin'];
                 }else{
