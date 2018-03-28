@@ -286,8 +286,12 @@ class UsersController extends AppController {
         }
         $this->loadComponent('Api.Matrix');
         $data = $this->request->getData();
-        $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';       
-        $items = $this->Users->patchEntity($entity, $data);
+        $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';
+        $data['timezone'] = !empty($data['timezone'])?$data['timezone']:date_default_timezone_get();
+        $data['physical_location']['current_latitude'] = Utils::getVar('latitude', $data);
+        $data['physical_location']['current_longitude'] = Utils::getVar('longitude', $data);
+        $items = $this->Users->patchEntity($entity, $data,['associated'=>['PhysicalLocation']]);
+
         if($items->errors()) {
             $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
         }
@@ -378,6 +382,7 @@ class UsersController extends AppController {
         $this->loadComponent('Api.Matrix');
         $data = $this->request->getData();
         $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';
+        $data['timezone'] = !empty($data['timezone'])?$data['timezone']:date_default_timezone_get();
         $data['status'] = 'Active';
         if(empty($data['fb_id'])) {
             $this->restException(['status' => "failed", 'message' => __('fb_id is required field.')], 400);
@@ -1374,7 +1379,7 @@ class UsersController extends AppController {
         $update['users']['is_notify'] = $isNotify;
         $update['user_logs']['device_id'] = $data['device_token'];
         $this->Users->UpdateAll(['is_notify'=>$isNotify], ['Users.id'=>$this->Auth->user('id')]);
-        TableRegistry::get('UserLogs')->UpdateAll(['device_id'=>$data['device_token']], ['user_id'=>$this->Auth->user('id')]);
+        TableRegistry::get('UserLogs')->UpdateAll(['device_id'=>$data['device_token'], 'modified'=>date('Y-m-d H:i:s')], ['user_id'=>$this->Auth->user('id')]);
         $response = ['status'=>'success', 'message'=>__('Device token updated successfully.')];
         $this->set($response);
     }
