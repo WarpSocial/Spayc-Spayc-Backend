@@ -265,10 +265,10 @@ class SpaycsController extends AppController {
                 }
             ]);
          if($lat != null && $long != null){
-            $distance = $this->Spaycs->distanceInMiles;
+            $distance = str_replace(':long',$long,str_replace(':lat',$lat,$this->Spaycs->distanceInMiles));
             $spaycs->select(['distance'=>$distance])
-                    ->bind(':lat', $lat, 'float')
-                    ->bind(':long', $long, 'float')
+                    //->bind(':lat', $lat, 'float')
+                    //->bind(':long', $long, 'float')
                     ->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
         }else{
             $spaycs->select(['distance'=>0])
@@ -340,8 +340,8 @@ class SpaycsController extends AppController {
         });
         
         //pr($spaycs->toArray());die;
-        $newQuery = clone $spaycs;
-        $data['count'] = $newQuery->all()->count();
+        //$newQuery = clone $spaycs;
+        $data['count'] = $spaycs->count();
         $data['spaycs'] = [];
         if(!$spaycs->isEmpty()) {
             $data['spaycs'] = $spaycs->toArray();
@@ -964,14 +964,23 @@ class SpaycsController extends AppController {
         }
         $page = $this->request->getQuery('page',1);
         $limit = $this->request->getQuery('limit',Configure::read('pagelimit'));
-        
+        $data=TableRegistry::get('Api.Hashtags')->spaceHashtags($this->request->getQuery());
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($user['id'], 'Accepted');
         $distance = Configure::read('miles');
-        $joinedSpayces = TableRegistry::get('Api.JoinedSpayc')->find()->where(['JoinedSpayc.user_id'=>(int)$user['id'],'distance <='=>$distance]);
-        if($joinedSpayces->isEmpty()){
+        $array = \Cake\Utility\Hash::extract($data['records'], '{n}.spayc_hashtags');
+        $temp =[];
+        if(!$data['count']){
              $this->restException(['status'=>'failed','message'=>'Record not found.'], 404);
         }
-        $ids = \Cake\Utility\Hash::extract($joinedSpayces->toArray(), '{n}.spayc_id');
+        foreach ($array as $key => $value) {
+           foreach ($value as $key_1 => $value_1) {
+              array_push($temp, $value_1['spayc_id']);
+           }
+        }
+        $ids=array_unique($temp);
+        if(!$ids){
+             $this->restException(['status'=>'failed','message'=>'Record not found.'], 404);
+        }
         $date = (new Time('now', Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i:s");
         $spaycs = $this->Spaycs->find();
         $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id'])

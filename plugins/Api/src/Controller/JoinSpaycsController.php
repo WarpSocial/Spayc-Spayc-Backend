@@ -79,7 +79,7 @@ class JoinSpaycsController extends AppController {
                 $jsModel->getConnection()->commit();
                 $friends = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($user['id'], 'Accepted');
                 //$userIds = $jsModel->getJoinedUserIds($data['spayc_id']);
-                if(in_array($spayc->user_id, $friends)) {
+                if($friends && in_array($spayc->user_id, $friends)) {
                     $push['slug'] = 'friend-join-spayc';
                 } else {
                     $push['slug'] = 'user-joined-your-spayc';
@@ -117,7 +117,7 @@ class JoinSpaycsController extends AppController {
         $data['user_id'] = $user['id'];
         $data['matrix_token'] = $user['UserLogs']['matrix_access_token'];        
         $data['matrix_user_id'] = $user['UserLogs']['matrix_user_id'];        
-        $errors = $jsModel->ValidateJoinSpayc($data,['Pending','Joined']);
+        $errors = $jsModel->ValidateStatus($data, ['Pending','Joined']);
         if(!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
@@ -156,7 +156,7 @@ class JoinSpaycsController extends AppController {
                 $jsModel->getConnection()->commit();
                 $friends = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($user['id'], 'Accepted');
                 //$userIds = $jsModel->getJoinedUserIds($data['spayc_id']);
-                if(in_array($spayc->user_id, $friends)) {
+                if($friends && in_array($spayc->user_id, $friends)) {
                     $push['slug'] = 'friend-join-spayc';
                 } else {
                     $push['slug'] = 'user-joined-your-spayc';
