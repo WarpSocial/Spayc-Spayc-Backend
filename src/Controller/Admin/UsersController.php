@@ -147,13 +147,13 @@ class UsersController extends AdminController
                 $user = $this->getUserObj($data['email'])->first();
                 if ($user) {              
                     if (!ApiHasher::check(trim($data['password']), $user->password)) {                       
-                        $this->Flash->error(__($this->errorSuccessMessage['32']));
+                        $this->Flash->error(__($this->errorSuccessMessage['11']));
                     }else{                       
                         $this->Auth->setUser($user);                        
                         return $this->redirect($this->Auth->redirectUrl());
                     }               
                 } else {
-                    $this->Flash->error(__($this->errorSuccessMessage['32']));
+                    $this->Flash->error(__($this->errorSuccessMessage['11']));
                 }
             } else {
                 $user->errors($errors);
@@ -180,7 +180,7 @@ class UsersController extends AdminController
                 if ($this->Users->save($user)) {
                     return $this->redirect(['action' => 'success']);
                 } else {                    
-                    $this->Flash->success(__($this->errorSuccessMessage['40']));
+                    $this->Flash->success(__($this->errorSuccessMessage['16']));
                 }
             } else {
                 $user->errors($errors);
@@ -189,9 +189,7 @@ class UsersController extends AdminController
         $this->set(compact('user'));
     }
 
-    public function success($page = null) {
-        //$this->set('title', 'Change Password');
-        //$this->set('base_url_admin',$this->base_url_admin);
+    public function success($page = null) {        
         if(!$this->Auth->user('id')){
             $this->viewBuilder()->layout('');
         }
@@ -224,8 +222,7 @@ class UsersController extends AdminController
               
             ]);  
         $query->formatResults(function (\Cake\Collection\CollectionInterface $results) {
-            return $results->map(function ($row) {                
-                $row->age = !empty($row['dob'])? date_diff(date_create($row['dob']), date_create('today'))->y:'';            
+            return $results->map(function ($row) {
                 $row->friend = !empty($row['requestedto'][0]['count'])? $row['requestedto'][0]['count'] : BLANK_COUNT;
                 $row->friend += !empty($row['requestedby'][0]['count'])? $row['requestedby'][0]['count'] : BLANK_COUNT;
                 unset($row['requestedby']);
@@ -244,18 +241,19 @@ class UsersController extends AdminController
         }
         if ($this->request->query('age_filter')) {
             $getage=$ageArr[$this->request->query('age_filter')];
-            $getage = explode("-", $getage );            
-            //$conditions_array['AND'] = [['age >= ' => $getage[0],'Users.age <= ' => $getage[1]]];
+            $getage = explode("-", $getage );   
+            $conditions_array["DATE_PART('year', now()) - DATE_PART('year', dob) >="] = $getage['0'];           
+            if((int)($getage['1'])){                
+               $conditions_array["DATE_PART('year', now()) - DATE_PART('year', dob) <="] = $getage['1'];
+            } 
         }         
         if(!empty($keyword)){
             $query->where(['OR' => [['Users.display_name LIKE' => "%".$keyword."%"], ['Users.email LIKE' => "%".$keyword."%"], ['Users.address LIKE' => "%".$keyword."%"],['Users.username LIKE' => "%".$keyword."%"]]]);
         } 
         if (count($conditions_array)) {
             $query->where($conditions_array);
-        }
-        //debug($query->toArray());die;
-        $users = $this->paginate($query);    
-        //pj($query);die;
+        }        
+        $users = $this->paginate($query); 
         $this->set(compact('users','keyword'));
         $this->set('_serialize', ['users']);
     }
@@ -280,9 +278,9 @@ class UsersController extends AdminController
                     $this->Users->updateAll($data, ['email'=>$user->email]);
                     $user =$this->Users->get($user->id);
                     $this->getMailer('User')->send('forgotPassword', [$user]);
-                   $result_arr = ['result' => true, 'message' => $this->errorSuccessMessage['44']];
+                   $result_arr = ['result' => true, 'message' => $this->errorSuccessMessage['17']];
                 } else {
-                    $result_arr = ['result' => false, 'message' => $this->errorSuccessMessage['43']];
+                    $result_arr = ['result' => false, 'message' => $this->errorSuccessMessage['3']];
                 }
             } else {                
                 $result_arr = ['result' => false, 'message' => $error];
@@ -297,16 +295,16 @@ class UsersController extends AdminController
     public function resetPassword($token, $email) {    
         $this->set('title', 'Reset password');        
         if (!$token || !$email) {  
-            $this->Flash->error(__($this->errorSuccessMessage['42']));
+            $this->Flash->error(__($this->errorSuccessMessage['13']));
             return $this->redirect(['action' => 'login']);  
         }
         $user = $this->getUserObj($email)->first(); 
         if (!$user) {
-            $this->Flash->error(__($this->errorSuccessMessage['36']));
+            $this->Flash->error(__($this->errorSuccessMessage['12']));
             return $this->redirect(['action' => 'login']); 
         }        
         if ($token != $user->forgot_password_token) {   
-            $this->Flash->error(__($this->errorSuccessMessage['37']));
+            $this->Flash->error(__($this->errorSuccessMessage['13']));
             return $this->redirect(['action' => 'login']); 
         }                
         if ($this->request->is(['post','put'])) {   
@@ -319,7 +317,7 @@ class UsersController extends AdminController
                 if ($this->Users->save($user)) {
                     return $this->redirect(['action' => 'success','login']);    
                 } else {                    
-                    $this->Flash->error(__($this->errorSuccessMessage['40']));
+                    $this->Flash->error(__($this->errorSuccessMessage['16']));
                     return $this->redirect(['action' => 'login']);    
                 }
             } else {     
@@ -342,7 +340,7 @@ class UsersController extends AdminController
             if (!$errors) {                        
                 $user->password = ApiHasher::hash($data['new_password']);
                 if ($this->Users->save($user)) {
-                    $result_arr = ['result' => true, 'message' => $this->errorSuccessMessage['27']];
+                    $result_arr = ['result' => true, 'message' => $this->errorSuccessMessage['10']];
                     //return $this->redirect(['action' => 'success','login']);    
                 } 
             } else {     

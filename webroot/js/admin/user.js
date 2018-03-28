@@ -115,37 +115,37 @@ jQuery(document).ready(function ($) {
            $('input').removeClass('incorrect-alert');
            if($.trim($('#old_password').val())==''){
                $('#old_password').addClass('incorrect-alert');
-               $('#oldpasswordError').text(errorSuccessMessage['10']);
+               $('#oldpasswordError').text(errorSuccessMessage['5']);
                $('#old_password').focus();
                return false;
            }
            if($.trim($('#new_password').val())==''){
                $('#new_password').addClass('incorrect-alert');
-               $('#passwordError').text(errorSuccessMessage['18']);
+               $('#passwordError').text(errorSuccessMessage['8']);
                $('#new_password').focus();
                return false;
            }
            if (!passwordPattern.test($.trim($('#new_password').val()))) {
               $('#new_password').addClass('incorrect-alert');
-              $('#passwordError').text(errorSuccessMessage['39']);
+              $('#passwordError').text(errorSuccessMessage['15']);
               $('#new_password').focus();
               return false;
            }
            if(($('#old_password').val()) == ($('#new_password').val())){
                $('#new_password').addClass('incorrect-alert');
-               $('#passwordError').text(errorSuccessMessage['11']);
+               $('#passwordError').text(errorSuccessMessage['6']);
                $('#new_password').focus();
                return false;
            }
            if($.trim($('#confirm_password').val())==''){
                $('#confirm_password').addClass('incorrect-alert');
-               $('#confirmpasswordError').text(errorSuccessMessage['20']);
+               $('#confirmpasswordError').text(errorSuccessMessage['9']);
                $('#confirm_password').focus();
                return false;
            }
            if(($('#confirm_password').val()) != ($('#new_password').val())){
                $('#confirm_password').addClass('incorrect-alert');
-               $('#confirmpasswordError').text(errorSuccessMessage['12']);
+               $('#confirmpasswordError').text(errorSuccessMessage['7']);
                $('#confirm_password').focus();
                return false;
            }
@@ -157,25 +157,25 @@ jQuery(document).ready(function ($) {
            
            if($.trim($('#new_password').val())==''){
                $('#new_password').addClass('incorrect-alert');
-               $('#passwordError').text(errorSuccessMessage['18']);
+               $('#passwordError').text(errorSuccessMessage['8']);
                $('#new_password').focus();
                return false;
            }
            if (!passwordPattern.test($.trim($('#new_password').val()))) {
               $('#new_password').addClass('incorrect-alert');
-              $('#passwordError').text(errorSuccessMessage['39']);
+              $('#passwordError').text(errorSuccessMessage['15']);
               $('#new_password').focus();
               return false;
            }
            if($.trim($('#confirm_password').val())==''){
                $('#confirm_password').addClass('incorrect-alert');
-               $('#confirmpasswordError').text(errorSuccessMessage['20']);
+               $('#confirmpasswordError').text(errorSuccessMessage['9']);
                $('#confirm_password').focus();
                return false;
            }
            if(($('#confirm_password').val()) != ($('#new_password').val())){
                $('#confirm_password').addClass('incorrect-alert');
-               $('#confirmpasswordError').text(errorSuccessMessage['12']);
+               $('#confirmpasswordError').text(errorSuccessMessage['7']);
                $('#confirm_password').focus();
                return false;
            }
@@ -190,28 +190,28 @@ jQuery(document).ready(function ($) {
            if($.trim($('#new_password').val())==''){
                err = 1;
                $('#new_password').addClass('incorrect-alert');
-               $('#passwordError').text(errorSuccessMessage['18']);
+               $('#passwordError').text(errorSuccessMessage['8']);
                $('#new_password').focus();
                return false;
            }
            if (!passwordPattern.test($.trim($('#new_password').val()))) {
               err = 1;
               $('#new_password').addClass('incorrect-alert');
-              $('#passwordError').text(errorSuccessMessage['39']);
+              $('#passwordError').text(errorSuccessMessage['15']);
               $('#new_password').focus();
               return false;
            }
            if($.trim($('#confirm_password').val())==''){
                err = 1;
                $('#confirm_password').addClass('incorrect-alert');
-               $('#confirmpasswordError').text(errorSuccessMessage['20']);
+               $('#confirmpasswordError').text(errorSuccessMessage['9']);
                $('#confirm_password').focus();
                return false;
            }
            if(($('#confirm_password').val()) != ($('#new_password').val())){
                err = 1;
                $('#confirm_password').addClass('incorrect-alert');
-               $('#confirmpasswordError').text(errorSuccessMessage['12']);
+               $('#confirmpasswordError').text(errorSuccessMessage['7']);
                $('#confirm_password').focus();
                return false;
            }         
