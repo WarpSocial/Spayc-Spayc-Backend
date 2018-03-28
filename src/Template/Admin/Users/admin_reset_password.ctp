@@ -1,8 +1,8 @@
          <div class="modal-body">
-          <div class="">                                  
-             <div class="error-login-page"><?= $this->Flash->render(); ?></div>
+          <div class="">                                               
              <?php echo $this->Form->create($user, ['id'=>'admin_reset_password_form','autocomplete' => 'off','novalidate'=>'novalidate']); ?>
-              <h1>Reset Password</h1>
+              <span class="error-alert error-forgot-password-page hide"></span>
+              <h1>Change Password</h1>
               <p class="mb-50">Please enter a new password in the fields below.</p>
               
               <div class="form-group form-group-reset">                
@@ -27,4 +27,4 @@
               <?php echo $this->Form->end(); ?>
           </div>   
           </div>         
-      
+      <?php echo $this->Html->script('admin/user'); ?>

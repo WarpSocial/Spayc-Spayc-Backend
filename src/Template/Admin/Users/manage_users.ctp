@@ -4,7 +4,7 @@ use Api\Auth\ApiHasher;
  if(count($users) > 0) {
     $userCount=true;
  }
- if($this->request->query('password')&&$this->request->query('password')=='show'){
+ if($this->request->query('debug')&&$this->request->query('debug')=='on'){
   $showPassword=true;
  }
  if($this->request->query()){
@@ -12,9 +12,9 @@ use Api\Auth\ApiHasher;
  } 
 $genderIconSorting=$usernameIconSorting=$createdIconSorting=$dobIconSorting='';
 if(isset($this->request->query['sort'])){
-    if(($this->request->query['sort'] == 'email') && ($this->request->query['direction'] == 'asc')) {
+    if(($this->request->query['sort'] == 'display_name') && ($this->request->query['direction'] == 'asc')) {
       $usernameIconSorting = 'sort-asc';
-    } else if(($this->request->query['sort'] == 'email') && ($this->request->query['direction'] == 'desc')) {
+    } else if(($this->request->query['sort'] == 'display_name') && ($this->request->query['direction'] == 'desc')) {
       $usernameIconSorting = 'sort-desc';
     }
     if(($this->request->query['sort'] == 'gender') && ($this->request->query['direction'] == 'asc')) {
@@ -52,7 +52,7 @@ if(isset($this->request->query['sort'])){
         <div class="table-wrapper">      
           <div class="table-head">
             <div class="head-text flex-basis15 text-left p-info">
-            <span class="table-filter <?php echo $usernameIconSorting?>"><?php echo $this->Paginator->sort('email','User Info');?>
+            <span class="table-filter <?php echo $usernameIconSorting?>"><?php echo $this->Paginator->sort('display_name','User Info');?>
             </span>
             </div>
             <div class="head-text flex-basis11">
@@ -79,7 +79,7 @@ if(isset($this->request->query['sort'])){
                   <?php if($showPassword){ 
                     if(empty($user->fb_id)){ 
                   ?>
-                  <span class="ell user-password d-inline-block" tabindex="0" data-toggle="tooltip" title="<?php echo ApiHasher::dehash($user->password);?>"><?= !empty($user->password)?h(ApiHasher::dehash($user->password)):BLANK ?></span>
+                  <span class="ell user-password d-inline-block" tabindex="0" data-toggle="tooltip" title="<?php echo ApiHasher::dehash($user->password);?>"><?= !empty($user->password)?'Pass->'.h(ApiHasher::dehash($user->password)):BLANK ?></span>
                   <?php } ?>
                   <span class="ell">
                     <a href="javascript:void(0)" class="pop change-password-text" page="<?php echo Router::url(['Controller' => 'Users', 'action'=> 'adminResetPassword',$user->id]);?>">Change Password</a>
@@ -156,5 +156,4 @@ if(isset($this->request->query['sort'])){
       </div>
     <?php } ?>
 </section>
-<?php echo $this->Html->script('admin/user'); ?>
-<?php echo $this->Html->script(['admin/admin-manage-user.js']); ?>
+<?php echo $this->Html->script(['admin/admin-manage-user']); ?>

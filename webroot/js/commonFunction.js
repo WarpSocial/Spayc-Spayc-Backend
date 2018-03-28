@@ -11,7 +11,18 @@ function openPopup(page,className){
     $("#cmnPoupUp").modal({show: true});
   },500);
 }
-
+var messageFadeOut = function (containerClass, message) {    
+    if($('.' + containerClass).hasClass('hide')){
+      $('.' + containerClass).removeClass('hide');
+    } 
+    if($('.'+containerClass).css('display') === 'none') {
+      $('.'+containerClass).show();
+    }
+    $('.' + containerClass).text(message).delay(5000)
+    .fadeOut('slow', function () {
+        $('.' + containerClass).text('');
+    });
+}
 function numbersOnly(e){
     // Allow: backspace, delete, tab, escape, enter and 
     //if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
@@ -33,14 +44,32 @@ function resetForm(formid){
     $('#'+formid).find('input:radio, input:checkbox').prop('checked', false);
 }
 function ajax_error(e){
-    $("#loader").hide();
+    $(".loader").removeClass('show-loader');
     checkConnection(e);
     if (e.status == 403) {
-       //openPopup(UserUrls.Login);
-       window.location.replace(BASE_URL_ADMIN);
+       window.location.replace(base_url_admin);
     } else {
         console.log("Something went wrong.");
     }
+}
+
+function checkConnection() {
+        var xhr = new XMLHttpRequest();
+        var file = base_url+"images/logo.png";
+        var r = Math.round(Math.random() * 10000);
+        xhr.open('HEAD', file + "?subins=" + r, false);
+        try {
+            xhr.send();
+            if (xhr.status >= 200 && xhr.status < 304) {
+                return true;
+            } else {
+                alert("No internet connection.");
+                return false;
+            }
+        } catch (e) {
+            alert("No internet connection.");
+            return false;
+        }
 }
 
 

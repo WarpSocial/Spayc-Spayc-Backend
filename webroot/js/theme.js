@@ -1,4 +1,24 @@
 $(function () {
+    $('input').bind("keypress click", function () {
+      if($(this).hasClass('incorrect-alert')){
+        $(this).removeClass('incorrect-alert');  
+        $(this).parent().parent().find('.input-alert').text('')
+      }
+    });    
+    if(!$('.error-alert').hasClass('hide') && ($('.error-alert').text().length > 0)){
+        $('.error-alert').delay(5000).fadeOut('slow', function () {
+        $('.error-alert').text('');
+      });
+    }    
+    $(document).on("click", ".pop", function(){
+      var className = $(this).attr('name');
+      if (typeof className !== typeof undefined && className !== false) {
+        className=$(this).attr('name');
+      }else{
+        className='';
+      }
+      openPopup($(this).attr('page'),className);
+    }); 
 
     //[setect dropdown]========
     // Default dropdown action to show/hide dropdown content

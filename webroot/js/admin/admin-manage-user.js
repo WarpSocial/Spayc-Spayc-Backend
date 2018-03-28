@@ -1,5 +1,4 @@
- $( document ).ready(function() {
-
+ $(document).ready(function() {
 	if($('#keyword').val() != ''){
 		$('#clear-search').removeClass('hide');
 	} else {

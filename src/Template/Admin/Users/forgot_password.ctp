@@ -1,7 +1,6 @@
 <div class="modal-body">
-  <span class="error-alert error-forgot-password-page hide"></span>
     <?= $this->Form->create('', ['id' => 'ForgetPasswordFrm', 'autocomplete' => 'off','novalidate'=>'novalidate']) ?>
-    <span class="error-alert error-forgot-password-page hide"></span>              
+    <span class="error-alert error-forgot-password-page hide"></span>
     <h1>Forgot Password?</h1>
       <p class="mb-30">Enter your work email address below. We will send you the link to reset your password.</p>
       <div class="form-group">               

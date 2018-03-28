@@ -9,7 +9,7 @@ define('FRIEND_REQUESTED_STATUS','Accepted');
 define('BLANK_COUNT',0);
 define('BLANK','--');
 $user_gender=array('1'=>'All','2'=>'Male','3'=>'Female','4'=>'Other');
-$user_age=array('1'=>'1-13','2'=>'13-26','3'=>'26-39','4'=>'39-52','5'=>'52-65','6'=>'65-above');
+$user_age=array('1'=>'13-20','2'=>'21-30','3'=>'31-40','4'=>'41-50','5'=>'51-above');
 define('USER_GENDER', serialize($user_gender));
 define('USER_AGE', serialize($user_age));
 $config =array();
@@ -20,7 +20,7 @@ $config['ERRORANDSUCCESSMSG'] = [
     4=>'Please enter password.',    
     5=>'Please enter current password.',   
     6=>'Current password and new password cannot be same.',
-    7=>'Passwords do not match, try again please!?',
+    7=>'Passwords do not match, try again please?',
     8=>'Please enter new password.', 
     9=>'Please enter confirm password.', 
     10=>'Your password has been changed successfully.', 

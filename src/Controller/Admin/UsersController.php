@@ -334,18 +334,24 @@ class UsersController extends AdminController
             return $this->redirect(['action' => 'manageUsers']);  
         }        
         $user = $this->Users->get($id);  
-        if ($this->request->is(['post','put'])) {   
-            $data = $this->request->getData();  
-            $errors = $this->Users->validationResetPassword($data);             
-            if (!$errors) {                        
+        if ($this->request->is(['post','put'])) { 
+            $data = $this->request->getData();
+            $error = '';
+            if (!isset($data['new_password'])) {
+                $error = $this->errorSuccessMessage['8'];
+            } else if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,30}$/',$data['new_password'])) {
+                $error = $this->errorSuccessMessage['15'];
+            }
+            if($data['new_password']!=$data['confirm_password']){
+                $error = $this->errorSuccessMessage['7'];
+            }
+            if (!$error) {               
                 $user->password = ApiHasher::hash($data['new_password']);
                 if ($this->Users->save($user)) {
                     $result_arr = ['result' => true, 'message' => $this->errorSuccessMessage['10']];
-                    //return $this->redirect(['action' => 'success','login']);    
                 } 
-            } else {     
-                $user->errors($errors);     
-                $result_arr = ['result' => false, 'message' => $errors]; 
+            } else {                   
+                $result_arr = ['result' => false, 'message' => $error]; 
             }
             echo json_encode($result_arr);
             die;
