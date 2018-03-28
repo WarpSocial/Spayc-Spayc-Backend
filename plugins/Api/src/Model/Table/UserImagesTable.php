@@ -104,18 +104,27 @@ class UserImagesTable extends Table {
         $entity = $this->newEntity();
         $items = $this->patchEntity($entity, $data, ['validate'=>false]);
         if($this->save($items)){
-           unlink($fileName);
+            unlink($fileName);
         }
         return $items;
     }
     public function facebookImg($imgUrl){
-        $imgFile = parse_url($imgUrl);
-        $absImgFile = $imgFile['scheme'].'://'.$imgFile['host'].$imgFile['path'];
-        $fileInfo = pathinfo($absImgFile);
-        $newImg = TMP.'/facebook_'.time().'.'.$fileInfo['extension'];
+       $http = new \Cake\Http\Client();
+       $response = $http->get($imgUrl);
+       $mimeType = $response->getHeaderLine('content-type');
+       if(empty($mimeType)){
+           return false;
+       }
+       $allMimeType = Configure::read('mimetype');
+       if(empty($allMimeType[$mimeType])){
+           return false;
+       }
+       $ext = $allMimeType[$mimeType];
+       $newImg = TMP.'/facebook_'.time().'.'.$ext;
         
-        file_put_contents($newImg, file_get_contents($imgUrl));
-        switch ($fileInfo['extension']) {
+        file_put_contents($newImg,$response->getBody());
+         //echo mime_content_type($newImg);die;
+        switch ($ext) {
             case 'gif' :
                 $srcImg = imagecreatefromgif($newImg);
                 break;

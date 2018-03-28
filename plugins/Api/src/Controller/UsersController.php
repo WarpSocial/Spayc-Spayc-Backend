@@ -376,7 +376,6 @@ class UsersController extends AppController {
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
     */
     public function facebookSignup() {
-        $this->Users->deleteAll(['email'=>'testerkwi@gmail.com']);
         if(!$this->request->is('post')) {
             $this->restException(['status'=>'failed','message'=>__('Method not allowed.')],405);
         }
