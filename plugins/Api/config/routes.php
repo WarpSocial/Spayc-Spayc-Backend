@@ -19,6 +19,7 @@ Router::plugin(
         $routes->connect('/verify/:token/:email', ['controller' => 'Users', 'action' => 'verifyAccount','ext'=>'html'], ['pass' => ['token', 'email']]);
         $routes->connect('/get-friends', ['controller' => 'Users', 'action' => 'getFriends']);
         $routes->connect('/friend-request', ['controller' => 'Users', 'action' => 'friendRequest']);
+        $routes->connect('/add-friend', ['controller' => 'Users', 'action' => 'addFriend']);
         $routes->connect('/request-accept-declined', ['controller' => 'Users', 'action' => 'requestAcceptDeclined']);
         $routes->connect('/block-friend', ['controller' => 'Users', 'action' => 'blockFriend']);
         $routes->connect('/unblock-friend', ['controller' => 'Users', 'action' => 'unblockFriend']);

@@ -834,3 +834,90 @@ function postUpdateUserStatus() { return; }
  * @apiUse UserErrorResponse
  */
 function postUpdateUserStatus() { return; }
+
+
+/**
+ @api {post} /friend-request.json Add Friend
+  @apiVersion 0.1.0
+  @apiName FriendRequest
+  @apiGroup User
+  @apiPermission Private User
+ 
+  @apiDescription Add Friend.
+  
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+  @apiParam {String} friend_id Friend id required (friend_id must be an user id)(Required).
+  @apiParam {String} friend_status Friend status and status must be either one from following 'Pending', 'Accepted', 'Blocked','is_direct','Decline','Unfriend' (Required).
+ 
+  @apiExample Example usage:
+ 
+    {
+        "friend_id":"5",
+        "friend_status":"Pending"
+    }
+ 
+ 
+  @apiSuccess {String} status success.
+  @apiSuccess {String} message Friend request send successfully.
+  @apiSuccess {Object} data Null.
+  @apiSuccessExample {json} Success-Response: 
+        HTTP/1.1 201 OK
+        {
+            "status": "success",
+            "message": "Friend request send successfully.",
+            "data": {
+                "id": "9",
+                "requested_by": 2,
+                "requested_to": 3,
+                "requested_status": "Blocked",
+                "action_by": "2"
+            }
+        }
+ 
+  @apiError {String} Friend request already sent.
+  @apiUse UserErrorResponse
+*/
+function postFriendRequest() { return; }
+
+/**
+ @api {put} /friend-response.json Set Friend Status
+  @apiVersion 0.1.0
+  @apiName setFriendStatus
+  @apiGroup User
+  @apiPermission Private User
+ 
+  @apiDescription Set Friend Status.
+  
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+* @apiParam  {String}   friend_id       Requested friend id (Required).
+* @apiParam  {String}   friend_status   Friend status must any one from following list 'Pending', 'Accepted', 'Blocked','is_direct','Decline','Unfriend' (Required).
+   @apiExample Example usage:
+ 
+    {
+        "friend_id":"5",
+        "friend_status":"Accepted"
+    }
+ 
+  @apiSuccess {String} status success.
+  @apiSuccess {String} message Friend status updated successfully.
+  @apiSuccess {Object} data Null.
+  @apiSuccessExample {json} Success-Response: 
+       HTTP/1.1 200 OK
+        {
+            "status": "success",
+            "message": "Friend status updated successfully.",
+            "data": {
+                "id": "9",
+                "requested_by": 2,
+                "requested_to": 3,
+                "requested_status": "Accepted",
+                "action_by": "3"
+            }
+        }
+ 
+  @apiError {String} Status is required fields and status must be in(Accepted,Declined,Blocked,Unfriend)..
+  @apiUse UserErrorResponse
+*/
+function setFriendStatus() { return; }
