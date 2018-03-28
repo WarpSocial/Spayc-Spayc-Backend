@@ -370,9 +370,8 @@ class UsersController extends AppController {
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
     */
-    public function facebookSignup() {
-        echo ApiHasher::dehash('ZTJiNTMxMGNmODQ2ZjE2NDc3MDM3ZTI5MzFkZjZmMGFlMTVkODk1ZjU2YzYwZjJjY2YwYTdjNjBiZTQ5ZTcxMlcXOEgqxHEhcWE0ANEjqdpVXqYtU6xaWA7y4U0KKtTdbyJEiKpAyvZ4XE2Q3DIq3eGDaPoMUR3i1B9T5NTBFT8=');die;
-        $this->Users->deleteAll(['email'=>'testerkwi@gmail.com']);
+    public function facebookSignup() {        
+        //$this->Users->deleteAll(['email'=>'testerkwi@gmail.com']);
         if(!$this->request->is('post')) {
             $this->restException(['status'=>'failed','message'=>__('Method not allowed.')],405);
         }
