@@ -10,7 +10,7 @@ $controller_action = $this->request->param('action');
           <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
-          <a class="navbar-brand" href="#">
+          <a class="navbar-brand" href="<?php echo Router::url(['_name' => 'login']);?>">
             <?php echo $this->Html->image("logo.png", ["alt" => ""]); ?>
             </a>
           <div class="collapse navbar-collapse" id="navbarNavDropdown">

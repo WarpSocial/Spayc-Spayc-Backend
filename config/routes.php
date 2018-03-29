@@ -76,7 +76,7 @@ Router::scope('/', function (RouteBuilder $routes) {
 });
 
 Router::prefix('admin', function ($routes) {
-    $routes->connect('/', ['controller' => 'Users', 'action' => 'login']);    
+    $routes->connect('/', ['controller' => 'Users', 'action' => 'login'],['_name' => 'login']);    
     $routes->connect('/forgotPassword/*', ['controller' => 'Users','action' => 'forgotPassword'],['_name' => 'forgotPassword']);
     $routes->connect('/success/*', ['controller' => 'Users','action' => 'success'],['_name' => 'success']);
     $routes->fallbacks(DashedRoute::class);
