@@ -591,6 +591,8 @@ class MatrixComponent extends Component {
             $conn->delete('stream_ordering_to_exterm',['room_id IN'=>$roomId]);
             $conn->delete('event_auth',['room_id IN'=>$roomId]);
             $conn->delete('appservice_room_list',['room_id IN'=>$roomId]);
+            $conn->delete('current_state_delta_stream',['room_id IN'=>$roomId]);
+            $conn->delete('event_search',['room_id IN'=>$roomId]);
         });
         
     }

@@ -106,7 +106,13 @@ class SpaycsController extends AppController {
         }
         $entity = $this->Spaycs->find()->contain('JoinedSpayc',function($q)use($user){
             return $q->where(['user_id'=>$user['id']]);
-        })->where(['matrix_room_id'=>$data['parent_matrix_room_id']]);        
+        });
+        if(preg_match("/[a-z]/i", $data['parent_matrix_room_id'])){
+            $entity->where(['matrix_room_id'=>$data['parent_matrix_room_id']]);        
+        }else{
+            $entity->where(['id'=>$data['parent_matrix_room_id']]);
+        }
+                
         if($entity->isEmpty()){
             $this->restException(['status'=>'failed','message'=>__('Parent space has not been found.')], 400);
         }
