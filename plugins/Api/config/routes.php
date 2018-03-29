@@ -57,7 +57,7 @@ Router::plugin(
         $routes->connect('/join-spayc', ['controller'=>'JoinSpaycs', 'action'=>'joinSpayc']);
         $routes->connect('/join-sub-spayc', ['controller'=>'JoinSpaycs', 'action'=>'joinSubSpayc']);
         $routes->connect('/ban-spayc-member', ['controller'=>'JoinSpaycs', 'action'=>'banSpaycMember']);
-        
+        $routes->connect('/read-notifications', ['controller' => 'Users', 'action' => 'readNotification']);
         $routes->connect('/transactions/:id', ['controller' => 'Spaycs', 'action' => 'matrixApplicationService'],['pass'=>['id']]);
         
         $routes->fallbacks(DashedRoute::class);

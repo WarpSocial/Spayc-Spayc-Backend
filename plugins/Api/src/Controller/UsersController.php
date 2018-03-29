@@ -1232,6 +1232,9 @@ class UsersController extends AppController {
 //            'JoinedSpayc'=>function($q) {
 //                return $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id']);
 //            },
+            'NotificationTo'=>function($q) {
+                return $q->select(['NotificationTo.requested_to', 'unread_notification'=>$q->func()->count('NotificationTo.id')])->group(['NotificationTo.requested_to'])->where(['NotificationTo.status'=>'Unread']);
+            },
             'Spaycs'=>function($q) {
                 return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id'])->where(['Spaycs.group_type !='=>'trusted_private','Spaycs.parent_id IS'=>null ]);
             }
@@ -1242,11 +1245,13 @@ class UsersController extends AppController {
                 $uId = ApiHasher::decrypt($row['id']);
                 $row['joined_spaycs'] = count($this->Users->findJoinedSpayc($id));
                 $row['created_spaycs'] = !empty($row['spaycs'][0]['created_spaycs'])? $row['spaycs'][0]['created_spaycs'] : 0;
+                $row['unread_notifications'] = !empty($row['notification_to'][0]['unread_notification'])? $row['notification_to'][0]['unread_notification'] : 0;
                 $row['friend'] = TableRegistry::get('Api.FriendRequest')->myFriend($uId,$loggedUser['id']);
                 $row['matrix_room_id'] = !empty($row['friend']['matrix_room_id'])?$row['friend']['matrix_room_id']:null;
                 unset($row['friend']['matrix_room_id']);
                 $row['friend']['total_friends'] = TableRegistry::get('Api.FriendRequest')->getFriendCountByUserId($uId);
                 unset($row['joined_spayc'],$row['requestedto'],$row['requestedby'],$row['spaycs']);
+                unset($row['notification_to']);
                 return $row;
             });
         });
@@ -1532,6 +1537,26 @@ class UsersController extends AppController {
             $this->response->statusCode(400);
             $response = ['status'=>'failed','message'=>__('System failed to change the role.')];
         }
+        $this->set($response);
+    }
+    
+    public function readNotification() {
+        if(!$this->request->is('post')) {
+            $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
+        }
+        $data = $this->request->getData();
+        if(empty($data['notification_ids'])) {
+            $this->restException(['status'=>'failed','message'=>__('Notification id is missing.')], 400);
+        }
+        $data['notification_ids'] = explode(',', $data['notification_ids']);
+        $user = $this->Auth->user();
+        $notification = TableRegistry::get("Api.Notifications");
+        $notify = $notification->find()->where(['id IN'=>$data['notification_ids'], 'requested_to'=>$user['id']]);
+        if($notify->count() != count($data['notification_ids'])) {
+            $this->restException(['status'=>'failed','message'=>__('Notification id is not valid.')], 400);
+        }
+        $notification->updateAll(['status'=>'Read'], ['id IN'=>$data['notification_ids']]);
+        $response = ['status'=>'success','message'=>__('Notification read successfully.')];
         $this->set($response);
     }
 }
