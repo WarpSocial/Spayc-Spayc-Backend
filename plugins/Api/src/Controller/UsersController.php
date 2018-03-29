@@ -1507,7 +1507,7 @@ class UsersController extends AppController {
         if($adminEntity[0]['is_admin'] <= 0){
             $this->restException(['status'=>'failed','message'=>__('You have no privileges to make someone admin.')], 400);
         }
-        if($userEntity[0]['is_admin'] == 1){
+        if($userEntity[0]['is_admin'] > 0){
             $this->restException(['status'=>'failed','message'=>__('User has already admin privileges.')], 400);
         }
         $entity = $userEntity[0];
