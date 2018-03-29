@@ -196,13 +196,13 @@ class UsersController extends AdminController
                 $user = $this->getUserObj($data['email'])->first();
                 if ($user) {              
                     if (!ApiHasher::check(trim($data['password']), $user->password)) {                       
-                        $this->Flash->error(__($this->errorSuccessMessage['11']));
+                        $this->Flash->error(__($this->errorSuccessMessage['INVALIDEMAILNPASS']));
                     }else{                       
                         $this->Auth->setUser($user);                        
                         return $this->redirect($this->Auth->redirectUrl());
                     }               
                 } else {
-                    $this->Flash->error(__($this->errorSuccessMessage['11']));
+                    $this->Flash->error(__($this->errorSuccessMessage['INVALIDEMAILNPASS']));
                 }
             } else {
                 $user->errors($errors);
@@ -229,7 +229,7 @@ class UsersController extends AdminController
                 if ($this->Users->save($user)) {
                     return $this->redirect(['action' => 'success']);
                 } else {                    
-                    $this->Flash->success(__($this->errorSuccessMessage['16']));
+                    $this->Flash->success(__($this->errorSuccessMessage['SYSTEMERR']));
                 }
             } else {
                 $user->errors($errors);
@@ -256,9 +256,9 @@ class UsersController extends AdminController
             $data_item = $this->request->data;           
             $error = array();
             if (!isset($data_item['email'])) {
-                $error = $this->errorSuccessMessage['3'];
+                $error = $this->errorSuccessMessage['BLANKEMAIL'];
             } else if (!filter_var($data_item['email'], FILTER_VALIDATE_EMAIL)) {
-                $error = $this->errorSuccessMessage['3'];
+                $error = $this->errorSuccessMessage['INVALIDEMAIL'];
             }
             if (empty($error)) {                  
                 $user = $this->getUserObj($data_item['email'])->first();
@@ -268,9 +268,9 @@ class UsersController extends AdminController
                     $this->Users->updateAll($data, ['email'=>$user->email]);
                     $user =$this->Users->get($user->id);
                     $this->getMailer('User')->send('forgotPassword', [$user]);
-                   $result_arr = ['result' => true, 'message' => $this->errorSuccessMessage['17']];
+                   $result_arr = ['result' => true, 'message' => $this->errorSuccessMessage['RESETLINKMSG']];
                 } else {
-                    $result_arr = ['result' => false, 'message' => $this->errorSuccessMessage['3']];
+                    $result_arr = ['result' => false, 'message' => $this->errorSuccessMessage['INVALIDEMAIL']];
                 }
             } else {                
                 $result_arr = ['result' => false, 'message' => $error];
@@ -285,21 +285,22 @@ class UsersController extends AdminController
     public function resetPassword($token, $email) {    
         $this->set('title', 'Reset password');        
         if (!$token || !$email) {  
-            $this->Flash->error(__($this->errorSuccessMessage['13']));
+            $this->Flash->error(__($this->errorSuccessMessage['INVALIDLINK']));
             return $this->redirect(['action' => 'login']);  
         }
         $user = $this->getUserObj($email)->first(); 
         if (!$user) {
-            $this->Flash->error(__($this->errorSuccessMessage['12']));
+            $this->Flash->error(__($this->errorSuccessMessage['INVALIDUSER']));
             return $this->redirect(['action' => 'login']); 
         }        
         if ($token != $user->forgot_password_token) {   
-            $this->Flash->error(__($this->errorSuccessMessage['13']));
+            $this->Flash->error(__($this->errorSuccessMessage['INVALIDLINK']));
             return $this->redirect(['action' => 'login']); 
         }                
         if ($this->request->is(['post','put'])) {   
-            $data = $this->request->getData();               
-            $errors = $this->Users->validationResetPassword($data);             
+            $data = $this->request->getData();                 
+            $errors = $this->Users->validationResetPassword($data);    
+
             if (!$errors) {
                 $user->forgot_password_token = null;
                 $user->forgot_password_timestamp = null;                
@@ -307,7 +308,7 @@ class UsersController extends AdminController
                 if ($this->Users->save($user)) {
                     return $this->redirect(['action' => 'success','login']);    
                 } else {                    
-                    $this->Flash->error(__($this->errorSuccessMessage['16']));
+                    $this->Flash->error(__($this->errorSuccessMessage['SYSTEMERR']));
                     return $this->redirect(['action' => 'login']);    
                 }
             } else {     
@@ -328,17 +329,17 @@ class UsersController extends AdminController
             $data = $this->request->getData();
             $error = '';
             if (!isset($data['new_password'])) {
-                $error = $this->errorSuccessMessage['8'];
-            } else if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,30}$/',$data['new_password'])) {
-                $error = $this->errorSuccessMessage['15'];
-            }
+                $error = $this->errorSuccessMessage['BLANKNPASS'];
+            } else if(!$this->Users->_getCustomPasswordRule($data['new_password'])) {
+                $error = $this->errorSuccessMessage['PASSERRMSG'];
+            }             
             if($data['new_password']!=$data['confirm_password']){
-                $error = $this->errorSuccessMessage['7'];
+                $error = $this->errorSuccessMessage['PASSMISSMATCH'];
             }
             if (!$error) {               
                 $user->password = ApiHasher::hash($data['new_password']);
                 if ($this->Users->save($user)) {
-                    $result_arr = ['result' => true, 'message' => $this->errorSuccessMessage['10']];
+                    $result_arr = ['result' => true, 'message' => $this->errorSuccessMessage['PASSSUCCESS']];
                 } 
             } else {                   
                 $result_arr = ['result' => false, 'message' => $error]; 

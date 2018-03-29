@@ -1,38 +1,36 @@
 <?php use Cake\Routing\Router;
 use Api\Auth\ApiHasher;
- $userCount=$showPassword=$filter=false;
- if(count($users) > 0) {
-    $userCount=true;
- }
- if($this->request->query('debug')&&$this->request->query('debug')=='on'){
+$userCount=$showPassword=$filter=false;
+if(count($users) > 0) 
+  $userCount=true; 
+if($this->request->query('debug')&&$this->request->query('debug')=='on')
   $showPassword=true;
- }
- if($this->request->query()){
-    $filter=true;
- } 
+if($this->request->query())
+  $filter=true;
+ 
 $genderIconSorting=$usernameIconSorting=$createdIconSorting=$dobIconSorting='';
-if(isset($this->request->query['sort'])){
-    if(($this->request->query['sort'] == 'display_name') && ($this->request->query['direction'] == 'asc')) {
-      $usernameIconSorting = 'sort-asc';
-    } else if(($this->request->query['sort'] == 'display_name') && ($this->request->query['direction'] == 'desc')) {
-      $usernameIconSorting = 'sort-desc';
-    }
-    if(($this->request->query['sort'] == 'gender') && ($this->request->query['direction'] == 'asc')) {
-      $genderIconSorting = 'sort-asc';
-    } else if(($this->request->query['sort'] == 'gender') && ($this->request->query['direction'] == 'desc')) {
-      $genderIconSorting = 'sort-desc';
-    }
-    if(($this->request->query['sort'] == 'dob') && ($this->request->query['direction'] == 'asc')) {
-      $dobIconSorting = 'sort-asc';
-    } else if(($this->request->query['sort'] == 'dob') && ($this->request->query['direction'] == 'desc')) {
-      $dobIconSorting = 'sort-desc';
-    }
+if(isset($this->request->query['sort'])) {
+
+    if(($this->request->query['sort'] == 'display_name') && ($this->request->query['direction'] == 'asc')) 
+        $usernameIconSorting = 'sort-asc';
+    else if(($this->request->query['sort'] == 'display_name') && ($this->request->query['direction'] == 'desc')) 
+        $usernameIconSorting = 'sort-desc';
     
-    if(($this->request->query['sort'] == 'created') && ($this->request->query['direction'] == 'asc')) {
-      $createdIconSorting = 'sort-asc';
-    } else if(($this->request->query['sort'] == 'created') && ($this->request->query['direction'] == 'desc')) {
-      $createdIconSorting = 'sort-desc';
-    }
+    if(($this->request->query['sort'] == 'gender') && ($this->request->query['direction'] == 'asc')) 
+        $genderIconSorting = 'sort-asc';
+    else if(($this->request->query['sort'] == 'gender') && ($this->request->query['direction'] == 'desc')) 
+        $genderIconSorting = 'sort-desc';
+    
+    if(($this->request->query['sort'] == 'dob') && ($this->request->query['direction'] == 'asc')) 
+        $dobIconSorting = 'sort-asc';
+    else if(($this->request->query['sort'] == 'dob') && ($this->request->query['direction'] == 'desc')) 
+        $dobIconSorting = 'sort-desc';
+    
+    if(($this->request->query['sort'] == 'created') && ($this->request->query['direction'] == 'asc')) 
+        $createdIconSorting = 'sort-asc';
+    else if(($this->request->query['sort'] == 'created') && ($this->request->query['direction'] == 'desc')) 
+        $createdIconSorting = 'sort-desc';
+    
 }
 ?>
 <!--=============breadcrumbs==============-->      
@@ -44,8 +42,9 @@ if(isset($this->request->query['sort'])){
       </div>
 <section class="content-wrapper content-filter">
         <!--===========filter================-->
-       <?php if($userCount || $filter){ ?>
-       <?php echo $this->element('admin/user-filter');?>
+        <?php if($userCount || $filter){ 
+                echo $this->element('admin/user-filter');
+        ?>
  
       <!--============= table head ===================-->
       <div class="container">        
@@ -73,13 +72,13 @@ if(isset($this->request->query['sort'])){
               <div class="table-row">
                 <div class="table-data flex-basis15 text-left p-info">
                   <span class="user-name"><?= !empty($user->display_name)?h($user->display_name):'' ?></span>
-                  <span class="ell"  class="d-inline-block" tabindex="0" data-toggle="tooltip" title="<?php echo $user->email;?>"><?= !empty($user->email)?h($user->email):'' ?></span>
+                  <span class="ell"  class="d-inline-block" tabindex="0" data-toggle="tooltip" data-animation="false" title="<?php echo $user->email;?>"><?= !empty($user->email)?h($user->email):'' ?></span>
                   <span class="user-contact"><?= !empty($user->phone)?h($user->country_code).'&nbsp;'.h($user->phone):''; ?>
                   </span>
                   <?php if($showPassword){ 
                     if(empty($user->fb_id)){ 
                   ?>
-                  <span class="ell user-password d-inline-block" tabindex="0" data-toggle="tooltip" title="<?php echo ApiHasher::dehash($user->password);?>"><?= !empty($user->password)?'Pass->'.h(ApiHasher::dehash($user->password)):'' ?></span>
+                  <span class="ell user-password d-inline-block" tabindex="0" data-toggle="tooltip" data-animation="false" title="<?php echo ApiHasher::dehash($user->password);?>"><?= !empty($user->password)?'Pass->'.h(ApiHasher::dehash($user->password)):'' ?></span>
                   <?php } ?>
                   <span class="ell">
                     <a href="javascript:void(0)" class="pop change-password-text" page="<?php echo Router::url(['Controller' => 'Users', 'action'=> 'adminResetPassword',$user->id]);?>">Change Password</a>

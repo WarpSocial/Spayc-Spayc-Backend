@@ -118,18 +118,12 @@ class UsersTable extends Table
                 ->requirePresence('new_password', 'create',__('Please enter new password.'))
                 ->notEmpty('new_password',__('Please enter new password.'))
                 ->add("new_password",'custom',[
-                    'rule'=>function($value,$context) {
-                        if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,30}$/', $value)){
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    },
+                    'rule'=>[$this, '_getCustomPasswordRule'],
                     'message'=>__('New password must contain 8-30 character length, at least one letter and one number.'),
                 ]);                
         $validator
-                ->requirePresence('confirm_password', 'create', __('Confirm Please enter your password.'))
-                ->notEmpty('confirm_password', __('Confirm Please enter your password.'))
+                ->requirePresence('confirm_password', 'create', __('Please enter password.'))
+                ->notEmpty('confirm_password', __('Please enter password.'))
                 ->sameAs('confirm_password', 'new_password',__('New password and confirm password should be matched, try again please!'));
         
         $error = $validator->errors($data);    
@@ -162,13 +156,7 @@ class UsersTable extends Table
                 ->requirePresence('new_password', 'create',__('Please enter new password.'))
                 ->notEmpty('new_password',__('Please enter new password.'))
                 ->add("new_password",'custom',[
-                    'rule'=>function($value,$context) {
-                        if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,30}$/', $value)){
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    },
+                    'rule'=>[$this, '_getCustomPasswordRule'],
                     'message'=>__('New password must contain 8-30 character length, at least one letter and one number.'),
                 ])
                 ->add('new_password', 'custom', [
@@ -186,6 +174,13 @@ class UsersTable extends Table
         
         $error = $validator->errors($data);    
         return $error;
+    }
+
+    public function _getCustomPasswordRule($value){        
+        if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,30}$/', $value))
+           return false;
+        else 
+           return true;
     }
 
     /**
