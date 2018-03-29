@@ -104,6 +104,7 @@ function postSpaycs() { return; }
 @apiDescription Update spayc or subspayc.
 
 @apiHeader {String} TOKEN           A token send by header as TOKEN
+@apiHeader {String} timezone        client timezone
 
 @apiParam {String} spayc_id         id either spayc id or matrix room id (Required).
 @apiParam {String} name             Name title of the spayc (Required).
@@ -117,7 +118,6 @@ function postSpaycs() { return; }
 @apiParam {String} image            Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
 @apiParam {String} longitude        Langitude from google map (Required).
 @apiParam {String} latitude         Latitude from google map (Required).
-@apiParam {String} invite           Matrix user id is optional in query string(Optional).
 
 @apiExample Example usage:
     {
@@ -132,8 +132,7 @@ function postSpaycs() { return; }
         "description":"spayc creating",
         "image":"file.png",
         "longitude":"XX.00.XX",
-        "latitude":"XX.00.XX",
-        "invite":"@test2:35.168.119.247, @test3:35.168.119.247"
+        "latitude":"XX.00.XX"
     }
  
 @apiSuccess {String} status success.

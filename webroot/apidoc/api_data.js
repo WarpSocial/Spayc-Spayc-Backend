@@ -1083,6 +1083,13 @@ define({ "api": [
             "optional": false,
             "field": "TOKEN",
             "description": "<p>A token send by header as TOKEN</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>client timezone</p> "
           }
         ]
       }
@@ -1173,13 +1180,6 @@ define({ "api": [
             "optional": false,
             "field": "latitude",
             "description": "<p>Latitude from google map (Required).</p> "
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "invite",
-            "description": "<p>Matrix user id is optional in query string(Optional).</p> "
           }
         ]
       }
@@ -1187,7 +1187,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "{\n    \"spayc_id\": \"XXXXXXX\",\n    \"name\": \"spaycdev\",\n    \"location\": \"Community addrss\",\n    \"type\": \"Event|Community\",\n    \"group_type\": \"Public|Private\",\n    \"start_date\": \"01-11-2019 01:02:20\",\n    \"end_date\": \"01-12-2019 01:02:20\",\n    \"passcode\": \"s5d4f87sdf4545\",\n    \"description\":\"spayc creating\",\n    \"image\":\"file.png\",\n    \"longitude\":\"XX.00.XX\",\n    \"latitude\":\"XX.00.XX\",\n    \"invite\":\"@test2:35.168.119.247, @test3:35.168.119.247\"\n}",
+        "content": "{\n    \"spayc_id\": \"XXXXXXX\",\n    \"name\": \"spaycdev\",\n    \"location\": \"Community addrss\",\n    \"type\": \"Event|Community\",\n    \"group_type\": \"Public|Private\",\n    \"start_date\": \"01-11-2019 01:02:20\",\n    \"end_date\": \"01-12-2019 01:02:20\",\n    \"passcode\": \"s5d4f87sdf4545\",\n    \"description\":\"spayc creating\",\n    \"image\":\"file.png\",\n    \"longitude\":\"XX.00.XX\",\n    \"latitude\":\"XX.00.XX\"\n}",
         "type": "json"
       }
     ],

@@ -50,7 +50,14 @@ class SpaycsController extends AppController {
         $items = $this->Spaycs->patchEntity($entity, $data);
         if($items->errors()) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
-        }        
+        }
+        if($data['type'] == 'Community'){ /* in community no need to keep start or end date*/
+            $items->start_date = '';
+            $items->end_date = '';            
+        }
+        if($data['group_type'] == 'Public'){ /* in community no need to keep start or end date*/
+            $items->passcode = '';
+        }
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
         
         $matrix = $this->Matrix->createRoom($data);
@@ -264,7 +271,7 @@ class SpaycsController extends AppController {
                     return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.distance']);
                 },
                 'SubscribedUsers' => function($q) {
-                    return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])->where(['status'=>'Active']);
+                    return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
                 },
                 'Comments' => function($q) {
                     return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
@@ -328,7 +335,7 @@ class SpaycsController extends AppController {
                     $physicalPresent = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[distance <='.$miles.']');
                     $present = count($physicalPresent);
                 }
-                $row['joined_spayc_status'] = !empty($status[0])?$status[0]:null;
+                $row['joined_spayc_status'] = !empty($status[0])?$status[0]:'';
 //                if($userId==$row['user_id']) {
 //                    $row['joined_spayc_status'] = 'Joined';
 //                }
@@ -384,21 +391,16 @@ class SpaycsController extends AppController {
         }
         $spayc = $spaycs->first();
         $entities = $scModel->find('all',['field'=>['id','user_id','spayc_id','status']])->where(['spayc_id'=>$spayc->id,'user_id'=>$data['user_id']]);
-        if($entities->isEmpty()){
-            $entity = $scModel->newEntity();
-            $entity->user_id = $data['user_id'];
-            $entity->spayc_id = $spayc->id;
-            $entity->status = 'Active';
-            $entity->modified = new \Cake\I18n\Time();
-            $entity->created = new \Cake\I18n\Time();            
-        }else{
-            $entity = $entities->first();
-            if($entity->status == 'Active'){
-                $this->restException(['status'=>'failed','message'=>__('User has been already subscribed.')], 400);
-            }
-            $entity->status = 'Active';
-            $entity->modified = new \Cake\I18n\Time();
-        }        
+        if(!$entities->isEmpty()){
+             $this->restException(['status'=>'failed','message'=>__('User has been already subscribed.')], 400);
+        }
+        $entity = $scModel->newEntity();
+        $entity->user_id = $data['user_id'];
+        $entity->spayc_id = $spayc->id;
+        //$entity->status = 'Active';
+        $entity->modified = new \Cake\I18n\Time();
+        $entity->created = new \Cake\I18n\Time();            
+                
         if($scModel->save($entity,['checkRules' => false, 'atomic' => false])){
             $response = ['status'=>'success','message'=>__('User has been subcribed successfully.')];
         }else{
@@ -435,10 +437,10 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('User has not yet subscribed.')], 400);
         }
         $entity = $entities->first();           
-        $entity->status = 'Inactive';
-        $entity->modified = new \Cake\I18n\Time();
-        $entity->updated_by = $this->Auth->user('id');
-        if($scModel->save($entity,['checkRules' => false, 'atomic' => false])){
+//        $entity->status = 'Inactive';
+//        $entity->modified = new \Cake\I18n\Time();
+//        $entity->updated_by = $this->Auth->user('id');
+        if($scModel->delete($entity)){
             $response = ['status'=>'success','message'=>__('User has been unsubcribed successfully.')];
         }else{
             $response = ['status'=>'failed','message'=>__('System failed to unsubscribe the user.')];
@@ -493,7 +495,7 @@ class SpaycsController extends AppController {
                         return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
                     },
                     'SubscribedUsers' => function($q) {
-                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])->where(['status'=>'Active']);
+                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
                     }
                 ]);
                
@@ -587,14 +589,19 @@ class SpaycsController extends AppController {
         if($user['id'] != $entity->user_id){
             $this->restException(['status'=>'failed','message'=>__('Insufficient privileges to edit this space.')], 400);
         }        
-        
         unset($data['spayc_id']);        
         $items = $this->Spaycs->patchEntity($entity, $data);        
+        if($data['type'] == 'Community'){ /* in community no need to keep start or end date*/
+            $items->start_date = '';
+            $items->end_date = '';
+        }
         
+        if($data['group_type'] == 'Public'){ /* in community no need to keep start or end date*/
+            $items->passcode = '';
+        }
         if(!empty($items->errors())) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
         }
-        
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
         $matrix = $this->Matrix->updateRoom($entity->matrix_room_id,$data);
         if(!$matrix) {
@@ -738,8 +745,7 @@ class SpaycsController extends AppController {
                         return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin']);
                     },
                     'SubscribedUsers' => function($q) {
-                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])
-                                ->where(['SubscribedUsers.status'=>'Active']);
+                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
                     },
                     'Comments' => function($q) {
                         return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);                        
@@ -835,7 +841,7 @@ class SpaycsController extends AppController {
                         return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin']);
                     },
                     'SubscribedUsers' => function($q) {
-                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])->where(['status'=>'Active']);
+                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
                     },
                     'Comments' => function($q) {
                         return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);                        
@@ -915,7 +921,7 @@ class SpaycsController extends AppController {
                         return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin']);
                     },
                     'SubscribedUsers' => function($q) {
-                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])->where(['status'=>'Active']);
+                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
                     },
                     'Comments' => function($q) {
                         return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);                        
@@ -1002,7 +1008,7 @@ class SpaycsController extends AppController {
                         return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin']);
                     },
                     'SubscribedUsers' => function($q) {
-                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])->where(['status'=>'Active']);
+                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
                     },
                     'Comments' => function($q) {
                         return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);                        

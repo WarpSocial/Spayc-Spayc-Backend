@@ -101,6 +101,12 @@ class SpaycsTable extends Table {
         ) )";
     }
 
+    public function validateDate($value,$context, $format = 'm-d-Y H:i:s') {
+        $d = \DateTime::createFromFormat($format, $value);
+        $valid = \DateTime::getLastErrors();         
+        return ($valid['warning_count']==0 && $valid['error_count']==0);
+    }
+
     /**
      * Default validation rules.
      *
@@ -134,14 +140,20 @@ class SpaycsTable extends Table {
                 ->notEmpty('start_date',__('Start date is required when type is event.'),function($context){
                      return (isset($context['data']['type']) && ($context['data']['type'] =='Event'));
                 })
-                ->dateTime('start_date','mdy',__('Start date is not in format MM-DD-YYYY H:i:s'))
-                        
-                ->add('start_date','daterange',[
-                    'rule'=> function($value,$context){
+                //->dateTime('start_date','mdy',__('Start date is not in format MM-DD-YYYY H:i:s'))
+                ->add('start_date',[
+                    'format'=>[
+                        'rule'=>[$this,'validateDate'],
+                        'last'=>true,
+                        'message'=>__('Start date is not in format MM-DD-YYYY H:i:s')
+                    ],
+                    'daterange'=>[
+                        'rule'=>function($value,$context){
                         if(!empty($value)){
                             /* Doesn't exceed 1 year ahead */
                             $timezone = Configure::read('timezone');
                             $startDate = Time::createFromFormat('m-d-Y H:i:s',$value,$timezone);
+                            
                             $currentDate = new Time('now',$timezone);
                             $now = clone $currentDate;
                             $currentDate->modify('+1 year')->modify('+1 minute');
@@ -149,19 +161,29 @@ class SpaycsTable extends Table {
                         }
                     },
                     'message'=>__('Start date can\'t be more than 1 year ahead or any past date.')
-                ]);
+                    ]
+                ]) ;
         $validator                
                 ->requirePresence('end_date', 'create',__('End Date key is missing.'))                
                 ->notEmpty('end_date',__('End date is required when type is event.'),function($context){
                      return (isset($context['data']['type']) && ($context['data']['type'] =='Event'));
                 })
-                ->dateTime('end_date','mdy',__('End date is not in format MM-DD-YYYY H:i:s'))
-                ->add('end_date','daterange',[
-                    'rule'=> function($value,$context){
+                //->dateTime('end_date','mdy',__('End date is not in format MM-DD-YYYY H:i:s'))
+                 
+                ->add('end_date',[
+                    'format'=>[
+                        'rule'=>[$this,'validateDate'],
+                        'last'=>true,
+                        'message'=>__('End date is not in format MM-DD-YYYY H:i:s')
+                    ],
+                    'daterange'=>[
+                        'rule'=>function($value,$context){
                      $timezone = Configure::read('timezone');
                         if(!empty($value) && !empty($context['data']['end_date']) && !empty($context['data']['start_date'])){
                             /* End date must be below of start date */
+                            
                             $startDate = Time::createFromFormat('m-d-Y H:i:s',$context['data']['start_date'],$timezone);
+                            
                             $endDate = Time::createFromFormat('m-d-Y H:i:s',$value,$timezone);
                             if($endDate->format('H') == '00'){
                                 $endDate->setTime(23,55);
@@ -171,7 +193,9 @@ class SpaycsTable extends Table {
                         return true;
                     },
                     'message'=>__('End date must be ahead from start date.')
-                ]);
+                    ]
+                ]) ;
+              
 
         $validator
                 //->requirePresence('passcode', 'create',__('Passcode key is missing.'))
@@ -197,12 +221,14 @@ class SpaycsTable extends Table {
                     'message'=>__('Image size must be less than '.\Cake\Core\Configure::read('maxupload').'.')
                 ]);
         $validator
-                ->requirePresence('longitude', 'create',__('Longitude key is missing.'))
-                ->notEmpty('longitude',__('Please enter longitude.'))
+                ->allowEmpty('longitude')
+                //->requirePresence('longitude', 'create',__('Longitude key is missing.'))
+                //->notEmpty('longitude',__('Please enter longitude.'))
                 ->longitude('longitude',__('Please enter valid longitude.'));        
         $validator
-                ->requirePresence('latitude', 'create',__('Latitude key is missing.'))
-                ->notEmpty('latitude',__('Please enter latitude.'))
+                //->requirePresence('latitude', 'create',__('Latitude key is missing.'))
+                //->notEmpty('latitude',__('Please enter latitude.'))
+                ->allowEmpty('latitude')
                 ->latitude('latitude',__('Please enter valid latitude.'));  
         
         return $validator;
