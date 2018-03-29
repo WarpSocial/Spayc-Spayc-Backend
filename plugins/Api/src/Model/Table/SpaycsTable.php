@@ -511,4 +511,183 @@ class SpaycsTable extends Table {
             }
             return 0;
     }
+    
+    
+    
+    public function getNearBySpaycsOnMap($request = [], $userId=null) {
+//        if(!empty($request['latitude']) && !empty($request['longitude'])) {
+//            $distanceField = '( 3959 * ACOS( COS( RADIANS(:latitude) ) *
+//                COS( RADIANS(  latitude ) ) *
+//                COS( RADIANS(  longitude ) - RADIANS(:longitude) ) +
+//                SIN( RADIANS(:latitude) ) *
+//                SIN( RADIANS(  latitude ) ) ) )';
+//            
+//            
+//             $distance = 24;
+//            $users = TableRegistry::get('Users')->find()
+//                ->select([
+//                    'distance' => $distanceField, 'id'])
+////                ->where(['Users.id'=>$userId])
+//                ->where(["$distanceField <=" => $distance])
+//                ->bind(':latitude', $request['latitude'], 'float')
+//                ->bind(':longitude', $request['longitude'], 'float')
+//                ->order(['Users.id']);
+//            print_R($users->toArray());die;
+//            if(!$users->isEmpty()) {
+//                return round($users->first()->distance, 2);
+//            }
+//            return 0;
+//            $spaycs = $this->find()
+//                ->select([
+//                    'distance' => $distanceField, 'id', 'name', 'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode'])
+//                ->where(["$distanceField >=" => $distance, 'status'=>'Active','Spaycs.group_type !='=>'trusted_private', 'Spaycs.parent_id IS'=>null])
+//                ->bind(':latitude', $request['latitude'], 'float')
+//                ->bind(':longitude', $request['longitude'], 'float')
+//                ->order(['distance'=>'ASC']);
+////            print_R($spaycs);die;
+//            print_R($spaycs->toArray());die;
+//        } else {
+//            $spaycs = $this->find()
+//                ->select(['id', 'name', 'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode'])
+//                ->where(['Spaycs.status'=>'Active', 'Spaycs.group_type !='=>'trusted_private', 'Spaycs.parent_id IS'=>null])
+//                ->order(['created'=>'DESC']);
+//        }
+//        $spaycs->contain([
+//            'JoinedSpayc' => function($q) {
+//                return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
+//            },
+//            'SubscribedUsers' => function($q) {
+//                return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
+//            }
+//        ]);
+//        $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
+//        $spaycs->limit($limit);
+//        if(!empty($request['keyword'])) {
+//            $spaycs->where(["LOWER(Spaycs.name) LIKE"=>"%".strtolower($request['keyword'])."%"]);
+//        }
+//        print_R($spaycs);die;
+//        $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($userId) {
+//            return $results->map(function ($row) use($userId) {
+//                $totalJoined = [];
+//                if(!empty($row['joined_spayc'])) {
+//                    $totalJoined = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[status=Joined].status');
+//                    $status = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.'].status');
+//                }
+//                $row['joined_spayc_status'] = !empty($status[0])?$status[0]:null;
+//                $row['is_joined'] = !empty($status[0])?true:false;
+//                $row['joined_users'] = !empty($row['joined_spayc'])?count($totalJoined):0;
+//                unset($row['joined_spayc']);
+//                if(!empty($row['subscribed_users'])) {
+//                    $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');
+//                }
+//                $row['subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):0;
+//                $row['is_subscribed'] = !empty($subUserId[0])?true:false;
+//                return $row;
+//            });
+//        });
+//        
+//        $page = (!empty($request['page']) && is_numeric($request['page']))?$request['page']:1;
+//        if($page < 0) {
+//            $page = $page*-1;
+//            $spaycs->page($page);
+//        } else {
+//            $spaycs->page($page);
+//        }
+//        $newQuery = clone $spaycs;
+//        $data['count'] = $newQuery->count();
+//        $data['records'] = [];
+//        if($spaycs->count()) {
+//            $data['records'] = $spaycs->toArray();
+//        }
+//        return $data;
+//        
+        
+        
+           if(!empty($request['latitude']) && !empty($request['longitude'])) {
+            //To search by kilometers instead of miles, replace 3959 with 6371.
+              $distanceField = '( 3959 * ACOS( COS( RADIANS(:latitude) ) *
+                COS( RADIANS(  latitude ) ) *
+                COS( RADIANS(  longitude ) - RADIANS(:longitude) ) +
+                SIN( RADIANS(:latitude) ) *
+                SIN( RADIANS(  latitude ) ) ) )';
+            $distance=  $this->distance($request['latitude'], $request['longitude'], $request['latitude2'], $request['longitude2']); 
+    
+            $spaycs = $this->find()
+                ->select([
+                    'distance' => $distanceField, 'id', 'name', 'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode'])
+                ->where(["$distanceField <=" => $distance, 'status'=>'Active',
+//                    'Spaycs.group_type !='=>'trusted_private', 
+//                    'Spaycs.parent_id IS'=>null
+                    ])
+                ->bind(':latitude', $request['latitude'], 'float')
+                ->bind(':longitude', $request['longitude'], 'float');
+//                ->order(['distance'=>'ASC']);
+        }
+//        $spaycs->contain([
+//            'JoinedSpayc' => function($q) {
+//                return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
+//            },
+//            'SubscribedUsers' => function($q) {
+//                return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
+//            }
+//        ]);
+//        $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
+//        $spaycs->limit($limit);
+//        if(!empty($request['keyword'])) {
+//            $spaycs->where(["LOWER(Spaycs.name) LIKE"=>"%".strtolower($request['keyword'])."%"]);
+//        }
+        
+//        $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($userId) {
+//            return $results->map(function ($row) use($userId) {
+//                $totalJoined = [];
+//                if(!empty($row['joined_spayc'])) {
+//                    $totalJoined = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[status=Joined].status');
+//                    $status = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.'].status');
+//                }
+//                $row['joined_spayc_status'] = !empty($status[0])?$status[0]:null;
+//                $row['is_joined'] = !empty($status[0])?true:false;
+//                $row['joined_users'] = !empty($row['joined_spayc'])?count($totalJoined):0;
+//                unset($row['joined_spayc']);
+//                if(!empty($row['subscribed_users'])) {
+//                    $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');
+//                }
+//                $row['subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):0;
+//                $row['is_subscribed'] = !empty($subUserId[0])?true:false;
+//                return $row;
+//            });
+//        });
+        $page = (!empty($request['page']) && is_numeric($request['page']))?$request['page']:1;
+        if($page < 0) {
+            $page = $page*-1;
+            $spaycs->page($page);
+        } else {
+            $spaycs->page($page);
+        }
+        $newQuery = clone $spaycs;
+        $data['count'] = $newQuery->count();
+        $data['records'] = [];
+        if($spaycs->count()) {
+            $data['records'] = $spaycs->toArray();
+        }
+        return $data;
+    }
+    
+    public function distance($lat1, $lon1, $lat2, $lon2) {
+
+    $pi80 = M_PI / 180;
+    $lat1 *= $pi80;
+    $lon1 *= $pi80;
+    $lat2 *= $pi80;
+    $lon2 *= $pi80;
+
+    $r = 3959; // mean radius of Earth in km
+    $dlat = $lat2 - $lat1;
+    $dlon = $lon2 - $lon1;
+    $a = sin($dlat / 2) * sin($dlat / 2) + cos($lat1) * cos($lat2) * sin($dlon / 2) * sin($dlon / 2);
+    $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+    $km = $r * $c;
+
+    //echo '<br/>'.$km;
+    return $km;
+}
 }

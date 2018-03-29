@@ -53,6 +53,7 @@ Router::plugin(
         $routes->connect('/physical-present-spaycs', ['controller'=>'Spaycs', 'action'=>'nearAboutSpayces']);
         $routes->connect('/public-spaycs', ['controller'=>'Spaycs', 'action'=>'publicSpayc']);
         $routes->connect('/hash-tag-spaycs', ['controller'=>'Spaycs', 'action'=>'hashTagSpayc']);
+        $routes->connect('/map-spaycs', ['controller'=>'Spaycs', 'action'=>'mapSpayc']);
         
         $routes->connect('/join-spayc', ['controller'=>'JoinSpaycs', 'action'=>'joinSpayc']);
         $routes->connect('/join-sub-spayc', ['controller'=>'JoinSpaycs', 'action'=>'joinSubSpayc']);
