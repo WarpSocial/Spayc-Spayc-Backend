@@ -39,13 +39,62 @@ class UsersController extends AdminController
      */
     public function index()
     {
-        $query = $this->Users->find('all')->contain('Fbs', 'MatrixUsers', 'Roles');
-        $users = $this->paginate($query);
-        // $this->paginate = [
-        //     'contain' => ['Fbs', 'MatrixUsers', 'Roles']
-        // ];
-        // $users = $this->paginate($this->Users);
-        $this->set(compact('users'));
+        $this->set('title', 'Manage User');
+        $conditions_array = [];
+        $ageArr = unserialize(USER_AGE);
+        $keyword=($this->request->query('keyword'))?trim($this->request->query('keyword')):'';
+        $query=$this->Users->find()
+            ->where(['Users.role_id IS'=> null])
+            ->contain([            
+                'JoinedSpayc'=>function($q) {
+                    return $q->select(['JoinedSpayc.user_id', 'joined_spaycs'=>$q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.user_id']);
+                },
+                'Spaycs'=>function($q) {
+                    return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id']);
+                },
+                'Requestedby' => function($q) {
+                   return $q->select(['Requestedby.requested_by','count' => $q->func()->count('Requestedby.id')])->group(['Requestedby.requested_by'])->Where(['Requestedby.requested_status'=>FRIEND_REQUESTED_STATUS]);
+                },
+                'Requestedto' => function($q) {
+                   return $q->select(['Requestedto.requested_to','count' => $q->func()->count('Requestedto.id')])->group(['Requestedto.requested_to'])->Where(['Requestedto.requested_status'=>FRIEND_REQUESTED_STATUS]);
+                }
+              
+            ]);  
+        $query->formatResults(function (\Cake\Collection\CollectionInterface $results) {
+            return $results->map(function ($row) {
+                $row->friend = !empty($row['requestedto'][0]['count'])? $row['requestedto'][0]['count'] : BLANK_COUNT;
+                $row->friend += !empty($row['requestedby'][0]['count'])? $row['requestedby'][0]['count'] : BLANK_COUNT;
+                unset($row['requestedby']);
+                unset($row['requestedto']);
+                return $row;
+            });
+        });
+         if ($this->request->query('gender') && $this->request->query('gender') !='All') {
+            $conditions_array['Users.gender'] = $this->request->query('gender');
+        }
+        if ($this->request->query('from_date')) {            
+            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') >="] = date(DATEFORMAT,strtotime($this->request->query('from_date')));
+        }
+        if ($this->request->query('to_date')) {
+            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') <="] = date(DATEFORMAT,strtotime($this->request->query('to_date')));
+        }
+        if ($this->request->query('age_filter')) {
+            $getage=$ageArr[$this->request->query('age_filter')];
+            $getage = explode("-", $getage );   
+            $conditions_array["DATE_PART('year', now()) - DATE_PART('year', dob) >="] = $getage['0'];           
+            if((int)($getage['1'])){                
+               $conditions_array["DATE_PART('year', now()) - DATE_PART('year', dob) <="] = $getage['1'];
+            } 
+        }         
+        if(!empty($keyword)){
+            $query->where(['OR' => [['Users.display_name LIKE' => "%".$keyword."%"], ['Users.email LIKE' => "%".$keyword."%"], ['Users.address LIKE' => "%".$keyword."%"],['Users.username LIKE' => "%".$keyword."%"]]]);
+        } 
+        if (count($conditions_array)) {
+            $query->where($conditions_array);
+        }        
+        $users = $this->paginate($query); 
+        $this->set(compact('users','keyword'));
+        $this->set('_serialize', ['users']);
     }
 
     /**
@@ -198,66 +247,7 @@ class UsersController extends AdminController
         }
         $this->set(['title' => 'Change Password','base_url_admin'=>$this->base_url_admin,'page' => $page]);
     }
-
-    public function manageUsers() {
-        $this->set('title', 'Manage User');
-        $conditions_array = [];
-        $ageArr = unserialize(USER_AGE);
-        $keyword=($this->request->query('keyword'))?trim($this->request->query('keyword')):'';
-        $query=$this->Users->find()
-            ->where(['Users.role_id IS'=> null])
-            ->contain([            
-                'JoinedSpayc'=>function($q) {
-                    return $q->select(['JoinedSpayc.user_id', 'joined_spaycs'=>$q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.user_id']);
-                },
-                'Spaycs'=>function($q) {
-                    return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id']);
-                },
-                'Requestedby' => function($q) {
-                   return $q->select(['Requestedby.requested_by','count' => $q->func()->count('Requestedby.id')])->group(['Requestedby.requested_by'])->Where(['Requestedby.requested_status'=>FRIEND_REQUESTED_STATUS]);
-                },
-                'Requestedto' => function($q) {
-                   return $q->select(['Requestedto.requested_to','count' => $q->func()->count('Requestedto.id')])->group(['Requestedto.requested_to'])->Where(['Requestedto.requested_status'=>FRIEND_REQUESTED_STATUS]);
-                }
-              
-            ]);  
-        $query->formatResults(function (\Cake\Collection\CollectionInterface $results) {
-            return $results->map(function ($row) {
-                $row->friend = !empty($row['requestedto'][0]['count'])? $row['requestedto'][0]['count'] : BLANK_COUNT;
-                $row->friend += !empty($row['requestedby'][0]['count'])? $row['requestedby'][0]['count'] : BLANK_COUNT;
-                unset($row['requestedby']);
-                unset($row['requestedto']);
-                return $row;
-            });
-        });
-         if ($this->request->query('gender') && $this->request->query('gender') !='All') {
-            $conditions_array['Users.gender'] = $this->request->query('gender');
-        }
-        if ($this->request->query('from_date')) {            
-            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') >="] = date(DATEFORMAT,strtotime($this->request->query('from_date')));
-        }
-        if ($this->request->query('to_date')) {
-            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') <="] = date(DATEFORMAT,strtotime($this->request->query('to_date')));
-        }
-        if ($this->request->query('age_filter')) {
-            $getage=$ageArr[$this->request->query('age_filter')];
-            $getage = explode("-", $getage );   
-            $conditions_array["DATE_PART('year', now()) - DATE_PART('year', dob) >="] = $getage['0'];           
-            if((int)($getage['1'])){                
-               $conditions_array["DATE_PART('year', now()) - DATE_PART('year', dob) <="] = $getage['1'];
-            } 
-        }         
-        if(!empty($keyword)){
-            $query->where(['OR' => [['Users.display_name LIKE' => "%".$keyword."%"], ['Users.email LIKE' => "%".$keyword."%"], ['Users.address LIKE' => "%".$keyword."%"],['Users.username LIKE' => "%".$keyword."%"]]]);
-        } 
-        if (count($conditions_array)) {
-            $query->where($conditions_array);
-        }        
-        $users = $this->paginate($query); 
-        $this->set(compact('users','keyword'));
-        $this->set('_serialize', ['users']);
-    }
-
+    
     public function forgotPassword() {
         $this->set('title', 'Forgot password'); 
         $this->viewBuilder()->layout('');
@@ -331,7 +321,7 @@ class UsersController extends AdminController
 
         $this->viewBuilder()->layout('');
         if (empty($id)) {
-            return $this->redirect(['action' => 'manageUsers']);  
+            return $this->redirect(['action' => 'index']);  
         }        
         $user = $this->Users->get($id);  
         if ($this->request->is(['post','put'])) { 

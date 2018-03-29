@@ -50,7 +50,7 @@ class AdminController extends AppController
             ],
             'loginRedirect' => [
                 'controller' => 'Users',
-                'action' => 'manage-users'
+                'action' => 'index'
             ],
             'logoutRedirect' => [
                 'controller' => 'Users',

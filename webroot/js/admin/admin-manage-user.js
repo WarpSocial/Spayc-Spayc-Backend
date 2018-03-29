@@ -19,7 +19,7 @@
 		//window.location.replace(base_url_admin+'users/manage-user');
 	});
 	$('#filter-reset').on('click',function(){  
-		window.location.replace(base_url_admin+'users/manage-users');	
+		window.location.replace(base_url_admin+'users/index');	
 	});
 
   });

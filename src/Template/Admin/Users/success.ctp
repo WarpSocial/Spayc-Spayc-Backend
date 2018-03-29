@@ -7,7 +7,7 @@
                 <div class="update-password-wrap">
                    <?php echo $this->Html->image("success.png", ["alt" => "success"]); ?>
                     <p class="mt-20 mb-20">Your password has been<br /> updated successfully.</p>
-                    <?php echo $this->Html->link('Ok',['controller' => 'Users', 'action' => 'manage-users'], ['class' => 'button btn-md']);?>
+                    <?php echo $this->Html->link('Ok',['controller' => 'Users', 'action' => 'index'], ['class' => 'button btn-md']);?>
                 </div>
             </div>    
         </div>

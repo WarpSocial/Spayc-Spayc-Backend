@@ -207,6 +207,7 @@ jQuery(document).ready(function ($) {
                    if (data.result) { 
                       $('.error-forgot-password-page').removeClass('error-alert hide');
                       $('.error-forgot-password-page').addClass('success-alert');
+                      resetForm('admin_reset_password_form');
                       $('.error-forgot-password-page').text(data.message).delay(5000)
                          .fadeOut('slow', function () {
                          $('.error-forgot-password-page').text('');
