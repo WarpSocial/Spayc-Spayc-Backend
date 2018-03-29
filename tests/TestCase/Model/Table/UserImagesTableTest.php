@@ -25,7 +25,16 @@ class UserImagesTableTest extends TestCase
      */
     public $fixtures = [
         'app.user_images',
-        'app.users'
+        'app.users',
+        'app.user_logs',
+        'app.joined_spayc',
+        'app.spaycs',
+        'app.matrix_rooms',
+        'app.subscribed_users',
+        'app.requestedby',
+        'app.requestedto',
+        'app.friend_request',
+        'app.roles'
     ];
 
     /**

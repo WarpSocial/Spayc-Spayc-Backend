@@ -1,0 +1,166 @@
+.table-wrapper{
+    width: 100%;
+    height: auto;
+    color: @blue;
+    .table-head{
+        width: 100%;
+        height: auto;
+        .flex-display(flex);
+        .flex-wrap(nowrap);
+        .align-items(center);
+        height: 60px;
+        margin-bottom: 5px;
+        .head-text{
+            font-weight: @medium;
+            text-align: center;
+            &.p-info {
+                max-width: 150px;
+            }
+            span{
+                padding: 10px 12px;
+                display: inline-block;
+                .rem-calc(12);
+                &.table-filter{
+                    position: relative;
+                    cursor: pointer;
+                    &:after{
+                        content: "";
+                        position: absolute;
+                        top:0;
+                        right: 0;
+                        width: 12px;
+                        height: 100%;
+                        background: url('../images/filter.png') no-repeat center center;
+                    }
+                    a {
+                        color :@blue;
+                        text-decoration: none;
+                    }
+                }
+                &.sort-asc {
+                    &:after {
+                        background: url('../images/filter-up.png') no-repeat center center;
+                    }
+                }
+                &.sort-desc {
+                    &:after {
+                        background: url('../images/filter-down.png') no-repeat center center;
+                    }
+                }
+            }
+        }
+    }
+    .table-row{
+        width: 100%;
+        height: auto;
+        .flex-display(flex);
+        .flex-wrap(nowrap);
+        .align-items(center);
+        min-height: 65px;
+        margin-bottom: 8px;
+        background: @white;
+        .border-radius(2px);
+        .box-shadow(0 2px 4px 0 rgba(0,0,0,0.10));
+        .table-data{
+            padding: 10px 12px;
+            text-align: center;
+            &.p-info {
+                max-width: 150px;  
+            }
+            span{
+                font-weight: @regular;
+                line-height: 20px;
+                display: block;
+                .rem-calc(12);
+                &.user-name{
+                    font-weight: @medium;
+                }
+                &.user-contact{
+                    color:@font-base;
+                    opacity: .7;
+                }
+                &.data-name{
+                    width: ~"calc(100% - 40px)";
+                    height: auto;
+                    padding-left: 10px;
+                }
+                &.data-image{
+                    width: 40px;
+                    height: 40px;
+                    img{
+                        height: 100%;
+                        width: 100%;
+                        object-fit: cover;
+                    }
+                }
+            }
+            .change-password-text {
+                color: @blue;
+                text-decoration: none;
+            }
+            &.d-flex-a-center{
+                .flex-display(flex);
+                .align-items(center);
+            }
+        }
+    }
+}
+
+
+/*==============table-pagination==============*/
+.table-pagination{
+    float: right;
+    margin: 20px 0 30px 25px;
+    li{
+        display: inline-block;
+        margin: 0px 4px;
+        &:last-child{
+          margin-right: 0;
+        }
+        a{
+            width: 25px;
+            height: 25px;
+            display: inline-block;
+            background: @white;
+            color: @pagination;
+            text-align: center;
+            .rem-calc(15);
+            line-height: 25px;
+            .border-radius(25px);
+            .box-shadow(0 0 4px 0 rgba(0, 0, 0, 0.1));
+            text-decoration:none;
+        }
+        &.next{
+            a {
+                width: 14px;
+                background: url('../images/pagination-arrow-right.png') no-repeat center right;
+                box-shadow: none;
+                &:hover{
+                    background: url('../images/pagination-arrow-right.png') no-repeat center right;
+                }
+            }
+        }
+        &.prev{
+            a {
+                width: 14px;
+                background: url('../images/pagination-arrow-left.png') no-repeat center left;
+                box-shadow: none;
+                &:hover{
+                    background: url('../images/pagination-arrow-left.png') no-repeat center left;
+                }
+            }
+        }
+        &:hover{
+            a {
+                background: @dark-green;
+                color: @white;
+            }
+        }
+        &.active{
+            a {
+                background: @dark-green;
+                color: @white;
+            }
+        }
+    }
+}

@@ -106,7 +106,13 @@ class SpaycsController extends AppController {
         }
         $entity = $this->Spaycs->find()->contain('JoinedSpayc',function($q)use($user){
             return $q->where(['user_id'=>$user['id']]);
-        })->where(['matrix_room_id'=>$data['parent_matrix_room_id']]);        
+        });
+        if(preg_match("/[a-z]/i", $data['parent_matrix_room_id'])){
+            $entity->where(['matrix_room_id'=>$data['parent_matrix_room_id']]);        
+        }else{
+            $entity->where(['id'=>$data['parent_matrix_room_id']]);
+        }
+                
         if($entity->isEmpty()){
             $this->restException(['status'=>'failed','message'=>__('Parent space has not been found.')], 400);
         }
@@ -258,7 +264,7 @@ class SpaycsController extends AppController {
                     return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.distance']);
                 },
                 'SubscribedUsers' => function($q) {
-                    return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
+                    return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])->where(['status'=>'Active']);
                 },
                 'Comments' => function($q) {
                     return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
@@ -487,7 +493,7 @@ class SpaycsController extends AppController {
                         return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
                     },
                     'SubscribedUsers' => function($q) {
-                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
+                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])->where(['status'=>'Active']);
                     }
                 ]);
                
@@ -829,7 +835,7 @@ class SpaycsController extends AppController {
                         return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin']);
                     },
                     'SubscribedUsers' => function($q) {
-                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
+                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])->where(['status'=>'Active']);
                     },
                     'Comments' => function($q) {
                         return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);                        
@@ -1009,7 +1015,7 @@ class SpaycsController extends AppController {
                         return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin']);
                     },
                     'SubscribedUsers' => function($q) {
-                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
+                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])->where(['status'=>'Active']);
                     },
                     'Comments' => function($q) {
                         return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);                        
@@ -1096,7 +1102,7 @@ class SpaycsController extends AppController {
                         return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin']);
                     },
                     'SubscribedUsers' => function($q) {
-                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
+                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])->where(['status'=>'Active']);
                     },
                     'Comments' => function($q) {
                         return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);                        

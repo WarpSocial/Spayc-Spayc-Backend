@@ -1,0 +1,55 @@
+<?php
+namespace App\Model\Entity;
+
+use Cake\ORM\Entity;
+use Api\Auth\ApiHasher;
+/**
+ * User Entity
+ *
+ * @property int $id
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $username
+ * @property string $email
+ * @property string $password
+ * @property \Cake\I18n\FrozenDate $dob
+ * @property string $status
+ * @property string $website_url
+ * @property string $address
+ * @property string $timezone
+ * @property string $token_verification
+ * @property \Cake\I18n\FrozenTime $created
+ * @property \Cake\I18n\FrozenTime $modified
+ *
+ * @property \Api\Model\Entity\UsersLog[] $users_logs
+ */
+class User extends Entity {
+
+    /**
+     * Fields that can be mass assigned using newEntity() or patchEntity().
+     *
+     * Note that when '*' is set to true, this allows all unspecified fields to
+     * be mass assigned. For security purposes, it is advised to set '*' to false
+     * (or remove it), and explicitly make individual fields accessible as needed.
+     *
+     * @var array
+     */
+    protected $_accessible = [
+        '*' => true,
+        'id' => false
+    ];
+    
+    protected function _setDob($dob) {
+        if (!empty($dob)) {            
+            $dob = \Cake\I18n\Time::createFromFormat('m-d-Y',$dob);
+            return $dob->format("Y-m-d");
+        } else {
+            return;
+        }
+    }
+    
+    protected function _getId($id) {      
+        return ApiHasher::encrypt($id);
+    }
+
+}

@@ -208,7 +208,7 @@ function deleteSpace() { return; }
 
 @apiHeader {String} TOKEN          A registered token must be in header.
 
-@apiParam {String} parent_matrix_room_id    Matrix parent room id (Required).
+@apiParam {String} parent_matrix_room_id    Matrix parent room id or Spayc parent room id (Required).
 @apiParam {String} name             Title of subspace (Required).
 @apiParam {String} group_type       Group type must be any one from the following Public|Private (Required).
 @apiParam {String} passcode         Passcode is required in case of private group type.

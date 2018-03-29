@@ -88,11 +88,11 @@ class JoinedSpaycTable extends Table {
     }
 
     public function getTotalJoinedFriends($spaycId = null, $userIds = []) {
-        return $this->find("all", ['fields' => ['id'], 'conditions' => ['spayc_id' => $spaycId, 'user_id IN' => $userIds]])->count();
+        return $this->find("all", ['fields' => ['id'], 'conditions' => ['spayc_id' => $spaycId, 'user_id IN' => $userIds,'status'=>'Joined']])->count();
     }
 
     public function getJoinedSpaycIds($userId = null) {
-        $spaycId = $this->find("all", ['fields' => ['id', 'spayc_id'], 'conditions' => ['user_id' => $userId]]);
+        $spaycId = $this->find("all", ['fields' => ['id', 'spayc_id'], 'conditions' => ['user_id' => $userId,'status'=>'Joined']]);
         $ids = [0];
         if ($spaycId->count()) {
             $spaycIds = $spaycId->toArray();
@@ -102,7 +102,7 @@ class JoinedSpaycTable extends Table {
     }
     
     public function getJoinedUserIds($spaycId = null) {
-        $userId = $this->find("all", ['fields' => ['id', 'user_id'], 'conditions' => ['spayc_id' => $spaycId]]);
+        $userId = $this->find("all", ['fields' => ['id', 'user_id'], 'conditions' => ['spayc_id' => $spaycId,'status'=>'Joined']]);
         $ids = [0];
         if ($userId->count()) {
             $userIds = $userId->toArray();
