@@ -1,0 +1,18 @@
+.breadcrumbs {
+    top: 65px;
+    position: fixed;
+    left: 0;
+    z-index: 1;
+}
+.modal a.button:hover, .modal a.button:hover{
+	color: #49ff00;
+	text-decoration: none;
+}
+.filter-button-apply {
+    bottom: 4px;
+    position: relative;
+}
+.success-alert, .error-alert{
+	min-height: 35px !important;
+	height: auto !important;
+}
