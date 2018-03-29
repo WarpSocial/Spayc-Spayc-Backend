@@ -92,6 +92,10 @@ class UsersTable extends Table {
             'foreignKey' => 'user_id',
             'className' => 'Api.Spaycs'
         ]);
+        $this->hasMany('NotificationTo', [
+            'foreignKey' => 'requested_to',
+            'className' => 'Api.Notifications'
+        ]);
     }
 
     /**

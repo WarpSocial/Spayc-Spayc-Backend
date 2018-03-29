@@ -502,6 +502,7 @@ function postForgotPassword() { return; }
         },
         "matrix_room_id": null,
         "created_spaycs": 0,
+        "unread_notifications": 46,
         "joined_spaycs": 0
     }
 }
@@ -921,3 +922,37 @@ function postFriendRequest() { return; }
   @apiUse UserErrorResponse
 */
 function setFriendStatus() { return; }
+
+/**
+ @api {post} /read-notifications.json Read notification
+  @apiVersion 0.1.0
+  @apiName readNotification
+  @apiGroup User
+  @apiPermission Private User
+ 
+  @apiDescription Mark as read notification.
+  
+* @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+* @apiParam  {String}   notification_ids     Notification ids comma separated string(Required).
+
+   @apiExample Example usage:
+ 
+    {
+        "notification_ids":"9,10"
+    }
+ 
+  @apiSuccess {String} status success.
+  @apiSuccess {String} message Notification read successfully.
+  @apiSuccess {Object} data Null.
+  @apiSuccessExample {json} Success-Response: 
+       HTTP/1.1 200 OK
+        {
+            "status": "success",
+            "message": "Notification read successfully."
+        }
+ 
+  @apiError {String}  Invalid Notification id is not valid.
+  @apiUse UserErrorResponse
+*/
+function postReadNotifications() { return; }

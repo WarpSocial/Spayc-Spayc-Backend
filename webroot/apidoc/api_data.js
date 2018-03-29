@@ -5158,6 +5158,137 @@ define({ "api": [
     }
   },
   {
+    "type": "post",
+    "url": "/read-notifications.json",
+    "title": "Read notification",
+    "version": "0.1.0",
+    "name": "readNotification",
+    "group": "User",
+    "permission": [
+      {
+        "name": "Private User"
+      }
+    ],
+    "description": "<p>Mark as read notification.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "notification_ids",
+            "description": "<p>Notification ids comma separated string(Required).</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "\n{\n    \"notification_ids\":\"9,10\"\n}",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Notification read successfully.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>Null.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "HTTP/1.1 200 OK\n {\n     \"status\": \"success\",\n     \"message\": \"Notification read successfully.\"\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "String",
+            "optional": false,
+            "field": "Invalid",
+            "description": "<p>Notification id is not valid.</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/user.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/read-notifications.json"
+      }
+    ]
+  },
+  {
     "type": "get",
     "url": "/remove-avatar/:order.json",
     "title": "Remove Profile Image",
@@ -5688,7 +5819,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"User profile.\",\n    \"data\": {\n        \"id\": \"11\",\n        \"username\": \"user\",\n        \"email\": \"test@domain.com\",\n        \"gender\": \"Female\",\n        \"dob\": null,\n        \"country_code\": null,\n        \"phone\": \"\",\n        \"website_url\": null,\n        \"address\": null,\n        \"bio_data\": null,\n        \"longitude\": 77.391026,\n        \"latitude\": 28.535516,\n        \"matrix_user_id\": null,\n        \"user_images\": [\n            {\n                \"id\": \"55\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180223144430.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            },\n            {\n                \"id\": \"56\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073256.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            },\n            {\n                \"id\": \"57\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073525.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            },\n            {\n                \"id\": \"58\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073548.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            }\n        ],\n        \"friend\": {\n            \"id\": \"41\",\n            \"requested_by\": \"10\",\n            \"requested_to\": \"11\",\n            \"requested_status\": \"Requested\",\n            \"total_friends\": 0\n        },\n        \"matrix_room_id\": null,\n        \"created_spaycs\": 0,\n        \"joined_spaycs\": 0\n    }\n}",
+          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"User profile.\",\n    \"data\": {\n        \"id\": \"11\",\n        \"username\": \"user\",\n        \"email\": \"test@domain.com\",\n        \"gender\": \"Female\",\n        \"dob\": null,\n        \"country_code\": null,\n        \"phone\": \"\",\n        \"website_url\": null,\n        \"address\": null,\n        \"bio_data\": null,\n        \"longitude\": 77.391026,\n        \"latitude\": 28.535516,\n        \"matrix_user_id\": null,\n        \"user_images\": [\n            {\n                \"id\": \"55\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180223144430.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            },\n            {\n                \"id\": \"56\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073256.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            },\n            {\n                \"id\": \"57\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073525.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            },\n            {\n                \"id\": \"58\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073548.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            }\n        ],\n        \"friend\": {\n            \"id\": \"41\",\n            \"requested_by\": \"10\",\n            \"requested_to\": \"11\",\n            \"requested_status\": \"Requested\",\n            \"total_friends\": 0\n        },\n        \"matrix_room_id\": null,\n        \"created_spaycs\": 0,\n        \"unread_notifications\": 46,\n        \"joined_spaycs\": 0\n    }\n}",
           "type": "json"
         }
       ]
