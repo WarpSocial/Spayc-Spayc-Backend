@@ -22,7 +22,7 @@ use Cake\Routing\Router;
         <tbody>
           <tr style="border:0;border-collapse:collapse;background-color:#1a4c59;">
               <td style="width:100%;margin:0;padding:7px 15px;font-size:25px;color: #fff;">
-                <?php echo $this->Html->image('logo.png', ['alt' => 'Spayc', 'style'=>'text-align: center;display: block;margin: 0 auto;']);?>
+                <img src="<?php echo $this->Url->build('/images/logo.png', true); ?>" alt="Spayc" style="text-align:center; display: block; margin: 0 auto;">
               </td>
           </tr>
           <tr>
