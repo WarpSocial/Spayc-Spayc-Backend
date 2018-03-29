@@ -25,5 +25,19 @@ return [
     'maxupload'=>'5MB',
     'adminEmail' =>'kiwitech@gmail.com',
     'reverification_subject'=>'Re-Verifiaction',
-    'forgotpassword_subject'=>'Forgot Password'
+    'forgotpassword_subject'=>'Forgot Password',
+    'mimetype' => [
+        'image/png' => 'png',
+        'image/jpe' => 'jpeg',
+        'image/jpg' => 'jpg',
+        'image/jpeg' => 'jpeg',
+        'image/jpg' => 'jpeg',
+        'image/gif' => 'gif',
+        'image/bmp' => 'bmp',
+        'image/vnd.microsoft.icon' => 'ico',
+        'image/tiff' => 'tiff',
+        'image/tiff' => 'tif',
+        'image/svg+xml' => 'svg',
+        'image/svg+xml' => 'svgz',
+    ],
 ];

@@ -376,7 +376,6 @@ class UsersController extends AppController {
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
     */
     public function facebookSignup() {
-        $this->Users->deleteAll(['email'=>'testerkwi@gmail.com']);
         if(!$this->request->is('post')) {
             $this->restException(['status'=>'failed','message'=>__('Method not allowed.')],405);
         }
@@ -1513,7 +1512,7 @@ class UsersController extends AppController {
         if($adminEntity[0]['is_admin'] <= 0){
             $this->restException(['status'=>'failed','message'=>__('You have no privileges to make someone admin.')], 400);
         }
-        if($userEntity[0]['is_admin'] == 1){
+        if($userEntity[0]['is_admin'] > 0){
             $this->restException(['status'=>'failed','message'=>__('User has already admin privileges.')], 400);
         }
         $entity = $userEntity[0];
