@@ -209,4 +209,58 @@ class FriendRequestTable extends Table
             return $friend->first();
         }
     }
+    
+     public function getNearByFriendsOnMap($request = [], $userId = null) {
+        $friends = $this->find('all')
+            ->select(['FriendRequest.id'])
+            ->Where([
+                ['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]], 
+                ['requested_status'=>'Accepted']]);
+        $child = \Cake\Utility\Hash::extract($friends->toArray(), '{n}.id');        
+//        print_R($child);die;
+//        $friends->contain([
+//            'Users' => function($q)use($request,$userId) {
+//        
+//                return $data;
+//            }
+//        ]);
+        
+            $distanceField = '( 3959 * ACOS( COS( RADIANS(:latitude) ) *
+                COS( RADIANS(  latitude ) ) *
+                COS( RADIANS(  longitude ) - RADIANS(:longitude) ) +
+                SIN( RADIANS(:latitude) ) *
+                SIN( RADIANS(  latitude ) ) ) )';
+            $distance=  $this->distance($request['latitude'], $request['longitude'], $request['latitude2'], $request['longitude2']); 
+            
+             $friends = TableRegistry::get('Api.Users')->find('all',['fields'=>['distance' => $distanceField, 'id', 'display_name', 'email', 'address']])
+                ->where(["$distanceField <=" => $distance, 'status'=>'Active',
+////                    'Spaycs.group_type !='=>'trusted_private', 
+////                    'Spaycs.parent_id IS'=>null
+                    ])
+                     ->where("id in (". implode($child,",").")")
+                ->bind(':latitude', $request['latitude'], 'float')
+                ->bind(':longitude', $request['longitude'], 'float');
+//        print_R($friends->toArray());die;
+        return $friends->toArray();
+    }
+    
+      
+    public function distance($lat1, $lon1, $lat2, $lon2) {
+
+    $pi80 = M_PI / 180;
+    $lat1 *= $pi80;
+    $lon1 *= $pi80;
+    $lat2 *= $pi80;
+    $lon2 *= $pi80;
+
+    $r = 3959; // mean radius of Earth in km
+    $dlat = $lat2 - $lat1;
+    $dlon = $lon2 - $lon1;
+    $a = sin($dlat / 2) * sin($dlat / 2) + cos($lat1) * cos($lat2) * sin($dlon / 2) * sin($dlon / 2);
+    $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+    $km = $r * $c;
+
+    //echo '<br/>'.$km;
+    return $km;
+}
 }
