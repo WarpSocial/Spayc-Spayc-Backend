@@ -214,3 +214,26 @@ INSERT INTO "notification_types" ("id", "type", "message", "slug", "created", "m
 (14,	'Someone commented',	'<USERNAME> has commented, <COMMENT> in your spayc, <SpaycName>',	'someone-commented',	'2018-02-28 17:27:10.578674',	NULL),
 (17,	'New Spayc',	'<SpaycName> spayc has been created within <X> miles of you',	'new-spayc',	'2018-02-28 17:27:10.578674',	NULL);
 
+CREATE TABLE "advertisement" (
+    "id" BIGSERIAL NOT NULL,
+    "user_id" BIGINT NOT NULL,
+    "name" character varying(255) NOT NULL,
+    "price" decimal(12,2) NOT NULL,
+    "description" text NULL,
+    "url" character varying(255) NULL,
+    "image" character varying(1000) NULL,
+    "status" row_status DEFAULT 'Pending' NOT NULL,
+    "created" timestamp NOT NULL,
+    "modified" timestamp,
+    PRIMARY KEY (id,created)
+);
+SELECT create_hypertable('advertisement', 'created');
+CREATE TABLE "spayc_advertisement" (
+    "id" BIGSERIAL NOT NULL,
+    "advertisement_id" BIGINT NOT NULL,
+    "spayc_id" BIGINT NOT NULL,
+    "created" timestamp NOT NULL,
+    "modified" timestamp,
+    PRIMARY KEY (id,created)
+);
+SELECT create_hypertable('spayc_advertisement', 'created');

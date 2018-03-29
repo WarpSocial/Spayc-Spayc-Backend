@@ -298,12 +298,14 @@ class SpaycsTable extends Table {
         
         $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($userId) {
             return $results->map(function ($row) use($userId) {
+                $totalJoined = [];
                 if(!empty($row['joined_spayc'])) {
+                    $totalJoined = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[status=Joined].status');
                     $status = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.'].status');
                 }
                 $row['joined_spayc_status'] = !empty($status[0])?$status[0]:null;
                 $row['is_joined'] = !empty($status[0])?true:false;
-                $row['joined_users'] = !empty($row['joined_spayc'])?count($row['joined_spayc']):0;
+                $row['joined_users'] = !empty($row['joined_spayc'])?count($totalJoined):0;
                 unset($row['joined_spayc']);
                 if(!empty($row['subscribed_users'])) {
                     $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');

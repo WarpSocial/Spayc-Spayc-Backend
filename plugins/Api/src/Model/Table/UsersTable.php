@@ -179,8 +179,9 @@ class UsersTable extends Table {
                     'message'=>__('ssAge must be 13 or greater than 13 year\'s old.'),
                 ]); 
         $validator
-            ->requirePresence('gender', 'create',__('Gender is required field.'))    
-            ->notEmpty('gender',__('Gender is required field.'))
+            //->requirePresence('gender', 'create',__('Gender is required field.'))                
+            //->notEmpty('gender',__('Gender is required field.'))
+            ->allowEmpty('gender')        
             ->inList('gender', Configure::read('gender'),__('Gender must be any one '.implode(',',Configure::read('gender')).'.'));      
         $validator
                 //->requirePresence('longitude', 'create',__('Longitude key is missing.'))
@@ -248,8 +249,9 @@ class UsersTable extends Table {
             ]);
                 
         $validator
-            ->requirePresence('gender', true, __('Gender is required field.'))    
-            ->notEmpty('gender',__('Gender is required field.'))
+            //->requirePresence('gender', true, __('Gender is required field.'))    
+            //->notEmpty('gender',__('Gender is required field.'))
+            ->allowEmpty('gender')    
             ->inList('gender', Configure::read('gender'),__('Gender must be any one '.implode(',',Configure::read('gender')).'.')           );
         
         $validator
@@ -325,8 +327,9 @@ class UsersTable extends Table {
             ]);
 
         $validator
-            ->requirePresence('gender', 'create',__('Gender is required field.'))    
-            ->notEmpty('gender',__('Gender is required field.'))
+            //->requirePresence('gender', 'create',__('Gender is required field.'))    
+            //->notEmpty('gender',__('Gender is required field.'))
+            ->allowEmpty('gender')      
             ->inList('gender', Configure::read('gender'),__('Gender must be any one '.implode(',',Configure::read('gender')).'.'));
         $validator
                 //->requirePresence('longitude', 'create',__('Longitude key is missing.'))

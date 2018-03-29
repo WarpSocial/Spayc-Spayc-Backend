@@ -313,9 +313,11 @@ class SpaycsController extends AppController {
             return $results->map(function ($row) use($friend,$userId,$loggedUser) {
                 $spaycId = ApiHasher::decrypt($row->id);
                 $row['friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
-                 $present= 0;
+                 $present= 0;$totalJoined=[];
                 if(!empty($row['joined_spayc'])) {
                     $status = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$loggedUser.'].status');                
+                    $totalJoined = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[status=Joined].status');
+                    
                     $miles = Configure::read('miles');
                     $physicalPresent = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[distance <='.$miles.']');
                     $present = count($physicalPresent);
@@ -325,7 +327,7 @@ class SpaycsController extends AppController {
 //                    $row['joined_spayc_status'] = 'Joined';
 //                }
                 $row['is_joined'] = !empty($status[0])?true:false;
-                $row['joined_users'] =  !empty($row['joined_spayc'])?count($row['joined_spayc']):0;
+                $row['joined_users'] =  !empty($row['joined_spayc'])?count($totalJoined):0;
                 unset($row['joined_spayc']);
                 if(!empty($row['subscribed_users'])) {
                     $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');
@@ -504,9 +506,10 @@ class SpaycsController extends AppController {
             return $results->map(function ($row) use($friend, $userId) {                
                 $spaycId = ApiHasher::decrypt($row->id);
                 $row['friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
-                $present = 0;
+                $present = 0;$totalJoined=[];
                 if(!empty($row['joined_spayc'])) {
                     $joinedStatus = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.']');
+                    $totalJoined = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[status=Joined].status');
                     $miles = Configure::read('miles');
                     $physicalPresent = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[distance <='.$miles.']');
                     $present = count($physicalPresent);
@@ -528,7 +531,7 @@ class SpaycsController extends AppController {
                     $row['joined_spayc_status'] = '';
                     $row['is_admin'] = '';
                 }
-                $row['joined_users'] =!empty($row['joined_spayc'])?count($row['joined_spayc']):0;
+                $row['joined_users'] =!empty($row['joined_spayc'])?count($totalJoined):0;
                 if(!empty($row['subscribed_users'])) {
                     $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');
                 }
@@ -561,6 +564,7 @@ class SpaycsController extends AppController {
         if (!$this->request->is(['put','patch','post'])) {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);
         }
+        $user = $this->Auth->user();
         $data = $this->request->getData();
         $data['group_type'] = !empty($data['group_type'])?ucfirst($data['group_type']):'';
         $data['type'] = !empty($data['type'])?ucfirst($data['type']):'';
@@ -574,6 +578,10 @@ class SpaycsController extends AppController {
         }
         
         $entity = $entities->first();
+        if($user['id'] != $entity->user_id){
+            $this->restException(['status'=>'failed','message'=>__('Insufficient privileges to edit this space.')], 400);
+        }        
+        
         unset($data['spayc_id']);        
         $items = $this->Spaycs->patchEntity($entity, $data);        
         
@@ -746,8 +754,10 @@ class SpaycsController extends AppController {
         $result = $query->map(function ($row)use($friend,$userId) {
                 $spaycId = ApiHasher::decrypt($row->id);
                 $row->friends = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
+                $totalJoined = [];
                 if(!empty($row->joined_spayc)) {
                     $joinedStatus = \Cake\Utility\Hash::extract($row->joined_spayc,'{n}[user_id='.$userId.']');
+                    $totalJoined = \Cake\Utility\Hash::extract($row->joined_spayc,'{n}[status=Joined].status');
                 }
                 $row->is_joined = false;
                 if(!empty($joinedStatus[0])){
@@ -760,7 +770,7 @@ class SpaycsController extends AppController {
                     $row->joined_spayc_status = '';
                     $row->is_admin = '';
                 }                
-                $row->joined_users =  !empty($row->joined_spayc)?count($row->joined_spayc):0;
+                $row->joined_users =  !empty($row->joined_spayc)?count($totalJoined):0;
                 if(!empty($row->subscribed_users)) {
                     $subUserId = \Cake\Utility\Hash::extract($row->subscribed_users,'{n}[user_id='.$userId.']');
                 }
@@ -840,8 +850,10 @@ class SpaycsController extends AppController {
         $result = $spaycs->map(function ($row)use($friend,$user) {
                 $spaycId = ApiHasher::decrypt($row->id);
                 $row->friends = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
+                $totalJoined = [];
                 if(!empty($row->joined_spayc)) {
                     $joinedStatus = \Cake\Utility\Hash::extract($row->joined_spayc,'{n}[user_id='.$user['id'].']');
+                    $totalJoined = \Cake\Utility\Hash::extract($row->joined_spayc,'{n}[status=Joined].status');
                 }
                 $row->is_joined = false;
                 if(!empty($joinedStatus[0])){
@@ -854,7 +866,7 @@ class SpaycsController extends AppController {
                     $row->joined_spayc_status = '';
                     $row->is_admin = '';
                 } 
-                $row->joined_users =  !empty($row->joined_spayc)?count($row->joined_spayc):0;
+                $row->joined_users =  !empty($row->joined_spayc)?count($totalJoined):0;
                 if(!empty($row->subscribed_users)) {
                     $subUserId = \Cake\Utility\Hash::extract($row->subscribed_users,'{n}[user_id='.$user['id'].']');
                 }
@@ -909,7 +921,9 @@ class SpaycsController extends AppController {
         $result = $spaycs->map(function ($row)use($friend,$user) {
                 $spaycId = ApiHasher::decrypt($row->id);
                 $row->friends = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
+                $totalJoined = [];
                 if(!empty($row->joined_spayc)) {
+                    $totalJoined = \Cake\Utility\Hash::extract($row->joined_spayc,'{n}[status=Joined].status');
                     $joinedStatus = \Cake\Utility\Hash::extract($row->joined_spayc,'{n}[user_id='.$user['id'].']');
                 }
                 $row->is_joined = false;
@@ -923,7 +937,7 @@ class SpaycsController extends AppController {
                     $row->joined_spayc_status = '';
                     $row->is_admin = '';
                 } 
-                $row->joined_users =  !empty($row->joined_spayc)?count($row->joined_spayc):0;
+                $row->joined_users =  !empty($row->joined_spayc)?count($totalJoined):0;
                 if(!empty($row->subscribed_users)) {
                     $subUserId = \Cake\Utility\Hash::extract($row->subscribed_users,'{n}[user_id='.$user['id'].']');
                 }
@@ -1003,7 +1017,9 @@ class SpaycsController extends AppController {
         $result = $spaycs->map(function ($row)use($friend,$user) {
                 $spaycId = ApiHasher::decrypt($row->id);
                 $row->friends = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
+                $totalJoined = [];
                 if(!empty($row->joined_spayc)) {
+                     $totalJoined = \Cake\Utility\Hash::extract($row->joined_spayc,'{n}[status=Joined].status');
                     $joinedStatus = \Cake\Utility\Hash::extract($row->joined_spayc,'{n}[user_id='.$user['id'].']');
                 }
                 $row->is_joined = false;
@@ -1017,7 +1033,7 @@ class SpaycsController extends AppController {
                     $row->joined_spayc_status = '';
                     $row->is_admin = '';
                 } 
-                $row->joined_users =  !empty($row->joined_spayc)?count($row->joined_spayc):0;
+                $row->joined_users =  !empty($row->joined_spayc)?count($totalJoined):0;
                 if(!empty($row->subscribed_users)) {
                     $subUserId = \Cake\Utility\Hash::extract($row->subscribed_users,'{n}[user_id='.$user['id'].']');
                 }
