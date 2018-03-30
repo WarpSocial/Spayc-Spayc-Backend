@@ -39,7 +39,7 @@ class JoinSpaycsController extends AppController {
         if(!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
-        $spaycs = TableRegistry::get('Spaycs')->find()->where(['id'=>$data['spayc_id']]);
+        $spaycs = TableRegistry::get('Api.Spaycs')->find()->where(['id'=>$data['spayc_id']]);
         if($spaycs->isEmpty()){
             $this->restException(['status'=>'failed','message'=>__('Spayc is not exist.')], 400);
         }
@@ -123,7 +123,7 @@ class JoinSpaycsController extends AppController {
         if(!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
-        $spaycs = TableRegistry::get('Spaycs')->find()->where(['id'=>$data['spayc_id']]);
+        $spaycs = TableRegistry::get('Api.Spaycs')->find()->where(['id'=>$data['spayc_id']]);
         if($spaycs->isEmpty()){
             $this->restException(['status'=>'failed','message'=>__('Spayc is not exist.')], 400);
         }

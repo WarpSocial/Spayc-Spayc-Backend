@@ -176,7 +176,7 @@ class FriendRequestTable extends Table
     
     public function updateRoomId($matrixId = null, $userId = null, $matrixRoomId = null) {
         if(!empty($matrixId)) {
-            $user = TableRegistry::get('Users')->findByMatrixUserId($matrixId)->select(['id']);
+            $user = TableRegistry::get('Api.Users')->findByMatrixUserId($matrixId)->select(['id']);
             if($user->count()) {
                 $inviteId = $user->first()->id;
                 $friend = $this->find('all')

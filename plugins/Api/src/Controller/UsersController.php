@@ -114,7 +114,7 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>'Profile image index is required'], 400);
         }
         $user = $this->Auth->user();
-        $profileImg = TableRegistry::get('UserImages')->find()->where(['user_id'=>$user['id'],'order_index'=>$order]);
+        $profileImg = TableRegistry::get('Api.UserImages')->find()->where(['user_id'=>$user['id'],'order_index'=>$order]);
         if($profileImg->isEmpty()){
             $this->restException(['status'=>'failed', 'message'=>'Record not found'], 400);
         }
@@ -1477,7 +1477,7 @@ class UsersController extends AppController {
         $update['users']['is_notify'] = $isNotify;
         $update['user_logs']['device_id'] = $data['device_token'];
         $this->Users->UpdateAll(['is_notify'=>$isNotify], ['Users.id'=>$this->Auth->user('id')]);
-        TableRegistry::get('UserLogs')->UpdateAll(['device_id'=>$data['device_token'], 'modified'=>date('Y-m-d H:i:s')], ['user_id'=>$this->Auth->user('id')]);
+        TableRegistry::get('Api.UserLogs')->UpdateAll(['device_id'=>$data['device_token'], 'modified'=>date('Y-m-d H:i:s')], ['user_id'=>$this->Auth->user('id')]);
         $response = ['status'=>'success', 'message'=>__('Device token updated successfully.')];
         $this->set($response);
     }

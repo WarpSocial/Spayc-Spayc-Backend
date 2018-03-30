@@ -57,22 +57,22 @@ class JoinedSpaycTable extends Table {
      * @param \Cake\Validation\Validator $validator Validator instance.
      * @return \Cake\Validation\Validator
      */
-    public function validationDefault(Validator $validator) {
-        $validator
-                ->integer('id')
-                ->allowEmpty('id', 'create');
-
-        $validator
-                ->integer('requested_by')
-                ->requirePresence('requested_by', 'create')
-                ->notEmpty('requested_by');
-
-        $validator
-                ->scalar('status')
-                ->allowEmpty('status');
-
-        return $validator;
-    }
+//    public function validationDefault(Validator $validator) {
+//        $validator
+//                ->integer('id')
+//                ->allowEmpty('id', 'create');
+//
+//        $validator
+//                ->integer('requested_by')
+//                ->requirePresence('requested_by', 'create')
+//                ->notEmpty('requested_by');
+//
+//        $validator
+//                ->scalar('status')
+//                ->allowEmpty('status');
+//
+//        return $validator;
+//    }
 
     /**
      * Returns a rules checker object that will be used for validating

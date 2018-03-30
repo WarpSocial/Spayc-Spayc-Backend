@@ -385,7 +385,7 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Spayc id is required fields.')], 400);
         }
         $data['spayc_id'] = ApiHasher::decrypt($data['spayc_id']);
-        $spaycs = TableRegistry::get('Spaycs')->find('all',['fields'=>['id','matrix_room_id']])->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
+        $spaycs = TableRegistry::get('Api.Spaycs')->find('all',['fields'=>['id','matrix_room_id']])->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
         if($spaycs->isEmpty()){
             $this->restException(['status'=>'failed','message'=>__('Invalid spayc id.')], 400);
         }
@@ -427,7 +427,7 @@ class SpaycsController extends AppController {
         if(empty($data['spayc_id'])) {
             $this->restException(['status'=>'failed','message'=>__('Spayc id is required fields.')], 400);
         }
-        $spaycs = TableRegistry::get('Spaycs')->find()->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
+        $spaycs = TableRegistry::get('Api.Spaycs')->find()->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
         if($spaycs->isEmpty()){
             $this->restException(['status'=>'failed','message'=>__('Invalid spayc id.')], 400);
         }

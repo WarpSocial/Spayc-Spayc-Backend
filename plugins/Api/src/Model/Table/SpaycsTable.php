@@ -59,12 +59,12 @@ class SpaycsTable extends Table {
         
         $this->belongsTo('ParentSpaycs', [
             'dependent' => true,
-            'className' => 'Spaycs',
+            'className' => 'Api.Spaycs',
             'foreignKey' => 'parent_id'
         ]);
         $this->hasMany('SubSpaycs', [
             'dependent' => true,
-            'className' => 'Spaycs',
+            'className' => 'Api.Spaycs',
             'foreignKey' => 'parent_id'
             
         ]);
@@ -484,10 +484,9 @@ class SpaycsTable extends Table {
         if($items['is_direct']){ 
             return true;
         }
-       
-        $joinedSpayc = TableRegistry::get('JoinedSpayc');
+        $joinedSpayc = TableRegistry::get('Api.JoinedSpayc');
         $entities = $joinedSpayc->newEntities($member);
-        $result = $joinedSpayc->saveMany($entities,['checkRules' => false,'atomic'=>false]);
+        $result = $joinedSpayc->saveMany($entities);
         return $result;
     }
 
@@ -499,7 +498,7 @@ class SpaycsTable extends Table {
                 + sin ( radians(:latitude) )
                 * sin( radians( Users.current_latitude ) )))';
             $distance = 0;
-            $users = TableRegistry::get('Users')->find()
+            $users = TableRegistry::get('Api.Users')->find()
                 ->select([
                     'distance' => $distanceField, 'id'])
                 ->where(["$distanceField >=" => $distance, 'Users.id'=>$userId])
