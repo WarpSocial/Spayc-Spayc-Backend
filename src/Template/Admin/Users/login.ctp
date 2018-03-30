@@ -10,7 +10,7 @@
              <div class="error-login-page"><?= $this->Flash->render(); ?></div>
              <?php echo $this->Form->create($user,['id'=>'adminLogin','autocomplete' => 'off','novalidate'=>'novalidate']); ?>
               <h1>Welcome Admin</h1>
-              <p class="mb-30">Login to continue to spayc admin.</p>
+              <p class="mb-30">Login to continue to warp admin.</p>
               <div class="form-group">               
                 <?= $this->Form->input('email',['class'=>'form-control','label'=>'Email', 'maxlength'=> '100']); ?>
                 <small class="input-alert" id="emailError"></small>

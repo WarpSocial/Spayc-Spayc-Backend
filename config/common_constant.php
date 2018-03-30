@@ -1,7 +1,7 @@
 <?php
 /* Admin constant and messages */
 define('ROLE_ADMIN',1);
-define('SITE_TITLE','spayc');
+define('SITE_TITLE','Warp');
 define('PAGINATION_LIMIT',20);
 define('DATEFORMAT_DISPLAY','M d, Y');
 define('DATEFORMAT','Y-m-d');

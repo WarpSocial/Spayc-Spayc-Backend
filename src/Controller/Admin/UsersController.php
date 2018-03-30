@@ -364,6 +364,38 @@ class UsersController extends AdminController
         return $obj;
     }
 
+    public function setUserStatus($id, $status = 'Blocked') {
+        $this->viewBuilder()->layout('');
+        if (empty($id)) {
+            return $this->redirect(['action' => 'index']);  
+        }        
+        $user = $this->Users->get($id);  
+        if ($this->request->is(['post','put'])) { 
+            // $data = $this->request->getData();
+            // pr($data);die;
+            // $error = '';
+            // if (!isset($data['new_password'])) {
+            //     $error = $this->errorSuccessMessage['BLANKNPASS'];
+            // } else if(!$this->Users->_getCustomPasswordRule($data['new_password'])) {
+            //     $error = $this->errorSuccessMessage['PASSERRMSG'];
+            // }             
+            // if($data['new_password']!=$data['confirm_password']){
+            //     $error = $this->errorSuccessMessage['PASSMISSMATCH'];
+            // }
+            // if (!$error) {               
+            //     $user->password = ApiHasher::hash($data['new_password']);
+            //     if ($this->Users->save($user)) {
+            //         $result_arr = ['result' => true, 'message' => $this->errorSuccessMessage['PASSSUCCESS']];
+            //     } 
+            // } else {                   
+            //     $result_arr = ['result' => false, 'message' => $error]; 
+            // }
+            // echo json_encode($result_arr);
+            // die;
+        }
+        $this->set(compact('user'));
+    }
+
 }
 
 

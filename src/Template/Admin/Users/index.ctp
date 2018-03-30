@@ -1,4 +1,5 @@
-<?php use Cake\Routing\Router;
+<?php 
+use Cake\Routing\Router;
 use Api\Auth\ApiHasher;
 $userCount=$showPassword=$filter=false;
 if(count($users) > 0) 
@@ -59,8 +60,8 @@ if(isset($this->request->query['sort'])) {
             </div>
             <div class="head-text flex-basis11"><span class="table-filter <?php echo $dobIconSorting?>"><?php echo $this->Paginator->sort('dob','Date of Birth');?></span></div>
             <div class="head-text flex-basis15 text-left"><span>Location</span></div>
-            <div class="head-text flex-basis9"><span>Spaycs Joined</span></div>
-            <div class="head-text flex-basis9"><span>Spaycs Created</span></div>
+            <div class="head-text flex-basis9"><span>Warps Joined</span></div>
+            <div class="head-text flex-basis9"><span>Warps Created</span></div>
             <div class="head-text flex-basis10"><span>Friends</span></div>
             <div class="head-text flex-basis14"><span>Advertisements</span></div>
             <div class="head-text flex-basis10"><span class="table-filter <?php echo $createdIconSorting?>"><?php echo $this->Paginator->sort('created','Registration Date');?></span></div>
@@ -118,7 +119,10 @@ if(isset($this->request->query['sort'])) {
                       <span></span>
                     </div>
                     <div class="dropdown-menu" aria-labelledby="table-data-dropdown">
-                      <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
+                      <button class="dropdown-item block hide"> <i class="icon-block"></i>Blockaa</button>
+                      <a href="javascript:void(0)" class="pop dropdown-item block" page="<?php echo Router::url(['Controller' => 'Users', 'action'=> 'setUserStatus',$user->id]);?>">
+                      <?php echo (strtolower($user->status) == 'active')?"<i class='icon-block status_".$user->id."'></i>Block":"<i class='icon-block'></i>Unblock";?>
+                      </a>
                     </div>
                   </div>
                 </div>

@@ -226,4 +226,41 @@ jQuery(document).ready(function ($) {
         }  
     }); 
 
+    $(document).on('submit', '#admin_reset_password_form', function (e) {            
+              
+            form = $("form#set_user_status_form");  
+            $.ajax({
+             type:'POST',
+             url:form.prop('action'),
+             data: form.serialize(),
+             dataType:'JSON',
+             async: true,             
+             beforeSend: function () {
+              $(".loader").addClass('show-loader');
+             },
+             success:function(data){        
+                $(".loader").removeClass('show-loader');  
+                console.log(data);      
+                 // if (data.result) { 
+                 //    $('.error-forgot-password-page').removeClass('error-alert hide');
+                 //    $('.error-forgot-password-page').addClass('success-alert');
+                 //    resetForm('admin_reset_password_form');
+                 //    $('.error-forgot-password-page').text(data.message).delay(5000)
+                 //       .fadeOut('slow', function () {
+                 //       $('.error-forgot-password-page').text('');
+                 //       $( ".skip-popup").trigger('click'); 
+                 //    });
+                 //  } else {                                                 
+                 //    messageFadeOut('error-forgot-password-page',data.message);
+                 //  }
+             },
+             error: function (e,x,t) {
+              $(".loader").removeClass('show-loader'); 
+              ajax_error(e);
+            }
+         });
+          e.preventDefault();
+        }  
+
+
 });
