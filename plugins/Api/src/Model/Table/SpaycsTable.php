@@ -90,6 +90,11 @@ class SpaycsTable extends Table {
             'className' => 'Api.SpaycHashtags'
         ]);
         
+         $this->belongsToMany('Advertisements', [
+            'joinTable' => 'spayc_advertisement',            
+            'className' => 'Api.Advertisements'
+        ]);
+        
         /* Earth radius in miles 3959 */
         /* for postgresql cast is required else for mysql not*/
         $this->distanceInMiles = "(3958.756 * ACOS(
@@ -622,14 +627,14 @@ class SpaycsTable extends Table {
                 ->bind(':longitude', $request['longitude'], 'float');
 //                ->order(['distance'=>'ASC']);
         }
-//        $spaycs->contain([
-//            'JoinedSpayc' => function($q) {
-//                return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
-//            },
-//            'SubscribedUsers' => function($q) {
-//                return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
-//            }
-//        ]);
+        $spaycs->contain([
+            'JoinedSpayc' => function($q) {
+                return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
+            },
+            'SubscribedUsers' => function($q) {
+                return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
+            }
+        ]);
 //        $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
 //        $spaycs->limit($limit);
 //        if(!empty($request['keyword'])) {
