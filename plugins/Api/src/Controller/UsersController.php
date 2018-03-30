@@ -292,7 +292,6 @@ class UsersController extends AppController {
         $data['physical_location']['current_latitude'] = Utils::getVar('latitude', $data);
         $data['physical_location']['current_longitude'] = Utils::getVar('longitude', $data);
         $items = $this->Users->patchEntity($entity, $data,['associated'=>['PhysicalLocation']]);
-
         if($items->errors()) {
             $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
         }
