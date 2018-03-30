@@ -486,7 +486,7 @@ class SpaycsTable extends Table {
         }
         $joinedSpayc = TableRegistry::get('Api.JoinedSpayc');
         $entities = $joinedSpayc->newEntities($member);
-        $result = $joinedSpayc->saveMany($entities);
+        $result = $joinedSpayc->saveMany($entities,['checkRules' => false,'atomic'=>false]);
         return $result;
     }
 
