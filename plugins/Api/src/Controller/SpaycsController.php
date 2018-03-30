@@ -590,12 +590,11 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Insufficient privileges to edit this space.')], 400);
         }        
         unset($data['spayc_id']);        
-        $items = $this->Spaycs->patchEntity($entity, $data);        
+        $items = $this->Spaycs->patchEntity($entity, $data);       
         if($data['type'] == 'Community'){ /* in community no need to keep start or end date*/
             $items->start_date = '';
             $items->end_date = '';
         }
-        
         if($data['group_type'] == 'Public'){ /* in community no need to keep start or end date*/
             $items->passcode = '';
         }
@@ -611,7 +610,7 @@ class SpaycsController extends AppController {
         if($items['description'] != $entity->description) {
             TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
         }
-        
+        die("END");
         if($this->Spaycs->save($items)){  
             $items = $items->toArray();
             $items['start_date']=  Utils::toClient($items['start_date']);

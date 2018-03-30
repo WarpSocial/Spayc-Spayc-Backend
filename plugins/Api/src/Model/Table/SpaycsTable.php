@@ -103,8 +103,12 @@ class SpaycsTable extends Table {
 
     public function validateDate($value,$context, $format = 'm-d-Y H:i:s') {
         $d = \DateTime::createFromFormat($format, $value);
-        $valid = \DateTime::getLastErrors();         
-        return ($valid['warning_count']==0 && $valid['error_count']==0);
+        $valid = \DateTime::getLastErrors(); 
+        if($valid['warning_count']==0 && $valid['error_count']==0){
+            return true;
+        }else{ 
+            return false;
+        }       
     }
 
     /**
@@ -140,50 +144,48 @@ class SpaycsTable extends Table {
                 ->notEmpty('start_date',__('Start date is required when type is event.'),function($context){
                      return (isset($context['data']['type']) && ($context['data']['type'] =='Event'));
                 })
-                //->dateTime('start_date','mdy',__('Start date is not in format MM-DD-YYYY H:i:s'))
-                ->add('start_date',[
-                    'format'=>[
-                        'rule'=>[$this,'validateDate'],
-                        'last'=>true,
-                        'message'=>__('Start date is not in format MM-DD-YYYY H:i:s')
+                ->add('start_date', [
+                    'format' => [
+                        'rule' => ['datetime','mdy'],
+                        'last' => true,
+                        'message' => __('Start date is not in format MM-DD-YYYY H:i:s')
                     ],
-                    'daterange'=>[
-                        'rule'=>function($value,$context){
-                        if(!empty($value)){
-                            /* Doesn't exceed 1 year ahead */
-                            $timezone = Configure::read('timezone');
-                            $startDate = Time::createFromFormat('m-d-Y H:i:s',$value,$timezone);
-                            
-                            $currentDate = new Time('now',$timezone);
-                            $now = clone $currentDate;
-                            $currentDate->modify('+1 year')->modify('+1 minute');
-                            return (bool) ($startDate >= $now && $startDate <= $currentDate);
-                        }
-                    },
-                    'message'=>__('Start date can\'t be more than 1 year ahead or any past date.')
+                    'daterange' => [
+                        'rule' => function($value,$context){
+                            if(!empty($value)){
+                                /* Doesn't exceed 1 year ahead */
+                                $timezone = Configure::read('timezone');
+                                $startDate = Time::createFromFormat('m-d-Y H:i:s',$value,$timezone);
+                                $currentDate = new Time('now',$timezone);
+                                $now = clone $currentDate;
+                                $currentDate->modify('+1 year')->modify('+1 minute');
+                                return (bool) ($startDate >= $now && $startDate <= $currentDate);
+                            }
+                        },
+                        'message'=>__('Start date can\'t be more than 1 year ahead or any past date.')
                     ]
-                ]) ;
+                ]);
+                
         $validator                
                 ->requirePresence('end_date', 'create',__('End Date key is missing.'))                
                 ->notEmpty('end_date',__('End date is required when type is event.'),function($context){
                      return (isset($context['data']['type']) && ($context['data']['type'] =='Event'));
                 })
-                //->dateTime('end_date','mdy',__('End date is not in format MM-DD-YYYY H:i:s'))
-                 
-                ->add('end_date',[
-                    'format'=>[
-                        'rule'=>[$this,'validateDate'],
-                        'last'=>true,
-                        'message'=>__('End date is not in format MM-DD-YYYY H:i:s')
+                ->add('end_date', [
+                    'format' => [
+                        'rule' => ['datetime','mdy'],
+                        'last' => true,
+                        'message' => __('End date is not in format MM-DD-YYYY H:i:s')
                     ],
-                    'daterange'=>[
-                        'rule'=>function($value,$context){
-                     $timezone = Configure::read('timezone');
+                    'daterange' => [
+                        'rule' => function($value,$context){
+                            $timezone = Configure::read('timezone');
                         if(!empty($value) && !empty($context['data']['end_date']) && !empty($context['data']['start_date'])){
                             /* End date must be below of start date */
-                            
+                            if(!$this->validateDate($context['data']['start_date'], $context)){
+                                return false;
+                            }
                             $startDate = Time::createFromFormat('m-d-Y H:i:s',$context['data']['start_date'],$timezone);
-                            
                             $endDate = Time::createFromFormat('m-d-Y H:i:s',$value,$timezone);
                             if($endDate->format('H') == '00'){
                                 $endDate->setTime(23,55);
@@ -191,11 +193,10 @@ class SpaycsTable extends Table {
                             return (bool)($startDate <= $endDate );
                         }
                         return true;
-                    },
-                    'message'=>__('End date must be ahead from start date.')
+                        },
+                        'message'=>__('End date must be ahead from start date.')
                     ]
-                ]) ;
-              
+                ]);               
 
         $validator
                 //->requirePresence('passcode', 'create',__('Passcode key is missing.'))
@@ -477,8 +478,7 @@ class SpaycsTable extends Table {
                 /*In direct chat no need to send the notification */
 
             }
-        }
-        
+        }      
         
         /*In direct chat no need take the record */
         if($items['is_direct']){ 
