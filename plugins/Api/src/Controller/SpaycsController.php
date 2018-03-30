@@ -610,7 +610,6 @@ class SpaycsController extends AppController {
         if($items['description'] != $entity->description) {
             TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
         }
-        die("END");
         if($this->Spaycs->save($items)){  
             $items = $items->toArray();
             $items['start_date']=  Utils::toClient($items['start_date']);
