@@ -111,14 +111,14 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
         $entity = $this->Spaycs->find()->contain('JoinedSpayc',function($q)use($user){
-            return $q->where(['user_id'=>$user['id']]);
+            return $q->where(['user_id'=>$user['id'],'status'=>'Joined']);
         });
         if(preg_match("/[a-z]/i", $data['parent_matrix_room_id'])){
             $entity->where(['matrix_room_id'=>$data['parent_matrix_room_id']]);        
         }else{
             $entity->where(['id'=>$data['parent_matrix_room_id']]);
         }
-                
+        $entity->where(['group_type !='=>'trusted_private']);        
         if($entity->isEmpty()){
             $this->restException(['status'=>'failed','message'=>__('Parent space has not been found.')], 400);
         }
@@ -136,6 +136,7 @@ class SpaycsController extends AppController {
         $data['latitude'] = $parentObj->latitude;
         $data['longitude'] = $parentObj->longitude;
         $data['type'] = $parentObj->type;
+        $data['location'] = $parentObj->location;
         $items = $this->Spaycs->newEntity($data,['validate'=>false]);
         
         
@@ -191,6 +192,10 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>'Invite is required field.'], 400);
         }
         $data['name'] = $data['invite'].'-'.$this->Auth->user('UserLogs.matrix_user_id');
+        $nameSwaped = $this->Auth->user('UserLogs.matrix_user_id').'-'.$data['invite'];
+        if($this->Spaycs->exists(['OR'=>[['name'=>$data['name']],['name'=>$nameSwaped]]])){
+            $this->restException(['status'=>'failed','message'=>__('One & One chat already initiated between you.')], 400);
+        }
         $data['group_type'] = 'trusted_private';
         $entity = $this->Spaycs->newEntity();
         $items = $this->Spaycs->patchEntity($entity, $data, ['validate'=>false]);

@@ -204,11 +204,12 @@ class SpaycsTable extends Table {
                 ]);               
 
         $validator
-                //->requirePresence('passcode', 'create',__('Passcode key is missing.'))
+                ->requirePresence('passcode', function($context){
+                    return (isset($context['data']['group_type']) && ($context['data']['group_type'] =='Private'));
+                },__('Passcode is required for private spayc.'))
                 ->maxLength('passcode', 30,__('Max 30 character is allowed for passcode.'))
-                //->add('passcode', 'unique', ['rule' => 'validateUnique','message'=>'Username must be unique.', 'provider' => 'table'])
-                ->notEmpty('passcode',__('Passcode is required in case of private group type.'),function($context){                    
-                     return (isset($context['data']['group_type']) && ($context['data']['group_type'] =='Private'));
+                ->notEmpty('passcode',__('Passcode is required for private spayc.'),function($context){             
+                    return (isset($context['data']['group_type']) && ($context['data']['group_type'] =='Private'));
                 });
 
         $validator
@@ -218,6 +219,17 @@ class SpaycsTable extends Table {
         
         $validator
                 ->allowEmpty('image')
+                ->add('image','isfile',[
+                    'rule'=>function($value,$context){
+                        if(!is_array($value) && !is_file($value)){
+                            return false;
+                        }else{
+                            return true;
+                        }
+                    },
+                    'last' => true,
+                    'message'=>__('Image is not valid image file.')
+                ])
                 ->add('image','extension',[
                     'rule' => ['extension', ['jpeg', 'png','jpg']],
                     'message'=>__('Please select only jpg,jpeg,png.')
@@ -261,29 +273,43 @@ class SpaycsTable extends Table {
                 ->requirePresence('group_type', 'create',__('Group key is missing.'))
                 ->notEmpty('group_type',__('Group is required field.'))
                 ->inList('group_type', Configure::read('grouptype'),__('Group value must be any one '.implode(',',Configure::read('grouptype')).'.')); 
-
+        
         $validator
-                //->requirePresence('passcode', 'create',__('Passcode key is missing.'))
+                ->requirePresence('passcode', function($context){
+                    return (isset($context['data']['group_type']) && ($context['data']['group_type'] =='Private'));
+                },__('Passcode is required for private sub-spayc.'))
                 ->maxLength('passcode', 30,__('Max 30 character is allowed for passcode.'))
                 ->notBlank('passcode',__('Passcode is required in case of private group type.'),function($context){                    
                      return (isset($context['data']['group_type']) && ($context['data']['group_type'] =='Private'));
-                })
-                ->notEmpty('passcode',__('Passcode is required in case of private group type.'),function($context){                    
-                     return (isset($context['data']['group_type']) && ($context['data']['group_type'] =='Private'));
+                })        
+                ->notEmpty('passcode',__('Passcode is required for private spayc.'),function($context){             
+                    return (isset($context['data']['group_type']) && ($context['data']['group_type'] =='Private'));
                 });
-                
 
         $validator
                 ->requirePresence('description', 'create',__('Description key is missing.'))
                 ->maxLength('description', 250,__('Description must be less than 250 characters.'))
                 ->allowEmpty('description');
         
-        $validator
+        $validator                
                 ->allowEmpty('image')
+                ->add('image','isfile',[
+                    'rule'=>function($value,$context){
+                        if(!is_array($value) && !is_file($value)){
+                            return false;
+                        }else{
+                            return true;
+                        }
+                    },
+                    'last' => true,
+                    'message'=>__('Image is not valid image file.')
+                ])
                 ->add('image','extension',[
                     'rule' => ['extension', ['jpeg', 'png','jpg']],
+                    'last' => true,
                     'message'=>__('Please select only jpg,jpeg,png.')
                 ])
+                
                 ->add('image','size',[
                     'rule' => ['fileSize', '<=',\Cake\Core\Configure::read('maxupload')],
                     'message'=>__('Image size must be less than '.\Cake\Core\Configure::read('maxupload').'.')

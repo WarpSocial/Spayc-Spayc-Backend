@@ -66,6 +66,9 @@ class JoinSpaycsController extends AppController {
             if($currentUserStatus->is_admin > 0){
                 $this->restException(['status'=>'failed','message'=>__('Admin could\'t change their own status')], 400);
             }
+            if(($currentUserStatus->status == 'Joined') && ($data['status'] == 'Pending')){
+                $this->restException(['status'=>'failed','message'=>__('Request is not valid because of you have joined this spayc.')], 400);
+            }
             if($currentUserStatus->status == $data['status']){
                 if($data['status'] == 'Joined'){
                     $message = __('You have already joined with this spayc');
@@ -182,6 +185,9 @@ class JoinSpaycsController extends AppController {
             $currentUserStatus = $currentUserStatus[0];
             if($currentUserStatus->is_admin > 0){
                 $this->restException(['status'=>'failed','message'=>__('Admin could\'t change their own status')], 400);
+            }
+            if(($currentUserStatus->status == 'Joined') && ($data['status'] == 'Pending')){
+                $this->restException(['status'=>'failed','message'=>__('Request is not valid because of you have joined this sub spayc.')], 400);
             }
             if($currentUserStatus->status == $data['status']){
                 if($data['status'] == 'Joined'){

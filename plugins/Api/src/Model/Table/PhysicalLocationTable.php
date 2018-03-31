@@ -35,7 +35,7 @@ class PhysicalLocationTable extends Table {
 
         $this->setTable('physical_location');
         $this->setDisplayField('id');
-        $this->setPrimaryKey(['id', 'user_id']);
+        $this->setPrimaryKey(['id']);
 
         $this->addBehavior('Timestamp');
 

@@ -309,8 +309,6 @@ class UsersController extends AppController {
         $items->set('matrix_access_token', $matrix['access_token']);
         #echo $data['token_verification'];die;
         if ($this->Users->save($items)) {
-            //$pl = TableRegistry::get('Api.PhysicalLocation')->newEntity();
-            //->save($items);
             $this->getMailer('Api.User')->send('signup', [$items]);
             $response = ['status' => "success", 'message' => __('Registration done successfully.'), 'data' =>
                 [
@@ -597,6 +595,9 @@ class UsersController extends AppController {
         }
         $id = $this->Auth->user('id');
         $data = $this->request->getData();
+        if(empty($data)){
+            $this->restException(['status'=>'failed', 'message'=>__('Invalid Request.')], 400);
+        }
         $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';
         $entity = $this->Users->get($id);
         $username = $entity->username;
@@ -606,7 +607,9 @@ class UsersController extends AppController {
         }
         /* At the time of update username will not update and maintain the prev username by swaping the value*/
         $items->set('username',$username);
-        $items->set('display_name',$data['username']);
+        if(!empty($data['username'])){
+            $items->set('display_name',$data['username']);
+        }
         if ($this->Users->save($items)) {
             $response = ['status' => "success", 'message' => __('Updated successfully.'), 'data' => $data];
         } else {
