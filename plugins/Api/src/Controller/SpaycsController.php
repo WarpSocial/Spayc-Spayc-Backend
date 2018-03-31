@@ -67,7 +67,6 @@ class SpaycsController extends AppController {
         $items->set('matrix_room_id',$matrix['room_id']);
         $items->set('matrix_room_alias',$matrix['room_alias']);
         $items->set('user_id', $this->Auth->user('id'));
-        
         if (!$items->errors()) {
             if($this->Spaycs->save($items)) {
                 //Joined the invite to the room//
@@ -481,7 +480,7 @@ class SpaycsController extends AppController {
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Accepted');
         
         $spayc = $this->Spaycs->find();
-        $spayc->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id'])
+        $spayc->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.parent_id','Spaycs.created','Spaycs.modified'])
                 ->where(['status'=>'Active', 'OR'=>['matrix_room_id'=>$id,'id'=>$id]])
                 ->contain([
                     'SubSpaycs' => function($q) {
@@ -512,6 +511,8 @@ class SpaycsController extends AppController {
         
         $spayc->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend, $userId) {
             return $results->map(function ($row) use($friend, $userId) {                
+                $row->created = Utils::toClient($row->created);
+                $row->modified = Utils::toClient($row->modified);
                 $spaycId = ApiHasher::decrypt($row->id);
                 $row['friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
                 $present = 0;$totalJoined=[];
@@ -568,7 +569,7 @@ class SpaycsController extends AppController {
      * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-     public function edit($id = null) {
+     public function edit($id = null) {         
         if (!$this->request->is(['put','patch','post'])) {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);
         }
@@ -590,12 +591,11 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Insufficient privileges to edit this space.')], 400);
         }        
         unset($data['spayc_id']);        
-        $items = $this->Spaycs->patchEntity($entity, $data);        
+        $items = $this->Spaycs->patchEntity($entity, $data);       
         if($data['type'] == 'Community'){ /* in community no need to keep start or end date*/
             $items->start_date = '';
             $items->end_date = '';
         }
-        
         if($data['group_type'] == 'Public'){ /* in community no need to keep start or end date*/
             $items->passcode = '';
         }
@@ -611,7 +611,6 @@ class SpaycsController extends AppController {
         if($items['description'] != $entity->description) {
             TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
         }
-        
         if($this->Spaycs->save($items)){  
             $items = $items->toArray();
             $items['start_date']=  Utils::toClient($items['start_date']);
@@ -738,7 +737,7 @@ class SpaycsController extends AppController {
         
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Accepted');
         $query = $this->Spaycs->find()
-                ->select(['Spaycs.id', 'Spaycs.name', 'Spaycs.location','Spaycs.description', 'Spaycs.matrix_room_id', 'Spaycs.start_date', 'Spaycs.end_date', 'Spaycs.image', 'Spaycs.type', 'Spaycs.group_type', 'Spaycs.passcode','Spaycs.user_id'])
+                ->select(['Spaycs.id', 'Spaycs.name', 'Spaycs.location','Spaycs.description', 'Spaycs.matrix_room_id', 'Spaycs.start_date', 'Spaycs.end_date', 'Spaycs.image', 'Spaycs.type', 'Spaycs.group_type', 'Spaycs.passcode','Spaycs.user_id','Spaycs.parent_id'])
                 ->where(['status'=>'Active','parent_id'=>$subspayc])                
                 ->contain([
                     'JoinedSpayc' => function($q) {
