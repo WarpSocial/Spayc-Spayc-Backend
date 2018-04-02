@@ -155,7 +155,6 @@ function postSpaycs() { return; }
         "image": "",
         "longitude": 77.209021,
         "latitude": 28.613939,
-        "invite": "@test2:35.168.119.247",
         "status": "Active",
         "matrix_room_id": "!JqhnnrWCtlFTnWlwWL:35.168.119.247",
         "matrix_room_alias": "#Holi13:35.168.119.247",
