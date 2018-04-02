@@ -214,7 +214,7 @@ class FriendRequestTable extends Table
          //Friend ID List     
          $child=$this->getFriendIdsByUserId($userId);
               
-                
+           if(!empty($child)) {       
         //Getting Distance
               $distanceField = '( 3959 * ACOS( COS( RADIANS(:latitude) ) *
                 COS( RADIANS(  latitude ) ) *
@@ -254,6 +254,10 @@ class FriendRequestTable extends Table
         if($friends->count()) {
             $data['records'] = $friends->toArray();
         }
+           }else{
+               $data['count'] = 0;
+               $data['records'] = [];
+           }
         return $data;
     }
     
