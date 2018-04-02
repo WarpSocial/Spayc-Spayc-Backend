@@ -41,16 +41,16 @@ class SpaycAdvertisementTable extends Table
 
         $this->addBehavior('Timestamp');
 
-        $this->belongsTo('Advertisements', [
-            'foreignKey' => 'advertisement_id',
-            'joinType' => 'INNER',
-            'className' => 'Api.Advertisements'
-        ]);
-        $this->belongsTo('Spaycs', [
-            'foreignKey' => 'spayc_id',
-            'joinType' => 'INNER',
-            'className' => 'Api.Spaycs'
-        ]);
+//        $this->belongsTo('Advertisements', [
+//            'foreignKey' => 'advertisement_id',
+//            'joinType' => 'INNER',
+//            'className' => 'Api.Advertisements'
+//        ]);
+//        $this->belongsTo('Spaycs', [
+//            'foreignKey' => 'spayc_id',
+//            'joinType' => 'INNER',
+//            'className' => 'Api.Spaycs'
+//        ]);
     }
 
     /**
@@ -76,8 +76,8 @@ class SpaycAdvertisementTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['advertisement_id'], 'Advertisements'));
-        $rules->add($rules->existsIn(['spayc_id'], 'Spaycs'));
+//        $rules->add($rules->existsIn(['advertisement_id'], 'Advertisements'));
+//        $rules->add($rules->existsIn(['spayc_id'], 'Spaycs'));
 
         return $rules;
     }

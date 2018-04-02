@@ -899,80 +899,13 @@ class SpaycsController extends AppController {
         $limit = $this->request->getQuery('limit',Configure::read('pagelimit'));
         $spayc=TableRegistry::get('Api.Spaycs')->getNearBySpaycsOnMap($this->request->getQuery(),$user['id']);
         $friends = TableRegistry::get('Api.FriendRequest')->getNearByFriendsOnMap($this->request->getQuery(), $user['id']);
-        print_R($friends);die;
-        $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($user['id'], 'Accepted');
-        $distance = Configure::read('miles');
-        $array = \Cake\Utility\Hash::extract($data['records'], '{n}.spayc_hashtags');
-        $temp =[];
-        if(!$data['count']){
+//        print_R($friends);die;
+        if(!$friends['count'] && !$spayc['count']){
              $this->restException(['status'=>'failed','message'=>'Record not found.'], 404);
         }
-        foreach ($array as $key => $value) {
-           foreach ($value as $key_1 => $value_1) {
-              array_push($temp, $value_1['spayc_id']);
-           }
-        }
-        $ids=array_unique($temp);
-        if(!$ids){
-             $this->restException(['status'=>'failed','message'=>'Record not found.'], 404);
-        }
-        $date = (new Time('now', Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i:s");
-        $spaycs = $this->Spaycs->find();
-        $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id'])
-            ->where(['status'=>'Active','parent_id IS'=>null,'Spaycs.group_type ='=>'Public','Spaycs.id IN'=>$ids])
-            ->contain([
-                    'JoinedSpayc' => function($q)use($user) {
-                        return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin']);
-                    },
-                    'SubscribedUsers' => function($q) {
-                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
-                    },
-                    'Comments' => function($q) {
-                        return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);                        
-                    }
-                ]);
-      
-        if(!empty($lat) && !empty($long)){
-            $distance = "ROUND( CAST(".str_replace(':long',$long,str_replace(':lat',$lat,$this->Spaycs->distanceInMiles))." AS numeric), 3)";
-            $spaycs->select(['distance'=>$distance])
-                    //->bind(':lat', $lat, 'float')
-                    //->bind(':long', $long, 'float')
-                    ->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
-        }else{
-            $spaycs->select(['distance'=>0])
-                    ->order(['created'=>'DESC']);
-        }
-        $spaycs->limit($limit)->page($page);
-        $result = $spaycs->map(function ($row)use($friend,$user) {
-                $spaycId = ApiHasher::decrypt($row->id);
-                $row->friends = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
-                $totalJoined = [];
-                if(!empty($row->joined_spayc)) {
-                     $totalJoined = \Cake\Utility\Hash::extract($row->joined_spayc,'{n}[status=Joined].status');
-                    $joinedStatus = \Cake\Utility\Hash::extract($row->joined_spayc,'{n}[user_id='.$user['id'].']');
-                }
-                $row->is_joined = false;
-                if(!empty($joinedStatus[0])){
-                    $row->joined_spayc_status = $joinedStatus[0]['status'];
-                    if($row->joined_spayc_status == 'Joined'){
-                        $row->is_joined = true;
-                    }
-                    $row->is_admin = $joinedStatus[0]['is_admin'];
-                }else{
-                    $row->joined_spayc_status = 'Not_Joined';
-                    $row->is_admin = '';
-                } 
-                $row->joined_users =  !empty($row->joined_spayc)?count($totalJoined):0;
-                if(!empty($row->subscribed_users)) {
-                    $subUserId = \Cake\Utility\Hash::extract($row->subscribed_users,'{n}[user_id='.$user['id'].']');
-                }
-                $row->subscribed_users = !empty($row->subscribed_users)?count($row->subscribed_users):0;
-                $row->is_subscribed = !empty($subUserId[0])?true:false;
-                $row->total_comments = !empty($row->comments[0]['total_comment'])?$row->comments[0]['total_comment']:0;
-                unset($row->joined_spayc,$row->comments);
-                return $row;
-            });
-        $response = ['status'=>'success','message'=>'List of spaycs.','data'=>$result];
+        $result['spaycs']=$spayc;
+        $result['friends']=$friends;
+        $response = ['status'=>'success','message'=>'List of Data.','data'=>$result];
         $this->set($response);
     }
     
@@ -1154,7 +1087,7 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
         }
         $data = $this->request->getData();
-      
+
         $user = $this->Auth->user();
       
         $entity = $this->Spaycs->find()->contain('JoinedSpayc',function($q)use($user){
@@ -1168,14 +1101,14 @@ class SpaycsController extends AppController {
         
         
         $data['spaycs'] = ['_ids' => [1]];
-        $items = $advModel->patchEntity($entity,$data,['associated'=>['Spaycs']]);
+        $items = $advModel->patchEntity($entity,$data);
         
         if(!empty($items->errors())) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
         }
         $items->user_id = $user['id'];
         $success=$advModel->save($items);
-        pr($success);die;
+//        pr($success);die;
         
         
         
@@ -1191,64 +1124,11 @@ class SpaycsController extends AppController {
         $entity->created = new \Cake\I18n\Time();   
         $ad_spayc[]=$advModel->save($entity);
         }
-        print_R($ad_spayc);die;
-                
-        if($entity->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>__('Parent space has not been found.')], 400);
+         
+        if(!count($ad_spayc)){
+            $this->restException(['status'=>'failed', 'message'=>__('Advertisement could not be saved. Please, try again.')], 400);
         }
-        
-        $parentObj = $entity->first();
-        if(empty($parentObj->joined_spayc)){
-            $this->restException(['status'=>'failed','message'=>__('You don\'t have sufficient right to create subspace.')], 400);
-        }
-        if(!empty($parentObj->parent_id)){
-            $this->restException(['status'=>'failed','message'=>__('Not allowd to create subspayc of subspayc.')], 400);
-        }
-        $data['parent_id'] = $parentObj->id;
-        $data['start_date'] = $parentObj->start_date;
-        $data['end_date'] = $parentObj->end_date;
-        $data['latitude'] = $parentObj->latitude;
-        $data['longitude'] = $parentObj->longitude;
-        $data['type'] = $parentObj->type;
-        $items = $this->Spaycs->newEntity($data,['validate'=>false]);
-        
-        
-        $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
-        
-        $matrix = $this->Matrix->createRoom($data);
-        if(!empty($matrix['error'])) {
-            $this->restException(['status' => "failed", 'message' =>__($matrix['error'])], 400);
-        }
-        $items->set('matrix_room_id',$matrix['room_id']);
-        $items->set('matrix_room_alias',$matrix['room_alias']);
-        $items->set('user_id', $this->Auth->user('id'));
-        if (!$items->errors()) {
-            if($this->Spaycs->save($items)){
-              $data['image'] = $items->get('image');
-              $data['matrix_room_id'] = $items->get('matrix_room_id');
-              //Joined the invite to the room//
-                $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
-                 if(!empty($items['description'])) {
-                    TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
-                }
-                $this->response->statusCode(201);
-                $data['id'] = $items->id;
-                $response = ['status'=>'success','message'=>__('SubSpayc Created Successfully'),'data'=>$data];
-                /*Event to bind to update the set upload room image */
-                $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
-                    'options' => [
-                        'matrix_token'=>$data['matrix_token'],
-                        'image'=> $items->get('image'),
-                        'matrix_room_id'=> $items->matrix_room_id,
-                        ]
-                ]);
-                EventManager::instance()->dispatch($event);
-            }else{
-                $this->restException(['status'=>'failed', 'message'=>__('Subspace could not be saved. Please, try again.')], 400);
-            }
-        } else {
-            $this->restException(['status'=>'failed', 'message'=>__('Subspace could not be saved. Please, try again.')], 400);
-        }
+        $response = ['status'=>'success','message'=>__('Advertisement Created Successfully'),'data'=>$success];
         $this->set($response);
     }
 
