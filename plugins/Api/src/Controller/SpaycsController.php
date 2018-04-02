@@ -489,8 +489,7 @@ class SpaycsController extends AppController {
                 ->where(['status'=>'Active', 'OR'=>['matrix_room_id'=>$id,'id'=>$id]])
                 ->contain([
                     'SubSpaycs' => function($q) {
-                    $exp = $q->newExpr()->addCase($q->newExpr()->add(['location IS NULL']),"");
-                        return  $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'location'=>$exp, 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id']);
+                        return  $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'SubSpaycs.location', 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id']);
                     },
                     'JoinedSpayc' => function($q) {
                         return  $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin']);
@@ -516,8 +515,8 @@ class SpaycsController extends AppController {
         
         $spayc->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend, $userId) {
             return $results->map(function ($row) use($friend, $userId) {                
-                $row->created = Utils::toClient($row->created);
-                $row->modified = Utils::toClient($row->modified);
+                //$row->created = Utils::toClient($row->created);
+                //$row->modified = Utils::toClient($row->modified);
                 $spaycId = ApiHasher::decrypt($row->id);
                 $row['friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
                 $present = 0;$totalJoined=[];
@@ -527,16 +526,6 @@ class SpaycsController extends AppController {
                     $miles = Configure::read('miles');
                     $physicalPresent = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[distance <='.$miles.']');
                     $present = count($physicalPresent);
-                }
-                if(!empty($row['sub_spaycs'])) {
-                    foreach($row['sub_spaycs'] as $key=>$subSpayc) {
-                        if(!empty($subSpayc->start_date)) {
-                            $sd = new Time($subSpayc->start_date,'UTC');
-                            $row['sub_spaycs'][$key]['start_date'] = $sd->setTimezone(Configure::read('timezone'))->format('m-d-Y H:i:s');              }
-                        if(!empty($subSpayc->end_date)) {
-                            $sd = new Time($subSpayc->end_date,'UTC');
-                            $row['sub_spaycs'][$key]['end_date'] = $sd->setTimezone(Configure::read('timezone'))->format('m-d-Y H:i:s');                }
-                    }
                 }
                 if(!empty($joinedStatus[0])){
                     $row['joined_spayc_status'] = $joinedStatus[0]['status'];

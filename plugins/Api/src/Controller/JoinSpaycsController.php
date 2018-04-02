@@ -54,7 +54,7 @@ class JoinSpaycsController extends AppController {
         $spayc = $spaycs->first();
         
         if(!empty($spayc->parent_id)){
-            $this->restException(['status'=>'failed','message'=>__('Sub spayc is not allowd to join.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Spayc is not allowd to join.')], 400);
         }
         
         if(($spayc->group_type == 'Public') && ($data['status'] == 'Pending')){
@@ -67,7 +67,7 @@ class JoinSpaycsController extends AppController {
                 $this->restException(['status'=>'failed','message'=>__('Admin could\'t change their own status')], 400);
             }
             if(($currentUserStatus->status == 'Joined') && ($data['status'] == 'Pending')){
-                $this->restException(['status'=>'failed','message'=>__('Request is not valid because of you have joined this spayc.')], 400);
+                $this->restException(['status'=>'failed','message'=>__('You are already part of this spayc.')], 400);
             }
             if($currentUserStatus->status == $data['status']){
                 if($data['status'] == 'Joined'){
