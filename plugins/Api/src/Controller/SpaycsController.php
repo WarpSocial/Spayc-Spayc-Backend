@@ -347,7 +347,7 @@ class SpaycsController extends AppController {
                 $row['joined_users'] =  !empty($row['joined_spayc'])?count($totalJoined):0;
                 unset($row['joined_spayc']);
                 if(!empty($row['subscribed_users'])) {
-                    $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');
+                    $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$loggedUser.']');
                 }
                 $row['subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):0;
                 $row['is_subscribed'] = !empty($subUserId[0])?true:false;
@@ -716,6 +716,7 @@ class SpaycsController extends AppController {
         }
         $subspayc = $this->request->getQuery('spayc_id',null);
         $user = $this->Auth->user();
+        $loggedUser = $user['id'];
         if(empty($subspayc)){
              $this->restException(['status'=>'failed','message'=>'Sub-spayc is required.'], 400);
         }
@@ -767,12 +768,12 @@ class SpaycsController extends AppController {
         }
         $query->limit($limit)->page($page);
         
-        $result = $query->map(function ($row)use($friend,$userId) {
+        $result = $query->map(function ($row)use($friend,$userId,$loggedUser) {
                 $spaycId = ApiHasher::decrypt($row->id);
                 $row->friends = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
                 $totalJoined = [];
                 if(!empty($row->joined_spayc)) {
-                    $joinedStatus = \Cake\Utility\Hash::extract($row->joined_spayc,'{n}[user_id='.$userId.']');
+                    $joinedStatus = \Cake\Utility\Hash::extract($row->joined_spayc,'{n}[user_id='.$loggedUser.']');
                     $totalJoined = \Cake\Utility\Hash::extract($row->joined_spayc,'{n}[status=Joined].status');
                 }
                 $row->is_joined = false;
@@ -788,7 +789,7 @@ class SpaycsController extends AppController {
                 }                
                 $row->joined_users =  !empty($row->joined_spayc)?count($totalJoined):0;
                 if(!empty($row->subscribed_users)) {
-                    $subUserId = \Cake\Utility\Hash::extract($row->subscribed_users,'{n}[user_id='.$userId.']');
+                    $subUserId = \Cake\Utility\Hash::extract($row->subscribed_users,'{n}[user_id='.$loggedUser.']');
                 }
                 $row->subscribed_users = !empty($row->subscribed_users)?count($row->subscribed_users):0;
                 $row->is_subscribed = !empty($subUserId[0])?true:false;
