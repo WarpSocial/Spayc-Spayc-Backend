@@ -339,7 +339,7 @@ class SpaycsController extends AppController {
                     $physicalPresent = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[distance <='.$miles.']');
                     $present = count($physicalPresent);
                 }
-                $row['joined_spayc_status'] = !empty($status[0])?$status[0]:'';
+                $row['joined_spayc_status'] = !empty($status[0])?$status[0]:'Not_Joined';
 //                if($userId==$row['user_id']) {
 //                    $row['joined_spayc_status'] = 'Joined';
 //                }
@@ -531,7 +531,7 @@ class SpaycsController extends AppController {
                     $row['joined_spayc_status'] = $joinedStatus[0]['status'];
                     $row['is_admin'] = $joinedStatus[0]['is_admin'];
                 }else{
-                    $row['joined_spayc_status'] = '';
+                    $row['joined_spayc_status'] = 'Not_Joined';
                     $row['is_admin'] = '';
                 }
                 $row['joined_users'] =!empty($row['joined_spayc'])?count($totalJoined):0;
@@ -773,7 +773,7 @@ class SpaycsController extends AppController {
                     }
                     $row->is_admin = $joinedStatus[0]['is_admin'];
                 }else{
-                    $row->joined_spayc_status = '';
+                    $row->joined_spayc_status = 'Not_Joined';
                     $row->is_admin = '';
                 }                
                 $row->joined_users =  !empty($row->joined_spayc)?count($totalJoined):0;
@@ -869,7 +869,7 @@ class SpaycsController extends AppController {
                     }
                     $row->is_admin = $joinedStatus[0]['is_admin'];
                 }else{
-                    $row->joined_spayc_status = '';
+                    $row->joined_spayc_status = 'Not_Joined';
                     $row->is_admin = '';
                 } 
                 $row->joined_users =  !empty($row->joined_spayc)?count($totalJoined):0;
@@ -968,7 +968,7 @@ class SpaycsController extends AppController {
                     }
                     $row->is_admin = $joinedStatus[0]['is_admin'];
                 }else{
-                    $row->joined_spayc_status = '';
+                    $row->joined_spayc_status = 'Not_Joined';
                     $row->is_admin = '';
                 } 
                 $row->joined_users =  !empty($row->joined_spayc)?count($totalJoined):0;
@@ -1040,7 +1040,7 @@ class SpaycsController extends AppController {
                     }
                     $row->is_admin = $joinedStatus[0]['is_admin'];
                 }else{
-                    $row->joined_spayc_status = '';
+                    $row->joined_spayc_status = 'Not_Joined';
                     $row->is_admin = '';
                 } 
                 $row->joined_users =  !empty($row->joined_spayc)?count($totalJoined):0;
@@ -1136,7 +1136,7 @@ class SpaycsController extends AppController {
                     }
                     $row->is_admin = $joinedStatus[0]['is_admin'];
                 }else{
-                    $row->joined_spayc_status = '';
+                    $row->joined_spayc_status = 'Not_Joined';
                     $row->is_admin = '';
                 } 
                 $row->joined_users =  !empty($row->joined_spayc)?count($totalJoined):0;

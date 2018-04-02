@@ -319,10 +319,16 @@ class MatrixComponent extends Component {
         $response = [];
         foreach ($httpResponse as $opt=>$res){
             $response[$opt] = json_decode($res->body,true);
+            if(!empty($_REQUEST['debug'])){
+                echo "<pre>";print_r($response);
+            }
             if(!empty($response[$opt]['errcode'])){
-                return false;
+                //return false;
             }            
         }
+        if(!empty($_REQUEST['debug'])){
+                echo "<pre>";print_r($response);die;
+            }
         return $response;
     }
     
