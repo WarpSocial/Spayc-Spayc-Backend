@@ -273,7 +273,7 @@ class SpaycsController extends AppController {
                 }
             ]);
          if($lat != null && $long != null){
-            $distance = str_replace(':long',$long,str_replace(':lat',$lat,$this->Spaycs->distanceInMiles));
+            $distance = "ROUND( CAST(".str_replace(':long',$long,str_replace(':lat',$lat,$this->Spaycs->distanceInMiles))." AS numeric), 3)";
             $spaycs->select(['distance'=>$distance])
                     //->bind(':lat', $lat, 'float')
                     //->bind(':long', $long, 'float')
@@ -494,10 +494,10 @@ class SpaycsController extends AppController {
                 ]);
                
         if($lat != null && $long != null){
-            $distance = $this->Spaycs->distanceInMiles;
+            $distance = "ROUND( CAST(".str_replace(':long',$long,str_replace(':lat',$lat,$this->Spaycs->distanceInMiles))." AS numeric), 3)";
             $spayc->select(['distance'=>$distance])
-                    ->bind(':lat', $lat, 'float')
-                    ->bind(':long', $long, 'float')
+                    //->bind(':lat', $lat, 'float')
+                    //->bind(':long', $long, 'float')
                     ->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
         }else{
             $spayc->select(['distance'=>0])
@@ -737,10 +737,10 @@ class SpaycsController extends AppController {
                     }
                 ]);
         if($lat != null && $long != null){
-            $distance = $this->Spaycs->distanceInMiles;
+            $distance = "ROUND( CAST(".str_replace(':long',$long,str_replace(':lat',$lat,$this->Spaycs->distanceInMiles))." AS numeric), 3)";
             $query->select(['distance'=>$distance])
-                    ->bind(':lat', $lat, 'float')
-                    ->bind(':long', $long, 'float')
+                    //->bind(':lat', $lat, 'float')
+                    //->bind(':long', $long, 'float')
                     ->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
         }else{
             $query->select(['distance'=>0])
@@ -834,10 +834,10 @@ class SpaycsController extends AppController {
                 ]);
       
         if(!empty($lat) && !empty($long)){
-            $distance = $this->Spaycs->distanceInMiles;
+            $distance = "ROUND( CAST(".str_replace(':long',$long,str_replace(':lat',$lat,$this->Spaycs->distanceInMiles))." AS numeric), 3)";
             $spaycs->select(['distance'=>$distance])
-                    ->bind(':lat', $userLat, 'float')
-                    ->bind(':long', $userLong, 'float')
+                    //->bind(':lat', $userLat, 'float')
+                    //->bind(':long', $userLong, 'float')
                     ->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
         }else{
             $spaycs->select(['distance'=>0])
@@ -933,10 +933,10 @@ class SpaycsController extends AppController {
                 ]);
       
         if(!empty($lat) && !empty($long)){
-            $distance = $this->Spaycs->distanceInMiles;
+            $distance = "ROUND( CAST(".str_replace(':long',$long,str_replace(':lat',$lat,$this->Spaycs->distanceInMiles))." AS numeric), 3)";
             $spaycs->select(['distance'=>$distance])
-                    ->bind(':lat', $lat, 'float')
-                    ->bind(':long', $long, 'float')
+                    //->bind(':lat', $lat, 'float')
+                    //->bind(':long', $long, 'float')
                     ->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
         }else{
             $spaycs->select(['distance'=>0])
@@ -1101,10 +1101,10 @@ class SpaycsController extends AppController {
                 ]);
       
         if(!empty($lat) && !empty($long)){
-            $distance = $this->Spaycs->distanceInMiles;
+            $distance = "ROUND( CAST(".str_replace(':long',$long,str_replace(':lat',$lat,$this->Spaycs->distanceInMiles))." AS numeric), 3)";
             $spaycs->select(['distance'=>$distance])
-                    ->bind(':lat', $lat, 'float')
-                    ->bind(':long', $long, 'float')
+                    //->bind(':lat', $lat, 'float')
+                    //->bind(':long', $long, 'float')
                     ->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
         }else{
             $spaycs->select(['distance'=>0])
