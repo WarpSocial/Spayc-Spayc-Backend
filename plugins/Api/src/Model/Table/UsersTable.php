@@ -488,8 +488,8 @@ class UsersTable extends Table {
     public function validationChangePassword(Validator $validator, $userId = null) {
         
         $validator
-                ->requirePresence('old_password', 'create',__('Old password is required field.'))
-                ->notEmpty('old_password',__('Old password is required field.'))
+                ->requirePresence('old_password', 'create',__('Previous password is required field.'))
+                ->notEmpty('old_password',__('Previous password is required field.'))
                 ->add('old_password','custom', [
                     'rule'=>function($value, $context) use($userId) {
                         $password = $this->get($userId, ['fields'=>'password']);
@@ -498,7 +498,7 @@ class UsersTable extends Table {
                         }
                         return true;
                     },
-                    'message'=>__('Old passwords don\'t match, try again please!'),
+                    'message'=>__('Previous password is not correct.'),
                 ]);
         
         $validator
@@ -512,7 +512,7 @@ class UsersTable extends Table {
                             return true;
                         }
                     },
-                    'message'=>__('New password must contain 8-30 character length, at least one letter and one number.'),
+                    'message'=>__('New password must contain 8-30 character length and at least one letter and one number.'),
                 ])
                 ->add('new_password', 'custom', [
                     'rule' => function($value, $context) {
@@ -521,11 +521,11 @@ class UsersTable extends Table {
                         }
                         return true;
                     },
-                    'message' => 'New password and old password should not be same, try again please!']);
+                    'message' => 'New password and previous password couldn\'t be same.']);
         $validator
                 ->requirePresence('confirm_password', 'create', __('Confirm password is required field.'))
                 ->notEmpty('confirm_password', __('Confirm password is required field.'))
-                ->sameAs('confirm_password', 'new_password',__('New password and confirm password should be matched, try again please!'));
+                ->sameAs('confirm_password', 'new_password',__('New password and confirm password must be matched.'));
         
         return $validator;
     }
