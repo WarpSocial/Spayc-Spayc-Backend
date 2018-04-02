@@ -1106,7 +1106,7 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
         }
         $data = $this->request->getData();
-      
+
         $user = $this->Auth->user();
       
         $entity = $this->Spaycs->find()->contain('JoinedSpayc',function($q)use($user){
@@ -1120,14 +1120,14 @@ class SpaycsController extends AppController {
         
         
         $data['spaycs'] = ['_ids' => [1]];
-        $items = $advModel->patchEntity($entity,$data,['associated'=>['Spaycs']]);
+        $items = $advModel->patchEntity($entity,$data);
         
         if(!empty($items->errors())) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
         }
         $items->user_id = $user['id'];
         $success=$advModel->save($items);
-        pr($success);die;
+//        pr($success);die;
         
         
         
@@ -1143,64 +1143,11 @@ class SpaycsController extends AppController {
         $entity->created = new \Cake\I18n\Time();   
         $ad_spayc[]=$advModel->save($entity);
         }
-        print_R($ad_spayc);die;
-                
-        if($entity->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>__('Parent space has not been found.')], 400);
+         
+        if(!count($ad_spayc)){
+            $this->restException(['status'=>'failed', 'message'=>__('Advertisement could not be saved. Please, try again.')], 400);
         }
-        
-        $parentObj = $entity->first();
-        if(empty($parentObj->joined_spayc)){
-            $this->restException(['status'=>'failed','message'=>__('You don\'t have sufficient right to create subspace.')], 400);
-        }
-        if(!empty($parentObj->parent_id)){
-            $this->restException(['status'=>'failed','message'=>__('Not allowd to create subspayc of subspayc.')], 400);
-        }
-        $data['parent_id'] = $parentObj->id;
-        $data['start_date'] = $parentObj->start_date;
-        $data['end_date'] = $parentObj->end_date;
-        $data['latitude'] = $parentObj->latitude;
-        $data['longitude'] = $parentObj->longitude;
-        $data['type'] = $parentObj->type;
-        $items = $this->Spaycs->newEntity($data,['validate'=>false]);
-        
-        
-        $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
-        
-        $matrix = $this->Matrix->createRoom($data);
-        if(!empty($matrix['error'])) {
-            $this->restException(['status' => "failed", 'message' =>__($matrix['error'])], 400);
-        }
-        $items->set('matrix_room_id',$matrix['room_id']);
-        $items->set('matrix_room_alias',$matrix['room_alias']);
-        $items->set('user_id', $this->Auth->user('id'));
-        if (!$items->errors()) {
-            if($this->Spaycs->save($items)){
-              $data['image'] = $items->get('image');
-              $data['matrix_room_id'] = $items->get('matrix_room_id');
-              //Joined the invite to the room//
-                $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
-                 if(!empty($items['description'])) {
-                    TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
-                }
-                $this->response->statusCode(201);
-                $data['id'] = $items->id;
-                $response = ['status'=>'success','message'=>__('SubSpayc Created Successfully'),'data'=>$data];
-                /*Event to bind to update the set upload room image */
-                $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
-                    'options' => [
-                        'matrix_token'=>$data['matrix_token'],
-                        'image'=> $items->get('image'),
-                        'matrix_room_id'=> $items->matrix_room_id,
-                        ]
-                ]);
-                EventManager::instance()->dispatch($event);
-            }else{
-                $this->restException(['status'=>'failed', 'message'=>__('Subspace could not be saved. Please, try again.')], 400);
-            }
-        } else {
-            $this->restException(['status'=>'failed', 'message'=>__('Subspace could not be saved. Please, try again.')], 400);
-        }
+        $response = ['status'=>'success','message'=>__('Advertisement Created Successfully'),'data'=>$success];
         $this->set($response);
     }
 
