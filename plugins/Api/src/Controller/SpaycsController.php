@@ -258,15 +258,6 @@ class SpaycsController extends AppController {
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Accepted');
         $lat = $this->request->getQuery('latitude',null);
         $long = $this->request->getQuery('longitude',null);
-        
-        if((empty($this->request->query('list_by')) || !in_array($this->request->query('list_by'), ['created', 'joined'])) || (!empty($lat) && !empty($long))) {
-            if(!Utils::isValidLatitude($lat)) {
-                $this->restException(['status'=>'failed', 'message'=>__('Latitude is not valid.')], 400);
-            }
-            if(!Utils::isValidLongitude($long)) {
-                $this->restException(['status'=>'failed', 'message'=>__('Longitude is not valid.')], 400);
-            }
-        }
         $spaycs = $this->Spaycs->find();
         $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id'])
             ->where(['status'=>'Active','parent_id IS'=>null,'Spaycs.group_type !='=>'trusted_private'])
