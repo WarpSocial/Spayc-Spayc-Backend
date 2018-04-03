@@ -213,7 +213,7 @@ class FriendRequestTable extends Table
      public function getNearByFriendsOnMap($request = [], $userId = null) {
          //Friend ID List     
          $child=$this->getFriendIdsByUserId($userId);
-              
+         
            if(!empty($child)) {       
         //Getting Distance
               $distanceField = '( 3959 * ACOS( COS( RADIANS(:latitude) ) *
