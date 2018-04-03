@@ -10,6 +10,7 @@ use Cake\Core\Configure;
 use Cake\I18n\Time;
 use Cake\ORM\TableRegistry;
 use Cake\Controller\ComponentRegistry;
+use Api\Utils\Utils;
 use Api\Controller\Component\PushComponent;
 use Api\Controller\Component\MatrixComponent;
 
@@ -631,7 +632,7 @@ class SpaycsTable extends Table {
 //        }
 //        return $data;
 //        
-    $date = (new Time('now', Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i:s");   
+    $end_date = (new Time('now', Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i:s");   
            if(!empty($request['latitude']) && !empty($request['longitude'])) {
             //To search by kilometers instead of miles, replace 3959 with 6371.
               $distanceField = '( 3959 * ACOS( COS( RADIANS(:latitude) ) *
@@ -648,9 +649,30 @@ class SpaycsTable extends Table {
                     'Spaycs.group_type !='=>'trusted_private', 
                     'Spaycs.parent_id IS'=>null
                     ])
-                    ->where(["end_date >="=>$date])
+//                    ->where(["end_date >="=>$date])
                 ->bind(':latitude', $request['latitude'], 'float')
                 ->bind(':longitude', $request['longitude'], 'float');
+            
+        if(isset($request['start_date']) && $request['start_date'] && isset($request['end_date']) && $request['end_date']) {
+            $d1 = new \Cake\I18n\Time($request['start_date']);
+            $startDate = Utils::setUtc($d1->format('Y-m-d H:i:s'), Configure::read("timezone"));
+            $spaycs->where(["Spaycs.start_date >="=>$startDate]);
+            
+            
+            $d2 = new \Cake\I18n\Time($request['end_date']);
+            $endDate = Utils::setUtc($d2->format('Y-m-d H:i:s'), Configure::read("timezone"));
+            $spaycs->where(["Spaycs.end_date <="=>$endDate]);
+        }else{
+            $spaycs->where(["end_date >="=>$end_date]);
+        }
+        
+        if(isset($request['spayc_type']) && in_array(ucfirst($request['spayc_type']), ['Event', 'Community'])) {
+            $spaycs->where(["Spaycs.type"=>ucfirst($request['spayc_type'])]);
+        }
+        
+        if(isset($request['group_type']) && in_array(ucfirst($request['group_type']), ['Public', 'Private'])) {
+            $spaycs->where(["Spaycs.group_type"=>ucfirst($request['group_type'])]);
+        }
         }
         $spaycs->contain([
             'JoinedSpayc' => function($q) {
