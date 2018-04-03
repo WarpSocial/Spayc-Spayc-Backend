@@ -398,7 +398,7 @@ class Utils {
         } else if ($unit == "N") {
             return ($miles * 0.8684);
         } else {
-            return $miles;
+            return number_format($miles,5);
         }
     }
 
