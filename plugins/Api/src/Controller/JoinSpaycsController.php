@@ -52,7 +52,6 @@ class JoinSpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Spayc is not exist.')], 400);
         }
         $spayc = $spaycs->first();
-        
         if(!empty($spayc->parent_id)){
             $this->restException(['status'=>'failed','message'=>__('Spayc is not allowd to join.')], 400);
         }
@@ -307,10 +306,10 @@ class JoinSpaycsController extends AppController {
         $currentUserStatus = $currentUserStatus[0];
         $BannedUserStatus = $BannedUserStatus[0];
         if($currentUserStatus['is_admin'] < 1){
-            $this->restException(['status'=>'failed','message'=>__('You have not permission to banned the user.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('You have not permission to ban a user.')], 400);
         }
         if($currentUserStatus['is_admin'] <= $BannedUserStatus['is_admin']){
-            $this->restException(['status'=>'failed','message'=>__('You have no rights to banned the user which has same level of access.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('You have no rights to ban a user which has same level of access.')], 400);
         }
         if($BannedUserStatus['status'] == 'Banned'){
             $this->restException(['status'=>'failed','message'=>__('User already banned with this spayc.')], 400);
@@ -327,13 +326,13 @@ class JoinSpaycsController extends AppController {
         $BannedUserStatus->updated_by = $user['id'];
         $matrix = $this->Matrix->banMember($data);
         if(!empty($matrix)) {
-            $this->restException(['status'=>'failed','message'=>__('Failed to banned the user.')],400);
+            $this->restException(['status'=>'failed','message'=>__('Failed to ban a user.')],400);
         }
         if($jsModel->save($BannedUserStatus)){
             $response = ['status'=>'success','message'=>__('User has been '.$data['status'].' successfully.')];
         }else{
             $this->response->statusCode(400);
-            $response = ['status'=>'failed','message'=>__('Failed to banned the user.')];
+            $response = ['status'=>'failed','message'=>__('Failed to ban a user.')];
         }
         $this->set($response);
     }
