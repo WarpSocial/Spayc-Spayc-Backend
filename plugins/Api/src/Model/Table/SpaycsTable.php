@@ -696,21 +696,35 @@ class SpaycsTable extends Table {
     }
     
     public function distance($lat1, $lon1, $lat2, $lon2) {
+        $pi80 = M_PI / 180;
+        $lat1 *= $pi80;
+        $lon1 *= $pi80;
+        $lat2 *= $pi80;
+        $lon2 *= $pi80;
 
-    $pi80 = M_PI / 180;
-    $lat1 *= $pi80;
-    $lon1 *= $pi80;
-    $lat2 *= $pi80;
-    $lon2 *= $pi80;
+        $r = 3959; // mean radius of Earth in km
+        $dlat = $lat2 - $lat1;
+        $dlon = $lon2 - $lon1;
+        $a = sin($dlat / 2) * sin($dlat / 2) + cos($lat1) * cos($lat2) * sin($dlon / 2) * sin($dlon / 2);
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+        $km = $r * $c;
 
-    $r = 3959; // mean radius of Earth in km
-    $dlat = $lat2 - $lat1;
-    $dlon = $lon2 - $lon1;
-    $a = sin($dlat / 2) * sin($dlat / 2) + cos($lat1) * cos($lat2) * sin($dlon / 2) * sin($dlon / 2);
-    $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-    $km = $r * $c;
+        //echo '<br/>'.$km;
+        return $km;
+    }
+    
+    public function updateDistance($entity){ 
+        if(!empty($entity['joined_spayc'])){
+            $this->getConnection()->transactional(function () use ($entity) {                
+                foreach ($entity->joined_spayc as $jp) {
+                    $this->JoinedSpayc->query()
+                            ->update()
+                            ->set(['distance' => $jp->distance])
+                            ->where(['id' => $jp->id])
+                            ->execute();
+                }
+            });
+        }
+    }
 
-    //echo '<br/>'.$km;
-    return $km;
-}
 }
