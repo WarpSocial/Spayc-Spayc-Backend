@@ -438,6 +438,7 @@ class SpaycsTable extends Table {
         if($query->isEmpty()){
             return [];
         }
+        $query->order(['JoinedSpayc.created'=>'DESC']);
         $result = $query->map(function ($row) {
             if(!empty($row->_matchingData['JoinedSpayc']->is_admin)){
                 $row->is_admin = $row->_matchingData['JoinedSpayc']->is_admin;
@@ -445,14 +446,14 @@ class SpaycsTable extends Table {
                 $row->is_admin = 0;
             }
             $row->matrix_room_id = '';
-            $row->requested_status = '';
+            $row->friend_status = '';
             $row->joined_status = 'Not_Joined';
             $row->physically_present = false;
             if(!empty($row->requestedto[0])){
-                $row->requested_status = $row->requestedto[0]->requested_status; 
+                $row->friend_status = $row->requestedto[0]->requested_status; 
                 $row->matrix_room_id = $row->requestedto[0]->matrix_room_id;
             }elseif(!empty($row->requestedby[0])){
-                $row->requested_status = $row->requestedby[0]->requested_status;
+                $row->friend_status = $row->requestedby[0]->requested_status;
                 $row->matrix_room_id = $row->requestedby[0]->matrix_room_id;
             }
             if(!empty($row->_matchingData['JoinedSpayc']->status)){
