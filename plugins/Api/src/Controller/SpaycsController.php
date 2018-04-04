@@ -705,15 +705,13 @@ class SpaycsController extends AppController {
         if(empty($page)){
             $page = 1;
         }
-        $query = $this->Spaycs->spaycMember($spaycId,$status,$page,$limit);
-        
-        if(!$query){
+        $query = $this->Spaycs->spaycMember($spaycId,$status,$page,$limit);        
+        if(empty($query)){
             $this->response->statusCode(204);
             $response = ['status'=>'success', 'message'=>__('List of spayc member.'), 'data'=>[]];
         }else{
             $response = ['status'=>'success', 'message'=>__('List of spayc member.'), 'data'=>$query];
-        }
-        
+        }        
         $this->set($response);
     }
     

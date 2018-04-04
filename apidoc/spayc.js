@@ -526,7 +526,7 @@ function postChatRoom() { return; }
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
 
-    @apiParam {String}     room_id      Spayc matrix id in query string (Required).
+    @apiParam {String}     room_id      Spayc matrix room id or spayc id in query string (Required).
     @apiParam {String}      status     Status of user, value must be any one from following(Pending|Joined) (Optional).
     @apiParam {Digit}      page        Page no(Optional).
     @apiParam {Digit}      limit       No of record to retrieve(Optional).
@@ -539,51 +539,36 @@ function postChatRoom() { return; }
 {
     "status": "success",
     "message": "List of spayc member.",
-    "data": {
-        "count": 4,
-        "records": [
-            {
-                "username": "devtestAA",
-                "email": "devtestAA@kiwitech.com",
-                "gender": "Male                                              ",
-                "dob": "02-25-2005",
-                "country_code": null,
-                "phone": "",
-                "website_url": null,
-                "address": null,
-                "bio_data": null,
-                "longitude": "21.253",
-                "latitude": "25.256",
-                "matrix_user_id": "@devtestaa:127.0.0.1",
-                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/4_20180220071137.png",
-                "user_id": "10",
-                "is_admin": 0,
-                "requested_status": "Joined",
-                "is_subscribed": false,
-                "physically_present": false
-            },
-            {
-                "username": "devtestAB",
-                "email": "devtestAB@kiwitech.com",
-                "gender": "Male                                              ",
-                "dob": "02-25-2005",
-                "country_code": null,
-                "phone": "",
-                "website_url": null,
-                "address": null,
-                "bio_data": null,
-                "longitude": "21.253",
-                "latitude": "25.256",
-                "matrix_user_id": "@devtestab:127.0.0.1",
-                "image_url": "",
-                "user_id": "11",
-                "is_admin": 0,
-                "requested_status": "Joined",
-                "is_subscribed": false,
-                "physically_present": false
-            }
-        ]
-    }
+    "data": [
+         {
+            "id": "2",
+            "username": "devuserA_1521280139",
+            "display_name": "devuserA",
+            "email": "devuserA@yopmail.com",
+            "matrix_user_id": "@devusera_1521280139:127.0.0.1",
+            "is_admin": 2,
+            "matrix_room_id": "",
+            "requested_status": "",
+            "joined_status": "Joined",
+            "physically_present": false,
+            "is_subscribed": true,
+            "image_url": ""
+        },
+        {
+            "id": "5",
+            "username": "devuserD_1521280167",
+            "display_name": "devuserD",
+            "email": "devuserD@yopmail.com",
+            "matrix_user_id": "@devuserd_1521280167:127.0.0.1",
+            "is_admin": 0,
+            "matrix_room_id": "",
+            "requested_status": "Accepted",
+            "joined_status": "Joined",
+            "physically_present": true,
+            "is_subscribed": false,
+            "image_url": ""
+        },
+    ]    
 }
  *
  * @apiUse UserErrorResponse
