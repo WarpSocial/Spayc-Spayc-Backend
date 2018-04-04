@@ -571,124 +571,62 @@ class SpaycsTable extends Table {
     
     
     public function getNearBySpaycsOnMap($request = [], $userId=null) {
-//        if(!empty($request['latitude']) && !empty($request['longitude'])) {
-//            $distanceField = '( 3959 * ACOS( COS( RADIANS(:latitude) ) *
-//                COS( RADIANS(  latitude ) ) *
-//                COS( RADIANS(  longitude ) - RADIANS(:longitude) ) +
-//                SIN( RADIANS(:latitude) ) *
-//                SIN( RADIANS(  latitude ) ) ) )';
-//            
-//            
-//             $distance = 24;
-//            $users = TableRegistry::get('Users')->find()
-//                ->select([
-//                    'distance' => $distanceField, 'id'])
-////                ->where(['Users.id'=>$userId])
-//                ->where(["$distanceField <=" => $distance])
-//                ->bind(':latitude', $request['latitude'], 'float')
-//                ->bind(':longitude', $request['longitude'], 'float')
-//                ->order(['Users.id']);
-//            print_R($users->toArray());die;
-//            if(!$users->isEmpty()) {
-//                return round($users->first()->distance, 2);
-//            }
-//            return 0;
-//            $spaycs = $this->find()
-//                ->select([
-//                    'distance' => $distanceField, 'id', 'name', 'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode'])
-//                ->where(["$distanceField >=" => $distance, 'status'=>'Active','Spaycs.group_type !='=>'trusted_private', 'Spaycs.parent_id IS'=>null])
-//                ->bind(':latitude', $request['latitude'], 'float')
-//                ->bind(':longitude', $request['longitude'], 'float')
-//                ->order(['distance'=>'ASC']);
-////            print_R($spaycs);die;
-//            print_R($spaycs->toArray());die;
-//        } else {
-//            $spaycs = $this->find()
-//                ->select(['id', 'name', 'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode'])
-//                ->where(['Spaycs.status'=>'Active', 'Spaycs.group_type !='=>'trusted_private', 'Spaycs.parent_id IS'=>null])
-//                ->order(['created'=>'DESC']);
-//        }
-//        $spaycs->contain([
-//            'JoinedSpayc' => function($q) {
-//                return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
-//            },
-//            'SubscribedUsers' => function($q) {
-//                return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
-//            }
-//        ]);
-//        $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
-//        $spaycs->limit($limit);
-//        if(!empty($request['keyword'])) {
-//            $spaycs->where(["LOWER(Spaycs.name) LIKE"=>"%".strtolower($request['keyword'])."%"]);
-//        }
-//        print_R($spaycs);die;
-//        $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($userId) {
-//            return $results->map(function ($row) use($userId) {
-//                $totalJoined = [];
-//                if(!empty($row['joined_spayc'])) {
-//                    $totalJoined = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[status=Joined].status');
-//                    $status = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.'].status');
-//                }
-//                $row['joined_spayc_status'] = !empty($status[0])?$status[0]:null;
-//                $row['is_joined'] = !empty($status[0])?true:false;
-//                $row['joined_users'] = !empty($row['joined_spayc'])?count($totalJoined):0;
-//                unset($row['joined_spayc']);
-//                if(!empty($row['subscribed_users'])) {
-//                    $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');
-//                }
-//                $row['subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):0;
-//                $row['is_subscribed'] = !empty($subUserId[0])?true:false;
-//                return $row;
-//            });
-//        });
-//        
-//        $page = (!empty($request['page']) && is_numeric($request['page']))?$request['page']:1;
-//        if($page < 0) {
-//            $page = $page*-1;
-//            $spaycs->page($page);
-//        } else {
-//            $spaycs->page($page);
-//        }
-//        $newQuery = clone $spaycs;
-//        $data['count'] = $newQuery->count();
-//        $data['records'] = [];
-//        if($spaycs->count()) {
-//            $data['records'] = $spaycs->toArray();
-//        }
-//        return $data;
-//        
-    $end_date = (new Time('now', Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i:s");   
-           if(!empty($request['latitude']) && !empty($request['longitude'])) {
+   $today_date = (new Time('now', Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i:s");
+           if(!empty($request['center_latitude']) && !empty($request['center_longitude'])) {
             //To search by kilometers instead of miles, replace 3959 with 6371.
               $distanceField = '( 3959 * ACOS( COS( RADIANS(:latitude) ) *
                 COS( RADIANS(  latitude ) ) *
                 COS( RADIANS(  longitude ) - RADIANS(:longitude) ) +
                 SIN( RADIANS(:latitude) ) *
                 SIN( RADIANS(  latitude ) ) ) )';
-            $distance=  $this->distance($request['latitude'], $request['longitude'], $request['latitude2'], $request['longitude2']); 
+            $distance=  $this->distance($request['center_latitude'], $request['center_longitude'], $request['endpoint_latitude'], $request['endpoint_longitude']); 
     
             $spaycs = $this->find()
                 ->select([
-                    'distance' => $distanceField, 'id', 'name', 'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode','latitude','longitude'])
-                ->where(["$distanceField <=" => $distance, 'status'=>'Active',
+//                    'distance' => $distanceField,
+                    'id', 
+                    'name', 
+//                    'location', 
+                    'matrix_room_id', 
+//                    'start_date', 
+//                    'end_date', 
+                    'image', 
+                    'type', 
+//                    'group_type', 
+//                    'passcode',
+                    'latitude','longitude'])
+                ->where(["$distanceField <=" => $distance, 'Spaycs.status'=>'Active',
                     'Spaycs.group_type !='=>'trusted_private', 
                     'Spaycs.parent_id IS'=>null
                     ])
 //                    ->where(["end_date >="=>$date])
-                ->bind(':latitude', $request['latitude'], 'float')
-                ->bind(':longitude', $request['longitude'], 'float');
+                ->bind(':latitude', $request['center_latitude'], 'float')
+                ->bind(':longitude', $request['center_longitude'], 'float');
+          
+//        if(isset($request['start_date']) && $request['start_date'] && isset($request['end_date']) && $request['end_date']) {
+//            $d1 = new \Cake\I18n\Time($request['start_date']);
+//            $startDate = Utils::setUtc($d1->format('Y-m-d H:i:s'), Configure::read("timezone"));
+//            $spaycs->where(["Spaycs.start_date >="=>$startDate]);
+//            
+//            
+//            $d2 = new \Cake\I18n\Time($request['end_date']);
+//            $endDate = Utils::setUtc($d2->format('Y-m-d H:i:s'), Configure::read("timezone"));
+//            $spaycs->where(["Spaycs.end_date <="=>$endDate]);
+//        }else{
+//            $spaycs->where(["end_date >="=>$today_date]);
+//        }
+        
+        if(isset($request['time']) && $request['time']=="past") {
+            $spaycs->where(["Spaycs.end_date <"=>$today_date]);
+        }else if(isset($request['time']) && $request['time']=="present") {
             
-        if(isset($request['start_date']) && $request['start_date'] && isset($request['end_date']) && $request['end_date']) {
-            $d1 = new \Cake\I18n\Time($request['start_date']);
-            $startDate = Utils::setUtc($d1->format('Y-m-d H:i:s'), Configure::read("timezone"));
-            $spaycs->where(["Spaycs.start_date >="=>$startDate]);
-            
-            
-            $d2 = new \Cake\I18n\Time($request['end_date']);
-            $endDate = Utils::setUtc($d2->format('Y-m-d H:i:s'), Configure::read("timezone"));
-            $spaycs->where(["Spaycs.end_date <="=>$endDate]);
+            $spaycs->where(["Spaycs.start_date <="=>$today_date]);
+            $spaycs->where(["Spaycs.end_date >="=>$today_date]);
+        }else if(isset($request['time']) && $request['time']=="future") {
+            $spaycs->where(["Spaycs.start_date >"=>$today_date]);
         }else{
-            $spaycs->where(["end_date >="=>$end_date]);
+            
+            $spaycs->where(["end_date >="=>$today_date]);
         }
         
         if(isset($request['spayc_type']) && in_array(ucfirst($request['spayc_type']), ['Event', 'Community'])) {
@@ -698,14 +636,41 @@ class SpaycsTable extends Table {
         if(isset($request['group_type']) && in_array(ucfirst($request['group_type']), ['Public', 'Private'])) {
             $spaycs->where(["Spaycs.group_type"=>ucfirst($request['group_type'])]);
         }
+        
+        if(isset($request['wrap_with_friends']) && $request['wrap_with_friends']=="yes") {
+        $child= TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId);
+          $spaycs->join(
+                [
+                    'table' => 'joined_spayc',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Spaycs.id = joined_spayc.spayc_id',
+                        'joined_spayc.user_id in ('.implode(",", $child).')'
+                    ]
+                ]
+            );
+           
+        }
+        if(isset($request['hashtag_id']) && $request['hashtag_id']) {
+            $spaycs->join(
+                [
+                    'table' => 'spayc_hashtags',
+                    'type' => 'INNER',
+                    'conditions' => [
+                         'Spaycs.id = spayc_hashtags.spayc_id',
+                        'spayc_hashtags.hashtag_id' => $request['hashtag_id'],
+                    ]
+                ]
+            );
+        }
         }
         $spaycs->contain([
-            'JoinedSpayc' => function($q) {
-                return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
-            },
-            'SubscribedUsers' => function($q) {
-                return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
-            }
+//            'JoinedSpayc' => function($q) {
+//                return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
+//            },
+//            'SubscribedUsers' => function($q) {
+//                return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
+//            }
         ]);
         $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($userId) {
             return $results->map(function ($row) use($userId) {
@@ -714,18 +679,21 @@ class SpaycsTable extends Table {
                     $totalJoined = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[status=Joined].status');
                     $status = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.'].status');
                 }
-                $row['joined_spayc_status'] = !empty($status[0])?$status[0]:null;
+//                $row['joined_spayc_status'] = !empty($status[0])?$status[0]:null;
                 $row['is_joined'] = !empty($status[0])?true:false;
-                $row['joined_users'] = !empty($row['joined_spayc'])?count($totalJoined):0;
+//                $row['joined_users'] = !empty($row['joined_spayc'])?count($totalJoined):0;
                 unset($row['joined_spayc']);
                 if(!empty($row['subscribed_users'])) {
                     $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');
                 }
-                $row['subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):0;
+//                $row['subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):0;
                 $row['is_subscribed'] = !empty($subUserId[0])?true:false;
                 return $row;
             });
         });
+        
+        $spaycs->distinct('spaycs.id');
+        
         $page = (!empty($request['page']) && is_numeric($request['page']))?$request['page']:1;
         if($page < 0) {
             $page = $page*-1;

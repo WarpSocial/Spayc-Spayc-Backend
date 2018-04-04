@@ -908,7 +908,7 @@ class SpaycsController extends AppController {
      */
     
     public function mapSpayc(){
-         if (!$this->request->is(['get'])) {
+         if (!$this->request->is(['post'])) {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);
         }
         $user = $this->Auth->user();
@@ -920,10 +920,8 @@ class SpaycsController extends AppController {
             $lat = $user['latitude'];
             $long = $user['longitude'];
         }
-        $page = $this->request->getQuery('page',1);
-        $limit = $this->request->getQuery('limit',Configure::read('pagelimit'));
-        $spayc=TableRegistry::get('Api.Spaycs')->getNearBySpaycsOnMap($this->request->getQuery(),$user['id']);
-        $friends = TableRegistry::get('Api.FriendRequest')->getNearByFriendsOnMap($this->request->getQuery(), $user['id']);
+        $spayc=TableRegistry::get('Api.Spaycs')->getNearBySpaycsOnMap($this->request->getData(),$user['id']);
+        $friends = TableRegistry::get('Api.FriendRequest')->getNearByFriendsOnMap($this->request->getData(), $user['id']);
 //        print_R($friends);die;
         if(!$friends['count'] && !$spayc['count']){
              $this->restException(['status'=>'failed','message'=>'Record not found.'], 404);
