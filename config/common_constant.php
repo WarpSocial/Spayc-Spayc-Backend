@@ -10,8 +10,10 @@ define('BLANK_COUNT',0);
 define('BLANK','--');
 $user_gender=array('1'=>'All','2'=>'Male','3'=>'Female','4'=>'Other');
 $user_age=array('1'=>'13-20','2'=>'21-30','3'=>'31-40','4'=>'41-50','5'=>'51-above');
+$status_arr=array('active'=>'Active','inactive'=>'Inactive');
 define('USER_GENDER', serialize($user_gender));
 define('USER_AGE', serialize($user_age));
+define('STATUS_ARR', serialize($status_arr));
 $config =array();
 $config['ERRORANDSUCCESSMSG'] = [
     'LOGOUTSUCCESS'=>'You log out successfully.',
@@ -31,4 +33,6 @@ $config['ERRORANDSUCCESSMSG'] = [
     'PASSERRMSG'=>'Password must contain 8-30 character length, at least one letter and one number.',
     'SYSTEMERR'=>'Oops! Something went wrong. Please try again', 
     'RESETLINKMSG'=>'A link to reset your password has been sent to your work email.',
+    'BLOCKED-MSG'=>'has been Blocked.',
+    'UNBLOCKED-MSG'=>'has been Unblocked.',
 ];

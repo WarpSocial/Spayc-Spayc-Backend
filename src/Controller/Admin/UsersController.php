@@ -370,28 +370,25 @@ class UsersController extends AdminController
             return $this->redirect(['action' => 'index']);  
         }        
         $user = $this->Users->get($id);  
-        if ($this->request->is(['post','put'])) { 
-            // $data = $this->request->getData();
-            // pr($data);die;
-            // $error = '';
-            // if (!isset($data['new_password'])) {
-            //     $error = $this->errorSuccessMessage['BLANKNPASS'];
-            // } else if(!$this->Users->_getCustomPasswordRule($data['new_password'])) {
-            //     $error = $this->errorSuccessMessage['PASSERRMSG'];
-            // }             
-            // if($data['new_password']!=$data['confirm_password']){
-            //     $error = $this->errorSuccessMessage['PASSMISSMATCH'];
-            // }
-            // if (!$error) {               
-            //     $user->password = ApiHasher::hash($data['new_password']);
-            //     if ($this->Users->save($user)) {
-            //         $result_arr = ['result' => true, 'message' => $this->errorSuccessMessage['PASSSUCCESS']];
-            //     } 
-            // } else {                   
-            //     $result_arr = ['result' => false, 'message' => $error]; 
-            // }
-            // echo json_encode($result_arr);
-            // die;
+        $statusArr = unserialize(STATUS_ARR);
+        if ($this->request->is(['post','put'])) {    
+            if(!empty($user->status) && ucfirst($user->status) == $statusArr['active'] )
+                $user->status = $statusArr['inactive'];
+            else
+                $user->status = $statusArr['active'];
+
+            if ($this->Users->save($user)) {   
+                $displayName = !empty($user->display_name)? $user->display_name :'User';
+                if (ucfirst($user->status) == $statusArr['active']) {   
+                    $result_arr = ['result' => true, 'status'=>$statusArr['active'], 'message' => $displayName.' '.$this->errorSuccessMessage['UNBLOCKED-MSG']]; 
+                } else {   
+                    $result_arr = ['result' => true, 'status'=>$statusArr['inactive'], 'message' => $displayName.' '.$this->errorSuccessMessage['BLOCKED-MSG']];   
+                }
+            } else {                
+                $result_arr = ['result' => false, 'status'=>'', 'message' => $this->errorSuccessMessage['SYSTEMERR']];   
+            }
+            echo json_encode($result_arr);
+            die;
         }
         $this->set(compact('user'));
     }

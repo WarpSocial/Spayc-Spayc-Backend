@@ -16,3 +16,12 @@
 	min-height: 35px !important;
 	height: auto !important;
 }
+.content-wrapper {
+    position: relative;
+}
+.header-alert {
+    bottom: 17px;
+    z-index: 9;
+    left: 50%;
+    transform: translateX(-50%);
+}

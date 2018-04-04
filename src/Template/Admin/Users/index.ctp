@@ -1,6 +1,7 @@
 <?php 
 use Cake\Routing\Router;
 use Api\Auth\ApiHasher;
+$statusArr = unserialize(STATUS_ARR);
 $userCount=$showPassword=$filter=false;
 if(count($users) > 0) 
   $userCount=true; 
@@ -41,12 +42,13 @@ if(isset($this->request->query['sort'])) {
           <p><span>manage</span> <span>user</span></p>
         </div>
       </div>
+
 <section class="content-wrapper content-filter">
+ <span class="error-alert users-msg header-alert" style="display: none;"></span>
         <!--===========filter================-->
         <?php if($userCount || $filter){ 
                 echo $this->element('admin/user-filter');
         ?>
- 
       <!--============= table head ===================-->
       <div class="container">        
         <div class="table-wrapper">      
@@ -82,7 +84,7 @@ if(isset($this->request->query['sort'])) {
                   <span class="ell user-password d-inline-block" tabindex="0" data-toggle="tooltip" data-animation="false" title="<?php echo ApiHasher::dehash($user->password);?>"><?= !empty($user->password)?'Pass->'.h(ApiHasher::dehash($user->password)):'' ?></span>
                   <?php } ?>
                   <span class="ell">
-                    <a href="javascript:void(0)" class="pop change-password-text" page="<?php echo Router::url(['Controller' => 'Users', 'action'=> 'adminResetPassword',$user->id]);?>">Change Password</a>
+                    <a href="javascript:void(0)" rel="modal-dialog-sm forgot-password-modal" class="pop change-password-text" page="<?php echo Router::url(['Controller' => 'Users', 'action'=> 'adminResetPassword',$user->id]);?>">Change Password</a>
                   </span>
                   <?php } ?>
                 </div>
@@ -119,9 +121,9 @@ if(isset($this->request->query['sort'])) {
                       <span></span>
                     </div>
                     <div class="dropdown-menu" aria-labelledby="table-data-dropdown">
-                      <button class="dropdown-item block hide"> <i class="icon-block"></i>Blockaa</button>
-                      <a href="javascript:void(0)" class="pop dropdown-item block" page="<?php echo Router::url(['Controller' => 'Users', 'action'=> 'setUserStatus',$user->id]);?>">
-                      <?php echo (strtolower($user->status) == 'active')?"<i class='icon-block status_".$user->id."'></i>Block":"<i class='icon-block'></i>Unblock";?>
+                      <button class="dropdown-item block hide"> <i class="icon-block"></i>Block</button>
+                      <?php  $blocktxt = (ucfirst($user->status) == $statusArr['active'])?"Block":"Unblock";?>
+                      <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item status_<?= $user->id?> <?= strtolower($blocktxt)?>" page="<?php echo Router::url(['Controller' => 'Users', 'action'=> 'setUserStatus',$user->id]);?>"><i class='icon-block'></i><span class="status_<?= $user->id?>"><?= $blocktxt?></span>
                       </a>
                     </div>
                   </div>
@@ -159,4 +161,4 @@ if(isset($this->request->query['sort'])) {
       </div>
     <?php } ?>
 </section>
-<?php echo $this->Html->script(['admin/admin-manage-user']); ?>
+<?php echo $this->Html->script(['admin/user','admin/admin-manage-user']); ?>

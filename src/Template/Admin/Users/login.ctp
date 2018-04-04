@@ -25,7 +25,7 @@
 
               <div class="mt-10 d-flex justify-content-between align-items-center">
                 <!-- <button type="button" class="forgot-password-text" data-toggle="modal" data-target="#forgotPassword">Forgot Password?</button> -->
-                <a class="pop forgot-password-text" page="<?php echo Router::url(['_name' => 'forgotPassword']);?>">Forgot Password?</a>
+                <a class="pop forgot-password-text" rel="modal-dialog-sm forgot-password-modal" page="<?php echo Router::url(['_name' => 'forgotPassword']);?>">Forgot Password?</a>
 
                  <?= $this->Form->button('Sign In', ['type' => 'submit','class'=>'button btn-md']); ?>               
                 <!--option-->

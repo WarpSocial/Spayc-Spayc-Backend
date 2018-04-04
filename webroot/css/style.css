@@ -906,7 +906,7 @@ input[type=radio]:checked + span {
 }
 button:disabled,
 input:disabled {
-  color: #2D8F30;
+  color: #2d8f30;
   cursor: not-allowed;
 }
 .login-page {
@@ -1316,7 +1316,8 @@ input:disabled {
   background: url('../images/datepicker.png') no-repeat center center;
   position: absolute;
   right: 0;
-  top: 0;
+  top: 50%;
+  margin-top: -10px;
 }
 .datepicker.dropdown-menu {
   border-radius: 0px;
@@ -1766,7 +1767,7 @@ input:disabled {
 /*===================================
 *   modal width calsses
 ===================================*/
-.modal .modal-dialog-sm {
+.modal-dialog-sm {
   width: 431px;
   max-width: 431px;
   height: auto;
@@ -1774,8 +1775,9 @@ input:disabled {
   -moz-box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.1);
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.1);
   border-radius: 0;
+  margin: 0 auto;
 }
-.modal .modal-dialog-xs {
+.modal-dialog-xs {
   width: 400px;
   max-width: 400px;
   height: auto;
@@ -1783,14 +1785,16 @@ input:disabled {
   -moz-box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.1);
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.1);
   border-radius: 0;
+  margin: 0 auto;
 }
-.modal .modal-dialog-lg {
+.modal-dialog-lg {
   width: 700px;
   max-width: 700px;
   height: auto;
   -webkit-box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.1);
   -moz-box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.1);
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
 }
 /*================custom message popup============*/
 .custom-message {
@@ -1853,7 +1857,15 @@ input:disabled {
   line-height: 22px;
 }
 /*================confirm message popup=================*/
-.confirm-message {
+.confirm-message .modal-content {
+  -webkit-border-radius: 5px !important;
+  -moz-border-radius: 5px !important;
+  border-radius: 5px !important;
+  -moz-background-clip: padding !important;
+  -webkit-background-clip: padding-box !important;
+  background-clip: padding-box !important;
+}
+.confirm-message .modal-content .modal-body {
   width: 100%;
   height: auto;
   -webkit-border-radius: 5px !important;
@@ -1862,8 +1874,9 @@ input:disabled {
   -moz-background-clip: padding !important;
   -webkit-background-clip: padding-box !important;
   background-clip: padding-box !important;
+  padding: 45px !important;
 }
-.confirm-message h2 {
+.confirm-message .modal-content .modal-body h2 {
   font-size: 1.125rem;
   color: #1a4c59;
   font-weight: 300;
@@ -1872,16 +1885,102 @@ input:disabled {
   line-height: 29px;
   margin-bottom: 0;
 }
-.confirm-message h2 span {
+.confirm-message .modal-content .modal-body h2 span {
   font-weight: 500;
 }
-.confirm-message .modal-body {
-  padding: 45px !important;
-}
-.confirm-message button {
+.confirm-message .modal-content .modal-body button {
   margin: 0 5px;
   height: 39px;
   line-height: 39px;
+}
+/*================ forgot password message===*/
+.forgot-password-modal .modal-body {
+  width: 100%;
+  height: 100%;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: -ms-flex;
+  display: flex;
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  -ms-align-items: center;
+  align-items: center;
+  padding: 50px !important;
+  position: relative;
+}
+.forgot-password-modal .modal-body h1 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #092d42;
+  letter-spacing: .5px;
+  margin-bottom: 0;
+  text-transform: uppercase;
+  line-height: 29px;
+}
+.forgot-password-modal .modal-body p {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: #092d42;
+}
+.forgot-password-modal .modal-body a {
+  color: #49ff00;
+  text-decoration: none;
+}
+.forgot-password-modal .modal-body a:hover {
+  color: #49ff00;
+}
+.forgot-password-modal .modal-body .forgot-password-text,
+.forgot-password-modal .modal-body .cancel-text {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: none;
+  color: #092d42;
+}
+.forgot-password-modal .modal-body .forgot-password-text:focus,
+.forgot-password-modal .modal-body .cancel-text:focus {
+  outline: 0;
+}
+.forgot-password-modal .modal-body .cancel-text {
+  color: #eb5656;
+  font-weight: 300;
+}
+.forgot-password-modal .modal-body .skip-text {
+  color: #1a4c59;
+  font-weight: 300;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.forgot-password-modal .modal-body label {
+  color: #333333;
+  opacity: .7;
+  font-size: 0.75rem;
+}
+.forgot-password-modal .modal-body .password-wrap {
+  height: auto;
+  width: 100%;
+}
+.forgot-password-modal .modal-body .password-wrap input {
+  padding-right: 40px;
+}
+.forgot-password-modal .modal-body .password-wrap .show-password {
+  position: absolute;
+  bottom: 30px;
+  right: 0;
+  line-height: 32px;
+  cursor: pointer;
+  font-size: 0.6875rem;
+}
+.forgot-password-modal .modal-body .update-password-wrap {
+  width: 100%;
+  display: block;
+  text-align: center;
+}
+.forgot-password-modal .modal-body a.forgot-password-text {
+  color: #1a4c59;
 }
 /*================user list popup============*/
 .modal .modal-dialog .user-list-modal {

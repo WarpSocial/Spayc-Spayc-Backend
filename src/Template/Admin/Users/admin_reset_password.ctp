@@ -27,4 +27,3 @@
               <?php echo $this->Form->end(); ?>
           </div>   
           </div>         
-      <?php echo $this->Html->script('admin/user'); ?>

@@ -1,6 +1,5 @@
 jQuery(document).ready(function ($) { 
-
-    $('.show-password').on('click', function () {   
+    $(document).on('click', '.show-password', function (e) {   
         var attrObj = $(this).parent("div").find('input');
         if (attrObj.attr('type') == 'text') { 
             $(this).text('Show');
@@ -53,31 +52,31 @@ jQuery(document).ready(function ($) {
             $('#ForgetPasswordFrm #emailError').text(errorSuccessMessage['INVALIDEMAIL']);
             return false;
         }          
-        if(err==0){           
-        $.ajax({
-               type:'POST',
-               url:UserUrls.ForgotPassword,
-               data: {email: email.val()},
-               dataType:'JSON',
-               async: true,             
-              beforeSend: function () {
-                $(".loader").addClass('show-loader');
-              },
-               success:function(data){        
-                  $(".loader").removeClass('show-loader');        
-                   if (data.result) {     
-                        $( "#forgotCancel").trigger('click'); 
-                        openPopup(UserUrls.Success);                   
-                    } else { 
-                      messageFadeOut('error-forgot-password-page',data.message);
-                    }
-               },
-               error: function (e,x,t) {
-              $(".loader").hide();
-              ajax_error(e);
-            }
-           });
-          e.preventDefault();
+        if(err==0){ 
+        $(".loader").addClass('show-loader');          
+          setTimeout(function(){
+            $.ajax({
+                   type:'POST',
+                   url:UserUrls.ForgotPassword,
+                   data: {email: email.val()},
+                   dataType:'JSON',
+                   async: false,             
+                   success:function(data){        
+                      $(".loader").removeClass('show-loader');        
+                       if (data.result) {     
+                            $( "#forgotCancel").trigger('click'); 
+                            openPopup(UserUrls.Success);                   
+                        } else { 
+                          messageFadeOut('error-forgot-password-page',data.message);
+                        }
+                   },
+                  error: function (e,x,t) {
+                    $(".loader").removeClass('show-loader'); 
+                    ajax_error(e);
+                  }
+               });
+          },10);
+        e.preventDefault();
         }  
     }); 
 
@@ -158,7 +157,7 @@ jQuery(document).ready(function ($) {
            }
        });
 
-      $(document).on('submit', '#admin_reset_password_form', function (e) {    
+    $(document).on('submit', '#admin_reset_password_form', function (e) {    
 
         $('.input-alert').text('');        
         $('input').removeClass('incorrect-alert');  
@@ -193,15 +192,14 @@ jQuery(document).ready(function ($) {
                return false;
            }         
         if(err==0){ 
+        $(".loader").addClass('show-loader');          
+        setTimeout(function(){
         $.ajax({
                type:'POST',
                url:form.prop('action'),
                data: form.serialize(),
                dataType:'JSON',
-               async: true,             
-               beforeSend: function () {
-                $(".loader").addClass('show-loader');
-               },
+               async: false,             
                success:function(data){        
                   $(".loader").removeClass('show-loader');        
                    if (data.result) { 
@@ -222,45 +220,49 @@ jQuery(document).ready(function ($) {
                 ajax_error(e);
               }
            });
+          });
           e.preventDefault();
         }  
-    }); 
-
-    $(document).on('submit', '#admin_reset_password_form', function (e) {            
-              
-            form = $("form#set_user_status_form");  
-            $.ajax({
-             type:'POST',
-             url:form.prop('action'),
-             data: form.serialize(),
-             dataType:'JSON',
-             async: true,             
-             beforeSend: function () {
-              $(".loader").addClass('show-loader');
-             },
-             success:function(data){        
-                $(".loader").removeClass('show-loader');  
-                console.log(data);      
-                 // if (data.result) { 
-                 //    $('.error-forgot-password-page').removeClass('error-alert hide');
-                 //    $('.error-forgot-password-page').addClass('success-alert');
-                 //    resetForm('admin_reset_password_form');
-                 //    $('.error-forgot-password-page').text(data.message).delay(5000)
-                 //       .fadeOut('slow', function () {
-                 //       $('.error-forgot-password-page').text('');
-                 //       $( ".skip-popup").trigger('click'); 
-                 //    });
-                 //  } else {                                                 
-                 //    messageFadeOut('error-forgot-password-page',data.message);
-                 //  }
-             },
-             error: function (e,x,t) {
-              $(".loader").removeClass('show-loader'); 
-              ajax_error(e);
+    });         
+    $(document).on('click', '#set_user_status_btn', function (e) {                         
+      form = $("form#set_user_status_form");  
+      $(".loader").addClass('show-loader');          
+      setTimeout(function(){
+      $.ajax({
+       type:'POST',
+       url:form.prop('action'),
+       data: form.serialize(),
+       dataType:'JSON',
+       async: false,             
+       success:function(data){        
+          $(".loader").removeClass('show-loader'); 
+          $( ".skip-popup").trigger('click');                            
+           if (data.result) {
+              if($('.status_'+$('#user-id').val()).hasClass('block')){
+                $('.status_'+$('#user-id').val()).removeClass('block').addClass('unblock');                      
+                $('span.status_'+$('#user-id').val()).text('Unblock');
+              } else {
+                $('.status_'+$('#user-id').val()).removeClass('unblock').addClass('block');                      
+                $('span.status_'+$('#user-id').val()).text('Block');
+              }
+              if (data.status == 'Active') {                      
+                $('.users-msg').removeClass('error-alert').addClass('success-alert');  
+              } else { 
+                $('.users-msg').removeClass('success-alert').addClass('error-alert');
+              }
+              messageFadeOut('users-msg',data.message);
+            } else {                                                 
+              messageFadeOut('users-msg',data.message);
             }
-         });
-          e.preventDefault();
-        }  
+       },
+       error: function (e,x,t) {
+        $(".loader").removeClass('show-loader'); 
+        ajax_error(e);
+      }
+   });
+  });
+    e.preventDefault();
+  });  
 
 
 });
