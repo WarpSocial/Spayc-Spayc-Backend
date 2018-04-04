@@ -221,26 +221,33 @@ class FriendRequestTable extends Table
                 COS( RADIANS(  longitude ) - RADIANS(:longitude) ) +
                 SIN( RADIANS(:latitude) ) *
                 SIN( RADIANS(  latitude ) ) ) )';
-            $distance=  $this->distance($request['latitude'], $request['longitude'], $request['latitude2'], $request['longitude2']); 
+            $distance=  $this->distance($request['center_latitude'], $request['center_longitude'], $request['endpoint_latitude'], $request['endpoint_longitude']); 
             
-             $friends = TableRegistry::get('Api.Users')->find('all',['fields'=>['distance' => $distanceField, 'id', 'display_name', 'email', 'address','latitude','longitude']])
+             $friends = TableRegistry::get('Api.Users')->find('all',['fields'=>[
+//                 'distance' => $distanceField,
+                 'id', 'display_name', 'email', 'address','latitude','longitude']])
                 ->where(["$distanceField <=" => $distance, 'status'=>'Active'])
                      ->where("id in (". implode($child,",").")")
-                ->bind(':latitude', $request['latitude'], 'float')
-                ->bind(':longitude', $request['longitude'], 'float');
-              $friends->contain([
-            'NotificationTo'=>function($q)use($userId) {
-                return $q->select(['NotificationTo.requested_to', 'unread_notification'=>$q->func()->count('NotificationTo.id')])->group(['NotificationTo.requested_to'])->where(['NotificationTo.status'=>'Unread',"(requested_to=$userId OR requested_by=$userId)"]);
-            }
-        ]);
+                ->bind(':latitude', $request['center_latitude'], 'float')
+                ->bind(':longitude', $request['center_longitude'], 'float');
+             
+             // Unread Notification
+//              $friends->contain([
+//            'NotificationTo'=>function($q)use($userId) {
+//                return $q->select(['NotificationTo.requested_to', 'unread_notification'=>$q->func()->count('NotificationTo.id')])->group(['NotificationTo.requested_to'])->where(['NotificationTo.status'=>'Unread',"(requested_to=$userId OR requested_by=$userId)"]);
+//            }
+//        ]);
+//        
+//           $friends->formatResults(function (\Cake\Collection\CollectionInterface $results){
+//            return $results->map(function ($row) {
+//                $row['unread_notifications'] = !empty($row['notification_to'][0]['unread_notification'])? $row['notification_to'][0]['unread_notification'] : 0;
+//                 unset($row['notification_to']);
+//                return $row;
+//            });
+//        });
+        // Unread Notification
         
-           $friends->formatResults(function (\Cake\Collection\CollectionInterface $results){
-            return $results->map(function ($row) {
-                $row['unread_notifications'] = !empty($row['notification_to'][0]['unread_notification'])? $row['notification_to'][0]['unread_notification'] : 0;
-                 unset($row['notification_to']);
-                return $row;
-            });
-        });
+        
          $page = (!empty($request['page']) && is_numeric($request['page']))?$request['page']:1;
         if($page < 0) {
             $page = $page*-1;
