@@ -565,18 +565,38 @@ class SpaycsController extends AppController {
         if(empty($data['spayc_id'])) {
             $this->restException(['status'=>'failed','message'=>'Spayc id is required.'], 400);
         }
-        $entities = $this->Spaycs->find()->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
-        
+        $entities = $this->Spaycs->find();
+         if(!empty($data['latitude']) || !empty($data['longitude'])){
+             $entities->contain('JoinedSpayc',function($q)use($data){
+                    $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id','pl.current_latitude','pl.current_longitude']);
+                    $dckey = [':lat',':long','Spaycs.latitude','Spaycs.longitude'];
+                    $rckey = [$data['latitude'],$data['longitude'],'pl.current_latitude','pl.current_longitude'];
+                    $distance = "ROUND(CAST(".str_replace($dckey,$rckey,$this->Spaycs->distanceInMiles)." AS numeric), 5)";
+                    $q->select(['distance'=>$distance]);
+                    $q->join([
+                        'pl'=>[
+                            'table' => 'physical_location',
+                            'type' => 'INNER',
+                            'conditions' => 'pl.user_id = JoinedSpayc.user_id'
+                        ]
+                    ]);
+                    return $q;
+                });
+         }
+                
+                
+        $entities->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
         if($entities->isEmpty()){
             $this->restException(['status'=>'failed','message'=>__('Invalid spayc id.')], 400);
         }
         
-        $entity = $entities->first();
+        $entity = $entities->first();        
+        
         if($user['id'] != $entity->user_id){
             $this->restException(['status'=>'failed','message'=>__('Insufficient privileges to edit this space.')], 400);
         }        
         unset($data['spayc_id']);        
-        $items = $this->Spaycs->patchEntity($entity, $data);       
+        $items = $this->Spaycs->patchEntity($entity, $data,['associated'=>['JoinedSpayc']]);       
         if($data['type'] == 'Community'){ /* in community no need to keep start or end date*/
             $items->start_date = '';
             $items->end_date = '';
@@ -596,7 +616,14 @@ class SpaycsController extends AppController {
         if($items['description'] != $entity->description) {
             TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
         }
+        $prevLocation = $entity->getOriginal('location');
         if($this->Spaycs->save($items)){  
+            if($prevLocation != $entity->get('location')){
+                $this->Spaycs->updateDistance($items);                
+            }
+            if(!empty($entity['joined_spayc'])){
+                unset($items->joined_spayc);
+            }
             $items = $items->toArray();
             $items['start_date']=  Utils::toClient($items['start_date']);
             $items['end_date'] = Utils::toClient($items['end_date']);
@@ -678,15 +705,13 @@ class SpaycsController extends AppController {
         if(empty($page)){
             $page = 1;
         }
-        $query = $this->Spaycs->spaycMember($spaycId,$status,$page,$limit);
-        
-        if(!$query){
+        $query = $this->Spaycs->spaycMember($spaycId,$status,$page,$limit);        
+        if(empty($query)){
             $this->response->statusCode(204);
             $response = ['status'=>'success', 'message'=>__('List of spayc member.'), 'data'=>[]];
         }else{
             $response = ['status'=>'success', 'message'=>__('List of spayc member.'), 'data'=>$query];
-        }
-        
+        }        
         $this->set($response);
     }
     
