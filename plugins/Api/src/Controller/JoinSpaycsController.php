@@ -39,11 +39,45 @@ class JoinSpaycsController extends AppController {
         if(!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
-        $spaycs = TableRegistry::get('Spaycs')->find()->where(['id'=>$data['spayc_id']]);
+        $spaycs = TableRegistry::get('Api.Spaycs')->find()
+                ->contain([
+                    'JoinedSpayc' => function($q)use($user) {
+                        return $q
+                                ->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.is_admin'])
+                                ->where(['JoinedSpayc.user_id'=>$user['id']]);
+                    },
+                ])
+                ->where(['id'=>$data['spayc_id']]);
         if($spaycs->isEmpty()){
             $this->restException(['status'=>'failed','message'=>__('Spayc is not exist.')], 400);
         }
         $spayc = $spaycs->first();
+        
+        if(!empty($spayc->parent_id)){
+            $this->restException(['status'=>'failed','message'=>__('Sub spayc is not allowd to join.')], 400);
+        }
+        
+        if(($spayc->group_type == 'Public') && ($data['status'] == 'Pending')){
+            $this->restException(['status'=>'failed','message'=>__('Invalid status for public spayc.')], 400);
+        }
+        $currentUserStatus = Hash::extract($spayc->joined_spayc, '{n}[user_id='.$user['id'].']');
+        if(!empty($currentUserStatus[0])){
+            $currentUserStatus = $currentUserStatus[0];
+            if($currentUserStatus->is_admin > 0){
+                $this->restException(['status'=>'failed','message'=>__('Admin could\'t change their own status')], 400);
+            }
+            if(($currentUserStatus->status == 'Joined') && ($data['status'] == 'Pending')){
+                $this->restException(['status'=>'failed','message'=>__('Request is not valid because of you have joined this spayc.')], 400);
+            }
+            if($currentUserStatus->status == $data['status']){
+                if($data['status'] == 'Joined'){
+                    $message = __('You have already joined with this spayc');
+                }else{
+                    $message = __('Your could\'t join with same status.');
+                }
+                $this->restException(['status'=>'failed','message'=>$message], 400);
+            }
+        }
         $data['matrix_room_id'] = $spayc->matrix_room_id;
         if(($spayc->group_type == 'Private') && empty($data['passcode'])){
             $data['status'] = 'Pending';
@@ -94,17 +128,21 @@ class JoinSpaycsController extends AppController {
                 $push['matrix_room_id'] = $spayc->matrix_room_id;
                 $push['display_name'] = $user['display_name'];
                 $this->Push->sendPushNotification($push);
-                
-                $response = ['status'=>'success','message'=>__('User has been '.$data['status'].' successfully.')];
+                if($data['status'] == 'Joined'){
+                    $msg = __('User has been joined successfully.');
+                }else{
+                    $msg = __('Your status has been changed successfully');
+                }
+                $response = ['status'=>'success','message'=>$msg];
             } else {
                 $jsModel->getConnection()->rollback();
                 $this->response->statusCode(400);
-                $response = ['status'=>'failed','message'=>__('System failed to '.$data['status'].'.')];
+                $response = ['status'=>'failed','message'=>__('System failed to process the request.')];
             }            
         }else{
             $jsModel->getConnection()->rollback();
             $this->response->statusCode(400);
-            $response = ['status'=>'failed','message'=>__('System failed to '.$data['status'].'.')];
+            $response = ['status'=>'failed','message'=>__('System failed to process the request.')];
         }
         $this->set($response);
     }
@@ -123,11 +161,44 @@ class JoinSpaycsController extends AppController {
         if(!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
-        $spaycs = TableRegistry::get('Spaycs')->find()->where(['id'=>$data['spayc_id']]);
+        $spaycs = TableRegistry::get('Api.Spaycs')->find()
+                ->contain([
+                    'JoinedSpayc' => function($q)use($user) {
+                        return $q
+                                ->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.is_admin'])
+                                ->where(['JoinedSpayc.user_id'=>$user['id']]);
+                    },
+                ])
+                ->where(['id'=>$data['spayc_id']]);
         if($spaycs->isEmpty()){
             $this->restException(['status'=>'failed','message'=>__('Spayc is not exist.')], 400);
         }
         $spayc = $spaycs->first();
+        if(empty($spayc->parent_id)){
+            $this->restException(['status'=>'failed','message'=>__('Only subspayc is allowed.')], 400);
+        }
+        if(($spayc->group_type == 'Public') && ($data['status'] == 'Pending')){
+            $this->restException(['status'=>'failed','message'=>__('Invalid status for public sub-spayc.')], 400);
+        }
+        $currentUserStatus = Hash::extract($spayc->joined_spayc, '{n}[user_id='.$user['id'].']');
+        if(!empty($currentUserStatus[0])){
+            $currentUserStatus = $currentUserStatus[0];
+            if($currentUserStatus->is_admin > 0){
+                $this->restException(['status'=>'failed','message'=>__('Admin could\'t change their own status')], 400);
+            }
+            if(($currentUserStatus->status == 'Joined') && ($data['status'] == 'Pending')){
+                $this->restException(['status'=>'failed','message'=>__('Request is not valid because of you have joined this sub spayc.')], 400);
+            }
+            if($currentUserStatus->status == $data['status']){
+                if($data['status'] == 'Joined'){
+                    $message = __('You have already joined with this spayc');
+                }else{
+                    $message = __('Your could\'t join with same status.');
+                }
+                $this->restException(['status'=>'failed','message'=>$message], 400);
+            }
+        }       
+        
         $data['matrix_room_id'] = $spayc->matrix_room_id;
         if(($spayc->group_type == 'Private') && empty($data['passcode'])){
             $data['status'] = 'Pending';
@@ -180,17 +251,21 @@ class JoinSpaycsController extends AppController {
                 $push['matrix_room_id'] = $spayc->matrix_room_id;
                 $push['display_name'] = $user['display_name'];
                 $this->Push->sendPushNotification($push);
-                
-                $response = ['status'=>'success','message'=>__('User has been '.$data['status'].' successfully.')];
+                if($data['status'] == 'Joined'){
+                    $msg = __('User has been joined successfully.');
+                }else{
+                    $msg = __('Your status has been changed successfully');
+                }
+                $response = ['status'=>'success','message'=>$msg];
             } else {
                 $jsModel->getConnection()->rollback();
                 $this->response->statusCode(400);
-                $response = ['status'=>'failed','message'=>__('System failed to '.$data['status'].'.')];
+                $response = ['status'=>'failed','message'=>__('System failed to process the request.')];
             }            
         }else{
             $jsModel->getConnection()->rollback();
             $this->response->statusCode(400);
-            $response = ['status'=>'failed','message'=>__('System failed to '.$data['status'].'.')];
+            $response = ['status'=>'failed','message'=>__('System failed to process the request.')];
         }
         $this->set($response);
     }

@@ -114,7 +114,7 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>'Profile image index is required'], 400);
         }
         $user = $this->Auth->user();
-        $profileImg = TableRegistry::get('UserImages')->find()->where(['user_id'=>$user['id'],'order_index'=>$order]);
+        $profileImg = TableRegistry::get('Api.UserImages')->find()->where(['user_id'=>$user['id'],'order_index'=>$order]);
         if($profileImg->isEmpty()){
             $this->restException(['status'=>'failed', 'message'=>'Record not found'], 400);
         }
@@ -292,7 +292,6 @@ class UsersController extends AppController {
         $data['physical_location']['current_latitude'] = Utils::getVar('latitude', $data);
         $data['physical_location']['current_longitude'] = Utils::getVar('longitude', $data);
         $items = $this->Users->patchEntity($entity, $data,['associated'=>['PhysicalLocation']]);
-
         if($items->errors()) {
             $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
         }
@@ -310,8 +309,6 @@ class UsersController extends AppController {
         $items->set('matrix_access_token', $matrix['access_token']);
         #echo $data['token_verification'];die;
         if ($this->Users->save($items)) {
-            //$pl = TableRegistry::get('Api.PhysicalLocation')->newEntity();
-            //->save($items);
             $this->getMailer('Api.User')->send('signup', [$items]);
             $response = ['status' => "success", 'message' => __('Registration done successfully.'), 'data' =>
                 [
@@ -352,14 +349,14 @@ class UsersController extends AppController {
         $user = $this->Users->findByEmail($email)->first();
         if (!empty($user)) {
             if ($user->status == 'Active') {
-                $this->Flash->error(__('Your Account has been already activated. You can now log in using the username and password you chose during the registration'));
+                $this->Flash->error(__('Your Account has been already activated. You can now log in using the email and password you has chosen during the registration'));
             }else{
                 if ($token != Security::hash($user->email, 'sha1', true)) {
                     $this->Flash->error(__('Invalid token. Please read email carefully and try again.'));
                 }else{
                      $user->status = 'Active';
                      if ($this->Users->save($user)) {
-                         $this->Flash->success(__('Your Account has been successfully activated. You can now log in using the username and password you chose during the registration.'));
+                         $this->Flash->success(__('Your Account has been successfully activated. You can now log in using the email and password you had chosen during the registration.'));
                     } else {
                         $this->Flash->success(__('This link has no longer existing.'));
                     }
@@ -598,6 +595,9 @@ class UsersController extends AppController {
         }
         $id = $this->Auth->user('id');
         $data = $this->request->getData();
+        if(empty($data)){
+            $this->restException(['status'=>'failed', 'message'=>__('Invalid Request.')], 400);
+        }
         $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';
         $entity = $this->Users->get($id);
         $username = $entity->username;
@@ -607,7 +607,9 @@ class UsersController extends AppController {
         }
         /* At the time of update username will not update and maintain the prev username by swaping the value*/
         $items->set('username',$username);
-        $items->set('display_name',$data['username']);
+        if(!empty($data['username'])){
+            $items->set('display_name',$data['username']);
+        }
         if ($this->Users->save($items)) {
             $response = ['status' => "success", 'message' => __('Updated successfully.'), 'data' => $data];
         } else {
@@ -1477,7 +1479,7 @@ class UsersController extends AppController {
         $update['users']['is_notify'] = $isNotify;
         $update['user_logs']['device_id'] = $data['device_token'];
         $this->Users->UpdateAll(['is_notify'=>$isNotify], ['Users.id'=>$this->Auth->user('id')]);
-        TableRegistry::get('UserLogs')->UpdateAll(['device_id'=>$data['device_token'], 'modified'=>date('Y-m-d H:i:s')], ['user_id'=>$this->Auth->user('id')]);
+        TableRegistry::get('Api.UserLogs')->UpdateAll(['device_id'=>$data['device_token'], 'modified'=>date('Y-m-d H:i:s')], ['user_id'=>$this->Auth->user('id')]);
         $response = ['status'=>'success', 'message'=>__('Device token updated successfully.')];
         $this->set($response);
     }

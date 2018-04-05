@@ -104,6 +104,7 @@ function postSpaycs() { return; }
 @apiDescription Update spayc or subspayc.
 
 @apiHeader {String} TOKEN           A token send by header as TOKEN
+@apiHeader {String} timezone        client timezone
 
 @apiParam {String} spayc_id         id either spayc id or matrix room id (Required).
 @apiParam {String} name             Name title of the spayc (Required).
@@ -117,7 +118,6 @@ function postSpaycs() { return; }
 @apiParam {String} image            Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
 @apiParam {String} longitude        Langitude from google map (Required).
 @apiParam {String} latitude         Latitude from google map (Required).
-@apiParam {String} invite           Matrix user id is optional in query string(Optional).
 
 @apiExample Example usage:
     {
@@ -132,8 +132,7 @@ function postSpaycs() { return; }
         "description":"spayc creating",
         "image":"file.png",
         "longitude":"XX.00.XX",
-        "latitude":"XX.00.XX",
-        "invite":"@test2:35.168.119.247, @test3:35.168.119.247"
+        "latitude":"XX.00.XX"
     }
  
 @apiSuccess {String} status success.
@@ -893,3 +892,209 @@ function getnearAboutSpayces() { return; }
  * @apiUse UserErrorResponse
  */
 function getPublicSpaycs() { return; }
+
+/**
+ @api {get} /hash-tag-spaycs.json?page=:page&limit=:limit&keyword=:keyword Hashtag Spayces
+ @apiVersion 0.1.0
+ @apiName hashTagSpaycs
+ @apiGroup Spayc
+ @apiPermission private
+
+ @apiDescription Get list of public and joined spayces.Spaycs must not be expired according to the spayc end date.Listing will be ordered on created.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ @apiHeader {String} timezone         * User time zone
+ 
+ @apiParam {Number}      page            Page number in query string (Optional).
+ @apiParam {Number}      limit           Limit in query string (Optional).
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "List of spaycs.",
+    "data": [
+        {
+            "id": "3",
+            "name": "Sam Second Community Spyace",
+            "user_id": 2,
+            "location": "Delhi",
+            "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180317082917.png",
+            "group_type": "Public",
+            "type": "Community",
+            "start_date": null,
+            "end_date": null,
+            "passcode": "",
+            "matrix_room_id": "!MvOssNcvbePXoBUIjC:spayc-dev.kiwireader.com",
+            "distance": 15.794925409093,
+            "subscribed_users": 1,
+            "friends": 0,
+            "is_joined": false,
+            "joined_spayc_status": "",
+            "is_admin": "",
+            "joined_users": 0,
+            "is_subscribed": false,
+            "total_comments": 0
+        },
+        {
+            "id": "4",
+            "name": "Community Type Sub Spyac",
+            "user_id": 3,
+            "location": null,
+            "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180317083321.png",
+            "group_type": "Public",
+            "type": "Community",
+            "start_date": null,
+            "end_date": null,
+            "passcode": "",
+            "matrix_room_id": "!nQPjgmlBePZsAyVvQH:spayc-dev.kiwireader.com",
+            "distance": 5450.5523363982,
+            "subscribed_users": 1,
+            "friends": 1,
+            "is_joined": false,
+            "joined_spayc_status": "",
+            "is_admin": "",
+            "joined_users": 1,
+            "is_subscribed": false,
+            "total_comments": 0
+        }
+    ],
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function hashTagSpaycs() { return; }
+/**
+ @api {post} /map-spaycs.json Map Spayces
+ @apiVersion 0.1.0
+ @apiName mapSpaycs
+ @apiGroup Spayc
+ @apiPermission private
+
+ @apiDescription Get list of Map spayces & Friends.Spaycs must not be expired according to the spayc end date.Listing will be ordered on created.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+    
+    
+@apiExample Example usage:
+    {
+        "center_latitude": "28.6367",
+        "center_longitude": "77.2748",
+        "endpoint_latitude": "19.0760",
+        "endpoint_longitude": "72.8777",
+        
+        "time": "present|past|future",
+        "spayc_type": "Event|Community",
+        "spayc_type": "Public|Private",
+        "wrap_with_friends": "yes|no",
+        "hashtag_id": xx
+        
+    }
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "List of Data.",
+    "data": {
+        "spaycs": {
+            "count": 1,
+            "records": [
+                {
+                    "id": "3",
+                    "name": "Sam Second Community Spyace",
+                    "matrix_room_id": "!MvOssNcvbePXoBUIjC:spayc-dev.kiwireader.com",
+                    "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180317082917.png",
+                    "type": "Community",
+                    "latitude": 28.7041,
+                    "longitude": 77.1025,
+                    "is_joined": false,
+                    "is_subscribed": false
+                }
+            ],
+        },
+        "friends": {
+            "count": 2,
+            "records": [
+                {
+                    "id": "2",
+                    "display_name": null,
+                    "email": "bot@gmail.com",
+                    "address": null,
+                    "latitude": 28.579403737919,
+                    "longitude": 77.320890067264
+                },
+                {
+                    "id": "3",
+                    "display_name": "sam",
+                    "email": "sam@yopmail.com",
+                    "address": null,
+                    "latitude": 28.7041,
+                    "longitude": 77.1025
+                }
+            ],
+        }
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function mapSpaycs() { return; }
+/**
+ @api {get} /create-advertisement.json Create Advertisement
+ @apiVersion 0.1.0
+ @apiName createAdvertisement
+ @apiGroup Spayc
+ @apiPermission private
+
+ @apiDescription Get list of Map spayces & Friends.Spaycs must not be expired according to the spayc end date.Listing will be ordered on created.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ @apiHeader {String} timezone         * User time zone
+ 
+ @apiParam {Number}      page            Page number in query string (Optional).
+ @apiParam {Number}      limit           Limit in query string (Optional).
+
+    @apiExample Example usage:
+    {
+        "name": "Space Ad",
+        "price": "250",
+        "description": "Test Test Test ",
+        "url": "http://www.xyz.com",
+        "description":"Advertisement creating",
+        "image":"file.png",
+        "longitude":"XX.00.XX",
+        "latitude":"XX.00.XX",
+    }
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Advertisement Created Successfully",
+    "data": {
+        "name": "Test",
+        "price": 250,
+        "description": "Test Test Test",
+        "image": "https://spayc-qa.s3.amazonaws.com/room/test_20180402092833.png",
+        "user_id": "1",
+        "created": "2018-04-02T09:28:33+00:00",
+        "modified": "2018-04-02T09:28:33+00:00",
+        "id": 53
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function createAdvertisement() { return; }

@@ -9,11 +9,12 @@ define({
     "withCompare": false,
     "withGenerator": false
   },
-  "apidoc": "0.2.0",
+  "defaultVersion": "0.0.0",
+  "apidoc": "0.3.0",
   "generator": {
     "name": "apidoc",
-    "time": "2018-03-29T11:02:19.541Z",
+    "time": "2018-04-04T15:04:26.722Z",
     "url": "http://apidocjs.com",
-    "version": "0.12.3"
+    "version": "0.17.6"
   }
 });
