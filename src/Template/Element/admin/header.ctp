@@ -19,7 +19,7 @@ $controller_action = $this->request->param('action');
                 <a class="nav-link" href="<?php echo Router::url(['action' => 'index','controller' =>'Users']);?>">Manage Users</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">Manage Spaycs</a>
+                <a class="nav-link" href="#">Manage Warps</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">Manage Advertisements</a>

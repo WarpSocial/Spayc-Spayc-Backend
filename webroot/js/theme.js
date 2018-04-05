@@ -1,4 +1,4 @@
-$(function () {
+$(function () {      
     $('input').bind("keypress click", function () {
       if($(this).hasClass('incorrect-alert')){
         $(this).removeClass('incorrect-alert');  
@@ -11,9 +11,9 @@ $(function () {
       });
     }    
     $(document).on("click", ".pop", function(){
-      var className = $(this).attr('name');
+      var className = $(this).attr('rel');
       if (typeof className !== typeof undefined && className !== false) {
-        className=$(this).attr('name');
+        className=$(this).attr('rel');
       }else{
         className='';
       }
