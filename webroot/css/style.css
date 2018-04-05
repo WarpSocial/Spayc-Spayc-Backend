@@ -335,6 +335,8 @@ a:not([href]):not([tabindex]) {
   padding: 0 30px;
   position: absolute;
   left: 50%;
+  -webkit-transform: translateX(-50%);
+  -moz-transform: translateX(-50%);
   transform: translateX(-50%);
   background: #e3f2dd;
   color: #48814a;

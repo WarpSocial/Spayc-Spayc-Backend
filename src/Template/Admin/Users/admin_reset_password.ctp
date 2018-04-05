@@ -1,7 +1,7 @@
          <div class="modal-body">
           <div class="">                                               
              <?php echo $this->Form->create($user, ['id'=>'admin_reset_password_form','autocomplete' => 'off','novalidate'=>'novalidate']); ?>
-              <span class="error-alert error-forgot-password-page hide"></span>
+              <span class="error-alert admin-reset-pwd hide"></span>
               <h1>Change Password</h1>
               <p class="mb-50">Please enter a new password in the fields below.</p>
               

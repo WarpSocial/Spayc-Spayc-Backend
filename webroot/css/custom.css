@@ -25,3 +25,11 @@
     left: 50%;
     transform: translateX(-50%);
 }
+.success-alert.header-alert {
+    position: relative;
+    transform: translateX(-50%);
+    bottom: 17px;
+}
+.chg-pwd-success-msg{
+    top: 11px;
+}

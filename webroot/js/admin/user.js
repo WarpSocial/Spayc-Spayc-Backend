@@ -203,16 +203,16 @@ jQuery(document).ready(function ($) {
                success:function(data){        
                   $(".loader").removeClass('show-loader');        
                    if (data.result) { 
-                      $('.error-forgot-password-page').removeClass('error-alert hide');
-                      $('.error-forgot-password-page').addClass('success-alert');
+                      $('.admin-reset-pwd').removeClass('error-alert hide');
+                      $('.admin-reset-pwd').addClass('success-alert chg-pwd-success-msg');
                       resetForm('admin_reset_password_form');
-                      $('.error-forgot-password-page').text(data.message).delay(5000)
+                      $('.admin-reset-pwd').text(data.message).delay(5000)
                          .fadeOut('slow', function () {
-                         $('.error-forgot-password-page').text('');
+                         $('.admin-reset-pwd').text('');
                          $( ".skip-popup").trigger('click'); 
                       });
                     } else {                                                 
-                      messageFadeOut('error-forgot-password-page',data.message);
+                      messageFadeOut('admin-reset-pwd',data.message);
                     }
                },
                error: function (e,x,t) {
@@ -250,6 +250,7 @@ jQuery(document).ready(function ($) {
               } else { 
                 $('.users-msg').removeClass('success-alert').addClass('error-alert');
               }
+              $('.users-msg').text(data.message);
               messageFadeOut('users-msg',data.message);
             } else {                                                 
               messageFadeOut('users-msg',data.message);
