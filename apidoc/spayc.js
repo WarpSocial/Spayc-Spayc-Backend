@@ -850,28 +850,29 @@ function getnearAboutSpayces() { return; }
  *      HTTP/1.1 200 OK
 {
     "status": "success",
-    "message": "List of Spaycs.",
+    "message": "List of spaycs.",
     "data": [
         {
-            "id": "95",
-            "name": "My Sub 8 March",
-            "location": null,
-            "matrix_room_id": "!xLfsiKaFDCBlLNyuAi:spayc-dev.kiwireader.com",
-            "start_date": "03-07-2018 18:32:16",
-            "end_date": "04-07-2018 18:32:34",
-            "image": null,
-            "type": "Event",
+            "id": "120",
+            "name": "kiwiJoshTA",
+            "image": "https://spayc-qa.s3.amazonaws.com/room/5_20180330063531.png",
             "group_type": "Public",
-            "passcode": "",
-            "user_id": 6,
-            "distance": "8266.679",
-            "subscribed_users": 0,
-            "friends": 0,
-            "joined_spayc_status": '',
-            "is_joined": false,
-            "joined_users": 0,
-            "is_subscribed": false,
-            "total_comments": 0
+            "type": "Community",
+            "start_date": null,
+            "end_date": null,
+            "matrix_room_id": "!SaAsSnzeUOFGqlsKgr:127.0.0.1",
+            "joined_status": "Joined"
+        },
+        {
+            "id": "119",
+            "name": "kiwiJoshTA",
+            "image": "https://spayc-qa.s3.amazonaws.com/room/5_20180330061805.png",
+            "group_type": "Public",
+            "type": "Community",
+            "start_date": null,
+            "end_date": null,
+            "matrix_room_id": "!cQgXksBtaXDSkAoRpk:127.0.0.1",
+            "joined_status": "Joined"
         }
     ]
 }
