@@ -40,4 +40,5 @@ return [
         'image/svg+xml' => 'svg',
         'image/svg+xml' => 'svgz',
     ],
+    'userstatus_subject'=>'User Status'
 ];

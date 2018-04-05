@@ -54,4 +54,12 @@ class UserMailer extends Mailer {
             ->template('contactus'); // By default template with same name as method name is used. 
     }
 
+    public function userStatus($user) {        
+        $this->viewVars(['user' => $user])
+            ->to($user->email)
+            ->subject(Configure::read('userstatus_subject'))
+            ->emailFormat('html')
+            ->template('userstatus');
+    }
+
 }

@@ -16,3 +16,25 @@
 	min-height: 35px !important;
 	height: auto !important;
 }
+.content-wrapper {
+    position: relative;
+}
+.header-alert {
+    bottom: 17px;
+    z-index: 9;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.success-alert.header-alert {
+    position: relative;
+    transform: translateX(-50%);
+    bottom: 17px;
+}
+.chg-pwd-success-msg{
+    top: 11px;
+}
+.forgot-password-modal-error {
+    position: absolute;
+    top: 10px !important;
+    width: calc(100% - 100px);
+}

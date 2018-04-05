@@ -6,7 +6,7 @@
 echo $this->element('admin/popups');
  if($authUser){ ?>
     <footer>
-      <p>&copySpayc. All Rights Reserved</p>
+      <p>&copyWarp. All Rights Reserved</p>
     </footer>
 <?php } ?>
 </body>
