@@ -26,6 +26,7 @@ class UsersController extends AdminController
     public function initialize() {
         parent::initialize();        
         $this->loadComponent('Api.Push');
+        $this->Spaycs = TableRegistry::get('Spaycs');
     }
     public function beforeFilter(Event $event)
     {
@@ -401,6 +402,48 @@ class UsersController extends AdminController
             die;
         }
         $this->set(compact('user'));
+    }
+
+    public function createdWarps($id = null)
+    {
+
+        if(empty($id) || is_numeric($id))
+            //return $this->redirect(['Controller'=>'Users', 'action' => 'index']);
+        
+        $this->set('title', 'Warps Created');        
+        $keyword=($this->request->query('keyword'))?trim($this->request->query('keyword')):'';
+        $query=$this->Spaycs->find()
+            ->where(['Spaycs.user_id'=> $id]);
+
+        if(!empty($keyword)){            
+            $query->where(['OR' => ['Spaycs.name LIKE' => "%".$keyword."%"]]);
+        }   
+        
+        $spaycs = $this->paginate($query); 
+        $this->set(compact('spaycs','keyword'));
+        $this->set('_serialize', ['spaycs']);
+    }
+
+    public function joinedWarps($id = null)
+    {
+        if(empty($id) || is_numeric($id))
+            //return $this->redirect(['Controller'=>'Users', 'action' => 'index']);
+
+        $this->set('title', 'Warps Joined');
+        $conditions_array = [];       
+        $keyword=($this->request->query('keyword'))?trim($this->request->query('keyword')):'';
+        $query=$this->Spaycs->find()->
+            contain(['Users'])
+            ->where(['Spaycs.user_id'=> $id]);
+
+        if(!empty($keyword)){
+            $query->where(['OR' => ['Spaycs.name LIKE' => "%".$keyword."%"]]);
+        }   
+        $spaycs = $this->paginate($query); 
+        $this->set(compact('spaycs','keyword'));
+        $this->set('_serialize', ['spaycs']);
+
+        //return $this->redirect(['action' => 'index']);
     }
 
 }

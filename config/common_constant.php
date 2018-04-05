@@ -16,7 +16,7 @@ define('USER_AGE', serialize($user_age));
 define('STATUS_ARR', serialize($status_arr));
 $config =array();
 $config['ERRORANDSUCCESSMSG'] = [
-    'LOGOUTSUCCESS'=>'You log out successfully.',
+    'LOGOUTSUCCESS'=>'You have log out successfully.',
     'BLANKEMAIL'=>'Please enter email',
     'INVALIDEMAIL'=>'Invalid Email.',
     'BLANKPASS'=>'Please enter password.',    

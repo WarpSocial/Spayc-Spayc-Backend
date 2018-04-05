@@ -39,7 +39,7 @@ if(isset($this->request->query['sort'])) {
       <div class="breadcrumbs">
         <div class="container">
           <h4>Manage Users</h4>
-          <p><span>manage</span> <span>user</span></p>
+          <p class="hide"><span>manage</span> <span>user</span></p>
         </div>
       </div>
 
@@ -47,7 +47,7 @@ if(isset($this->request->query['sort'])) {
  <span class="error-alert users-msg header-alert" style="display: none;"></span>
         <!--===========filter================-->
         <?php if($userCount || $filter){ 
-                echo $this->element('admin/user-filter');
+                echo $this->element('admin/user-filter', ['userFilter'=> true]);
         ?>
       <!--============= table head ===================-->
       <div class="container">        
@@ -98,10 +98,16 @@ if(isset($this->request->query['sort'])) {
                   <span><?= !empty($user->address)?h($user->address):BLANK ?></span>
                 </div>
                 <div class="table-data flex-basis9">
-                  <span><?= !empty($user->joined_spayc[0]->joined_spaycs)?h($user->joined_spayc[0]->joined_spaycs):BLANK_COUNT ?></span>
+                  <span><?= !empty($user->joined_spayc[0]->joined_spaycs)?
+                            $this->Html->link($user->joined_spayc[0]->joined_spaycs,['controller' => 'Users', 'action' => 'joined-warps',$user->id], ['class' => 'num-letter-spacing']):
+                            BLANK_COUNT ?>
+                  </span>
                 </div>
                 <div class="table-data flex-basis9">
-                  <span><?= !empty($user->spaycs[0]->created_spaycs)?h($user->spaycs[0]->created_spaycs):BLANK_COUNT ?></span>
+                  <span><?= !empty($user->spaycs[0]->created_spaycs)?
+                          $this->Html->link($user->spaycs[0]->created_spaycs,['controller' => 'Users', 'action' => 'createdWarps',$user->id], ['class' => 'num-letter-spacing']):
+                            BLANK_COUNT ?>
+                  </span>
                 </div>
                 <div class="table-data flex-basis10">
                   <span><?= !empty($user->friend)?h($user->friend):BLANK_COUNT ?></span>

@@ -13,7 +13,7 @@ $genderArr = unserialize(USER_GENDER);
 	                <span class="clear-search hide" id="clear-search"></span>
 	              </div>
             	</div>
-
+              <?php if($userFilter) { ?>
               <div class="filter-by ml-auto">
               	<h4>Fillter by</h4>
              		<!--============filter dropdown========-->
@@ -91,6 +91,7 @@ $genderArr = unserialize(USER_GENDER);
                 <?= $this->Form->button('Apply', ['type' => 'submit','class'=>'reset-filter']); ?>
                 <?= $this->Form->button('Reset', ['type' => 'button', 'id'=>'filter-reset', 'class'=>'reset-filter']); ?>
             </div>
+            <?php } ?>
           </div>
     <?php echo $this->Form->end();?>
   </div>

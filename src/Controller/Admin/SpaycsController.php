@@ -1,15 +1,41 @@
 <?php
 namespace App\Controller\Admin;
 
-use App\Controller\AppController;
+use App\Controller\AdminController;
+use Cake\Network\Exception\ForbiddenException;
+use Cake\Network\Exception\NotFoundException;
+use Cake\View\Exception\MissingTemplateException;
+use Cake\Routing\Router;
+use Cake\Event\Event;
+use Cake\Core\Configure;
+use Cake\ORM\TableRegistry;
+use Cake\Mailer\Email;
+use Cake\Mailer\MailerAwareTrait;
+use Api\Auth\ApiHasher;
+use Cake\Utility\Security;
+use Cake\Validation\Validator;
+
 
 /**
  * Spaycs Controller
  *
  * @property \App\Model\Table\SpaycsTable $Spaycs
  */
-class SpaycsController extends AppController
+class SpaycsController extends AdminController
 {
+
+    use MailerAwareTrait;
+
+    public function initialize() {
+        parent::initialize();        
+        $this->loadComponent('Api.Push');
+    }
+
+    public function beforeFilter(Event $event)
+    {
+        parent::beforeFilter($event);
+        //$this->Auth->allow(['']);
+    }
 
     /**
      * Index method
@@ -18,12 +44,12 @@ class SpaycsController extends AppController
      */
     public function index()
     {
-        $this->paginate = [
-            'contain' => ['Users', 'MatrixRooms', 'ParentSpaycs']
-        ];
-        $spaycs = $this->paginate($this->Spaycs);
+        // $this->paginate = [
+        //     'contain' => ['Users', 'MatrixRooms', 'ParentSpaycs']
+        // ];
+        // $spaycs = $this->paginate($this->Spaycs);
 
-        $this->set(compact('spaycs'));
+        // $this->set(compact('spaycs'));
     }
 
     /**
@@ -111,4 +137,6 @@ class SpaycsController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
+
+    
 }
