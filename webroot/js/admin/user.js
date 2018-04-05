@@ -67,7 +67,7 @@ jQuery(document).ready(function ($) {
                             $( "#forgotCancel").trigger('click'); 
                             openPopup(UserUrls.Success);                   
                         } else { 
-                          messageFadeOut('error-forgot-password-page',data.message);
+                          messageFadeOut('forgot-password-modal-error',data.message);
                         }
                    },
                   error: function (e,x,t) {
