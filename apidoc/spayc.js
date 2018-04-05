@@ -1048,20 +1048,16 @@ function hashTagSpaycs() { return; }
  */
 function mapSpaycs() { return; }
 /**
- @api {get} /create-advertisement.json Create Advertisement
+ @api {post} /create-advertisement.json Create Advertisement
  @apiVersion 0.1.0
  @apiName createAdvertisement
- @apiGroup Spayc
+ @apiGroup Advertisement
  @apiPermission private
 
- @apiDescription Get list of Map spayces & Friends.Spaycs must not be expired according to the spayc end date.Listing will be ordered on created.
+ @apiDescription Create Advertisement.
  
  @apiHeader {String} TOKEN            * A token send by header as TOKEN
- @apiHeader {String} timezone         * User time zone
  
- @apiParam {Number}      page            Page number in query string (Optional).
- @apiParam {Number}      limit           Limit in query string (Optional).
-
     @apiExample Example usage:
     {
         "name": "Space Ad",
@@ -1072,6 +1068,7 @@ function mapSpaycs() { return; }
         "image":"file.png",
         "longitude":"XX.00.XX",
         "latitude":"XX.00.XX",
+        "spayc_id":"5,6"
     }
 
  *
@@ -1098,3 +1095,123 @@ function mapSpaycs() { return; }
  * @apiUse UserErrorResponse
  */
 function createAdvertisement() { return; }
+
+
+/**
+ @api {post} /advertisement-edit.json Edit Advertisement
+ @apiVersion 0.1.0
+ @apiName editAdvertisement
+ @apiGroup Advertisement
+ @apiPermission private
+
+ @apiDescription Edit Advertisement.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+
+    @apiExample Example usage:
+    {
+        "id": XX,
+        "name": "Space Ad",
+        "price": "250",
+        "description": "Test Test Test ",
+        "url": "http://www.xyz.com",
+        "description":"Advertisement creating",
+        "image":"file.png",
+    }
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Advertisement Updated Successfully",
+    "data": {
+        "id": 47,
+        "user_id": 1,
+        "name": "New",
+        "price": 255,
+        "description": "description",
+        "url": "www.test.com",
+        "image": "https://spayc-qa.s3.amazonaws.com/room/handle_slider_20180405094347.png",
+        "status": "Pending",
+        "created": "2018-04-02T09:21:30+00:00",
+        "modified": "2018-04-05T09:43:46+00:00"
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function editAdvertisement() { return; }
+
+
+
+/**
+ @api {get} /advertisement-details.json?id=:id View Advertisement
+ @apiVersion 0.1.0
+ @apiName viewAdvertisement
+ @apiGroup Advertisement
+ @apiPermission private
+
+ @apiDescription Edit Advertisement.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Advertisement Details",
+    "data": {
+        "id": 47,
+        "name": "New",
+        "image": "https://spayc-qa.s3.amazonaws.com/room/handle_slider_20180405094347.png",
+        "price": 255,
+        "description": "description",
+        "url": "www.test.com"
+        }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function viewAdvertisement() { return; }
+
+
+
+
+
+/**
+ @api {get} /advertisement-delete.json?id=:id Delete Advertisement
+ @apiVersion 0.1.0
+ @apiName deleteAdvertisement
+ @apiGroup Advertisement
+ @apiPermission private
+
+ @apiDescription Edit Advertisement.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+        "response": {
+            "status": "success",
+            "message": "Advertisement has been deleted."
+        }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function deleteAdvertisement() { return; }

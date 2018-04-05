@@ -1,6 +1,436 @@
 [
   {
     "type": "post",
+    "url": "/create-advertisement.json",
+    "title": "Create Advertisement",
+    "version": "0.1.0",
+    "name": "createAdvertisement",
+    "group": "Advertisement",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>Create Advertisement.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "{\n    \"name\": \"Space Ad\",\n    \"price\": \"250\",\n    \"description\": \"Test Test Test \",\n    \"url\": \"http://www.xyz.com\",\n    \"description\":\"Advertisement creating\",\n    \"image\":\"file.png\",\n    \"longitude\":\"XX.00.XX\",\n    \"latitude\":\"XX.00.XX\",\n    \"spayc_id\":\"5,6\"\n}",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>List of spaycs..</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>List of Spaycs.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Advertisement Created Successfully\",\n    \"data\": {\n        \"name\": \"Test\",\n        \"price\": 250,\n        \"description\": \"Test Test Test\",\n        \"image\": \"https://spayc-qa.s3.amazonaws.com/room/test_20180402092833.png\",\n        \"user_id\": \"1\",\n        \"created\": \"2018-04-02T09:28:33+00:00\",\n        \"modified\": \"2018-04-02T09:28:33+00:00\",\n        \"id\": 53\n    }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/spayc.js",
+    "groupTitle": "Advertisement",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/create-advertisement.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
+    "url": "/advertisement-delete.json?id=:id",
+    "title": "Delete Advertisement",
+    "version": "0.1.0",
+    "name": "deleteAdvertisement",
+    "group": "Advertisement",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>Edit Advertisement.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>List of spaycs..</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>List of Spaycs.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "     HTTP/1.1 200 OK\n{\n        \"response\": {\n            \"status\": \"success\",\n            \"message\": \"Advertisement has been deleted.\"\n        }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/spayc.js",
+    "groupTitle": "Advertisement",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/advertisement-delete.json?id=:id"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/advertisement-edit.json",
+    "title": "Edit Advertisement",
+    "version": "0.1.0",
+    "name": "editAdvertisement",
+    "group": "Advertisement",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>Edit Advertisement.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "{\n    \"id\": XX,\n    \"name\": \"Space Ad\",\n    \"price\": \"250\",\n    \"description\": \"Test Test Test \",\n    \"url\": \"http://www.xyz.com\",\n    \"description\":\"Advertisement creating\",\n    \"image\":\"file.png\",\n}",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>List of spaycs..</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>List of Spaycs.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Advertisement Updated Successfully\",\n    \"data\": {\n        \"id\": 47,\n        \"user_id\": 1,\n        \"name\": \"New\",\n        \"price\": 255,\n        \"description\": \"description\",\n        \"url\": \"www.test.com\",\n        \"image\": \"https://spayc-qa.s3.amazonaws.com/room/handle_slider_20180405094347.png\",\n        \"status\": \"Pending\",\n        \"created\": \"2018-04-02T09:21:30+00:00\",\n        \"modified\": \"2018-04-05T09:43:46+00:00\"\n    }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/spayc.js",
+    "groupTitle": "Advertisement",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/advertisement-edit.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
+    "url": "/advertisement-details.json?id=:id",
+    "title": "View Advertisement",
+    "version": "0.1.0",
+    "name": "viewAdvertisement",
+    "group": "Advertisement",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>Edit Advertisement.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>List of spaycs..</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>List of Spaycs.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Advertisement Details\",\n    \"data\": {\n        \"id\": 47,\n        \"name\": \"New\",\n        \"image\": \"https://spayc-qa.s3.amazonaws.com/room/handle_slider_20180405094347.png\",\n        \"price\": 255,\n        \"description\": \"description\",\n        \"url\": \"www.test.com\"\n        }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/spayc.js",
+    "groupTitle": "Advertisement",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/advertisement-details.json?id=:id"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
     "url": "/add-friend.json",
     "title": "Add Friend",
     "version": "0.1.0",
@@ -1604,144 +2034,6 @@
     "sampleRequest": [
       {
         "url": "http://spayc.com/api/create-subspace.json"
-      }
-    ],
-    "error": {
-      "fields": {
-        "Error 4xx": [
-          {
-            "group": "Error 4xx",
-            "type": "Object",
-            "optional": false,
-            "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p>"
-          }
-        ],
-        "Error-Response Object": [
-          {
-            "group": "Error-Response Object",
-            "type": "Boolean",
-            "optional": false,
-            "field": "status",
-            "description": "<p>failed.</p>"
-          },
-          {
-            "group": "Error-Response Object",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>Message.</p>"
-          }
-        ]
-      },
-      "examples": [
-        {
-          "title": "Sample Error-Response:",
-          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
-          "type": "json"
-        }
-      ]
-    }
-  },
-  {
-    "type": "get",
-    "url": "/create-advertisement.json",
-    "title": "Create Advertisement",
-    "version": "0.1.0",
-    "name": "createAdvertisement",
-    "group": "Spayc",
-    "permission": [
-      {
-        "name": "private"
-      }
-    ],
-    "description": "<p>Get list of Map spayces &amp; Friends.Spaycs must not be expired according to the spayc end date.Listing will be ordered on created.</p>",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": false,
-            "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
-          },
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": false,
-            "field": "timezone",
-            "description": "<ul> <li>User time zone</li> </ul>"
-          }
-        ]
-      }
-    },
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "optional": false,
-            "field": "page",
-            "description": "<p>Page number in query string (Optional).</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "optional": false,
-            "field": "limit",
-            "description": "<p>Limit in query string (Optional).</p>"
-          }
-        ]
-      }
-    },
-    "examples": [
-      {
-        "title": "Example usage:",
-        "content": "{\n    \"name\": \"Space Ad\",\n    \"price\": \"250\",\n    \"description\": \"Test Test Test \",\n    \"url\": \"http://www.xyz.com\",\n    \"description\":\"Advertisement creating\",\n    \"image\":\"file.png\",\n    \"longitude\":\"XX.00.XX\",\n    \"latitude\":\"XX.00.XX\",\n}",
-        "type": "json"
-      }
-    ],
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "status",
-            "description": "<p>success.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>List of spaycs..</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Object",
-            "optional": false,
-            "field": "data",
-            "description": "<p>List of Spaycs.</p>"
-          }
-        ]
-      },
-      "examples": [
-        {
-          "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Advertisement Created Successfully\",\n    \"data\": {\n        \"name\": \"Test\",\n        \"price\": 250,\n        \"description\": \"Test Test Test\",\n        \"image\": \"https://spayc-qa.s3.amazonaws.com/room/test_20180402092833.png\",\n        \"user_id\": \"1\",\n        \"created\": \"2018-04-02T09:28:33+00:00\",\n        \"modified\": \"2018-04-02T09:28:33+00:00\",\n        \"id\": 53\n    }\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "filename": "apidoc/spayc.js",
-    "groupTitle": "Spayc",
-    "sampleRequest": [
-      {
-        "url": "http://spayc.com/api/create-advertisement.json"
       }
     ],
     "error": {
