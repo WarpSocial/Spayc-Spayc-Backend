@@ -50,7 +50,7 @@ Router::plugin(
         $routes->connect('/spayc-edit',['controller'=>'Spaycs', 'action'=>'edit']);
         $routes->connect('/spayc-members',['controller'=>'Spaycs', 'action'=>'spaycMembers']);
         $routes->connect('/subspaycs', ['controller'=>'Spaycs', 'action'=>'viewSubSpaycs']);
-        $routes->connect('/physical-present-spaycs', ['controller'=>'Spaycs', 'action'=>'nearAboutSpayces']);
+        $routes->connect('/physical-present-spaycs', ['controller'=>'Spaycs', 'action'=>'physicalyPresentSpaycs']);
         $routes->connect('/public-spaycs', ['controller'=>'Spaycs', 'action'=>'publicSpayc']);
         $routes->connect('/hash-tag-spaycs', ['controller'=>'Spaycs', 'action'=>'hashTagSpayc']);
         $routes->connect('/map-spaycs', ['controller'=>'Spaycs', 'action'=>'mapSpayc']);

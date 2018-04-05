@@ -778,12 +778,10 @@ function getSubSpaycs() { return; }
  @apiGroup Spayc
  @apiPermission private
 
- @apiDescription Get list of spayces which user has been joined and spayces must be within 1 miles.Spaycs must not be expired according to the spayc end date.Listing will be ordered on distance and if distance will be same then on created.
+ @apiDescription Get list of spayces which user has been joined and spayces must be within 1 miles.Spaycs must not be expired.Listing will be ordered on distance and if distance will be same then on created.In absence of latitude and longitude distance will be calculated on stored latitude and longitude.
  
  @apiHeader {String} TOKEN            * A token send by header as TOKEN
  
- @apiParam {Number}      page            Page number in query string (Optional).
- @apiParam {Number}      limit           Limit in query string (Optional).
  @apiParam {String}      latitude        Latitude of current user (Optional).
  @apiParam {String}      longitude       Longitude of current user (Optional).
 
@@ -795,28 +793,33 @@ function getSubSpaycs() { return; }
  *      HTTP/1.1 200 OK
 {
     "status": "success",
-    "message": "List of Spaycs.",
+    "message": "List of spaycs.",
     "data": [
         {
-            "id": "95",
-            "name": "My Sub 8 March",
-            "location": null,
-            "matrix_room_id": "!xLfsiKaFDCBlLNyuAi:spayc-dev.kiwireader.com",
-            "start_date": "03-07-2018 18:32:16",
-            "end_date": "04-07-2018 18:32:34",
-            "image": null,
-            "type": "Event",
+            "id": "xxx",
+            "name": "kiwiJoshTA",
+            "image": "https://spayc-qa.s3.amazonaws.com/room/5_20180330084419.png",
             "group_type": "Public",
-            "passcode": "",
-            "user_id": 6,
-            "distance": "8266.679",
-            "subscribed_users": 0,
-            "friends": 0,
-            "joined_spayc_status": '',
-            "is_joined": false,
-            "joined_users": 0,
+            "type": "Event",
+            "start_date": "04-15-2018 14:32:20",
+            "end_date": "05-30-2018 14:32:20",
+            "matrix_room_id": "!LEHgeQLltxEMrDOZgh:127.0.0.1",
+            "distance": 0.32,
+            "is_subscribed": true,
+            "joined_status": "Joined"
+        },
+        {
+            "id": "xxx",
+            "name": "kiwiJoshLE",
+            "image": null,
+            "group_type": "Public",
+            "type": "Community",
+            "start_date": "05-28-2018 20:19:20",
+            "end_date": "06-28-2018 20:26:20",
+            "matrix_room_id": "!IBoaOQvLREneRQCFYy:127.0.0.1",
+            "distance": 1,
             "is_subscribed": false,
-            "total_comments": 0
+            "joined_status": "Joined"
         }
     ]
 }
