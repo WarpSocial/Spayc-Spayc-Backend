@@ -19,5 +19,6 @@ return [
     'maxupload'=>'5MB',
     'adminEmail' =>'kiwitech@gmail.com',
     'reverification_subject'=>'Re-Verifiaction',
-    'forgotpassword_subject'=>'Forgot Password'
+    'forgotpassword_subject'=>'Forgot Password',
+    'userstatus_subject'=>'User Status'
 ];

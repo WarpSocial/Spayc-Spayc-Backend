@@ -25,6 +25,7 @@ class UsersController extends AdminController
     use MailerAwareTrait;
     public function initialize() {
         parent::initialize();        
+        $this->loadComponent('Api.Push');
     }
     public function beforeFilter(Event $event)
     {
@@ -38,7 +39,7 @@ class UsersController extends AdminController
      * @return \Cake\Http\Response|void
      */
     public function index()
-    {
+    {        
         $this->set('title', 'Manage User');
         $conditions_array = [];
         $ageArr = unserialize(USER_AGE);
@@ -377,13 +378,22 @@ class UsersController extends AdminController
             else
                 $user->status = $statusArr['active'];
 
-            if ($this->Users->save($user)) {   
+            if ($this->Users->save($user)) {
+                $user =$this->Users->get($user->id);
                 $displayName = !empty($user->display_name)? $user->display_name :'User';
                 if (ucfirst($user->status) == $statusArr['active']) {   
                     $result_arr = ['result' => true, 'status'=>$statusArr['active'], 'message' => $displayName.' '.$this->errorSuccessMessage['UNBLOCKED-MSG']]; 
                 } else {   
                     $result_arr = ['result' => true, 'status'=>$statusArr['inactive'], 'message' => $displayName.' '.$this->errorSuccessMessage['BLOCKED-MSG']];   
                 }
+                if(!empty($user->email))
+                    $this->getMailer('User')->send('userStatus', [$user]);   
+                // for push notification
+                // $push['requested_by'] = $this->Auth->user('id');
+                // $push['username'] = $this->Auth->user('username');
+                // $push['requested_to'] = $user->id;
+                // $push['slug'] = 'blocked';
+                // $this->Push->sendPushNotification($push);
             } else {                
                 $result_arr = ['result' => false, 'status'=>'', 'message' => $this->errorSuccessMessage['SYSTEMERR']];   
             }
