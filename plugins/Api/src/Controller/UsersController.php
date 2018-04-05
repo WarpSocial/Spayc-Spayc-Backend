@@ -291,6 +291,7 @@ class UsersController extends AppController {
         $data['timezone'] = !empty($data['timezone'])?$data['timezone']:date_default_timezone_get();
         $data['physical_location']['current_latitude'] = Utils::getVar('latitude', $data);
         $data['physical_location']['current_longitude'] = Utils::getVar('longitude', $data);
+        
         $items = $this->Users->patchEntity($entity, $data,['associated'=>['PhysicalLocation']]);
         if($items->errors()) {
             $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
@@ -396,6 +397,7 @@ class UsersController extends AppController {
             $data['email'] = !empty($data['email'])?$data['email']:$alreadyExist['email'];
             $data['password'] = $alreadyExist['password'];
             $entity = $this->Users->get($data['id']);
+            $this->Users->PhysicalLocation->deleteAll(['user_id'=>$entity->id]);
         } else {
             $data['token_verification'] = Security::hash($data['email'], 'sha1', true);
             $data['password'] = Text::uuid();

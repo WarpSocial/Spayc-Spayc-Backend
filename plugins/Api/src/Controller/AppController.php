@@ -41,7 +41,7 @@ class AppController extends BaseController {
         Configure::write('timezone', 'UTC');
         if($this->request->header('timezone')) {
             Configure::write('timezone', $this->request->header('timezone'));
-        }
+        }        
     }
     public function beforeRender(Event $event) {
         parent::beforeRender($event);
@@ -71,8 +71,5 @@ class AppController extends BaseController {
         $this->response->stop();
     }
     
-    
-    protected function _outputMessage($template){
-        
-    }
+
 }

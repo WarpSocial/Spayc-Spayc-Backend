@@ -155,7 +155,6 @@ function postSpaycs() { return; }
         "image": "",
         "longitude": 77.209021,
         "latitude": 28.613939,
-        "invite": "@test2:35.168.119.247",
         "status": "Active",
         "matrix_room_id": "!JqhnnrWCtlFTnWlwWL:35.168.119.247",
         "matrix_room_alias": "#Holi13:35.168.119.247",
@@ -527,7 +526,7 @@ function postChatRoom() { return; }
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
 
-    @apiParam {String}     room_id      Spayc matrix id in query string (Required).
+    @apiParam {String}     room_id      Spayc matrix room id or spayc id in query string (Required).
     @apiParam {String}      status     Status of user, value must be any one from following(Pending|Joined) (Optional).
     @apiParam {Digit}      page        Page no(Optional).
     @apiParam {Digit}      limit       No of record to retrieve(Optional).
@@ -540,51 +539,36 @@ function postChatRoom() { return; }
 {
     "status": "success",
     "message": "List of spayc member.",
-    "data": {
-        "count": 4,
-        "records": [
-            {
-                "username": "devtestAA",
-                "email": "devtestAA@kiwitech.com",
-                "gender": "Male                                              ",
-                "dob": "02-25-2005",
-                "country_code": null,
-                "phone": "",
-                "website_url": null,
-                "address": null,
-                "bio_data": null,
-                "longitude": "21.253",
-                "latitude": "25.256",
-                "matrix_user_id": "@devtestaa:127.0.0.1",
-                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/4_20180220071137.png",
-                "user_id": "10",
-                "is_admin": 0,
-                "requested_status": "Joined",
-                "is_subscribed": false,
-                "physically_present": false
-            },
-            {
-                "username": "devtestAB",
-                "email": "devtestAB@kiwitech.com",
-                "gender": "Male                                              ",
-                "dob": "02-25-2005",
-                "country_code": null,
-                "phone": "",
-                "website_url": null,
-                "address": null,
-                "bio_data": null,
-                "longitude": "21.253",
-                "latitude": "25.256",
-                "matrix_user_id": "@devtestab:127.0.0.1",
-                "image_url": "",
-                "user_id": "11",
-                "is_admin": 0,
-                "requested_status": "Joined",
-                "is_subscribed": false,
-                "physically_present": false
-            }
-        ]
-    }
+    "data": [
+         {
+            "id": "2",
+            "username": "devuserA_1521280139",
+            "display_name": "devuserA",
+            "email": "devuserA@yopmail.com",
+            "matrix_user_id": "@devusera_1521280139:127.0.0.1",
+            "is_admin": 2,
+            "matrix_room_id": "",
+            "requested_status": "",
+            "joined_status": "Joined",
+            "physically_present": false,
+            "is_subscribed": true,
+            "image_url": ""
+        },
+        {
+            "id": "5",
+            "username": "devuserD_1521280167",
+            "display_name": "devuserD",
+            "email": "devuserD@yopmail.com",
+            "matrix_user_id": "@devuserd_1521280167:127.0.0.1",
+            "is_admin": 0,
+            "matrix_room_id": "",
+            "requested_status": "Accepted",
+            "joined_status": "Joined",
+            "physically_present": true,
+            "is_subscribed": false,
+            "image_url": ""
+        },
+    ]    
 }
  *
  * @apiUse UserErrorResponse
@@ -794,12 +778,10 @@ function getSubSpaycs() { return; }
  @apiGroup Spayc
  @apiPermission private
 
- @apiDescription Get list of spayces which user has been joined and spayces must be within 1 miles.Spaycs must not be expired according to the spayc end date.Listing will be ordered on distance and if distance will be same then on created.
+ @apiDescription Get list of spayces which user has been joined and spayces must be within 1 miles.Spaycs must not be expired.Listing will be ordered on distance and if distance will be same then on created.In absence of latitude and longitude distance will be calculated on stored latitude and longitude.
  
  @apiHeader {String} TOKEN            * A token send by header as TOKEN
  
- @apiParam {Number}      page            Page number in query string (Optional).
- @apiParam {Number}      limit           Limit in query string (Optional).
  @apiParam {String}      latitude        Latitude of current user (Optional).
  @apiParam {String}      longitude       Longitude of current user (Optional).
 
@@ -811,28 +793,33 @@ function getSubSpaycs() { return; }
  *      HTTP/1.1 200 OK
 {
     "status": "success",
-    "message": "List of Spaycs.",
+    "message": "List of spaycs.",
     "data": [
         {
-            "id": "95",
-            "name": "My Sub 8 March",
-            "location": null,
-            "matrix_room_id": "!xLfsiKaFDCBlLNyuAi:spayc-dev.kiwireader.com",
-            "start_date": "03-07-2018 18:32:16",
-            "end_date": "04-07-2018 18:32:34",
-            "image": null,
-            "type": "Event",
+            "id": "xxx",
+            "name": "kiwiJoshTA",
+            "image": "https://spayc-qa.s3.amazonaws.com/room/5_20180330084419.png",
             "group_type": "Public",
-            "passcode": "",
-            "user_id": 6,
-            "distance": "8266.679",
-            "subscribed_users": 0,
-            "friends": 0,
-            "joined_spayc_status": '',
-            "is_joined": false,
-            "joined_users": 0,
+            "type": "Event",
+            "start_date": "04-15-2018 14:32:20",
+            "end_date": "05-30-2018 14:32:20",
+            "matrix_room_id": "!LEHgeQLltxEMrDOZgh:127.0.0.1",
+            "distance": 0.32,
+            "is_subscribed": true,
+            "joined_status": "Joined"
+        },
+        {
+            "id": "xxx",
+            "name": "kiwiJoshLE",
+            "image": null,
+            "group_type": "Public",
+            "type": "Community",
+            "start_date": "05-28-2018 20:19:20",
+            "end_date": "06-28-2018 20:26:20",
+            "matrix_room_id": "!IBoaOQvLREneRQCFYy:127.0.0.1",
+            "distance": 1,
             "is_subscribed": false,
-            "total_comments": 0
+            "joined_status": "Joined"
         }
     ]
 }
@@ -863,28 +850,29 @@ function getnearAboutSpayces() { return; }
  *      HTTP/1.1 200 OK
 {
     "status": "success",
-    "message": "List of Spaycs.",
+    "message": "List of spaycs.",
     "data": [
         {
-            "id": "95",
-            "name": "My Sub 8 March",
-            "location": null,
-            "matrix_room_id": "!xLfsiKaFDCBlLNyuAi:spayc-dev.kiwireader.com",
-            "start_date": "03-07-2018 18:32:16",
-            "end_date": "04-07-2018 18:32:34",
-            "image": null,
-            "type": "Event",
+            "id": "120",
+            "name": "kiwiJoshTA",
+            "image": "https://spayc-qa.s3.amazonaws.com/room/5_20180330063531.png",
             "group_type": "Public",
-            "passcode": "",
-            "user_id": 6,
-            "distance": "8266.679",
-            "subscribed_users": 0,
-            "friends": 0,
-            "joined_spayc_status": '',
-            "is_joined": false,
-            "joined_users": 0,
-            "is_subscribed": false,
-            "total_comments": 0
+            "type": "Community",
+            "start_date": null,
+            "end_date": null,
+            "matrix_room_id": "!SaAsSnzeUOFGqlsKgr:127.0.0.1",
+            "joined_status": "Joined"
+        },
+        {
+            "id": "119",
+            "name": "kiwiJoshTA",
+            "image": "https://spayc-qa.s3.amazonaws.com/room/5_20180330061805.png",
+            "group_type": "Public",
+            "type": "Community",
+            "start_date": null,
+            "end_date": null,
+            "matrix_room_id": "!cQgXksBtaXDSkAoRpk:127.0.0.1",
+            "joined_status": "Joined"
         }
     ]
 }
