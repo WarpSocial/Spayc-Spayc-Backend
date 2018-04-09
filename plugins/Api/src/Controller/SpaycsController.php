@@ -816,19 +816,19 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);
         }
         $user = $this->Auth->user();
-        $pquery = TableRegistry::get('Api.PhysicalLocation')->findByUserId($user['id']);
-        if(!$pquery->isEmpty()){
-            $pquery = $pquery->first();
-            $userLat = $pquery->current_latitude;
-            $userLong = $pquery->current_longitude;
+        $lat = $this->request->getQuery('latitude');
+        $long = $this->request->getQuery('longitude');
+        if(empty($lat) && empty( $long)){
+            $pquery = TableRegistry::get('Api.PhysicalLocation')->findByUserId($user['id']);
+            if($pquery->isEmpty()){
+                $this->restException(['status'=>'failed','message'=>__('Latitude and Longitude is not updated.Either update the user current status or provide the latitude and longitude.')], 400);
+            }
+            $lat = $pquery->current_latitude;
+            $long = $pquery->current_longitude;            
         }else{
-            $userLat = '';
-            $userLong = '';
+            TableRegistry::get('Api.PhysicalLocation')->updateLocation($user,$lat,$long);
         }
-                
-        
-        $lat = $this->request->getQuery('latitude',$userLat);
-        $long = $this->request->getQuery('longitude',$userLong);
+       
         $date = (new Time('now', Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i:s");
         $errors = TableRegistry::get('Api.Users')->validateLatLong(['latitude'=>$lat,'longitude'=>$long]); 
         if(!empty($errors)) {
