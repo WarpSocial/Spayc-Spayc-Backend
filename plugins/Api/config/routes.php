@@ -54,7 +54,11 @@ Router::plugin(
         $routes->connect('/public-spaycs', ['controller'=>'Spaycs', 'action'=>'publicSpayc']);
         $routes->connect('/hash-tag-spaycs', ['controller'=>'Spaycs', 'action'=>'hashTagSpayc']);
         $routes->connect('/map-spaycs', ['controller'=>'Spaycs', 'action'=>'mapSpayc']);
-        $routes->connect('/create-advertisement', ['controller' => 'Spaycs', 'action' => 'createAdvertisement']);
+        
+        $routes->connect('/create-advertisement', ['controller' => 'Advertisement', 'action' => 'createAdvertisement']);
+        $routes->connect('/advertisement-details', ['controller' => 'Advertisement', 'action' => 'viewAdvertisement']);
+        $routes->connect('/advertisement-edit', ['controller' => 'Advertisement', 'action' => 'edit']);
+        $routes->connect('/advertisement-delete', ['controller' => 'Advertisement', 'action' => 'delete']);
         
         $routes->connect('/join-spayc', ['controller'=>'JoinSpaycs', 'action'=>'joinSpayc']);
         $routes->connect('/join-sub-spayc', ['controller'=>'JoinSpaycs', 'action'=>'joinSubSpayc']);
