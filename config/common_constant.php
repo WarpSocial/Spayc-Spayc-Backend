@@ -13,9 +13,16 @@ define('BLANK','--');
 $user_gender=array('1'=>'All','2'=>'Male','3'=>'Female','4'=>'Other');
 $user_age=array('1'=>'13-20','2'=>'21-30','3'=>'31-40','4'=>'41-50','5'=>'51-above');
 $status_arr=array('active'=>'Active','inactive'=>'Inactive');
+$spayctype_arr= array('event'=>'Event','community'=>'Community');
+$grouptype_arr= array('Public'=>'Public','Private'=>'Private');
+$spaycuserstatus_arr= array('1'=>'Admin','2'=>'Super Admin');
 define('USER_GENDER', serialize($user_gender));
 define('USER_AGE', serialize($user_age));
 define('STATUS_ARR', serialize($status_arr));
+define('SPAYC_TYPE_ARR', serialize($spayctype_arr));
+define('GROUP_TYPE_ARR', serialize($grouptype_arr));
+define('SPAYC_USER_STATUS_ARR', serialize($spaycuserstatus_arr));
+
 $config =array();
 $config['ERRORANDSUCCESSMSG'] = [
     'LOGOUTSUCCESS'=>'You have log out successfully.',

@@ -1,5 +1,7 @@
 <?php 
 use Cake\Routing\Router;
+$spaycTypeArr = unserialize(SPAYC_TYPE_ARR);
+$groupTypeArr = unserialize(GROUP_TYPE_ARR);
 $spaycsCount=$filter=false;
 if(count($spaycs) > 0) 
   $spaycsCount=true; 
@@ -38,7 +40,7 @@ if($this->request->query())
                       <div class="box-heading event"><?= !empty($spayc->type)?$spayc->type:BLANK?></div>
                       <div class="tag-line ell">
                           <span><?= !empty($spayc->name)?$spayc->name:BLANK?></span>
-                          <i class="icon-public-icon"></i>
+                        <i class="icon-<?= strtolower($spayc->group_type) ?>-icon"></i>
                       </div>
                       <!--======dropdown===-->
                       <div class="dropdown table-view-dropdown square-box-dropdown">
@@ -47,21 +49,22 @@ if($this->request->query())
                           <span></span>
                           <span></span>
                         </div>
-                        <div class="dropdown-menu" aria-labelledby="table-data-dropdown_<?= $spayc->id?>">
-                          <button class="dropdown-item view"> <i class="icon-view"></i>View</button>
+                        <div class="dropdown-menu" aria-labelledby="table-data-dropdown_<?= $spayc->id?>">                         
+                          <?= $this->Html->link("<i class='icon-view'></i>View",['controller' => 'Spaycs', 'action' => 'view',$spayc->id,$user->id], ['class' => 'dropdown-item view','escape' => false]);?>  
                           <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
                           <button class="dropdown-item delete"> <i class="icon-Delete"></i>Delete</button>
                         </div>
                       </div>
                   </div>
                   <div class="info-wrap">
+                    <?php if($spayc->type == $spaycTypeArr['event']) {?>
                       <div class="date-row info-data ell">
                           <span><?= !empty($this->dateFormat($spayc->start_date))?$this->dateFormat($spayc->start_date,DATEFORMAT_SPAYC).'&nbsp;-&nbsp;'.$this->dateFormat($spayc->end_date, DATEFORMAT_SPAYC):BLANK ?></span>
                       </div>
                       <div class="time-row info-data ell">
                           <span><?= !empty($this->dateFormat($spayc->start_date))?$this->dateFormat($spayc->start_date,TIMEFORMAT_SPAYC).'&nbsp;-&nbsp;'.$this->dateFormat($spayc->end_date, TIMEFORMAT_SPAYC):BLANK ?></span>
                       </div>
-                      <?php if(!empty($spayc->location)) { ?>
+                      <?php } if(!empty($spayc->location)) { ?>
                       <div class="address-row info-data ell">
                         <span><?= $spayc->location ?></span>
                       </div>

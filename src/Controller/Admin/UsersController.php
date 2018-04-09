@@ -50,9 +50,9 @@ class UsersController extends AdminController
             ->contain([            
                 'JoinedSpayc'=>function($q) {
                     return $q->select(['JoinedSpayc.user_id', 'joined_spaycs'=>$q->func()->count('JoinedSpayc.id')])->where(['JoinedSpayc.status'=>'Joined'])->group(['JoinedSpayc.user_id']);
-                },
+                },                
                 'Spaycs'=>function($q) {
-                    return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id']);
+                    return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->where(['Spaycs.group_type !=' =>'trusted_private'])->group(['Spaycs.user_id']);
                 },
                 'Requestedby' => function($q) {
                    return $q->select(['Requestedby.requested_by','count' => $q->func()->count('Requestedby.id')])->group(['Requestedby.requested_by'])->Where(['Requestedby.requested_status'=>FRIEND_REQUESTED_STATUS]);
@@ -412,7 +412,7 @@ class UsersController extends AdminController
         $this->set('title', 'Warps Created');        
         $keyword=($this->request->query('keyword'))?trim(strtolower($this->request->query('keyword'))):'';
         $query=$this->Spaycs->find()
-            ->where(['Spaycs.user_id'=> $id])
+            ->where(['Spaycs.user_id'=> $id,'Spaycs.group_type !='=>'trusted_private'])
             ->contain([                    
                 'Users',                
                 'Comments' => function($q) {
@@ -449,8 +449,6 @@ class UsersController extends AdminController
         $spaycs = $this->paginate($query)->toArray();         
         $this->set(compact('spaycs','keyword','user'));
         $this->set('_serialize', ['spaycs']);
-
-        //return $this->redirect(['action' => 'index']);
     }
 
 }
