@@ -25,10 +25,51 @@ define({ "api": [
         ]
       }
     },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Advertisement Name (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "price",
+            "description": "<p>Advertisement Price (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "url",
+            "description": "<p>Advertisement URL (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "description",
+            "description": "<p>Advertisement Description (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "File",
+            "optional": false,
+            "field": "image",
+            "description": "<p>Advertisement Image (Optional).</p>"
+          }
+        ]
+      }
+    },
     "examples": [
       {
         "title": "Example usage:",
-        "content": "{\n    \"name\": \"Space Ad\",\n    \"price\": \"250\",\n    \"description\": \"Test Test Test \",\n    \"url\": \"http://www.xyz.com\",\n    \"description\":\"Advertisement creating\",\n    \"image\":\"file.png\",\n    \"longitude\":\"XX.00.XX\",\n    \"latitude\":\"XX.00.XX\",\n    \"spayc_id\":\"5,6\"\n}",
+        "content": "{\n    \"name\": \"Space Ad\",\n    \"price\": \"250\",\n    \"description\": \"Test Test Test \",\n    \"url\": \"http://www.xyz.com\",\n    \"description\":\"Advertisement creating\",\n    \"image\":\"file.png\",\n    \"spayc_id\":\"5,6\"\n}",
         "type": "json"
       }
     ],
@@ -132,6 +173,19 @@ define({ "api": [
             "optional": false,
             "field": "TOKEN",
             "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Advertisement ID in query string(Required).</p>"
           }
         ]
       }
@@ -247,6 +301,54 @@ define({ "api": [
         "type": "json"
       }
     ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Advertisement ID - Update by(Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Advertisement Name.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "price",
+            "description": "<p>Advertisement Price.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "url",
+            "description": "<p>Advertisement URL.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "description",
+            "description": "<p>Advertisement Description.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "File",
+            "optional": false,
+            "field": "image",
+            "description": "<p>Advertisement Image.</p>"
+          }
+        ]
+      }
+    },
     "success": {
       "fields": {
         "Success 200": [
@@ -327,6 +429,130 @@ define({ "api": [
   },
   {
     "type": "get",
+    "url": "/user-advertisement.json?page=:page&limit=:limit",
+    "title": "User Advertisement",
+    "version": "0.1.0",
+    "name": "userAdvertisement",
+    "group": "Advertisement",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>User Advertisement.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "page",
+            "description": "<p>Page number in query string (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>Limit in query string (Optional).</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>List of spaycs..</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>List of Spaycs.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"List of Advertisement.\",\n    \"data\": [\n        {\n            \"id\": 48,\n            \"name\": \"asd\",\n            \"image\": \"https://spayc-qa.s3.amazonaws.com/room/test_20180402092149.png\",\n            \"price\": 250,\n            \"description\": \"asdasd\",\n            \"url\": null\n        },\n        {\n            \"id\": 49,\n            \"name\": \"asd\",\n            \"image\": \"https://spayc-qa.s3.amazonaws.com/room/test_20180402092707.png\",\n            \"price\": 250,\n            \"description\": \"asdasd\",\n            \"url\": null\n        },\n        {\n            \"id\": 50,\n            \"name\": \"asd\",\n            \"image\": \"https://spayc-qa.s3.amazonaws.com/room/test_20180402092717.png\",\n            \"price\": 250,\n            \"description\": \"asdasd\",\n            \"url\": null\n        },\n        {\n            \"id\": 51,\n            \"name\": \"asd\",\n            \"image\": \"https://spayc-qa.s3.amazonaws.com/room/test_20180402092736.png\",\n            \"price\": 250,\n            \"description\": \"asdasd\",\n            \"url\": null\n        },\n        {\n            \"id\": 52,\n            \"name\": \"Test\",\n            \"image\": \"https://spayc-qa.s3.amazonaws.com/room/test_20180402092815.png\",\n            \"price\": 250,\n            \"description\": \"asdasd\",\n            \"url\": null\n        }\n    ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/spayc.js",
+    "groupTitle": "Advertisement",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/user-advertisement.json?page=:page&limit=:limit"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
     "url": "/advertisement-details.json?id=:id",
     "title": "View Advertisement",
     "version": "0.1.0",
@@ -347,6 +573,19 @@ define({ "api": [
             "optional": false,
             "field": "TOKEN",
             "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Advertisement ID in query string(Required).</p>"
           }
         ]
       }
@@ -2955,10 +3194,79 @@ define({ "api": [
         ]
       }
     },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "center_latitude",
+            "description": "<p>Center Screen Latitude (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "center_longitude",
+            "description": "<p>Center Screen Longitude (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "endpoint_latitude",
+            "description": "<p>Corner Screen Latitude (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "endpoint_longitude",
+            "description": "<p>Corner Screen Longitude (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "time",
+            "description": "<p>Spayc Time (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "spayc_type",
+            "description": "<p>Spayc Type (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "group_type",
+            "description": "<p>Spayc Group Type (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "wrap_with_friends",
+            "description": "<p>Spayc having with friends (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "hashtag_id",
+            "description": "<p>Hashtag Search Filter (Optional).</p>"
+          }
+        ]
+      }
+    },
     "examples": [
       {
         "title": "Example usage:",
-        "content": "{\n    \"center_latitude\": \"28.6367\",\n    \"center_longitude\": \"77.2748\",\n    \"endpoint_latitude\": \"19.0760\",\n    \"endpoint_longitude\": \"72.8777\",\n    \n    \"time\": \"present|past|future\",\n    \"spayc_type\": \"Event|Community\",\n    \"spayc_type\": \"Public|Private\",\n    \"wrap_with_friends\": \"yes|no\",\n    \"hashtag_id\": xx\n    \n}",
+        "content": "{\n    \"center_latitude\": \"28.6367\",\n    \"center_longitude\": \"77.2748\",\n    \"endpoint_latitude\": \"19.0760\",\n    \"endpoint_longitude\": \"72.8777\",\n    \n    \"time\": \"present|past|future\",\n    \"spayc_type\": \"Event|Community\",\n    \"group_type\": \"Public|Private\",\n    \"wrap_with_friends\": \"yes|no\",\n    \"hashtag_id\": xx\n    \n}",
         "type": "json"
       }
     ],

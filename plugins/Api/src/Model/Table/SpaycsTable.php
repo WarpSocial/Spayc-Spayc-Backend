@@ -572,7 +572,6 @@ class SpaycsTable extends Table {
     
     public function getNearBySpaycsOnMap($request = [], $userId=null) {
    $today_date = (new Time('now', Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i:s");
-           if(!empty($request['center_latitude']) && !empty($request['center_longitude'])) {
             //To search by kilometers instead of miles, replace 3959 with 6371.
               $distanceField = '( 3959 * ACOS( COS( RADIANS(:latitude) ) *
                 COS( RADIANS(  latitude ) ) *
@@ -662,7 +661,6 @@ class SpaycsTable extends Table {
                     ]
                 ]
             );
-        }
         }
         $spaycs->contain([
 //            'JoinedSpayc' => function($q) {
