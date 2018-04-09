@@ -82,6 +82,7 @@ $groupTypeArr = unserialize(GROUP_TYPE_ARR);
               <div class="subspayc-box-wrapper clearfix">
                 <?php 
                   if (count($spayc->sub_spaycs)) {
+                    $spaycImgShadow = 'gradient-layer.png';
                     foreach($spayc->sub_spaycs as $sub_spaycs ) {                
                       $subSpaycImg ='no-image.png';
                       $spaycImgClass ='no-image-placeholder';
@@ -93,6 +94,7 @@ $groupTypeArr = unserialize(GROUP_TYPE_ARR);
                 <div class="subspayc-box">                 
                   <div class="subspayc-image-wrap <?= $spaycImgClass?>">
                     <?= $this->Html->image($subSpaycImg, ["alt" => "", 'class' =>'']); ?>
+                    <?= $this->Html->image($spaycImgShadow, ["alt" => "", 'class' =>'img-shadow']); ?>
                   </div>
                   <div class="text-wrap">
                     <span class="<?= strtolower($sub_spaycs->group_type) ?>"></span>
