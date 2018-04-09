@@ -42,7 +42,7 @@ $genderArr = unserialize(USER_GENDER);
 	                </div>
               </div>
               <div class="filter-box">
-                  <div class="dropp-header js-dropp-action filter-sm">
+                  <div class="dropp-header js-dropp-action filter-xs">
                     <span class="dropp-header__title js-value ell "><?php echo ($this->request->query('age_filter'))?$ageArr[$this->request->query('age_filter')]:'Age';?></span>
                     <i class="icon icon-down-filter"></i>
                   </div>

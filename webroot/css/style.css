@@ -299,7 +299,7 @@ a:not([href]):not([tabindex]) {
   min-width: 330px;
   height: 35px;
   line-height: 35px;
-  opacity: 0.8;
+  opacity: 0.9;
   padding: 0 20px;
   position: relative;
   background: #f4e2e2;
@@ -331,7 +331,7 @@ a:not([href]):not([tabindex]) {
   min-width: 330px;
   height: 35px;
   line-height: 35px;
-  opacity: 0.8;
+  opacity: 0.9;
   padding: 0 30px;
   position: absolute;
   left: 50%;
@@ -818,7 +818,10 @@ input[type=radio]:checked + span {
 *     filter width
 ========================================*/
 .filter-sm {
-  width: 118px;
+  width: 100px;
+}
+.filter-xs {
+  width: 66px;
 }
 /*========================================
 *   flex-basis
@@ -1037,7 +1040,7 @@ input:disabled {
 .login-box label,
 .forgot-password-box label {
   color: #333333;
-  opacity: .7;
+  opacity: .9;
   font-size: 0.75rem;
 }
 .login-box .password-wrap,
@@ -1067,6 +1070,7 @@ input:disabled {
 .login-box a.forgot-password-text,
 .forgot-password-box a.forgot-password-text {
   color: #1a4c59;
+  font-weight: 400;
 }
 /*=================================
 *  forgot password
@@ -1975,7 +1979,7 @@ input:disabled {
 }
 .forgot-password-modal .modal-body label {
   color: #333333;
-  opacity: .7;
+  opacity: .9;
   font-size: 0.75rem;
 }
 .forgot-password-modal .modal-body .password-wrap {
