@@ -822,8 +822,8 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);
         }
         $user = $this->Auth->user();
-        $lat = $this->request->getQuery('latitude');
-        $long = $this->request->getQuery('longitude');
+        $lat = $tmpLat = $this->request->getQuery('latitude');
+        $long = $tmpLong = $this->request->getQuery('longitude');
         if(empty($lat) && empty( $long)){
             $pquery = TableRegistry::get('Api.PhysicalLocation')->findByUserId($user['id']);
             if($pquery->isEmpty()){
@@ -858,23 +858,14 @@ class SpaycsController extends AppController {
                 }
                 return $q;
         });
-        if(!empty($lat) && !empty($long)){
-            $distance = "ROUND( CAST(".str_replace(':long',$long,str_replace(':lat',$lat,$this->Spaycs->distanceInMiles))." AS numeric), 3)";
-            $query->select(['distance'=>$distance])
-                    ->where([$distance.' <='=>$radius])
-                    ->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
-        }else{
-            $query->select(['distance'=>"''"])
-                    ->order(['Spaycs.created'=>'DESC']);
-        }
+        $query->order(['JoinedSpayc.distance'=>'ASC','Spaycs.created'=>'DESC']);
         $query->limit($limit)->page($page);
+       // pr($query->toArray());die;
         if($query->isEmpty()){
              $this->restException(['status'=>'failed','message'=>'Record not found.'], 204);
         }
         $result = $query->map(function ($row)use($lat,$long) {
-            if(empty($lat) && empty($long)){
-                $row->distance = $row->_matchingData['JoinedSpayc']->distance;
-            }
+            $row->distance = $row->_matchingData['JoinedSpayc']->distance;
             $row->is_subscribed = !empty($row->subscribed_users)?true:false;
             $row->joined_status = 'Joined';
             unset($row->_matchingData,$row->subscribed_users);
