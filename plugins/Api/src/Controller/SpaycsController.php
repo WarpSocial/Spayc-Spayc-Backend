@@ -561,7 +561,7 @@ class SpaycsController extends AppController {
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
      public function edit($id = null) {         
-        if (!$this->request->is(['put','patch','post'])) {
+        if (!$this->request->is(['post'])) {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);
         }
         $user = $this->Auth->user();
