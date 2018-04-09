@@ -24,17 +24,19 @@ if($this->request->query())
           <div class="event-box-wrapper clearfix">
             <!--=======Square-box=======-->
               <?php if ($spaycsCount) {
+                 $spaycImgShadow = 'gradient-layer.png';
                 foreach($spaycs as $spayc) {                
-                  $spaycImg ='no-image.png';
-                  $spaycImgClass ='no-image-placeholder';
+                  $spaycImg ='no-image.png';                 
+                  $spaycImgClass ='no-image-placeholder';                  
                   if(!empty($spayc->image)){
-                    $spaycImg =$spayc->image;
+                    $spaycImg =$spayc->image;                                
                     $spaycImgClass='';
                   }
               ?>  
               <div class="square-box">
                   <div class="image-wrap <?= $spaycImgClass?>">
                     <?= $this->Html->image($spaycImg, ["alt" => "", 'class' =>'']); ?>
+                    <?= $this->Html->image($spaycImgShadow, ["alt" => "", 'class' =>'img-shadow']); ?>
                       <div class="box-heading event"><?= !empty($spayc->type)?$spayc->type:BLANK?></div>
                       <div class="tag-line ell">
                           <span><?= !empty($spayc->name)?$spayc->name:BLANK?></span>
