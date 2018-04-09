@@ -616,16 +616,21 @@ class SpaycsTable extends Table {
 //        }
         
         if(isset($request['time']) && $request['time']=="past") {
-            $spaycs->where(["Spaycs.end_date <"=>$today_date]);
+//            $spaycs->where(["Spaycs.end_date <"=>$today_date]);
+            $spaycs->where(['OR'=>[['Spaycs.end_date <'=>$today_date],['Spaycs.end_date IS'=>null]]]);
         }else if(isset($request['time']) && $request['time']=="present") {
-            
-            $spaycs->where(["Spaycs.start_date <="=>$today_date]);
-            $spaycs->where(["Spaycs.end_date >="=>$today_date]);
+//            $spaycs->where(["Spaycs.start_date <="=>$today_date]);
+            $spaycs->where(['OR'=>[['Spaycs.start_date <='=>$today_date],['Spaycs.end_date IS'=>null]]]);
+//            $spaycs->where(["Spaycs.end_date >="=>$today_date]);
+            $spaycs->where(['OR'=>[['Spaycs.end_date >='=>$today_date],['Spaycs.end_date IS'=>null]]]);
         }else if(isset($request['time']) && $request['time']=="future") {
-            $spaycs->where(["Spaycs.start_date >"=>$today_date]);
+//            $spaycs->where(["Spaycs.start_date >"=>$today_date]);
+            $spaycs->where(['OR'=>[['Spaycs.start_date >'=>$today_date],['Spaycs.end_date IS'=>null]]]);
         }else{
-            
-            $spaycs->where(["end_date >="=>$today_date]);
+//            $spaycs->where(["Spaycs.start_date <="=>$today_date]);
+            $spaycs->where(['OR'=>[['Spaycs.start_date <='=>$today_date],['Spaycs.end_date IS'=>null]]]);
+//            $spaycs->where(["Spaycs.end_date >="=>$today_date]);
+            $spaycs->where(['OR'=>[['Spaycs.end_date >='=>$today_date],['Spaycs.end_date IS'=>null]]]);
         }
         
         if(isset($request['spayc_type']) && in_array(ucfirst($request['spayc_type']), ['Event', 'Community'])) {
@@ -663,12 +668,12 @@ class SpaycsTable extends Table {
             );
         }
         $spaycs->contain([
-//            'JoinedSpayc' => function($q) {
-//                return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
-//            },
-//            'SubscribedUsers' => function($q) {
-//                return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
-//            }
+            'JoinedSpayc' => function($q) {
+                return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
+            },
+            'SubscribedUsers' => function($q) {
+                return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
+            }
         ]);
         $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($userId) {
             return $results->map(function ($row) use($userId) {
@@ -679,12 +684,13 @@ class SpaycsTable extends Table {
                 }
 //                $row['joined_spayc_status'] = !empty($status[0])?$status[0]:null;
                 $row['is_joined'] = !empty($status[0])?true:false;
-//                $row['joined_users'] = !empty($row['joined_spayc'])?count($totalJoined):0;
+                $row['joined_users'] = !empty($row['joined_spayc'])?count($totalJoined):0;
                 unset($row['joined_spayc']);
                 if(!empty($row['subscribed_users'])) {
                     $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');
                 }
 //                $row['subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):0;
+                unset($row['subscribed_users']);
                 $row['is_subscribed'] = !empty($subUserId[0])?true:false;
                 return $row;
             });
