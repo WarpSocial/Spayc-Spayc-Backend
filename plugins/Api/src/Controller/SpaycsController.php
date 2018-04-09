@@ -886,15 +886,23 @@ class SpaycsController extends AppController {
          if (!$this->request->is(['post'])) {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);
         }
+//        echo $this->request->getData('center_latitude');die;
+         if(empty($this->request->getData('center_latitude'))
+                 || empty($this->request->getData('center_longitude'))
+                 || empty($this->request->getData('endpoint_latitude'))
+                 || empty($this->request->getData('endpoint_longitude'))
+                 ) {
+            $this->restException(['status'=>'failed', 'message'=> __('Parameter Invalid.')], 400);
+         }
         $user = $this->Auth->user();
         $pquery = TableRegistry::get('Api.PhysicalLocation')->findByUserId($user['id']);
-        if(!$pquery->isEmpty()){
-            $lat = $pquery->current_latitude;
-            $long = $pquery->current_longitude;
-        }else{
-            $lat = $user['latitude'];
-            $long = $user['longitude'];
-        }
+//        if(!$pquery->isEmpty()){
+//            $lat = $pquery->latitude;
+//            $long = $pquery->longitude;
+//        }else{
+//            $lat = $user['latitude'];
+//            $long = $user['latitude'];
+//        }
         $spayc=TableRegistry::get('Api.Spaycs')->getNearBySpaycsOnMap($this->request->getData(),$user['id']);
         $friends = TableRegistry::get('Api.FriendRequest')->getNearByFriendsOnMap($this->request->getData(), $user['id']);
 //        print_R($friends);die;
@@ -1043,59 +1051,4 @@ class SpaycsController extends AppController {
         $this->set($response);
     }
     
-      /**
-     * createAdvertisement method to create subspace
-     *
-     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
-     */
-    public function createAdvertisement() {
-        if (!$this->request->is('post')) {
-            $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
-        }
-        $data = $this->request->getData();
-
-        $user = $this->Auth->user();
-      
-        $entity = $this->Spaycs->find()->contain('JoinedSpayc',function($q)use($user){
-            return $q->where(['user_id'=>$user['id']]);
-        });
-         
-        $advModel = TableRegistry::get('Api.Advertisement');
-        
-        $entity = $advModel->newEntity();
-        //pr($this->request->getData());
-        
-        
-        $data['spaycs'] = ['_ids' => [1]];
-        $items = $advModel->patchEntity($entity,$data);
-        
-        if(!empty($items->errors())) {
-            $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
-        }
-        $items->user_id = $user['id'];
-        $success=$advModel->save($items);
-//        pr($success);die;
-        
-        
-        
-        
-        $ad_spayc=array();
-        $spayc_id=explode(",",$data['spayc_id']);
-        foreach($spayc_id as $k=>$v){
-        $advModel = TableRegistry::get('Api.SpaycAdvertisement');
-        $entity = $advModel->newEntity();
-        $entity->advertisement_id = $success->id;
-        $entity->spayc_id = $v;
-        $entity->modified = new \Cake\I18n\Time();
-        $entity->created = new \Cake\I18n\Time();   
-        $ad_spayc[]=$advModel->save($entity);
-        }
-         
-        if(!count($ad_spayc)){
-            $this->restException(['status'=>'failed', 'message'=>__('Advertisement could not be saved. Please, try again.')], 400);
-        }
-        $response = ['status'=>'success','message'=>__('Advertisement Created Successfully'),'data'=>$success];
-        $this->set($response);
-    }
-
 }

@@ -57,6 +57,7 @@ Router::plugin(
         
         $routes->connect('/create-advertisement', ['controller' => 'Advertisement', 'action' => 'createAdvertisement']);
         $routes->connect('/advertisement-details', ['controller' => 'Advertisement', 'action' => 'viewAdvertisement']);
+        $routes->connect('/user-advertisement', ['controller' => 'Advertisement', 'action' => 'userAdvertisement']);
         $routes->connect('/advertisement-edit', ['controller' => 'Advertisement', 'action' => 'edit']);
         $routes->connect('/advertisement-delete', ['controller' => 'Advertisement', 'action' => 'delete']);
         

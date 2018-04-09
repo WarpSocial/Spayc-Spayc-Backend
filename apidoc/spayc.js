@@ -968,6 +968,17 @@ function hashTagSpaycs() { return; }
  @apiHeader {String} TOKEN            * A token send by header as TOKEN
     
     
+    @apiParam {String}      center_latitude            Center Screen Latitude (Required).
+    @apiParam {String}      center_longitude           Center Screen Longitude (Required).
+    @apiParam {String}      endpoint_latitude          Corner Screen Latitude (Required).
+    @apiParam {String}      endpoint_longitude         Corner Screen Longitude (Required).
+
+    @apiParam {String}      time                     Spayc Time (Optional).
+    @apiParam {String}      spayc_type               Spayc Type (Optional).
+    @apiParam {String}      group_type               Spayc Group Type (Optional).
+    @apiParam {String}      wrap_with_friends        Spayc having with friends (Optional).
+    @apiParam {Number}      hashtag_id               Hashtag Search Filter (Optional).
+    
 @apiExample Example usage:
     {
         "center_latitude": "28.6367",
@@ -977,7 +988,7 @@ function hashTagSpaycs() { return; }
         
         "time": "present|past|future",
         "spayc_type": "Event|Community",
-        "spayc_type": "Public|Private",
+        "group_type": "Public|Private",
         "wrap_with_friends": "yes|no",
         "hashtag_id": xx
         
@@ -1046,6 +1057,12 @@ function mapSpaycs() { return; }
  
  @apiHeader {String} TOKEN            * A token send by header as TOKEN
  
+    @apiParam {String}      name            Advertisement Name (Required).
+    @apiParam {Number}      price            Advertisement Price (Required).
+    @apiParam {String}      url            Advertisement URL (Required).
+    @apiParam {String}      description            Advertisement Description (Required).
+    @apiParam {File}      image               Advertisement Image (Optional).
+
     @apiExample Example usage:
     {
         "name": "Space Ad",
@@ -1054,8 +1071,6 @@ function mapSpaycs() { return; }
         "url": "http://www.xyz.com",
         "description":"Advertisement creating",
         "image":"file.png",
-        "longitude":"XX.00.XX",
-        "latitude":"XX.00.XX",
         "spayc_id":"5,6"
     }
 
@@ -1107,6 +1122,12 @@ function createAdvertisement() { return; }
         "image":"file.png",
     }
 
+    @apiParam {Number}      id            Advertisement ID - Update by(Required).
+    @apiParam {String}      name            Advertisement Name.
+    @apiParam {Number}      price            Advertisement Price.
+    @apiParam {String}      url            Advertisement URL.
+    @apiParam {String}      description            Advertisement Description.
+    @apiParam {File}      image               Advertisement Image.
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message List of spaycs..
@@ -1148,6 +1169,8 @@ function editAdvertisement() { return; }
  @apiHeader {String} TOKEN            * A token send by header as TOKEN
 
 
+    @apiParam {Number}      id            Advertisement ID in query string(Required).
+
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message List of spaycs..
@@ -1174,6 +1197,80 @@ function viewAdvertisement() { return; }
 
 
 
+/**
+ @api {get} /user-advertisement.json?page=:page&limit=:limit User Advertisement
+ @apiVersion 0.1.0
+ @apiName userAdvertisement
+ @apiGroup Advertisement
+ @apiPermission private
+
+ @apiDescription User Advertisement.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+
+    @apiParam {Number}      page            Page number in query string (Optional).
+    @apiParam {Number}      limit           Limit in query string (Optional).
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "List of Advertisement.",
+    "data": [
+        {
+            "id": 48,
+            "name": "asd",
+            "image": "https://spayc-qa.s3.amazonaws.com/room/test_20180402092149.png",
+            "price": 250,
+            "description": "asdasd",
+            "url": null
+        },
+        {
+            "id": 49,
+            "name": "asd",
+            "image": "https://spayc-qa.s3.amazonaws.com/room/test_20180402092707.png",
+            "price": 250,
+            "description": "asdasd",
+            "url": null
+        },
+        {
+            "id": 50,
+            "name": "asd",
+            "image": "https://spayc-qa.s3.amazonaws.com/room/test_20180402092717.png",
+            "price": 250,
+            "description": "asdasd",
+            "url": null
+        },
+        {
+            "id": 51,
+            "name": "asd",
+            "image": "https://spayc-qa.s3.amazonaws.com/room/test_20180402092736.png",
+            "price": 250,
+            "description": "asdasd",
+            "url": null
+        },
+        {
+            "id": 52,
+            "name": "Test",
+            "image": "https://spayc-qa.s3.amazonaws.com/room/test_20180402092815.png",
+            "price": 250,
+            "description": "asdasd",
+            "url": null
+        }
+    ]
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function userAdvertisement() { return; }
+
+
+
+
 
 /**
  @api {get} /advertisement-delete.json?id=:id Delete Advertisement
@@ -1185,6 +1282,7 @@ function viewAdvertisement() { return; }
  @apiDescription Edit Advertisement.
  
  @apiHeader {String} TOKEN            * A token send by header as TOKEN
+    @apiParam {Number}      id            Advertisement ID in query string(Required).
 
 
  *

@@ -193,4 +193,35 @@ class AdvertisementController extends AppController {
         $this->set($response);
     }
 
+    
+      
+    public function userAdvertisement(){
+         if (!$this->request->is(['get'])) {
+            $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);
+        }
+        
+        $user = $this->Auth->user();
+        $pquery = TableRegistry::get('Api.Advertisement')->findByUserId($user['id'])
+                ->select(['id','name','image','price','description','url']);
+         
+        $page = $this->request->getQuery('page',1);
+        $limit = $this->request->getQuery('limit',Configure::read('pagelimit'));
+        $pquery->limit($limit)->page($page);
+        
+        
+        if($pquery->isEmpty()){
+             $this->restException(['status'=>'failed','message'=>'Record not found.'], 400);
+        }
+        if($pquery->toArray()){
+        $data=$pquery->toArray();
+         $response = ['status'=>'success','message'=>'List of Advertisement.','data'=>$data];
+        }else{
+                $response = ['status'=>'failed','message'=>__('No Advertisement found')];
+        }
+       
+        
+       
+        $this->set($response);
+    }
+    
 }
