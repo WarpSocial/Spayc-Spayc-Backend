@@ -908,7 +908,7 @@ input[type=radio]:checked + span {
 }
 button:disabled,
 input:disabled {
-  color: #2d8f30;
+  color: #2D8F30;
   cursor: not-allowed;
 }
 .login-page {
@@ -1419,6 +1419,19 @@ input:disabled {
 }
 .table-wrapper .table-row .table-data.p-info {
   max-width: 150px;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: -ms-flex;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  -moz-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  -ms-align-items: center;
+  align-items: center;
 }
 .table-wrapper .table-row .table-data span {
   font-weight: 400;
@@ -1793,7 +1806,7 @@ input:disabled {
   border-radius: 0;
   margin: 0 auto;
 }
-.modal-dialog-lg {
+.modal-dialog-lg .modal-dialog {
   width: 700px;
   max-width: 700px;
   height: auto;
