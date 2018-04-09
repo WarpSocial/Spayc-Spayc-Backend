@@ -720,7 +720,12 @@ class SpaycsController extends AppController {
         }        
         $this->set($response);
     }
-    
+    /**
+     * viewSubSpaycs method to lit the subspaycs of spayc
+     * 
+     * @param String $spayc_id Parent spayc id
+     * @return Object Json object with spayc details.
+     */
     public function viewSubSpaycs(){
         if (!$this->request->is(['get'])) {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);
@@ -922,14 +927,11 @@ class SpaycsController extends AppController {
             $this->restException(__('Page and limit value must be integer.'),400);
         }
         $date = (new Time('now', Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i:s");
+        $subQuery = TableRegistry::get('Api.JoinedSpayc')->joinedSpaycQuery($user['id']);
         $query = $this->Spaycs->find();
-        $query->select(['Spaycs.id', 'Spaycs.name','Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.matrix_room_id','JoinedSpayc.status']);
-        $query->where(['Spaycs.status'=>'Active','Spaycs.parent_id IS'=>null,'Spaycs.group_type !='=>'trusted_private','Spaycs.group_type ='=>'Public','OR'=>[['Spaycs.end_date >='=>$date],['Spaycs.end_date IS'=>null]]]);
+        $query->select(['Spaycs.id', 'Spaycs.name','Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.matrix_room_id']);
+        $query->where(['Spaycs.status'=>'Active','Spaycs.parent_id IS'=>null,'OR'=>[['Spaycs.id IN'=>$subQuery],['Spaycs.group_type'=>'Public']]]);
         
-        $query->innerJoinWith('JoinedSpayc',function($q)use($user) {
-                $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin','JoinedSpayc.distance'])->where(['JoinedSpayc.user_id'=>$user['id'],'JoinedSpayc.status'=>'Joined']);                
-                return $q;
-        });
        $query->order(['Spaycs.created'=>'DESC']);
        $query->limit($limit)->page($page);
         if($query->isEmpty()){

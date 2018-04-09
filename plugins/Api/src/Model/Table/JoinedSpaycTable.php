@@ -100,7 +100,12 @@ class JoinedSpaycTable extends Table {
         }
         return $ids;
     }
-    
+    /**
+     * getJoinedUserIds method to list the joined user ids 
+     * 
+     * @param Int $spayc_id Description
+     * @return Array array of user ids
+     */
     public function getJoinedUserIds($spaycId = null) {
         $userId = $this->find("all", ['fields' => ['id', 'user_id'], 'conditions' => ['spayc_id' => $spaycId,'status'=>'Joined']]);
         $ids = [0];
@@ -109,6 +114,23 @@ class JoinedSpaycTable extends Table {
             $ids = \Cake\Utility\Hash::extract($userIds, '{n}.user_id');
         }
         return $ids;
+    }
+    
+    /**
+     * joinedSpaycsQuery method to return the query of user joined spaycs
+     * 
+     * @param Int $userId user primary key
+     * @return String sql query
+     */
+    public function joinedSpaycQuery($userId = null) {
+        if($userId == null){
+            return false;
+        }
+        $query = $this->find()
+                ->select(['id'])
+                ->distinct()
+                ->where(['user_id' => $userId,'status'=>'Joined']);
+        return $query;
     }
     
     public function ValidateStatus($data,$status){
