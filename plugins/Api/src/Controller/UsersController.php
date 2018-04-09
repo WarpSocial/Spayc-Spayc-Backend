@@ -1369,39 +1369,7 @@ class UsersController extends AppController {
         $lat = (float)$data['latitude'];
         $long = (float)$data['longitude'];
         $user = $this->Auth->user();
-        $distance = "ROUND( CAST({$this->Users->Spaycs->distanceInMiles} AS numeric), 3)";       
-        $jsModel = TableRegistry::get('Api.JoinedSpayc');
-        $jsquery = $jsModel->find()
-                ->select(['JoinedSpayc.id','JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.distance'])
-                ->contain(['Spaycs'=>function($q)use($distance){
-                    $miles= Configure::read('miles');
-                    return $q->select(['distance'=>$distance]);
-                            
-                }])
-                ->bind(':lat', $lat, 'float')
-                ->bind(':long', $long, 'float')
-                ->where(['JoinedSpayc.user_id'=>$user['id']]);
-                //pj($query->toArray());die;
-        if(!$jsquery->isEmpty()){
-            $result = $jsquery->toArray();
-             foreach($result as $row){
-                 $jsModel->query()
-                          ->update()
-                          ->set(['distance' => $row->distance])
-                          ->where(['user_id' => $row->user_id,'spayc_id'=>$row->spayc_id])
-                          ->execute();
-             }
-         }
-         $ple = $this->Users->PhysicalLocation->findByUserId($user['id']);
-         if($ple->isEmpty()){
-             $pl = $this->Users->PhysicalLocation->newEntity();
-             $pl->set('user_id',$user['id']);
-         }else{
-             $pl = $ple->first();             
-         }
-         $pl->set('current_latitude',$data['latitude']);
-         $pl->set('current_longitude',$data['longitude']);
-        if($this->Users->PhysicalLocation->save($pl,['validate'=>false,'checkRules'=>false,'atomic'=>false])){
+        if($this->Users->PhysicalLocation->updateLocation($user,$lat,$long)){
             $response = ['status'=>'success', 'message'=>__('Request has been updated successfully.')];
         }else{
             $this->response->statusCode(400);
