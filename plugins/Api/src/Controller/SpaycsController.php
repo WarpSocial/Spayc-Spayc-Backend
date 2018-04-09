@@ -386,16 +386,21 @@ class SpaycsController extends AppController {
         }
         $spayc = $spaycs->first();
         $entities = $scModel->find('all',['field'=>['id','user_id','spayc_id','status']])->where(['spayc_id'=>$spayc->id,'user_id'=>$data['user_id']]);
-        if(!$entities->isEmpty()){
-             $this->restException(['status'=>'failed','message'=>__('User has been already subscribed.')], 400);
+        if($entities->isEmpty()){
+            $entity = $scModel->newEntity();
+        }else{
+            $entity = $entities->first();
+            if($entity->status == 'Active'){
+                $this->restException(['status'=>'failed','message'=>__('User has been already subscribed.')], 400);
+           }
         }
-        $entity = $scModel->newEntity();
+        
         $entity->user_id = $data['user_id'];
+        $entity->status = 'Active';
         $entity->spayc_id = $spayc->id;
         //$entity->status = 'Active';
         $entity->modified = new \Cake\I18n\Time();
-        $entity->created = new \Cake\I18n\Time();            
-                
+        $entity->created = new \Cake\I18n\Time();
         if($scModel->save($entity,['checkRules' => false, 'atomic' => false])){
             $response = ['status'=>'success','message'=>__('User has been subcribed successfully.')];
         }else{
@@ -427,14 +432,15 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Invalid spayc id.')], 400);
         }
         $spayc = $spaycs->first();
-        $entities = $scModel->find('all',['field'=>['id','user_id','spayc_id','status']])->where(['spayc_id'=>$spayc->id,'user_id'=>$data['user_id']]);        
+        $entities = $scModel->find('all',['field'=>['id','user_id','spayc_id','status']])->where(['spayc_id'=>$spayc->id,'user_id'=>$data['user_id']]);      
         if($entities->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>__('User has not yet subscribed.')], 400);
+             $this->restException(['status'=>'failed','message'=>__('User has not yet subscribed.')], 400);
+        }else{
+            $entity = $entities->first();
+            if($entity->status == 'Inactive'){
+                $this->restException(['status'=>'failed','message'=>__('User has been already un-subscribed.')], 400);
+           }
         }
-        $entity = $entities->first();           
-//        $entity->status = 'Inactive';
-//        $entity->modified = new \Cake\I18n\Time();
-//        $entity->updated_by = $this->Auth->user('id');
         if($scModel->delete($entity)){
             $response = ['status'=>'success','message'=>__('User has been unsubcribed successfully.')];
         }else{
@@ -823,6 +829,7 @@ class SpaycsController extends AppController {
             if($pquery->isEmpty()){
                 $this->restException(['status'=>'failed','message'=>__('Latitude and Longitude is not updated.Either update the user current status or provide the latitude and longitude.')], 400);
             }
+            $pquery = $pquery->first();
             $lat = $pquery->current_latitude;
             $long = $pquery->current_longitude;            
         }else{
