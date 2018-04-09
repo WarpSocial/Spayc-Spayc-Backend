@@ -4,6 +4,8 @@ define('ROLE_ADMIN',1);
 define('SITE_TITLE','Warp');
 define('PAGINATION_LIMIT',20);
 define('DATEFORMAT_DISPLAY','M d, Y');
+define('DATEFORMAT_SPAYC','D, d M');
+define('TIMEFORMAT_SPAYC','h : i A');
 define('DATEFORMAT','Y-m-d');
 define('FRIEND_REQUESTED_STATUS','Accepted');
 define('BLANK_COUNT',0);

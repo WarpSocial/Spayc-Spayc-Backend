@@ -44,12 +44,12 @@ class UsersController extends AdminController
         $this->set('title', 'Manage User');
         $conditions_array = [];
         $ageArr = unserialize(USER_AGE);
-        $keyword=($this->request->query('keyword'))?trim($this->request->query('keyword')):'';
+        $keyword=($this->request->query('keyword'))?trim(strtolower($this->request->query('keyword'))):'';
         $query=$this->Users->find()
             ->where(['Users.role_id IS'=> null])
             ->contain([            
                 'JoinedSpayc'=>function($q) {
-                    return $q->select(['JoinedSpayc.user_id', 'joined_spaycs'=>$q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.user_id']);
+                    return $q->select(['JoinedSpayc.user_id', 'joined_spaycs'=>$q->func()->count('JoinedSpayc.id')])->where(['JoinedSpayc.status'=>'Joined'])->group(['JoinedSpayc.user_id']);
                 },
                 'Spaycs'=>function($q) {
                     return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id']);
@@ -93,8 +93,8 @@ class UsersController extends AdminController
         } 
         if (count($conditions_array)) {
             $query->where($conditions_array);
-        }        
-        $users = $this->paginate($query); 
+        }                 
+        $users = $this->paginate($query);          
         $this->set(compact('users','keyword'));
         $this->set('_serialize', ['users']);
     }
@@ -406,41 +406,48 @@ class UsersController extends AdminController
 
     public function createdWarps($id = null)
     {
-
-        if(empty($id) || is_numeric($id))
-            //return $this->redirect(['Controller'=>'Users', 'action' => 'index']);
+        if(empty($id) || !is_numeric($id))
+            return $this->redirect(['Controller'=>'Users', 'action' => 'index']);
         
         $this->set('title', 'Warps Created');        
-        $keyword=($this->request->query('keyword'))?trim($this->request->query('keyword')):'';
+        $keyword=($this->request->query('keyword'))?trim(strtolower($this->request->query('keyword'))):'';
         $query=$this->Spaycs->find()
-            ->where(['Spaycs.user_id'=> $id]);
+            ->where(['Spaycs.user_id'=> $id])
+            ->contain([                    
+                'Users',                
+                'Comments' => function($q) {
+                    return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
+                }
+            ]);
 
         if(!empty($keyword)){            
             $query->where(['OR' => ['Spaycs.name LIKE' => "%".$keyword."%"]]);
-        }   
-        
-        $spaycs = $this->paginate($query); 
+        }           
+        $spaycs = $this->paginate($query)->toArray();           
         $this->set(compact('spaycs','keyword'));
         $this->set('_serialize', ['spaycs']);
     }
 
     public function joinedWarps($id = null)
     {
-        if(empty($id) || is_numeric($id))
-            //return $this->redirect(['Controller'=>'Users', 'action' => 'index']);
+        if(empty($id) || !is_numeric($id))
+            return $this->redirect(['Controller'=>'Users', 'action' => 'index']);
 
         $this->set('title', 'Warps Joined');
-        $conditions_array = [];       
-        $keyword=($this->request->query('keyword'))?trim($this->request->query('keyword')):'';
-        $query=$this->Spaycs->find()->
-            contain(['Users'])
-            ->where(['Spaycs.user_id'=> $id]);
-
+        $keyword=($this->request->query('keyword'))?trim(strtolower($this->request->query('keyword'))):'';
+        $user = $this->Users->get($id);    
+        $query = $this->Spaycs->find();
+        $query->select(['Spaycs.id', 'Spaycs.name','Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.location']);
+        $query->where(['Spaycs.group_type !='=>'trusted_private']);  
+        $query->innerJoinWith('JoinedSpayc',function($q)use($user) {
+                $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin'])->where(['JoinedSpayc.user_id'=>$user->id,'JoinedSpayc.status'=>'Joined']);                
+                return $q;
+        });
         if(!empty($keyword)){
             $query->where(['OR' => ['Spaycs.name LIKE' => "%".$keyword."%"]]);
         }   
-        $spaycs = $this->paginate($query); 
-        $this->set(compact('spaycs','keyword'));
+        $spaycs = $this->paginate($query)->toArray();         
+        $this->set(compact('spaycs','keyword','user'));
         $this->set('_serialize', ['spaycs']);
 
         //return $this->redirect(['action' => 'index']);

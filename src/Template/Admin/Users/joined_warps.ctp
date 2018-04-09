@@ -10,7 +10,7 @@ if($this->request->query())
       <div class="breadcrumbs">
         <div class="container">
           <h4>Manage Users</h4>
-          <p><span>Users</span> <span>Warps Created by <?= !empty($spaycs['0']->user->display_name)?ucwords($spaycs['0']->user->display_name):''?> </span></p>
+          <p><span>Users</span> <span>Warps Joined by <?= !empty($user->display_name)?ucwords($user->display_name):''?> </span></p>
         </div>
       </div>
 
@@ -48,7 +48,7 @@ if($this->request->query())
                           <span></span>
                         </div>
                         <div class="dropdown-menu" aria-labelledby="table-data-dropdown_<?= $spayc->id?>">
-                          <button class="dropdown-item view"> <i class="icon-view"></i>View</button>                          
+                          <button class="dropdown-item view"> <i class="icon-view"></i>View</button>
                           <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
                           <button class="dropdown-item delete"> <i class="icon-Delete"></i>Delete</button>
                         </div>

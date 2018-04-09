@@ -74,7 +74,7 @@ if(isset($this->request->query['sort'])) {
             <!--==============table data====================-->
               <div class="table-row">
                 <div class="table-data flex-basis15 text-left p-info">
-                  <span class="user-name"><?= !empty($user->display_name)?h($user->display_name):'' ?></span>
+                  <span class="user-name"><?= !empty($user->display_name)?h(ucwords($user->display_name)):'' ?></span>
                   <span class="ell"  class="d-inline-block" tabindex="0" data-toggle="tooltip" data-animation="false" title="<?php echo $user->email;?>"><?= !empty($user->email)?h($user->email):'' ?></span>
                   <span class="user-contact"><?= !empty($user->phone)?h($user->country_code).'&nbsp;'.h($user->phone):''; ?>
                   </span>

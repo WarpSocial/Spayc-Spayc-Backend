@@ -61,6 +61,10 @@ class SpaycsController extends AdminController
      */
     public function view($id = null)
     {
+
+        if(empty($id) || !is_numeric($id))
+            return $this->redirect(['Controller'=>'Users', 'action' => 'index']);
+
         $spayc = $this->Spaycs->get($id, [
             'contain' => ['Users', 'MatrixRooms', 'ParentSpaycs']
         ]);
