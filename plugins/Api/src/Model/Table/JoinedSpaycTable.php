@@ -127,7 +127,7 @@ class JoinedSpaycTable extends Table {
             return false;
         }
         $query = $this->find()
-                ->select(['id'])
+                ->select(['spayc_id'])
                 ->distinct()
                 ->where(['user_id' => $userId,'status'=>'Joined']);
         return $query;

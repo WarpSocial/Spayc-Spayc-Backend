@@ -1335,8 +1335,7 @@ class UsersController extends AppController {
                 $this->Push->sendOnIOS($send, $message);
             }
         }
-        $response = ['status'=>'success', 'message'=>__('notification sent')];
-        $this->set($response);
+       $this->restException();
     }
     
     public function testPushnotification() {
@@ -1475,17 +1474,23 @@ class UsersController extends AppController {
         }
         $adminEntity = Hash::extract($entities->toArray(), '{n}[user_id='.$user['id'].']');
         $userEntity = Hash::extract($entities->toArray(), '{n}[user_id='.$data['user_id'].']');
-        if(empty($adminEntity[0])){
+        if(empty($adminEntity[0]) || ($adminEntity[0]['status'] != 'Joined')){
             $this->restException(['status'=>'failed','message'=>__('You are not joined with this spayc.')], 400);
         }
-        if(empty($userEntity[0])){
+        if(empty($userEntity[0]) || ($userEntity[0]['status'] != 'Joined')){
             $this->restException(['status'=>'failed','message'=>__('user is not joined with this spayc.')], 400);
         }
         if($adminEntity[0]['is_admin'] <= 0){
             $this->restException(['status'=>'failed','message'=>__('You have no privileges to make someone admin.')], 400);
         }
-        if($userEntity[0]['is_admin'] > 0){
-            $this->restException(['status'=>'failed','message'=>__('User has already admin privileges.')], 400);
+        if(($userEntity[0]['is_admin'] == $adminEntity[0]['is_admin'])){
+            $this->restException(['status'=>'failed','message'=>__('You couldn\'t change the role with same privileges.')], 400);
+        }
+        if(($userEntity[0]['is_admin'] == 2) && ($data['role'] == 2)){
+            $this->restException(['status'=>'failed','message'=>__('You couldn\'t change the role of superadmin.')], 400);
+        }
+        if($userEntity[0]['is_admin'] == $data['role']){
+            $this->restException(['status'=>'failed','message'=>__('User has already with same privileges.')], 400);
         }
         $entity = $userEntity[0];
         if($entity->is_admin == $data['role']){
@@ -1503,7 +1508,12 @@ class UsersController extends AppController {
             $push['spayc_id'] = $data['spayc_id']; //provide spayc id if push related to spayc
             $push['slug'] = 'admin-asigned';
             $this->Push->sendPushNotification($push);
-            $response = ['status'=>'success','message'=>__('User has been assigned as admin successfully.')];
+            if($data['role'] == 1){
+                $message = __('User has been assigned as admin successfully.');
+            }else{
+                $message = __('Role has been changed  successfully.');
+            }
+            $response = ['status'=>'success','message'=>$message];
         }else{
             $this->response->statusCode(400);
             $response = ['status'=>'failed','message'=>__('System failed to change the role.')];

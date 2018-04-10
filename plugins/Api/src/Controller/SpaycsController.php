@@ -561,7 +561,7 @@ class SpaycsController extends AppController {
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
      public function edit($id = null) {         
-        if (!$this->request->is(['put','patch','post'])) {
+        if (!$this->request->is(['post'])) {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);
         }
         $user = $this->Auth->user();
@@ -858,9 +858,7 @@ class SpaycsController extends AppController {
             }]);
         $query->innerJoinWith('JoinedSpayc',function($q)use($user,$radius,$lat,$long) {
                 $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin','JoinedSpayc.distance'])->where(['JoinedSpayc.user_id'=>$user['id'],'JoinedSpayc.status'=>'Joined']);
-                if(empty($lat) && empty($long)){
-                    $q->where(['JoinedSpayc.distance <='=>$radius]);
-                }
+                $q->where(['JoinedSpayc.distance <='=>$radius]);
                 return $q;
         });
         $query->order(['JoinedSpayc.distance'=>'ASC','Spaycs.created'=>'DESC']);
@@ -945,12 +943,18 @@ class SpaycsController extends AppController {
         if($query->isEmpty()){
              $this->restException(['status'=>'failed','message'=>'Record not found.'], 204);
         }
-        $result = $query->map(function ($row) {
-            $row->joined_status = 'Joined';
+       // pj($query);
+        $result = $query->map(function ($row)use($subQuery) {
+            $joinedId = \Cake\Utility\Hash::extract($subQuery->toArray(),'{n}[id='.$row->id.']');
+            if(!empty($joinedId)){
+                $row->joined_status = 'Joined';
+            }else{
+                $row->joined_status = 'Not_Joined';
+            };
             unset($row->_matchingData);
             return $row;
          });
-       
+      
         $response = ['status'=>'success','message'=>'List of spaycs.','data'=>$result];
         $this->set($response);
     }

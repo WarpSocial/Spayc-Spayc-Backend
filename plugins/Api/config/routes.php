@@ -62,6 +62,7 @@ Router::plugin(
         $routes->connect('/advertisement-delete', ['controller' => 'Advertisement', 'action' => 'delete']);
         
         $routes->connect('/join-spayc', ['controller'=>'JoinSpaycs', 'action'=>'joinSpayc']);
+        $routes->connect('/accept-join-request', ['controller'=>'JoinSpaycs', 'action'=>'acceptJoinedRequest']);
         $routes->connect('/join-sub-spayc', ['controller'=>'JoinSpaycs', 'action'=>'joinSubSpayc']);
         $routes->connect('/ban-spayc-member', ['controller'=>'JoinSpaycs', 'action'=>'banSpaycMember']);
         $routes->connect('/read-notifications', ['controller' => 'Users', 'action' => 'readNotification']);
