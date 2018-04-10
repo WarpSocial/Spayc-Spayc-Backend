@@ -669,10 +669,12 @@ class SpaycsTable extends Table {
         }
         $spaycs->contain([
             'JoinedSpayc' => function($q) {
-                return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
+                return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status'])
+                        ->where(['JoinedSpayc.status' => "Joined"]);
             },
             'SubscribedUsers' => function($q) {
-                return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
+                return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])
+                        ->where(['SubscribedUsers.status' => "Active"]);;
             }
         ]);
         $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($userId) {
