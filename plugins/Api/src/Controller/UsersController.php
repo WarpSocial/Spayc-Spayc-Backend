@@ -1335,8 +1335,7 @@ class UsersController extends AppController {
                 $this->Push->sendOnIOS($send, $message);
             }
         }
-        $response = ['status'=>'success', 'message'=>__('notification sent')];
-        $this->set($response);
+       $this->restException();
     }
     
     public function testPushnotification() {
