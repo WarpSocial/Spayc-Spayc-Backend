@@ -1014,10 +1014,11 @@ function hashTagSpaycs() { return; }
                     "type": "Community",
                     "latitude": 28.7041,
                     "longitude": 77.1025,
-                    "is_joined": false,
-                    "is_subscribed": false
+                    "is_joined": true,
+                    "joined_users": 3,
+                    "is_subscribed": true
                 }
-            ],
+            ]
         },
         "friends": {
             "count": 2,
@@ -1028,7 +1029,8 @@ function hashTagSpaycs() { return; }
                     "email": "bot@gmail.com",
                     "address": null,
                     "latitude": 28.579403737919,
-                    "longitude": 77.320890067264
+                    "longitude": 77.320890067264,
+                    "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
                 },
                 {
                     "id": "3",
@@ -1036,9 +1038,10 @@ function hashTagSpaycs() { return; }
                     "email": "sam@yopmail.com",
                     "address": null,
                     "latitude": 28.7041,
-                    "longitude": 77.1025
+                    "longitude": 77.1025,
+                    "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
                 }
-            ],
+            ]
         }
     }
 }
