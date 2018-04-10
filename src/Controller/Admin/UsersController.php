@@ -93,7 +93,8 @@ class UsersController extends AdminController
         } 
         if (count($conditions_array)) {
             $query->where($conditions_array);
-        }                 
+        }  
+        $query->order(['Users.display_name' => 'asc']);        
         $users = $this->paginate($query);          
         $this->set(compact('users','keyword'));
         $this->set('_serialize', ['users']);
