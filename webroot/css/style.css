@@ -2352,6 +2352,7 @@ input:disabled {
 .subspayc .subspayc-box-wrapper .subspayc-box .subspayc-image-wrap {
   width: 100%;
   height: 135px;
+  position: relative;
 }
 .subspayc .subspayc-box-wrapper .subspayc-box .subspayc-image-wrap img {
   width: 100%;
@@ -2383,7 +2384,7 @@ input:disabled {
   position: absolute;
   top: 0;
   right: 0;
-  background: url('../images/icon-public.png') no-repeat center center;
+  background: url('../images/icon-public.svg') no-repeat center center;
 }
 .subspayc .subspayc-box-wrapper .subspayc-box .text-wrap .private {
   width: 30px;
@@ -2392,7 +2393,7 @@ input:disabled {
   position: absolute;
   top: 0;
   right: 0;
-  background: url('../images/icon-private.png') no-repeat center center;
+  background: url('../images/icon-private.svg') no-repeat center center;
 }
 .subspayc .subspayc-box-wrapper .subspayc-box:nth-child(4n+4) {
   margin-right: 0;
