@@ -926,9 +926,13 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
         $data = $this->request->getData();
+        $loggedUser = $this->Auth->user();
         $errors = $this->Users->requestBlockedValidate($data);
         if(!empty($errors)) {
             $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($errors)], 400);
+        }
+        if($loggedUser['id'] == $data['friend_id']) {
+            $this->restException(['status'=>'failed', 'message'=>__('You couldn\'t block himself.')], 400);
         }
         $data['friend_id'] = ApiHasher::decrypt($data['friend_id']);
         $frObj = TableRegistry::get('Api.FriendRequest');
@@ -936,7 +940,6 @@ class UsersController extends AppController {
         if(!$spaceUsr) {
             $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
         }
-        $loggedUser = $this->Auth->user();
         $requestedFrnd = $frObj->find()->Where(['OR'=>[
             ['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']],
             ['requested_by' => $data['friend_id'],'requested_to'=>$loggedUser['id']]
@@ -1321,6 +1324,7 @@ class UsersController extends AppController {
         $data = $this->request->getData();
         $pushData['post_value'] = json_encode($data);
         $pushData['created'] = date("Y-m-d H:i:s");
+        Log::info(json_encode($pushData,JSON_PRETTY_PRINT));
         $pusher = TableRegistry::get("Api.PusherData");
         $push = $pusher->newEntity();
         $item = $pusher->patchEntity($push, $pushData);

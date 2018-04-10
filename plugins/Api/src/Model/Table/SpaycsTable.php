@@ -164,7 +164,7 @@ class SpaycsTable extends Table {
                                 $startDate = Time::createFromFormat('m-d-Y H:i:s',$value,$timezone);
                                 $currentDate = new Time('now',$timezone);
                                 $now = clone $currentDate;
-                                $currentDate->modify('+1 year')->modify('+1 minute');
+                                $currentDate->modify('+1 year');
                                 return (bool) ($startDate >= $now && $startDate <= $currentDate);
                             }
                         },

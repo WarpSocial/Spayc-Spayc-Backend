@@ -74,6 +74,8 @@ class SpaycsController extends AppController {
                 if(!empty($items['description'])) {
                     TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
                 }
+                $items->created = Utils::toClient($items->created);
+                $items->modified = Utils::toClient($items->modified);
                 $this->response->statusCode(201);
                 $response = ['status'=>'success','message'=>__('Your spayc '.ucfirst($data['name']).', has been created.'),'data'=>$items];
                 /*Event to bind to update the set upload room image */
@@ -124,6 +126,9 @@ class SpaycsController extends AppController {
         }
         
         $parentObj = $entity->first();
+        if(!empty($parentObj->parent_id)){
+            $this->restException(['status'=>'failed','message'=>__('Spayc inside subspayc is not allowed.')], 400);
+        }
         if(empty($parentObj->joined_spayc)){
             $this->restException(['status'=>'failed','message'=>__('You don\'t have sufficient right to create subspace.')], 400);
         }

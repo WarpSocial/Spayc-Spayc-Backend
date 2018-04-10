@@ -49,7 +49,7 @@ class JoinSpaycsController extends AppController {
                 ])
                 ->where(['id'=>$data['spayc_id']]);
         if($spaycs->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>__('Spayc is not exist.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Spayc is no longer available..')], 400);
         }
         $spayc = $spaycs->first();
         if(!empty($spayc->parent_id)){
@@ -289,8 +289,9 @@ class JoinSpaycsController extends AppController {
                                 ->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.is_admin'])
                                 ->where(['JoinedSpayc.user_id IN'=>[$data['user_id'],$user['id']]]);
                     },
+                   'Users'
                 ])
-                ->where(['id'=>$data['spayc_id']]);
+                ->where(['Spaycs.id'=>$data['spayc_id']]);
         if($spaycs->isEmpty()) {
             $this->restException(['status'=>'failed','message'=>__('Spayc is no longer available.')], 400);
         }
@@ -304,15 +305,18 @@ class JoinSpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('User is not member of this spayc.')], 400);
         }
         $currentUserStatus = $currentUserStatus[0];
+        if($currentUserStatus['is_admin'] != 2){
+            $data['matrix_token'] = $spayc->user->matrix_access_token;
+        }
         $BannedUserStatus = $BannedUserStatus[0];
         if($currentUserStatus['is_admin'] < 1){
-            $this->restException(['status'=>'failed','message'=>__('You have not permission to ban a user.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('You have no permission to ban a user.')], 400);
         }
         if($currentUserStatus['is_admin'] <= $BannedUserStatus['is_admin']){
             $this->restException(['status'=>'failed','message'=>__('You have no rights to ban a user which has same level of access.')], 400);
         }
         if($BannedUserStatus['status'] == 'Banned'){
-            $this->restException(['status'=>'failed','message'=>__('User already banned with this spayc.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('User has already banned with this spayc.')], 400);
         }
         if($BannedUserStatus['status'] != 'Joined'){
             $this->restException(['status'=>'failed','message'=>__('User is not joined with this spayc.')], 400);
@@ -325,8 +329,8 @@ class JoinSpaycsController extends AppController {
         $BannedUserStatus->modified = new \Cake\I18n\Time();
         $BannedUserStatus->updated_by = $user['id'];
         $matrix = $this->Matrix->banMember($data);
-        if(!empty($matrix)) {
-            $this->restException(['status'=>'failed','message'=>__('Failed to ban a user.')],400);
+        if(is_string($matrix)) {
+            $this->restException(['status'=>'failed','message'=>__($matrix)],400);
         }
         if($jsModel->save($BannedUserStatus)){
             $response = ['status'=>'success','message'=>__('User has been '.$data['status'].' successfully.')];

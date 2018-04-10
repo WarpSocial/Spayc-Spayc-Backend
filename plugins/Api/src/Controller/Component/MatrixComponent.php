@@ -528,8 +528,9 @@ class MatrixComponent extends Component {
         ); 
         
         $response = json_decode($httpResponse->body,true);
-        if(!empty($response['errcode'])){
-            return $this->errorMsg($response['errcode']);
+        if(!empty($response['errcode'])){            
+            //return $this->errorMsg($response['errcode']);
+            return $response['error'];
         }else{
             return true;
         }
