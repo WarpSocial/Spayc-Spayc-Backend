@@ -1478,11 +1478,14 @@ class UsersController extends AppController {
         if(empty($adminEntity[0]) || ($adminEntity[0]['status'] != 'Joined')){
             $this->restException(['status'=>'failed','message'=>__('You are not joined with this spayc.')], 400);
         }
-        if(empty($userEntity[0]) || ($userEntity[0]['status' != 'Joined'])){
+        if(empty($userEntity[0]) || ($userEntity[0]['status'] != 'Joined')){
             $this->restException(['status'=>'failed','message'=>__('user is not joined with this spayc.')], 400);
         }
         if($adminEntity[0]['is_admin'] <= 0){
             $this->restException(['status'=>'failed','message'=>__('You have no privileges to make someone admin.')], 400);
+        }
+        if(($userEntity[0]['is_admin'] == $adminEntity[0]['is_admin'])){
+            $this->restException(['status'=>'failed','message'=>__('You couldn\'t change the role with same privileges.')], 400);
         }
         if(($userEntity[0]['is_admin'] == 2) && ($data['role'] == 2)){
             $this->restException(['status'=>'failed','message'=>__('You couldn\'t change the role of superadmin.')], 400);
