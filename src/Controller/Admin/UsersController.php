@@ -14,7 +14,7 @@ use Cake\Mailer\MailerAwareTrait;
 use Api\Auth\ApiHasher;
 use Cake\Utility\Security;
 use Cake\Validation\Validator;
-
+use Api\Utils\Utils;
 /**
  * Users Controller
  *
@@ -52,7 +52,7 @@ class UsersController extends AdminController
                     return $q->select(['JoinedSpayc.user_id', 'joined_spaycs'=>$q->func()->count('JoinedSpayc.id')])->where(['JoinedSpayc.status'=>'Joined'])->group(['JoinedSpayc.user_id']);
                 },                
                 'Spaycs'=>function($q) {
-                    return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->where(['Spaycs.group_type !=' =>'trusted_private'])->group(['Spaycs.user_id']);
+                    return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->where(['Spaycs.group_type !=' =>'trusted_private','parent_id IS'=>null])->group(['Spaycs.user_id']);
                 },
                 'Requestedby' => function($q) {
                    return $q->select(['Requestedby.requested_by','count' => $q->func()->count('Requestedby.id')])->group(['Requestedby.requested_by'])->Where(['Requestedby.requested_status'=>FRIEND_REQUESTED_STATUS]);
@@ -89,12 +89,12 @@ class UsersController extends AdminController
             } 
         }         
         if(!empty($keyword)){
-            $query->where(['OR' => [['Users.display_name LIKE' => "%".$keyword."%"], ['Users.email LIKE' => "%".$keyword."%"], ['Users.address LIKE' => "%".$keyword."%"],['Users.username LIKE' => "%".$keyword."%"]]]);
+            $query->where(['OR' => [['LOWER(Users.display_name) LIKE' => "%".$keyword."%"], ['LOWER(Users.email) LIKE' => "%".$keyword."%"], ['LOWER(Users.address) LIKE' => "%".$keyword."%"],['LOWER(Users.username) LIKE' => "%".$keyword."%"]]]);
         } 
         if (count($conditions_array)) {
             $query->where($conditions_array);
         }  
-        $query->order(['Users.display_name' => 'asc']);        
+        $this->paginate = ['order' => ['Users.display_name' => 'ASC']];
         $users = $this->paginate($query);          
         $this->set(compact('users','keyword'));
         $this->set('_serialize', ['users']);
@@ -404,54 +404,6 @@ class UsersController extends AdminController
         }
         $this->set(compact('user'));
     }
-
-    public function createdWarps($id = null)
-    {
-        if(empty($id) || !is_numeric($id))
-            return $this->redirect(['Controller'=>'Users', 'action' => 'index']);
-        
-        $this->set('title', 'Warps Created');        
-        $keyword=($this->request->query('keyword'))?trim(strtolower($this->request->query('keyword'))):'';
-        $query=$this->Spaycs->find()
-            ->where(['Spaycs.user_id'=> $id,'Spaycs.group_type !='=>'trusted_private'])
-            ->contain([                    
-                'Users',                
-                'Comments' => function($q) {
-                    return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
-                }
-            ]);
-
-        if(!empty($keyword)){            
-            $query->where(['OR' => ['Spaycs.name LIKE' => "%".$keyword."%"]]);
-        }           
-        $spaycs = $this->paginate($query)->toArray();           
-        $this->set(compact('spaycs','keyword'));
-        $this->set('_serialize', ['spaycs']);
-    }
-
-    public function joinedWarps($id = null)
-    {
-        if(empty($id) || !is_numeric($id))
-            return $this->redirect(['Controller'=>'Users', 'action' => 'index']);
-
-        $this->set('title', 'Warps Joined');
-        $keyword=($this->request->query('keyword'))?trim(strtolower($this->request->query('keyword'))):'';
-        $user = $this->Users->get($id);    
-        $query = $this->Spaycs->find();
-        $query->select(['Spaycs.id', 'Spaycs.name','Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.location']);
-        $query->where(['Spaycs.group_type !='=>'trusted_private']);  
-        $query->innerJoinWith('JoinedSpayc',function($q)use($user) {
-                $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin'])->where(['JoinedSpayc.user_id'=>$user->id,'JoinedSpayc.status'=>'Joined']);                
-                return $q;
-        });
-        if(!empty($keyword)){
-            $query->where(['OR' => ['Spaycs.name LIKE' => "%".$keyword."%"]]);
-        }   
-        $spaycs = $this->paginate($query)->toArray();         
-        $this->set(compact('spaycs','keyword','user'));
-        $this->set('_serialize', ['spaycs']);
-    }
-
 }
 
 

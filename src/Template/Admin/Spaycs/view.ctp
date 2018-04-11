@@ -55,12 +55,12 @@ $groupTypeArr = unserialize(GROUP_TYPE_ARR);
                     </span>
                   </div>
                 </div>
-                <?php } ?>
-
+                <?php } if(!empty($spayc->location)) { ?>
                 <div class="address-wrapper">
                   <span>Address</span>
                   <span class="bold-text"><?= !empty($spayc->location)?$spayc->location:BLANK ?></span>
                 </div>
+                <?php } ?>
 
                 <div class="member-wrapper hide">
                   <span>Members</span>
@@ -98,8 +98,8 @@ $groupTypeArr = unserialize(GROUP_TYPE_ARR);
                   </div>
                   <div class="text-wrap">
                     <span class="<?= strtolower($sub_spaycs->group_type) ?>"></span>
-                    <h4><?= !empty($sub_spaycs->name)?$sub_spaycs->name:BLANK?></h4>
-                    <p><?= !empty($sub_spaycs->description)?$sub_spaycs->description:BLANK?></p>
+                    <h4><?= !empty($sub_spaycs->name)?$sub_spaycs->name:''?></h4>
+                    <p><?= !empty($sub_spaycs->description)?$sub_spaycs->description:''?></p>
                   </div>
                 </div>
                <?php 

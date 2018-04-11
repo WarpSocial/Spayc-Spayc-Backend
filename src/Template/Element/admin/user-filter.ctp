@@ -69,7 +69,7 @@ $genderArr = unserialize(USER_GENDER);
               <div class="filter-box">
                   <div class="dropp-header filter-sm datepicker-box">
                     <div class="input-group date datepicker">
-                      <?= $this->Form->input('from_date',['type'=>'text', 'placeholder'=> 'From Date', 'class'=>'from-date', 'value'=> $this->request->query('from_date'), 'readonly'=>true, 'label'=>false,'templates' => ['inputContainer' => '{{content}}']]); ?>
+                      <?= $this->Form->input('from_date',['type'=>'text', 'placeholder'=> 'From Date', 'class'=>'from-date date-filter', 'value'=> $this->request->query('from_date'), 'readonly'=>true, 'label'=>false,'templates' => ['inputContainer' => '{{content}}']]); ?>
                       <span class="input-group-addon datepicker-icon"></span>
                   </div>
                   </div>
@@ -79,7 +79,7 @@ $genderArr = unserialize(USER_GENDER);
               <div class="filter-box">
                   <div class="dropp-header filter-sm datepicker-box">
                     <div 	class="input-group date datepicker">
-                       <?= $this->Form->input('to_date',['type'=>'text', 'placeholder'=> 'To Date', 'class'=>'to-date', 'value'=> $this->request->query('to_date'), 'readonly'=>true, 'label'=>false,'templates' => ['inputContainer' => '{{content}}'] ]); ?>
+                       <?= $this->Form->input('to_date',['type'=>'text', 'placeholder'=> 'To Date', 'class'=>'to-date date-filter', 'value'=> $this->request->query('to_date'), 'readonly'=>true, 'label'=>false,'templates' => ['inputContainer' => '{{content}}'] ]); ?>
                       <span class="input-group-addon datepicker-icon"></span>
                     </div>
                   </div>

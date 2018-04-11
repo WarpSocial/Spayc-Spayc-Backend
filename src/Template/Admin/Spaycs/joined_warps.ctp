@@ -7,6 +7,7 @@ if(count($spaycs) > 0)
   $spaycsCount=true; 
 if($this->request->query())
   $filter=true;
+
 ?>
 <!--=============breadcrumbs==============-->            
       <div class="breadcrumbs">
@@ -52,7 +53,7 @@ if($this->request->query())
                           <span></span>
                         </div>
                         <div class="dropdown-menu" aria-labelledby="table-data-dropdown_<?= $spayc->id?>">                         
-                          <?= $this->Html->link("<i class='icon-view'></i>View",['controller' => 'Spaycs', 'action' => 'view',$spayc->id,$user->id], ['class' => 'dropdown-item view','escape' => false]);?>  
+                          <?= $this->Html->link("<i class='icon-view'></i>View",['controller' => 'Spaycs', 'action' => 'view',$spayc->id,$spayc->user_id], ['class' => 'dropdown-item view','escape' => false]);?>  
                           <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
                           <button class="dropdown-item delete"> <i class="icon-Delete"></i>Delete</button>
                         </div>
@@ -70,9 +71,17 @@ if($this->request->query())
                       <div class="address-row info-data ell">
                         <span><?= $spayc->location ?></span>
                       </div>
-                      <?php } if(isset($spayc->comments[0]->total_comment) && !empty($spayc->comments[0]->total_comment)) { ?>
+                      <?php } if(!empty($spayc->total_presents)) { ?>
+                      <div class="presented-row info-data ell">
+                          <span><?= $spayc->total_presents ?> Presented</span>
+                      </div>
+                      <?php } if(!empty($spayc->joined_users)) { ?>
+                      <div class="friends-row info-data ell">
+                          <span><?= $spayc->joined_users ?> Joiners</span>
+                      </div>
+                      <?php } if(!empty($spayc->total_comments)) { ?>
                       <div class="comment-row info-data ell">
-                        <span><?= $spayc->comments[0]->total_comment ?> Comments</span>
+                        <span><?= $spayc->total_comments ?> Comments</span>
                       </div>
                       <?php } ?>
                   </div>
