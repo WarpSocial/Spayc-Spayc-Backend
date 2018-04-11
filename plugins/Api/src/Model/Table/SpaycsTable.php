@@ -165,6 +165,9 @@ class SpaycsTable extends Table {
                                 $currentDate = new Time('now',$timezone);
                                 $now = clone $currentDate;
                                 $currentDate->modify('+1 year');
+                                $startDate = strtotime($startDate->format('Y-m-d H:i'));
+                                $now = strtotime($now->format('Y-m-d H:i'));
+                                $currentDate = strtotime($currentDate->format('Y-m-d H:i'));
                                 return (bool) ($startDate >= $now && $startDate <= $currentDate);
                             }
                         },
@@ -196,6 +199,8 @@ class SpaycsTable extends Table {
                             if($endDate->format('H') == '00'){
                                 $endDate->setTime(23,55);
                             }
+                            $startDate = strtotime($startDate->format("Y-m-d H:i"));
+                            $endDate = strtotime($endDate->format("Y-m-d H:i"));
                             return (bool)($startDate <= $endDate );
                         }
                         return true;
