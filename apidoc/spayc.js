@@ -682,20 +682,20 @@ function postJoinSubSpayc() { return; }
 
 
 /**
-@api {post} /ban-spayc-member.json Ban Spayc Member
+@api {post} /ban-spayc-member.json Ban/Unban Spayc Member
 @apiVersion 0.1.0
 @apiName postBanSpaycMember
 @apiGroup Spayc
 @apiPermission private
 
-@apiDescription super admin or admin can ban spayc member who has not rights of admin and super admin could ban admin privileges member too.
+@apiDescription super admin or admin can ban or unban spayc member who has not rights of admin and super admin could ban admin privileges member too.
 
 * @apiHeader {String} TOKEN            * Token required in header
 * @apiHeader {String} timezone            * Current timezone
 
 @apiParam {Intger} spayc_id Existing Spayc id(Required).
 @apiParam {Intger} user_id  Member id of joined spayc(Required).
-@apiParam {String} status Status must be any one Banned (Required).
+@apiParam {String} status Status must be any one Banned or Unbanned (Required).
 
 @apiExample Example usage:
 {

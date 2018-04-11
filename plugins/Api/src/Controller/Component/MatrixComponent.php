@@ -514,7 +514,12 @@ class MatrixComponent extends Component {
         ];
         $roomId  = $this->validRoomId($data['matrix_room_id']);
         $http = new Client();
-        $url = $this->config('url') .DS.$this->config('client').DS.'rooms'. DS.$roomId.DS.'ban?access_token='.$data['matrix_token'];
+        if($data['status'] == 'Unbanned'){
+            $apiEndpoint = 'unban';
+        }else{
+            $apiEndpoint = 'ban';
+        }
+        $url = $this->config('url') .DS.$this->config('client').DS.'rooms'. DS.$roomId.DS.$apiEndpoint.'?access_token='.$data['matrix_token'];
         $httpResponse = $http->post(
             $url, 
             json_encode($postData), 

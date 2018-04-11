@@ -171,7 +171,8 @@ class SpaycsTable extends Table {
                                 return (bool) ($startDate >= $now && $startDate <= $currentDate);
                             }
                         },
-                        'message'=>__('Start date can\'t be more than 1 year ahead or any past date.')
+                        //'message'=>__('Start date can\'t be more than 1 year ahead or any past date.')
+                                'message'=>__('Start date can not be greater than end date.')
                     ]
                 ]);
                 

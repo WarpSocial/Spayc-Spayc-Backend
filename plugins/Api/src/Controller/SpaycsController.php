@@ -684,6 +684,9 @@ class SpaycsController extends AppController {
         }
         if($id == null){
             $id = $this->request->query('id');
+            if(empty($id)){
+                $this->restException(['status'=>'failed','message'=>'Record not found.'], 404);
+            }
         } 
         $user = $this->Auth->user();
         $entity = $this->Spaycs->find()
@@ -698,15 +701,15 @@ class SpaycsController extends AppController {
         array_push($matrixRoomIds, $spayc->matrix_room_id);
         $child = \Cake\Utility\Hash::extract($spayc->sub_spaycs, '{n}.id');        
         array_push($child,$spayc->id);  
-        $this->Matrix->deleteRoom($matrixRoomIds);
-        if ($this->Spaycs->delete($spayc)) {
-            TableRegistry::get('Api.JoinedSpayc')->deleteAll(['spayc_id IN' => $child]);
-            TableRegistry::get('Api.SubscribedUsers')->deleteAll(['spayc_id IN' => $child]);
-            TableRegistry::get('Api.SpaycHashtags')->deleteAll(['spayc_id IN' => $child]);
-            $response = ['status'=>'success','message'=>__('The spayc has been deleted.')];
-        } else {
-            $response = ['status'=>'failed','message'=>__('Spayc could not be deleted.')];
-        }
+//        $this->Matrix->deleteRoom($matrixRoomIds);
+//        if ($this->Spaycs->delete($spayc)) {
+//            TableRegistry::get('Api.JoinedSpayc')->deleteAll(['spayc_id IN' => $child]);
+//            TableRegistry::get('Api.SubscribedUsers')->deleteAll(['spayc_id IN' => $child]);
+//            TableRegistry::get('Api.SpaycHashtags')->deleteAll(['spayc_id IN' => $child]);
+//            $response = ['status'=>'success','message'=>__('The spayc has been deleted.')];
+//        } else {
+//            $response = ['status'=>'failed','message'=>__('Spayc could not be deleted.')];
+//        }
          $this->set(compact('response'));
     }
     

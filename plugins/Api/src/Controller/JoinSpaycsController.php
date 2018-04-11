@@ -63,7 +63,7 @@ class JoinSpaycsController extends AppController {
         if(!empty($currentUserStatus[0])){
             $currentUserStatus = $currentUserStatus[0];
             if($currentUserStatus->is_admin > 0){
-                $this->restException(['status'=>'failed','message'=>__('Admin could\'t change their own status')], 400);
+                $this->restException(['status'=>'failed','message'=>__('Admin could\'t change their own role.')], 400);
             }
             if(($currentUserStatus->status == 'Joined') && ($data['status'] == 'Pending')){
                 $this->restException(['status'=>'failed','message'=>__('You are already part of this spayc.')], 400);
@@ -281,7 +281,7 @@ class JoinSpaycsController extends AppController {
         $user = $this->Auth->user();
         $data = $this->request->getData();
         $jsModel = TableRegistry::get('Api.JoinedSpayc');
-        $errors = $jsModel->ValidateStatus($data,['Banned']);
+        $errors = $jsModel->ValidateStatus($data,['Banned','Unbanned']);
         if(!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
@@ -320,17 +320,24 @@ class JoinSpaycsController extends AppController {
         if($currentUserStatus['is_admin'] <= $BannedUserStatus['is_admin']){
             $this->restException(['status'=>'failed','message'=>__('You have no rights to ban a user which has same level of access.')], 400);
         }
-        if($BannedUserStatus['status'] == 'Banned'){
-            $this->restException(['status'=>'failed','message'=>__('User has already banned with this spayc.')], 400);
+        if($currentUserStatus['status'] != 'Joined'){
+            $this->restException(['status'=>'failed','message'=>__('Only joined member who has admin rights can ban or unban any user.')], 400);
         }
-        if($BannedUserStatus['status'] != 'Joined'){
+        if($BannedUserStatus['status'] == $data['status']){
+            $this->restException(['status'=>'failed','message'=>__('User has already '. strtolower($data['status']).' with this spayc.')], 400);
+        }
+        if(($BannedUserStatus['status'] == 'Joined') && ($data['status'] == 'Unbanned')){
+            $this->restException(['status'=>'failed','message'=>__('Cannot unban user who was not banned.')], 400);
+        }       
+        
+        if(!in_array($BannedUserStatus['status'],['Joined','Banned'])){
             $this->restException(['status'=>'failed','message'=>__('User is not joined with this spayc.')], 400);
         }
         $bannedMatrixUser = TableRegistry::get('Api.Users')->get($BannedUserStatus['user_id'],['fields'=>['matrix_user_id']]);
         $data['matrix_user_id'] = $bannedMatrixUser->matrix_user_id;
         $data['matrix_room_id'] = $spayc->matrix_room_id;
         
-        $BannedUserStatus->status = $data['status'];
+        $BannedUserStatus->status = ($data['status'] == 'Unbanned')?'Joined':$data['status'];
         $BannedUserStatus->modified = new \Cake\I18n\Time();
         $BannedUserStatus->updated_by = $user['id'];
         $matrix = $this->Matrix->banMember($data);
@@ -345,6 +352,8 @@ class JoinSpaycsController extends AppController {
         }
         $this->set($response);
     }
+    
+    
     /**
      * acceptJoinedRequest to accept the request of join member
      * accept-join-request endpoint
@@ -356,51 +365,49 @@ class JoinSpaycsController extends AppController {
         $data = $this->request->getData();
         $jsModel = TableRegistry::get('Api.JoinedSpayc');
         $user = $this->Auth->user();
-        $data['user_id'] = $user['id'];
-        $data['matrix_token'] = $user['UserLogs']['matrix_access_token'];        
-        $data['matrix_user_id'] = $user['UserLogs']['matrix_user_id'];        
-        $errors = $jsModel->ValidateStatus($data,['Pending','Joined']);
+        $errors = $jsModel->ValidateStatus($data,['Accepted','Declined']);
         if(!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
         $spaycs = TableRegistry::get('Api.Spaycs')->find()
                 ->contain([
-                    'JoinedSpayc' => function($q)use($user) {
+                    'JoinedSpayc' => function($q)use($data,$user) {
                         return $q
                                 ->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.is_admin'])
-                                ->where(['JoinedSpayc.user_id'=>$user['id']]);
+                                ->where(['JoinedSpayc.user_id IN'=>[$data['user_id'],$user['id']]]);
                     },
                 ])
                 ->where(['id'=>$data['spayc_id']]);
         if($spaycs->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>__('Spayc is not exist.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Spayc is no longer available.')], 400);
         }
-        $spayc = $spaycs->first();
-        if(!empty($spayc->parent_id)){
-            $this->restException(['status'=>'failed','message'=>__('Not allowed to join sub spayc.')], 400);
-        }
+        $spayc = $spaycs->first();       
         
-        if(($spayc->group_type == 'Public') && ($data['status'] == 'Pending')){
-            $this->restException(['status'=>'failed','message'=>__('Invalid status for public spayc.')], 400);
+        if(($spayc->group_type == 'Public')){
+            $this->restException(['status'=>'failed','message'=>__('Spayc must be private only.')], 400);
         }
         $currentUserStatus = Hash::extract($spayc->joined_spayc, '{n}[user_id='.$user['id'].']');
-        if(!empty($currentUserStatus[0])){
-            $currentUserStatus = $currentUserStatus[0];
-            if($currentUserStatus->is_admin > 0){
-                $this->restException(['status'=>'failed','message'=>__('Admin could\'t change their own status')], 400);
-            }
-            if(($currentUserStatus->status == 'Joined') && ($data['status'] == 'Pending')){
-                $this->restException(['status'=>'failed','message'=>__('You are already part of this spayc.')], 400);
-            }
-            if($currentUserStatus->status == $data['status']){
-                if($data['status'] == 'Joined'){
-                    $message = __('You have already joined with this spayc');
-                }else{
-                    $message = __('Your could\'t join with same status.');
-                }
-                $this->restException(['status'=>'failed','message'=>$message], 400);
-            }
+        $requestedUserStatus = Hash::extract($spayc->joined_spayc, '{n}[user_id='.$data['user_id'].']');
+        if(empty($currentUserStatus[0])){
+            $this->restException(['status'=>'failed','message'=>__('You are not member of this spayc.')], 400);
+        }elseif(empty($requestedUserStatus[0])){
+            $this->restException(['status'=>'failed','message'=>__('User is not member of this spayc.')], 400);
         }
+        $currentUserStatus = $currentUserStatus[0];
+        if(($currentUserStatus['status'] != 'Joined') || ($currentUserStatus['is_admin'] < 1)){
+            $this->restException(['status'=>'failed','message'=>__('Only joined member who has admin rights can accept or decline any user.')], 400);
+        }
+        if($currentUserStatus['is_admin'] <= $requestedUserStatus['is_admin']){
+            $this->restException(['status'=>'failed','message'=>__('You have no rights to accept or decline a user which has same level of access.')], 400);
+        }
+        if(($requestedUserStatus['status'] == 'Joined')){
+            $this->restException(['status'=>'failed','message'=>__('User already joined with this spayc.')], 400);
+        }       
+        if($requestedUserStatus['status'] == $data['status']){
+            $this->restException(['status'=>'failed','message'=>__('User has already '. strtolower($data['status']).' with this spayc.')], 400);
+        }
+      
+        
         $data['matrix_room_id'] = $spayc->matrix_room_id;
         if(($spayc->group_type == 'Private') && empty($data['passcode'])){
             $data['status'] = 'Pending';
