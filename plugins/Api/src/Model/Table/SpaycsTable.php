@@ -433,7 +433,7 @@ class SpaycsTable extends Table {
                 }
                 return $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin','JoinedSpayc.distance'])->where($condition);
         });
-       
+       $count = $query->count();
         if($limit != null){
             $query->limit($limit);
         }
@@ -476,7 +476,7 @@ class SpaycsTable extends Table {
             unset($row->_matchingData,$row->user_images,$row->subscribed_users,$row->requestedby,$row->requestedto);
             return $row;
         });
-        return $result;
+        return ['count'=>$count,'records'=>$result];
     }
     
     public function joinedInvite($items = [],$spaycId = null,$adminUser = null){

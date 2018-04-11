@@ -130,7 +130,12 @@ class JoinSpaycsController extends AppController {
                 if($data['status'] == 'Joined'){
                     $msg = __('User has been joined successfully.');
                 }else{
-                    $msg = __('Your status has been changed successfully');
+                    if(($spayc->group_type == 'Private') && empty($data['passcode'])){
+                        $msg = __('Your request has been sent successfully.');
+                    }else{
+                        $msg = __('Your status has been changed successfully.');
+                    }
+                    
                 }
                 $response = ['status'=>'success','message'=>$msg];
             } else {

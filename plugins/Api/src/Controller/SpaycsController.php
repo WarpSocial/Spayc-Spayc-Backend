@@ -385,11 +385,12 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Spayc id is required fields.')], 400);
         }
         $data['spayc_id'] = ApiHasher::decrypt($data['spayc_id']);
-        $spaycs = TableRegistry::get('Api.Spaycs')->find('all',['fields'=>['id','matrix_room_id']])->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
+        $spaycs = TableRegistry::get('Api.Spaycs')->find('all',['fields'=>['id','name','image','matrix_room_id','user_id']])->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
         if($spaycs->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>__('Invalid spayc id.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('This spayc is no longer exist.')], 400);
         }
         $spayc = $spaycs->first();
+        $friend = TableRegistry::get('Api.FriendRequest')->myFriend($user['id'],$spayc->user_id);
         $entities = $scModel->find('all',['field'=>['id','user_id','spayc_id','status']])->where(['spayc_id'=>$spayc->id,'user_id'=>$data['user_id']]);
         if($entities->isEmpty()){
             $entity = $scModel->newEntity();
@@ -407,6 +408,22 @@ class SpaycsController extends AppController {
         $entity->modified = new \Cake\I18n\Time();
         $entity->created = new \Cake\I18n\Time();
         if($scModel->save($entity,['checkRules' => false, 'atomic' => false])){
+            $push = [
+                'slug' => 'user-subscribed-to-your-spayc',
+                'requested_by' => $user['id'],
+                'requested_to' => $spayc->user_id,
+                'spayc_id' => $spayc->id,
+                'spayc_name' => $spayc->name,
+                'spayc_image' => $spayc->image,
+                'matrix_room_id' => $spayc->matrix_room_id,
+                'display_name' => $user['display_name'],
+                
+            ];
+            if(!empty($friend)){
+                $push['slug'] = 'friend-subscribed-to-your-spayc';
+            }
+            $this->Push->sendPushNotification($push);
+             
             $response = ['status'=>'success','message'=>__('User has been subcribed successfully.')];
         }else{
             $response = ['status'=>'failed','message'=>__('System failed to subscribe the user.')];
