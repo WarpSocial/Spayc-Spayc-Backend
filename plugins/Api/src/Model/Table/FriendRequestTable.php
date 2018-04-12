@@ -147,6 +147,47 @@ class FriendRequestTable extends Table
         return $ids;
     }
     
+    
+    public function getFriendIdsRoomIdByUserId($userId = null, $status = 'Accepted') {
+        $status = ucfirst($status);
+        if($status == 'Pending') {
+            $cond = ['FriendRequest.requested_to'=>$userId];
+        } else if($status == 'Blocked') {
+            $cond = ['FriendRequest.action_by'=>$userId];
+        } else {
+            $cond = ['OR'=>['FriendRequest.requested_by'=>$userId, 'FriendRequest.requested_to'=>$userId]];
+        }
+        if(in_array($status, Configure::read('friend_requested_status'))) {
+            $cond['requested_status'] = $status;
+            //$cond['friend_status IS'] = NULL;
+        }
+        /*if(in_array($status, Configure::read('friend_status'))) {
+            $cond['friend_status'] = $status;
+        }*/
+
+        $friends = $this->find('all', ['fields'=>['FriendRequest.requested_by', 'FriendRequest.requested_to','FriendRequest.matrix_room_id'], 'conditions'=>[$cond]]);
+        if($friends->isEmpty()){
+            return false;
+        }
+        
+        $ids = [];
+        $room_ids = [];
+        foreach($friends as $frnd){
+            if($frnd->requested_by != $userId){
+                array_push($ids, $frnd->requested_by);
+                 $room_ids[$frnd->requested_by]= $frnd->matrix_room_id;
+            }
+            if($frnd->requested_to != $userId){
+                array_push($ids, $frnd->requested_to);
+                 $room_ids[$frnd->requested_to]= $frnd->matrix_room_id;
+            }
+           
+        }
+        $data['ids']=$ids;
+        $data['room_ids']=$room_ids;
+        return $data;
+    }
+    
     public function getFriendIdsByStatus($userId = null, $status = 'Blocked') {
         $status = ucfirst($status);
         $cond = ['OR'=>['FriendRequest.requested_by'=>$userId, 'FriendRequest.requested_to'=>$userId]];
@@ -212,7 +253,9 @@ class FriendRequestTable extends Table
     
      public function getNearByFriendsOnMap($request = [], $userId = null) {
          //Friend ID List     
-         $child=$this->getFriendIdsByUserId($userId);
+         $all_id=$this->getFriendIdsRoomIdByUserId($userId);
+         $child=$all_id['ids'];
+         $room_id=$all_id['room_ids'];
          
            if(!empty($child)) {       
         //Getting Distance
@@ -259,7 +302,12 @@ class FriendRequestTable extends Table
         $data['count'] = $newQuery->count();
         $data['records'] = [];
         if($friends->count()) {
-            $data['records'] = $friends->toArray();
+            $all_friends=[];
+            foreach($friends->toArray() as $k=>$friend){
+                $all_friends[$k]=$friend;
+                $all_friends[$k]['matrix_room_id']=$room_id[$friend['id']];
+            }
+            $data['records'] = $all_friends;
         }
            }else{
                $data['count'] = 0;

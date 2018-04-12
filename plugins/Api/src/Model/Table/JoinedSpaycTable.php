@@ -100,7 +100,12 @@ class JoinedSpaycTable extends Table {
         }
         return $ids;
     }
-    
+    /**
+     * getJoinedUserIds method to list the joined user ids 
+     * 
+     * @param Int $spayc_id Description
+     * @return Array array of user ids
+     */
     public function getJoinedUserIds($spaycId = null) {
         $userId = $this->find("all", ['fields' => ['id', 'user_id'], 'conditions' => ['spayc_id' => $spaycId,'status'=>'Joined']]);
         $ids = [0];
@@ -111,14 +116,29 @@ class JoinedSpaycTable extends Table {
         return $ids;
     }
     
+    /**
+     * joinedSpaycsQuery method to return the query of user joined spaycs
+     * 
+     * @param Int $userId user primary key
+     * @return String sql query
+     */
+    public function joinedSpaycQuery($userId = null) {
+        if($userId == null){
+            return false;
+        }
+        $query = $this->find()
+                ->select(['spayc_id'])
+                ->distinct()
+                ->where(['user_id' => $userId,'status'=>'Joined']);
+        return $query;
+    }
+    
     public function ValidateStatus($data,$status){
         $validator = new Validator();
         $validator->requirePresence('spayc_id', true,__('Spayc id key is missing.'))
                 ->notEmpty('spayc_id', __('Please enter Spayc id.'));
         $validator->requirePresence('user_id', true,__('User id key is missing.'))
-                ->notEmpty('user_id', __('Please enter User id.'));
-        $validator->requirePresence('user_id', true,__('User id key is missing.'))
-                ->notEmpty('user_id', __('Please enter User id.'));
+                ->notEmpty('user_id', __('Please enter User id.'));       
         $validator->requirePresence('status', true,__('status key is missing.'))
                 ->notEmpty('status', __('Please enter status.'))
                 ->inList('status', $status,__('Status should be '. implode(' or ',$status)));

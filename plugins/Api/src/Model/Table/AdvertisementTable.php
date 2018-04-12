@@ -50,9 +50,9 @@ class AdvertisementTable extends Table {
             'className' => 'Api.Users'
         ]);
         
-        $this->belongsToMany('Spaycs', [            
-            'className' => 'Api.Spaycs'
-        ]);
+//        $this->belongsToMany('Spaycs', [            
+//            'className' => 'Api.Spaycs'
+//        ]);
         
     }
 

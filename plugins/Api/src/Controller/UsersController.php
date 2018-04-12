@@ -291,6 +291,7 @@ class UsersController extends AppController {
         $data['timezone'] = !empty($data['timezone'])?$data['timezone']:date_default_timezone_get();
         $data['physical_location']['current_latitude'] = Utils::getVar('latitude', $data);
         $data['physical_location']['current_longitude'] = Utils::getVar('longitude', $data);
+        
         $items = $this->Users->patchEntity($entity, $data,['associated'=>['PhysicalLocation']]);
         if($items->errors()) {
             $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
@@ -396,6 +397,7 @@ class UsersController extends AppController {
             $data['email'] = !empty($data['email'])?$data['email']:$alreadyExist['email'];
             $data['password'] = $alreadyExist['password'];
             $entity = $this->Users->get($data['id']);
+            $this->Users->PhysicalLocation->deleteAll(['user_id'=>$entity->id]);
         } else {
             $data['token_verification'] = Security::hash($data['email'], 'sha1', true);
             $data['password'] = Text::uuid();
@@ -924,9 +926,13 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
         $data = $this->request->getData();
+        $loggedUser = $this->Auth->user();
         $errors = $this->Users->requestBlockedValidate($data);
         if(!empty($errors)) {
             $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($errors)], 400);
+        }
+        if($loggedUser['id'] == $data['friend_id']) {
+            $this->restException(['status'=>'failed', 'message'=>__('You couldn\'t block himself.')], 400);
         }
         $data['friend_id'] = ApiHasher::decrypt($data['friend_id']);
         $frObj = TableRegistry::get('Api.FriendRequest');
@@ -934,7 +940,6 @@ class UsersController extends AppController {
         if(!$spaceUsr) {
             $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
         }
-        $loggedUser = $this->Auth->user();
         $requestedFrnd = $frObj->find()->Where(['OR'=>[
             ['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']],
             ['requested_by' => $data['friend_id'],'requested_to'=>$loggedUser['id']]
@@ -1319,6 +1324,7 @@ class UsersController extends AppController {
         $data = $this->request->getData();
         $pushData['post_value'] = json_encode($data);
         $pushData['created'] = date("Y-m-d H:i:s");
+        Log::info(json_encode($pushData,JSON_PRETTY_PRINT));
         $pusher = TableRegistry::get("Api.PusherData");
         $push = $pusher->newEntity();
         $item = $pusher->patchEntity($push, $pushData);
@@ -1333,8 +1339,7 @@ class UsersController extends AppController {
                 $this->Push->sendOnIOS($send, $message);
             }
         }
-        $response = ['status'=>'success', 'message'=>__('notification sent')];
-        $this->set($response);
+       $this->restException();
     }
     
     public function testPushnotification() {
@@ -1367,39 +1372,7 @@ class UsersController extends AppController {
         $lat = (float)$data['latitude'];
         $long = (float)$data['longitude'];
         $user = $this->Auth->user();
-        $distance = "ROUND( CAST({$this->Users->Spaycs->distanceInMiles} AS numeric), 3)";       
-        $jsModel = TableRegistry::get('Api.JoinedSpayc');
-        $jsquery = $jsModel->find()
-                ->select(['JoinedSpayc.id','JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.distance'])
-                ->contain(['Spaycs'=>function($q)use($distance){
-                    $miles= Configure::read('miles');
-                    return $q->select(['distance'=>$distance]);
-                            
-                }])
-                ->bind(':lat', $lat, 'float')
-                ->bind(':long', $long, 'float')
-                ->where(['JoinedSpayc.user_id'=>$user['id']]);
-                //pj($query->toArray());die;
-        if(!$jsquery->isEmpty()){
-            $result = $jsquery->toArray();
-             foreach($result as $row){
-                 $jsModel->query()
-                          ->update()
-                          ->set(['distance' => $row->distance])
-                          ->where(['user_id' => $row->user_id,'spayc_id'=>$row->spayc_id])
-                          ->execute();
-             }
-         }
-         $ple = $this->Users->PhysicalLocation->findByUserId($user['id']);
-         if($ple->isEmpty()){
-             $pl = $this->Users->PhysicalLocation->newEntity();
-             $pl->set('user_id',$user['id']);
-         }else{
-             $pl = $ple->first();             
-         }
-         $pl->set('current_latitude',$data['latitude']);
-         $pl->set('current_longitude',$data['longitude']);
-        if($this->Users->PhysicalLocation->save($pl,['validate'=>false,'checkRules'=>false,'atomic'=>false])){
+        if($this->Users->PhysicalLocation->updateLocation($user,$lat,$long)){
             $response = ['status'=>'success', 'message'=>__('Request has been updated successfully.')];
         }else{
             $this->response->statusCode(400);
@@ -1505,17 +1478,23 @@ class UsersController extends AppController {
         }
         $adminEntity = Hash::extract($entities->toArray(), '{n}[user_id='.$user['id'].']');
         $userEntity = Hash::extract($entities->toArray(), '{n}[user_id='.$data['user_id'].']');
-        if(empty($adminEntity[0])){
+        if(empty($adminEntity[0]) || ($adminEntity[0]['status'] != 'Joined')){
             $this->restException(['status'=>'failed','message'=>__('You are not joined with this spayc.')], 400);
         }
-        if(empty($userEntity[0])){
+        if(empty($userEntity[0]) || ($userEntity[0]['status'] != 'Joined')){
             $this->restException(['status'=>'failed','message'=>__('user is not joined with this spayc.')], 400);
         }
         if($adminEntity[0]['is_admin'] <= 0){
             $this->restException(['status'=>'failed','message'=>__('You have no privileges to make someone admin.')], 400);
         }
-        if($userEntity[0]['is_admin'] > 0){
-            $this->restException(['status'=>'failed','message'=>__('User has already admin privileges.')], 400);
+        if(($userEntity[0]['is_admin'] == $adminEntity[0]['is_admin'])){
+            $this->restException(['status'=>'failed','message'=>__('You couldn\'t change the role with same privileges.')], 400);
+        }
+        if(($userEntity[0]['is_admin'] == 2) && ($data['role'] == 2)){
+            $this->restException(['status'=>'failed','message'=>__('You couldn\'t change the role of superadmin.')], 400);
+        }
+        if($userEntity[0]['is_admin'] == $data['role']){
+            $this->restException(['status'=>'failed','message'=>__('User has already with same privileges.')], 400);
         }
         $entity = $userEntity[0];
         if($entity->is_admin == $data['role']){
@@ -1533,7 +1512,12 @@ class UsersController extends AppController {
             $push['spayc_id'] = $data['spayc_id']; //provide spayc id if push related to spayc
             $push['slug'] = 'admin-asigned';
             $this->Push->sendPushNotification($push);
-            $response = ['status'=>'success','message'=>__('User has been assigned as admin successfully.')];
+            if($data['role'] == 1){
+                $message = __('User has been assigned as admin successfully.');
+            }else{
+                $message = __('Role has been changed  successfully.');
+            }
+            $response = ['status'=>'success','message'=>$message];
         }else{
             $this->response->statusCode(400);
             $response = ['status'=>'failed','message'=>__('System failed to change the role.')];

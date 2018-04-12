@@ -164,7 +164,10 @@ class SpaycsTable extends Table {
                                 $startDate = Time::createFromFormat('m-d-Y H:i:s',$value,$timezone);
                                 $currentDate = new Time('now',$timezone);
                                 $now = clone $currentDate;
-                                $currentDate->modify('+1 year')->modify('+1 minute');
+                                $currentDate->modify('+1 year');
+                                $startDate = strtotime($startDate->format('Y-m-d H:i'));
+                                $now = strtotime($now->format('Y-m-d H:i'));
+                                $currentDate = strtotime($currentDate->format('Y-m-d H:i'));
                                 return (bool) ($startDate >= $now && $startDate <= $currentDate);
                             }
                         },
@@ -196,6 +199,8 @@ class SpaycsTable extends Table {
                             if($endDate->format('H') == '00'){
                                 $endDate->setTime(23,55);
                             }
+                            $startDate = strtotime($startDate->format("Y-m-d H:i"));
+                            $endDate = strtotime($endDate->format("Y-m-d H:i"));
                             return (bool)($startDate <= $endDate );
                         }
                         return true;
@@ -395,26 +400,38 @@ class SpaycsTable extends Table {
         if($spaceid == null){
             return false;
         }
-        $spayc = $this->find()->select('id')->where(['matrix_room_id'=>$spaceid])->first();
-        if(empty($spayc)){
+        if(preg_match("/[a-z]/i", $spaceid)){
+            $room_id = $this->find()->select('id')->where(['matrix_room_id'=>$spaceid])->first()->id;
+        }else{
+            $room_id = $spaceid;
+        }
+        
+        if(empty($room_id)){
             return false;
         }
         $loggedUser = Configure::read('auth');
-        $matrix_room_id = $spayc->id;
         $query = $this->Users->find();
-        $query->select(['Users.id', 'Users.username','Users.display_name', 'Users.email', 'Users.gender', 'Users.dob','Users.country_code', 'Users.phone', 'Users.website_url', 'Users.address', 'Users.bio_data', 'Users.longitude', 'Users.latitude', 'Users.matrix_user_id','JoinedSpayc.status']);
+        $query->select(['Users.id', 'Users.username','Users.display_name', 'Users.email','Users.matrix_user_id','JoinedSpayc.status']);
         $query->contain([
              'UserImages'=>function($q) {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
-            }
+            },
+            'SubscribedUsers' => function($q) {
+                return $q->select(['SubscribedUsers.id','SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])->where(['SubscribedUsers.status'=>'Active']);
+            },        
+            'Requestedby' => function($q)use($loggedUser) {
+                return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_to','Requestedby.requested_status','Requestedby.matrix_room_id'])->where(['OR'=>[['Requestedby.requested_by'=>$loggedUser['id']],['Requestedby.requested_to'=>$loggedUser['id']]]]);
+            },        
+            'Requestedto' => function($q)use($loggedUser) {
+                return $q->select(['Requestedto.id','Requestedto.requested_by', 'Requestedto.requested_to','Requestedto.requested_status','Requestedto.matrix_room_id'])->where(['OR'=>[['Requestedto.requested_by'=>$loggedUser['id']],['Requestedto.requested_to'=>$loggedUser['id']]]]);
+            },        
         ]);
-        $query->innerJoinWith('JoinedSpayc',function($q)use($matrix_room_id,$status,$loggedUser) {
-                $condition = ['JoinedSpayc.spayc_id'=>$matrix_room_id,'JoinedSpayc.user_id !='=>$loggedUser['id']];
+        $query->innerJoinWith('JoinedSpayc',function($q)use($room_id ,$status,$loggedUser) {
+                $condition = ['JoinedSpayc.spayc_id'=>$room_id ,'JoinedSpayc.user_id !='=>$loggedUser['id']];
                 if($status != null){
                     $condition['JoinedSpayc.status'] = $status;
                 }
-                return $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin'])
-                        ->where($condition);
+                return $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin','JoinedSpayc.distance'])->where($condition);
         });
        $count = $query->count();
         if($limit != null){
@@ -426,24 +443,37 @@ class SpaycsTable extends Table {
         if($query->isEmpty()){
             return [];
         }
-        
+        $query->order(['JoinedSpayc.created'=>'DESC']);
         $result = $query->map(function ($row) {
             if(!empty($row->_matchingData['JoinedSpayc']->is_admin)){
                 $row->is_admin = $row->_matchingData['JoinedSpayc']->is_admin;
             }else{
                 $row->is_admin = 0;
             }
+            $row->matrix_room_id = '';
+            $row->friend_status = '';
+            $row->joined_status = 'Not_Joined';
+            $row->physically_present = false;
+            if(!empty($row->requestedto[0])){
+                $row->friend_status = $row->requestedto[0]->requested_status; 
+                $row->matrix_room_id = $row->requestedto[0]->matrix_room_id;
+            }elseif(!empty($row->requestedby[0])){
+                $row->friend_status = $row->requestedby[0]->requested_status;
+                $row->matrix_room_id = $row->requestedby[0]->matrix_room_id;
+            }
             if(!empty($row->_matchingData['JoinedSpayc']->status)){
-                $row->requested_status = $row->_matchingData['JoinedSpayc']->status;
-            }else{
-                $row->requested_status = "Pending";
+                $row->joined_status = $row->_matchingData['JoinedSpayc']->status;
+            }
+            if(!empty($row->_matchingData['JoinedSpayc']->distance)){
+                $miles = Configure::read('miles');
+                 $row->physically_present = ($row->_matchingData['JoinedSpayc']->distance <= $miles)?true:false;
             }
             
-            $row->is_subscribed = false;
-            $row->physically_present = false;
+            $row->is_subscribed = !empty($row->subscribed_users)?true:false;
+            
             $row->image_url = !empty($row->user_images[0]['image_url'])?$row->user_images[0]['image_url']:"";
             
-            unset($row->_matchingData,$row->user_images);
+            unset($row->_matchingData,$row->user_images,$row->subscribed_users,$row->requestedby,$row->requestedto);
             return $row;
         });
         return ['count'=>$count,'records'=>$result];
@@ -547,7 +577,6 @@ class SpaycsTable extends Table {
     
     public function getNearBySpaycsOnMap($request = [], $userId=null) {
    $today_date = (new Time('now', Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i:s");
-           if(!empty($request['center_latitude']) && !empty($request['center_longitude'])) {
             //To search by kilometers instead of miles, replace 3959 with 6371.
               $distanceField = '( 3959 * ACOS( COS( RADIANS(:latitude) ) *
                 COS( RADIANS(  latitude ) ) *
@@ -592,16 +621,21 @@ class SpaycsTable extends Table {
 //        }
         
         if(isset($request['time']) && $request['time']=="past") {
-            $spaycs->where(["Spaycs.end_date <"=>$today_date]);
+//            $spaycs->where(["Spaycs.end_date <"=>$today_date]);
+            $spaycs->where(['OR'=>[['Spaycs.end_date <'=>$today_date],['Spaycs.end_date IS'=>null]]]);
         }else if(isset($request['time']) && $request['time']=="present") {
-            
-            $spaycs->where(["Spaycs.start_date <="=>$today_date]);
-            $spaycs->where(["Spaycs.end_date >="=>$today_date]);
+//            $spaycs->where(["Spaycs.start_date <="=>$today_date]);
+            $spaycs->where(['OR'=>[['Spaycs.start_date <='=>$today_date],['Spaycs.end_date IS'=>null]]]);
+//            $spaycs->where(["Spaycs.end_date >="=>$today_date]);
+            $spaycs->where(['OR'=>[['Spaycs.end_date >='=>$today_date],['Spaycs.end_date IS'=>null]]]);
         }else if(isset($request['time']) && $request['time']=="future") {
-            $spaycs->where(["Spaycs.start_date >"=>$today_date]);
+//            $spaycs->where(["Spaycs.start_date >"=>$today_date]);
+            $spaycs->where(['OR'=>[['Spaycs.start_date >'=>$today_date],['Spaycs.end_date IS'=>null]]]);
         }else{
-            
-            $spaycs->where(["end_date >="=>$today_date]);
+//            $spaycs->where(["Spaycs.start_date <="=>$today_date]);
+            $spaycs->where(['OR'=>[['Spaycs.start_date <='=>$today_date],['Spaycs.end_date IS'=>null]]]);
+//            $spaycs->where(["Spaycs.end_date >="=>$today_date]);
+            $spaycs->where(['OR'=>[['Spaycs.end_date >='=>$today_date],['Spaycs.end_date IS'=>null]]]);
         }
         
         if(isset($request['spayc_type']) && in_array(ucfirst($request['spayc_type']), ['Event', 'Community'])) {
@@ -638,14 +672,15 @@ class SpaycsTable extends Table {
                 ]
             );
         }
-        }
         $spaycs->contain([
-//            'JoinedSpayc' => function($q) {
-//                return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status']);
-//            },
-//            'SubscribedUsers' => function($q) {
-//                return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
-//            }
+            'JoinedSpayc' => function($q) {
+                return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status'])
+                        ->where(['JoinedSpayc.status' => "Joined"]);
+            },
+            'SubscribedUsers' => function($q) {
+                return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])
+                        ->where(['SubscribedUsers.status' => "Active"]);;
+            }
         ]);
         $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($userId) {
             return $results->map(function ($row) use($userId) {
@@ -656,12 +691,13 @@ class SpaycsTable extends Table {
                 }
 //                $row['joined_spayc_status'] = !empty($status[0])?$status[0]:null;
                 $row['is_joined'] = !empty($status[0])?true:false;
-//                $row['joined_users'] = !empty($row['joined_spayc'])?count($totalJoined):0;
+                $row['joined_users'] = !empty($row['joined_spayc'])?count($totalJoined):0;
                 unset($row['joined_spayc']);
                 if(!empty($row['subscribed_users'])) {
                     $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');
                 }
 //                $row['subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):0;
+                unset($row['subscribed_users']);
                 $row['is_subscribed'] = !empty($subUserId[0])?true:false;
                 return $row;
             });
@@ -686,21 +722,43 @@ class SpaycsTable extends Table {
     }
     
     public function distance($lat1, $lon1, $lat2, $lon2) {
+        $pi80 = M_PI / 180;
+        $lat1 *= $pi80;
+        $lon1 *= $pi80;
+        $lat2 *= $pi80;
+        $lon2 *= $pi80;
 
-    $pi80 = M_PI / 180;
-    $lat1 *= $pi80;
-    $lon1 *= $pi80;
-    $lat2 *= $pi80;
-    $lon2 *= $pi80;
+        $r = 3959; // mean radius of Earth in km
+        $dlat = $lat2 - $lat1;
+        $dlon = $lon2 - $lon1;
+        $a = sin($dlat / 2) * sin($dlat / 2) + cos($lat1) * cos($lat2) * sin($dlon / 2) * sin($dlon / 2);
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+        $km = $r * $c;
 
-    $r = 3959; // mean radius of Earth in km
-    $dlat = $lat2 - $lat1;
-    $dlon = $lon2 - $lon1;
-    $a = sin($dlat / 2) * sin($dlat / 2) + cos($lat1) * cos($lat2) * sin($dlon / 2) * sin($dlon / 2);
-    $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-    $km = $r * $c;
+        //echo '<br/>'.$km;
+        return $km;
+    }
+    
+    public function updateDistance($entity){ 
+        if(!empty($entity['joined_spayc'])){
+            $this->getConnection()->transactional(function () use ($entity) {                
+                foreach ($entity->joined_spayc as $jp) {
+                    $this->JoinedSpayc->query()
+                            ->update()
+                            ->set(['distance' => $jp->distance])
+                            ->where(['id' => $jp->id])
+                            ->execute();
+                }
+            });
+        }
+    }
+    
+    public function spaycPk($spaycId){
+        if(preg_match("/[a-z]/i", $spaycId)){
+            return ['matrix_room_id'=>$spaycId];        
+        }else{
+            return ['id'=>$spaycId];
+        }
+    }
 
-    //echo '<br/>'.$km;
-    return $km;
-}
 }

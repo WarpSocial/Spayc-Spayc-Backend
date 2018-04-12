@@ -50,15 +50,22 @@ Router::plugin(
         $routes->connect('/spayc-edit',['controller'=>'Spaycs', 'action'=>'edit']);
         $routes->connect('/spayc-members',['controller'=>'Spaycs', 'action'=>'spaycMembers']);
         $routes->connect('/subspaycs', ['controller'=>'Spaycs', 'action'=>'viewSubSpaycs']);
-        $routes->connect('/physical-present-spaycs', ['controller'=>'Spaycs', 'action'=>'nearAboutSpayces']);
+        $routes->connect('/physical-present-spaycs', ['controller'=>'Spaycs', 'action'=>'physicalyPresentSpaycs']);
         $routes->connect('/public-spaycs', ['controller'=>'Spaycs', 'action'=>'publicSpayc']);
         $routes->connect('/hash-tag-spaycs', ['controller'=>'Spaycs', 'action'=>'hashTagSpayc']);
         $routes->connect('/map-spaycs', ['controller'=>'Spaycs', 'action'=>'mapSpayc']);
-        $routes->connect('/create-advertisement', ['controller' => 'Spaycs', 'action' => 'createAdvertisement']);
+        
+        $routes->connect('/create-advertisement', ['controller' => 'Advertisement', 'action' => 'createAdvertisement']);
+        $routes->connect('/advertisement-details', ['controller' => 'Advertisement', 'action' => 'viewAdvertisement']);
+        $routes->connect('/user-advertisement', ['controller' => 'Advertisement', 'action' => 'userAdvertisement']);
+        $routes->connect('/advertisement-edit', ['controller' => 'Advertisement', 'action' => 'edit']);
+        $routes->connect('/advertisement-delete', ['controller' => 'Advertisement', 'action' => 'delete']);
         
         $routes->connect('/join-spayc', ['controller'=>'JoinSpaycs', 'action'=>'joinSpayc']);
+        $routes->connect('/accept-join-request', ['controller'=>'JoinSpaycs', 'action'=>'acceptJoinedRequest']);
         $routes->connect('/join-sub-spayc', ['controller'=>'JoinSpaycs', 'action'=>'joinSubSpayc']);
         $routes->connect('/ban-spayc-member', ['controller'=>'JoinSpaycs', 'action'=>'banSpaycMember']);
+        $routes->connect('/remove-spayc-member', ['controller'=>'JoinSpaycs', 'action'=>'removeFromSpayc']);
         $routes->connect('/read-notifications', ['controller' => 'Users', 'action' => 'readNotification']);
         $routes->connect('/transactions/:id', ['controller' => 'Spaycs', 'action' => 'matrixApplicationService'],['pass'=>['id']]);
         

@@ -6,7 +6,8 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
-
+use Cake\ORM\TableRegistry;
+use Cake\Core\Configure;
 /**
  * PhysicalLocation Model
  *
@@ -44,6 +45,46 @@ class PhysicalLocationTable extends Table {
             'joinType' => 'INNER',
             'className' => 'Api.Users'
         ]);
+    }
+    
+    public function updateLocation($user,$lat,$long){
+        $distance = "ROUND( CAST({$this->Users->Spaycs->distanceInMiles} AS numeric), 3)";       
+        $jsModel = TableRegistry::get('Api.JoinedSpayc');
+        $jsquery = $jsModel->find()
+                ->select(['JoinedSpayc.id','JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.distance'])
+                ->contain(['Spaycs'=>function($q)use($distance){
+                    $miles= Configure::read('miles');
+                    return $q->select(['distance'=>$distance]);
+                            
+                }])
+                ->bind(':lat', $lat, 'float')
+                ->bind(':long', $long, 'float')
+                ->where(['JoinedSpayc.user_id'=>$user['id']]);
+                //pj($query->toArray());die;
+        if(!$jsquery->isEmpty()){
+            $result = $jsquery->toArray();
+             foreach($result as $row){
+                 $jsModel->query()
+                          ->update()
+                          ->set(['distance' => $row->distance])
+                          ->where(['user_id' => $row->user_id,'spayc_id'=>$row->spayc_id])
+                          ->execute();
+             }
+         }
+         $ple = $this->findByUserId($user['id']);
+         if($ple->isEmpty()){
+             $pl = $this->newEntity();
+             $pl->set('user_id',$user['id']);
+         }else{
+             $pl = $ple->first();             
+         }
+         $pl->set('current_latitude',$lat);
+         $pl->set('current_longitude',$long);
+        if($this->save($pl,['validate'=>false,'checkRules'=>false,'atomic'=>false])){
+            return true;
+        }else{
+            return false;
+        }
     }
 
 }
