@@ -48,11 +48,11 @@ class AppView extends View
             return;
         }
         if($dateTime instanceof \Cake\I18n\Time){
-            $date = $dateTime->format(DATEFORMAT_DISPLAY);
+            $date = $dateTime->format($format);
         } elseif($dateTime instanceof \DateTime) {
-            $date = $dateTime->format(DATEFORMAT_DISPLAY);
+            $date = $dateTime->format($format);
         } else {
-            $date = (new \Cake\I18n\Time($dateTime))->format(DATEFORMAT_DISPLAY);
+            $date = (new \Cake\I18n\Time($dateTime))->format($format);
         }
         return $date;
     }

@@ -10,28 +10,28 @@ if($this->request->query('debug')&&$this->request->query('debug')=='on')
 if($this->request->query())
   $filter=true;
  
-$genderIconSorting=$usernameIconSorting=$createdIconSorting=$dobIconSorting='';
+ $genderIconSorting=$usernameIconSorting=$createdIconSorting=$dobIconSorting='filter.png';
 if(isset($this->request->query['sort'])) {
 
     if(($this->request->query['sort'] == 'display_name') && ($this->request->query['direction'] == 'asc')) 
-        $usernameIconSorting = 'sort-asc';
+        $usernameIconSorting = 'filter-up.png';
     else if(($this->request->query['sort'] == 'display_name') && ($this->request->query['direction'] == 'desc')) 
-        $usernameIconSorting = 'sort-desc';
+        $usernameIconSorting = 'filter-down.png';
     
     if(($this->request->query['sort'] == 'gender') && ($this->request->query['direction'] == 'asc')) 
-        $genderIconSorting = 'sort-asc';
+        $genderIconSorting = 'filter-up.png';
     else if(($this->request->query['sort'] == 'gender') && ($this->request->query['direction'] == 'desc')) 
-        $genderIconSorting = 'sort-desc';
+        $genderIconSorting = 'filter-down.png';
     
     if(($this->request->query['sort'] == 'dob') && ($this->request->query['direction'] == 'asc')) 
-        $dobIconSorting = 'sort-asc';
+        $dobIconSorting = 'filter-up.png';
     else if(($this->request->query['sort'] == 'dob') && ($this->request->query['direction'] == 'desc')) 
-        $dobIconSorting = 'sort-desc';
+        $dobIconSorting = 'filter-down.png';
     
     if(($this->request->query['sort'] == 'created') && ($this->request->query['direction'] == 'asc')) 
-        $createdIconSorting = 'sort-asc';
+        $createdIconSorting = 'filter-up.png';
     else if(($this->request->query['sort'] == 'created') && ($this->request->query['direction'] == 'desc')) 
-        $createdIconSorting = 'sort-desc';
+        $createdIconSorting = 'filter-down.png';
     
 }
 ?>
@@ -39,7 +39,7 @@ if(isset($this->request->query['sort'])) {
       <div class="breadcrumbs">
         <div class="container">
           <h4>Manage Users</h4>
-          <p><span>manage</span> <span>user</span></p>
+          <p class="hide"><span>manage</span> <span>user</span></p>
         </div>
       </div>
 
@@ -47,26 +47,27 @@ if(isset($this->request->query['sort'])) {
  <span class="error-alert users-msg header-alert" style="display: none;"></span>
         <!--===========filter================-->
         <?php if($userCount || $filter){ 
-                echo $this->element('admin/user-filter');
+                echo $this->element('admin/user-filter', ['userFilter'=> true]);
         ?>
       <!--============= table head ===================-->
       <div class="container">        
         <div class="table-wrapper">      
           <div class="table-head">
             <div class="head-text flex-basis15 text-left p-info">
-            <span class="table-filter <?php echo $usernameIconSorting?>"><?php echo $this->Paginator->sort('display_name','User Info');?>
+            <span class="table-filter"><?php echo $this->Paginator->sort('display_name','User Info').'&nbsp;<i>'.$this->Paginator->sort('display_name',$this->Html->image($usernameIconSorting, ['alt' => 'icon']),['escape' => false]).'</i>';?>     
             </span>
             </div>
             <div class="head-text flex-basis11">
-              <span class="table-filter <?php echo $genderIconSorting?>"><?php echo $this->Paginator->sort('gender','Gender');?></span>
+              <span class="table-filter"><?php echo $this->Paginator->sort('gender','Gender').'&nbsp;<i>'.$this->Paginator->sort('gender',$this->Html->image($genderIconSorting, ['alt' => 'icon']),['escape' => false]).'</i>';?></span>
             </div>
-            <div class="head-text flex-basis11"><span class="table-filter <?php echo $dobIconSorting?>"><?php echo $this->Paginator->sort('dob','Date of Birth');?></span></div>
+            <div class="head-text flex-basis11"><span class="table-filter"><?php echo $this->Paginator->sort('dob','Date of Birth').'&nbsp;<i>'.$this->Paginator->sort('dob',$this->Html->image($dobIconSorting, ['alt' => 'icon']),['escape' => false]).'</i>';?></span>
+            </div>
             <div class="head-text flex-basis15 text-left"><span>Location</span></div>
             <div class="head-text flex-basis9"><span>Warps Joined</span></div>
             <div class="head-text flex-basis9"><span>Warps Created</span></div>
             <div class="head-text flex-basis10"><span>Friends</span></div>
             <div class="head-text flex-basis14"><span>Advertisements</span></div>
-            <div class="head-text flex-basis10"><span class="table-filter <?php echo $createdIconSorting?>"><?php echo $this->Paginator->sort('created','Registration Date');?></span></div>
+            <div class="head-text flex-basis10"><span class="table-filter"><?php echo $this->Paginator->sort('created','Registration Date').'&nbsp;<i>'.$this->Paginator->sort('created',$this->Html->image($createdIconSorting, ['alt' => 'icon']),['escape' => false]).'</i>';?></span></div>
             <div class="head-text flex-basis6"><span class="blank"></span></div>
           </div>
           <?php   if ($userCount) {?>  
@@ -74,7 +75,7 @@ if(isset($this->request->query['sort'])) {
             <!--==============table data====================-->
               <div class="table-row">
                 <div class="table-data flex-basis15 text-left p-info">
-                  <span class="user-name"><?= !empty($user->display_name)?h($user->display_name):'' ?></span>
+                  <span class="user-name"><?= !empty($user->display_name)?h(ucwords($user->display_name)):'' ?></span>
                   <span class="ell"  class="d-inline-block" tabindex="0" data-toggle="tooltip" data-animation="false" title="<?php echo $user->email;?>"><?= !empty($user->email)?h($user->email):'' ?></span>
                   <span class="user-contact"><?= !empty($user->phone)?h($user->country_code).'&nbsp;'.h($user->phone):''; ?>
                   </span>
@@ -98,10 +99,16 @@ if(isset($this->request->query['sort'])) {
                   <span><?= !empty($user->address)?h($user->address):BLANK ?></span>
                 </div>
                 <div class="table-data flex-basis9">
-                  <span><?= !empty($user->joined_spayc[0]->joined_spaycs)?h($user->joined_spayc[0]->joined_spaycs):BLANK_COUNT ?></span>
+                  <span><?= !empty($user->joined_spayc[0]->joined_spaycs)?
+                            $this->Html->link($user->joined_spayc[0]->joined_spaycs,['controller' => 'Spaycs', 'action' => 'joined-warps',$user->id], ['class' => 'num-letter-spacing']):
+                            BLANK_COUNT ?>
+                  </span>
                 </div>
                 <div class="table-data flex-basis9">
-                  <span><?= !empty($user->spaycs[0]->created_spaycs)?h($user->spaycs[0]->created_spaycs):BLANK_COUNT ?></span>
+                  <span><?= !empty($user->spaycs[0]->created_spaycs)?
+                          $this->Html->link($user->spaycs[0]->created_spaycs,['controller' => 'Spaycs', 'action' => 'createdWarps',$user->id], ['class' => 'num-letter-spacing']):
+                            BLANK_COUNT ?>
+                  </span>
                 </div>
                 <div class="table-data flex-basis10">
                   <span><?= !empty($user->friend)?h($user->friend):BLANK_COUNT ?></span>

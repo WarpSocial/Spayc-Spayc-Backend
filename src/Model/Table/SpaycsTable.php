@@ -40,7 +40,7 @@ class SpaycsTable extends Table
      */
     public function initialize(array $config)
     {
-       parent::initialize($config);
+      parent::initialize($config);
 
         $this->setTable('spaycs');
         $this->setDisplayField('name');
@@ -59,31 +59,52 @@ class SpaycsTable extends Table
         ]);
         
         $this->belongsTo('ParentSpaycs', [
+            'dependent' => true,
             'className' => 'Spaycs',
             'foreignKey' => 'parent_id'
         ]);
         $this->hasMany('SubSpaycs', [
+            'dependent' => true,
             'className' => 'Spaycs',
             'foreignKey' => 'parent_id'
             
         ]);
         $this->hasMany('JoinedSpayc', [
+            'dependent' => true,
             'foreignKey' => 'spayc_id',
             'className' => 'JoinedSpayc'
         ]);
         $this->hasMany('SubscribedUsers', [
+            'dependent' => true,
             'foreignKey' => 'spayc_id',
             'className' => 'SubscribedUsers'
         ]);
         $this->hasMany('Comments', [
+            'dependent' => true,
             'foreignKey' => 'spayc_id',
             'className' => 'Comments'
         ]);
         $this->hasMany('SpaycHashtags', [
+            'dependent' => true,
             'foreignKey' => 'spayc_id',
             'joinType' => 'INNER',
             'className' => 'SpaycHashtags'
         ]);
+        
+         $this->belongsToMany('Advertisements', [
+            'joinTable' => 'spayc_advertisement',            
+            'className' => 'Advertisements'
+        ]);
+        
+        /* Earth radius in miles 3959 */
+        /* for postgresql cast is required else for mysql not*/
+        $this->distanceInMiles = "(3958.756 * ACOS(
+            COS(RADIANS(:lat)) *
+            COS(RADIANS(Spaycs.latitude)) *
+            COS( RADIANS(Spaycs.longitude) - RADIANS(:long) ) +
+            SIN(RADIANS(:lat)) *
+            SIN(RADIANS(Spaycs.latitude))
+        ) )";
     }
 
     /**

@@ -66,6 +66,9 @@
             text-align: center;
             &.p-info {
                 max-width: 150px;  
+                .flex-display(flex);
+                .flex-wrap(wrap);
+                .align-items(center);
             }
             span{
                 font-weight: @regular;
@@ -92,6 +95,10 @@
                         width: 100%;
                         object-fit: cover;
                     }
+                }
+                a {
+                    color:@blue;
+                    text-decoration: none;
                 }
             }
             .change-password-text {

@@ -38,3 +38,20 @@
     top: 10px !important;
     width: calc(100% - 100px);
 }
+.num-letter-spacing {
+    letter-spacing:2px;
+}
+.no-image-placeholder {
+    width: 100%;
+    height: auto;
+}
+.img-shadow {
+    width: 100%;
+    height: auto !important;
+    position: absolute !important;
+    bottom: 0;
+    left: 0;
+}
+.table-wrapper .table-head .head-text span.table-filter::after {
+    display: none;
+}
