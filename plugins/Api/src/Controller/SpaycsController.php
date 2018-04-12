@@ -112,17 +112,14 @@ class SpaycsController extends AppController {
         if(!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
+        
         $entity = $this->Spaycs->find()->contain('JoinedSpayc',function($q)use($user){
             return $q->where(['user_id'=>$user['id'],'status'=>'Joined']);
         });
-        if(preg_match("/[a-z]/i", $data['parent_matrix_room_id'])){
-            $entity->where(['matrix_room_id'=>$data['parent_matrix_room_id']]);        
-        }else{
-            $entity->where(['id'=>$data['parent_matrix_room_id']]);
-        }
+        $entity->where($this->Spaycs->spaycPk($data['parent_matrix_room_id']));
         $entity->where(['group_type !='=>'trusted_private']);        
         if($entity->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>__('Parent space has not been found.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Parent spayc is no longer available.')], 400);
         }
         
         $parentObj = $entity->first();
@@ -144,7 +141,10 @@ class SpaycsController extends AppController {
         $data['location'] = $parentObj->location;
         $items = $this->Spaycs->newEntity($data,['validate'=>false]);
         
-        
+        if($data['group_type'] == 'Public'){ /* in community no need to keep start or end date*/
+            $data['passcode'] = '';
+            $items->set('passcode', '');
+        }
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
         
         $matrix = $this->Matrix->createRoom($data);
@@ -154,7 +154,7 @@ class SpaycsController extends AppController {
         $items->set('matrix_room_id',$matrix['room_id']);
         $items->set('matrix_room_alias',$matrix['room_alias']);
         $items->set('user_id', $this->Auth->user('id'));
-        if (!$items->errors()) {
+        if (!$items->errors()) {            
             if($this->Spaycs->save($items)){
               $data['image'] = $items->get('image');
               $data['matrix_room_id'] = $items->get('matrix_room_id');

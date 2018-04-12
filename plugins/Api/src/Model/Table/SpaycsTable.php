@@ -171,8 +171,7 @@ class SpaycsTable extends Table {
                                 return (bool) ($startDate >= $now && $startDate <= $currentDate);
                             }
                         },
-                        //'message'=>__('Start date can\'t be more than 1 year ahead or any past date.')
-                                'message'=>__('Start date can not be greater than end date.')
+                        'message'=>__('Start date can\'t be more than 1 year ahead or any past date.')
                     ]
                 ]);
                 
@@ -751,6 +750,14 @@ class SpaycsTable extends Table {
                             ->execute();
                 }
             });
+        }
+    }
+    
+    public function spaycPk($spaycId){
+        if(preg_match("/[a-z]/i", $spaycId)){
+            return ['matrix_room_id'=>$spaycId];        
+        }else{
+            return ['id'=>$spaycId];
         }
     }
 

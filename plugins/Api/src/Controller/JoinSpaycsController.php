@@ -352,6 +352,76 @@ class JoinSpaycsController extends AppController {
         }
         $this->set($response);
     }
+    /**
+     * remove user from spayc
+     * @param $user_id
+     * @param $spayc_id 
+     * @return Json object
+     */
+    public function removeFromSpayc() {
+        if (!$this->request->is('post')) {
+            $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
+        }
+        $user = $this->Auth->user();
+        $data = $this->request->getData();
+        $jsModel = TableRegistry::get('Api.JoinedSpayc');
+        if(empty($data['spayc_id']) || empty($data['user_id'])){
+             $this->restException(['status'=>'failed','message'=>['Spayc id and user id are required fields.']], 400);
+        }
+        $spaycs = TableRegistry::get('Api.Spaycs')->find()
+                ->contain([
+                    'Users',
+                    'JoinedSpayc' => function($q)use($data,$user) {
+                        return $q
+                                ->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.is_admin'])
+                                ->where(['JoinedSpayc.user_id IN'=>[$data['user_id'],$user['id']]]);
+                    },
+                   'Users'
+                ])
+                ->where(['Spaycs.id'=>$data['spayc_id']]);
+        if($spaycs->isEmpty()) {
+            $this->restException(['status'=>'failed','message'=>__('Spayc is no longer available.')], 400);
+        }
+        $spayc = $spaycs->first();
+        if(empty($spayc->joined_spayc)){
+             $this->restException(['status'=>'failed','message'=>__('User is not member of this spayc.')], 400);
+        }
+        $currentUserStatus = Hash::extract($spayc->joined_spayc, '{n}[user_id='.$user['id'].']');
+        $removeUserStatus = Hash::extract($spayc->joined_spayc, '{n}[user_id='.$data['user_id'].']');
+        if(empty($currentUserStatus[0]) || empty($removeUserStatus[0])){
+            $this->restException(['status'=>'failed','message'=>__('User is not member of this spayc.')], 400);
+        }
+        $currentUserStatus = $currentUserStatus[0];
+        $removeUserStatus = $removeUserStatus[0];
+        if($currentUserStatus['is_admin'] < 1){
+            $this->restException(['status'=>'failed','message'=>__('You have no permission to remove a user.')], 400);
+        }
+        if($currentUserStatus['is_admin'] <= $removeUserStatus['is_admin']){
+            $this->restException(['status'=>'failed','message'=>__('You have no rights to remove a user which has same level of access.')], 400);
+        }
+        if($currentUserStatus['status'] != 'Joined'){
+            $this->restException(['status'=>'failed','message'=>__('Only joined member who has admin rights can remove any user.')], 400);
+        }
+        if($removeUserStatus['status'] != 'Joined'){
+            $this->restException(['status'=>'failed','message'=>__('User is not joined with this spayc.')], 400);
+        }
+        $removeMatrixUser = TableRegistry::get('Api.Users')->get($removeUserStatus['user_id'],['fields'=>['matrix_user_id']]);
+        $data['matrix_user_id'] = $removeMatrixUser->matrix_user_id;
+        $data['matrix_room_id'] = $spayc->matrix_room_id;
+        $data['matrix_token'] = $spayc['user']->matrix_access_token;        
+      
+        $matrix = $this->Matrix->removeMember($data);
+        if(is_string($matrix)) {
+            $this->restException(['status'=>'failed','message'=>__($matrix)],400);
+        }
+        if($jsModel->delete($removeUserStatus)){
+            $response = ['status'=>'success','message'=>__('User has been removed successfully.')];
+        }else{
+            $this->response->statusCode(400);
+            $response = ['status'=>'failed','message'=>__('Failed to remove a user.')];
+        }
+        $this->set($response);
+    }
     
     
     /**

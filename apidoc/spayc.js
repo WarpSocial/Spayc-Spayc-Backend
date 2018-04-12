@@ -1337,3 +1337,36 @@ function deleteAdvertisement() { return; }
 @apiUse errorResponse
  */
 function postAcceptJoinedRequest() { return; }
+/**
+@api {post} /remove-spayc-member.json Remove/Kick Remove user from spayc
+@apiVersion 0.1.0
+@apiName postRemoveFromSpayc
+@apiGroup Spayc
+@apiPermission private
+
+@apiDescription super admin or admin can remove the user from spayc. Only joined user will be removed.
+
+* @apiHeader {String} TOKEN            * Token required in header
+* @apiHeader {String} timezone            * Current timezone
+
+@apiParam {Intger} spayc_id Existing Spayc id(Required).
+@apiParam {Intger} user_id  Member id of joined spayc(Required).
+
+@apiExample Example usage:
+{
+    "spayc_id":"xxx",
+    "user_id":"xxx",
+}
+ 
+@apiSuccess {String} status success.
+@apiSuccess {String} message User has been removed successfully.
+@apiSuccessExample {json} Success-Response: 
+    HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "User has been removed successfully."
+}
+
+@apiUse errorResponse
+ */
+function postRemoveFromSpayc() { return; }

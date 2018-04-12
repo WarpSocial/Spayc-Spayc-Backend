@@ -541,6 +541,45 @@ class MatrixComponent extends Component {
         }
     }
     
+    /**
+     * removeMember remove/Kick user from room
+     * @param Int $matrix_user_id matrix user id
+     * @param Int $matrix_room_id matrix room id
+     * @param Int $matrix_token matrix matrix token 
+     * @return Bool if false return error string
+     */
+    public function removeMember($data = []) {
+        if(empty($data['matrix_user_id']) || empty($data['matrix_token']) || empty($data['matrix_room_id'])){
+            return false;
+        }
+        $postData = [
+            'reason'=>'User not interested',
+            'user_id'=>$data['matrix_user_id']
+        ];
+        $roomId  = $this->validRoomId($data['matrix_room_id']);
+        $http = new Client();        
+        $url = $this->config('url') .DS.$this->config('client').DS.'rooms'. DS.$roomId.DS.'kick'.'?access_token='.$data['matrix_token'];
+        $httpResponse = $http->post(
+            $url, 
+            json_encode($postData), 
+            [
+                'type'=>'json',
+                'ssl_verify_host' => $this->config('sslverify'), 
+                'ssl_verify_peer' => $this->config('sslverify'),
+                'ssl_verify_host' => $this->config('sslverify'),
+                'ssl_verify_peer_name' => $this->config('sslverify')
+            ]
+        ); 
+        
+        $response = json_decode($httpResponse->body,true);
+        if(!empty($response['errcode'])){            
+            //return $this->errorMsg($response['errcode']);
+            return $response['error'];
+        }else{
+            return true;
+        }
+    }
+    
     public function validRoomId($roomid=null){
         if($roomid == null){
             return false;
