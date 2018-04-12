@@ -40,8 +40,8 @@ class UsersController extends AdminController
      * @return \Cake\Http\Response|void
      */
     public function index()
-    {        
-        $this->set('title', 'Manage User');
+    {           
+        $this->set('title', $this->siteTitleMessage['MANAGEUSER']);
         $conditions_array = [];
         $ageArr = unserialize(USER_AGE);
         $keyword=($this->request->query('keyword'))?trim(strtolower($this->request->query('keyword'))):'';
@@ -186,8 +186,9 @@ class UsersController extends AdminController
         return $this->redirect(['action' => 'index']);
     }
     
-    public function login() {
-        $this->set('title', 'Admin Panel'); 
+    public function login() {        
+        
+        $this->set('title', $this->siteTitleMessage['ADMINPANEL']);
         if($this->Auth->user('id')){
             return $this->redirect($this->Auth->redirectUrl());       
         }
@@ -220,8 +221,9 @@ class UsersController extends AdminController
         return $this->redirect($this->Auth->logout());
     }
 
-    public function changePassword() {
-        $this->set('title', 'Change Password');
+    public function changePassword() {                
+
+        $this->set('title', $this->siteTitleMessage['CHANGEPASSWORD']);
         $user = $this->Users->get($this->Auth->user('id'));                
         if ($this->request->is(['post','put'])) {          
             $data = $this->request->getData();
@@ -248,11 +250,12 @@ class UsersController extends AdminController
         if(!empty($page)){
             $this->viewBuilder()->layout('admin');
         }
-        $this->set(['title' => 'Change Password','base_url_admin'=>$this->base_url_admin,'page' => $page]);
+        $this->set(['title' => $this->siteTitleMessage['CHANGEPASSWORD'],'base_url_admin'=>$this->base_url_admin,'page' => $page]);
     }
     
-    public function forgotPassword() {
-        $this->set('title', 'Forgot password'); 
+    public function forgotPassword() {        
+
+        $this->set('title', $this->siteTitleMessage['FORGOTPASSWORD']);
         $this->viewBuilder()->layout('');
         $this->autoRender = false;
         if ($this->request->is('post')) {            
@@ -285,8 +288,8 @@ class UsersController extends AdminController
         }
     }
 
-    public function resetPassword($token, $email) {    
-        $this->set('title', 'Reset password');        
+    public function resetPassword($token, $email) {                      
+        $this->set('title', $this->siteTitleMessage['RESETPASSWORD']);   
         if (!$token || !$email) {  
             $this->Flash->error(__($this->errorSuccessMessage['INVALIDLINK']));
             return $this->redirect(['action' => 'login']);  

@@ -10,6 +10,7 @@ define('DATEFORMAT','Y-m-d');
 define('FRIEND_REQUESTED_STATUS','Accepted');
 define('BLANK_COUNT',0);
 define('BLANK','--');
+$friend_requested_status_arr=array('accepted'=>'Accepted','decline'=>'Decline','pending'=>'Pending','blocked'=>'Blocked');
 $user_gender=array('1'=>'All','2'=>'Male','3'=>'Female','4'=>'Other');
 $user_age=array('1'=>'13-20','2'=>'21-30','3'=>'31-40','4'=>'41-50','5'=>'51-above');
 $status_arr=array('active'=>'Active','inactive'=>'Inactive');
@@ -22,8 +23,21 @@ define('STATUS_ARR', serialize($status_arr));
 define('SPAYC_TYPE_ARR', serialize($spayctype_arr));
 define('GROUP_TYPE_ARR', serialize($grouptype_arr));
 define('SPAYC_USER_STATUS_ARR', serialize($spaycuserstatus_arr));
+define('FRIEND_REQUESTED_STATUS_ARR', serialize($friend_requested_status_arr));
 
 $config =array();
+$config['SITETITLEMESSAGE'] = [
+    'ADMINPANEL'=>'Admin Panel',
+    'CHANGEPASSWORD'=>'Change Password',
+    'MANAGEUSER'=>'Manage Users',
+    'FORGOTPASSWORD'=>'Forgot Password',
+    'RESETPASSWORD'=>'Reset Password',
+    'MANAGEUSER'=>'Manage Users',
+    'MANAGEUSER'=>'Manage Users',    
+    'WARPCREATED'=>'Warps Created',
+    'WARPJOINED'=>SITE_TITLE.'s Joined',
+    'WARPDETAIL'=>SITE_TITLE.' Detail',
+    ];
 $config['ERRORANDSUCCESSMSG'] = [
     'LOGOUTSUCCESS'=>'You have log out successfully.',
     'BLANKEMAIL'=>'Please enter email',

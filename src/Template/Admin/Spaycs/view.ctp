@@ -3,7 +3,6 @@ use Cake\Routing\Router;
 $spaycUserStatusArr = unserialize(SPAYC_USER_STATUS_ARR);
 $spaycTypeArr = unserialize(SPAYC_TYPE_ARR);
 $groupTypeArr = unserialize(GROUP_TYPE_ARR);
-//pr($spayc);die;
 ?>
 <!--=============breadcrumbs==============-->            
   <div class="breadcrumbs">
@@ -77,6 +76,7 @@ $groupTypeArr = unserialize(GROUP_TYPE_ARR);
             </div>
 
             <!--======subspayc=====-->
+            <?php if(empty($subspayc)) {?>
             <div class="subspayc">
               <h2>Subwarps <span>(<?= count($spayc->sub_spaycs)?>)</span></h2>
               <div class="subspayc-box-wrapper clearfix">
@@ -95,13 +95,26 @@ $groupTypeArr = unserialize(GROUP_TYPE_ARR);
                   <div class="subspayc-image-wrap <?= $spaycImgClass?>">
                     <?= $this->Html->image($subSpaycImg, ["alt" => "", 'class' =>'']); ?>
                     <?= $this->Html->image($spaycImgShadow, ["alt" => "", 'class' =>'img-shadow']); ?>
+                     <!--======dropdown===-->
+                      <div class="dropdown table-view-dropdown square-box-dropdown">
+                        <div class="table-dropdown"  id="table-data-dropdown_<?= $sub_spaycs->id?>" data-toggle="dropdown">
+                          <span></span>
+                          <span></span>
+                          <span></span>
+                        </div>
+                        <div class="dropdown-menu" aria-labelledby="table-data-dropdown_<?= $sub_spaycs->id?>">                             
+                          <?= $this->Html->link("<i class='icon-view'></i>View",['controller' => 'Spaycs', 'action' => 'view',$sub_spaycs->id,$spayc->user_id,'subspayc'], ['class' => 'dropdown-item view','escape' => false]);?>    
+                          <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
+                          <button class="dropdown-item delete"> <i class="icon-Delete"></i>Delete</button>
+                        </div>
+                      </div>
                   </div>
                   <div class="text-wrap">
-                    <span class="<?= strtolower($sub_spaycs->group_type) ?>"></span>
+                    <span class="<?= !empty($sub_spaycs->group_type)?strtolower($sub_spaycs->group_type):'' ?>"></span>
                     <h4><?= !empty($sub_spaycs->name)?$sub_spaycs->name:''?></h4>
                     <p><?= !empty($sub_spaycs->description)?$sub_spaycs->description:''?></p>
                   </div>
-                </div>
+                </div>               
                <?php 
                   }
                } else { ?>
@@ -111,6 +124,7 @@ $groupTypeArr = unserialize(GROUP_TYPE_ARR);
               <?php } ?>
               </div>
             </div>
+            <?php } ?>
           </div>
         </div>
     </section>
