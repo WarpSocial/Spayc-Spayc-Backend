@@ -970,7 +970,7 @@ class SpaycsController extends AppController {
         }
        // pj($query);
         $result = $query->map(function ($row)use($subQuery) {
-            $joinedId = \Cake\Utility\Hash::extract($subQuery->toArray(),'{n}[id='.$row->id.']');
+            $joinedId = \Cake\Utility\Hash::extract($subQuery->toArray(),'{n}[id='.$row->spayc_id.']');
             if(!empty($joinedId)){
                 $row->joined_status = 'Joined';
             }else{

@@ -377,7 +377,7 @@ class JoinSpaycsController extends AppController {
                                 ->where(['JoinedSpayc.user_id IN'=>[$data['user_id'],$user['id']]]);
                     },
                 ])
-                ->where(['id'=>$data['spayc_id']]);
+                ->where(['Spaycs.id'=>$data['spayc_id']]);
         if($spaycs->isEmpty()){
             $this->restException(['status'=>'failed','message'=>__('Spayc is no longer available.')], 400);
         }
@@ -394,8 +394,9 @@ class JoinSpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('User is not member of this spayc.')], 400);
         }
         $currentUserStatus = $currentUserStatus[0];
+        $requestedUserStatus = $requestedUserStatus[0];
         if(($currentUserStatus['status'] != 'Joined') || ($currentUserStatus['is_admin'] < 1)){
-            $this->restException(['status'=>'failed','message'=>__('Only joined member who has admin rights can accept or decline any user.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Joined member and admin can accept or decline of any user request.')], 400);
         }
         if($currentUserStatus['is_admin'] <= $requestedUserStatus['is_admin']){
             $this->restException(['status'=>'failed','message'=>__('You have no rights to accept or decline a user which has same level of access.')], 400);
@@ -404,75 +405,39 @@ class JoinSpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('User already joined with this spayc.')], 400);
         }       
         if($requestedUserStatus['status'] == $data['status']){
-            $this->restException(['status'=>'failed','message'=>__('User has already '. strtolower($data['status']).' with this spayc.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('User has alreadyd '. strtolower($data['status']).' with this spayc.')], 400);
         }
       
-        
+        $requestedMatrixUser = TableRegistry::get('Api.Users')->get($requestedUserStatus['user_id'],['fields'=>['matrix_user_id','matrix_access_token']]);
+        $data['matrix_user_id'] = $requestedMatrixUser->matrix_user_id;
+        $data['matrix_token'] = $requestedMatrixUser->matrix_access_token;
         $data['matrix_room_id'] = $spayc->matrix_room_id;
-        if(($spayc->group_type == 'Private') && empty($data['passcode'])){
-            $data['status'] = 'Pending';
-        }elseif(($spayc->group_type == 'Private') && ($spayc->passcode != $data['passcode'])){
-            $this->restException(['status'=>'failed','message'=>__('Passcode is not valid.')], 400);
-        }
+       
         
-        $entities = $jsModel->find('all',['field'=>['id','user_id','spayc_id','status']])->where(['JoinedSpayc.spayc_id'=>$data['spayc_id'],'JoinedSpayc.user_id'=>$data['user_id']]);  
-        $plQuery = TableRegistry::get('Api.PhysicalLocation')->findByUserId($data['user_id'])->first();
-        if($entities->isEmpty()){
-            $entity = $jsModel->newEntity();
-            $entity->user_id = $data['user_id'];
-            $entity->spayc_id = $data['spayc_id'];
-            $entity->status = $data['status'];
-            $entity->modified = new \Cake\I18n\Time();
-            $entity->updated_by = $user['id'];
-        }else{
-            $entity = $entities->first();
-            if(strtolower($entity->status) == strtolower($data['status'])){
-                $this->restException(['status'=>'failed','message'=>__('User has been already '.strtolower($data['status']).'.')], 400);
-            }
-            $entity->status = $data['status'];
-            $entity->modified = new \Cake\I18n\Time();
-            $entity->updated_by = $user['id'];
-        }
-        if(!empty($plQuery)){
-            $entity->distance = Utils::distance($plQuery->current_latitude, $plQuery->current_longitude, $spayc->latitude,$spayc->longitude);
-        }
+        $requestedUserStatus->status = ($data['status'] == 'Accepted')?'Joined':'Declined';
+        $requestedUserStatus->modified = new \Cake\I18n\Time();
+        $requestedUserStatus->updated_by = $user['id'];
+        $jsModel = TableRegistry::get('Api.JoinedSpayc');
         $jsModel->getConnection()->begin();
-        if($jsModel->save($entity,['checkRules' => false, 'atomic' => false])){
-            if(!empty($data['passcode'])){                
-                $data['status'] = 'Joined';
-            }
-            if($this->Matrix->joinRoom($data)) {
-                $jsModel->getConnection()->commit();
-                $friends = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($user['id'], 'Accepted');
-                //$userIds = $jsModel->getJoinedUserIds($data['spayc_id']);
-                if($friends && in_array($spayc->user_id, $friends)) {
-                    $push['slug'] = 'friend-join-spayc';
+        if ($jsModel->save($requestedUserStatus, ['checkRules' => false, 'atomic' => false])) {
+            if ($data['status'] == 'Accepted') {
+                $matrixData = ['status'=>'Joined']+$data;
+                if ($this->Matrix->joinRoom($matrixData)) {
+                    $jsModel->getConnection()->commit();
+                    $response = ['status' => 'success', 'message' => __('Request has been '. strtolower($data['status']).' successfully.')];
                 } else {
-                    $push['slug'] = 'user-joined-your-spayc';
+                    $jsModel->getConnection()->rollback();
+                    $this->response->statusCode(400);
+                    $response = ['status' => 'failed', 'message' => __('System failed to process the request.')];
                 }
-                $push['requested_by'] = $user['id'];
-                $push['requested_to'] =  $spayc->user_id;
-                $push['spayc_id'] =  $spayc->id;
-                $push['spayc_name'] = $spayc->name;
-                $push['spayc_image'] = $spayc->image;
-                $push['matrix_room_id'] = $spayc->matrix_room_id;
-                $push['display_name'] = $user['display_name'];
-                $this->Push->sendPushNotification($push);
-                if($data['status'] == 'Joined'){
-                    $msg = __('User has been joined successfully.');
-                }else{
-                    $msg = __('Your status has been changed successfully');
-                }
-                $response = ['status'=>'success','message'=>$msg];
-            } else {
-                $jsModel->getConnection()->rollback();
-                $this->response->statusCode(400);
-                $response = ['status'=>'failed','message'=>__('System failed to process the request.')];
-            }            
-        }else{
+            }else{
+                $jsModel->getConnection()->commit();
+                $response = ['status' => 'success', 'message' => __('Request has been '. strtolower($data['status']).' successfully.')];
+            }
+        } else {
             $jsModel->getConnection()->rollback();
             $this->response->statusCode(400);
-            $response = ['status'=>'failed','message'=>__('System failed to process the request.')];
+            $response = ['status' => 'failed', 'message' => __('System failed to process the request.')];
         }
         $this->set($response);
     }
