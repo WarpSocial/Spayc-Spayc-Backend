@@ -4041,7 +4041,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/remove-spayc-member.json",
-    "title": "Remove/Kick Remove user from spayc",
+    "title": "Remove/Kick user from spayc",
     "version": "0.1.0",
     "name": "postRemoveFromSpayc",
     "group": "Spayc",

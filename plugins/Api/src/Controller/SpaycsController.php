@@ -416,8 +416,7 @@ class SpaycsController extends AppController {
                 'spayc_name' => $spayc->name,
                 'spayc_image' => $spayc->image,
                 'matrix_room_id' => $spayc->matrix_room_id,
-                'display_name' => $user['display_name'],
-                
+                'display_name' => $user['display_name']                
             ];
             if(!empty($friend)){
                 $push['slug'] = 'friend-subscribed-to-your-spayc';
@@ -534,8 +533,8 @@ class SpaycsController extends AppController {
         
         $spayc->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend, $userId) {
             return $results->map(function ($row) use($friend, $userId) {                
-                //$row->created = Utils::toClient($row->created);
-                //$row->modified = Utils::toClient($row->modified);
+                $row->created = Utils::toClient($row->created);
+                $row->modified = Utils::toClient($row->modified);
                 $spaycId = ApiHasher::decrypt($row->id);
                 $row['friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
                 $present = 0;$totalJoined=[];

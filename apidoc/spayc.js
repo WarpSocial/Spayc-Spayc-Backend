@@ -1338,7 +1338,7 @@ function deleteAdvertisement() { return; }
  */
 function postAcceptJoinedRequest() { return; }
 /**
-@api {post} /remove-spayc-member.json Remove/Kick Remove user from spayc
+@api {post} /remove-spayc-member.json Remove/Kick user from spayc
 @apiVersion 0.1.0
 @apiName postRemoveFromSpayc
 @apiGroup Spayc
