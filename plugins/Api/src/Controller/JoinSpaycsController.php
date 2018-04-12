@@ -403,7 +403,7 @@ class JoinSpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Only joined member who has admin rights can remove any user.')], 400);
         }
         if($removeUserStatus['status'] != 'Joined'){
-            $this->restException(['status'=>'failed','message'=>__('User is not joined with this spayc.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Only joined user will be removed.')], 400);
         }
         $removeMatrixUser = TableRegistry::get('Api.Users')->get($removeUserStatus['user_id'],['fields'=>['matrix_user_id']]);
         $data['matrix_user_id'] = $removeMatrixUser->matrix_user_id;
