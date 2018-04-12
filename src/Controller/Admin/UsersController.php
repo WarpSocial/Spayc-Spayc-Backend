@@ -14,7 +14,7 @@ use Cake\Mailer\MailerAwareTrait;
 use Api\Auth\ApiHasher;
 use Cake\Utility\Security;
 use Cake\Validation\Validator;
-
+use Api\Utils\Utils;
 /**
  * Users Controller
  *
@@ -26,6 +26,7 @@ class UsersController extends AdminController
     public function initialize() {
         parent::initialize();        
         $this->loadComponent('Api.Push');
+        $this->Spaycs = TableRegistry::get('Spaycs');
     }
     public function beforeFilter(Event $event)
     {
@@ -39,19 +40,19 @@ class UsersController extends AdminController
      * @return \Cake\Http\Response|void
      */
     public function index()
-    {        
-        $this->set('title', 'Manage User');
+    {           
+        $this->set('title', $this->siteTitleMessage['MANAGEUSER']);
         $conditions_array = [];
         $ageArr = unserialize(USER_AGE);
-        $keyword=($this->request->query('keyword'))?trim($this->request->query('keyword')):'';
+        $keyword=($this->request->query('keyword'))?trim(strtolower($this->request->query('keyword'))):'';
         $query=$this->Users->find()
             ->where(['Users.role_id IS'=> null])
             ->contain([            
                 'JoinedSpayc'=>function($q) {
-                    return $q->select(['JoinedSpayc.user_id', 'joined_spaycs'=>$q->func()->count('JoinedSpayc.id')])->group(['JoinedSpayc.user_id']);
-                },
+                    return $q->select(['JoinedSpayc.user_id', 'joined_spaycs'=>$q->func()->count('JoinedSpayc.id')])->where(['JoinedSpayc.status'=>'Joined'])->group(['JoinedSpayc.user_id']);
+                },                
                 'Spaycs'=>function($q) {
-                    return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id']);
+                    return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->where(['Spaycs.group_type !=' =>'trusted_private','parent_id IS'=>null])->group(['Spaycs.user_id']);
                 },
                 'Requestedby' => function($q) {
                    return $q->select(['Requestedby.requested_by','count' => $q->func()->count('Requestedby.id')])->group(['Requestedby.requested_by'])->Where(['Requestedby.requested_status'=>FRIEND_REQUESTED_STATUS]);
@@ -88,12 +89,13 @@ class UsersController extends AdminController
             } 
         }         
         if(!empty($keyword)){
-            $query->where(['OR' => [['Users.display_name LIKE' => "%".$keyword."%"], ['Users.email LIKE' => "%".$keyword."%"], ['Users.address LIKE' => "%".$keyword."%"],['Users.username LIKE' => "%".$keyword."%"]]]);
+            $query->where(['OR' => [['LOWER(Users.display_name) LIKE' => "%".$keyword."%"], ['LOWER(Users.email) LIKE' => "%".$keyword."%"], ['LOWER(Users.address) LIKE' => "%".$keyword."%"],['LOWER(Users.username) LIKE' => "%".$keyword."%"]]]);
         } 
         if (count($conditions_array)) {
             $query->where($conditions_array);
-        }        
-        $users = $this->paginate($query); 
+        }  
+        $this->paginate = ['order' => ['Users.display_name' => 'ASC']];
+        $users = $this->paginate($query);          
         $this->set(compact('users','keyword'));
         $this->set('_serialize', ['users']);
     }
@@ -184,8 +186,9 @@ class UsersController extends AdminController
         return $this->redirect(['action' => 'index']);
     }
     
-    public function login() {
-        $this->set('title', 'Admin Panel'); 
+    public function login() {        
+        
+        $this->set('title', $this->siteTitleMessage['ADMINPANEL']);
         if($this->Auth->user('id')){
             return $this->redirect($this->Auth->redirectUrl());       
         }
@@ -218,8 +221,9 @@ class UsersController extends AdminController
         return $this->redirect($this->Auth->logout());
     }
 
-    public function changePassword() {
-        $this->set('title', 'Change Password');
+    public function changePassword() {                
+
+        $this->set('title', $this->siteTitleMessage['CHANGEPASSWORD']);
         $user = $this->Users->get($this->Auth->user('id'));                
         if ($this->request->is(['post','put'])) {          
             $data = $this->request->getData();
@@ -246,11 +250,12 @@ class UsersController extends AdminController
         if(!empty($page)){
             $this->viewBuilder()->layout('admin');
         }
-        $this->set(['title' => 'Change Password','base_url_admin'=>$this->base_url_admin,'page' => $page]);
+        $this->set(['title' => $this->siteTitleMessage['CHANGEPASSWORD'],'base_url_admin'=>$this->base_url_admin,'page' => $page]);
     }
     
-    public function forgotPassword() {
-        $this->set('title', 'Forgot password'); 
+    public function forgotPassword() {        
+
+        $this->set('title', $this->siteTitleMessage['FORGOTPASSWORD']);
         $this->viewBuilder()->layout('');
         $this->autoRender = false;
         if ($this->request->is('post')) {            
@@ -283,8 +288,8 @@ class UsersController extends AdminController
         }
     }
 
-    public function resetPassword($token, $email) {    
-        $this->set('title', 'Reset password');        
+    public function resetPassword($token, $email) {                      
+        $this->set('title', $this->siteTitleMessage['RESETPASSWORD']);   
         if (!$token || !$email) {  
             $this->Flash->error(__($this->errorSuccessMessage['INVALIDLINK']));
             return $this->redirect(['action' => 'login']);  
@@ -402,7 +407,6 @@ class UsersController extends AdminController
         }
         $this->set(compact('user'));
     }
-
 }
 
 

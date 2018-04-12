@@ -70,7 +70,8 @@ class AdminController extends AppController
     {
         $this->base_url = Router::url('/', true);
         $this->base_url_admin = Router::url('/', true).'admin';
-        $this->errorSuccessMessage = Configure::read('ERRORANDSUCCESSMSG');        
+        $this->errorSuccessMessage = Configure::read('ERRORANDSUCCESSMSG');
+        $this->siteTitleMessage = Configure::read('SITETITLEMESSAGE');        
         $this->set('error_success_message', json_encode($this->errorSuccessMessage));
         $this->set('base_url', $this->base_url);
         $this->set('base_url_admin', $this->base_url_admin); 

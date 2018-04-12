@@ -24,32 +24,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-friends-icon:before {
-  content: "\e901";
+.icon-private-icon:before {
+  content: "\e900";
 }
-.icon-presended-icon .path1:before {
+.icon-icon-public-dark:before {
   content: "\e902";
-  color: rgb(255, 255, 255);
-}
-.icon-presended-icon .path2:before {
-  content: "\e903";
-  margin-left: -1em;
-  color: rgb(0, 0, 0);
-}
-.icon-presended-icon .path3:before {
-  content: "\e904";
-  margin-left: -1em;
-  color: none;
-}
-.icon-presended-icon .path4:before {
-  content: "\e905";
-  margin-left: -1em;
-  color: rgb(102, 102, 102);
-}
-.icon-presended-icon .path5:before {
-  content: "\e906";
-  margin-left: -1em;
-  color: rgb(255, 255, 255);
 }
 .icon-checkbox-s-icon .path1:before {
   content: "\e907";
@@ -60,14 +39,8 @@
   margin-left: -1em;
   color: rgb(255, 255, 255);
 }
-.icon-reject-icon:before {
-  content: "\e909";
-}
-.icon-checkbox-icon:before {
-  content: "\e90a";
-}
-.icon-address-book-icon:before {
-  content: "\e90b";
+.icon-sss:before {
+  content: "\e901";
 }
 .icon-down-filter:before {
   content: "\e90c";

@@ -87,4 +87,28 @@ class JoinedSpaycTable extends Table
 
         return $rules;
     }
+
+    public function getTotalJoinedFriends($spaycId = null, $userIds = []) {
+        return $this->find("all", ['fields' => ['id'], 'conditions' => ['spayc_id' => $spaycId, 'user_id IN' => $userIds,'status'=>'Joined']])->count();
+    }
+
+    public function getJoinedSpaycIds($userId = null) {
+        $spaycId = $this->find("all", ['fields' => ['id', 'spayc_id'], 'conditions' => ['user_id' => $userId,'status'=>'Joined']]);
+        $ids = [0];
+        if ($spaycId->count()) {
+            $spaycIds = $spaycId->toArray();
+            $ids = \Cake\Utility\Hash::extract($spaycIds, '{n}.spayc_id');
+        }
+        return $ids;
+    }
+    
+    public function getJoinedUserIds($spaycId = null) {
+        $userId = $this->find("all", ['fields' => ['id', 'user_id'], 'conditions' => ['spayc_id' => $spaycId,'status'=>'Joined']]);
+        $ids = [0];
+        if ($userId->count()) {
+            $userIds = $userId->toArray();
+            $ids = \Cake\Utility\Hash::extract($userIds, '{n}.user_id');
+        }
+        return $ids;
+    }
 }
