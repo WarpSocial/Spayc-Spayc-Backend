@@ -74,6 +74,8 @@ class SpaycsController extends AppController {
                 if(!empty($items['description'])) {
                     TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
                 }
+                $items->created = Utils::toClient($items->created);
+                $items->modified = Utils::toClient($items->modified);
                 $this->response->statusCode(201);
                 $response = ['status'=>'success','message'=>__('Your spayc '.ucfirst($data['name']).', has been created.'),'data'=>$items];
                 /*Event to bind to update the set upload room image */
@@ -110,20 +112,20 @@ class SpaycsController extends AppController {
         if(!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
+        
         $entity = $this->Spaycs->find()->contain('JoinedSpayc',function($q)use($user){
             return $q->where(['user_id'=>$user['id'],'status'=>'Joined']);
         });
-        if(preg_match("/[a-z]/i", $data['parent_matrix_room_id'])){
-            $entity->where(['matrix_room_id'=>$data['parent_matrix_room_id']]);        
-        }else{
-            $entity->where(['id'=>$data['parent_matrix_room_id']]);
-        }
+        $entity->where($this->Spaycs->spaycPk($data['parent_matrix_room_id']));
         $entity->where(['group_type !='=>'trusted_private']);        
         if($entity->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>__('Parent space has not been found.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Parent spayc is no longer available.')], 400);
         }
         
         $parentObj = $entity->first();
+        if(!empty($parentObj->parent_id)){
+            $this->restException(['status'=>'failed','message'=>__('Spayc inside subspayc is not allowed.')], 400);
+        }
         if(empty($parentObj->joined_spayc)){
             $this->restException(['status'=>'failed','message'=>__('You don\'t have sufficient right to create subspace.')], 400);
         }
@@ -139,7 +141,10 @@ class SpaycsController extends AppController {
         $data['location'] = $parentObj->location;
         $items = $this->Spaycs->newEntity($data,['validate'=>false]);
         
-        
+        if($data['group_type'] == 'Public'){ /* in community no need to keep start or end date*/
+            $data['passcode'] = '';
+            $items->set('passcode', '');
+        }
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
         
         $matrix = $this->Matrix->createRoom($data);
@@ -149,7 +154,7 @@ class SpaycsController extends AppController {
         $items->set('matrix_room_id',$matrix['room_id']);
         $items->set('matrix_room_alias',$matrix['room_alias']);
         $items->set('user_id', $this->Auth->user('id'));
-        if (!$items->errors()) {
+        if (!$items->errors()) {            
             if($this->Spaycs->save($items)){
               $data['image'] = $items->get('image');
               $data['matrix_room_id'] = $items->get('matrix_room_id');
@@ -380,11 +385,12 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Spayc id is required fields.')], 400);
         }
         $data['spayc_id'] = ApiHasher::decrypt($data['spayc_id']);
-        $spaycs = TableRegistry::get('Api.Spaycs')->find('all',['fields'=>['id','matrix_room_id']])->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
+        $spaycs = TableRegistry::get('Api.Spaycs')->find('all',['fields'=>['id','name','image','matrix_room_id','user_id']])->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
         if($spaycs->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>__('Invalid spayc id.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('This spayc is no longer exist.')], 400);
         }
         $spayc = $spaycs->first();
+        $friend = TableRegistry::get('Api.FriendRequest')->myFriend($user['id'],$spayc->user_id);
         $entities = $scModel->find('all',['field'=>['id','user_id','spayc_id','status']])->where(['spayc_id'=>$spayc->id,'user_id'=>$data['user_id']]);
         if($entities->isEmpty()){
             $entity = $scModel->newEntity();
@@ -402,6 +408,22 @@ class SpaycsController extends AppController {
         $entity->modified = new \Cake\I18n\Time();
         $entity->created = new \Cake\I18n\Time();
         if($scModel->save($entity,['checkRules' => false, 'atomic' => false])){
+            $push = [
+                'slug' => 'user-subscribed-to-your-spayc',
+                'requested_by' => $user['id'],
+                'requested_to' => $spayc->user_id,
+                'spayc_id' => $spayc->id,
+                'spayc_name' => $spayc->name,
+                'spayc_image' => $spayc->image,
+                'matrix_room_id' => $spayc->matrix_room_id,
+                'display_name' => $user['display_name'],
+                
+            ];
+            if(!empty($friend)){
+                $push['slug'] = 'friend-subscribed-to-your-spayc';
+            }
+            $this->Push->sendPushNotification($push);
+             
             $response = ['status'=>'success','message'=>__('User has been subcribed successfully.')];
         }else{
             $response = ['status'=>'failed','message'=>__('System failed to subscribe the user.')];
@@ -662,6 +684,9 @@ class SpaycsController extends AppController {
         }
         if($id == null){
             $id = $this->request->query('id');
+            if(empty($id)){
+                $this->restException(['status'=>'failed','message'=>'Record not found.'], 404);
+            }
         } 
         $user = $this->Auth->user();
         $entity = $this->Spaycs->find()
@@ -676,15 +701,15 @@ class SpaycsController extends AppController {
         array_push($matrixRoomIds, $spayc->matrix_room_id);
         $child = \Cake\Utility\Hash::extract($spayc->sub_spaycs, '{n}.id');        
         array_push($child,$spayc->id);  
-        $this->Matrix->deleteRoom($matrixRoomIds);
-        if ($this->Spaycs->delete($spayc)) {
-            TableRegistry::get('Api.JoinedSpayc')->deleteAll(['spayc_id IN' => $child]);
-            TableRegistry::get('Api.SubscribedUsers')->deleteAll(['spayc_id IN' => $child]);
-            TableRegistry::get('Api.SpaycHashtags')->deleteAll(['spayc_id IN' => $child]);
-            $response = ['status'=>'success','message'=>__('The spayc has been deleted.')];
-        } else {
-            $response = ['status'=>'failed','message'=>__('Spayc could not be deleted.')];
-        }
+//        $this->Matrix->deleteRoom($matrixRoomIds);
+//        if ($this->Spaycs->delete($spayc)) {
+//            TableRegistry::get('Api.JoinedSpayc')->deleteAll(['spayc_id IN' => $child]);
+//            TableRegistry::get('Api.SubscribedUsers')->deleteAll(['spayc_id IN' => $child]);
+//            TableRegistry::get('Api.SpaycHashtags')->deleteAll(['spayc_id IN' => $child]);
+//            $response = ['status'=>'success','message'=>__('The spayc has been deleted.')];
+//        } else {
+//            $response = ['status'=>'failed','message'=>__('Spayc could not be deleted.')];
+//        }
          $this->set(compact('response'));
     }
     
@@ -945,7 +970,7 @@ class SpaycsController extends AppController {
         }
        // pj($query);
         $result = $query->map(function ($row)use($subQuery) {
-            $joinedId = \Cake\Utility\Hash::extract($subQuery->toArray(),'{n}[id='.$row->id.']');
+            $joinedId = \Cake\Utility\Hash::extract($subQuery->toArray(),'{n}[id='.$row->spayc_id.']');
             if(!empty($joinedId)){
                 $row->joined_status = 'Joined';
             }else{

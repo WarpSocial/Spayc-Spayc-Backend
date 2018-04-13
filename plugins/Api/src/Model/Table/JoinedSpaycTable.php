@@ -149,9 +149,7 @@ class JoinedSpaycTable extends Table {
         $validator->requirePresence('spayc_id', true,__('Spayc id key is missing.'))
                 ->notEmpty('spayc_id', __('Please enter Spayc id.'));
         $validator->requirePresence('user_id', true,__('User id key is missing.'))
-                ->notEmpty('user_id', __('Please enter User id.'));
-        $validator->requirePresence('user_id', true,__('User id key is missing.'))
-                ->notEmpty('user_id', __('Please enter User id.'));
+                ->notEmpty('user_id', __('Please enter User id.'));       
         $validator->requirePresence('status', true,__('status key is missing.'))
                 ->notEmpty('status', __('Please enter status.'))
                 ->inList('status', $status,__('Status should be '. implode(' or ',$status)));

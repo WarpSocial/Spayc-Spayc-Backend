@@ -57,27 +57,33 @@
 *   modal width calsses
 ===================================*/
 .modal-dialog-sm {
-  width: 431px;
-  max-width: 431px;
-  height: auto;
-  .box-shadow(0 0 8px 0 rgba(0, 0, 0, 0.1));
-  border-radius: 0;
-  margin:0 auto;
+  .modal-dialog {
+    width: 431px;
+    max-width: 431px;
+    height: auto;
+    .box-shadow(0 0 8px 0 rgba(0, 0, 0, 0.1));
+    border-radius: 0;
+    margin:0 auto;
+  }
 }
 .modal-dialog-xs {
-  width: 400px;
-  max-width: 400px;
-  height: auto;
-  .box-shadow(0 0 8px 0 rgba(0, 0, 0, 0.1));
-  border-radius: 0;
-  margin:0 auto;
+  .modal-dialog {
+    width: 400px;
+    max-width: 400px;
+    height: auto;
+    .box-shadow(0 0 8px 0 rgba(0, 0, 0, 0.1));
+    border-radius: 0;
+    margin:0 auto;
+  }
 }
 .modal-dialog-lg {
-  width: 700px;
-  max-width: 700px;
-  height: auto;
-  .box-shadow(0 0 8px 0 rgba(0, 0, 0, 0.1));
-  margin:0 auto;
+  .modal-dialog {
+    width: 700px;
+    max-width: 700px;
+    height: auto;
+    .box-shadow(0 0 8px 0 rgba(0, 0, 0, 0.1));
+    margin:0 auto;
+  }
 
 }
 
@@ -218,7 +224,7 @@
     }
     label {
     color: @font-base;
-    opacity: .7;
+    opacity: .9;
     .rem-calc(12);
     }
     .password-wrap {

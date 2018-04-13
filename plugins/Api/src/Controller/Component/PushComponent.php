@@ -120,9 +120,7 @@ class PushComponent extends Component {
                 return false;
             }
             $deviceId = $deviceId->first();
-            if(strlen($deviceId->device_id)<64) {
-                return false;
-            }
+            
             if($notificationType->slug == 'friend-request') {
                 $notificationType->message = str_replace("<USERNAME>", ucwords($data['display_name']), $notificationType->message);
             }
@@ -150,17 +148,20 @@ class PushComponent extends Component {
             $data['device_token'] = $deviceId->device_id;
             $data['notification_type'] = $notificationType->type;
             //pr($data);die;
-            $sent = false;
+            /* Save the record in db*/
+             $data['date_time'] = (new Time($userInputTime, $timezone))->setTimezone('UTC')->format("Y-m-d H:i:s");
+            $data['message'] = $notificationType->message;
+            $data['status'] = 'Unread';
+            $data['created'] = date("Y-m-d H:i:s"); //pr($data);exit;
+            TableRegistry::get("Api.Notifications")->addNotification($data);
+            /* end of saving  */
+            /* Send notification */
             if(!empty($data['device_token'])) {
+                if(strlen($deviceId->device_id)<64) {
+                    return false;
+                }
                 $sent = $this->sendOnIOS($data, $notificationType->message);
-            }
-            if($sent) {
-                $data['date_time'] = (new Time($userInputTime, $timezone))->setTimezone('UTC')->format("Y-m-d H:i:s");
-                $data['message'] = $notificationType->message;
-                $data['status'] = 'Unread';
-                $data['created'] = date("Y-m-d H:i:s"); //pr($data);exit;
-                TableRegistry::get("Api.Notifications")->addNotification($data);
-            }
+            }            
         }
     }
 }

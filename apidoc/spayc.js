@@ -679,23 +679,21 @@ function postJoinSpayc() { return; }
 @apiUse errorResponse
  */
 function postJoinSubSpayc() { return; }
-
-
 /**
-@api {post} /ban-spayc-member.json Ban Spayc Member
+@api {post} /ban-spayc-member.json Ban/Unban Spayc Member
 @apiVersion 0.1.0
 @apiName postBanSpaycMember
 @apiGroup Spayc
 @apiPermission private
 
-@apiDescription super admin or admin can ban spayc member who has not rights of admin and super admin could ban admin privileges member too.
+@apiDescription super admin or admin can ban or unban spayc member who has not rights of admin and super admin could ban admin privileges member too.
 
 * @apiHeader {String} TOKEN            * Token required in header
 * @apiHeader {String} timezone            * Current timezone
 
 @apiParam {Intger} spayc_id Existing Spayc id(Required).
 @apiParam {Intger} user_id  Member id of joined spayc(Required).
-@apiParam {String} status Status must be any one Banned (Required).
+@apiParam {String} status Status must be any one Banned or Unbanned (Required).
 
 @apiExample Example usage:
 {
@@ -1303,6 +1301,7 @@ function userAdvertisement() { return; }
  * @apiUse UserErrorResponse
  */
 function deleteAdvertisement() { return; }
+<<<<<<< HEAD
 
 
 
@@ -1338,3 +1337,73 @@ function deleteAdvertisement() { return; }
  */
 function unreadNotification() { return; }
 
+=======
+/**
+@api {post} /accept-join-request.json Accept/Decline Join Request
+@apiVersion 0.1.0
+@apiName postAcceptJoinedRequest
+@apiGroup Spayc
+@apiPermission private
+
+@apiDescription super admin or admin can accept or decline the join request of private spayc.
+
+* @apiHeader {String} TOKEN            * Token required in header
+* @apiHeader {String} timezone            * Current timezone
+
+@apiParam {Intger} spayc_id Existing Spayc id(Required).
+@apiParam {Intger} user_id  Member id of joined spayc(Required).
+@apiParam {String} status Status must be any one Accepted or Declined (Required).
+
+@apiExample Example usage:
+{
+    "spayc_id":"xxx",
+    "user_id":"xxx",
+    "status":"Accepted"
+}
+ 
+@apiSuccess {String} status success.
+@apiSuccess {String} message User has been {status} successfully.
+@apiSuccessExample {json} Success-Response: 
+    HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "User has been {status} successfully."
+}
+
+@apiUse errorResponse
+ */
+function postAcceptJoinedRequest() { return; }
+/**
+@api {post} /remove-spayc-member.json Remove/Kick Remove user from spayc
+@apiVersion 0.1.0
+@apiName postRemoveFromSpayc
+@apiGroup Spayc
+@apiPermission private
+
+@apiDescription super admin or admin can remove the user from spayc. Only joined user will be removed.
+
+* @apiHeader {String} TOKEN            * Token required in header
+* @apiHeader {String} timezone            * Current timezone
+
+@apiParam {Intger} spayc_id Existing Spayc id(Required).
+@apiParam {Intger} user_id  Member id of joined spayc(Required).
+
+@apiExample Example usage:
+{
+    "spayc_id":"xxx",
+    "user_id":"xxx",
+}
+ 
+@apiSuccess {String} status success.
+@apiSuccess {String} message User has been removed successfully.
+@apiSuccessExample {json} Success-Response: 
+    HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "User has been removed successfully."
+}
+
+@apiUse errorResponse
+ */
+function postRemoveFromSpayc() { return; }
+>>>>>>> c27ed5bcc024d10d2752b0ebf58dcfae629bc146

@@ -15,7 +15,7 @@ $controller_action = $this->request->param('action');
             </a>
           <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav ml-auto">
-              <li class="nav-item <?php echo (($controller_name=='Users') && ($controller_action=='index')) ? 'active' : '';?>">
+              <li class="nav-item <?php echo (($controller_name=='Users' || $controller_name=='Spaycs') && ($controller_action=='index') || ($controller_action=='createdWarps') || ($controller_action=='joinedWarps')|| ($controller_action=='view')) ? 'active' : '';?>">
                 <a class="nav-link" href="<?php echo Router::url(['action' => 'index','controller' =>'Users']);?>">Manage Users</a>
               </li>
               <li class="nav-item">

@@ -15,11 +15,24 @@
 
 	$('#clear-search').on('click',function(){  			
 		$('#keyword').val('');
-		$('#clear-search').addClass('hide');
-		//window.location.replace(base_url_admin+'users/manage-user');
+		$('#clear-search').addClass('hide');			
+		window.location.replace($("form#userFilterFrm").prop('action').split('?')[0]);
 	});
 	$('#filter-reset').on('click',function(){  
 		window.location.replace(base_url_admin+'users/index');	
 	});
+	
+	if($("#to-date").length) {
+	    $(".date-filter").on('change',function(){	  	
+		    var startDate = $("#from-date").val();
+		    var endDate = $("#to-date").val();
+			if ((Date.parse(endDate) <= Date.parse(startDate))) {
+				messageFadeOut('users-msg',"To date should be greater than From date");
+		  		$("#to-date").val('');
+			}
+	  	});
+	}
 
-  });
+
+
+ }); 

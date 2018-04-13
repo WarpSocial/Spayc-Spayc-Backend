@@ -164,7 +164,10 @@ class SpaycsTable extends Table {
                                 $startDate = Time::createFromFormat('m-d-Y H:i:s',$value,$timezone);
                                 $currentDate = new Time('now',$timezone);
                                 $now = clone $currentDate;
-                                $currentDate->modify('+1 year')->modify('+1 minute');
+                                $currentDate->modify('+1 year');
+                                $startDate = strtotime($startDate->format('Y-m-d H:i'));
+                                $now = strtotime($now->format('Y-m-d H:i'));
+                                $currentDate = strtotime($currentDate->format('Y-m-d H:i'));
                                 return (bool) ($startDate >= $now && $startDate <= $currentDate);
                             }
                         },
@@ -196,6 +199,8 @@ class SpaycsTable extends Table {
                             if($endDate->format('H') == '00'){
                                 $endDate->setTime(23,55);
                             }
+                            $startDate = strtotime($startDate->format("Y-m-d H:i"));
+                            $endDate = strtotime($endDate->format("Y-m-d H:i"));
                             return (bool)($startDate <= $endDate );
                         }
                         return true;
@@ -428,7 +433,7 @@ class SpaycsTable extends Table {
                 }
                 return $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin','JoinedSpayc.distance'])->where($condition);
         });
-       
+       $count = $query->count();
         if($limit != null){
             $query->limit($limit);
         }
@@ -471,7 +476,7 @@ class SpaycsTable extends Table {
             unset($row->_matchingData,$row->user_images,$row->subscribed_users,$row->requestedby,$row->requestedto);
             return $row;
         });
-        return $result;
+        return ['count'=>$count,'records'=>$result];
     }
     
     public function joinedInvite($items = [],$spaycId = null,$adminUser = null){
@@ -747,6 +752,14 @@ class SpaycsTable extends Table {
                             ->execute();
                 }
             });
+        }
+    }
+    
+    public function spaycPk($spaycId){
+        if(preg_match("/[a-z]/i", $spaycId)){
+            return ['matrix_room_id'=>$spaycId];        
+        }else{
+            return ['id'=>$spaycId];
         }
     }
 
