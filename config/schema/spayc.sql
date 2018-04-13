@@ -253,4 +253,52 @@ ALTER TABLE "users" ADD "role_id" integer DEFAULT NULL;
 INSERT INTO "users" ("id", "username", "email", "password", "gender", "dob", "phone", "status", "website_url", "address", "bio_data", "fb_id", "fb_access_key", "longitude", "latitude", "timezone", "matrix_user_id", "matrix_access_token", "created", "modified", "token_verification", "forgot_password_token", "forgot_password_timestamp", "country_code", "is_notify", "current_latitude", "current_longitude", "role_id") VALUES
 ('56',  'admin',    'ankur.gupta@kiwitech.com', 'ODIyZDBkN2MxYWVlOTcxZTZhNmMxNjhjZTNjMGQ3ZGMyYzk2ODY4MzM3MDQ3MDZmOTZhMTM0YjU1MzA1YmYzYnwyLmLenyaqlsnztYhQTM8dc+OpkWpoF/jvMx9EELyk', 'Male', NULL, NULL, 'Active',   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   '2018-03-15 15:40:41',  '2018-03-15 15:40:41',  NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,'1');
 
+-- Adminer 4.3.1 PostgreSQL dump
 
+DROP TABLE IF EXISTS "queue_phinxlog";
+CREATE TABLE "public"."queue_phinxlog" (
+    "version" bigint NOT NULL,
+    "migration_name" character varying(100),
+    "start_time" timestamp,
+    "end_time" timestamp,
+    "breakpoint" boolean DEFAULT false NOT NULL,
+    CONSTRAINT "queue_phinxlog_pkey" PRIMARY KEY ("version")
+) WITH (oids = false);
+
+
+DROP TABLE IF EXISTS "queued_jobs";
+CREATE SEQUENCE queued_tasks_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
+
+CREATE TABLE "public"."queued_jobs" (
+    "id" integer DEFAULT nextval('queued_tasks_id_seq') NOT NULL,
+    "job_type" character varying(45) NOT NULL,
+    "data" text,
+    "job_group" character varying(255),
+    "reference" character varying(255),
+    "created" timestamp,
+    "notbefore" timestamp,
+    "fetched" timestamp,
+    "completed" timestamp,
+    "progress" real,
+    "failed" integer DEFAULT 0 NOT NULL,
+    "failure_message" text,
+    "workerkey" character varying(45),
+    "status" character varying(255),
+    "priority" integer DEFAULT 5 NOT NULL,
+    CONSTRAINT "queued_tasks_pkey" PRIMARY KEY ("id")
+) WITH (oids = false);
+
+
+DROP TABLE IF EXISTS "queue_processes";
+CREATE SEQUENCE queue_processes_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
+
+CREATE TABLE "public"."queue_processes" (
+    "id" integer DEFAULT nextval('queue_processes_id_seq') NOT NULL,
+    "pid" character varying(30) NOT NULL,
+    "created" timestamp,
+    "modified" timestamp,
+    CONSTRAINT "queue_processes_pkey" PRIMARY KEY ("id")
+) WITH (oids = false);
+
+
+-- 2018-04-13 16:39:12.591553+05:30
