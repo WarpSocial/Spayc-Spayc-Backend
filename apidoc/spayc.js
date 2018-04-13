@@ -1070,7 +1070,6 @@ function mapSpaycs() { return; }
         "price": "250",
         "description": "Test Test Test ",
         "url": "http://www.xyz.com",
-        "description":"Advertisement creating",
         "image":"file.png",
         "spayc_id":"5,6"
     }
@@ -1082,18 +1081,19 @@ function mapSpaycs() { return; }
  * @apiSuccessExample {json} Success-Response: 
  *      HTTP/1.1 200 OK
 {
-    "status": "success",
-    "message": "Advertisement Created Successfully",
-    "data": {
-        "name": "Test",
-        "price": 250,
-        "description": "Test Test Test",
-        "image": "https://spayc-qa.s3.amazonaws.com/room/test_20180402092833.png",
-        "user_id": "1",
-        "created": "2018-04-02T09:28:33+00:00",
-        "modified": "2018-04-02T09:28:33+00:00",
-        "id": 53
-    }
+        "status": "success",
+        "message": "Advertisement Created Successfully",
+        "data": {
+            "name": "Space Ad",
+            "price": 20.81,
+            "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type ",
+            "url": "http://www.xyz.com",
+            "user_id": "1",
+            "modified": "2018-04-13 06:35:39",
+            "created": "2018-04-13 06:35:39",
+            "id": 101,
+            "created_spayc": "94,95"
+        }
 }
  *
  * @apiUse UserErrorResponse
@@ -1119,7 +1119,6 @@ function createAdvertisement() { return; }
         "price": "250",
         "description": "Test Test Test ",
         "url": "http://www.xyz.com",
-        "description":"Advertisement creating",
         "image":"file.png",
     }
 
@@ -1302,6 +1301,43 @@ function userAdvertisement() { return; }
  * @apiUse UserErrorResponse
  */
 function deleteAdvertisement() { return; }
+<<<<<<< HEAD
+
+
+
+/**
+ @api {get} /unread-notification.json Unread Notification
+ @apiVersion 0.1.0
+ @apiName unreadNotification
+ @apiGroup Spayc
+ @apiPermission private
+
+ @apiDescription Edit Advertisement.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+
+
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message of Unread Notification..
+ * @apiSuccess {Object} data Count of Unread Notification.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Unread Notification Count.",
+    "data": {
+        "id": "1",
+        "unread_notifications": 5
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function unreadNotification() { return; }
+
+=======
 /**
 @api {post} /accept-join-request.json Accept/Decline Join Request
 @apiVersion 0.1.0
@@ -1370,3 +1406,4 @@ function postAcceptJoinedRequest() { return; }
 @apiUse errorResponse
  */
 function postRemoveFromSpayc() { return; }
+>>>>>>> c27ed5bcc024d10d2752b0ebf58dcfae629bc146

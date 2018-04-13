@@ -672,6 +672,8 @@ class SpaycsTable extends Table {
                 ]
             );
         }
+        $subQuery = TableRegistry::get('Api.JoinedSpayc')->bannedSpaycQuery($userId);
+        $spaycs->where(['Spaycs.id NOT IN'=>$subQuery]);
         $spaycs->contain([
             'JoinedSpayc' => function($q) {
                 return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status'])

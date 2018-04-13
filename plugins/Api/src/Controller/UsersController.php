@@ -1544,4 +1544,34 @@ class UsersController extends AppController {
         $response = ['status'=>'success','message'=>__('Notification read successfully.')];
         $this->set($response);
     }
+    
+    public function unreadNotification($id = null) {
+        if(!$this->request->is(['get'])) {
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
+        }
+        $loggedUser = $this->Auth->user();
+        $id=$loggedUser['id'];
+        $user = $this->Users->find('all', ['fields'=>['Users.id']])->where(['OR'=>['Users.id'=>$id,'Users.matrix_user_id'=>$id]]);
+
+        $userId = $this->Auth->user('id');
+        $user->contain([
+            'NotificationTo'=>function($q) {
+                return $q->select(['NotificationTo.requested_to', 'unread_notification'=>$q->func()->count('NotificationTo.id')])->group(['NotificationTo.requested_to'])->where(['NotificationTo.status'=>'Unread']);
+            }
+        ]);
+        //pj($user);die;
+        $user->formatResults(function (\Cake\Collection\CollectionInterface $results)use($loggedUser,$id) {
+            return $results->map(function ($row)use($loggedUser,$id) {
+                $uId = ApiHasher::decrypt($row['id']);
+                $row['unread_notifications'] = !empty($row['notification_to'][0]['unread_notification'])? $row['notification_to'][0]['unread_notification'] : 0;
+                unset($row['notification_to']);
+                return $row;
+            });
+        });
+        if($user->isEmpty()){
+            $this->restException(['status'=>'failed', 'message'=>__('Invalid user')], 400);
+        }
+        $response = ['status'=>'success', 'message'=>__('Unread Notification Count.'), 'data'=> $user->first()];
+        $this->set($response);
+    }
 }
