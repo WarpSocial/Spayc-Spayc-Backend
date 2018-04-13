@@ -911,7 +911,7 @@ input[type=radio]:checked + span {
 }
 button:disabled,
 input:disabled {
-  color: #2d8f30;
+  color: #2D8F30;
   cursor: not-allowed;
 }
 .login-page {
@@ -1039,8 +1039,8 @@ input:disabled {
 }
 .login-box label,
 .forgot-password-box label {
-  color: #333333;
-  opacity: .9;
+  color: #686868;
+  opacity: 1;
   font-size: 0.75rem;
 }
 .login-box .password-wrap,
@@ -1069,8 +1069,8 @@ input:disabled {
 }
 .login-box a.forgot-password-text,
 .forgot-password-box a.forgot-password-text {
-  color: #1a4c59;
   font-weight: 400;
+  color: #092d42;
 }
 /*=================================
 *  forgot password
@@ -1122,6 +1122,7 @@ input:disabled {
   font-size: 0.875rem;
   margin: 0;
   font-weight: 400;
+  color: #000000;
 }
 .filters .filter-wrapper .search {
   width: 250px;
@@ -1176,6 +1177,7 @@ input:disabled {
 .filter-box .dropp-header .dropp-header__title {
   width: calc(87%);
   padding-right: 5px;
+  color: #000000;
 }
 .filter-box .dropp-header .icon {
   width: 13px;
@@ -1978,7 +1980,7 @@ input:disabled {
   cursor: pointer;
 }
 .forgot-password-modal .modal-body label {
-  color: #333333;
+  color: #686868;
   opacity: .9;
   font-size: 0.75rem;
 }
