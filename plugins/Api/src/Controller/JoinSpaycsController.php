@@ -498,6 +498,9 @@ class JoinSpaycsController extends AppController {
         if(($requestedUserStatus['status'] == 'Joined')){
             $this->restException(['status'=>'failed','message'=>__('User already joined with this spayc.')], 400);
         }       
+        if(($requestedUserStatus['status'] != 'Pending')){
+            $this->restException(['status'=>'failed','message'=>__('Only pending user will be accepted.')], 400);
+        }       
         if($requestedUserStatus['status'] == $data['status']){
             $this->restException(['status'=>'failed','message'=>__('User has alreadyd '. strtolower($data['status']).' with this spayc.')], 400);
         }
@@ -513,7 +516,12 @@ class JoinSpaycsController extends AppController {
         $requestedUserStatus->updated_by = $user['id'];
         $jsModel = TableRegistry::get('Api.JoinedSpayc');
         $jsModel->getConnection()->begin();
-        if ($jsModel->save($requestedUserStatus, ['checkRules' => false, 'atomic' => false])) {
+        if($data['status'] == 'Accepted'){
+            $dbStatus = $jsModel->save($requestedUserStatus, ['checkRules' => false, 'atomic' => false]);
+        }else{
+            $dbStatus = $jsModel->delete($requestedUserStatus);
+        }
+        if ($dbStatus) {
             if ($data['status'] == 'Accepted') {
                 $matrixData = ['status'=>'Joined']+$data;
                 if ($this->Matrix->joinRoom($matrixData)) {
