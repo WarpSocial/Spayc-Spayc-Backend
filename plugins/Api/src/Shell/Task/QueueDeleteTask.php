@@ -31,7 +31,6 @@ class QueueDeleteTask extends QueueTask {
     public function run(array $data, $jobId) {
         $matrix = new MatrixComponent(new ComponentRegistry());
         $push = new PushComponent(new ComponentRegistry());
-        \Cake\Log\Log::info(json_encode($jobId));
         if(!empty($data['joined_spayc'])){
             /* For root spayc */
             foreach($data['joined_spayc'] as $joinedUser){
