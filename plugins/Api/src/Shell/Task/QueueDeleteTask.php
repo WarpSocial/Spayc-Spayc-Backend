@@ -45,7 +45,10 @@ class QueueDeleteTask extends QueueTask {
                     'matrix_room_id' => $data['matrix_room_id'],
                     'display_name' => $joinedUser['user']['display_name']                
                 ];
-                $push->sendPushNotification($rPush);
+                /* super admin will not recieve any notification */
+                if($data['user_id'] != $joinedUser['user_id']){
+                    $push->sendPushNotification($rPush);
+                }
             }
         }
         if(!empty($data['sub_spaycs'])){
@@ -64,7 +67,10 @@ class QueueDeleteTask extends QueueTask {
                             'matrix_room_id' => $subspayc['matrix_room_id'],
                             'display_name' => $joinspayc['user']['display_name']                
                         ];
-                        $push->sendPushNotification($sPush);
+                        /* super admin will not recieve any notification */
+                        if($data['user_id'] != $joinspayc['user_id']){
+                            $push->sendPushNotification($sPush);
+                        }
                     }
                 }
             }
