@@ -15,8 +15,8 @@
 
 	$('#clear-search').on('click',function(){  			
 		$('#keyword').val('');
-		$('#clear-search').addClass('hide');
-		//window.location.replace(base_url_admin+'users/manage-user');
+		$('#clear-search').addClass('hide');			
+		window.location.replace($("form#userFilterFrm").prop('action').split('?')[0]);
 	});
 	$('#filter-reset').on('click',function(){  
 		window.location.replace(base_url_admin+'users/index');	
