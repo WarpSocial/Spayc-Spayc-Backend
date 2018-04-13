@@ -61,13 +61,18 @@ class AdvertisementController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Insufficient privileges to edit this Advertisement.')], 400);
         }        
         unset($data['id']);        
-        unset($data['price']);        
+        unset($data['price']);     
         
         $items = $this->Advertisement->patchEntity($entity, $data);       
        
         if(!empty($items->errors())) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
         }
+        if (isset($data['url']) && !filter_var($data['url'], FILTER_VALIDATE_URL)) {
+            $this->restException(['status'=>'failed', 'message'=> __('Enter Valid URL.')], 400);
+        } 
+        
+        $items->modified = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");   
         
         
         
@@ -87,7 +92,7 @@ class AdvertisementController extends AppController {
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function delete($id = null) {  
-        if (!$this->request->is(['post','delete'])) {
+        if (!$this->request->is(['get'])) {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);
         }
         if($id == null){
@@ -118,7 +123,7 @@ class AdvertisementController extends AppController {
      */
     
     public function viewAdvertisement(){
-         if (!$this->request->is(['post'])) {
+         if (!$this->request->is(['get'])) {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);
         }
         
@@ -148,7 +153,7 @@ class AdvertisementController extends AppController {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
         }
         $data = $this->request->getData();
-
+       
         $user = $this->Auth->user();
       
         $entity = TableRegistry::get('Api.Spaycs')->find()->contain('JoinedSpayc',function($q)use($user){
@@ -159,15 +164,31 @@ class AdvertisementController extends AppController {
         
         $entity = $advModel->newEntity();
         //pr($this->request->getData());
+//        echo $data['spayc_id'];die;
+        $exist = TableRegistry::get('Api.JoinedSpayc')->find()
+                ->where(['spayc_id IN ('.$data['spayc_id'].')', 'user_id'=>$user['id'], 'status'=>'Joined']);
         
-        
+        $spayc_id=explode(",",$data['spayc_id']);
+//        print_R($exist->toArray());die;
+        if(count($exist->toArray()) != count($spayc_id)){
+              $this->restException(['status'=>'failed', 'message'=> __('Not Authorized to Create Ad in listed Spaycs.')], 400);
+        }
         $data['spaycs'] = ['_ids' => [1]];
         $items = $advModel->patchEntity($entity,$data);
         
         if(!empty($items->errors())) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
         }
+         
+        if (!$this->isCurrency($data['price'])){
+            $this->restException(['status'=>'failed', 'message'=> __('Enter Valid Price.')], 400);
+        }
+        if (!filter_var($data['url'], FILTER_VALIDATE_URL)) {
+            $this->restException(['status'=>'failed', 'message'=> __('Enter Valid URL.')], 400);
+        } 
         $items->user_id = $user['id'];
+        $items->modified = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
+        $items->created = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");   
         $success=$advModel->save($items);
 //        pr($success);die;
         
@@ -181,14 +202,16 @@ class AdvertisementController extends AppController {
         $entity = $advModel->newEntity();
         $entity->advertisement_id = $success->id;
         $entity->spayc_id = $v;
-        $entity->modified = new \Cake\I18n\Time();
-        $entity->created = new \Cake\I18n\Time();   
-        $ad_spayc[]=$advModel->save($entity);
+        $entity->modified = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
+        $entity->created = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");   
+        $created=$advModel->save($entity);
+        $ad_spayc[]=$created->id;
         }
          
         if(!count($ad_spayc)){
             $this->restException(['status'=>'failed', 'message'=>__('Advertisement could not be saved. Please, try again.')], 400);
         }
+        $success['created_spayc']= implode(",",$ad_spayc);
         $response = ['status'=>'success','message'=>__('Advertisement Created Successfully'),'data'=>$success];
         $this->set($response);
     }
@@ -207,10 +230,10 @@ class AdvertisementController extends AppController {
         $page = $this->request->getQuery('page',1);
         $limit = $this->request->getQuery('limit',Configure::read('pagelimit'));
         $pquery->limit($limit)->page($page);
-        
+        $pquery->order(['id'=>'DESC']);
         
         if($pquery->isEmpty()){
-             $this->restException(['status'=>'failed','message'=>'Record not found.'], 400);
+             $this->restException(['status'=>'failed','message'=>'Record not found.'], 404);
         }
         if($pquery->toArray()){
         $data=$pquery->toArray();
@@ -223,5 +246,9 @@ class AdvertisementController extends AppController {
        
         $this->set($response);
     }
-    
+
+public function isCurrency($number)
+        {
+          return preg_match("/^-?[0-9]+(?:\.[0-9]{1,2})?$/", $number);
+        }    
 }
