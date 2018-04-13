@@ -108,6 +108,7 @@ class PushComponent extends Component {
     }
     
     public function sendPushNotification($data) {
+        //\Cake\Log\Log::info(json_encode($data,JSON_PRETTY_PRINT));
         if(!empty($data['slug'])) { 
             $notificationType = TableRegistry::get("Api.NotificationTypes")->findBySlug($data['slug']);
             if($notificationType->isEmpty()) {

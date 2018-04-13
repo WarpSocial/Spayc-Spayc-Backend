@@ -112,7 +112,6 @@ class SpaycsController extends AppController {
         if(!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
-        
         $entity = $this->Spaycs->find()->contain('JoinedSpayc',function($q)use($user){
             return $q->where(['user_id'=>$user['id'],'status'=>'Joined']);
         });
@@ -416,8 +415,7 @@ class SpaycsController extends AppController {
                 'spayc_name' => $spayc->name,
                 'spayc_image' => $spayc->image,
                 'matrix_room_id' => $spayc->matrix_room_id,
-                'display_name' => $user['display_name'],
-                
+                'display_name' => $user['display_name']                
             ];
             if(!empty($friend)){
                 $push['slug'] = 'friend-subscribed-to-your-spayc';
@@ -534,8 +532,8 @@ class SpaycsController extends AppController {
         
         $spayc->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend, $userId) {
             return $results->map(function ($row) use($friend, $userId) {                
-                //$row->created = Utils::toClient($row->created);
-                //$row->modified = Utils::toClient($row->modified);
+                $row->created = Utils::toClient($row->created);
+                $row->modified = Utils::toClient($row->modified);
                 $spaycId = ApiHasher::decrypt($row->id);
                 $row['friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
                 $present = 0;$totalJoined=[];
@@ -584,7 +582,7 @@ class SpaycsController extends AppController {
      */
      public function edit($id = null) {         
         if (!$this->request->is(['post'])) {
-            $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);
+            $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
         }
         $user = $this->Auth->user();
         $data = $this->request->getData();
@@ -679,38 +677,59 @@ class SpaycsController extends AppController {
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function delete($id = null) {  
-        if (!$this->request->is(['post','delete'])) {
-            $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);
+        if (!$this->request->is(['delete'])) {
+            $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
         }
         if($id == null){
             $id = $this->request->query('id');
             if(empty($id)){
-                $this->restException(['status'=>'failed','message'=>'Record not found.'], 404);
+                $this->restException(['status'=>'failed','message'=>'Spayc id is required.'], 400);
             }
         } 
         $user = $this->Auth->user();
         $entity = $this->Spaycs->find()
                 ->where(['OR'=>['id'=>$id,'matrix_room_id'=>$id],'user_id'=>$user['id']])
-                ->contain('SubSpaycs');
+                ->contain([
+                    'SubSpaycs'=>function($q){
+                        return $q->select(['id','name','image','matrix_room_id','parent_id']);
+                    },
+                    'SubSpaycs.JoinedSpayc'=>function($q){
+                        return $q->select(['id','spayc_id','user_id']);
+                    },'SubSpaycs.JoinedSpayc.Users'=>function($q){
+                        return $q->select(['id','display_name','matrix_access_token','matrix_user_id']);
+                    },   
+                    'JoinedSpayc'=>function($q){
+                        return $q->select(['id','spayc_id','user_id']);
+                    },
+                    'JoinedSpayc.Users'=>function($q){
+                        return $q->select(['id','display_name','matrix_access_token','matrix_user_id']);
+                    },   
+                ]);
         if($entity->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>'Record not found.'], 404);
+            $this->restException(['status'=>'failed','message'=>'This spayc is no longer exist.'], 404);
         }
+        
         $spayc = $entity->first();
+        $spayc->set('matrix_access_token',$user['matrix_access_token']);
+        
+        $qj = TableRegistry::get('Queue.QueuedJobs');
+        $qj->createJob('Delete',$spayc->toArray());
         
         $matrixRoomIds = \Cake\Utility\Hash::extract($spayc->sub_spaycs, '{n}.matrix_room_id');
         array_push($matrixRoomIds, $spayc->matrix_room_id);
         $child = \Cake\Utility\Hash::extract($spayc->sub_spaycs, '{n}.id');        
-        array_push($child,$spayc->id);  
+        array_push($child,$spayc->id); 
+       
 //        $this->Matrix->deleteRoom($matrixRoomIds);
-//        if ($this->Spaycs->delete($spayc)) {
-//            TableRegistry::get('Api.JoinedSpayc')->deleteAll(['spayc_id IN' => $child]);
-//            TableRegistry::get('Api.SubscribedUsers')->deleteAll(['spayc_id IN' => $child]);
-//            TableRegistry::get('Api.SpaycHashtags')->deleteAll(['spayc_id IN' => $child]);
-//            $response = ['status'=>'success','message'=>__('The spayc has been deleted.')];
-//        } else {
-//            $response = ['status'=>'failed','message'=>__('Spayc could not be deleted.')];
-//        }
-         $this->set(compact('response'));
+        if ($this->Spaycs->delete($spayc)) {
+            TableRegistry::get('Api.JoinedSpayc')->deleteAll(['spayc_id IN' => $child]);
+            TableRegistry::get('Api.SubscribedUsers')->deleteAll(['spayc_id IN' => $child]);
+            TableRegistry::get('Api.SpaycHashtags')->deleteAll(['spayc_id IN' => $child]);
+            $response = ['status'=>'success','message'=>__('The spayc has been deleted.')];
+        } else {
+            $response = ['status'=>'failed','message'=>__('Spayc could not be deleted.')];
+        }
+         $this->set($response);
     }
     
     public function matrixApplicationService($id = null){

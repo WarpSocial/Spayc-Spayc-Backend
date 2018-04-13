@@ -1,0 +1,57 @@
+{
+	"name": "dereuromark/cakephp-queue",
+	"type": "cakephp-plugin",
+	"description": "The Queue plugin for CakePHP provides deferred task execution.",
+	"keywords": ["cakephp","queue","deferred tasks","background"],
+	"homepage": "http://github.com/dereuromark/cakephp-queue",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Mark Scherer",
+			"homepage": "http://www.dereuromark.de",
+			"role": "Contributor"
+		},
+		{
+			"name": "David Yell",
+			"homepage": "https://github.com/davidyell",
+			"role": "Contributor"
+		}
+	],
+	"require": {
+		"php": ">=5.6",
+		"cakephp/cakephp": "^3.4"
+	},
+	"require-dev": {
+		"cakephp/migrations": "^1.0",
+		"dereuromark/cakephp-tools": "^1.2",
+		"dereuromark/cakephp-ide-helper": "@stable",
+		"fig-r/psr2r-sniffer": "dev-master"
+	},
+	"suggest": {
+		"dereuromark/cakephp-tools": "For the Email lib and QueueEmailTask. Or write your own task here. Also for admin backend.",
+		"dereuromark/cakephp-ide-helper": "For maximum IDE support, especially around createJob() usage."
+	},
+	"support": {
+		"source": "https://github.com/dereuromark/cakephp-queue"
+	},
+	"autoload": {
+		"psr-4": {
+			"Queue\\": "src/",
+			"Queue\\Test\\Fixture\\": "tests/Fixture/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Queue\\Test\\": "tests/",
+			"App\\": "tests/test_app/src/",
+			"Foo\\": "tests/test_app/plugins/Foo/src/",
+			"Cake\\Test\\": "vendor/cakephp/cakephp/tests/"
+		}
+	},
+	"scripts": {
+		"test": "php phpunit.phar",
+		"test-setup": "[ ! -f phpunit.phar ] && wget https://phar.phpunit.de/phpunit-5.7.20.phar && mv phpunit-5.7.20.phar phpunit.phar || true",
+		"cs-check": "phpcs -p --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=/cakephp-queue/vendor/,/tmp/,/logs/,/config/Migrations/ --extensions=php ./",
+		"cs-fix": "phpcbf -v --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=/cakephp-queue/vendor/,/tmp/,/logs/,/config/Migrations/ --extensions=php ./"
+	}
+}
