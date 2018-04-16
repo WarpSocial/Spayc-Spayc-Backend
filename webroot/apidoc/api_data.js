@@ -2324,7 +2324,7 @@ define({ "api": [
         "name": "private"
       }
     ],
-    "description": "<p>Get list of public and joined spayces.Spaycs must not be expired according to the spayc end date.Listing will be ordered on created.</p>",
+    "description": "<p>Get list of public and joined spayces.Spaycs must not be expired according to the spayc end date.Listing will be ordered on miles and then on created.</p>",
     "header": {
       "fields": {
         "Header": [

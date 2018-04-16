@@ -832,7 +832,7 @@ function getnearAboutSpayces() { return; }
  @apiGroup Spayc
  @apiPermission private
 
- @apiDescription Get list of public and joined spayces.Spaycs must not be expired according to the spayc end date.Listing will be ordered on created.
+ @apiDescription Get list of public and joined spayces.Spaycs must not be expired according to the spayc end date.Listing will be ordered on miles and then on created.
  
  @apiHeader {String} TOKEN            * A token send by header as TOKEN
  @apiHeader {String} timezone         * User time zone
