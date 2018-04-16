@@ -344,7 +344,7 @@ class JoinSpaycsController extends AppController {
         if(is_string($matrix)) {
             $this->restException(['status'=>'failed','message'=>__($matrix)],400);
         }
-        if($jsModel->save($BannedUserStatus)){
+        if($jsModel->save($BannedUserStatus)){            
             $push = [
                 'slug' => 'blocked',
                 'requested_by' => $user['id'],
@@ -356,6 +356,7 @@ class JoinSpaycsController extends AppController {
                 'display_name' => $user['display_name']                
             ];
             if($data['status'] == 'Banned'){
+                TableRegistry::get('Api.SubscribedUsers')->removeSubscription($data['user_id'],$spayc->id);
                 $this->Push->sendPushNotification($push);
             }
             $response = ['status'=>'success','message'=>__('User has been '.$data['status'].' successfully.')];

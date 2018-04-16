@@ -1,0 +1,17 @@
+https://jira.kiwitech.com/browse/SPAYCBKND-584 = Not a bug
+https://jira.kiwitech.com/browse/SPAYCBKND-587 = Fixed
+https://jira.kiwitech.com/browse/SPAYCBKND-579 = Need to ask
+https://jira.kiwitech.com/browse/SPAYCBKND-558 = Fixed
+https://jira.kiwitech.com/browse/SPAYCBKND-553 = Fixed
+https://jira.kiwitech.com/browse/SPAYCBKND-522 = Later
+https://jira.kiwitech.com/browse/SPAYCBKND-520 = Later
+https://jira.kiwitech.com/browse/SPAYCBKND-519 = Later
+https://jira.kiwitech.com/browse/SPAYCBKND-518 = Need to talk with Dhirender
+https://jira.kiwitech.com/browse/SPAYCBKND-493 = Fixed
+
+https://jira.kiwitech.com/browse/SPAYCBKND-376 = Need to close this
+https://jira.kiwitech.com/browse/SPAYCBKND-382 = Need to close this
+https://jira.kiwitech.com/browse/SPAYCBKND-339 = We are not keeping the device id it is device token
+
+https://jira.kiwitech.com/browse/SPAYCBKND-581 = Fixed but It should be handled by front end
+

@@ -565,7 +565,10 @@ class SpaycsController extends AppController {
         });
         $data = [];        
         if(!$spayc->isEmpty()) {
-            $data = $spayc->first();                        
+            $data = $spayc->first();
+            if($data['joined_spayc_status'] != 'Joined'){
+                $this->restException(['status'=>'failed','message'=>__('You have not joined with this spayc')],400);
+            }
         } else {
             $this->response->statusCode(204);
         }
@@ -989,7 +992,7 @@ class SpaycsController extends AppController {
         }
        // pj($query);
         $result = $query->map(function ($row)use($subQuery) {
-            $joinedId = \Cake\Utility\Hash::extract($subQuery->toArray(),'{n}[id='.$row->spayc_id.']');
+            $joinedId = \Cake\Utility\Hash::extract($subQuery->toArray(),'{n}[spayc_id='.$row->id.']');
             if(!empty($joinedId)){
                 $row->joined_status = 'Joined';
             }else{
