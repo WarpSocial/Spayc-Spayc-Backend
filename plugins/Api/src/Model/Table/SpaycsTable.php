@@ -707,13 +707,13 @@ class SpaycsTable extends Table {
         
         $spaycs->distinct('spaycs.id');
         
-        $page = (!empty($request['page']) && is_numeric($request['page']))?$request['page']:1;
-        if($page < 0) {
-            $page = $page*-1;
-            $spaycs->page($page);
-        } else {
-            $spaycs->page($page);
-        }
+//        $page = (!empty($request['page']) && is_numeric($request['page']))?$request['page']:1;
+//        if($page < 0) {
+//            $page = $page*-1;
+//            $spaycs->page($page);
+//        } else {
+//            $spaycs->page($page);
+//        }
         $newQuery = clone $spaycs;
         $data['count'] = $newQuery->count();
         $data['records'] = [];

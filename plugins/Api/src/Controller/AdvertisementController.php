@@ -61,7 +61,6 @@ class AdvertisementController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Insufficient privileges to edit this Advertisement.')], 400);
         }        
         unset($data['id']);        
-        unset($data['price']);     
         
         $items = $this->Advertisement->patchEntity($entity, $data);       
        
@@ -132,10 +131,33 @@ class AdvertisementController extends AppController {
         }
         $user = $this->Auth->user();
         $pquery = TableRegistry::get('Api.Advertisement')->findById($this->request->getQuery('id',null))
-                ->select(['id','name','image','price','description','url']);
+                ->select(['id','name','user_id','image','price','description','url','status']);
+        
         if($pquery->toArray()){
+         
         $data=$pquery->toArray();
-        $response = ['status'=>'success','message'=>'Advertisement Details','data'=>$data[0]];
+         if($data[0]->user_id != $user['id']) {
+            $this->restException(['status'=>'failed', 'message'=>__('Not Authorized to view that Advertisement.')], 400);
+        }
+        unset($data[0]->user_id);
+        
+        $entity = TableRegistry::get('Api.Spaycs')->find('all',['fields'=>[
+//                 'distance' => $distanceField,
+                 'Spaycs.name','Spaycs.id','Spaycs.type','Spaycs.image']])->join(
+                [
+                    'table' => 'spayc_advertisement',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Spaycs.id = spayc_advertisement.spayc_id',
+                        'spayc_advertisement.advertisement_id'=>$data[0]->id
+                    ]
+                ]
+            );
+        $spayc=$entity->toArray();
+        $array['advertisement']=$data[0];
+        if($spayc)
+        $array['spaycs']=$spayc;
+        $response = ['status'=>'success','message'=>'Advertisement Details','data'=>$array];
         }else{
                 $response = ['status'=>'failed','message'=>__('No Advertisement found')];
         }
@@ -205,7 +227,7 @@ class AdvertisementController extends AppController {
         $entity->modified = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
         $entity->created = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");   
         $created=$advModel->save($entity);
-        $ad_spayc[]=$created->id;
+        $ad_spayc[]=$v;
         }
          
         if(!count($ad_spayc)){
@@ -225,12 +247,12 @@ class AdvertisementController extends AppController {
         
         $user = $this->Auth->user();
         $pquery = TableRegistry::get('Api.Advertisement')->findByUserId($user['id'])
-                ->select(['id','name','image','price','description','url']);
+                ->select(['id','name','image','price','description','url','status']);
          
         $page = $this->request->getQuery('page',1);
         $limit = $this->request->getQuery('limit',Configure::read('pagelimit'));
         $pquery->limit($limit)->page($page);
-        $pquery->order(['id'=>'DESC']);
+        $pquery->order(['created'=>'DESC']);
         
         if($pquery->isEmpty()){
              $this->restException(['status'=>'failed','message'=>'Record not found.'], 404);
