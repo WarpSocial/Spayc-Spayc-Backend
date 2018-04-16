@@ -567,7 +567,7 @@ class SpaycsController extends AppController {
         if(!$spayc->isEmpty()) {
             $data = $spayc->first();
             if($data['joined_spayc_status'] == 'Banned'){
-                $this->restException(['status'=>'failed','message'=>__('You have not joined with this spayc')],400);
+                $this->restException(['status'=>'failed','message'=>__('You have banned with this spayc')],400);
             }
         } else {
             $this->response->statusCode(204);
