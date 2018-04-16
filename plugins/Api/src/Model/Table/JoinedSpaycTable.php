@@ -133,6 +133,17 @@ class JoinedSpaycTable extends Table {
         return $query;
     }
     
+    public function bannedSpaycQuery($userId = null) {
+        if($userId == null){
+            return false;
+        }
+        $query = $this->find()
+                ->select(['spayc_id'])
+                ->distinct()
+                ->where(['user_id' => $userId,'status'=>'Banned']);
+        return $query;
+    }
+    
     public function ValidateStatus($data,$status){
         $validator = new Validator();
         $validator->requirePresence('spayc_id', true,__('Spayc id key is missing.'))
