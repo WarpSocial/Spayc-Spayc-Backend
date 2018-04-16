@@ -567,7 +567,7 @@ class SpaycsController extends AppController {
         if(!$spayc->isEmpty()) {
             $data = $spayc->first();
             if($data['joined_spayc_status'] != 'Joined'){
-                $this->restException(['status'=>'failed','message'=>__('You have not joined with this spayc')],400);
+                //$this->restException(['status'=>'failed','message'=>__('You have not joined with this spayc')],400);
             }
         } else {
             $this->response->statusCode(204);
@@ -646,7 +646,10 @@ class SpaycsController extends AppController {
             TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
         }
         $prevLocation = $entity->getOriginal('location');
-        if($this->Spaycs->save($items)){  
+        if($this->Spaycs->save($items)){
+            if(!empty($items['description'])) {
+                //TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
+            }
             if($prevLocation != $entity->get('location')){
                 $this->Spaycs->updateDistance($items);                
             }
@@ -728,6 +731,7 @@ class SpaycsController extends AppController {
             TableRegistry::get('Api.JoinedSpayc')->deleteAll(['spayc_id IN' => $child]);
             TableRegistry::get('Api.SubscribedUsers')->deleteAll(['spayc_id IN' => $child]);
             TableRegistry::get('Api.SpaycHashtags')->deleteAll(['spayc_id IN' => $child]);
+            TableRegistry::get('Api.SpaycAdvertisement')->deleteAll(['spayc_id IN' => $child]);
             $response = ['status'=>'success','message'=>__('The spayc has been deleted.')];
         } else {
             $response = ['status'=>'failed','message'=>__('Spayc could not be deleted.')];
