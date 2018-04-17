@@ -192,9 +192,21 @@ class AdvertisementController extends AppController {
         $entity = $advModel->newEntity();
         //pr($this->request->getData());
 //        echo $data['spayc_id'];die;
-        $exist = TableRegistry::get('Api.JoinedSpayc')->find()
-                ->where(['spayc_id IN ('.$data['spayc_id'].')', 'user_id'=>$user['id'], 'status'=>'Joined']);
-        
+        $exist = TableRegistry::get('Api.Spaycs')->find()
+                ->join(
+                [
+                    'table' => 'joined_spayc',
+                    'alias' => 'JoinedSpayc',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Spaycs.id = JoinedSpayc.spayc_id',
+                    ]
+                ]
+            )->where(['OR'=>
+                    [
+                        ['Spaycs.id IN ('.$data['spayc_id'].')', 'JoinedSpayc.user_id'=>$user['id'], 'JoinedSpayc.status'=>'Joined','Spaycs.group_type'=>'Private'],
+                    ['Spaycs.id IN ('.$data['spayc_id'].')','Spaycs.group_type'=>'Public']]])
+                ->distinct(['Spaycs.id']);
         $spayc_id=explode(",",$data['spayc_id']);
 //        print_R($exist->toArray());die;
         if(count($exist->toArray()) != count($spayc_id)){
