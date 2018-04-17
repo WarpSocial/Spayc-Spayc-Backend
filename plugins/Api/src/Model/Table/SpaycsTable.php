@@ -523,7 +523,9 @@ class SpaycsTable extends Table {
                 'matrix_token'=>$val->matrix_access_token
             ];
             if($val->id != $adminUser){
-                $matrix->joinRoom($joinData);
+                 TableRegistry::get('Queue.QueuedJobs')->createJob('MuteUnmute',['join'=>true,'rule'=>'mute','status'=>'Joined','matrix_token'=>$val->matrix_access_token,'matrix_room_id'=>$items['matrix_room_id']]);
+                $qj = TableRegistry::get('Queue.QueuedJobs');
+                $qj->createJob('MuteUnmute',['join'=>true,'rule'=>'mute','items'=>$joinData]);
             }
             $push['requested_by'] = $adminUser;
             $push['requested_to'] = $val->id;
@@ -534,7 +536,8 @@ class SpaycsTable extends Table {
             $push['matrix_room_id'] = $items['matrix_room_id'];
             $push['distance'] = $this->getSpaycDistanceFromUser($items['latitude'], $items['longitude'], $push['requested_to']);
             if(!$items['is_direct']){
-                if(($val->id != $adminUser)){ 
+                if(($val->id != $adminUser)){
+                    
                     $pushNotification->sendPushNotification($push);
                 }
                 /*In direct chat no need to send the notification */

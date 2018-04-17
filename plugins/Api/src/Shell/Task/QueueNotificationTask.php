@@ -11,7 +11,7 @@ use Api\Controller\Component\PushComponent;
 /**
  * QueueNotification shell task.
  */
-class QueueNotificationTask extends Shell {
+class QueueNotificationTask extends QueueTask {
 
     /**
      * @var int
@@ -29,9 +29,8 @@ class QueueNotificationTask extends Shell {
      * @return bool Success
      */
     public function run(array $data, $jobId) {
-        $matrix = new MatrixComponent(new ComponentRegistry());
         $push = new PushComponent(new ComponentRegistry());
-
+        $push->sendOnIOS($data);
         $this->hr();
         $this->out('Proccessing to leave the room');
         $this->hr();

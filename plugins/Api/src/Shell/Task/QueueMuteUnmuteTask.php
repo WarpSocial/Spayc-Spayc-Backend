@@ -30,8 +30,11 @@ class QueueMuteUnmuteTask extends QueueTask {
      */
     public function run(array $data, $jobId) {
         $matrix = new MatrixComponent(new ComponentRegistry());
-        $push = new PushComponent(new ComponentRegistry());
-        
+        // \Cake\Log\Log::info(json_encode($data,JSON_PRETTY_PRINT));
+        if($data['join']){
+           $matrix->joinRoom(['status'=>$data['status'],'matrix_token'=>$data['matrix_token'],'matrix_room_id'=>$data['matrix_room_id']]);
+        }
+        $matrix->muteUnmute($data['rule'],$data['matrix_token'],$data['matrix_room_id']);
         $this->hr();
         $this->out('Proccessing to leave the room');
         $this->hr();

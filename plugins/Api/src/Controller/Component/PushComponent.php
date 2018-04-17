@@ -34,8 +34,9 @@ class PushComponent extends Component {
         $this->snsConfig = Configure::read('SNS');       
     }
     
-    public function sendOnIOS($data, $message){
-        
+    public function sendOnIOS($data){        
+        // \Cake\Log\Log::info(json_encode($data,JSON_PRETTY_PRINT));
+        $message = $data['message'];
         try {
             $config = $this->snsConfig;
             $this->SnsClient = SnsClient::factory([
@@ -154,14 +155,16 @@ class PushComponent extends Component {
             $data['message'] = $notificationType->message;
             $data['status'] = 'Unread';
             $data['created'] = date("Y-m-d H:i:s"); //pr($data);exit;
-            TableRegistry::get("Api.Notifications")->addNotification($data);
+            $items = TableRegistry::get("Api.Notifications")->addNotification($data);
             /* end of saving  */
             /* Send notification */
             if(!empty($data['device_token'])) {
                 if(strlen($deviceId->device_id)<64) {
                     return false;
                 }
-                $sent = $this->sendOnIOS($data, $notificationType->message);
+                $qj = TableRegistry::get('Queue.QueuedJobs');
+                $qj->createJob('Notification',$data);
+                //$sent = $this->sendOnIOS($data);
             }            
         }
     }

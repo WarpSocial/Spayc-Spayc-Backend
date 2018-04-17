@@ -501,13 +501,18 @@ class MatrixComponent extends Component {
     /**
      * muteUnmute function to mute and unmute the user
      */
-    public function muteUnmute($matrixToken = null,$matrixRoomId=null){
-        if(empty($matrixToken) || empty($matrixRoomId)){
+    public function muteUnmute($rule='mute',$matrixToken = null,$matrixRoomId=null){
+        if(is_null($matrixToken) || is_null($matrixRoomId)){
             return false;
+        }
+        if($rule == 'mute'){
+            $rule = 'dont_notify';
+        }else{
+            $rule = 'notify';
         }
         $roomId  = $this->validRoomId($matrixRoomId);
         $postData = [
-            'actions'=>['User not interested'],
+            'actions'=>[$rule],
             'conditions'=>[['key'=>'room_id','kind'=>'event_match','pattern'=>$roomId]]
         ];
         

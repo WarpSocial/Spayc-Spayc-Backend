@@ -7,7 +7,7 @@ https://jira.kiwitech.com/browse/SPAYCBKND-493 = Done
 https://jira.kiwitech.com/browse/SPAYCBKND-593 = Fixed
 https://jira.kiwitech.com/browse/SPAYCBKND-522 = Later
 https://jira.kiwitech.com/browse/SPAYCBKND-520 = Later
-https://jira.kiwitech.com/browse/SPAYCBKND-519 = Later
+https://jira.kiwitech.com/browse/SPAYCBKND-519 = It is keyword which filter on both either spayc, user or hashtag
 https://jira.kiwitech.com/browse/SPAYCBKND-518 = Need to talk with Dhirender
 https://jira.kiwitech.com/browse/SPAYCBKND-358 = Need to fix
 478

@@ -407,6 +407,7 @@ class SpaycsController extends AppController {
         $entity->modified = new \Cake\I18n\Time();
         $entity->created = new \Cake\I18n\Time();
         if($scModel->save($entity,['checkRules' => false, 'atomic' => false])){
+            $this->Matrix->muteUnmute('Unmute',$user['UserLogs']['matrix_access_token'], $spayc->matrix_room_id);
             $push = [
                 'slug' => 'user-subscribed-to-your-spayc',
                 'requested_by' => $user['id'],
@@ -462,6 +463,7 @@ class SpaycsController extends AppController {
            }
         }
         if($scModel->delete($entity)){
+            $this->Matrix->muteUnmute('mute',$user['UserLogs']['matrix_access_token'], $spayc->matrix_room_id);
             $response = ['status'=>'success','message'=>__('User has been unsubcribed successfully.')];
         }else{
             $response = ['status'=>'failed','message'=>__('System failed to unsubscribe the user.')];
