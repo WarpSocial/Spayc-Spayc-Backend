@@ -102,7 +102,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n        \"status\": \"success\",\n        \"message\": \"Advertisement Created Successfully\",\n        \"data\": {\n            \"name\": \"Space Ad\",\n            \"price\": 20.81,\n            \"description\": \"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type \",\n            \"url\": \"http://www.xyz.com\",\n            \"user_id\": \"1\",\n            \"modified\": \"2018-04-13 06:35:39\",\n            \"created\": \"2018-04-13 06:35:39\",\n            \"id\": 101,\n            \"created_spayc\": \"94,95\"\n        }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n        \"status\": \"success\",\n        \"message\": \"Advertisement Created Successfully\",\n        \"data\": {\n            \"name\": \"Space Ad\",\n            \"price\": 20.81,\n            \"description\": \"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type \",\n            \"url\": \"http://www.xyz.com\",\n            \"user_id\": \"1\",\n            \"modified\": \"2018-04-17 11:16:28\",\n            \"created\": \"2018-04-17 11:16:28\",\n            \"id\": 101,\n            \"created_spayc\": \"94,95\"\n        }\n}",
           "type": "json"
         }
       ]
@@ -378,7 +378,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Advertisement Updated Successfully\",\n    \"data\": {\n        \"id\": 47,\n        \"user_id\": 1,\n        \"name\": \"New\",\n        \"price\": 255,\n        \"description\": \"description\",\n        \"url\": \"www.test.com\",\n        \"image\": \"https://spayc-qa.s3.amazonaws.com/room/handle_slider_20180405094347.png\",\n        \"status\": \"Pending\",\n        \"created\": \"2018-04-02T09:21:30+00:00\",\n        \"modified\": \"2018-04-05T09:43:46+00:00\"\n    }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Advertisement Updated Successfully\",\n    \"data\": {\n        \"id\": 47,\n        \"user_id\": 1,\n        \"name\": \"New\",\n        \"price\": 255,\n        \"description\": \"description\",\n        \"url\": \"www.test.com\",\n        \"image\": \"https://spayc-qa.s3.amazonaws.com/room/handle_slider_20180405094347.png\",\n        \"status\": \"Pending\",\n        \"created\": \"2018-04-17 11:16:28\",\n        \"modified\": \"2018-04-17 12:16:40\",\n    }\n}",
           "type": "json"
         }
       ]
