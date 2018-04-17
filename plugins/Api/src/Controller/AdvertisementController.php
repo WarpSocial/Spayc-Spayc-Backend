@@ -67,6 +67,10 @@ class AdvertisementController extends AppController {
         if(!empty($items->errors())) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
         }
+        
+        if (!$this->isCurrency($data['price'])){
+            $this->restException(['status'=>'failed', 'message'=> __('Enter Valid Price.')], 400);
+        }
         if (isset($data['url']) && !filter_var($data['url'], FILTER_VALIDATE_URL)) {
             $this->restException(['status'=>'failed', 'message'=> __('Enter Valid URL.')], 400);
         } 
@@ -76,6 +80,7 @@ class AdvertisementController extends AppController {
         
         
         if($success=$this->Advertisement->save($items)){  
+            $success->created= Utils::toClient($success->created);
              $response = ['status'=>'success','message'=>__('Advertisement Updated Successfully'),'data'=>$success];
         }else{
             $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be updated. Please, try again.')], 400);
