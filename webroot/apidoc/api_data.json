@@ -619,7 +619,7 @@
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Advertisement Details\",\n    \"data\": {\n        \"id\": 47,\n        \"name\": \"New\",\n        \"image\": \"https://spayc-qa.s3.amazonaws.com/room/handle_slider_20180405094347.png\",\n        \"price\": 255,\n        \"description\": \"description\",\n        \"url\": \"www.test.com\"\n        }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n\"status\": \"success\",\n\"message\": \"Advertisement Details\",\n\"data\": {\n\"advertisement\": {\n        \"id\": 48,\n        \"name\": \"Space Ad\",\n        \"image\": \"https://spayc-qa.s3.amazonaws.com/room/test_20180402092149.png\",\n        \"price\": 250,\n        \"description\": \"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type \",\n        \"url\": \"http://sswww.xyz.com\",\n        \"status\": \"Pending\"\n        },\n\"spaycs\": [\n        {\n      \"name\": \"Public Sub Spyac\",\n      \"id\": \"5\",\n      \"type\": \"Community\",\n      \"image\": \"https://spayc-dev.s3.amazonaws.com/room/image_20180317103648.png\"\n      },\n        {\n      \"name\": \"Sam First Spyac\",\n      \"id\": \"2\",\n      \"type\": \"Community\",\n      \"image\": \"https://spayc-dev.s3.amazonaws.com/room/image_20180322083256.png\"\n      }\n      ],\n}\n}",
           "type": "json"
         }
       ]

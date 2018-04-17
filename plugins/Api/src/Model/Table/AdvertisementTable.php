@@ -65,7 +65,7 @@ class AdvertisementTable extends Table {
     public function validationDefault(Validator $validator) {
         $validator
                 ->requirePresence('name', 'create', __('Name key is missing.'))
-                ->maxLength('name', 255, 'Name must be less than 255 characters.')
+                ->maxLength('name', 255, 'Name should not exceed more then 255 characters.')
                 ->notEmpty('name', __('Spayc name is required.'))
                 ->notBlank('name', __('Spayc name is required.'));
         $validator

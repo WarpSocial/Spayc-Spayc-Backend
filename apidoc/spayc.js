@@ -1178,16 +1178,33 @@ function editAdvertisement() { return; }
  * @apiSuccessExample {json} Success-Response: 
  *      HTTP/1.1 200 OK
 {
-    "status": "success",
-    "message": "Advertisement Details",
-    "data": {
-        "id": 47,
-        "name": "New",
-        "image": "https://spayc-qa.s3.amazonaws.com/room/handle_slider_20180405094347.png",
-        "price": 255,
-        "description": "description",
-        "url": "www.test.com"
-        }
+"status": "success",
+"message": "Advertisement Details",
+"data": {
+"advertisement": {
+        "id": 48,
+        "name": "Space Ad",
+        "image": "https://spayc-qa.s3.amazonaws.com/room/test_20180402092149.png",
+        "price": 250,
+        "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type ",
+        "url": "http://sswww.xyz.com",
+        "status": "Pending"
+        },
+"spaycs": [
+        {
+      "name": "Public Sub Spyac",
+      "id": "5",
+      "type": "Community",
+      "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180317103648.png"
+      },
+        {
+      "name": "Sam First Spyac",
+      "id": "2",
+      "type": "Community",
+      "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180322083256.png"
+      }
+      ],
+}
 }
  *
  * @apiUse UserErrorResponse
@@ -1301,9 +1318,6 @@ function userAdvertisement() { return; }
  * @apiUse UserErrorResponse
  */
 function deleteAdvertisement() { return; }
-<<<<<<< HEAD
-
-
 
 /**
  @api {get} /unread-notification.json Unread Notification
@@ -1337,7 +1351,6 @@ function deleteAdvertisement() { return; }
  */
 function unreadNotification() { return; }
 
-=======
 /**
 @api {post} /accept-join-request.json Accept/Decline Join Request
 @apiVersion 0.1.0
@@ -1373,6 +1386,7 @@ function unreadNotification() { return; }
 @apiUse errorResponse
  */
 function postAcceptJoinedRequest() { return; }
+
 /**
 @api {post} /remove-spayc-member.json Remove/Kick user from spayc
 @apiVersion 0.1.0
@@ -1406,4 +1420,3 @@ function postAcceptJoinedRequest() { return; }
 @apiUse errorResponse
  */
 function postRemoveFromSpayc() { return; }
->>>>>>> c27ed5bcc024d10d2752b0ebf58dcfae629bc146
