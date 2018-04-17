@@ -621,13 +621,26 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Invalid spayc id.')], 400);
         }
         
-        $entity = $entities->first();        
-        
+        $entity = $entities->first();                
         if($user['id'] != $entity->user_id){
             $this->restException(['status'=>'failed','message'=>__('Insufficient privileges to edit this space.')], 400);
         }        
-        unset($data['spayc_id']);        
-        $items = $this->Spaycs->patchEntity($entity, $data,['associated'=>['JoinedSpayc']]);       
+        unset($data['spayc_id']);   
+        if(is_null($entity->parent_id)){            
+            $items = $this->Spaycs->patchEntity($entity, $data,['associated'=>['JoinedSpayc']]);
+            if(!empty($items->errors())) {
+                $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
+            }
+        }else{
+            $data['parent_matrix_room_id'] = $entity->parent_id;
+            $errors = $this->Spaycs->validateSubspace($data);
+            if(!empty($errors)) {
+                $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
+            }
+            unset($data['parent_matrix_room_id']);
+            $items = $this->Spaycs->patchEntity($entity, $data,['validate'=>false,'associated'=>['JoinedSpayc']]);
+        }
+        
         if($data['type'] == 'Community'){ /* in community no need to keep start or end date*/
             $items->start_date = '';
             $items->end_date = '';
@@ -635,9 +648,7 @@ class SpaycsController extends AppController {
         if($data['group_type'] == 'Public'){ /* in community no need to keep start or end date*/
             $items->passcode = '';
         }
-        if(!empty($items->errors())) {
-            $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
-        }
+        
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
         $matrix = $this->Matrix->updateRoom($entity->matrix_room_id,$data);
         if(!$matrix) {
@@ -659,6 +670,8 @@ class SpaycsController extends AppController {
                 unset($items->joined_spayc);
             }
             $items = $items->toArray();
+            $items['created']=  Utils::toClient($items['created']);
+            $items['modified'] = Utils::toClient($items['modified']);
             $items['start_date']=  Utils::toClient($items['start_date']);
             $items['end_date'] = Utils::toClient($items['end_date']);
             $response = ['status'=>'success','message'=>__('The spayc has been updated successfully.'),'data'=>$items];
