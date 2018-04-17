@@ -253,7 +253,12 @@ ALTER TABLE "users" ADD "role_id" integer DEFAULT NULL;
 INSERT INTO "users" ("id", "username", "email", "password", "gender", "dob", "phone", "status", "website_url", "address", "bio_data", "fb_id", "fb_access_key", "longitude", "latitude", "timezone", "matrix_user_id", "matrix_access_token", "created", "modified", "token_verification", "forgot_password_token", "forgot_password_timestamp", "country_code", "is_notify", "current_latitude", "current_longitude", "role_id") VALUES
 ('56',  'admin',    'ankur.gupta@kiwitech.com', 'ODIyZDBkN2MxYWVlOTcxZTZhNmMxNjhjZTNjMGQ3ZGMyYzk2ODY4MzM3MDQ3MDZmOTZhMTM0YjU1MzA1YmYzYnwyLmLenyaqlsnztYhQTM8dc+OpkWpoF/jvMx9EELyk', 'Male', NULL, NULL, 'Active',   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   '2018-03-15 15:40:41',  '2018-03-15 15:40:41',  NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,'1');
 
+
 -- Adminer 4.3.1 PostgreSQL dump
+INSERT INTO "notification_types" ("id", "type", "message", "slug", "created", "modified")
+VALUES ('19', 'Blocked by admin', 'You''ve been blocked. What did you do now?', 'blocked-by-admin', now(), NULL),
+VALUES ('20', 'UNblocked by admin', 'You''ve been unblocked.', 'unblocked-by-admin', now(), NULL);
+
 
 DROP TABLE IF EXISTS "queue_phinxlog";
 CREATE TABLE "public"."queue_phinxlog" (

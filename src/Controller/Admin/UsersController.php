@@ -377,6 +377,8 @@ class UsersController extends AdminController
         }        
         $user = $this->Users->get($id);  
         $statusArr = unserialize(STATUS_ARR);
+        $pushNotificationAdminSlug = unserialize(PUSH_NOTIFICATION_ADMIN_SLUG);
+        $txtMassage = unserialize(TEXT_MASSAGE);               
         if ($this->request->is(['post','put'])) {    
             if(!empty($user->status) && ucfirst($user->status) == $statusArr['active'] )
                 $user->status = $statusArr['inactive'];
@@ -386,19 +388,23 @@ class UsersController extends AdminController
             if ($this->Users->save($user)) {
                 $user =$this->Users->get($user->id);
                 $displayName = !empty($user->display_name)? $user->display_name :'User';
-                if (ucfirst($user->status) == $statusArr['active']) {   
+                if (ucfirst($user->status) == $statusArr['active']) { 
+                    $user->statusTxt = $txtMassage['unblock'];
+                    $pushNotificationAdminSlug = $pushNotificationAdminSlug['unblocked'];
                     $result_arr = ['result' => true, 'status'=>$statusArr['active'], 'message' => $displayName.' '.$this->errorSuccessMessage['UNBLOCKED-MSG']]; 
-                } else {   
+                } else {                       
+                    $user->statusTxt = $txtMassage['block'];
+                    $pushNotificationAdminSlug = $pushNotificationAdminSlug['blocked'];
                     $result_arr = ['result' => true, 'status'=>$statusArr['inactive'], 'message' => $displayName.' '.$this->errorSuccessMessage['BLOCKED-MSG']];   
-                }
+                }                
                 if(!empty($user->email))
                     $this->getMailer('User')->send('userStatus', [$user]);   
                 // for push notification
-                // $push['requested_by'] = $this->Auth->user('id');
-                // $push['username'] = $this->Auth->user('username');
-                // $push['requested_to'] = $user->id;
-                // $push['slug'] = 'blocked';
-                // $this->Push->sendPushNotification($push);
+                $push['requested_by'] = $this->Auth->user('id');
+                $push['username'] = $this->Auth->user('display_name');
+                $push['requested_to'] = $user->id;
+                $push['slug'] = $pushNotificationAdminSlug;
+                $this->Push->sendPushNotification($push);
             } else {                
                 $result_arr = ['result' => false, 'status'=>'', 'message' => $this->errorSuccessMessage['SYSTEMERR']];   
             }
