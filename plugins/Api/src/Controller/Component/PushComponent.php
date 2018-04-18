@@ -165,8 +165,7 @@ class PushComponent extends Component {
                 if(strlen($deviceId->device_id)<64) {
                     return false;
                 }
-                $qj = TableRegistry::get('Queue.QueuedJobs');
-                $qj->createJob('Notification',$data);
+                TableRegistry::get('Queue.QueuedJobs')->createJob('Notification',$data);
                 //$sent = $this->sendOnIOS($data);
             }            
         }

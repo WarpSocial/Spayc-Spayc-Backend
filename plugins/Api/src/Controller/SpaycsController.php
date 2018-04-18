@@ -622,6 +622,7 @@ class SpaycsController extends AppController {
         }
         
         $entity = $entities->first();                
+        $eventType = $entity->type;
         if($user['id'] != $entity->user_id){
             $this->restException(['status'=>'failed','message'=>__('Insufficient privileges to edit this space.')], 400);
         }        
@@ -640,7 +641,7 @@ class SpaycsController extends AppController {
             unset($data['parent_matrix_room_id']);
             $items = $this->Spaycs->patchEntity($entity, $data,['validate'=>false,'associated'=>['JoinedSpayc']]);
         }
-        
+        $items->type = $eventType;
         if($data['type'] == 'Community'){ /* in community no need to keep start or end date*/
             $items->start_date = '';
             $items->end_date = '';

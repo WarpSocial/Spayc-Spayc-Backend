@@ -35,6 +35,7 @@ class QueueDeleteTask extends QueueTask {
             /* For root spayc */
             foreach($data['joined_spayc'] as $joinedUser){
                 $matrix->leaveRoom($data['matrix_room_id'],$joinedUser['user']['matrix_access_token']);
+                $matrix->muteUnmute('mute',$joinedUser['user']['matrix_access_token'],$data['matrix_room_id']);
                 $rPush = [
                     'slug' => 'spayc-deleted',
                     'requested_by' => $data['user_id'],
@@ -47,6 +48,7 @@ class QueueDeleteTask extends QueueTask {
                 ];
                 /* super admin will not recieve any notification */
                 if($data['user_id'] != $joinedUser['user_id']){
+                    \Cake\Log\Log::info(json_encode($rPush,JSON_PRETTY_PRINT));
                     $push->sendPushNotification($rPush);
                 }
             }
@@ -57,7 +59,9 @@ class QueueDeleteTask extends QueueTask {
                 if(!empty($subspayc['joined_spayc'])){
                     foreach($subspayc['joined_spayc'] as $joinspayc){
                         $matrix->leaveRoom($subspayc['matrix_room_id'],$joinspayc['user']['matrix_access_token']);
+                        $matrix->muteUnmute('mute',$joinspayc['user']['matrix_access_token'],$subspayc['matrix_room_id']);
                         $sPush = [
+                            'subpayc' => 'sub-spayc-deleted',
                             'slug' => 'spayc-deleted',
                             'requested_by' => $data['user_id'],
                             'requested_to' => $joinspayc['user_id'],
@@ -69,6 +73,7 @@ class QueueDeleteTask extends QueueTask {
                         ];
                         /* super admin will not recieve any notification */
                         if($data['user_id'] != $joinspayc['user_id']){
+                            \Cake\Log\Log::info(json_encode($sPush,JSON_PRETTY_PRINT));
                             $push->sendPushNotification($sPush);
                         }
                     }

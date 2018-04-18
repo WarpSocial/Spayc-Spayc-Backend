@@ -32,9 +32,9 @@ class QueueNotificationTask extends QueueTask {
         $push = new PushComponent(new ComponentRegistry());
         $push->sendOnIOS($data);
         $this->hr();
-        $this->out('Proccessing to leave the room');
+        $this->out('Proccessing to send the notification');
         $this->hr();
-        $this->out(' ->Success, All user have been leave the room');
+        $this->out('->Success, Notification has been sent successfully.');
         $this->out(' ');
         $this->out(' ');
         return true;

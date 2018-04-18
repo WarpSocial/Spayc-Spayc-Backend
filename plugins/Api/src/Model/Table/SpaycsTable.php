@@ -137,7 +137,13 @@ class SpaycsTable extends Table {
 
         $validator
                 ->requirePresence('type', 'create',__('Type key is missing.'))
-                ->notEmpty('type',__('Type is required field.'))
+                ->notEmpty('type',__('Type is required field.'),function($context){
+                    if($context['newRecord']){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                })
                 ->inList('type', Configure::read('spayctype'),__('Type value must be any one '.implode(',',Configure::read('spayctype')).'.')); 
 
         $validator
@@ -522,11 +528,9 @@ class SpaycsTable extends Table {
                 'matrix_room_id'=>$items['matrix_room_id'],
                 'matrix_token'=>$val->matrix_access_token
             ];
-            if($val->id != $adminUser){
-                 TableRegistry::get('Queue.QueuedJobs')->createJob('MuteUnmute',['join'=>true,'rule'=>'mute','status'=>'Joined','matrix_token'=>$val->matrix_access_token,'matrix_room_id'=>$items['matrix_room_id']]);
-                $qj = TableRegistry::get('Queue.QueuedJobs');
-                $qj->createJob('MuteUnmute',['join'=>true,'rule'=>'mute','items'=>$joinData]);
-            }
+            //if($val->id != $adminUser){
+            TableRegistry::get('Queue.QueuedJobs')->createJob('MuteUnmute',['join'=>true,'rule'=>'mute','status'=>'Joined','matrix_token'=>$val->matrix_access_token,'matrix_room_id'=>$items['matrix_room_id']]);                
+            //}
             $push['requested_by'] = $adminUser;
             $push['requested_to'] = $val->id;
             $push['slug'] = 'new-spayc';
@@ -537,7 +541,6 @@ class SpaycsTable extends Table {
             $push['distance'] = $this->getSpaycDistanceFromUser($items['latitude'], $items['longitude'], $push['requested_to']);
             if(!$items['is_direct']){
                 if(($val->id != $adminUser)){
-                    
                     $pushNotification->sendPushNotification($push);
                 }
                 /*In direct chat no need to send the notification */

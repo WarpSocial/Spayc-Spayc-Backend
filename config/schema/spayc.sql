@@ -195,24 +195,24 @@ CREATE TABLE "notification_types" (
 SELECT create_hypertable('notification_types', 'created');
 
 INSERT INTO "notification_types" ("id", "type", "message", "slug", "created", "modified") VALUES
-(18,	'Admin of the spayc commented',	'The admin of the Spayc, <SpaycName> commented <COMMENT>',	'admin-of-the-spayc-commented',	'2018-03-05 17:27:10.578674',	NULL),
+(18,	'Admin of the warp commented',	'The admin of the Warp, <SpaycName> commented <COMMENT>',	'admin-of-the-spayc-commented',	'2018-03-05 17:27:10.578674',	NULL),
 (9,	'friend like your comment',	'<FRIEND> liked your comment, <COMMENT>. Well, you aren''t friends for no reason',	'friend-like-your-comment',	'2018-02-28 17:27:10.578674',	NULL),
 (1,	'Friend Request',	'Apparently, you''re so cool <USERNAME> wants to be friends with you.',	'friend-request',	'2018-02-28 17:27:10.578674',	NULL),
 (2,	'Friend Added',	'You made another friend! Look at you go!',	'friend-added',	'2018-02-28 17:27:10.578674',	NULL),
-(15,	'Spayc will be inactive in <days> days',	'Your spayc, Spayc <SpaycName> will be inactive in <days> days unless somebody interacts with it!',	'spayc-inative',	'2018-02-28 17:27:10.578674',	NULL),
-(16,	'Spayc Deleted',	'Your Spayc has been deleted either by you or due to inactivity! Sorry!',	'spayc-deleted',	'2018-02-28 17:27:10.578674',	NULL),
+(15,	'Warp will be inactive in <days> days',	'Your warp, Warp <SpaycName> will be inactive in <days> days unless somebody interacts with it!',	'spayc-inative',	'2018-02-28 17:27:10.578674',	NULL),
+(16,	'Warp Deleted',	'Your Warp has been deleted either by you or due to inactivity! Sorry!',	'spayc-deleted',	'2018-02-28 17:27:10.578674',	NULL),
 (11,	'Friend replyed to your comment',	'<FRIEND> replied, REPLY on your comment, <COMMENT>',	'friend replyed to your comment',	'2018-02-28 17:27:10.578674',	NULL),
-(4,	'Friend joined your spayc',	'Let''s get this party started! A friend joined your Spayc, <SpaycName>',	'friend-join-spayc',	'2018-02-28 17:27:10.578674',	NULL),
+(4,	'Friend joined your warp',	'Let''s get this party started! A friend joined your Warp, <SpaycName>',	'friend-join-spayc',	'2018-02-28 17:27:10.578674',	NULL),
 (3,	'Blocked',	'You''ve been blocked. What did you do now?',	'blocked',	'2018-02-28 17:27:10.578674',	NULL),
 (12,	'Admin asigned',	'You''ve been asigned as admin, can you handle that responsibility?',	'admin-asigned',	'2018-02-28 17:27:10.578674',	NULL),
-(13,	'Kick from a spayc',	'You''ve been kicked from a spayc. Another rude comment or was it a pic?',	'kick-from-spayc',	'2018-02-28 17:27:10.578674',	NULL),
-(6,	'Friend subscribed to your spayc',	'Your friend, <USERNAME> has subscribed your Spayc, <SpaycName>. That''s what friends are for, right?',	'friend-subscribed-to-your-spayc',	'2018-02-28 17:27:10.578674',	NULL),
-(7,	'User subscribed to your spayc',	'There ya go! A USER <USERNAME>, subscribed to your Spayc, <SpaycName>',	'user-subscribed-to-your-spayc',	'2018-02-28 17:27:10.578674',	NULL),
-(5,	'User joined your spayc',	'<USERNAME> who joined your Spayc, <SpaycName>',	'user-joined-your-spayc',	'2018-02-28 17:27:10.578674',	NULL),
+(13,	'Kick from a warp',	'You''ve been kicked from a warp. Another rude comment or was it a pic?',	'kick-from-spayc',	'2018-02-28 17:27:10.578674',	NULL),
+(6,	'Friend subscribed to your warp',	'Your friend, <USERNAME> has subscribed your Warp, <SpaycName>. That''s what friends are for, right?',	'friend-subscribed-to-your-spayc',	'2018-02-28 17:27:10.578674',	NULL),
+(7,	'User subscribed to your warp',	'There ya go! A USER <USERNAME>, subscribed to your Warp, <SpaycName>',	'user-subscribed-to-your-spayc',	'2018-02-28 17:27:10.578674',	NULL),
+(5,	'User joined your warp',	'<USERNAME> who joined your Warp, <SpaycName>',	'user-joined-your-spayc',	'2018-02-28 17:27:10.578674',	NULL),
 (8,	'A user liked your comment',	'<USERNAME> liked your comment, <COMMENT>. Way to say that great thing you said',	'a-user-liked-your-comment',	'2018-02-28 17:27:10.578674',	NULL),
 (10,	'Someone replyed to your comment',	'<USERNAME> replied, REPLY your comment, <COMMENT>. Check it out!',	'someone-replyed-to-your-comment',	'2018-02-28 17:27:10.578674',	NULL),
-(14,	'Someone commented',	'<USERNAME> has commented, <COMMENT> in your spayc, <SpaycName>',	'someone-commented',	'2018-02-28 17:27:10.578674',	NULL),
-(17,	'New Spayc',	'<SpaycName> spayc has been created within <X> miles of you',	'new-spayc',	'2018-02-28 17:27:10.578674',	NULL);
+(14,	'Someone commented',	'<USERNAME> has commented, <COMMENT> in your warp, <SpaycName>',	'someone-commented',	'2018-02-28 17:27:10.578674',	NULL),
+(17,	'New Warp',	'<SpaycName> warp has been created within <X> miles of you',	'new-spayc',	'2018-02-28 17:27:10.578674',	NULL);
 
 CREATE TABLE "advertisement" (
     "id" BIGSERIAL NOT NULL,
