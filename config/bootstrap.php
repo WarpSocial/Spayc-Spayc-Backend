@@ -215,6 +215,6 @@ Type::build('timestamp')
 if (Configure::read('debug')) {
    // Plugin::load('DebugKit', ['bootstrap' => true]);
 }
-
+Plugin::load('Queue', ['routes' => true]);
 Plugin::load('Api', ['bootstrap' => true, 'routes' => true]);
 Configure::load('common_constant');

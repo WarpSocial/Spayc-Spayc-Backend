@@ -111,6 +111,9 @@ class JoinSpaycsController extends AppController {
                 $data['status'] = 'Joined';
             }
             if($this->Matrix->joinRoom($data)) {
+                if($spayc->group_type == "Public"){
+                    $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);
+                }
                 $jsModel->getConnection()->commit();
                 $friends = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($user['id'], 'Accepted');
                 //$userIds = $jsModel->getJoinedUserIds($data['spayc_id']);
@@ -239,6 +242,9 @@ class JoinSpaycsController extends AppController {
                 $data['status'] = 'Joined';
             }
             if($this->Matrix->joinRoom($data)) {
+                if($spayc->group_type == "Public"){
+                    $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);
+                }
                 $jsModel->getConnection()->commit();
                 $friends = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($user['id'], 'Accepted');
                 //$userIds = $jsModel->getJoinedUserIds($data['spayc_id']);
@@ -273,6 +279,9 @@ class JoinSpaycsController extends AppController {
         }
         $this->set($response);
     }
+    /**
+     * banSpaycMember to ban or unban the uesr from spayc
+     */
     
     public function banSpaycMember() {
         if (!$this->request->is('post')) {
@@ -288,19 +297,34 @@ class JoinSpaycsController extends AppController {
         
         $data['matrix_token'] = $user['UserLogs']['matrix_access_token'];        
         $spaycs = TableRegistry::get('Api.Spaycs')->find()
+                ->select(['Spaycs.id','Spaycs.name','Spaycs.image','Spaycs.matrix_room_id','Spaycs.parent_id'])
                 ->contain([
                     'JoinedSpayc' => function($q)use($data,$user) {
                         return $q
                                 ->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.is_admin'])
                                 ->where(['JoinedSpayc.user_id IN'=>[$data['user_id'],$user['id']]]);
                     },
-                   'Users'
+                    'JoinedSpayc.Users'=>function($q){
+                        return $q->select(['Users.id','Users.matrix_access_token','Users.matrix_user_id','Users.display_name']);                    
+                    },            
+                    'SubSpaycs' => function($q)use($data){                        
+                        $q->select(['SubSpaycs.id','SubSpaycs.name','SubSpaycs.image','SubSpaycs.parent_id','SubSpaycs.matrix_room_id']);
+                        $q->innerJoinWith('JoinedSpayc',function($qq)use($data) {
+                            $qq->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin','JoinedSpayc.distance'])->where(['JoinedSpayc.user_id'=>$data['user_id'],'JoinedSpayc.status'=>'Joined']);
+                            return $qq;
+                        });
+                        return $q;
+                    },
+                   'Users'=>function($q){
+                        return $q->select(['Users.id','Users.matrix_access_token','Users.matrix_user_id','Users.display_name']);
+                   }
                 ])
                 ->where(['Spaycs.id'=>$data['spayc_id']]);
         if($spaycs->isEmpty()) {
             $this->restException(['status'=>'failed','message'=>__('Spayc is no longer available.')], 400);
         }
         $spayc = $spaycs->first();
+        //pj($spayc);die;
         if(empty($spayc->joined_spayc)){
              $this->restException(['status'=>'failed','message'=>__('User is not member of this spayc.')], 400);
         }
@@ -333,8 +357,7 @@ class JoinSpaycsController extends AppController {
         if(!in_array($BannedUserStatus['status'],['Joined','Banned'])){
             $this->restException(['status'=>'failed','message'=>__('User is not joined with this spayc.')], 400);
         }
-        $bannedMatrixUser = TableRegistry::get('Api.Users')->get($BannedUserStatus['user_id'],['fields'=>['matrix_user_id']]);
-        $data['matrix_user_id'] = $bannedMatrixUser->matrix_user_id;
+        $data['matrix_user_id'] = $BannedUserStatus->user->matrix_user_id;
         $data['matrix_room_id'] = $spayc->matrix_room_id;
         
         $BannedUserStatus->status = ($data['status'] == 'Unbanned')?'Joined':$data['status'];
@@ -344,7 +367,28 @@ class JoinSpaycsController extends AppController {
         if(is_string($matrix)) {
             $this->restException(['status'=>'failed','message'=>__($matrix)],400);
         }
-        if($jsModel->save($BannedUserStatus)){
+        $rule = 'mute';
+        if($data['status'] == 'Unbanned'){
+            $rule = 'Unmute';
+        }
+        $this->Matrix->muteUnmute($rule,$BannedUserStatus->user->matrix_access_token, $spayc->matrix_room_id);
+        if($jsModel->save($BannedUserStatus)){            
+            $push = [
+                'slug' => 'blocked',
+                'requested_by' => $user['id'],
+                'requested_to' => $data['user_id'],
+                'spayc_id' => $spayc->id,
+                'spayc_name' => $spayc->name,
+                'spayc_image' => $spayc->image,
+                'matrix_room_id' => $spayc->matrix_room_id,
+                'display_name' => $user['display_name']                
+            ];
+            if($data['status'] == 'Banned'){
+                TableRegistry::get('Api.SubscribedUsers')->removeSubscription($data['user_id'],$spayc->id);                
+            }else{
+                $push['slug'] = 'unblocked-by-admin';
+            }            
+            $this->Push->sendPushNotification($push);            
             $response = ['status'=>'success','message'=>__('User has been '.$data['status'].' successfully.')];
         }else{
             $this->response->statusCode(400);
@@ -376,13 +420,16 @@ class JoinSpaycsController extends AppController {
                                 ->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.is_admin'])
                                 ->where(['JoinedSpayc.user_id IN'=>[$data['user_id'],$user['id']]]);
                     },
+                    'JoinedSpayc.Users'=>function($q){
+                        return $q->select(['Users.id','Users.matrix_access_token','Users.matrix_user_id','Users.display_name']);                    
+                    },           
                    'Users'
                 ])
                 ->where(['Spaycs.id'=>$data['spayc_id']]);
         if($spaycs->isEmpty()) {
             $this->restException(['status'=>'failed','message'=>__('Spayc is no longer available.')], 400);
         }
-        $spayc = $spaycs->first();
+        $spayc = $spaycs->first();        
         if(empty($spayc->joined_spayc)){
              $this->restException(['status'=>'failed','message'=>__('User is not member of this spayc.')], 400);
         }
@@ -414,7 +461,19 @@ class JoinSpaycsController extends AppController {
         if(is_string($matrix)) {
             $this->restException(['status'=>'failed','message'=>__($matrix)],400);
         }
+        $this->Matrix->muteUnmute('mute',$removeUserStatus->user->matrix_access_token, $spayc->matrix_room_id);
         if($jsModel->delete($removeUserStatus)){
+            $push = [
+                'slug' => 'kick-from-spayc',
+                'requested_by' => $user['id'],
+                'requested_to' => $data['user_id'],
+                'spayc_id' => $spayc->id,
+                'spayc_name' => $spayc->name,
+                'spayc_image' => $spayc->image,
+                'matrix_room_id' => $spayc->matrix_room_id,
+                'display_name' => $user['display_name']                
+            ];
+            $this->Push->sendPushNotification($push);
             $response = ['status'=>'success','message'=>__('User has been removed successfully.')];
         }else{
             $this->response->statusCode(400);
@@ -474,6 +533,9 @@ class JoinSpaycsController extends AppController {
         if(($requestedUserStatus['status'] == 'Joined')){
             $this->restException(['status'=>'failed','message'=>__('User already joined with this spayc.')], 400);
         }       
+        if(($requestedUserStatus['status'] != 'Pending')){
+            $this->restException(['status'=>'failed','message'=>__('Only pending user will be accepted.')], 400);
+        }       
         if($requestedUserStatus['status'] == $data['status']){
             $this->restException(['status'=>'failed','message'=>__('User has alreadyd '. strtolower($data['status']).' with this spayc.')], 400);
         }
@@ -489,10 +551,16 @@ class JoinSpaycsController extends AppController {
         $requestedUserStatus->updated_by = $user['id'];
         $jsModel = TableRegistry::get('Api.JoinedSpayc');
         $jsModel->getConnection()->begin();
-        if ($jsModel->save($requestedUserStatus, ['checkRules' => false, 'atomic' => false])) {
+        if($data['status'] == 'Accepted'){
+            $dbStatus = $jsModel->save($requestedUserStatus, ['checkRules' => false, 'atomic' => false]);
+        }else{
+            $dbStatus = $jsModel->delete($requestedUserStatus);
+        }
+        if ($dbStatus) {
             if ($data['status'] == 'Accepted') {
                 $matrixData = ['status'=>'Joined']+$data;
                 if ($this->Matrix->joinRoom($matrixData)) {
+                    $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);
                     $jsModel->getConnection()->commit();
                     $response = ['status' => 'success', 'message' => __('Request has been '. strtolower($data['status']).' successfully.')];
                 } else {

@@ -108,7 +108,11 @@ class NotificationsTable extends Table
         if(!empty($data)) {            
             $entity = $this->newEntity();
             $items = $this->patchEntity($entity, $data);
-            $this->save($items);
+            if($this->save($items)){
+                return $items;
+            }else{
+                return false;
+            }
         }
     }
 }
