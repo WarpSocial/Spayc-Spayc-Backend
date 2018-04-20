@@ -31,7 +31,7 @@ use Cake\Routing\Router;
                 <tbody>
                   <tr>
                     <td style="line-height:23px;">
-                      <div style="display: block; font-size: 16px;">Status- <?php echo ucwords($user->status);?> </div>
+                      <div style="display: block; font-size: 16px;">Status- <?php echo ucwords($user->statusTxt);?> </div>
                       <div style="margin-top: 25px; color:#272727; font-size: 14px;">Hi <?php echo ucwords($user->display_name);?>,</div>
                       <div style="color:#333333; margin-top:10px; font-size: 13px;">Lorem Ipsum is slechts een proeftekst uit het drukkerij- en zetterijwezen. Lorem Ipsum is de standaard proeftekst in deze bedrijfstak sinds de 16e eeuw, toen een onbekende drukker een zethaak met letters nam en ze door elkaar husselde om een font-catalogus te maken.</div>
                     </td>
