@@ -94,7 +94,8 @@ CREATE TABLE joined_spayc (
     "created" timestamp NOT NULL,
     "modified" timestamp,
     "updated_by" BIGINT NOT NULL,
-    "role" smallint DEFAULT NULL,
+    "is_admin" smallint DEFAULT 0 NOT NULL,
+    "distance" numeric,
     PRIMARY KEY (id,spayc_id,user_id,created)
 );
 SELECT create_hypertable('joined_spayc', 'created');
@@ -117,6 +118,7 @@ CREATE TABLE spaycs (
     "created" timestamp NOT NULL,
     "modified" timestamp,
     "parent_id" bigint,
+    "category_id" bigint NULL,
     PRIMARY KEY (id,user_id,created)
 );
 SELECT create_hypertable('spaycs', 'created');
@@ -307,3 +309,75 @@ CREATE TABLE "public"."queue_processes" (
 
 
 -- 2018-04-13 16:39:12.591553+05:30
+CREATE TABLE "spayc_categories" (
+    "id" BIGSERIAL NOT NULL,
+    "parent_id" bigint NULL,
+    "lft" integer NULL,
+    "right" integer NULL,
+    "name" character varying(100),
+    "slug" character varying(100),
+    "description" character varying(200),
+    "status" row_status DEFAULT 'Active' NOT NULL,
+    "created" timestamp,
+    "modified" timestamp,
+    PRIMARY KEY ("id","created")
+);
+SELECT create_hypertable('spayc_categories', 'created');
+
+CREATE TABLE "promotions" (
+    "id" BIGSERIAL NOT NULL,
+    "spayc_id" BIGINT NULL,
+    "views" numeric(50) NULL,
+    "balanced_views" numeric(50) NULL,
+    "status" row_status NOT NULL DEFAULT 'Active',
+    "created" timestamp,
+    "modified" timestamp,
+    PRIMARY KEY ("id","created")
+);
+SELECT create_hypertable('promotions', 'created');
+CREATE TABLE "spayc_promotion" (
+    "id" BIGSERIAL NOT NULL,
+    "promotion_id" BIGINT NULL,
+    "spayc_id" BIGINT NULL,
+    "priority" INTEGER NULL,
+    "created" timestamp,
+    "modified" timestamp,
+    PRIMARY KEY ("id","created")
+);
+SELECT create_hypertable('spayc_promotion', 'created');
+CREATE TABLE "spayc_promotion_priority" (
+    "id" BIGSERIAL NOT NULL,
+    "spayc_id" BIGINT NULL,
+    "priority" INTEGER NULL,
+    "comment_count" INTEGER NULL,
+    "created" timestamp,
+    "modified" timestamp,
+    PRIMARY KEY ("id","created")
+);
+SELECT create_hypertable('spayc_promotion_priority', 'created');
+CREATE TABLE "purchase" (
+    "id" BIGSERIAL NOT NULL,
+    "plan_id" BIGINT NULL,
+    "receipt" VARCHAR(200) NULL,
+    "promotion_id" BIGINT NULL,
+    "advertisement_id" BIGINT NULL,
+    "plateform" BIGINT NULL,
+    "purchase_date" timestamp,
+    "created" timestamp,
+    "modified" timestamp,
+    PRIMARY KEY ("id","created")
+);
+SELECT create_hypertable('purchase', 'created');
+CREATE TABLE "plans" (
+    "id" BIGSERIAL NOT NULL,
+    "name" VARCHAR(200) NULL,
+    "slug" VARCHAR(200) NULL,
+    "amount" DECIMAL(7,2) NULL,
+    "currency" VARCHAR(20) NULL,
+    "views" INTEGER NULL,
+    "status" row_status NOT NULL DEFAULT 'Active',
+    "created" timestamp,
+    "modified" timestamp,
+    PRIMARY KEY ("id","created")
+);
+SELECT create_hypertable('plans', 'created');

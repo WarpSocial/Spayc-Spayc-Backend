@@ -163,7 +163,7 @@ class PushComponent extends Component {
             /* Send notification */
             if(!empty($data['device_token'])) {
                 if(strlen($deviceId->device_id)<64) {
-                    return false;
+                    //return false;
                 }
                 TableRegistry::get('Queue.QueuedJobs')->createJob('Notification',$data);
                 //$sent = $this->sendOnIOS($data);

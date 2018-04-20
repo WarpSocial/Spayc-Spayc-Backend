@@ -733,9 +733,8 @@ class SpaycsController extends AppController {
         
         $spayc = $entity->first();
         $spayc->set('matrix_access_token',$user['matrix_access_token']);
-        
-        $qj = TableRegistry::get('Queue.QueuedJobs');
-        $qj->createJob('Delete',$spayc->toArray());
+        /* To queue the job to process from backend system */
+        TableRegistry::get('Queue.QueuedJobs')->createJob('Delete',$spayc->toArray());
         
         $matrixRoomIds = \Cake\Utility\Hash::extract($spayc->sub_spaycs, '{n}.matrix_room_id');
         array_push($matrixRoomIds, $spayc->matrix_room_id);
