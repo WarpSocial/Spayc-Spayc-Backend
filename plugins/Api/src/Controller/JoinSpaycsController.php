@@ -324,7 +324,7 @@ class JoinSpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Spayc is no longer available.')], 400);
         }
         $spayc = $spaycs->first();
-        //pj($spayc);die;
+        #pj($spayc);die;
         if(empty($spayc->joined_spayc)){
              $this->restException(['status'=>'failed','message'=>__('User is not member of this spayc.')], 400);
         }
@@ -366,6 +366,14 @@ class JoinSpaycsController extends AppController {
         $matrix = $this->Matrix->banMember($data);
         if(is_string($matrix)) {
             $this->restException(['status'=>'failed','message'=>__($matrix)],400);
+        }
+        if($data['status'] == 'Unbanned'){
+            $mjoin['matrix_user_id'] = $BannedUserStatus->user->matrix_user_id;
+            $mjoin['matrix_token'] = $BannedUserStatus->user->matrix_access_token;
+            $mjoin['matrix_room_id'] = $spayc->matrix_room_id;
+            $mjoin['status'] = 'Joined';
+            //pr($mjoin);die;
+            $this->Matrix->joinRoom($mjoin);
         }
         $rule = 'mute';
         if($data['status'] == 'Unbanned'){
