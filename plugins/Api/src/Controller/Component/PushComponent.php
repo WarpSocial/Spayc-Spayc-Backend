@@ -34,8 +34,9 @@ class PushComponent extends Component {
         $this->snsConfig = Configure::read('SNS');       
     }
     
-    public function sendOnIOS($data, $message){
-        
+    public function sendOnIOS($data){        
+        // \Cake\Log\Log::info(json_encode($data,JSON_PRETTY_PRINT));
+        $message = $data['message'];
         try {
             $config = $this->snsConfig;
             $this->SnsClient = SnsClient::factory([
@@ -108,6 +109,7 @@ class PushComponent extends Component {
     }
     
     public function sendPushNotification($data) {
+        //\Cake\Log\Log::info(json_encode($data,JSON_PRETTY_PRINT));
         if(!empty($data['slug'])) { 
             $notificationType = TableRegistry::get("Api.NotificationTypes")->findBySlug($data['slug']);
             if($notificationType->isEmpty()) {
@@ -135,7 +137,10 @@ class PushComponent extends Component {
                 $notificationType->message = str_replace("<USERNAME>", ucwords($data['display_name']), $notificationType->message);
                 $notificationType->message = str_replace("<SpaycName>", $data['spayc_name'], $notificationType->message);
             }
-            
+            if(($notificationType->slug == 'user-subscribed-to-your-spayc') || ( $notificationType->slug == 'friend-subscribed-to-your-spayc' )) {
+                $notificationType->message = str_replace("<USERNAME>", ucwords($data['display_name']), $notificationType->message);
+                $notificationType->message = str_replace("<SpaycName>", $data['spayc_name'], $notificationType->message);
+            }
             $userImages = TableRegistry::get("Api.UserImages")->findByUserIdAndIsProfile($data['requested_by'], 'Yes');
             if(!$userImages->isEmpty()) {
                 $data['user_image'] = $userImages->first()->image_url;
@@ -153,14 +158,15 @@ class PushComponent extends Component {
             $data['message'] = $notificationType->message;
             $data['status'] = 'Unread';
             $data['created'] = date("Y-m-d H:i:s"); //pr($data);exit;
-            TableRegistry::get("Api.Notifications")->addNotification($data);
+            $items = TableRegistry::get("Api.Notifications")->addNotification($data);
             /* end of saving  */
             /* Send notification */
             if(!empty($data['device_token'])) {
                 if(strlen($deviceId->device_id)<64) {
-                    return false;
+                    //return false;
                 }
-                $sent = $this->sendOnIOS($data, $notificationType->message);
+                TableRegistry::get('Queue.QueuedJobs')->createJob('Notification',$data);
+                //$sent = $this->sendOnIOS($data);
             }            
         }
     }

@@ -662,6 +662,7 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
         $data = $this->request->getData();
+        $loggedUser = $this->Auth->user();   
         $errors = $this->Users->friendRequestValidate($data);
         if(!empty($errors)) {
             $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($errors)], 400);
@@ -672,7 +673,10 @@ class UsersController extends AppController {
         if(!$spaceUsr){
             $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
         }
-        $loggedUser = $this->Auth->user();   
+        if($data['friend_id'] == $loggedUser['id']){
+            $this->restException(['status'=>'failed','message'=>__('You could not {0} himself.', strtolower($data['friend_status']))],400);
+        }
+        
         
         $requestedFrnd = $frObj->find()->Where(['OR'=>[
             ['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']],
@@ -1571,7 +1575,15 @@ class UsersController extends AppController {
         if($user->isEmpty()){
             $this->restException(['status'=>'failed', 'message'=>__('Invalid user')], 400);
         }
-        $response = ['status'=>'success', 'message'=>__('Unread Notification Count.'), 'data'=> $user->first()];
+        $notification=$user->first();
+        if($notification['unread_notifications']){
+            $data['is_unread_count']=true;
+            $response = ['status'=>'success', 'message'=>__('Unread Notification Status.'), 'data'=> $data];
+        }else{
+            $data['is_unread_count']=false;
+            $response = ['status'=>'success', 'message'=>__('No Unread count found.'), 'data'=> $data];
+        }
+        
         $this->set($response);
     }
 }

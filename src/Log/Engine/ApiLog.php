@@ -113,6 +113,11 @@ class ApiLog extends BaseLog {
      * @return bool success of write.
      */
     public function log($level, $message, array $context = []) {
+        $isCli = PHP_SAPI === 'cli';
+        if ($isCli){
+            return;
+        }
+            
         $userid = Configure::read('auth.id', null);
         $request = \Cake\Routing\Router::getRequest();
         $extrainfo = [

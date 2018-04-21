@@ -57,6 +57,11 @@ class SpaycsTable extends Table {
             'joinType' => 'INNER',
             'className' => 'Api.Users'
         ]);
+        $this->belongsTo('SpaycCategories', [
+            'foreignKey' => 'spayc_category_id',
+            'joinType' => 'INNER',
+            'className' => 'Api.SpaycCategories'
+        ]);
         
         $this->belongsTo('ParentSpaycs', [
             'dependent' => true,
@@ -137,7 +142,13 @@ class SpaycsTable extends Table {
 
         $validator
                 ->requirePresence('type', 'create',__('Type key is missing.'))
-                ->notEmpty('type',__('Type is required field.'))
+                ->notEmpty('type',__('Type is required field.'),function($context){
+                    if($context['newRecord']){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                })
                 ->inList('type', Configure::read('spayctype'),__('Type value must be any one '.implode(',',Configure::read('spayctype')).'.')); 
 
         $validator
@@ -254,6 +265,24 @@ class SpaycsTable extends Table {
                 //->notEmpty('latitude',__('Please enter latitude.'))
                 ->allowEmpty('latitude')
                 ->latitude('latitude',__('Please enter valid latitude.'));  
+        $validator                
+                ->allowEmpty('spayc_category_id')
+                ->integer('spayc_category_id',__('Please enter valid category.'))
+                ->add('spayc_category_id','validcategoryid',[
+                    'rule'=>function($value,$context){
+                        if(!empty($value)){                            
+                            $exist = $this->SpaycCategories->exists(['id'=>$value]);
+                            if($exist){
+                                return true;
+                            }else{
+                                return false;
+                            }
+                        }else{
+                            return false;
+                        }
+                    },
+                    'message'=>__('Please enter valid category.')
+                ]);  
         
         return $validator;
     }
@@ -320,6 +349,24 @@ class SpaycsTable extends Table {
                     'rule' => ['fileSize', '<=',\Cake\Core\Configure::read('maxupload')],
                     'message'=>__('Image size must be less than '.\Cake\Core\Configure::read('maxupload').'.')
                 ]);
+         $validator                
+                ->allowEmpty('spayc_category_id')
+                ->integer('spayc_category_id',__('Please enter valid category.'))
+                ->add('spayc_category_id','validcategoryid',[
+                    'rule'=>function($value,$context){
+                        if(!empty($value)){                            
+                            $exist = $this->SpaycCategories->exists(['id'=>$value]);
+                            if($exist){
+                                return true;
+                            }else{
+                                return false;
+                            }
+                        }else{
+                            return false;
+                        }
+                    },
+                    'message'=>__('Please enter valid category.')
+                ]);             
          return $validator->errors($data);
     }
     
@@ -420,10 +467,10 @@ class SpaycsTable extends Table {
                 return $q->select(['SubscribedUsers.id','SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])->where(['SubscribedUsers.status'=>'Active']);
             },        
             'Requestedby' => function($q)use($loggedUser) {
-                return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_to','Requestedby.requested_status','Requestedby.matrix_room_id'])->where(['OR'=>[['Requestedby.requested_by'=>$loggedUser['id']],['Requestedby.requested_to'=>$loggedUser['id']]]]);
+                return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_to','Requestedby.requested_status','Requestedby.matrix_room_id','Requestedby.action_by'])->where(['OR'=>[['Requestedby.requested_by'=>$loggedUser['id']],['Requestedby.requested_to'=>$loggedUser['id']]]]);
             },        
             'Requestedto' => function($q)use($loggedUser) {
-                return $q->select(['Requestedto.id','Requestedto.requested_by', 'Requestedto.requested_to','Requestedto.requested_status','Requestedto.matrix_room_id'])->where(['OR'=>[['Requestedto.requested_by'=>$loggedUser['id']],['Requestedto.requested_to'=>$loggedUser['id']]]]);
+                return $q->select(['Requestedto.id','Requestedto.requested_by', 'Requestedto.requested_to','Requestedto.requested_status','Requestedto.matrix_room_id','Requestedto.action_by'])->where(['OR'=>[['Requestedto.requested_by'=>$loggedUser['id']],['Requestedto.requested_to'=>$loggedUser['id']]]]);
             },        
         ]);
         $query->innerJoinWith('JoinedSpayc',function($q)use($room_id ,$status,$loggedUser) {
@@ -431,7 +478,7 @@ class SpaycsTable extends Table {
                 if($status != null){
                     $condition['JoinedSpayc.status'] = $status;
                 }
-                return $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin','JoinedSpayc.distance'])->where($condition);
+                return $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin','JoinedSpayc.distance','JoinedSpayc.updated_by'])->where($condition);
         });
        $count = $query->count();
         if($limit != null){
@@ -452,18 +499,22 @@ class SpaycsTable extends Table {
             }
             $row->matrix_room_id = '';
             $row->friend_status = '';
+            $row->action_by = '';
             $row->joined_status = 'Not_Joined';
             $row->physically_present = false;
             if(!empty($row->requestedto[0])){
                 $row->friend_status = $row->requestedto[0]->requested_status; 
                 $row->matrix_room_id = $row->requestedto[0]->matrix_room_id;
+                $row->action_by = $row->requestedto[0]->action_by;
             }elseif(!empty($row->requestedby[0])){
                 $row->friend_status = $row->requestedby[0]->requested_status;
                 $row->matrix_room_id = $row->requestedby[0]->matrix_room_id;
+                $row->action_by = $row->requestedby[0]->action_by;
             }
             if(!empty($row->_matchingData['JoinedSpayc']->status)){
                 $row->joined_status = $row->_matchingData['JoinedSpayc']->status;
             }
+            $row->updated_by = $row->_matchingData['JoinedSpayc']->updated_by;
             if(!empty($row->_matchingData['JoinedSpayc']->distance)){
                 $miles = Configure::read('miles');
                  $row->physically_present = ($row->_matchingData['JoinedSpayc']->distance <= $miles)?true:false;
@@ -522,9 +573,9 @@ class SpaycsTable extends Table {
                 'matrix_room_id'=>$items['matrix_room_id'],
                 'matrix_token'=>$val->matrix_access_token
             ];
-            if($val->id != $adminUser){
-                $matrix->joinRoom($joinData);
-            }
+            //if($val->id != $adminUser){
+            TableRegistry::get('Queue.QueuedJobs')->createJob('MuteUnmute',['join'=>true,'rule'=>'mute','status'=>'Joined','matrix_token'=>$val->matrix_access_token,'matrix_room_id'=>$items['matrix_room_id']]);                
+            //}
             $push['requested_by'] = $adminUser;
             $push['requested_to'] = $val->id;
             $push['slug'] = 'new-spayc';
@@ -532,9 +583,9 @@ class SpaycsTable extends Table {
             $push['spayc_name'] = $items['name'];
             $push['spayc_image'] = $items['image'];
             $push['matrix_room_id'] = $items['matrix_room_id'];
-            $push['distance'] = $this->getSpaycDistanceFromUser($items['latitude'], $items['longitude'], $push['requested_to']);
+            $push['distance'] = $distance;
             if(!$items['is_direct']){
-                if(($val->id != $adminUser)){ 
+                if(($val->id != $adminUser)){
                     $pushNotification->sendPushNotification($push);
                 }
                 /*In direct chat no need to send the notification */
@@ -596,6 +647,7 @@ class SpaycsTable extends Table {
 //                    'end_date', 
                     'image', 
                     'type', 
+                    'modified', 
 //                    'group_type', 
 //                    'passcode',
                     'latitude','longitude'])

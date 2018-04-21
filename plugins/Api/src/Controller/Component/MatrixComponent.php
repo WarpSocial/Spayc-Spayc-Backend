@@ -23,7 +23,8 @@ class MatrixComponent extends Component {
      */
     protected $_defaultConfig = [
         'client'=> 'client/r0',
-        'media'=> 'media/v1'
+        'media'=> 'media/v1',
+        'clientv1'=> 'client/api/v1'
     ];
     
      /**
@@ -72,13 +73,7 @@ class MatrixComponent extends Component {
         $httpResponse = $http->post(
                 $url, 
                 json_encode($validInput), 
-                [
-                    'type'=>'json',
-                    'ssl_verify_host' => $this->config('sslverify'), 
-                    'ssl_verify_peer' => $this->config('sslverify'),
-                    'ssl_verify_host' => $this->config('sslverify'),
-                    'ssl_verify_peer_name' => $this->config('sslverify')
-                ]
+                $this->bodyType()
             );
         $response = json_decode($httpResponse->body,true);
         if($httpResponse->isOk()){
@@ -107,13 +102,7 @@ class MatrixComponent extends Component {
         $httpResponse = $http->post(
                 $url, 
                 json_encode($validInput), 
-                [
-                    'type'=>'json',
-                    'ssl_verify_host' => $this->config('sslverify'), 
-                    'ssl_verify_peer' => $this->config('sslverify'),
-                    'ssl_verify_host' => $this->config('sslverify'),
-                    'ssl_verify_peer_name' => $this->config('sslverify')
-                ]
+                $this->bodyType()
             );
         $response = json_decode($httpResponse->body,true);
         if($httpResponse->isOk()){            
@@ -137,13 +126,7 @@ class MatrixComponent extends Component {
         $httpResponse = $http->put(
             $url, 
             json_encode(['displayname'=>$name]), 
-            [
-                'type'=>'json',
-                'ssl_verify_host' => $this->config('sslverify'), 
-                'ssl_verify_peer' => $this->config('sslverify'),
-                'ssl_verify_host' => $this->config('sslverify'),
-                'ssl_verify_peer_name' => $this->config('sslverify')
-            ]
+            $this->bodyType()
         ); 
         
         $response = json_decode($httpResponse->body,true);
@@ -204,13 +187,7 @@ class MatrixComponent extends Component {
         $httpResponse = $http->post(
                 $url, 
                 json_encode($validInput), 
-                [
-                    'type'=>'json',
-                    'ssl_verify_host' => $this->config('sslverify'), 
-                    'ssl_verify_peer' => $this->config('sslverify'),
-                    'ssl_verify_host' => $this->config('sslverify'),
-                    'ssl_verify_peer_name' => $this->config('sslverify')
-                ]
+                $this->bodyType()
             );
         $response = json_decode($httpResponse->body,true);
         #pr($response);die;
@@ -253,13 +230,7 @@ class MatrixComponent extends Component {
             $httpResponse['name'] =   $http->put(
                 $url.'/m.room.name?access_token='.$items['matrix_token'], 
                 json_encode(['name'=>$items['name']]), 
-                [
-                    'type'=>'json',
-                    'ssl_verify_host' => $this->config('sslverify'), 
-                    'ssl_verify_peer' => $this->config('sslverify'),
-                    'ssl_verify_host' => $this->config('sslverify'),
-                    'ssl_verify_peer_name' => $this->config('sslverify')
-                ]
+                $this->bodyType()
             );
             //pr($httpResponse['name']->body());die;
         }
@@ -267,13 +238,7 @@ class MatrixComponent extends Component {
             $httpResponse['topic'] =  $http->put(
                 $url.'/m.room.topic?access_token='.$items['matrix_token'], 
                 json_encode(['topic'=>$items['description']]), 
-                [
-                    'type'=>'json',
-                    'ssl_verify_host' => $this->config('sslverify'), 
-                    'ssl_verify_peer' => $this->config('sslverify'),
-                    'ssl_verify_host' => $this->config('sslverify'),
-                    'ssl_verify_peer_name' => $this->config('sslverify')
-                ]
+                $this->bodyType()
             );
         }
         if(!empty($items['group_type'])){
@@ -281,38 +246,20 @@ class MatrixComponent extends Component {
             $httpResponse['preset'] = $http->put(
                 $url.'/m.room.preset?access_token='.$items['matrix_token'], 
                     json_encode(['preset'=>$preset]), 
-                    [
-                        'type'=>'json',
-                        'ssl_verify_host' => $this->config('sslverify'), 
-                        'ssl_verify_peer' => $this->config('sslverify'),
-                        'ssl_verify_host' => $this->config('sslverify'),
-                        'ssl_verify_peer_name' => $this->config('sslverify')
-                    ]
+                    $this->bodyType()
                 );
             
             $httpResponse['visibility'] = $http->put(
                     $url.'/m.room.visibility?access_token='.$items['matrix_token'], 
                     json_encode(['visibility'=> strtolower($items['group_type'])]), 
-                    [
-                        'type'=>'json',
-                        'ssl_verify_host' => $this->config('sslverify'), 
-                        'ssl_verify_peer' => $this->config('sslverify'),
-                        'ssl_verify_host' => $this->config('sslverify'),
-                        'ssl_verify_peer_name' => $this->config('sslverify')
-                    ]
+                    $this->bodyType()
                 ); 
         }
         if(!empty($items['join_rule'])){
             $httpResponse['join_rule'] = $http->put(
                 $url.'/m.room.join_rules?access_token='.$items['matrix_token'], 
                 json_encode(['join_rule'=>'public']), 
-                [
-                    'type'=>'json',
-                    'ssl_verify_host' => $this->config('sslverify'), 
-                    'ssl_verify_peer' => $this->config('sslverify'),
-                    'ssl_verify_host' => $this->config('sslverify'),
-                    'ssl_verify_peer_name' => $this->config('sslverify')
-                ]
+                $this->bodyType()
             ); 
             
         }
@@ -387,13 +334,7 @@ class MatrixComponent extends Component {
         $httpResponse = $http->put(
                 $options['url'], 
                 json_encode($options['body']),
-                [
-                    'type' => 'json',
-                    'ssl_verify_host' => $this->config('sslverify'), 
-                    'ssl_verify_peer' => $this->config('sslverify'),
-                    'ssl_verify_host' => $this->config('sslverify'),
-                    'ssl_verify_peer_name' => $this->config('sslverify')
-                ]
+                $this->bodyType()
             );
         $response = json_decode($httpResponse->body,true);
         return;
@@ -419,13 +360,7 @@ class MatrixComponent extends Component {
         $httpResponse = $http->post(
                 $url, 
                 json_encode($validInput), 
-                [
-                    'type'=>'json',
-                    'ssl_verify_host' => $this->config('sslverify'), 
-                    'ssl_verify_peer' => $this->config('sslverify'),
-                    'ssl_verify_host' => $this->config('sslverify'),
-                    'ssl_verify_peer_name' => $this->config('sslverify')
-                ]
+                $this->bodyType()
             );
         $response = json_decode($httpResponse->body,true);
         if($httpResponse->isOk()){
@@ -446,13 +381,7 @@ class MatrixComponent extends Component {
         $httpResponse = $http->post(
             $url, 
             json_encode([]), 
-            [
-                'type'=>'json',
-                'ssl_verify_host' => $this->config('sslverify'), 
-                'ssl_verify_peer' => $this->config('sslverify'),
-                'ssl_verify_host' => $this->config('sslverify'),
-                'ssl_verify_peer_name' => $this->config('sslverify')
-            ]
+            $this->bodyType()
         ); 
         
         $response = json_decode($httpResponse->body,true);
@@ -485,13 +414,7 @@ class MatrixComponent extends Component {
         $httpResponse = $http->post(
             $url, 
             json_encode($postData), 
-            [
-                'type'=>'json',
-                'ssl_verify_host' => $this->config('sslverify'), 
-                'ssl_verify_peer' => $this->config('sslverify'),
-                'ssl_verify_host' => $this->config('sslverify'),
-                'ssl_verify_peer_name' => $this->config('sslverify')
-            ]
+            $this->bodyType()
         ); 
         
         $response = json_decode($httpResponse->body,true);
@@ -523,13 +446,7 @@ class MatrixComponent extends Component {
         $httpResponse = $http->post(
             $url, 
             json_encode($postData), 
-            [
-                'type'=>'json',
-                'ssl_verify_host' => $this->config('sslverify'), 
-                'ssl_verify_peer' => $this->config('sslverify'),
-                'ssl_verify_host' => $this->config('sslverify'),
-                'ssl_verify_peer_name' => $this->config('sslverify')
-            ]
+            $this->bodyType()
         ); 
         
         $response = json_decode($httpResponse->body,true);
@@ -562,13 +479,7 @@ class MatrixComponent extends Component {
         $httpResponse = $http->post(
             $url, 
             json_encode($postData), 
-            [
-                'type'=>'json',
-                'ssl_verify_host' => $this->config('sslverify'), 
-                'ssl_verify_peer' => $this->config('sslverify'),
-                'ssl_verify_host' => $this->config('sslverify'),
-                'ssl_verify_peer_name' => $this->config('sslverify')
-            ]
+            $this->bodyType()
         ); 
         
         $response = json_decode($httpResponse->body,true);
@@ -587,6 +498,47 @@ class MatrixComponent extends Component {
         return '!'.urlencode(substr($roomid,1));
     }
     
+    /**
+     * muteUnmute function to mute and unmute the user
+     */
+    public function muteUnmute($rule='mute',$matrixToken = null,$matrixRoomId=null){
+        if(is_null($matrixToken) || is_null($matrixRoomId)){
+            return false;
+        }
+        if($rule == 'mute'){
+            $rule = 'dont_notify';
+        }else{
+            $rule = 'notify';
+        }
+        $roomId  = $this->validRoomId($matrixRoomId);
+        $postData = [
+            'actions'=>[$rule],
+            'conditions'=>[['key'=>'room_id','kind'=>'event_match','pattern'=>$roomId]]
+        ];
+        
+        $http = new Client();        
+        $url = $this->config('url') .DS.$this->config('client').DS.'pushrules'. DS.'global'.DS.'override'.DS.$roomId.'?access_token='.$matrixToken;
+        $httpResponse = $http->put(
+            $url, 
+            json_encode($postData), 
+            $this->bodyType()
+        ); 
+        
+        $response = json_decode($httpResponse->body,true);
+        if(!empty($response['errcode'])){            
+            //return $this->errorMsg($response['errcode']);
+            return $response['error'];
+        }else{
+            return true;
+        }
+    }
+    
+    /**
+     * errorMsg to display the common message for common matrix error
+     * 
+     * @param String $errorCode matrix error code
+     * @return String error string.
+     */
     public function errorMsg($errorCode){
         $messages = [
             'M_FORBIDDEN'=>__('You are not invited to this room'),
@@ -598,6 +550,21 @@ class MatrixComponent extends Component {
         }else{
             return __('Invalid request.');
         }        
+    }
+    
+    /**
+     * bodyType method to set client body
+     * @return Array body content type
+     */
+    public function bodyType($type='json'){
+        $body = [
+                'type'=>$type,
+                'ssl_verify_host' => $this->config('sslverify'), 
+                'ssl_verify_peer' => $this->config('sslverify'),
+                'ssl_verify_host' => $this->config('sslverify'),
+                'ssl_verify_peer_name' => $this->config('sslverify')
+            ];
+        return $body;
     }
     
     public function deleteRoom($roomId){

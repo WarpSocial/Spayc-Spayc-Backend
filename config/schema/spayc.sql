@@ -94,7 +94,8 @@ CREATE TABLE joined_spayc (
     "created" timestamp NOT NULL,
     "modified" timestamp,
     "updated_by" BIGINT NOT NULL,
-    "role" smallint DEFAULT NULL,
+    "is_admin" smallint DEFAULT 0 NOT NULL,
+    "distance" numeric,
     PRIMARY KEY (id,spayc_id,user_id,created)
 );
 SELECT create_hypertable('joined_spayc', 'created');
@@ -117,6 +118,7 @@ CREATE TABLE spaycs (
     "created" timestamp NOT NULL,
     "modified" timestamp,
     "parent_id" bigint,
+    "category_id" bigint NULL,
     PRIMARY KEY (id,user_id,created)
 );
 SELECT create_hypertable('spaycs', 'created');
@@ -195,36 +197,39 @@ CREATE TABLE "notification_types" (
 SELECT create_hypertable('notification_types', 'created');
 
 INSERT INTO "notification_types" ("id", "type", "message", "slug", "created", "modified") VALUES
-(18,	'Admin of the spayc commented',	'The admin of the Spayc, <SpaycName> commented <COMMENT>',	'admin-of-the-spayc-commented',	'2018-03-05 17:27:10.578674',	NULL),
+(18,	'Admin of the warp commented',	'The admin of the Warp, <SpaycName> commented <COMMENT>',	'admin-of-the-spayc-commented',	'2018-03-05 17:27:10.578674',	NULL),
 (9,	'friend like your comment',	'<FRIEND> liked your comment, <COMMENT>. Well, you aren''t friends for no reason',	'friend-like-your-comment',	'2018-02-28 17:27:10.578674',	NULL),
 (1,	'Friend Request',	'Apparently, you''re so cool <USERNAME> wants to be friends with you.',	'friend-request',	'2018-02-28 17:27:10.578674',	NULL),
 (2,	'Friend Added',	'You made another friend! Look at you go!',	'friend-added',	'2018-02-28 17:27:10.578674',	NULL),
-(15,	'Spayc will be inactive in <days> days',	'Your spayc, Spayc <SpaycName> will be inactive in <days> days unless somebody interacts with it!',	'spayc-inative',	'2018-02-28 17:27:10.578674',	NULL),
-(16,	'Spayc Deleted',	'Your Spayc has been deleted either by you or due to inactivity! Sorry!',	'spayc-deleted',	'2018-02-28 17:27:10.578674',	NULL),
+(15,	'Warp will be inactive in <days> days',	'Your warp, Warp <SpaycName> will be inactive in <days> days unless somebody interacts with it!',	'spayc-inative',	'2018-02-28 17:27:10.578674',	NULL),
+(16,	'Warp Deleted',	'Your Warp has been deleted either by you or due to inactivity! Sorry!',	'spayc-deleted',	'2018-02-28 17:27:10.578674',	NULL),
 (11,	'Friend replyed to your comment',	'<FRIEND> replied, REPLY on your comment, <COMMENT>',	'friend replyed to your comment',	'2018-02-28 17:27:10.578674',	NULL),
-(4,	'Friend joined your spayc',	'Let''s get this party started! A friend joined your Spayc, <SpaycName>',	'friend-join-spayc',	'2018-02-28 17:27:10.578674',	NULL),
+(4,	'Friend joined your warp',	'Let''s get this party started! A friend joined your Warp, <SpaycName>',	'friend-join-spayc',	'2018-02-28 17:27:10.578674',	NULL),
 (3,	'Blocked',	'You''ve been blocked. What did you do now?',	'blocked',	'2018-02-28 17:27:10.578674',	NULL),
 (12,	'Admin asigned',	'You''ve been asigned as admin, can you handle that responsibility?',	'admin-asigned',	'2018-02-28 17:27:10.578674',	NULL),
-(13,	'Kick from a spayc',	'You''ve been kicked from a spayc. Another rude comment or was it a pic?',	'kick-from-spayc',	'2018-02-28 17:27:10.578674',	NULL),
-(6,	'Friend subscribed to your spayc',	'Your friend, <USERNAME> has subscribed your Spayc, <SpaycName>. That''s what friends are for, right?',	'friend-subscribed-to-your-spayc',	'2018-02-28 17:27:10.578674',	NULL),
-(7,	'User subscribed to your spayc',	'There ya go! A USER <USERNAME>, subscribed to your Spayc, <SpaycName>',	'user-subscribed-to-your-spayc',	'2018-02-28 17:27:10.578674',	NULL),
-(5,	'User joined your spayc',	'<USERNAME> who joined your Spayc, <SpaycName>',	'user-joined-your-spayc',	'2018-02-28 17:27:10.578674',	NULL),
+(13,	'Kick from a warp',	'You''ve been kicked from a warp. Another rude comment or was it a pic?',	'kick-from-spayc',	'2018-02-28 17:27:10.578674',	NULL),
+(6,	'Friend subscribed to your warp',	'Your friend, <USERNAME> has subscribed your Warp, <SpaycName>. That''s what friends are for, right?',	'friend-subscribed-to-your-spayc',	'2018-02-28 17:27:10.578674',	NULL),
+(7,	'User subscribed to your warp',	'There ya go! A USER <USERNAME>, subscribed to your Warp, <SpaycName>',	'user-subscribed-to-your-spayc',	'2018-02-28 17:27:10.578674',	NULL),
+(5,	'User joined your warp',	'<USERNAME> who joined your Warp, <SpaycName>',	'user-joined-your-spayc',	'2018-02-28 17:27:10.578674',	NULL),
 (8,	'A user liked your comment',	'<USERNAME> liked your comment, <COMMENT>. Way to say that great thing you said',	'a-user-liked-your-comment',	'2018-02-28 17:27:10.578674',	NULL),
 (10,	'Someone replyed to your comment',	'<USERNAME> replied, REPLY your comment, <COMMENT>. Check it out!',	'someone-replyed-to-your-comment',	'2018-02-28 17:27:10.578674',	NULL),
-(14,	'Someone commented',	'<USERNAME> has commented, <COMMENT> in your spayc, <SpaycName>',	'someone-commented',	'2018-02-28 17:27:10.578674',	NULL),
-(17,	'New Spayc',	'<SpaycName> spayc has been created within <X> miles of you',	'new-spayc',	'2018-02-28 17:27:10.578674',	NULL);
+(14,	'Someone commented',	'<USERNAME> has commented, <COMMENT> in your warp, <SpaycName>',	'someone-commented',	'2018-02-28 17:27:10.578674',	NULL),
+(17,	'New Warp',	'<SpaycName> warp has been created within <X> miles of you',	'new-spayc',	'2018-02-28 17:27:10.578674',	NULL);
 
 CREATE TABLE "advertisement" (
     "id" BIGSERIAL NOT NULL,
     "user_id" BIGINT NOT NULL,
     "name" character varying(255) NOT NULL,
     "price" decimal(12,2) NOT NULL,
+    "views" BIGINT NOT NULL,
+    "balance" BIGINT NOT NULL,
     "description" text NULL,
     "url" character varying(255) NULL,
     "image" character varying(1000) NULL,
     "status" row_status DEFAULT 'Pending' NOT NULL,
     "created" timestamp NOT NULL,
     "modified" timestamp,
+    "expired" timestamp,
     PRIMARY KEY (id,created)
 );
 SELECT create_hypertable('advertisement', 'created');
@@ -253,8 +258,130 @@ ALTER TABLE "users" ADD "role_id" integer DEFAULT NULL;
 INSERT INTO "users" ("id", "username", "email", "password", "gender", "dob", "phone", "status", "website_url", "address", "bio_data", "fb_id", "fb_access_key", "longitude", "latitude", "timezone", "matrix_user_id", "matrix_access_token", "created", "modified", "token_verification", "forgot_password_token", "forgot_password_timestamp", "country_code", "is_notify", "current_latitude", "current_longitude", "role_id") VALUES
 ('56',  'admin',    'ankur.gupta@kiwitech.com', 'ODIyZDBkN2MxYWVlOTcxZTZhNmMxNjhjZTNjMGQ3ZGMyYzk2ODY4MzM3MDQ3MDZmOTZhMTM0YjU1MzA1YmYzYnwyLmLenyaqlsnztYhQTM8dc+OpkWpoF/jvMx9EELyk', 'Male', NULL, NULL, 'Active',   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   '2018-03-15 15:40:41',  '2018-03-15 15:40:41',  NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,'1');
 
+
+-- Adminer 4.3.1 PostgreSQL dump
 INSERT INTO "notification_types" ("id", "type", "message", "slug", "created", "modified")
 VALUES ('19', 'Blocked by admin', 'You''ve been blocked. What did you do now?', 'blocked-by-admin', now(), NULL),
 VALUES ('20', 'UNblocked by admin', 'You''ve been unblocked.', 'unblocked-by-admin', now(), NULL);
 
 
+DROP TABLE IF EXISTS "queue_phinxlog";
+CREATE TABLE "public"."queue_phinxlog" (
+    "version" bigint NOT NULL,
+    "migration_name" character varying(100),
+    "start_time" timestamp,
+    "end_time" timestamp,
+    "breakpoint" boolean DEFAULT false NOT NULL,
+    CONSTRAINT "queue_phinxlog_pkey" PRIMARY KEY ("version")
+) WITH (oids = false);
+
+
+DROP TABLE IF EXISTS "queued_jobs";
+CREATE SEQUENCE queued_tasks_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
+
+CREATE TABLE "public"."queued_jobs" (
+    "id" integer DEFAULT nextval('queued_tasks_id_seq') NOT NULL,
+    "job_type" character varying(45) NOT NULL,
+    "data" text,
+    "job_group" character varying(255),
+    "reference" character varying(255),
+    "created" timestamp,
+    "notbefore" timestamp,
+    "fetched" timestamp,
+    "completed" timestamp,
+    "progress" real,
+    "failed" integer DEFAULT 0 NOT NULL,
+    "failure_message" text,
+    "workerkey" character varying(45),
+    "status" character varying(255),
+    "priority" integer DEFAULT 5 NOT NULL,
+    CONSTRAINT "queued_tasks_pkey" PRIMARY KEY ("id")
+) WITH (oids = false);
+
+
+DROP TABLE IF EXISTS "queue_processes";
+CREATE SEQUENCE queue_processes_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
+
+CREATE TABLE "public"."queue_processes" (
+    "id" integer DEFAULT nextval('queue_processes_id_seq') NOT NULL,
+    "pid" character varying(30) NOT NULL,
+    "created" timestamp,
+    "modified" timestamp,
+    CONSTRAINT "queue_processes_pkey" PRIMARY KEY ("id")
+) WITH (oids = false);
+
+
+-- 2018-04-13 16:39:12.591553+05:30
+CREATE TABLE "spayc_categories" (
+    "id" BIGSERIAL NOT NULL,
+    "parent_id" bigint NULL,
+    "lft" integer NULL,
+    "right" integer NULL,
+    "name" character varying(100),
+    "slug" character varying(100),
+    "description" character varying(200),
+    "status" row_status DEFAULT 'Active' NOT NULL,
+    "created" timestamp,
+    "modified" timestamp,
+    PRIMARY KEY ("id","created")
+);
+SELECT create_hypertable('spayc_categories', 'created');
+
+CREATE TABLE "promotions" (
+    "id" BIGSERIAL NOT NULL,
+    "spayc_id" BIGINT NULL,
+    "views" numeric(50) NULL,
+    "balanced_views" numeric(50) NULL,
+    "status" row_status NOT NULL DEFAULT 'Active',
+    "created" timestamp,
+    "modified" timestamp,
+    PRIMARY KEY ("id","created")
+);
+SELECT create_hypertable('promotions', 'created');
+CREATE TABLE "spayc_promotion" (
+    "id" BIGSERIAL NOT NULL,
+    "promotion_id" BIGINT NULL,
+    "spayc_id" BIGINT NULL,
+    "priority" INTEGER NULL,
+    "created" timestamp,
+    "modified" timestamp,
+    PRIMARY KEY ("id","created")
+);
+SELECT create_hypertable('spayc_promotion', 'created');
+CREATE TABLE "spayc_promotion_priority" (
+    "id" BIGSERIAL NOT NULL,
+    "spayc_id" BIGINT NULL,
+    "priority" INTEGER NULL,
+    "comment_count" INTEGER NULL,
+    "created" timestamp,
+    "modified" timestamp,
+    PRIMARY KEY ("id","created")
+);
+SELECT create_hypertable('spayc_promotion_priority', 'created');
+CREATE TABLE "purchase" (
+    "id" BIGSERIAL NOT NULL,
+    "plan_id" BIGINT NULL,
+    "receipt" VARCHAR(200) NULL,
+    "promotion_id" BIGINT NULL,
+    "advertisement_id" BIGINT NULL,
+    "platform" BIGINT NULL,
+    "amount" DECIMAL(7,2) NULL,
+    "purchase_date" timestamp,
+    "created" timestamp,
+    "modified" timestamp,
+    PRIMARY KEY ("id","created")
+);
+SELECT create_hypertable('purchase', 'created');
+CREATE TABLE "plans" (
+    "id" BIGSERIAL NOT NULL,
+    "name" VARCHAR(200) NULL,
+    "slug" VARCHAR(200) NULL,
+    "amount" DECIMAL(7,2) NULL,
+    "currency" VARCHAR(20) NULL,
+    "views" INTEGER NULL,
+    "status" row_status NOT NULL DEFAULT 'Active',
+    "created" timestamp,
+    "modified" timestamp,
+    PRIMARY KEY ("id","created")
+);
+SELECT create_hypertable('plans', 'created');
