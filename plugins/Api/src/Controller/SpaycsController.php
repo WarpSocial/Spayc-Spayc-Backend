@@ -267,7 +267,7 @@ class SpaycsController extends AppController {
             ->where(['status'=>'Active','parent_id IS'=>null,'Spaycs.group_type !='=>'trusted_private'])
             ->contain([                    
                 'JoinedSpayc' => function($q) {
-                    return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.distance']);
+                    return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.distance'])->where(['JoinedSpayc.status'=>'Joined']);
                 },
                 'SubscribedUsers' => function($q) {
                     return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
@@ -511,7 +511,7 @@ class SpaycsController extends AppController {
                         return  $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'SubSpaycs.location', 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id']);
                     },
                     'JoinedSpayc' => function($q) {
-                        return  $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin','JoinedSpayc.distance']);
+                        return  $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin','JoinedSpayc.distance'])->where(['JoinedSpayc.status'=>'Joined']);
                     },
                     'Comments' => function($q) {
                         return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
@@ -829,7 +829,7 @@ class SpaycsController extends AppController {
                 ->where(['status'=>'Active','parent_id'=>$subspayc])                
                 ->contain([
                     'JoinedSpayc' => function($q) {
-                        return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin', 'JoinedSpayc.distance']);
+                        return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin', 'JoinedSpayc.distance'])->where(['JoinedSpayc.status'=>'Joined']);
                     },
                     'SubscribedUsers' => function($q) {
                         return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
@@ -993,6 +993,7 @@ class SpaycsController extends AppController {
         }
         $user = $this->Auth->user();
         
+        $keyword = $this->request->getQuery('keyword',null);
         $page = (int)$this->request->getQuery('page',1);        
         $limit = (int)$this->request->getQuery('limit',Configure::read('pagelimit'));
         if(!$page || !$limit){
@@ -1003,13 +1004,22 @@ class SpaycsController extends AppController {
         $query = $this->Spaycs->find();
         $query->select(['Spaycs.id', 'Spaycs.name','Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.matrix_room_id']);
         $query->where(['Spaycs.status'=>'Active','Spaycs.parent_id IS'=>null,'OR'=>[['Spaycs.id IN'=>$subQuery],['Spaycs.group_type'=>'Public']]]);
-        
-       $query->order(['Spaycs.created'=>'DESC']);
-       $query->limit($limit)->page($page);
+        if(!empty($keyword)){
+            $search = Utils::clean(strtolower($keyword));
+            $keyString = explode(' ', $search);
+            $keywords = array_diff($keyString, array(''));
+            foreach ($keywords as $key) {
+                $keyQuery[] = [
+                    "LOWER(Spaycs.name) LIKE" => "%".trim($key)."%"
+                ];
+            }
+            $query->where(['OR'=>$keyQuery]);
+        }
+        $query->order(['Spaycs.created'=>'DESC']);
+        $query->limit($limit)->page($page);
         if($query->isEmpty()){
              $this->restException(['status'=>'failed','message'=>'Record not found.'], 204);
-        }
-       // pj($query);
+        }        
         $result = $query->map(function ($row)use($subQuery) {
             $joinedId = \Cake\Utility\Hash::extract($subQuery->toArray(),'{n}[spayc_id='.$row->id.']');
             if(!empty($joinedId)){
@@ -1067,7 +1077,7 @@ class SpaycsController extends AppController {
             ->where(['status'=>'Active','parent_id IS'=>null,'Spaycs.group_type ='=>'Public','Spaycs.id IN'=>$ids])
             ->contain([
                     'JoinedSpayc' => function($q)use($user) {
-                        return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin','JoinedSpayc.distance']);
+                        return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin','JoinedSpayc.distance'])->where(['JoinedSpayc.status'=>'Joined']);
                     },
                     'SubscribedUsers' => function($q) {
                         return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);

@@ -324,7 +324,7 @@ class JoinSpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Spayc is no longer available.')], 400);
         }
         $spayc = $spaycs->first();
-        //pj($spayc);die;
+        #pj($spayc);die;
         if(empty($spayc->joined_spayc)){
              $this->restException(['status'=>'failed','message'=>__('User is not member of this spayc.')], 400);
         }
@@ -344,51 +344,46 @@ class JoinSpaycsController extends AppController {
         if($currentUserStatus['is_admin'] <= $BannedUserStatus['is_admin']){
             $this->restException(['status'=>'failed','message'=>__('You have no rights to ban a user which has same level of access.')], 400);
         }
-        if($currentUserStatus['status'] != 'Joined'){
+        if($currentUserStatus['status'] != JOINED){
             $this->restException(['status'=>'failed','message'=>__('Only joined member who has admin rights can ban or unban any user.')], 400);
         }
         if($BannedUserStatus['status'] == $data['status']){
             $this->restException(['status'=>'failed','message'=>__('User has already '. strtolower($data['status']).' with this spayc.')], 400);
         }
-        if(($BannedUserStatus['status'] == 'Joined') && ($data['status'] == 'Unbanned')){
+        if(($BannedUserStatus['status'] == JOINED) && ($data['status'] == UNBANNED)){
             $this->restException(['status'=>'failed','message'=>__('Cannot unban user who was not banned.')], 400);
         }       
         
-        if(!in_array($BannedUserStatus['status'],['Joined','Banned'])){
+        if(!in_array($BannedUserStatus['status'],['Joined',BANNED])){
             $this->restException(['status'=>'failed','message'=>__('User is not joined with this spayc.')], 400);
         }
         $data['matrix_user_id'] = $BannedUserStatus->user->matrix_user_id;
         $data['matrix_room_id'] = $spayc->matrix_room_id;
         
-        $BannedUserStatus->status = ($data['status'] == 'Unbanned')?'Joined':$data['status'];
+        $BannedUserStatus->status = ($data['status'] == UNBANNED)?JOINED:$data['status'];
         $BannedUserStatus->modified = new \Cake\I18n\Time();
         $BannedUserStatus->updated_by = $user['id'];
         $matrix = $this->Matrix->banMember($data);
         if(is_string($matrix)) {
             $this->restException(['status'=>'failed','message'=>__($matrix)],400);
         }
+        if($data['status'] == UNBANNED){
+            $mjoin['matrix_user_id'] = $BannedUserStatus->user->matrix_user_id;
+            $mjoin['matrix_token'] = $BannedUserStatus->user->matrix_access_token;
+            $mjoin['matrix_room_id'] = $spayc->matrix_room_id;
+            $mjoin['status'] = 'Joined';
+            //pr($mjoin);die;
+            $this->Matrix->joinRoom($mjoin);
+        }
         $rule = 'mute';
-        if($data['status'] == 'Unbanned'){
+        if($data['status'] == UNBANNED){
             $rule = 'Unmute';
         }
         $this->Matrix->muteUnmute($rule,$BannedUserStatus->user->matrix_access_token, $spayc->matrix_room_id);
-        if($jsModel->save($BannedUserStatus)){            
-            $push = [
-                'slug' => 'blocked',
-                'requested_by' => $user['id'],
-                'requested_to' => $data['user_id'],
-                'spayc_id' => $spayc->id,
-                'spayc_name' => $spayc->name,
-                'spayc_image' => $spayc->image,
-                'matrix_room_id' => $spayc->matrix_room_id,
-                'display_name' => $user['display_name']                
-            ];
+        if($jsModel->save($BannedUserStatus)){                        
             if($data['status'] == 'Banned'){
                 TableRegistry::get('Api.SubscribedUsers')->removeSubscription($data['user_id'],$spayc->id);                
-            }else{
-                $push['slug'] = 'unblocked-by-admin';
-            }            
-            $this->Push->sendPushNotification($push);            
+            }
             $response = ['status'=>'success','message'=>__('User has been '.$data['status'].' successfully.')];
         }else{
             $this->response->statusCode(400);
@@ -457,7 +452,8 @@ class JoinSpaycsController extends AppController {
         $data['matrix_room_id'] = $spayc->matrix_room_id;
         $data['matrix_token'] = $spayc['user']->matrix_access_token;        
       
-        $matrix = $this->Matrix->removeMember($data);
+        //$matrix = $this->Matrix->removeMember($data);
+        $matrix = $this->Matrix->leaveRoom($data);
         if(is_string($matrix)) {
             $this->restException(['status'=>'failed','message'=>__($matrix)],400);
         }

@@ -361,7 +361,7 @@ SELECT create_hypertable('spayc_promotion_priority', 'created');
 CREATE TABLE "purchase" (
     "id" BIGSERIAL NOT NULL,
     "plan_id" BIGINT NULL,
-    "receipt" VARCHAR(200) NULL,
+    "receipt" text NULL,
     "promotion_id" BIGINT NULL,
     "advertisement_id" BIGINT NULL,
     "platform" BIGINT NULL,
@@ -374,14 +374,28 @@ CREATE TABLE "purchase" (
 SELECT create_hypertable('purchase', 'created');
 CREATE TABLE "plans" (
     "id" BIGSERIAL NOT NULL,
-    "name" VARCHAR(200) NULL,
+    "name" VARCHAR(200) NULL,    
     "slug" VARCHAR(200) NULL,
     "amount" DECIMAL(7,2) NULL,
     "currency" VARCHAR(20) NULL,
     "views" INTEGER NULL,
     "status" row_status NOT NULL DEFAULT 'Active',
+    "identifier" VARCHAR(200) NULL,
     "created" timestamp,
     "modified" timestamp,
     PRIMARY KEY ("id","created")
 );
 SELECT create_hypertable('plans', 'created');
+INSERT INTO "plans" ("id", "name", "slug", "amount", "currency", "views", "status", "created", "modified") VALUES
+(1,	'Plan I',	'plan-1',	'1.00',	'USD',	500,	'Active',	'2018-04-20 15:07:23.713696',	'2018-04-20 15:07:23.713696'),
+(2,	'Plan II',	'plan-2',	'2.00',	'USD',	1000,	'Active',	'2018-04-20 15:08:21.355268',	'2018-04-20 15:08:21.355268'),
+(3,	'Plan III',	'plan-3',	'5.00',	'USD',	2500,	'Active',	'2018-04-20 15:10:22.46612',	'2018-04-20 15:10:22.46612'),
+(4,	'Plan IV',	'plan-4',	'10.00',	'USD',	6000,	'Active',	'2018-04-20 15:10:22.46612',	'2018-04-20 15:10:22.46612');
+
+INSERT INTO "spayc_categories" ("id", "parent_id", "lft", "right", "name", "slug", "description", "status", "created", "modified") VALUES
+(1,	NULL,	1,	2,	'Music',	'music',	'Music',	'Active',	'2018-04-19 21:00:59.737171',	'2018-04-19 21:00:59.737171'),
+(2,	1,	3,	4,	'Blues & Jazz',	'blues-jazz',	'Blues & Jazz',	'Active',	'2018-04-19 21:02:01.031273',	'2018-04-19 21:02:01.031273'),
+(3,	1,	5,	7,	'Alternative',	'alternative',	'Alternative',	'Active',	'2018-04-19 21:02:32.883426',	'2018-04-19 21:02:32.883426'),
+(4,	1,	8,	10,	'Classical',	'classical',	'Classical',	'Active',	'2018-04-19 21:03:00.810881',	'2018-04-19 21:03:00.810881'),
+(5,	NULL,	11,	13,	'Science & Technology',	'science-technology',	'Science & Technology',	'Active',	'2018-04-19 21:03:43.820194',	'2018-04-19 21:03:43.820194'),
+(6,	NULL,	13,	14,	'Business & Professional',	'business-professional',	'Business & Professional',	'Active',	'2018-04-19 21:04:33.062492',	'2018-04-19 21:04:33.062492');

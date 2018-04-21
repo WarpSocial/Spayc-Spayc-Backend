@@ -58,6 +58,41 @@ define({ "api": [
           },
           {
             "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "spayc_id",
+            "description": "<p>Spayc List (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "plan_id",
+            "description": "<p>Plan ID (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "receipt",
+            "description": "<p>Plan Receipt (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "platform",
+            "description": "<p>Platform (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "purchase_date",
+            "description": "<p>Plan Purchase Date (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
             "type": "File",
             "optional": false,
             "field": "image",
@@ -69,7 +104,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "{\n    \"name\": \"Space Ad\",\n    \"price\": \"250\",\n    \"description\": \"Test Test Test \",\n    \"url\": \"http://www.xyz.com\",\n    \"image\":\"file.png\",\n    \"spayc_id\":\"5,6\"\n}",
+        "content": "{\n    \"name\": \"Space Ad\",\n    \"price\": \"250\",\n    \"description\": \"Test Test Test \",\n    \"url\": \"http://www.xyz.com\",\n    \"image\":\"file.png\",\n    \"spayc_id\":\"5,6\"\n\n    \"plan_id\":\"1\",\n    \"receipt\":\"test12345\",\n    \"platform\":\"IOS\",\n    \"purchase_date\":\"2018-04-17\"\n}",
         "type": "json"
       }
     ],
@@ -297,7 +332,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "{\n    \"id\": XX,\n    \"name\": \"Space Ad\",\n    \"price\": \"250\",\n    \"description\": \"Test Test Test \",\n    \"url\": \"http://www.xyz.com\",\n    \"image\":\"file.png\",\n}",
+        "content": "{\n    \"id\": XX,\n    \"name\": \"Space Ad\",\n    \"price\": \"250\",\n    \"description\": \"Test Test Test \",\n    \"url\": \"http://www.xyz.com\",\n    \"spayc_id\": \"2,3,4,1\",\n    \"image\":\"file.png\",\n}",
         "type": "json"
       }
     ],
@@ -316,35 +351,42 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "name",
-            "description": "<p>Advertisement Name.</p>"
+            "description": "<p>Advertisement Name.(Required).</p>"
           },
           {
             "group": "Parameter",
             "type": "Number",
             "optional": false,
             "field": "price",
-            "description": "<p>Advertisement Price.</p>"
+            "description": "<p>Advertisement Price.(Required).</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "url",
-            "description": "<p>Advertisement URL.</p>"
+            "description": "<p>Advertisement URL.(Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "spayc_id",
+            "description": "<p>Spayc List (Required).</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "description",
-            "description": "<p>Advertisement Description.</p>"
+            "description": "<p>Advertisement Description.(Required).</p>"
           },
           {
             "group": "Parameter",
             "type": "File",
             "optional": false,
             "field": "image",
-            "description": "<p>Advertisement Image.</p>"
+            "description": "<p>Advertisement Image.(Optional).</p>"
           }
         ]
       }
@@ -378,7 +420,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Advertisement Updated Successfully\",\n    \"data\": {\n        \"id\": 47,\n        \"user_id\": 1,\n        \"name\": \"New\",\n        \"price\": 255,\n        \"description\": \"description\",\n        \"url\": \"www.test.com\",\n        \"image\": \"https://spayc-qa.s3.amazonaws.com/room/handle_slider_20180405094347.png\",\n        \"status\": \"Pending\",\n        \"created\": \"2018-04-17 11:16:28\",\n        \"modified\": \"2018-04-17 12:16:40\",\n    }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Advertisement Updated Successfully\",\n    \"data\": {\n        \"id\": 127,\n        \"user_id\": 1,\n        \"name\": \"Test\",\n        \"price\": 250,\n        \"description\": \"test test\",\n        \"url\": \"http:\\/\\/www.xyz.com\",\n        \"image\": \"https://spayc-qa.s3.amazonaws.com/room/handle_slider_20180405094347.png\",\n        \"status\": \"Active\",\n        \"created\": \"04-20-2018 10:36:52\",\n        \"modified\": \"2018-04-20 12:54:59\",\n        \"views\": 500,\n        \"balance\": 500,\n        \"created_spayc\": \"2,3,4,1\"\n    }\n}",
           "type": "json"
         }
       ]
@@ -502,7 +544,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"List of Advertisement.\",\n    \"data\": [\n        {\n            \"id\": 48,\n            \"name\": \"asd\",\n            \"image\": \"https://spayc-qa.s3.amazonaws.com/room/test_20180402092149.png\",\n            \"price\": 250,\n            \"description\": \"asdasd\",\n            \"url\": null\n        },\n        {\n            \"id\": 49,\n            \"name\": \"asd\",\n            \"image\": \"https://spayc-qa.s3.amazonaws.com/room/test_20180402092707.png\",\n            \"price\": 250,\n            \"description\": \"asdasd\",\n            \"url\": null\n        },\n        {\n            \"id\": 50,\n            \"name\": \"asd\",\n            \"image\": \"https://spayc-qa.s3.amazonaws.com/room/test_20180402092717.png\",\n            \"price\": 250,\n            \"description\": \"asdasd\",\n            \"url\": null\n        },\n        {\n            \"id\": 51,\n            \"name\": \"asd\",\n            \"image\": \"https://spayc-qa.s3.amazonaws.com/room/test_20180402092736.png\",\n            \"price\": 250,\n            \"description\": \"asdasd\",\n            \"url\": null\n        },\n        {\n            \"id\": 52,\n            \"name\": \"Test\",\n            \"image\": \"https://spayc-qa.s3.amazonaws.com/room/test_20180402092815.png\",\n            \"price\": 250,\n            \"description\": \"asdasd\",\n            \"url\": null\n        }\n    ]\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"List of Advertisement.\",\n    \"data\": [\n        {\n            \"id\": 127,\n            \"name\": \"Test\",\n            \"image\": null,\n            \"price\": 250,\n            \"description\": \"test test\",\n            \"url\": \"http:\\/\\/www.xyz.com\",\n            \"status\": \"Pending\",\n            \"expired\": \"04-20-2018 13:57:20\"\n        },\n        {\n            \"id\": 126,\n            \"name\": \"test\",\n            \"image\": null,\n            \"price\": 250,\n            \"description\": \"Advertisement creating\",\n            \"url\": \"http:\\/\\/www.xyz.com\",\n            \"status\": \"Pending\",\n            \"expired\": null\n        },\n        {\n            \"id\": 125,\n            \"name\": \"test\",\n            \"image\": null,\n            \"price\": 250,\n            \"description\": \"Advertisement creating\",\n            \"url\": \"http:\\/\\/www.xyz.com\",\n            \"status\": \"Pending\",\n            \"expired\": null\n        },\n        {\n            \"id\": 124,\n            \"name\": \"test\",\n            \"image\": null,\n            \"price\": 250,\n            \"description\": \"Advertisement creating\",\n            \"url\": \"http:\\/\\/www.xyz.com\",\n            \"status\": \"Pending\",\n            \"expired\": null\n        },\n        {\n            \"id\": 123,\n            \"name\": \"test\",\n            \"image\": null,\n            \"price\": 250,\n            \"description\": \"Advertisement creating\",\n            \"url\": \"http:\\/\\/www.xyz.com\",\n            \"status\": \"Pending\",\n            \"expired\": null\n        }\n    ]\n}",
           "type": "json"
         }
       ]
@@ -619,7 +661,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n\"status\": \"success\",\n\"message\": \"Advertisement Details\",\n\"data\": {\n\"advertisement\": {\n        \"id\": 48,\n        \"name\": \"Space Ad\",\n        \"image\": \"https://spayc-qa.s3.amazonaws.com/room/test_20180402092149.png\",\n        \"price\": 250,\n        \"description\": \"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type \",\n        \"url\": \"http://sswww.xyz.com\",\n        \"status\": \"Pending\"\n        },\n\"spaycs\": [\n        {\n      \"name\": \"Public Sub Spyac\",\n      \"id\": \"5\",\n      \"type\": \"Community\",\n      \"image\": \"https://spayc-dev.s3.amazonaws.com/room/image_20180317103648.png\"\n      },\n        {\n      \"name\": \"Sam First Spyac\",\n      \"id\": \"2\",\n      \"type\": \"Community\",\n      \"image\": \"https://spayc-dev.s3.amazonaws.com/room/image_20180322083256.png\"\n      }\n      ],\n}\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Advertisement Details\",\n    \"data\": {\n        \"advertisement\": {\n            \"id\": 127,\n            \"name\": \"Test\",\n            \"image\": null,\n            \"price\": 250,\n            \"description\": \"test test\",\n            \"url\": \"http:\\/\\/www.xyz.com\",\n            \"status\": \"Pending\",\n            \"expired\": \"04-20-2018 13:57:20\"\n        },\n        \"spaycs\": [\n            {\n                \"name\": \"Sam First Spyac\",\n                \"id\": \"2\",\n                \"type\": \"Community\",\n                \"image\": \"https:\\/\\/spayc-dev.s3.amazonaws.com\\/room\\/image_20180322083256.png\"\n            },\n            {\n                \"name\": \"Community Type Sub Spyac\",\n                \"id\": \"4\",\n                \"type\": \"Community\",\n                \"image\": \"https:\\/\\/spayc-dev.s3.amazonaws.com\\/room\\/image_20180317083321.png\"\n            },\n            {\n                \"name\": \"@bot_1521192995:spayc-dev.kiwireader.com-@top_1521192957:spayc-dev.kiwireader.com\",\n                \"id\": \"1\",\n                \"type\": \"Community\",\n                \"image\": null\n            },\n            {\n                \"name\": \"Sam Second Community Spyace\",\n                \"id\": \"3\",\n                \"type\": \"Community\",\n                \"image\": \"https:\\/\\/spayc-dev.s3.amazonaws.com\\/room\\/image_20180317082917.png\"\n            }\n        ]\n    }\n}",
           "type": "json"
         }
       ]
@@ -1497,6 +1539,110 @@ define({ "api": [
     ]
   },
   {
+    "type": "get",
+    "url": "/meta-data.json",
+    "title": "Meta-Data",
+    "version": "0.1.0",
+    "name": "Meta_Data",
+    "group": "Plans",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>List of categories,sub-categories,plans with details.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<p>token must be in header.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>List of meta-data details.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>Object of List of categories and plans.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"Message\": \"List of meta-data details.\",\n    \"data\": {\n        \"categories\": [\n            {\n                \"id\": 1,\n                \"parent_id\": null,\n                \"name\": \"Music\",\n                \"slug\": \"music\",\n                \"description\": \"Music\",\n                \"created\": \"04-19-2018 21:00:59\",\n                \"modified\": \"04-19-2018 21:00:59\",\n                \"sub_categories\": [\n                    {\n                        \"id\": 2,\n                        \"parent_id\": 1,\n                        \"name\": \"Blues & Jazz\",\n                        \"slug\": \"blues-jazz\",\n                        \"description\": \"Blues & Jazz\",\n                        \"created\": \"04-19-2018 21:02:01\",\n                        \"modified\": \"04-19-2018 21:02:01\"\n                    }                    \n                ]\n            },\n            {\n                \"id\": 2,\n                \"parent_id\": 1,\n                \"name\": \"Blues & Jazz\",\n                \"slug\": \"blues-jazz\",\n                \"description\": \"Blues & Jazz\",\n                \"created\": \"04-19-2018 21:02:01\",\n                \"modified\": \"04-19-2018 21:02:01\",\n                \"sub_categories\": []\n            }\n        ],\n        \"plans\": [\n            {\n                \"id\": 1,\n                \"name\": \"Plan I\",\n                \"slug\": \"plan-1\",\n                \"amount\": 1,\n                \"currency\": \"USD\",\n                \"views\": 500,\n                \"created\": \"04-20-2018 15:07:23\",\n                \"modified\": \"04-20-2018 15:07:23\"\n            },            \n            {\n                \"id\": 4,\n                \"name\": \"Plan IV\",\n                \"slug\": \"plan-4\",\n                \"amount\": 10,\n                \"currency\": \"USD\",\n                \"views\": 6000,\n                \"created\": \"04-20-2018 15:10:22\",\n                \"modified\": \"04-20-2018 15:10:22\"\n            }\n        ]\n    }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/plans.js",
+    "groupTitle": "Plans",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/meta-data.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
     "type": "post",
     "url": "/chat-room.json",
     "title": "One to One Room",
@@ -2348,6 +2494,13 @@ define({ "api": [
     "parameter": {
       "fields": {
         "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "keyword",
+            "description": "<p>keyword which filter on spayc name only(Optional).</p>"
+          },
           {
             "group": "Parameter",
             "type": "Number",

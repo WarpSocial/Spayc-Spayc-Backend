@@ -438,7 +438,7 @@ class MatrixComponent extends Component {
         $roomId  = $this->validRoomId($data['matrix_room_id']);
         $http = new Client();
         if($data['status'] == 'Unbanned'){
-            $apiEndpoint = 'unban';
+            $apiEndpoint = 'unban';            
         }else{
             $apiEndpoint = 'ban';
         }
@@ -453,7 +453,7 @@ class MatrixComponent extends Component {
         if(!empty($response['errcode'])){            
             //return $this->errorMsg($response['errcode']);
             return $response['error'];
-        }else{
+        }else{            
             return true;
         }
     }

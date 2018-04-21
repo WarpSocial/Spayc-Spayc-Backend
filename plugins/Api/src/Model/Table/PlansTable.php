@@ -5,7 +5,8 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
-
+use Cake\Collection\CollectionInterface;
+use Api\Utils\Utils;
 /**
  * Plans Model
  *
@@ -79,5 +80,22 @@ class PlansTable extends Table
             ->notEmpty('status');
 
         return $validator;
+    }
+    
+    /**
+     * AllPlans to get all the active plans
+     * 
+     * @return Object Array of object contain plan details
+     */
+    public function allPlans(){
+        $items = $this->find()
+                ->select(['id','name','slug','amount','currency','views','created','modified'])
+                ->where(['status'=>ACTIVE])
+                ->map(function($row){
+                    $row->created = Utils::toClient($row->created);
+                    $row->modified = Utils::toClient($row->modified);
+                    return $row;
+                });
+        return $items;
     }
 }
