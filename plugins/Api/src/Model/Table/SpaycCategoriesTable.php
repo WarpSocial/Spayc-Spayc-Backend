@@ -6,7 +6,8 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
-
+use Cake\Collection\CollectionInterface;
+use Api\Utils\Utils;
 /**
  * SpaycCategories Model
  *
@@ -45,7 +46,7 @@ class SpaycCategoriesTable extends Table {
             'className' => 'Api.SpaycCategories',
             'foreignKey' => 'parent_id'
         ]);
-        $this->hasMany('ChildSpaycCategories', [
+        $this->hasMany('subCategories', [
             'className' => 'Api.SpaycCategories',
             'foreignKey' => 'parent_id'
         ]);
@@ -103,6 +104,32 @@ class SpaycCategoriesTable extends Table {
         $rules->add($rules->existsIn(['parent_id'], 'ParentSpaycCategories'));
 
         return $rules;
+    }
+    
+    /*
+     * allCategories method to returnt he active categoris with sub-categories
+     * 
+     * @return array of all categegories and subcategories or false
+     * 
+     */
+    public function allCategories(){
+        $categories = $this->find()
+                ->select(['id','parent_id','name','slug','description','created','modified'])
+                ->contain(['subCategories'=>function($q){
+                    return $q->select(['id','parent_id','name','slug','description','created','modified'])->where(['subCategories.status'=>ACTIVE]);                    
+                }])->where(['SpaycCategories.status'=>ACTIVE])
+                ->map(function($row){
+                    $row->created = Utils::toClient($row->created);
+                    $row->modified = Utils::toClient($row->modified);
+                    if(!empty($row->sub_categories)){
+                        foreach($row->sub_categories as $skey => $subrow){
+                            $row->sub_categories[$skey]->created = Utils::toClient($subrow->created);
+                            $row->sub_categories[$skey]->modified = Utils::toClient($subrow->modified);
+                        };
+                    }
+                    return $row;
+                });
+        return $categories;        
     }
 
 }

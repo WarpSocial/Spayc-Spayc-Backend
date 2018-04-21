@@ -358,10 +358,10 @@ SELECT create_hypertable('spayc_promotion_priority', 'created');
 CREATE TABLE "purchase" (
     "id" BIGSERIAL NOT NULL,
     "plan_id" BIGINT NULL,
-    "receipt" VARCHAR(200) NULL,
+    "receipt" text NULL,
     "promotion_id" BIGINT NULL,
     "advertisement_id" BIGINT NULL,
-    "plateform" BIGINT NULL,
+    "platform" VARCHAR(100) NULL,
     "purchase_date" timestamp,
     "created" timestamp,
     "modified" timestamp,
@@ -370,12 +370,13 @@ CREATE TABLE "purchase" (
 SELECT create_hypertable('purchase', 'created');
 CREATE TABLE "plans" (
     "id" BIGSERIAL NOT NULL,
-    "name" VARCHAR(200) NULL,
+    "name" VARCHAR(200) NULL,    
     "slug" VARCHAR(200) NULL,
     "amount" DECIMAL(7,2) NULL,
     "currency" VARCHAR(20) NULL,
     "views" INTEGER NULL,
     "status" row_status NOT NULL DEFAULT 'Active',
+    "identifier" VARCHAR(200) NULL,
     "created" timestamp,
     "modified" timestamp,
     PRIMARY KEY ("id","created")
