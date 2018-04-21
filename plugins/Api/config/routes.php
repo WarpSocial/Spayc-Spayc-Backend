@@ -72,6 +72,7 @@ Router::plugin(
         
         /* for plan */
         $routes->connect('/meta-data', ['controller' => 'Plans', 'action' => 'metaData']);
+        $routes->connect('/add-promotional-spayc', ['controller' => 'Plans', 'action' => 'addPromotionalSpayc']);
         
         
         $routes->fallbacks(DashedRoute::class);
