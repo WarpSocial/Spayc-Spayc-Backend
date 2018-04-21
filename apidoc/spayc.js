@@ -837,6 +837,7 @@ function getnearAboutSpayces() { return; }
  @apiHeader {String} TOKEN            * A token send by header as TOKEN
  @apiHeader {String} timezone         * User time zone
  
+ @apiParam {String}      keyword     keyword which filter on spayc name only(Optional).
  @apiParam {Number}      page            Page number in query string (Optional).
  @apiParam {Number}      limit           Limit in query string (Optional).
 
