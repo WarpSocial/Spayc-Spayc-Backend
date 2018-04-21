@@ -247,6 +247,18 @@ ALTER TABLE "joined_spayc" ADD "updated_by" bigint NULL;
 ALTER TABLE "spaycs" ADD "parent_id" bigint NULL;
 ALTER TABLE "joined_spayc" ADD "is_admin" smallint NOT NULL DEFAULT '0';
 
+
+CREATE TABLE "spayc_advertisement_priority" (
+    "id" BIGSERIAL NOT NULL,
+    "spayc_id" BIGINT NULL,
+    "priority" INTEGER NULL,
+    "comment_count" INTEGER NULL,
+    "created" timestamp,
+    "modified" timestamp,
+    PRIMARY KEY ("id","created")
+);
+SELECT create_hypertable('spayc_advertisement_priority', 'created');
+
 -- 15-march 2018 for admin  --
 CREATE TABLE roles (
    id BIGSERIAL NOT NULL,
