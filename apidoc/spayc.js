@@ -1003,7 +1003,7 @@ function hashTagSpaycs() { return; }
     "message": "List of Data.",
     "data": {
         "spaycs": {
-            "count": 1,
+            "count": 2,
             "records": [
                 {
                     "id": "3",
@@ -1011,11 +1011,25 @@ function hashTagSpaycs() { return; }
                     "matrix_room_id": "!MvOssNcvbePXoBUIjC:spayc-dev.kiwireader.com",
                     "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180317082917.png",
                     "type": "Community",
+                    "modified": "2018-03-17T08:29:17+00:00",
                     "latitude": 28.7041,
                     "longitude": 77.1025,
                     "is_joined": true,
-                    "joined_users": 3,
+                    "joined_users": 2,
                     "is_subscribed": true
+                },
+                {
+                    "id": "4",
+                    "name": "Community Type Sub Spyac",
+                    "matrix_room_id": "!nQPjgmlBePZsAyVvQH:spayc-dev.kiwireader.com",
+                    "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180317083321.png",
+                    "type": "Community",
+                    "modified": "2018-03-17T08:33:21+00:00",
+                    "latitude": 28.7041,
+                    "longitude": 77.1025,
+                    "is_joined": false,
+                    "joined_users": 0,
+                    "is_subscribed": false
                 }
             ]
         },
@@ -1029,6 +1043,7 @@ function hashTagSpaycs() { return; }
                     "address": null,
                     "latitude": 28.579403737919,
                     "longitude": 77.320890067264,
+                    "modified": "2018-03-16T09:36:35+00:00",
                     "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
                 },
                 {
@@ -1038,6 +1053,7 @@ function hashTagSpaycs() { return; }
                     "address": null,
                     "latitude": 28.7041,
                     "longitude": 77.1025,
+                    "modified": "2018-03-17T08:21:47+00:00",
                     "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
                 }
             ]
