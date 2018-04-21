@@ -99,17 +99,15 @@ if(isset($this->request->query['sort'])) {
                   <span><?= !empty($user->address)?h($user->address):BLANK ?></span>
                 </div>
                 <div class="table-data flex-basis9">
-                  <span><?= !empty($user->joined_spayc[0]->joined_spaycs)?$user->joined_spayc[0]->joined_spaycs:BLANK_COUNT ?>
-                            <!-- !empty($user->joined_spayc[0]->joined_spaycs)?
+                  <span><?= !empty($user->joined_spayc[0]->joined_spaycs)?
                             $this->Html->link($user->joined_spayc[0]->joined_spaycs,['controller' => 'Spaycs', 'action' => 'joined-warps',$user->id], ['class' => 'num-letter-spacing']):
-                            BLANK_COUNT -->
+                            BLANK_COUNT ?>
                   </span>
                 </div>
                 <div class="table-data flex-basis9">
-                  <span><?= !empty($user->spaycs[0]->created_spaycs)?$user->spaycs[0]->created_spaycs:BLANK_COUNT ?>
-                           <!--  !empty($user->spaycs[0]->created_spaycs)?
+                  <span><?= !empty($user->spaycs[0]->created_spaycs)?
                           $this->Html->link($user->spaycs[0]->created_spaycs,['controller' => 'Spaycs', 'action' => 'createdWarps',$user->id], ['class' => 'num-letter-spacing']):
-                            BLANK_COUNT -->
+                            BLANK_COUNT ?>
                   </span>
                 </div>
                 <div class="table-data flex-basis10">
@@ -130,10 +128,10 @@ if(isset($this->request->query['sort'])) {
                       <span></span>
                     </div>
                     <div class="dropdown-menu" aria-labelledby="table-data-dropdown">
-                      <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
-                      <?php  //$blocktxt = (ucfirst($user->status) == $statusArr['active'])?"Block":"Unblock";?>
-                      <!-- <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item status_<?= $user->id?> <?php //echo strtolower($blocktxt)?>" page="<?php //echo Router::url(['Controller' => 'Users', 'action'=> 'setUserStatus',$user->id]);?>"><i class='icon-block'></i><span class="status_<?= $user->id?>"><?php //echo $blocktxt?></span>
-                      </a> -->
+                      <button class="dropdown-item block hide"> <i class="icon-block"></i>Block</button>
+                      <?php  $blocktxt = (ucfirst($user->status) == $statusArr['active'])?"Block":"Unblock";?>
+                      <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item status_<?= $user->id?> <?= strtolower($blocktxt)?>" page="<?php echo Router::url(['Controller' => 'Users', 'action'=> 'setUserStatus',$user->id]);?>"><i class='icon-block'></i><span class="status_<?= $user->id?>"><?= $blocktxt?></span>
+                      </a>
                     </div>
                   </div>
                 </div>
