@@ -372,23 +372,10 @@ class JoinSpaycsController extends AppController {
             $rule = 'Unmute';
         }
         $this->Matrix->muteUnmute($rule,$BannedUserStatus->user->matrix_access_token, $spayc->matrix_room_id);
-        if($jsModel->save($BannedUserStatus)){            
-            $push = [
-                'slug' => 'blocked',
-                'requested_by' => $user['id'],
-                'requested_to' => $data['user_id'],
-                'spayc_id' => $spayc->id,
-                'spayc_name' => $spayc->name,
-                'spayc_image' => $spayc->image,
-                'matrix_room_id' => $spayc->matrix_room_id,
-                'display_name' => $user['display_name']                
-            ];
+        if($jsModel->save($BannedUserStatus)){                        
             if($data['status'] == 'Banned'){
                 TableRegistry::get('Api.SubscribedUsers')->removeSubscription($data['user_id'],$spayc->id);                
-            }else{
-                $push['slug'] = 'unblocked-by-admin';
-            }            
-            $this->Push->sendPushNotification($push);            
+            }
             $response = ['status'=>'success','message'=>__('User has been '.$data['status'].' successfully.')];
         }else{
             $this->response->statusCode(400);
@@ -457,7 +444,8 @@ class JoinSpaycsController extends AppController {
         $data['matrix_room_id'] = $spayc->matrix_room_id;
         $data['matrix_token'] = $spayc['user']->matrix_access_token;        
       
-        $matrix = $this->Matrix->removeMember($data);
+        //$matrix = $this->Matrix->removeMember($data);
+        $matrix = $this->Matrix->leaveRoom($data);
         if(is_string($matrix)) {
             $this->restException(['status'=>'failed','message'=>__($matrix)],400);
         }

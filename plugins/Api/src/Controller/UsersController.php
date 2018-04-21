@@ -1198,7 +1198,7 @@ class UsersController extends AppController {
                 $row->image_url = !empty($row['user_images'][0]['image_url'])?$row['user_images'][0]['image_url']:'';
                 //unset($row['requestedto']);
                 //unset($row['requestedby']);
-                unset($row['user_images']);
+                unset($row['user_images'],$row['matrix_access_token']);
                 return $row;
             });
         });
