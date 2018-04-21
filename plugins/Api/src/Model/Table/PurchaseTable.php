@@ -1,4 +1,5 @@
 <?php
+
 namespace Api\Model\Table;
 
 use Cake\ORM\Query;
@@ -23,8 +24,7 @@ use Cake\Validation\Validator;
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class PurchaseTable extends Table
-{
+class PurchaseTable extends Table {
 
     /**
      * Initialize method
@@ -32,8 +32,7 @@ class PurchaseTable extends Table
      * @param array $config The configuration for the Table.
      * @return void
      */
-    public function initialize(array $config)
-    {
+    public function initialize(array $config) {
         parent::initialize($config);
 
         $this->setTable('purchase');
@@ -56,45 +55,4 @@ class PurchaseTable extends Table
         ]);
     }
 
-    /**
-     * Default validation rules.
-     *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
-     */
-    public function validationDefault(Validator $validator)
-    {
-        $validator
-            ->allowEmpty('id', 'create');
-
-        $validator
-            ->scalar('receipt')
-            ->maxLength('receipt', 200)
-            ->allowEmpty('receipt');
-
-        $validator
-            ->allowEmpty('plateform');
-
-        $validator
-            ->dateTime('purchase_date')
-            ->allowEmpty('purchase_date');
-
-        return $validator;
-    }
-
-    /**
-     * Returns a rules checker object that will be used for validating
-     * application integrity.
-     *
-     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
-     * @return \Cake\ORM\RulesChecker
-     */
-    public function buildRules(RulesChecker $rules)
-    {
-        $rules->add($rules->existsIn(['plan_id'], 'Plans'));
-        $rules->add($rules->existsIn(['promotion_id'], 'Promotions'));
-        $rules->add($rules->existsIn(['advertisement_id'], 'Advertisements'));
-
-        return $rules;
-    }
 }

@@ -44,6 +44,14 @@ class PromotionsTable extends Table
             'foreignKey' => 'spayc_id',
             'className' => 'Api.Spaycs'
         ]);
+        $this->hasOne('Purchase', [
+            'foreignKey' => 'promotion_id',
+            'className' => 'Api.Purchase'
+        ]);
+        $this->belongsToMany('Spaycs', [
+            'joinTable' => 'spayc_promotion',            
+            'className' => 'Api.Spaycs'
+        ]);
        
     }
 

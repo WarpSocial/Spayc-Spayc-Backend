@@ -327,8 +327,10 @@ SELECT create_hypertable('spayc_categories', 'created');
 CREATE TABLE "promotions" (
     "id" BIGSERIAL NOT NULL,
     "spayc_id" BIGINT NULL,
+    "user_id" BIGINT NULL,
     "views" numeric(50) NULL,
     "balanced_views" numeric(50) NULL,
+    "amount" DECIMAL(7,2) NULL,
     "status" row_status NOT NULL DEFAULT 'Active',
     "created" timestamp,
     "modified" timestamp,

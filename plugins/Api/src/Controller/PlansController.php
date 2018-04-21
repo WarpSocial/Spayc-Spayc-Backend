@@ -6,6 +6,7 @@ use Api\Controller\AppController;
 use Cake\ORM\TableRegistry;
 use Cake\Core\Configure;
 use Api\Utils;
+use Cake\Utility\Hash;
 /**
  * Plans Controller
  *
@@ -36,18 +37,35 @@ class PlansController extends AppController {
         if (!$this->request->is('post')) {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
         }
-        $errors = $this->Spaycs->validateSubspace($data);
+        $data= $this->request->getData();        
+        $errors = $this->Plans->validatePromotionalSpayc($data);
         if(!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
-        $entity = $this->Spaycs->find()->contain('JoinedSpayc',function($q)use($user){
-            return $q->where(['user_id'=>$user['id'],'status'=>'Joined']);
-        });
-        $entity->where($this->Spaycs->spaycPk($data['parent_matrix_room_id']));
-        $entity->where(['group_type !='=>'trusted_private']);        
-        if($entity->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>__('Parent spayc is no longer available.')], 400);
+        $user = $this->Auth->user();
+        $data['pspaycs'] = explode(',', $data['spayc_promotional_id'].','.$data['spayc_id']) ;
+        $sRepo = TableRegistry::get('Api.Spaycs');
+        $spaycs = $sRepo->find('list')->where(['id IN'=> $data['pspaycs']])->toArray();
+        $spaycIds = array_keys($spaycs);
+        if(!in_array($data['spayc_id'],$spaycIds)){
+            $this->restException(['status'=>'failed', 'message'=> __('Spayc is no longer available.')], 400);
         }
+        if(!empty(array_diff($data['pspaycs'],$spaycIds))){
+            $this->restException(['status'=>'failed', 'message'=> __('Some of promotional spayc is no longer available.')], 400);
+        }
+        $plan = $this->Plans->get($data['plan_id']);
+        $data['views'] = $data['balanced_views'] = $plan->views;
+        $data['amount'] = $plan->amount;
+        $data['user'] = $user['id'];
+        $data['plan_id'] = $plan->id;
+        $pRepo = TableRegistry::get('Api.Promotions');
+        $pRepo->getConnection()->begin();
+        $promotion = $pRepo->newEntity($data);
+        $data->save($promotion);
+        $pRepo->getConnection()->commit();
+        $pRepo->getConnection()->rollback();
+        $promo = $pRepo->find()->contain(['Purchase','SpaycPromotion','SpaycPromotionPriority']);
+        pj($promo);die;
         $this->set($response);
     }
 }
