@@ -1497,6 +1497,110 @@
     ]
   },
   {
+    "type": "get",
+    "url": "/meta-data.json",
+    "title": "Meta-Data",
+    "version": "0.1.0",
+    "name": "Meta_Data",
+    "group": "Plans",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>List of categories,sub-categories,plans with details.</p> ",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<p>token must be in header.</p> "
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p> "
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>List of meta-data details.</p> "
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>Object of List of categories and plans.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"Message\": \"List of meta-data details.\",\n    \"data\": {\n        \"categories\": [\n            {\n                \"id\": 1,\n                \"parent_id\": null,\n                \"name\": \"Music\",\n                \"slug\": \"music\",\n                \"description\": \"Music\",\n                \"created\": \"04-19-2018 21:00:59\",\n                \"modified\": \"04-19-2018 21:00:59\",\n                \"sub_categories\": [\n                    {\n                        \"id\": 2,\n                        \"parent_id\": 1,\n                        \"name\": \"Blues & Jazz\",\n                        \"slug\": \"blues-jazz\",\n                        \"description\": \"Blues & Jazz\",\n                        \"created\": \"04-19-2018 21:02:01\",\n                        \"modified\": \"04-19-2018 21:02:01\"\n                    }                    \n                ]\n            },\n            {\n                \"id\": 2,\n                \"parent_id\": 1,\n                \"name\": \"Blues & Jazz\",\n                \"slug\": \"blues-jazz\",\n                \"description\": \"Blues & Jazz\",\n                \"created\": \"04-19-2018 21:02:01\",\n                \"modified\": \"04-19-2018 21:02:01\",\n                \"sub_categories\": []\n            }\n        ],\n        \"plans\": [\n            {\n                \"id\": 1,\n                \"name\": \"Plan I\",\n                \"slug\": \"plan-1\",\n                \"amount\": 1,\n                \"currency\": \"USD\",\n                \"views\": 500,\n                \"created\": \"04-20-2018 15:07:23\",\n                \"modified\": \"04-20-2018 15:07:23\"\n            },            \n            {\n                \"id\": 4,\n                \"name\": \"Plan IV\",\n                \"slug\": \"plan-4\",\n                \"amount\": 10,\n                \"currency\": \"USD\",\n                \"views\": 6000,\n                \"created\": \"04-20-2018 15:10:22\",\n                \"modified\": \"04-20-2018 15:10:22\"\n            }\n        ]\n    }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/plans.js",
+    "groupTitle": "Plans",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/meta-data.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p> "
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p> "
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
     "type": "post",
     "url": "/chat-room.json",
     "title": "One to One Room",

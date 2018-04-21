@@ -70,6 +70,10 @@ Router::plugin(
         $routes->connect('/read-notifications', ['controller' => 'Users', 'action' => 'readNotification']);
         $routes->connect('/transactions/:id', ['controller' => 'Spaycs', 'action' => 'matrixApplicationService'],['pass'=>['id']]);
         
+        /* for plan */
+        $routes->connect('/meta-data', ['controller' => 'Plans', 'action' => 'metaData']);
+        
+        
         $routes->fallbacks(DashedRoute::class);
     }
 );

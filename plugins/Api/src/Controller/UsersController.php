@@ -1476,7 +1476,10 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
         $jsModel = TableRegistry::get('Api.JoinedSpayc');
-        $entities = $jsModel->find()->where(['spayc_id'=>$data['spayc_id'],'user_id IN'=>[$data['user_id'],$user['id']]]);
+        $entities = $jsModel->find()
+                ->contain(['Spaycs' => function($q) {
+                    return $q->select(['Spaycs.id', 'Spaycs.name', 'Spaycs.matrix_room_id', 'Spaycs.image']);
+            }])->where(['JoinedSpayc.spayc_id'=>$data['spayc_id'],'JoinedSpayc.user_id IN'=>[$data['user_id'],$user['id']]]);
         if($entities->isEmpty()){
             $this->restException(['status'=>'failed','message'=>__('User has not joined this spayc.')], 400);
         }
@@ -1504,7 +1507,6 @@ class UsersController extends AppController {
         if($entity->is_admin == $data['role']){
             $this->restException(['status'=>'failed','message'=>__('User has already been admin.')], 400);
         }
-        
         $entity->is_admin = $data['role'];
         $entity->modified = new \Cake\I18n\Time();
         $entity->updated_by = $this->Auth->user('id');
@@ -1513,6 +1515,7 @@ class UsersController extends AppController {
             $push['username'] = $user['username'];
             $push['display_name'] = $user['display_name'];
             $push['requested_to'] = $data['user_id'];
+            $push['matrix_room_id'] = $entity->spayc->matrix_room_id;
             $push['spayc_id'] = $data['spayc_id']; //provide spayc id if push related to spayc
             $push['slug'] = 'admin-asigned';
             $this->Push->sendPushNotification($push);
