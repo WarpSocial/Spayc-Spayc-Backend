@@ -140,7 +140,15 @@ class UsersTable extends Table {
                 ->requirePresence('email', 'create',__('Email is required field.'))
                 ->notEmpty('email',__('Email is required field.'))
                 ->email('email', false, __('Invalid email address.'))                
-                ->add('email', 'unique', ['rule' => 'validateUnique','message'=>__('Email already exist.'), 'provider' => 'table']) ;
+                ->add('email', 'unique', [
+                    'rule' => function($value,$context){
+                        if(!empty($value)){                            
+                             return !$this->exists(['LOWER(email)'=> strtolower($value)]);
+                        }else{
+                            return false;
+                        }
+                    },
+                    'message'=>__('Email already exist.')]) ;
         
         $validator
                 ->notEmpty('country_code',__('Country code is required field.'),function($context){
@@ -485,8 +493,8 @@ class UsersTable extends Table {
      * @param \Cake\Validation\Validator $validator Validator instance.
      * @return \Cake\Validation\Validator
      */
-    public function validationChangePassword(Validator $validator, $userId = null) {
-        
+    public function validationChangePassword($data,$userId = null) {
+        $validator = new Validator();
         $validator
                 ->requirePresence('old_password', 'create',__('Previous password is required field.'))
                 ->notEmpty('old_password',__('Previous password is required field.'))
@@ -504,7 +512,7 @@ class UsersTable extends Table {
         $validator
                 ->requirePresence('new_password', 'create',__('New password is required field.'))
                 ->notEmpty('new_password',__('New password is required field.'))
-                ->add("new_password",'custom',[
+                ->add("new_password",'passwordrule',[
                     'rule'=>function($value,$context) {
                         if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,30}$/', $value)){
                             return false;
@@ -526,8 +534,7 @@ class UsersTable extends Table {
                 ->requirePresence('confirm_password', 'create', __('Confirm password is required field.'))
                 ->notEmpty('confirm_password', __('Confirm password is required field.'))
                 ->sameAs('confirm_password', 'new_password',__('New password and confirm password must be matched.'));
-        
-        return $validator;
+        return $validator->errors($data);
     }
 
     /**

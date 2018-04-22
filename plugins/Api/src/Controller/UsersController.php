@@ -493,14 +493,15 @@ class UsersController extends AppController {
         if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
             $this->restException(['status'=>'failed', 'message'=>__('Invalid email address.')], 400);
         }
-        $user = $this->Users->findByEmail($data['email']);
+        $user = $this->Users->find()->where(['LOWER(email)'=> strtolower($data['email'])]);
         if(!$user->count()) {
             $this->restException(['status'=>'failed', 'message'=>__('Something went wrong.')], 400);
         }
         $user = $user->first();
+        $user->email = strtolower($user->email);
         $user['forgot_password_token'] = $data['forgot_password_token'] = sha1(uniqid(rand(), true));
         $data['forgot_password_timestamp'] = time();
-        $d = $this->Users->updateAll($data, ['email'=>$data['email']]);
+        $d = $this->Users->updateAll($data, ['LOWER(email)'=> strtolower($data['email'])]);
         $this->getMailer('Api.User')->send('forgotPassword', [$user]);
         $response = ['status' => "success", 'message' => __('Reset password link has been sent to your email address.')];
         $this->set($response);
@@ -511,7 +512,7 @@ class UsersController extends AppController {
         if (!$token || !$email) {
             throw new NotFoundException(__('Missing required information. Please read email carefully and try again.'));
         }
-        $user = $this->Users->findByEmail($email)->first();
+        $user = $this->Users->find()->where(['LOWER(email)'=> strtolower($email)])->first();
         if (!$user) {
             $status = 'error';
             $this->Flash->error(__('Failed to reset the password.'));            
@@ -535,6 +536,7 @@ class UsersController extends AppController {
                 $user->status = 'Active';
                 $user->password = $data['password'];
                 $user->forgot_password_token = null;
+                $user->forgot_password_timestamp = null;
                 if ($this->Users->save($user)) {
                     $matrixData = [
                         'old_password' => $previousPassword,
@@ -565,12 +567,10 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
         $data_item = \Api\Utils\Utils::escape($this->request->data);
-        $validator = new \Cake\Validation\Validator();
-        $validator = $this->Users->validationChangePassword($validator, $this->Auth->user('id'));
-        $errors = $validator->errors($data_item);
+        $errors = $this->Users->validationChangePassword($data_item, $this->Auth->user('id'));
         if($errors) {
             $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($errors)], 400);
-        } 
+        }
         if(!empty($this->Auth->user('UserLogs.matrix_user_id')) && !empty($this->Auth->user('UserLogs.matrix_access_token'))) {
             $this->loadComponent('Api.Matrix');
             $data_item['matrix_user_id'] = $this->Auth->user('UserLogs.matrix_user_id');
@@ -805,7 +805,7 @@ class UsersController extends AppController {
         if(!$requestedFrnd->isEmpty()){
             $currentStatus = $requestedFrnd->first()->requested_status;
             if(in_array($currentStatus, ['Pending', 'Accepted', 'Blocked'])) {
-                $this->restException(['status'=>'failed', 'message'=>__('Friend request already sent status is '.$currentStatus.'.')], 400);
+                $this->restException(['status'=>'failed', 'message'=>__('You have been already '.$currentStatus.'.')], 400);
             }
         }
         if($requestedFrnd->isEmpty()){
@@ -1454,10 +1454,10 @@ class UsersController extends AppController {
         /*if(($isNotify=='On' && !empty($data['device_token'])) && strlen($data['device_token'])<64) {
             $this->restException(['status'=>'failed','message'=>'Invalid device token'], 400);
         }*/
-        $update['users']['is_notify'] = $isNotify;
-        $update['user_logs']['device_id'] = $data['device_token'];
-        $this->Users->UpdateAll(['is_notify'=>$isNotify], ['Users.id'=>$this->Auth->user('id')]);
-        TableRegistry::get('Api.UserLogs')->UpdateAll(['device_id'=>$data['device_token'], 'modified'=>date('Y-m-d H:i:s')], ['user_id'=>$this->Auth->user('id')]);
+        
+        $modified = new \Cake\I18n\Time();        
+        $this->Users->UpdateAll(['is_notify'=>$isNotify, 'modified'=>$modified], ['Users.id'=>$this->Auth->user('id')]);
+        TableRegistry::get('Api.UserLogs')->UpdateAll(['device_token'=>$data['device_token'], 'modified'=>$modified], ['user_id'=>$this->Auth->user('id')]);
         $response = ['status'=>'success', 'message'=>__('Device token updated successfully.')];
         $this->set($response);
     }

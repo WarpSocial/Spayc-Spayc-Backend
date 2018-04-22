@@ -117,7 +117,7 @@ class PushComponent extends Component {
             }
            
             $notificationType = $notificationType->first();
-            $deviceId = TableRegistry::get("Api.UserLogs")->findByUserId($data['requested_to'])->select(['id', 'user_id', 'device_id']);
+            $deviceId = TableRegistry::get("Api.UserLogs")->findByUserId($data['requested_to'])->select(['id', 'user_id', 'device_id','device_token']);
             if($deviceId->isEmpty()) {
                 return false;
             }
@@ -150,7 +150,7 @@ class PushComponent extends Component {
             //$userInputTime = new \DateTime("now", new \DateTimeZone('America/New_York') );
             //echo $userInputTime->format('Y-m-d H:i:s');
             $data['time'] =  $userInputTime->format("m-d-Y H:i:s");
-            $data['device_token'] = $deviceId->device_id;
+            $data['device_token'] = $deviceId->device_token;
             $data['notification_type'] = $notificationType->type;
             //pr($data);die;
             /* Save the record in db*/
@@ -162,7 +162,7 @@ class PushComponent extends Component {
             /* end of saving  */
             /* Send notification */
             if(!empty($data['device_token'])) {
-                if(strlen($deviceId->device_id)<64) {
+                if(strlen($deviceId->device_token)<64) {
                     //return false;
                 }
                 TableRegistry::get('Queue.QueuedJobs')->createJob('Notification',$data);

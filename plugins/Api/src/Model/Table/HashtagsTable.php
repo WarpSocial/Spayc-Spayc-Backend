@@ -142,6 +142,7 @@ class HashtagsTable extends Table
             return false;
         }
         $spHashtags = TableRegistry::get('Api.SpaycHashtags');
+        $spHashtags->deleteAll(['spayc_id'=>$spaycId]);
         foreach($matches[1] as $key=>$hash) {
             $entity = $this->find("all")->select(["id", "name"])->where(['LOWER(name)'=>  strtolower($hash)]);
             if(!$entity->isEmpty()) {

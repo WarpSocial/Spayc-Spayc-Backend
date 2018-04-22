@@ -66,7 +66,7 @@ class ApiAuthenticate extends BaseAuthenticate {
         $table = TableRegistry::get('Api.'.$this->_config['userModel']);
         $user = $table->find()->matching('UserLogs',function($q)use($token){
             return $q
-                    ->select(['id','user_id','plain_token','token','matrix_access_token','device_id','matrix_user_id','login_status','last_login'])
+                    ->select(['id','user_id','plain_token','token','matrix_access_token','device_token','device_id','matrix_user_id','login_status','last_login'])
                     ->where(['plain_token'=>$token]);
             
         })->where(['Users.status'=>'Active']);
@@ -117,7 +117,7 @@ class ApiAuthenticate extends BaseAuthenticate {
         $userModel = 'Api.'.$this->_config['userModel'];
         list($plugin, $model) = pluginSplit($userModel);
         $fields = $this->_config['fields'];
-        $conditions = [$fields['username']=>$username];
+        $conditions = ['LOWER('.$fields['username'].')'=> strtolower($username)];
         if (!empty($this->_config['scope'])) {
             $conditions = array_merge($conditions, $this->_config['scope']);
         }
