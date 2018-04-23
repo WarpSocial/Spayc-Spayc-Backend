@@ -73,6 +73,7 @@ class PlansTable extends Table {
                 ]);
         $validator
                 ->requirePresence('receipt','create', __('Please provide the receipt.'))
+                ->maxLength('receipt', 500,__('Receipt must be lower than 500 character.'))
                 ->allowEmpty('receipt',__('Please provide the receipt.'));
         $validator
                 ->requirePresence('purchase_date','create', __('Please provide the purchase date.'))
@@ -80,6 +81,7 @@ class PlansTable extends Table {
                 ->dateTime('purchase_date','mdy',__('Purchase date is not valid.'));
         $validator
                 ->requirePresence('platform','create', __('Please provide the platform.'))
+                ->maxLength('platform', 100,__('Platform must be lower than 100 character.'))
                 ->notEmpty('platform',__('Please provide the platform.'));
               
          return $validator->errors($data);

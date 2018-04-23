@@ -71,8 +71,7 @@ class PlansController extends AppController {
             //'spaycs'=>['_ids'=>explode(',',$data['spayc_id'])],
             'purchase'=>$purchase
         ];
-        //pr($promotions);die;
-        //echo "<pre>";print_r($promotions);die;
+        
         $pRepo = TableRegistry::get('Api.Promotions');
         $pRepo->getConnection()->begin();        
         
@@ -81,23 +80,25 @@ class PlansController extends AppController {
         if($items->errors()) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
         }
+        $sppRepo = TableRegistry::get('Api.SpaycPromotionPriority');
         if($pRepo->save($items)){
-            $sppRepo = TableRegistry::get('Api.SpaycPromotionPriority');
-            if(!$sppRepo->exists(['spayc_id'=>$data['spayc_promotional_id']])){
-                $sppItems = $sppRepo->newEntity(['spayc_id'=>$data['spayc_promotional_id'],'priority'=>0,'comment_count'=>0]);
-                $sppRepo->save($sppItems);
-            }
-            
             foreach(explode(',',$data['spayc_id']) as $key=>$value){
                 $spayc = ['spayc_id'=>$value,'promotion_id'=>$items->id];   
                 $spEntity = $pRepo->SpaycPromotion->newEntity($spayc);
                 $pRepo->SpaycPromotion->save($spEntity);
+                
+                if(!$sppRepo->exists(['spayc_id'=>$value])){
+                    $sppItems = $sppRepo->newEntity(['spayc_id'=>$value,'priority'=>0,'comment_count'=>0]);
+                    $sppRepo->save($sppItems);
+                }
             }
             $pRepo->getConnection()->commit();
+            $this->response->statusCode(201);
+            unset($data['pspaycs']);
             $response = ['status'=>'success','message'=>__('Promotion has been created successfully.'),'data'=>$data];
         }else{
             $pRepo->getConnection()->rollback();
-            $response = ['status'=>'failed','message'=>__('Failed to create new promotion'),'data'=>$data];
+            $response = ['status'=>'failed','message'=>__('Failed to create new promotion')];
         }
         
         $this->set($response);
