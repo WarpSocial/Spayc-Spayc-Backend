@@ -1,4 +1,5 @@
 <?php
+
 namespace Api\Model\Entity;
 
 use Cake\ORM\Entity;
@@ -20,8 +21,7 @@ use Cake\ORM\Entity;
  * @property \Api\Model\Entity\Promotion $promotion
  * @property \Api\Model\Entity\Advertisement $advertisement
  */
-class Purchase extends Entity
-{
+class Purchase extends Entity {
 
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
@@ -33,15 +33,7 @@ class Purchase extends Entity
      * @var array
      */
     protected $_accessible = [
-        'plan_id' => true,
-        'receipt' => true,
-        'promotion_id' => true,
-        'advertisement_id' => true,
-        'platform' => true,
-        'purchase_date' => true,
-        'modified' => true,
-        'plan' => true,
-        'promotion' => true,
-        'advertisement' => true
+        '*'=>true
     ];
+
 }

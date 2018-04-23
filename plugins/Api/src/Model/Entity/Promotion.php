@@ -8,13 +8,16 @@ use Cake\ORM\Entity;
  *
  * @property int $id
  * @property int $spayc_id
+ * @property int $user_id
  * @property float $views
  * @property float $balanced_views
+ * @property float $amount
  * @property string $status
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
  *
- * @property \Api\Model\Entity\Spayc $spayc
+ * @property \App\Model\Entity\Spayc[] $spaycs
+ * @property \Api\Model\Entity\Purchase $purchase
  */
 class Promotion extends Entity
 {
@@ -29,11 +32,6 @@ class Promotion extends Entity
      * @var array
      */
     protected $_accessible = [
-        'spayc_id' => true,
-        'views' => true,
-        'balanced_views' => true,
-        'status' => true,
-        'modified' => true,
-        'spayc' => true
+        '*'=>true
     ];
 }

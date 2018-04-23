@@ -1644,6 +1644,165 @@
   },
   {
     "type": "post",
+    "url": "/add-promotional-spayc.json",
+    "title": "Create Promotional Spayc",
+    "version": "0.1.0",
+    "name": "PostAddPromotionalSpayc",
+    "group": "Plans",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>create spayc which you want to promote in communication center.</p> ",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token must be in header.</li> </ul> "
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "spayc_promotional_id",
+            "description": "<ul> <li>promotional spayc id (Required).</li> </ul> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "spayc_id",
+            "description": "<ul> <li>List of selected spayc ids in comma separated (Required).</li> </ul> "
+          },
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "plan_id",
+            "description": "<ul> <li>Selected plan id (Required).</li> </ul> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "receipt",
+            "description": "<p>Receipt details (Optional).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "DateTime",
+            "optional": false,
+            "field": "purchase_date",
+            "description": "<ul> <li>Date of purchase the plan (Required).</li> </ul> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "platform",
+            "description": "<ul> <li>Device platform details (Required).</li> </ul> "
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "    {\n\t\"spayc_promotional_id\":\"308\",\n\t\"spayc_id\":\"307,306,305,303\",\n\t\"plan_id\":\"3\",\n\t\"receipt\":\"resdfklsf\",\n\t\"purchase_date\":\"05-04-2018 04:02:20\",\n\t\"platform\":\"ios\"\n    }",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p> "
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Promotion has been created successfully.</p> "
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>requested input.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "    HTTP/1.1 201 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Promotion has been created successfully.\",\n    \"data\": {\n        \"spayc_promotional_id\": \"308\",\n        \"spayc_id\": \"307,306,305,303\",\n        \"plan_id\": \"3\",\n        \"receipt\": \"resdfklsf\",\n        \"purchase_date\": \"05-04-2018 04:02:20\",\n        \"platform\": \"ios\"\n    }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/plans.js",
+    "groupTitle": "Plans",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/add-promotional-spayc.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p> "
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p> "
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
     "url": "/chat-room.json",
     "title": "One to One Room",
     "version": "0.1.0",
