@@ -226,7 +226,7 @@ class PriorityBehavior extends Behavior {
         $config = $this->getConfig();
         $table = $this->_table;
 
-        $table->removeBehavior('Sequence');
+        $table->removeBehavior('Priority');
 
         $return = $table->getConnection()->transactional(
                 function ($connection) use ($table, $entity, $config, $scope, $direction) {
@@ -261,7 +261,7 @@ class PriorityBehavior extends Behavior {
         }
         );
 
-        $table->addBehavior('ADmad/Sequence.Sequence', $config);
+        $table->addBehavior('Api.Priority', $config);
 
         return (bool) $return;
     }
@@ -281,7 +281,7 @@ class PriorityBehavior extends Behavior {
         $config = $this->getConfig();
         $table = $this->_table;
 
-        $table->removeBehavior('Sequence');
+        $table->removeBehavior('Priority');
 
         $return = $table->getConnection()->transactional(
                 function ($connection) use ($table, $records) {
@@ -322,7 +322,7 @@ class PriorityBehavior extends Behavior {
         }
         );
 
-        $table->addBehavior('ADmad/Sequence.Sequence', $config);
+        $table->addBehavior('Api.Priority', $config);
 
         return $return;
     }

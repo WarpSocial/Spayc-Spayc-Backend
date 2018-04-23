@@ -38,9 +38,10 @@ class SpaycAdvertisementTable extends Table
 
         $this->setTable('spayc_advertisement');
         $this->setDisplayField('id');
-        $this->setPrimaryKey(['id', 'created']);
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+        $this->addBehavior('Api.Priority');
 
 //        $this->belongsTo('Advertisements', [
 //            'foreignKey' => 'advertisement_id',
@@ -96,7 +97,13 @@ class SpaycAdvertisementTable extends Table
                 ]
             )
                  ->where(['spayc_id'=>$spayc_id,"balance > 0"]);
-         print_R(count($ad->toArray()));die;
+//         $this->setOrder($adids);
+//         die;
+         //pr($ad->toArray());
+        $adids = \Cake\Utility\Hash::extract($ad->toArray(), '{n}.id');
+//        print_R($adids);die;
+        $this->setOrder($adids);die;
+         
         $joinedSpayc = TableRegistry::get('Api.JoinedSpayc')->find()
                 ->contain('Spaycs')
                 ->where(['JoinedSpayc.status'=>'Joined','JoinedSpayc.user_id'=>$userid,'Spaycs.parent_id IS'=>null]);
