@@ -777,6 +777,10 @@ class SpaycsController extends AppController {
         if(empty($page)){
             $page = 1;
         }
+        $user = $this->Auth->user();
+        if($this->Spaycs->JoinedSpayc->exists(['user_id'=>$user['id'],'status'=>BANNED,'spayc_id'=>$spaycId])){
+            $this->restException(['status'=>'failed','message'=>__('Your status with this spayc has been banned.')], 400);
+        }
         $query = $this->Spaycs->spaycMember($spaycId,$status,$page,$limit);        
         if(empty($query)){
             $this->response->statusCode(204);
