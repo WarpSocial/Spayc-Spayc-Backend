@@ -36,35 +36,21 @@ class SpaycPromotionTable extends Table {
 
         $this->setTable('spayc_promotion');
         $this->setDisplayField('id');
-        $this->setPrimaryKey(['id', 'created']);
+        $this->setPrimaryKey(['id', 'spayc_id', 'promotion_id']);
 
         $this->addBehavior('Timestamp');
+        $this->addBehavior('Api.Priority');
 
         $this->belongsTo('Promotions', [
             'foreignKey' => 'promotion_id',
+            'joinType' => 'INNER',
             'className' => 'Api.Promotions'
         ]);
         $this->belongsTo('Spaycs', [
             'foreignKey' => 'spayc_id',
+            'joinType' => 'INNER',
             'className' => 'Api.Spaycs'
         ]);
-    }
-
-    /**
-     * Default validation rules.
-     *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
-     */
-    public function validationDefault(Validator $validator) {
-        $validator
-                ->allowEmpty('id', 'create');
-
-        $validator
-                ->integer('priority')
-                ->allowEmpty('priority');
-
-        return $validator;
     }
 
     /**
@@ -77,7 +63,6 @@ class SpaycPromotionTable extends Table {
     public function buildRules(RulesChecker $rules) {
         $rules->add($rules->existsIn(['promotion_id'], 'Promotions'));
         $rules->add($rules->existsIn(['spayc_id'], 'Spaycs'));
-
         return $rules;
     }
 

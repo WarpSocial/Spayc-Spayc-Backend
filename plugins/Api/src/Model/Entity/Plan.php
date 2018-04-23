@@ -1,4 +1,5 @@
 <?php
+
 namespace Api\Model\Entity;
 
 use Cake\ORM\Entity;
@@ -16,8 +17,7 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
  */
-class Plan extends Entity
-{
+class Plan extends Entity {
 
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
@@ -37,4 +37,5 @@ class Plan extends Entity
         'status' => true,
         'modified' => true
     ];
+
 }

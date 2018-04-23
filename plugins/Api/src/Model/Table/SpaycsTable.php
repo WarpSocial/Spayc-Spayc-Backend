@@ -100,6 +100,12 @@ class SpaycsTable extends Table {
             'joinTable' => 'spayc_advertisement',            
             'className' => 'Api.Advertisements'
         ]);
+        $this->belongsToMany('Promotions', [
+            'foreignKey' => 'spayc_id',
+            'targetForeignKey' => 'promotion_id',
+            'joinTable' => 'spayc_promotion',
+            'className' => 'Api.Promotions'
+        ]);
         
         /* Earth radius in miles 3959 */
         /* for postgresql cast is required else for mysql not*/

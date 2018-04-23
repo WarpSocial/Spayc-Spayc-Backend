@@ -1,4 +1,5 @@
 <?php
+
 namespace Api\Model\Table;
 
 use Cake\ORM\Query;
@@ -7,6 +8,8 @@ use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use Cake\Collection\CollectionInterface;
 use Api\Utils\Utils;
+use Cake\ORM\TableRegistry;
+
 /**
  * Plans Model
  *
@@ -20,8 +23,7 @@ use Api\Utils\Utils;
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class PlansTable extends Table
-{
+class PlansTable extends Table {
 
     /**
      * Initialize method
@@ -29,73 +31,77 @@ class PlansTable extends Table
      * @param array $config The configuration for the Table.
      * @return void
      */
-    public function initialize(array $config)
-    {
+    public function initialize(array $config) {
         parent::initialize($config);
 
         $this->setTable('plans');
         $this->setDisplayField('name');
-        $this->setPrimaryKey(['id', 'created']);
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
     }
 
     /**
-     * Default validation rules.
-     *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
+     * validatePromotionalSpayc to validate the input request of spayc promotion.
+     * 
+     * @param array $data input request data
+     * @return array List of array
      */
-    public function validationDefault(Validator $validator)
-    {
+    public function validatePromotionalSpayc($data){
+        $validator = new Validator();
         $validator
-            ->allowEmpty('id', 'create');
-
+                ->requirePresence('spayc_id','create', __('Please provide the spayc id'))
+                ->notEmpty('spayc_id',__('Please provide the spayc id'));                
         $validator
-            ->scalar('name')
-            ->maxLength('name', 200)
-            ->allowEmpty('name');
-
+                ->requirePresence('spayc_promotional_id','create', __('Please provide promotional spayc.'))
+                ->integer('spayc_promotional_id',__('Please provide integer value for promotional spayc.'))
+                ->notEmpty('spayc_promotional_id',__('Please provide promotional spayc.'));
+        
         $validator
-            ->scalar('slug')
-            ->maxLength('slug', 200)
-            ->allowEmpty('slug');
-
+                ->requirePresence('plan_id','create', __('Please provide the plan.'))
+                ->notEmpty('plan_id',__('Please provide the plan.'))
+                ->integer('plan_id',__('Please provide integer value for plan.'))
+                ->add('plan_id','exist',[
+                    'rule'=>function($value,$context){
+                        if(!empty($value)){
+                            return  TableRegistry::get('Api.Plans')->exists(['id'=>$value]);
+                        }else{
+                            return false;
+                        }
+                    },
+                    'message'=>__('Plan is not available.')
+                ]);
         $validator
-            ->decimal('amount')
-            ->allowEmpty('amount');
-
+                ->requirePresence('receipt','create', __('Please provide the receipt.'))
+                ->maxLength('receipt', 500,__('Receipt must be lower than 500 character.'))
+                ->allowEmpty('receipt',__('Please provide the receipt.'));
         $validator
-            ->scalar('currency')
-            ->maxLength('currency', 20)
-            ->allowEmpty('currency');
-
+                ->requirePresence('purchase_date','create', __('Please provide the purchase date.'))
+                ->allowEmpty('purchase_date',__('Please provide the purchase date.'))
+                ->dateTime('purchase_date','mdy',__('Purchase date is not valid.'));
         $validator
-            ->integer('views')
-            ->allowEmpty('views');
-
-        $validator
-            ->scalar('status')
-            ->requirePresence('status', 'create')
-            ->notEmpty('status');
-
-        return $validator;
+                ->requirePresence('platform','create', __('Please provide the platform.'))
+                ->maxLength('platform', 100,__('Platform must be lower than 100 character.'))
+                ->notEmpty('platform',__('Please provide the platform.'));
+              
+         return $validator->errors($data);
     }
-    
+
     /**
      * AllPlans to get all the active plans
      * 
      * @return Object Array of object contain plan details
      */
-    public function allPlans(){
+    public function allPlans() {
         $items = $this->find()
-                ->select(['id','name','slug','amount','currency','views','created','modified'])
-                ->where(['status'=>ACTIVE])
-                ->map(function($row){
-                    $row->created = Utils::toClient($row->created);
-                    $row->modified = Utils::toClient($row->modified);
-                    return $row;
-                });
+                ->select(['id', 'name', 'slug', 'amount', 'currency', 'views', 'created', 'modified'])
+                ->where(['status' => ACTIVE])
+                ->map(function($row) {
+            $row->created = Utils::toClient($row->created);
+            $row->modified = Utils::toClient($row->modified);
+            return $row;
+        });
         return $items;
     }
+
 }
