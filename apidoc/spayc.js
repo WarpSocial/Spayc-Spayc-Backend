@@ -1375,6 +1375,49 @@ function userAdvertisement() { return; }
 function deleteAdvertisement() { return; }
 
 /**
+ @api {post} /ad-logic.json Advertisement Logic
+ @apiVersion 0.1.0
+ @apiName adLogic
+ @apiGroup Advertisement
+ @apiPermission private
+
+ @apiDescription Advertisement Logic.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+    @apiParam {Number}      spayc_id            Spayc Id (Required).
+    @apiParam {Number}      cycle               Current Cycle (Required).
+    @apiParam {Number}      comment_count       Comment Count (Required).
+
+    @apiExample Example usage:
+    {
+        "spayc_id":"5",
+        "cycle":"1",
+        "comment_count":"20"
+    }
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+        "status": "success",
+        "message": "Advertisement Details",
+        "data": {
+           
+        }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function adLogic() { return; }
+
+
+
+
+/**
  @api {get} /unread-notification.json Unread Notification
  @apiVersion 0.1.0
  @apiName unreadNotification

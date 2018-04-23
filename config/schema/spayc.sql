@@ -251,7 +251,7 @@ ALTER TABLE "joined_spayc" ADD "is_admin" smallint NOT NULL DEFAULT '0';
 CREATE TABLE "spayc_advertisement_priority" (
     "id" BIGSERIAL NOT NULL,
     "spayc_id" BIGINT NULL,
-    "priority" INTEGER NULL,
+    "cycle" INTEGER NULL,
     "comment_count" INTEGER NULL,
     "created" timestamp,
     "modified" timestamp,

@@ -4,6 +4,7 @@ namespace Api\Model\Table;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
+use \Cake\ORM\TableRegistry;
 use Cake\Validation\Validator;
 
 /**
@@ -80,5 +81,29 @@ class SpaycAdvertisementTable extends Table
 //        $rules->add($rules->existsIn(['spayc_id'], 'Spaycs'));
 
         return $rules;
+    }
+    
+     public function setPriority($spayc_id){
+         
+         $ad=TableRegistry::get('Api.SpaycAdvertisement')->find()
+                  ->join(
+                [
+                    'table' => 'advertisement',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'advertisement.id = SpaycAdvertisement.advertisement_id',
+                    ]
+                ]
+            )
+                 ->where(['spayc_id'=>$spayc_id,"balance > 0"]);
+         print_R(count($ad->toArray()));die;
+        $joinedSpayc = TableRegistry::get('Api.JoinedSpayc')->find()
+                ->contain('Spaycs')
+                ->where(['JoinedSpayc.status'=>'Joined','JoinedSpayc.user_id'=>$userid,'Spaycs.parent_id IS'=>null]);
+        if($joinedSpayc->isEmpty()){
+            return [];
+        }else{
+            return $joinedSpayc->toArray();
+        }
     }
 }

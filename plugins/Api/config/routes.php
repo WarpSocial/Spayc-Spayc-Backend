@@ -60,6 +60,8 @@ Router::plugin(
         $routes->connect('/advertisement-edit', ['controller' => 'Advertisement', 'action' => 'edit']);
         $routes->connect('/advertisement-delete', ['controller' => 'Advertisement', 'action' => 'delete']);
         
+        $routes->connect('/ad-logic', ['controller' => 'Advertisement', 'action' => 'adLogic']);
+        
         $routes->connect('/unread-notification', ['controller' => 'Users', 'action' => 'unreadNotification']);
         
         $routes->connect('/join-spayc', ['controller'=>'JoinSpaycs', 'action'=>'joinSpayc']);

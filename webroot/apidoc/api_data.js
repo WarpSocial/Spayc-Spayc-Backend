@@ -1,6 +1,144 @@
 define({ "api": [
   {
     "type": "post",
+    "url": "/ad-logic.json",
+    "title": "Advertisement Logic",
+    "version": "0.1.0",
+    "name": "adLogic",
+    "group": "Advertisement",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>Advertisement Logic.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "spayc_id",
+            "description": "<p>Spayc Id (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "cycle",
+            "description": "<p>Current Cycle (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "comment_count",
+            "description": "<p>Comment Count (Required).</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "{\n    \"spayc_id\":\"5\",\n    \"cycle\":\"1\",\n    \"comment_count\":\"20\"\n}",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>List of spaycs..</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>List of Spaycs.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "     HTTP/1.1 200 OK\n{\n        \"status\": \"success\",\n        \"message\": \"Advertisement Details\",\n        \"data\": {\n           \n        }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/spayc.js",
+    "groupTitle": "Advertisement",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/ad-logic.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
     "url": "/create-advertisement.json",
     "title": "Create Advertisement",
     "version": "0.1.0",
@@ -3452,7 +3590,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"List of Data.\",\n    \"data\": {\n        \"spaycs\": {\n            \"count\": 1,\n            \"records\": [\n                {\n                    \"id\": \"3\",\n                    \"name\": \"Sam Second Community Spyace\",\n                    \"matrix_room_id\": \"!MvOssNcvbePXoBUIjC:spayc-dev.kiwireader.com\",\n                    \"image\": \"https://spayc-dev.s3.amazonaws.com/room/image_20180317082917.png\",\n                    \"type\": \"Community\",\n                    \"latitude\": 28.7041,\n                    \"longitude\": 77.1025,\n                    \"is_joined\": true,\n                    \"joined_users\": 3,\n                    \"is_subscribed\": true\n                }\n            ]\n        },\n        \"friends\": {\n            \"count\": 2,\n            \"records\": [\n                {\n                    \"id\": \"2\",\n                    \"display_name\": null,\n                    \"email\": \"bot@gmail.com\",\n                    \"address\": null,\n                    \"latitude\": 28.579403737919,\n                    \"longitude\": 77.320890067264,\n                    \"matrix_room_id\": \"!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com\"\n                },\n                {\n                    \"id\": \"3\",\n                    \"display_name\": \"sam\",\n                    \"email\": \"sam@yopmail.com\",\n                    \"address\": null,\n                    \"latitude\": 28.7041,\n                    \"longitude\": 77.1025,\n                    \"matrix_room_id\": \"!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com\"\n                }\n            ]\n        }\n    }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"List of Data.\",\n    \"data\": {\n        \"spaycs\": {\n            \"count\": 2,\n            \"records\": [\n                {\n                    \"id\": \"3\",\n                    \"name\": \"Sam Second Community Spyace\",\n                    \"matrix_room_id\": \"!MvOssNcvbePXoBUIjC:spayc-dev.kiwireader.com\",\n                    \"image\": \"https://spayc-dev.s3.amazonaws.com/room/image_20180317082917.png\",\n                    \"type\": \"Community\",\n                    \"modified\": \"2018-03-17T08:29:17+00:00\",\n                    \"latitude\": 28.7041,\n                    \"longitude\": 77.1025,\n                    \"is_joined\": true,\n                    \"joined_users\": 2,\n                    \"is_subscribed\": true\n                },\n                {\n                    \"id\": \"4\",\n                    \"name\": \"Community Type Sub Spyac\",\n                    \"matrix_room_id\": \"!nQPjgmlBePZsAyVvQH:spayc-dev.kiwireader.com\",\n                    \"image\": \"https://spayc-dev.s3.amazonaws.com/room/image_20180317083321.png\",\n                    \"type\": \"Community\",\n                    \"modified\": \"2018-03-17T08:33:21+00:00\",\n                    \"latitude\": 28.7041,\n                    \"longitude\": 77.1025,\n                    \"is_joined\": false,\n                    \"joined_users\": 0,\n                    \"is_subscribed\": false\n                }\n            ]\n        },\n        \"friends\": {\n            \"count\": 2,\n            \"records\": [\n                {\n                    \"id\": \"2\",\n                    \"display_name\": null,\n                    \"email\": \"bot@gmail.com\",\n                    \"address\": null,\n                    \"latitude\": 28.579403737919,\n                    \"longitude\": 77.320890067264,\n                    \"modified\": \"2018-03-16T09:36:35+00:00\",\n                    \"matrix_room_id\": \"!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com\"\n                },\n                {\n                    \"id\": \"3\",\n                    \"display_name\": \"sam\",\n                    \"email\": \"sam@yopmail.com\",\n                    \"address\": null,\n                    \"latitude\": 28.7041,\n                    \"longitude\": 77.1025,\n                    \"modified\": \"2018-03-17T08:21:47+00:00\",\n                    \"matrix_room_id\": \"!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com\"\n                }\n            ]\n        }\n    }\n}",
           "type": "json"
         }
       ]
