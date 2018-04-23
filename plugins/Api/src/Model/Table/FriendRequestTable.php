@@ -268,7 +268,7 @@ class FriendRequestTable extends Table
             
              $friends = TableRegistry::get('Api.Users')->find('all',['fields'=>[
 //                 'distance' => $distanceField,
-                 'id', 'display_name', 'email', 'address','latitude','longitude']])
+                 'id', 'display_name', 'email', 'address','latitude','longitude','modified']])
                 ->where(["$distanceField <=" => $distance, 'status'=>'Active'])
                      ->where("id in (". implode($child,",").")")
                 ->bind(':latitude', $request['center_latitude'], 'float')

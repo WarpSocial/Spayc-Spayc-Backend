@@ -81,6 +81,20 @@ class AdvertisementTable extends Table {
                 ->maxLength('description', 250, __('Description must be less than 250 characters.'))
                 ->allowEmpty('description');
 
+        
+        $validator
+                ->requirePresence('plan_id', 'create', __('Plan key is missing.'))
+                ->notEmpty('plan_id', __('Plan key is required.'));
+        
+        $validator
+                ->requirePresence('receipt', 'create', __('Receipt key is missing.'))
+                ->notEmpty('receipt', __('Receipt key is required.'));
+        
+        $validator
+                ->requirePresence('platform', 'create', __('Platform key is missing.'))
+                ->notEmpty('platform', __('Platform key is required.'));
+        
+        
         $validator
                 ->allowEmpty('image')
                 ->add('image', 'extension', [

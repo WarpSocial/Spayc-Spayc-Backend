@@ -55,8 +55,38 @@ class AdvertisementController extends AppController {
         }
 
         $entity = $entities->first();
-        if ($user['id'] != $entity->user_id) {
-            $this->restException(['status' => 'failed', 'message' => __('Insufficient privileges to edit this Advertisement.')], 400);
+        if($user['id'] != $entity->user_id){
+            $this->restException(['status'=>'failed','message'=>__('Insufficient privileges to edit this Advertisement.')], 400);
+        }        
+        unset($data['id']);        
+        
+        
+        // Check IF Exist (Public || Private)
+           $exist = TableRegistry::get('Api.Spaycs')->find()
+                ->join(
+                [
+                    'table' => 'joined_spayc',
+                    'alias' => 'JoinedSpayc',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Spaycs.id = JoinedSpayc.spayc_id',
+                    ]
+                ]
+            )->where(['OR'=>
+                    [
+                        ['Spaycs.id IN ('.$data['spayc_id'].')', 'JoinedSpayc.user_id'=>$user['id'], 'JoinedSpayc.status'=>'Joined','Spaycs.group_type'=>'Private'],
+                    ['Spaycs.id IN ('.$data['spayc_id'].')','Spaycs.group_type'=>'Public']]])
+                ->distinct(['Spaycs.id']);
+        $spayc_id=explode(",",$data['spayc_id']);
+//        print_R($exist->toArray());die;
+        if(count($exist->toArray()) != count($spayc_id)){
+              $this->restException(['status'=>'failed', 'message'=> __('Not Authorized to Create Ad in listed Spaycs.')], 400);
+        }
+        // Check IF Exist 
+        $items = $this->Advertisement->patchEntity($entity, $data);       
+       
+        if(!empty($items->errors())) {
+            $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
         }
         unset($data['id']);
 
@@ -70,18 +100,40 @@ class AdvertisementController extends AppController {
             $this->restException(['status' => 'failed', 'message' => __('Enter Valid Price.')], 400);
         }
         if (isset($data['url']) && !filter_var($data['url'], FILTER_VALIDATE_URL)) {
-            $this->restException(['status' => 'failed', 'message' => __('Enter Valid URL.')], 400);
+            $this->restException(['status'=>'failed', 'message'=> __('Enter Valid URL.')], 400);
+        } 
+        
+        $items->modified = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");   
+        $items->expired = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");   
+        
+        
+        
+        if($success=$this->Advertisement->save($items)){  
+            $success->created= Utils::toClient($success->created);
+             TableRegistry::get('Api.SpaycAdvertisement')->deleteAll(['advertisement_id' => $success->id]);
+            // Saving Ad into Spayc_Ad 
+            $ad_spayc=array();
+            $spayc_id=explode(",",$data['spayc_id']);
+            foreach($spayc_id as $k=>$v){
+            $advModel = TableRegistry::get('Api.SpaycAdvertisement');
+            $entity = $advModel->newEntity();
+            $entity->advertisement_id = $success->id;
+            $entity->spayc_id = $v;
+            $entity->modified = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
+            $entity->created = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");   
+            $created=$advModel->save($entity);
+            $ad_spayc[]=$v;
         }
-
-        $items->modified = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
-
-
-
-        if ($success = $this->Advertisement->save($items)) {
-            $success->created = Utils::toClient($success->created);
-            $response = ['status' => 'success', 'message' => __('Advertisement Updated Successfully'), 'data' => $success];
-        } else {
-            $this->restException(['status' => 'failed', 'message' => __('The spayc could not be updated. Please, try again.')], 400);
+            // Saving Ad into Spayc_Ad 
+        
+         if(!count($ad_spayc)){
+            $this->restException(['status'=>'failed', 'message'=>__('Advertisement could not be saved. Please, try again.')], 400);
+        }
+        $success['created_spayc']= implode(",",$ad_spayc);
+        
+             $response = ['status'=>'success','message'=>__('Advertisement Updated Successfully'),'data'=>$success];
+        }else{
+            $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be updated. Please, try again.')], 400);
         }
         $this->set($response);
     }
@@ -131,18 +183,18 @@ class AdvertisementController extends AppController {
             $this->restException(['status' => 'failed', 'message' => __('Advertisement id is required field.')], 400);
         }
         $user = $this->Auth->user();
-        $pquery = TableRegistry::get('Api.Advertisement')->findById($this->request->getQuery('id', null))
-                ->select(['id', 'name', 'user_id', 'image', 'price', 'description', 'url', 'status']);
-
-        if ($pquery->toArray()) {
-
-            $data = $pquery->toArray();
-            if ($data[0]->user_id != $user['id']) {
-                $this->restException(['status' => 'failed', 'message' => __('Not Authorized to view that Advertisement.')], 400);
-            }
-            unset($data[0]->user_id);
-
-            $entity = TableRegistry::get('Api.Spaycs')->find('all', ['fields' => [
+        $pquery = TableRegistry::get('Api.Advertisement')->findById($this->request->getQuery('id',null))
+                ->select(['id','name','user_id','image','price','description','url','status','expired']);
+        
+        if($pquery->toArray()){
+         
+        $data=$pquery->toArray();
+         if($data[0]->user_id != $user['id']) {
+            $this->restException(['status'=>'failed', 'message'=>__('Not Authorized to view that Advertisement.')], 400);
+        }
+        unset($data[0]->user_id);
+        
+        $entity = TableRegistry::get('Api.Spaycs')->find('all',['fields'=>[
 //                 'distance' => $distanceField,
                             'Spaycs.name', 'Spaycs.id', 'Spaycs.type', 'Spaycs.image']])->join(
                     [
@@ -218,13 +270,26 @@ class AdvertisementController extends AppController {
         if (!$this->isCurrency($data['price'])) {
             $this->restException(['status' => 'failed', 'message' => __('Enter Valid Price.')], 400);
         }
-        if (!filter_var($data['url'], FILTER_VALIDATE_URL)) {
-            $this->restException(['status' => 'failed', 'message' => __('Enter Valid URL.')], 400);
+        if (isset($data['url']) && !filter_var($data['url'], FILTER_VALIDATE_URL)) {
+            $this->restException(['status'=>'failed', 'message'=> __('Enter Valid URL.')], 400);
+        } 
+        
+
+        //Fetcing Plan 
+        $pquery = TableRegistry::get('Api.Plans')->findById($data['plan_id']);
+         
+        if($pquery->isEmpty()){
+             $this->restException(['status'=>'failed','message'=>'Plan not found.'], 404);
         }
+        $plan=$pquery->first();
         $items->user_id = $user['id'];
         $items->modified = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
-        $items->created = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
-        $success = $advModel->save($items);
+        $items->created = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");   
+//        print_R($plan);die;
+        $items->views = $plan['views'];
+        $items->balance = $plan['views'];
+        $items->status = 'Active';
+        $success=$advModel->save($items);
 //        pr($success);die;
 
 
@@ -242,9 +307,26 @@ class AdvertisementController extends AppController {
             $created = $advModel->save($entity);
             $ad_spayc[] = $v;
         }
-
-        if (!count($ad_spayc)) {
-            $this->restException(['status' => 'failed', 'message' => __('Advertisement could not be saved. Please, try again.')], 400);
+        
+        //Saving into the Purchase
+        if($success->id){
+            $purchaseModel = TableRegistry::get('Api.Purchase');
+        $entity = $purchaseModel->newEntity();
+        $entity->advertisement_id = $success->id;
+        $entity->plan_id = $data['plan_id'];
+        $entity->receipt = $data['receipt'];
+        $entity->amount = $plan['amount'];
+        $entity->platform = $data['platform'];
+        if(isset($data['purchase_date']) && $data['purchase_date'])
+        $entity->purchase_date = $data['purchase_date'];
+        $entity->modified = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
+        $entity->created = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");   
+//        print_r($entity);die;
+        $purchase=$purchaseModel->save($entity);
+        }
+         
+        if(!count($ad_spayc)){
+            $this->restException(['status'=>'failed', 'message'=>__('Advertisement could not be saved. Please, try again.')], 400);
         }
         $success['created_spayc'] = implode(",", $ad_spayc);
         $response = ['status' => 'success', 'message' => __('Advertisement Created Successfully'), 'data' => $success];
@@ -258,10 +340,10 @@ class AdvertisementController extends AppController {
 
         $user = $this->Auth->user();
         $pquery = TableRegistry::get('Api.Advertisement')->findByUserId($user['id'])
-                ->select(['id', 'name', 'image', 'price', 'description', 'url', 'status']);
-
-        $page = $this->request->getQuery('page', 1);
-        $limit = $this->request->getQuery('limit', Configure::read('pagelimit'));
+                ->select(['id','name','image','price','description','url','status','expired']);
+         
+        $page = $this->request->getQuery('page',1);
+        $limit = $this->request->getQuery('limit',Configure::read('pagelimit'));
         $pquery->limit($limit)->page($page);
         $pquery->order(['created' => 'DESC']);
 

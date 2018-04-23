@@ -2,7 +2,8 @@
 namespace Api\Model\Entity;
 
 use Cake\ORM\Entity;
-
+use Cake\I18n\Time;
+use Cake\Core\Configure;
 /**
  * Advertisement Entity
  *
@@ -42,4 +43,18 @@ class Advertisement extends Entity
         'modified' => true,
         'user' => true
     ];
+    
+     protected function _getExpired($date) {
+        $request = new \Cake\Http\ServerRequest();
+         if($this->isNew() || strstr($request->getRequestTarget(),'edit')) {
+             return $date;
+         }
+        $timezone = Configure::read('timezone');
+        if (!empty($date)) {
+            $ed = new Time($date,'UTC');
+            return $ed->setTimezone($timezone)->format('m-d-Y H:i:s');
+        } else {
+            return;
+        }
+    }
 }
