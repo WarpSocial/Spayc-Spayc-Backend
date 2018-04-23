@@ -78,3 +78,52 @@
  * @apiUse UserErrorResponse
  */
 function getView() { return; }
+/**
+@api {post} /add-promotional-spayc.json Create Promotional Spayc
+@apiVersion 0.1.0
+@apiName PostAddPromotionalSpayc
+@apiGroup Plans
+@apiPermission private
+
+@apiDescription create spayc which you want to promote in communication center.
+
+@apiHeader {String} TOKEN   * A token must be in header.
+
+@apiParam {Integer} spayc_promotional_id    * promotional spayc id (Required).
+@apiParam {String} spayc_id     * List of selected spayc ids in comma separated (Required).
+@apiParam {Integer} plan_id     * Selected plan id (Required).
+@apiParam {String} receipt       Receipt details (Optional).
+@apiParam {DateTime} purchase_date      * Date of purchase the plan (Required).  
+@apiParam {String} platform     * Device platform details (Required).
+
+@apiExample Example usage:
+    {
+	"spayc_promotional_id":"308",
+	"spayc_id":"307,306,305,303",
+	"plan_id":"3",
+	"receipt":"resdfklsf",
+	"purchase_date":"05-04-2018 04:02:20",
+	"platform":"ios"
+    }
+ 
+@apiSuccess {String} status success.
+@apiSuccess {String} message Promotion has been created successfully.
+@apiSuccess {Object} data requested input.
+@apiSuccessExample {json} Success-Response: 
+    HTTP/1.1 201 OK
+{
+    "status": "success",
+    "message": "Promotion has been created successfully.",
+    "data": {
+        "spayc_promotional_id": "308",
+        "spayc_id": "307,306,305,303",
+        "plan_id": "3",
+        "receipt": "resdfklsf",
+        "purchase_date": "05-04-2018 04:02:20",
+        "platform": "ios"
+    }
+}
+
+@apiUse errorResponse
+ */
+function postAddPromotionalSpayc() { return; }

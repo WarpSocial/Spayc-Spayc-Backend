@@ -30,9 +30,6 @@ class SpaycPromotionPriorityFixture extends TestFixture
         'comment_count' => ['type' => 'integer', 'length' => 10, 'default' => null, 'null' => true, 'comment' => null, 'precision' => null, 'unsigned' => null, 'autoIncrement' => null],
         'created' => ['type' => 'timestamp', 'length' => null, 'default' => null, 'null' => false, 'comment' => null, 'precision' => null],
         'modified' => ['type' => 'timestamp', 'length' => null, 'default' => null, 'null' => true, 'comment' => null, 'precision' => null],
-        '_indexes' => [
-            'spayc_promotion_priority_created_idx' => ['type' => 'index', 'columns' => ['created'], 'length' => []],
-        ],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id', 'created'], 'length' => []],
         ],
@@ -50,8 +47,8 @@ class SpaycPromotionPriorityFixture extends TestFixture
             'spayc_id' => 1,
             'priority' => 1,
             'comment_count' => 1,
-            'created' => 1524217467,
-            'modified' => 1524217467
+            'created' => 1524460800,
+            'modified' => 1524460800
         ],
     ];
 }
