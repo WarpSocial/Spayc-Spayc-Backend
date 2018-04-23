@@ -1,4 +1,5 @@
 <?php
+
 namespace Api\Model\Table;
 
 use Cake\ORM\Query;
@@ -21,8 +22,7 @@ use Cake\Validation\Validator;
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class PromotionsTable extends Table
-{
+class PromotionsTable extends Table {
 
     /**
      * Initialize method
@@ -30,29 +30,37 @@ class PromotionsTable extends Table
      * @param array $config The configuration for the Table.
      * @return void
      */
-    public function initialize(array $config)
-    {
+    public function initialize(array $config) {
         parent::initialize($config);
 
         $this->setTable('promotions');
         $this->setDisplayField('id');
-        $this->setPrimaryKey(['id', 'created']);
+        $this->setPrimaryKey(['id']);
 
         $this->addBehavior('Timestamp');
-
         $this->belongsTo('Spaycs', [
             'foreignKey' => 'spayc_id',
             'className' => 'Api.Spaycs'
+        ]);
+        $this->belongsTo('Users', [
+            'foreignKey' => 'user_id',
+            'className' => 'Api.Users'
         ]);
         $this->hasOne('Purchase', [
             'foreignKey' => 'promotion_id',
             'className' => 'Api.Purchase'
         ]);
+        $this->hasMany('SpaycPromotion', [
+            'foreignKey' => 'promotion_id',
+            'className' => 'Api.SpaycPromotion'
+        ]);
         $this->belongsToMany('Spaycs', [
-            'joinTable' => 'spayc_promotion',            
+            'foreignKey' => 'promotion_id',
+            'targetForeignKey' => 'spayc_id',
+            'joinTable' => 'spayc_promotion',
             'className' => 'Api.Spaycs'
         ]);
-       
+        
     }
 
     /**
@@ -61,24 +69,19 @@ class PromotionsTable extends Table
      * @param \Cake\Validation\Validator $validator Validator instance.
      * @return \Cake\Validation\Validator
      */
-    public function validationDefault(Validator $validator)
-    {
+    public function validationDefault(Validator $validator) {
         $validator
-            ->allowEmpty('id', 'create');
+                ->allowEmpty('id', 'create');
 
         $validator
-            ->decimal('views')
-            ->allowEmpty('views');
+                ->decimal('views')
+                ->allowEmpty('views');
 
         $validator
-            ->decimal('balanced_views')
-            ->allowEmpty('balanced_views');
+                ->decimal('balanced_views')
+                ->allowEmpty('balanced_views');
 
-        $validator
-            ->scalar('status')
-            ->requirePresence('status', 'create')
-            ->notEmpty('status');
-
+        
         return $validator;
     }
 
@@ -89,10 +92,10 @@ class PromotionsTable extends Table
      * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
      * @return \Cake\ORM\RulesChecker
      */
-    public function buildRules(RulesChecker $rules)
-    {
-        $rules->add($rules->existsIn(['spayc_id'], 'Spaycs'));
+//    public function buildRules(RulesChecker $rules) {
+//        $rules->add($rules->existsIn(['spayc_id'], 'Spaycs'));
+//
+//        return $rules;
+//    }
 
-        return $rules;
-    }
 }

@@ -101,7 +101,9 @@ class SpaycsTable extends Table {
             'className' => 'Api.Advertisements'
         ]);
         $this->belongsToMany('Promotions', [
-            'joinTable' => 'spayc_promotion',            
+            'foreignKey' => 'spayc_id',
+            'targetForeignKey' => 'promotion_id',
+            'joinTable' => 'spayc_promotion',
             'className' => 'Api.Promotions'
         ]);
         

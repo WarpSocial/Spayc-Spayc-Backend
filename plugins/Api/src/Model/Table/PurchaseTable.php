@@ -54,5 +54,4 @@ class PurchaseTable extends Table {
             'className' => 'Api.Advertisements'
         ]);
     }
-
 }

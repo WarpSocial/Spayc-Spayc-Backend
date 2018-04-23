@@ -51,11 +51,12 @@ class PlansTable extends Table {
         $validator = new Validator();
         $validator
                 ->requirePresence('spayc_id','create', __('Please provide the spayc id'))
-                ->notEmpty('spayc_id',__('Please provide the spayc id'))
-                ->integer('spayc_id',__('Please provide integer value for spayc.'));
+                ->notEmpty('spayc_id',__('Please provide the spayc id'));                
         $validator
                 ->requirePresence('spayc_promotional_id','create', __('Please provide promotional spayc.'))
+                ->integer('spayc_promotional_id',__('Please provide integer value for promotional spayc.'))
                 ->notEmpty('spayc_promotional_id',__('Please provide promotional spayc.'));
+        
         $validator
                 ->requirePresence('plan_id','create', __('Please provide the plan.'))
                 ->notEmpty('plan_id',__('Please provide the plan.'))

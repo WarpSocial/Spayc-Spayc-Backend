@@ -5,7 +5,7 @@ namespace Api\Controller;
 use Api\Controller\AppController;
 use Cake\ORM\TableRegistry;
 use Cake\Core\Configure;
-use Api\Utils;
+use Api\Utils\Utils;
 use Cake\Utility\Hash;
 /**
  * Plans Controller
@@ -37,6 +37,7 @@ class PlansController extends AppController {
         if (!$this->request->is('post')) {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
         }
+        
         $data= $this->request->getData();        
         $errors = $this->Plans->validatePromotionalSpayc($data);
         if(!empty($errors)) {
@@ -47,25 +48,58 @@ class PlansController extends AppController {
         $sRepo = TableRegistry::get('Api.Spaycs');
         $spaycs = $sRepo->find('list')->where(['id IN'=> $data['pspaycs']])->toArray();
         $spaycIds = array_keys($spaycs);
-        if(!in_array($data['spayc_id'],$spaycIds)){
-            $this->restException(['status'=>'failed', 'message'=> __('Spayc is no longer available.')], 400);
+        if(!in_array($data['spayc_promotional_id'],$spaycIds)){
+            $this->restException(['status'=>'failed', 'message'=> __('Promotional Spayc is no longer available.')], 400);
         }
         if(!empty(array_diff($data['pspaycs'],$spaycIds))){
-            $this->restException(['status'=>'failed', 'message'=> __('Some of promotional spayc is no longer available.')], 400);
+            $this->restException(['status'=>'failed', 'message'=> __('Some of spayc id is no longer available.')], 400);
         }
+        
         $plan = $this->Plans->get($data['plan_id']);
-        $data['views'] = $data['balanced_views'] = $plan->views;
-        $data['amount'] = $plan->amount;
-        $data['user'] = $user['id'];
-        $data['plan_id'] = $plan->id;
+        $purchase = [
+            'plan_id'=>$data['plan_id'],
+            'receipt'=>$data['receipt'],
+            'platform'=>$data['platform'],
+            'purchase_date'=> Utils::toUtc($data['purchase_date']),
+        ];
+        $promotions = [
+            'spayc_id'=>$data['spayc_promotional_id'],
+            'user_id'=>$user['id'],
+            'views'=>$plan->views,
+            'balanced_views'=>$plan->views,
+            'amount'=>$plan->amount,
+            //'spaycs'=>['_ids'=>explode(',',$data['spayc_id'])],
+            'purchase'=>$purchase
+        ];
+        //pr($promotions);die;
+        //echo "<pre>";print_r($promotions);die;
         $pRepo = TableRegistry::get('Api.Promotions');
-        $pRepo->getConnection()->begin();
-        $promotion = $pRepo->newEntity($data);
-        $data->save($promotion);
-        $pRepo->getConnection()->commit();
-        $pRepo->getConnection()->rollback();
-        $promo = $pRepo->find()->contain(['Purchase','SpaycPromotion','SpaycPromotionPriority']);
-        pj($promo);die;
+        $pRepo->getConnection()->begin();        
+        
+        $pEntity = $pRepo->newEntity();
+        $items = $pRepo->patchEntity($pEntity,$promotions);
+        if($items->errors()) {
+            $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
+        }
+        if($pRepo->save($items)){
+            $sppRepo = TableRegistry::get('Api.SpaycPromotionPriority');
+            if(!$sppRepo->exists(['spayc_id'=>$data['spayc_promotional_id']])){
+                $sppItems = $sppRepo->newEntity(['spayc_id'=>$data['spayc_promotional_id'],'priority'=>0,'comment_count'=>0]);
+                $sppRepo->save($sppItems);
+            }
+            
+            foreach(explode(',',$data['spayc_id']) as $key=>$value){
+                $spayc = ['spayc_id'=>$value,'promotion_id'=>$items->id];   
+                $spEntity = $pRepo->SpaycPromotion->newEntity($spayc);
+                $pRepo->SpaycPromotion->save($spEntity);
+            }
+            $pRepo->getConnection()->commit();
+            $response = ['status'=>'success','message'=>__('Promotion has been created successfully.'),'data'=>$data];
+        }else{
+            $pRepo->getConnection()->rollback();
+            $response = ['status'=>'failed','message'=>__('Failed to create new promotion'),'data'=>$data];
+        }
+        
         $this->set($response);
     }
 }

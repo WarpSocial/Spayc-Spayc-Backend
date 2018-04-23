@@ -1,4 +1,5 @@
 <?php
+
 namespace Api\Model\Entity;
 
 use Cake\ORM\Entity;
@@ -16,8 +17,7 @@ use Cake\ORM\Entity;
  * @property \Api\Model\Entity\Promotion $promotion
  * @property \Api\Model\Entity\Spayc $spayc
  */
-class SpaycPromotion extends Entity
-{
+class SpaycPromotion extends Entity {
 
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
@@ -32,8 +32,10 @@ class SpaycPromotion extends Entity
         'promotion_id' => true,
         'spayc_id' => true,
         'priority' => true,
+        'created' => true,
         'modified' => true,
         'promotion' => true,
         'spayc' => true
     ];
+
 }
