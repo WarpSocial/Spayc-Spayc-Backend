@@ -643,6 +643,7 @@ class SpaycsTable extends Table {
 //                    'end_date', 
                     'image', 
                     'type', 
+                    'modified', 
 //                    'group_type', 
 //                    'passcode',
                     'latitude','longitude'])

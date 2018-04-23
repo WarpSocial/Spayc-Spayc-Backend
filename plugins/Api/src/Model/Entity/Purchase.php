@@ -12,7 +12,7 @@ use Cake\ORM\Entity;
  * @property string $receipt
  * @property int $promotion_id
  * @property int $advertisement_id
- * @property int $plateform
+ * @property int $platform
  * @property \Cake\I18n\FrozenTime $purchase_date
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified

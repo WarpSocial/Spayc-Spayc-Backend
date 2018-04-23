@@ -495,10 +495,10 @@ class UsersController extends AppController {
         }
         $user = $this->Users->findByEmail($data['email']);
         if(!$user->count()) {
-            $this->restException(['status'=>'failed', 'message'=>__('Email does not exists.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('Something went wrong.')], 400);
         }
         $user = $user->first();
-        $user['forgot_password_token'] = $data['forgot_password_token'] = Security::hash($data['email'], 'sha1', true);
+        $user['forgot_password_token'] = $data['forgot_password_token'] = sha1(uniqid(rand(), true));
         $data['forgot_password_timestamp'] = time();
         $d = $this->Users->updateAll($data, ['email'=>$data['email']]);
         $this->getMailer('Api.User')->send('forgotPassword', [$user]);
@@ -519,7 +519,8 @@ class UsersController extends AppController {
             $status = 'error';
             $this->Flash->error(__('Password reset link has either expired or invalid.'));
         }
-        if ($token != Security::hash($user->email, 'sha1', true)) {
+//        if ($token != Security::hash($user->email, 'sha1', true)) {
+        if ($token != $user->forgot_password_token) {
             $status = 'error';
             $this->Flash->error(__('Password reset link has either expired or invalid.'));
         }        
@@ -1578,7 +1579,15 @@ class UsersController extends AppController {
         if($user->isEmpty()){
             $this->restException(['status'=>'failed', 'message'=>__('Invalid user')], 400);
         }
-        $response = ['status'=>'success', 'message'=>__('Unread Notification Count.'), 'data'=> $user->first()];
+        $notification=$user->first();
+        if($notification['unread_notifications']){
+            $data['is_unread_count']=true;
+            $response = ['status'=>'success', 'message'=>__('Unread Notification Status.'), 'data'=> $data];
+        }else{
+            $data['is_unread_count']=false;
+            $response = ['status'=>'success', 'message'=>__('No Unread count found.'), 'data'=> $data];
+        }
+        
         $this->set($response);
     }
 }

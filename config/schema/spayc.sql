@@ -221,12 +221,15 @@ CREATE TABLE "advertisement" (
     "user_id" BIGINT NOT NULL,
     "name" character varying(255) NOT NULL,
     "price" decimal(12,2) NOT NULL,
+    "views" BIGINT NOT NULL,
+    "balance" BIGINT NOT NULL,
     "description" text NULL,
     "url" character varying(255) NULL,
     "image" character varying(1000) NULL,
     "status" row_status DEFAULT 'Pending' NOT NULL,
     "created" timestamp NOT NULL,
     "modified" timestamp,
+    "expired" timestamp,
     PRIMARY KEY (id,created)
 );
 SELECT create_hypertable('advertisement', 'created');
@@ -243,6 +246,18 @@ SELECT create_hypertable('spayc_advertisement', 'created');
 ALTER TABLE "joined_spayc" ADD "updated_by" bigint NULL;
 ALTER TABLE "spaycs" ADD "parent_id" bigint NULL;
 ALTER TABLE "joined_spayc" ADD "is_admin" smallint NOT NULL DEFAULT '0';
+
+
+CREATE TABLE "spayc_advertisement_priority" (
+    "id" BIGSERIAL NOT NULL,
+    "spayc_id" BIGINT NULL,
+    "priority" INTEGER NULL,
+    "comment_count" INTEGER NULL,
+    "created" timestamp,
+    "modified" timestamp,
+    PRIMARY KEY ("id","created")
+);
+SELECT create_hypertable('spayc_advertisement_priority', 'created');
 
 -- 15-march 2018 for admin  --
 CREATE TABLE roles (
@@ -363,7 +378,8 @@ CREATE TABLE "purchase" (
     "receipt" text NULL,
     "promotion_id" BIGINT NULL,
     "advertisement_id" BIGINT NULL,
-    "platform" VARCHAR(100) NULL,
+    "platform" BIGINT NULL,
+    "amount" DECIMAL(7,2) NULL,
     "purchase_date" timestamp,
     "created" timestamp,
     "modified" timestamp,

@@ -1003,7 +1003,7 @@ function hashTagSpaycs() { return; }
     "message": "List of Data.",
     "data": {
         "spaycs": {
-            "count": 1,
+            "count": 2,
             "records": [
                 {
                     "id": "3",
@@ -1011,11 +1011,25 @@ function hashTagSpaycs() { return; }
                     "matrix_room_id": "!MvOssNcvbePXoBUIjC:spayc-dev.kiwireader.com",
                     "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180317082917.png",
                     "type": "Community",
+                    "modified": "2018-03-17T08:29:17+00:00",
                     "latitude": 28.7041,
                     "longitude": 77.1025,
                     "is_joined": true,
-                    "joined_users": 3,
+                    "joined_users": 2,
                     "is_subscribed": true
+                },
+                {
+                    "id": "4",
+                    "name": "Community Type Sub Spyac",
+                    "matrix_room_id": "!nQPjgmlBePZsAyVvQH:spayc-dev.kiwireader.com",
+                    "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180317083321.png",
+                    "type": "Community",
+                    "modified": "2018-03-17T08:33:21+00:00",
+                    "latitude": 28.7041,
+                    "longitude": 77.1025,
+                    "is_joined": false,
+                    "joined_users": 0,
+                    "is_subscribed": false
                 }
             ]
         },
@@ -1029,6 +1043,7 @@ function hashTagSpaycs() { return; }
                     "address": null,
                     "latitude": 28.579403737919,
                     "longitude": 77.320890067264,
+                    "modified": "2018-03-16T09:36:35+00:00",
                     "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
                 },
                 {
@@ -1038,6 +1053,7 @@ function hashTagSpaycs() { return; }
                     "address": null,
                     "latitude": 28.7041,
                     "longitude": 77.1025,
+                    "modified": "2018-03-17T08:21:47+00:00",
                     "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
                 }
             ]
@@ -1063,6 +1079,11 @@ function mapSpaycs() { return; }
     @apiParam {Number}      price            Advertisement Price (Required).
     @apiParam {String}      url            Advertisement URL (Required).
     @apiParam {String}      description            Advertisement Description (Required).
+    @apiParam {String}      spayc_id            Spayc List (Required).
+    @apiParam {Number}      plan_id            Plan ID (Required).
+    @apiParam {Number}      receipt            Plan Receipt (Required).
+    @apiParam {String}      platform            Platform (Required).
+    @apiParam {String}      purchase_date       Plan Purchase Date (Optional).
     @apiParam {File}      image               Advertisement Image (Optional).
 
     @apiExample Example usage:
@@ -1073,6 +1094,11 @@ function mapSpaycs() { return; }
         "url": "http://www.xyz.com",
         "image":"file.png",
         "spayc_id":"5,6"
+
+        "plan_id":"1",
+        "receipt":"test12345",
+        "platform":"IOS",
+        "purchase_date":"2018-04-17"
     }
 
  *
@@ -1090,8 +1116,8 @@ function mapSpaycs() { return; }
             "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type ",
             "url": "http://www.xyz.com",
             "user_id": "1",
-            "modified": "2018-04-13 06:35:39",
-            "created": "2018-04-13 06:35:39",
+            "modified": "2018-04-17 11:16:28",
+            "created": "2018-04-17 11:16:28",
             "id": 101,
             "created_spayc": "94,95"
         }
@@ -1120,15 +1146,17 @@ function createAdvertisement() { return; }
         "price": "250",
         "description": "Test Test Test ",
         "url": "http://www.xyz.com",
+        "spayc_id": "2,3,4,1",
         "image":"file.png",
     }
 
     @apiParam {Number}      id            Advertisement ID - Update by(Required).
-    @apiParam {String}      name            Advertisement Name.
-    @apiParam {Number}      price            Advertisement Price.
-    @apiParam {String}      url            Advertisement URL.
-    @apiParam {String}      description            Advertisement Description.
-    @apiParam {File}      image               Advertisement Image.
+    @apiParam {String}      name            Advertisement Name.(Required).
+    @apiParam {Number}      price            Advertisement Price.(Required).
+    @apiParam {String}      url            Advertisement URL.(Required).
+    @apiParam {String}      spayc_id            Spayc List (Required).
+    @apiParam {String}      description            Advertisement Description.(Required).
+    @apiParam {File}      image               Advertisement Image.(Optional).
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message List of spaycs..
@@ -1139,16 +1167,19 @@ function createAdvertisement() { return; }
     "status": "success",
     "message": "Advertisement Updated Successfully",
     "data": {
-        "id": 47,
+        "id": 127,
         "user_id": 1,
-        "name": "New",
-        "price": 255,
-        "description": "description",
-        "url": "www.test.com",
+        "name": "Test",
+        "price": 250,
+        "description": "test test",
+        "url": "http:\/\/www.xyz.com",
         "image": "https://spayc-qa.s3.amazonaws.com/room/handle_slider_20180405094347.png",
-        "status": "Pending",
-        "created": "2018-04-02T09:21:30+00:00",
-        "modified": "2018-04-05T09:43:46+00:00"
+        "status": "Active",
+        "created": "04-20-2018 10:36:52",
+        "modified": "2018-04-20 12:54:59",
+        "views": 500,
+        "balance": 500,
+        "created_spayc": "2,3,4,1"
     }
 }
  *
@@ -1179,33 +1210,46 @@ function editAdvertisement() { return; }
  * @apiSuccessExample {json} Success-Response: 
  *      HTTP/1.1 200 OK
 {
-"status": "success",
-"message": "Advertisement Details",
-"data": {
-"advertisement": {
-        "id": 48,
-        "name": "Space Ad",
-        "image": "https://spayc-qa.s3.amazonaws.com/room/test_20180402092149.png",
-        "price": 250,
-        "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type ",
-        "url": "http://sswww.xyz.com",
-        "status": "Pending"
+    "status": "success",
+    "message": "Advertisement Details",
+    "data": {
+        "advertisement": {
+            "id": 127,
+            "name": "Test",
+            "image": null,
+            "price": 250,
+            "description": "test test",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Pending",
+            "expired": "04-20-2018 13:57:20"
         },
-"spaycs": [
-        {
-      "name": "Public Sub Spyac",
-      "id": "5",
-      "type": "Community",
-      "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180317103648.png"
-      },
-        {
-      "name": "Sam First Spyac",
-      "id": "2",
-      "type": "Community",
-      "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180322083256.png"
-      }
-      ],
-}
+        "spaycs": [
+            {
+                "name": "Sam First Spyac",
+                "id": "2",
+                "type": "Community",
+                "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180322083256.png"
+            },
+            {
+                "name": "Community Type Sub Spyac",
+                "id": "4",
+                "type": "Community",
+                "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180317083321.png"
+            },
+            {
+                "name": "@bot_1521192995:spayc-dev.kiwireader.com-@top_1521192957:spayc-dev.kiwireader.com",
+                "id": "1",
+                "type": "Community",
+                "image": null
+            },
+            {
+                "name": "Sam Second Community Spyace",
+                "id": "3",
+                "type": "Community",
+                "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180317082917.png"
+            }
+        ]
+    }
 }
  *
  * @apiUse UserErrorResponse
@@ -1240,44 +1284,54 @@ function viewAdvertisement() { return; }
     "message": "List of Advertisement.",
     "data": [
         {
-            "id": 48,
-            "name": "asd",
-            "image": "https://spayc-qa.s3.amazonaws.com/room/test_20180402092149.png",
-            "price": 250,
-            "description": "asdasd",
-            "url": null
-        },
-        {
-            "id": 49,
-            "name": "asd",
-            "image": "https://spayc-qa.s3.amazonaws.com/room/test_20180402092707.png",
-            "price": 250,
-            "description": "asdasd",
-            "url": null
-        },
-        {
-            "id": 50,
-            "name": "asd",
-            "image": "https://spayc-qa.s3.amazonaws.com/room/test_20180402092717.png",
-            "price": 250,
-            "description": "asdasd",
-            "url": null
-        },
-        {
-            "id": 51,
-            "name": "asd",
-            "image": "https://spayc-qa.s3.amazonaws.com/room/test_20180402092736.png",
-            "price": 250,
-            "description": "asdasd",
-            "url": null
-        },
-        {
-            "id": 52,
+            "id": 127,
             "name": "Test",
-            "image": "https://spayc-qa.s3.amazonaws.com/room/test_20180402092815.png",
+            "image": null,
             "price": 250,
-            "description": "asdasd",
-            "url": null
+            "description": "test test",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Pending",
+            "expired": "04-20-2018 13:57:20"
+        },
+        {
+            "id": 126,
+            "name": "test",
+            "image": null,
+            "price": 250,
+            "description": "Advertisement creating",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Pending",
+            "expired": null
+        },
+        {
+            "id": 125,
+            "name": "test",
+            "image": null,
+            "price": 250,
+            "description": "Advertisement creating",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Pending",
+            "expired": null
+        },
+        {
+            "id": 124,
+            "name": "test",
+            "image": null,
+            "price": 250,
+            "description": "Advertisement creating",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Pending",
+            "expired": null
+        },
+        {
+            "id": 123,
+            "name": "test",
+            "image": null,
+            "price": 250,
+            "description": "Advertisement creating",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Pending",
+            "expired": null
         }
     ]
 }
