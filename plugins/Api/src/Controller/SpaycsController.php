@@ -661,7 +661,6 @@ class SpaycsController extends AppController {
             $this->restException(['status' => "failed", 'message' =>__('Third party updation failed.')], 400);
         }
         
-        
         $prevLocation = $entity->getOriginal('location');
         $prevDescription = $entity->getOriginal('description');
         if($this->Spaycs->save($items)){
