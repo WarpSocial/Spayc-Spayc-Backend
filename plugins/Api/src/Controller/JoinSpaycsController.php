@@ -452,7 +452,7 @@ class JoinSpaycsController extends AppController {
         $data['matrix_room_id'] = $spayc->matrix_room_id;
         $data['matrix_token'] = $spayc['user']->matrix_access_token;        
         //$matrix = $this->Matrix->removeMember($data);
-        $matrix = $this->Matrix->leaveRoom($data['matrix_room_id'],$data['matrix_token']);
+        $matrix = $this->Matrix->leaveRoom($data['matrix_room_id'],$removeUserStatus->user->matrix_access_token);
         if(is_string($matrix)) {
             $this->restException(['status'=>'failed','message'=>__($matrix)],400);
         }

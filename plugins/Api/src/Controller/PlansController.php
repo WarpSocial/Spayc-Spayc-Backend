@@ -13,6 +13,17 @@ use Cake\Utility\Hash;
  * @property \Api\Model\Table\PlansTable $Plans
  */
 class PlansController extends AppController {
+    
+     /**
+     * beforeFilter overwrite the default function
+     * 
+     * @param object $event 
+     */
+    
+    public function beforeFilter(\Cake\Event\Event $event) {
+        parent::beforeFilter($event);
+        $this->Auth->allow(['metaData']);
+    }
    
     /**
      * index method to show the meta data
