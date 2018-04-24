@@ -661,9 +661,7 @@ class SpaycsController extends AppController {
             $this->restException(['status' => "failed", 'message' =>__('Third party updation failed.')], 400);
         }
         
-        if($items['description'] != $entity->description) {
-            TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
-        }
+        
         $prevLocation = $entity->getOriginal('location');
         $prevDescription = $entity->getOriginal('description');
         if($this->Spaycs->save($items)){

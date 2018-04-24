@@ -513,7 +513,7 @@ class MatrixComponent extends Component {
         $roomId  = $this->validRoomId($matrixRoomId);
         $postData = [
             'actions'=>[$rule],
-            'conditions'=>[['key'=>'room_id','kind'=>'event_match','pattern'=>$roomId]]
+            'conditions'=>[['key'=>'room_id','kind'=>'event_match','pattern'=>$matrixRoomId]]
         ];
         
         $http = new Client();        
