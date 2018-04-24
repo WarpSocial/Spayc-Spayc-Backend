@@ -322,7 +322,7 @@ class PriorityBehavior extends Behavior {
         }
         );
 
-        $table->addBehavior('ADmad/Sequence.Sequence', $config);
+        $table->addBehavior('Api.Priority', $config);
 
         return $return;
     }

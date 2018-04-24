@@ -37,7 +37,7 @@ class UsersController extends AppController {
     
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
-        $this->Auth->allow(['login', 'add', 'facebookSignup', 'forgotPassword', 'reverification', 'verifyAccount', 'resetPassword', 'pushNotification']);
+        $this->Auth->allow(['login', 'add', 'facebookSignup', 'forgotPassword', 'reverification', 'verifyAccount', 'resetPassword', 'pushNotification','facebookFriends']);
     }
     
     public function avatars() {
@@ -1588,6 +1588,16 @@ class UsersController extends AppController {
             $response = ['status'=>'success', 'message'=>__('No Unread count found.'), 'data'=> $data];
         }
         
+        $this->set($response);
+    }
+    
+    /**
+     * facebookFriends method to get list of friends from facebook
+     */
+    public function facebookFriends(){
+        $this->loadComponent('Api.Facebook');
+        $data = $this->facebookFriends('1545532572230775','EAACOvPyG43sBAHP9D2RIURFcwXfFin0mVCVQZCNG0KChBeJDznGtau4TZAQu1Y7iTGIyMEZCVpBc6ZAlGW7uLHZCJjIpUITvRyTjkmUMt9Q6uZBNoeVJkWxVECORQlZA4sAmTK4ldnz5OAadG6HLk2bh5MugZClRVCdGfkE4hcfsE3OxpcnyDQwPHGcIJJNBpBOLPu4XLnFv3kyAFFneLbEJAD1lEiS6o9WNTwPIJEMnFwZDZD');
+        $response = ['status'=>'success','message'=>'List of friends','data'=>$data];
         $this->set($response);
     }
 }
