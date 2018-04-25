@@ -90,7 +90,7 @@ $input = $this->request->getData();
     <?=$this->Html->script('bootstrap.min');?>
     <?=$this->Html->script('app');?>
     <script type="text/javascript">
-        $('#resetpaswd-frms').submit(function(e){        
+        $('#resetpaswd-frm').submit(function(e){        
            if($.trim($('#password').val())==''){
                $('#password').addClass('reset-alert');
                $('.hint').text('Requires at least 1 number and 1 letter.');
