@@ -113,20 +113,21 @@ class SpaycCategoriesTable extends Table {
      * 
      */
     public function allCategories(){
-        $categories = $this->find()
-                ->select(['id','parent_id','name','slug','description','created','modified'])
-                ->contain(['subCategories'=>function($q){
-                    return $q->select(['id','parent_id','name','slug','description','created','modified'])->where(['subCategories.status'=>ACTIVE]);                    
-                }])->where(['SpaycCategories.status'=>ACTIVE])
+        $categories = $this->find('threaded')
+                ->select(['SpaycCategories.id','SpaycCategories.parent_id','SpaycCategories.name','SpaycCategories.slug','SpaycCategories.description','SpaycCategories.created','SpaycCategories.modified'])
+                ->where(['SpaycCategories.status'=>ACTIVE])
+                ->order(['SpaycCategories.name'=>'ASC'])        
                 ->map(function($row){
                     $row->created = Utils::toClient($row->created);
                     $row->modified = Utils::toClient($row->modified);
-                    if(!empty($row->sub_categories)){
-                        foreach($row->sub_categories as $skey => $subrow){
-                            $row->sub_categories[$skey]->created = Utils::toClient($subrow->created);
-                            $row->sub_categories[$skey]->modified = Utils::toClient($subrow->modified);
+                    if(!empty($row->children)){
+                        foreach($row->children as $skey => $subrow){
+                            $row->children[$skey]->created = Utils::toClient($subrow->created);
+                            $row->children[$skey]->modified = Utils::toClient($subrow->modified);
                         };
                     }
+                    $row->sub_categories = $row->children;
+                    unset($row->children);
                     return $row;
                 });
         return $categories;        

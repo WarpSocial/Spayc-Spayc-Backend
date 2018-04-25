@@ -375,11 +375,7 @@ class JoinSpaycsController extends AppController {
             //pr($mjoin);die;
             $this->Matrix->joinRoom($mjoin);
         }
-        $rule = 'mute';
-        if($data['status'] == UNBANNED){
-            $rule = 'Unmute';
-        }
-        $this->Matrix->muteUnmute($rule,$BannedUserStatus->user->matrix_access_token, $spayc->matrix_room_id);
+        $this->Matrix->muteUnmute('mute',$BannedUserStatus->user->matrix_access_token, $spayc->matrix_room_id);
         if($jsModel->save($BannedUserStatus)){                        
             if($data['status'] == 'Banned'){
                 TableRegistry::get('Api.SubscribedUsers')->removeSubscription($data['user_id'],$spayc->id);                

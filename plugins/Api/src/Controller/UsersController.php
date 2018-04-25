@@ -509,38 +509,28 @@ class UsersController extends AppController {
     
     public function resetPassword($token, $email) {
         $status = 'success';
-        if (!$token || !$email) {
+        $done = $this->request->getQuery('status');
+        if (!$token || !$email) { 
             throw new NotFoundException(__('Missing required information. Please read email carefully and try again.'));
         }
-        $user = $this->Users->find()->where(['LOWER(email)'=> strtolower($email)])->first();
+        $user = $this->Users->find()->where(['LOWER(email)'=> strtolower($email),'forgot_password_token'=>$token])->first();
         if (!$user) {
             $status = 'error';
-            $this->Flash->error(__('Failed to reset the password.'));            
-        }elseif(empty($user->forgot_password_token)){
-            $status = 'error';
-            $this->Flash->error(__('Password reset link has either expired or invalid.'));
+            $this->Flash->error(__('Password reset link has either expired or invalid.'));            
         }
-//        if ($token != Security::hash($user->email, 'sha1', true)) {
-        if ($token != $user->forgot_password_token) {
-            $status = 'error';
-            $this->Flash->error(__('Password reset link has either expired or invalid.'));
-        }        
-        if($this->request->is('post') && ($status == 'success')){
+        if($this->request->is(['post','put']) && ($status == 'success')){
             $data = $this->request->getData();
-            if(empty($data['password']) || empty($data['confirm_password'])){
-                $this->Flash->error(__('All fields are required.'));
-            }elseif($data['password'] != $data['confirm_password']){
-                $this->Flash->error(__('Password not matched.'));
-            }else{ 
+            $error = $this->Users->validationResetPassword($data);
+            if(empty($error)){                
                 $previousPassword = ApiHasher::dehash($user->password);
                 $user->status = 'Active';
-                $user->password = $data['password'];
+                $user->password = $data['new_password'];
                 $user->forgot_password_token = null;
                 $user->forgot_password_timestamp = null;
                 if ($this->Users->save($user)) {
                     $matrixData = [
                         'old_password' => $previousPassword,
-                        'new_password' => $data['password'],
+                        'new_password' => $data['new_password'],
                         'matrix_user_id' => $user->matrix_user_id,
                         'matrix_access_token' => $user->matrix_access_token,
                     ];
@@ -548,14 +538,18 @@ class UsersController extends AppController {
                     $this->loadComponent('Api.Matrix');
                     $this->Matrix->changePassword($matrixData);
                     $status = 'done';
-                    $this->Flash->success(__('Your new password has been reset successfully.'));
-                    //return $this->redirect(['action' => 'login']);    
+                    //$this->Flash->success(__('Your new password has been reset successfully.'),['status'=>'done']);
+                    //return $this->redirect(['users/reset-password/'.$token.'/'.$email.'?status=done']);    
                 } else {
                     $status = 'failed';
                     $this->Flash->error(__('Failed to reset the password.'));
                     //return $this->redirect(['action' => 'login']);    
                 }
-            }            
+            }else{
+                $status = 'failed';
+                $user->errors($error);
+            }
+            
         }        
         $this->set(compact('user'));
         $this->set(compact('status'));
@@ -1518,9 +1512,9 @@ class UsersController extends AppController {
             $push['requested_to'] = $data['user_id'];
             $push['matrix_room_id'] = $entity->spayc->matrix_room_id;
             $push['spayc_id'] = $data['spayc_id']; //provide spayc id if push related to spayc
-            $push['slug'] = 'admin-asigned';
-            $this->Push->sendPushNotification($push);
+            $push['slug'] = 'admin-asigned';            
             if($data['role'] == 1){
+                $this->Push->sendPushNotification($push);
                 $message = __('User has been assigned as admin successfully.');
             }else{
                 $message = __('Role has been changed  successfully.');
@@ -1596,7 +1590,9 @@ class UsersController extends AppController {
      */
     public function facebookFriends(){
         $this->loadComponent('Api.Facebook');
-        $data = $this->facebookFriends('1545532572230775','EAACOvPyG43sBAHP9D2RIURFcwXfFin0mVCVQZCNG0KChBeJDznGtau4TZAQu1Y7iTGIyMEZCVpBc6ZAlGW7uLHZCJjIpUITvRyTjkmUMt9Q6uZBNoeVJkWxVECORQlZA4sAmTK4ldnz5OAadG6HLk2bh5MugZClRVCdGfkE4hcfsE3OxpcnyDQwPHGcIJJNBpBOLPu4XLnFv3kyAFFneLbEJAD1lEiS6o9WNTwPIJEMnFwZDZD');
+        $fbId = $this->request->getQuery('fb_id');
+        $fbAccessKey = $this->request->getQuery('fb_access_key');
+        $data = $this->Facebook->friendLists($fbId,$fbAccessKey);
         $response = ['status'=>'success','message'=>'List of friends','data'=>$data];
         $this->set($response);
     }

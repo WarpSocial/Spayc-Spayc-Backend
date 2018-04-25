@@ -96,11 +96,12 @@ class PlansTable extends Table {
         $items = $this->find()
                 ->select(['id', 'name', 'slug', 'amount', 'currency', 'views', 'created', 'modified'])
                 ->where(['status' => ACTIVE])
+                ->order(['name'=>'ASC'])
                 ->map(function($row) {
-            $row->created = Utils::toClient($row->created);
-            $row->modified = Utils::toClient($row->modified);
-            return $row;
-        });
+                    $row->created = Utils::toClient($row->created);
+                    $row->modified = Utils::toClient($row->modified);
+                    return $row;
+                });
         return $items;
     }
 

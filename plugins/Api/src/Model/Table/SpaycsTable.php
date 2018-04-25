@@ -474,7 +474,7 @@ class SpaycsTable extends Table {
                 if($status != null){
                     $condition['JoinedSpayc.status'] = $status;
                 }
-                return $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin','JoinedSpayc.distance','JoinedSpayc.updated_by'])->where($condition);
+                return $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin','JoinedSpayc.distance','JoinedSpayc.updated_by'])->where($condition)->order(['JoinedSpayc.created'=>'DESC']);;
         });
        $count = $query->count();
         if($limit != null){
@@ -486,7 +486,7 @@ class SpaycsTable extends Table {
         if($query->isEmpty()){
             return [];
         }
-        $query->order(['JoinedSpayc.created'=>'DESC']);
+        
         $result = $query->map(function ($row) {
             if(!empty($row->_matchingData['JoinedSpayc']->is_admin)){
                 $row->is_admin = $row->_matchingData['JoinedSpayc']->is_admin;

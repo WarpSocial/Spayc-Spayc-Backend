@@ -9,7 +9,7 @@
     <title>Account verification</title>
     <!--===============stylesheet=================-->
     <?=$this->Html->css('bootstrap.min.css');?>
-    <?=$this->Html->css('style.css');?>
+    <?=$this->Html->css('Api.style.css');?>
   </head>
 
  <body>

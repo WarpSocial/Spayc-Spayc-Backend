@@ -536,6 +536,34 @@ class UsersTable extends Table {
                 ->sameAs('confirm_password', 'new_password',__('New password and confirm password must be matched.'));
         return $validator->errors($data);
     }
+    /**
+     * validationResetPassword validation rules.
+     *
+     * @param Array $data input data
+     * @return \Cake\Validation\Validator
+     */
+    public function validationResetPassword($data) {
+        $validator = new Validator();
+        $validator
+                ->requirePresence('new_password', 'create',__('New password is required field.'))
+                ->notEmpty('new_password',__('New password is required field.'))
+                ->add("new_password",'passwordrule',[
+                    'rule'=>function($value,$context) {
+                        if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,30}$/', $value)){
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    },
+                    'message'=>__('New password must contain 8-30 character length and at least one letter and one number.'),
+                ]);
+                
+        $validator
+                ->requirePresence('confirm_password', 'create', __('Confirm password is required field.'))
+                ->notEmpty('confirm_password', __('Confirm password is required field.'))
+                ->sameAs('confirm_password', 'new_password',__('New password and confirm password must be matched.'));
+        return $validator->errors($data);
+    }
 
     /**
      * Returns a rules checker object that will be used for validating
