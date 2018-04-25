@@ -495,7 +495,7 @@ class UsersController extends AppController {
         }
         $user = $this->Users->find()->where(['LOWER(email)'=> strtolower($data['email'])]);
         if(!$user->count()) {
-            $this->restException(['status'=>'failed', 'message'=>__('Something went wrong.')], 400);
+            $this->restException(['status'=>'success', 'message'=>__('Reset password link has been sent to your email address if you are registered with us.')], 200);
         }
         $user = $user->first();
         $user->email = strtolower($user->email);
@@ -503,7 +503,7 @@ class UsersController extends AppController {
         $data['forgot_password_timestamp'] = time();
         $d = $this->Users->updateAll($data, ['LOWER(email)'=> strtolower($data['email'])]);
         $this->getMailer('Api.User')->send('forgotPassword', [$user]);
-        $response = ['status' => "success", 'message' => __('Reset password link has been sent to your email address.')];
+        $response = ['status' => "success", 'message' => __('Reset password link has been sent to your email address if you are registered with us.')];
         $this->set($response);
     }
     
