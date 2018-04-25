@@ -237,6 +237,9 @@ CREATE TABLE "spayc_advertisement" (
     "id" BIGSERIAL NOT NULL,
     "advertisement_id" BIGINT NOT NULL,
     "spayc_id" BIGINT NOT NULL,
+    "priority" INTEGER NULL,
+    "advertisement_status" INTEGER NULL DEFAULT '0',
+    "display_times" INTEGER NULL DEFAULT '0',
     "created" timestamp NOT NULL,
     "modified" timestamp,
     PRIMARY KEY (id,created)

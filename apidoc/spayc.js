@@ -1082,7 +1082,7 @@ function mapSpaycs() { return; }
     @apiParam {String}      spayc_id            Spayc List (Required).
     @apiParam {Number}      plan_id            Plan ID (Required).
     @apiParam {Number}      receipt            Plan Receipt (Required).
-    @apiParam {String}      platform            Platform (Required).
+    @apiParam {String}      platform            Platform (Optional).
     @apiParam {String}      purchase_date       Plan Purchase Date (Optional).
     @apiParam {File}      image               Advertisement Image (Optional).
 
@@ -1098,7 +1098,7 @@ function mapSpaycs() { return; }
         "plan_id":"1",
         "receipt":"test12345",
         "platform":"IOS",
-        "purchase_date":"2018-04-17"
+        "purchase_date":"2018-04-17 10:36:52"
     }
 
  *

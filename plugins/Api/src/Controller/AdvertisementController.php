@@ -386,13 +386,15 @@ class AdvertisementController extends AppController {
                             'type' => 'INNER',
                             'conditions' => [
                                 'Spaycs.id = spayc_advertisement.spayc_id',
+                                'advertisement_status != 2',
                             ]
                         ]
                 )->where(['spayc_id' =>  $data['spayc_id']])
                 ->distinct(['Spaycs.id']);;
         
         if($spaycRow->isEmpty()){
-             $this->restException(['status'=>'failed','message'=>'Spayc not Authorized with any Advertisement.'], 404);
+//             $this->restException(['status'=>'failed','message'=>'Spayc not Authorized with any Advertisement .'], 404);
+             $this->restException(['status'=>'failed','message'=>'Advertisement could not be found.'], 404);
         }
         
         
@@ -402,130 +404,87 @@ class AdvertisementController extends AppController {
                  ->order(['id' => 'DESC']);
          
         $cycleData=$cycleRow->first();
-        if($cycleData){
+//        if($cycleData || 1){
              $cycle=$cycleData['cycle'];
              $comment_count=$cycleData['comment_count'];
              
              
              if($data['cycle']<=$cycle && $data['comment_count']<=$comment_count){ 
                  // If Cycle Same or Low Count Comment or Low Cycle
-                 $this->restException(['status' => 'failed', 'message' => __('Cycle Already Inserted.')], 400);
+//                 $this->restException(['status' => 'failed', 'message' => __('Cycle Already Inserted.')], 400);
              }elseif($data['cycle']==$cycle && $data['comment_count']>=$comment_count){ 
                  // If Cycle Same and Count Comment Greater
                  $update['comment_count']=$data['comment_count'];
                  $condition['spayc_id']=$data['spayc_id'];
                  $condition['cycle']=$data['cycle'];
                  TableRegistry::get('Api.SpaycAdvertisementPriority')->UpdateAll($update, $condition);
-             }elseif($data['cycle']>$cycle){
+             }elseif($data['cycle']>$cycle || !$cycleData){
+                 
+                 //Ad Expire,Active,View Balance
+                 TableRegistry::get('Api.SpaycAdvertisement')->updateAdvertisementStatus($data['spayc_id']);
+                 
                  // If Cycle Greater, New Entry Cycle
-//                    $adModel = TableRegistry::get('Api.SpaycAdvertisementPriority');
-//                    $entity = $adModel->newEntity();
-//                    $entity->spayc_id = $data['spayc_id'];
-//                    $entity->cycle = $data['cycle'];
-//                    $entity->comment_count = $data['comment_count'];
-//                    
-//                    $entity->modified = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
-//                    $entity->created = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
-//                    $created = $adModel->save($entity);
+                    $adModel = TableRegistry::get('Api.SpaycAdvertisementPriority');
+                    $entity = $adModel->newEntity();
+                    $entity->spayc_id = $data['spayc_id'];
+                    $entity->cycle = $data['cycle'];
+                    $entity->comment_count = $data['comment_count'];
+                    
+                    $entity->modified = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
+                    $entity->created = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
+                    $created = $adModel->save($entity);
                     
                     $priority = TableRegistry::get('Api.SpaycAdvertisement')
                             ->setPriority($data['spayc_id']);
                     
              }
+//        }else{
+//            // Sace New Cycle
+////                  $adModel = TableRegistry::get('Api.SpaycAdvertisementPriority');
+////                    $entity = $adModel->newEntity();
+////                    $entity->spayc_id = $data['spayc_id'];
+////                    $entity->cycle = $data['cycle'];
+////                    $entity->comment_count = $data['comment_count'];
+////                    
+////                    $entity->modified = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
+////                    $entity->created = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
+////                    $created = $adModel->save($entity);
+//        }
+        
+        
+         
+        $ad = TableRegistry::get('Api.SpaycAdvertisement')->find('all',
+                ['fields'=>
+                    [
+                        'advertisement.name',
+                        'advertisement.price',
+                        'advertisement.image',
+                        'advertisement.description',
+                        'advertisement.url',
+                        
+                        ]])
+                ->join(
+                        [
+                            'table' => 'advertisement',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'advertisement.id = SpaycAdvertisement.advertisement_id',
+                            ]
+                        ]
+                )
+                ->where(['spayc_id'=>$data['spayc_id'],"balance > 0","advertisement_status"=>1])
+                ->order(['SpaycAdvertisement.priority' => 'ASC'])
+                ->limit(1)
+                ;
+        $frequency=TableRegistry::get('Api.SpaycAdvertisement')->adFrequency($data['spayc_id']);
+        $data=[];
+        if($ad->isEmpty()){
+             $this->restException(['status'=>'failed','message'=>'Advertisement not found.'], 404);
         }else{
-            
-            // Sace New Cycle
-//                  $adModel = TableRegistry::get('Api.SpaycAdvertisementPriority');
-//                    $entity = $adModel->newEntity();
-//                    $entity->spayc_id = $data['spayc_id'];
-//                    $entity->cycle = $data['cycle'];
-//                    $entity->comment_count = $data['comment_count'];
-//                    
-//                    $entity->modified = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
-//                    $entity->created = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
-//                    $created = $adModel->save($entity);
+            $data=$ad->first();
         }
-        
-        
-        
-        die;
-        
-        
-        $spayc_id = explode(",", $data['spayc_id']);
-//        print_R($exist->toArray());die;
-        if (count($exist->toArray()) != count($spayc_id)) {
-            $this->restException(['status' => 'failed', 'message' => __('Not Authorized to Create Ad in listed Spaycs.')], 400);
-        }
-        $data['spaycs'] = ['_ids' => [1]];
-        $items = $advModel->patchEntity($entity, $data);
-
-        if (!empty($items->errors())) {
-            $this->restException(['status' => 'failed', 'message' => $this->mapErrors($items->errors())], 400);
-        }
-
-        if (!$this->isCurrency($data['price'])) {
-            $this->restException(['status' => 'failed', 'message' => __('Enter Valid Price.')], 400);
-        }
-        if (isset($data['url']) && !filter_var($data['url'], FILTER_VALIDATE_URL)) {
-            $this->restException(['status'=>'failed', 'message'=> __('Enter Valid URL.')], 400);
-        } 
-        
-
-        //Fetcing Plan 
-        $pquery = TableRegistry::get('Api.Plans')->findById($data['plan_id']);
-         
-        if($pquery->isEmpty()){
-             $this->restException(['status'=>'failed','message'=>'Plan not found.'], 404);
-        }
-        $plan=$pquery->first();
-        $items->user_id = $user['id'];
-        $items->modified = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
-        $items->created = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");   
-//        print_R($plan);die;
-        $items->views = $plan['views'];
-        $items->balance = $plan['views'];
-        $items->status = 'Active';
-        $success=$advModel->save($items);
-//        pr($success);die;
-
-
-
-
-        $ad_spayc = array();
-        $spayc_id = explode(",", $data['spayc_id']);
-        foreach ($spayc_id as $k => $v) {
-            $advModel = TableRegistry::get('Api.SpaycAdvertisement');
-            $entity = $advModel->newEntity();
-            $entity->advertisement_id = $success->id;
-            $entity->spayc_id = $v;
-            $entity->modified = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
-            $entity->created = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
-            $created = $advModel->save($entity);
-            $ad_spayc[] = $v;
-        }
-        
-        //Saving into the Purchase
-        if($success->id){
-            $purchaseModel = TableRegistry::get('Api.Purchase');
-        $entity = $purchaseModel->newEntity();
-        $entity->advertisement_id = $success->id;
-        $entity->plan_id = $data['plan_id'];
-        $entity->receipt = $data['receipt'];
-        $entity->amount = $plan['amount'];
-        $entity->platform = $data['platform'];
-        if(isset($data['purchase_date']) && $data['purchase_date'])
-        $entity->purchase_date = $data['purchase_date'];
-        $entity->modified = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
-        $entity->created = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");   
-//        print_r($entity);die;
-        $purchase=$purchaseModel->save($entity);
-        }
-         
-        if(!count($ad_spayc)){
-            $this->restException(['status'=>'failed', 'message'=>__('Advertisement could not be saved. Please, try again.')], 400);
-        }
-        $success['created_spayc'] = implode(",", $ad_spayc);
-        $response = ['status' => 'success', 'message' => __('Advertisement Created Successfully'), 'data' => $success];
+        $data['frequency']=$frequency;
+        $response = ['status' => 'success', 'message' => __('Advertisement Find Successfully'), 'data' => $data];
         $this->set($response);
     }
     

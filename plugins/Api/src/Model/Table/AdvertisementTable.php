@@ -91,11 +91,6 @@ class AdvertisementTable extends Table {
                 ->notEmpty('receipt', __('Receipt key is required.'));
         
         $validator
-                ->requirePresence('platform', 'create', __('Platform key is missing.'))
-                ->notEmpty('platform', __('Platform key is required.'));
-        
-        
-        $validator
                 ->allowEmpty('image')
                 ->add('image', 'extension', [
                     'rule' => ['extension', ['jpeg', 'png', 'jpg']],
