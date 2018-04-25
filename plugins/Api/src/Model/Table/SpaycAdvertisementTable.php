@@ -140,11 +140,17 @@ class SpaycAdvertisementTable extends Table
                         ]
                 )
                 ->where(['spayc_id' => $spayc_id, "balance < 1 "]);
-        $adids = \Cake\Utility\Hash::extract($ad->toArray(), '{n}.id');
+        $ad_spayc_ids = \Cake\Utility\Hash::extract($ad->toArray(), '{n}.id');
+        $adids = \Cake\Utility\Hash::extract($ad->toArray(), '{n}.advertisement_id');
         $expired=false;
-        if($adids){
+        if($ad_spayc_ids){
         $update['advertisement_status'] = 2;
-        $expired=TableRegistry::get('Api.SpaycAdvertisement')->UpdateAll($update, ["id in (" . implode(",", $adids) . ")"]);
+        $expired=TableRegistry::get('Api.SpaycAdvertisement')->UpdateAll($update, ["id in (" . implode(",", $ad_spayc_ids) . ")"]);
+        }
+        if($adids){
+        $update_ad['status'] = "Inactive";
+        $expired=TableRegistry::get('Api.Advertisement')
+                ->UpdateAll($update_ad, ["id in (" . implode(",", $adids) . ")"]);
         }
         return $expired;
     }

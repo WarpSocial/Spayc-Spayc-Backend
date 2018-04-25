@@ -48,6 +48,10 @@ class AdvertisementController extends AppController {
         if (empty($data['id'])) {
             $this->restException(['status' => 'failed', 'message' => 'Advertisement id is required.'], 400);
         }
+        if (empty($data['spayc_id'])) {
+            $this->restException(['status' => 'failed', 'message' => 'Spayc id is required.'], 400);
+        }
+        
         $entities = $this->Advertisement->find()->where(['id' => $data['id']]);
 
         if ($entities->isEmpty()) {
@@ -57,7 +61,8 @@ class AdvertisementController extends AppController {
         $entity = $entities->first();
         if($user['id'] != $entity->user_id){
             $this->restException(['status'=>'failed','message'=>__('Insufficient privileges to edit this Advertisement.')], 400);
-        }        
+        }
+        
         unset($data['id']);        
         
         
@@ -96,7 +101,7 @@ class AdvertisementController extends AppController {
             $this->restException(['status' => 'failed', 'message' => $this->mapErrors($items->errors())], 400);
         }
 
-        if (!$this->isCurrency($data['price'])) {
+        if ($data['price'] && !$this->isCurrency($data['price'])) {
             $this->restException(['status' => 'failed', 'message' => __('Enter Valid Price.')], 400);
         }
         if (isset($data['url']) && !filter_var($data['url'], FILTER_VALIDATE_URL)) {
@@ -184,7 +189,7 @@ class AdvertisementController extends AppController {
         }
         $user = $this->Auth->user();
         $pquery = TableRegistry::get('Api.Advertisement')->findById($this->request->getQuery('id',null))
-                ->select(['id','name','user_id','image','price','description','url','status','expired']);
+                ->select(['id','name','user_id','image','price','description','url','status','views','balance']);
         
         if($pquery->toArray()){
          
@@ -316,6 +321,7 @@ class AdvertisementController extends AppController {
         $entity->plan_id = $data['plan_id'];
         $entity->receipt = $data['receipt'];
         $entity->amount = $plan['amount'];
+        if(isset($data['platform']))
         $entity->platform = $data['platform'];
         if(isset($data['purchase_date']) && $data['purchase_date'])
         $entity->purchase_date = $data['purchase_date'];
@@ -340,7 +346,7 @@ class AdvertisementController extends AppController {
 
         $user = $this->Auth->user();
         $pquery = TableRegistry::get('Api.Advertisement')->findByUserId($user['id'])
-                ->select(['id','name','image','price','description','url','status','expired']);
+                ->select(['id','name','image','price','description','url','status','views','balance']);
          
         $page = $this->request->getQuery('page',1);
         $limit = $this->request->getQuery('limit',Configure::read('pagelimit'));

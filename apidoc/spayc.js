@@ -1214,14 +1214,15 @@ function editAdvertisement() { return; }
     "message": "Advertisement Details",
     "data": {
         "advertisement": {
-            "id": 127,
+            "id": 308,
             "name": "Test",
             "image": null,
             "price": 250,
             "description": "test test",
             "url": "http:\/\/www.xyz.com",
-            "status": "Pending",
-            "expired": "04-20-2018 13:57:20"
+            "status": "Active",
+            "views": 500,
+            "balance": 500
         },
         "spaycs": [
             {
@@ -1282,56 +1283,61 @@ function viewAdvertisement() { return; }
 {
     "status": "success",
     "message": "List of Advertisement.",
-    "data": [
+   "data": [
         {
-            "id": 127,
+            "id": 311,
+            "name": "test",
+            "image": null,
+            "price": 250,
+            "description": "test test",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Active",
+            "views": 500,
+            "balance": 500
+        },
+        {
+            "id": 309,
+            "name": "test",
+            "image": null,
+            "price": 250,
+            "description": "test test",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Active",
+            "views": 500,
+            "balance": 500
+        },
+        {
+            "id": 310,
+            "name": "test",
+            "image": null,
+            "price": 250,
+            "description": "test test",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Active",
+            "views": 500,
+            "balance": 500
+        },
+        {
+            "id": 307,
+            "name": "test",
+            "image": null,
+            "price": 250,
+            "description": "test test",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Active",
+            "views": 500,
+            "balance": 0
+        },
+        {
+            "id": 308,
             "name": "Test",
             "image": null,
             "price": 250,
             "description": "test test",
             "url": "http:\/\/www.xyz.com",
-            "status": "Pending",
-            "expired": "04-20-2018 13:57:20"
-        },
-        {
-            "id": 126,
-            "name": "test",
-            "image": null,
-            "price": 250,
-            "description": "Advertisement creating",
-            "url": "http:\/\/www.xyz.com",
-            "status": "Pending",
-            "expired": null
-        },
-        {
-            "id": 125,
-            "name": "test",
-            "image": null,
-            "price": 250,
-            "description": "Advertisement creating",
-            "url": "http:\/\/www.xyz.com",
-            "status": "Pending",
-            "expired": null
-        },
-        {
-            "id": 124,
-            "name": "test",
-            "image": null,
-            "price": 250,
-            "description": "Advertisement creating",
-            "url": "http:\/\/www.xyz.com",
-            "status": "Pending",
-            "expired": null
-        },
-        {
-            "id": 123,
-            "name": "test",
-            "image": null,
-            "price": 250,
-            "description": "Advertisement creating",
-            "url": "http:\/\/www.xyz.com",
-            "status": "Pending",
-            "expired": null
+            "status": "Active",
+            "views": 500,
+            "balance": 500
         }
     ]
 }
