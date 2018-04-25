@@ -220,7 +220,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "platform",
-            "description": "<p>Platform (Required).</p>"
+            "description": "<p>Platform (Optional).</p>"
           },
           {
             "group": "Parameter",
@@ -242,7 +242,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "{\n    \"name\": \"Space Ad\",\n    \"price\": \"250\",\n    \"description\": \"Test Test Test \",\n    \"url\": \"http://www.xyz.com\",\n    \"image\":\"file.png\",\n    \"spayc_id\":\"5,6\"\n\n    \"plan_id\":\"1\",\n    \"receipt\":\"test12345\",\n    \"platform\":\"IOS\",\n    \"purchase_date\":\"2018-04-17\"\n}",
+        "content": "{\n    \"name\": \"Space Ad\",\n    \"price\": \"250\",\n    \"description\": \"Test Test Test \",\n    \"url\": \"http://www.xyz.com\",\n    \"image\":\"file.png\",\n    \"spayc_id\":\"5,6\"\n\n    \"plan_id\":\"1\",\n    \"receipt\":\"test12345\",\n    \"platform\":\"IOS\",\n    \"purchase_date\":\"2018-04-17 10:36:52\"\n}",
         "type": "json"
       }
     ],
@@ -1792,7 +1792,7 @@ define({ "api": [
         "name": "private"
       }
     ],
-    "description": "<p>create spayc which you want to promote in communication center.</p> ",
+    "description": "<p>create spayc which you want to promote in communication center.</p>",
     "header": {
       "fields": {
         "Header": [
@@ -1801,7 +1801,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token must be in header.</li> </ul> "
+            "description": "<ul> <li>A token must be in header.</li> </ul>"
           }
         ]
       }
@@ -1814,42 +1814,42 @@ define({ "api": [
             "type": "Integer",
             "optional": false,
             "field": "spayc_promotional_id",
-            "description": "<ul> <li>promotional spayc id (Required).</li> </ul> "
+            "description": "<ul> <li>promotional spayc id (Required).</li> </ul>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "spayc_id",
-            "description": "<ul> <li>List of selected spayc ids in comma separated (Required).</li> </ul> "
+            "description": "<ul> <li>List of selected spayc ids in comma separated (Required).</li> </ul>"
           },
           {
             "group": "Parameter",
             "type": "Integer",
             "optional": false,
             "field": "plan_id",
-            "description": "<ul> <li>Selected plan id (Required).</li> </ul> "
+            "description": "<ul> <li>Selected plan id (Required).</li> </ul>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "receipt",
-            "description": "<p>Receipt details (Optional).</p> "
+            "description": "<p>Receipt details (Optional).</p>"
           },
           {
             "group": "Parameter",
             "type": "DateTime",
             "optional": false,
             "field": "purchase_date",
-            "description": "<ul> <li>Date of purchase the plan (Required).</li> </ul> "
+            "description": "<ul> <li>Date of purchase the plan (Required).</li> </ul>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "platform",
-            "description": "<ul> <li>Device platform details (Required).</li> </ul> "
+            "description": "<ul> <li>Device platform details (Required).</li> </ul>"
           }
         ]
       }
@@ -1869,21 +1869,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p> "
+            "description": "<p>success.</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Promotion has been created successfully.</p> "
+            "description": "<p>Promotion has been created successfully.</p>"
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>requested input.</p> "
+            "description": "<p>requested input.</p>"
           }
         ]
       },
@@ -1910,7 +1910,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p> "
+            "description": "<p>Returns a json Object.</p>"
           }
         ],
         "Error-Response Object": [
@@ -1919,14 +1919,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p> "
+            "description": "<p>failed.</p>"
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p> "
+            "description": "<p>Message.</p>"
           }
         ]
       },
