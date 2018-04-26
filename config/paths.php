@@ -83,3 +83,11 @@ define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'vendor' . DS . 'cakephp' . DS . 'c
  */
 define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 define('CAKE', CORE_PATH . 'src' . DS);
+
+define('ACTIVE','Active');
+define('INACTIVE','Inactive');
+define('UNBANNED','Unbanned');
+define('BANNED','Banned');
+define('JOINED','Joined');
+define('SUPERADMIN',2);
+define('ADMIN',1);

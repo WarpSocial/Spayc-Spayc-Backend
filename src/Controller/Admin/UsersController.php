@@ -47,12 +47,14 @@ class UsersController extends AdminController
         $keyword=($this->request->query('keyword'))?trim(strtolower($this->request->query('keyword'))):'';
         $query=$this->Users->find()
             ->where(['Users.role_id IS'=> null])
-            ->contain([            
+            ->contain([                                       
                 'JoinedSpayc'=>function($q) {
-                    return $q->select(['JoinedSpayc.user_id', 'joined_spaycs'=>$q->func()->count('JoinedSpayc.id')])->where(['JoinedSpayc.status'=>'Joined'])->group(['JoinedSpayc.user_id']);
-                },                
-                'Spaycs'=>function($q) {
-                    return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->where(['Spaycs.group_type !=' =>'trusted_private','parent_id IS'=>null])->group(['Spaycs.user_id']);
+                    $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin','JoinedSpayc.distance'])->where(['JoinedSpayc.status'=>JOINED]);                  
+                    $q->innerJoinWith('Spaycs',function($qq) {
+                        $qq->select(['Spaycs.user_id','Spaycs.id','Spaycs.parent_id'])->where(['Spaycs.group_type !=' =>'trusted_private','Spaycs.parent_id IS'=>null]); 
+                        return $qq;                        
+                    });
+                    return $q;
                 },
                 'Requestedby' => function($q) {
                    return $q->select(['Requestedby.requested_by','count' => $q->func()->count('Requestedby.id')])->group(['Requestedby.requested_by'])->Where(['Requestedby.requested_status'=>FRIEND_REQUESTED_STATUS]);
@@ -64,6 +66,14 @@ class UsersController extends AdminController
             ]);  
         $query->formatResults(function (\Cake\Collection\CollectionInterface $results) {
             return $results->map(function ($row) {
+                $row->createdSpayc=$row->joinedSpayc=0;
+                if(isset($row['joined_spayc']) && !empty($row['joined_spayc'])) {
+                $joinedSpayc = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[status=Joined]');
+                $createdSpayc = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[is_admin=2,status=Joined]');
+                $row->joinedSpayc=count($joinedSpayc);
+                $row->createdSpayc=count($createdSpayc);
+                unset($row['joined_spayc']);
+                }               
                 $row->friend = !empty($row['requestedto'][0]['count'])? $row['requestedto'][0]['count'] : BLANK_COUNT;
                 $row->friend += !empty($row['requestedby'][0]['count'])? $row['requestedby'][0]['count'] : BLANK_COUNT;
                 unset($row['requestedby']);
@@ -95,7 +105,7 @@ class UsersController extends AdminController
             $query->where($conditions_array);
         }  
         $this->paginate = ['order' => ['Users.display_name' => 'ASC']];
-        $users = $this->paginate($query);          
+        $users = $this->paginate($query);   
         $this->set(compact('users','keyword'));
         $this->set('_serialize', ['users']);
     }
