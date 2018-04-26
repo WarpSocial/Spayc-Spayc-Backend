@@ -117,10 +117,14 @@ class JoinSpaycsController extends AppController {
                 $jsModel->getConnection()->commit();
                 $friends = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($user['id'], 'Accepted');
                 //$userIds = $jsModel->getJoinedUserIds($data['spayc_id']);
-                if($friends && in_array($spayc->user_id, $friends)) {
-                    $push['slug'] = 'friend-join-spayc';
-                } else {
-                    $push['slug'] = 'user-joined-your-spayc';
+                if($data['status'] = 'Joined'){
+                    if($friends && in_array($spayc->user_id, $friends)) {
+                        $push['slug'] = 'friend-join-spayc';
+                    } else {
+                        $push['slug'] = 'user-joined-your-spayc';
+                    }
+                }else{
+                    $push['slug'] = 'join-request';
                 }
                 $push['requested_by'] = $user['id'];
                 $push['requested_to'] =  $spayc->user_id;
@@ -248,10 +252,14 @@ class JoinSpaycsController extends AppController {
                 $jsModel->getConnection()->commit();
                 $friends = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($user['id'], 'Accepted');
                 //$userIds = $jsModel->getJoinedUserIds($data['spayc_id']);
-                if($friends && in_array($spayc->user_id, $friends)) {
-                    $push['slug'] = 'friend-join-spayc';
-                } else {
-                    $push['slug'] = 'user-joined-your-spayc';
+                if($data['status'] = 'Joined'){
+                    if($friends && in_array($spayc->user_id, $friends)) {
+                        $push['slug'] = 'friend-join-spayc';
+                    } else {
+                        $push['slug'] = 'user-joined-your-spayc';
+                    }
+                }else{
+                    $push['slug'] = 'join-request';
                 }
                 $push['requested_by'] = $user['id'];
                 $push['requested_to'] =  $spayc->user_id;
@@ -553,6 +561,16 @@ class JoinSpaycsController extends AppController {
                 if ($this->Matrix->joinRoom($matrixData)) {
                     $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);
                     $jsModel->getConnection()->commit();
+                    $this->Push->sendPushNotification([
+                        'slug' => 'accept-join-request',
+                        'requested_by' => $user['id'],
+                        'requested_to' => $data['user_id'],
+                        'spayc_id' => $spayc->id,
+                        'spayc_name' => $spayc->name,
+                        'spayc_image' => $spayc->image,
+                        'matrix_room_id' => $spayc->matrix_room_id,
+                        'display_name' => $user['display_name']                
+                    ]);
                     $response = ['status' => 'success', 'message' => __('Request has been '. strtolower($data['status']).' successfully.')];
                 } else {
                     $jsModel->getConnection()->rollback();
