@@ -179,11 +179,14 @@ class AdvertisementController extends AppController {
         $ad = $entity->first();
         $id = $ad->id;
 //        print_R($ad);die;
-        if ($this->Advertisement->delete($ad)) {
-            TableRegistry::get('Api.SpaycAdvertisement')->deleteAll(['advertisement_id' => $id]);
-            $response = ['status' => 'success', 'message' => __('Advertisement has been deleted.')];
+        if ($ad) {
+            $update['status']='Removed';
+            $condition['id']=$id;
+            TableRegistry::get('Api.Advertisement')->UpdateAll($update, $condition);
+//            TableRegistry::get('Api.SpaycAdvertisement')->deleteAll(['advertisement_id' => $id]);
+            $response = ['status' => 'success', 'message' => __('Advertisement has been removed.')];
         } else {
-            $response = ['status' => 'failed', 'message' => __('Advertisement could not be deleted.')];
+            $response = ['status' => 'failed', 'message' => __('Advertisement could not be removed.')];
         }
         $this->set(compact('response'));
     }
@@ -202,7 +205,8 @@ class AdvertisementController extends AppController {
         }
         $user = $this->Auth->user();
         $pquery = TableRegistry::get('Api.Advertisement')->findById($this->request->getQuery('id',null))
-                ->select(['id','name','user_id','image','price','description','url','status','views','balance']);
+                ->select(['id','name','user_id','image','price','description','url','status','views','balance'])
+                ->where(["status != 'Removed'"]);
         
         if($pquery->toArray()){
          
@@ -223,7 +227,8 @@ class AdvertisementController extends AppController {
                             'spayc_advertisement.advertisement_id' => $data[0]->id
                         ]
                     ]
-            );
+            )
+                ->where(["status != 'Removed'"]);
             $spayc = $entity->toArray();
             $array['advertisement'] = $data[0];
             if ($spayc)
@@ -371,7 +376,8 @@ class AdvertisementController extends AppController {
 
         $user = $this->Auth->user();
         $pquery = TableRegistry::get('Api.Advertisement')->findByUserId($user['id'])
-                ->select(['id','name','image','price','description','url','status','views','balance']);
+                ->select(['id','name','image','price','description','url','status','views','balance'])
+                ->where(["status != 'Removed'"]);
          
         $page = $this->request->getQuery('page',1);
         $limit = $this->request->getQuery('limit',Configure::read('pagelimit'));
