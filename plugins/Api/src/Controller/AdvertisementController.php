@@ -441,6 +441,11 @@ class AdvertisementController extends AppController {
                  ->order(['id' => 'DESC']);
          
         $cycleData=$cycleRow->first();
+        $frequency=TableRegistry::get('Api.SpaycAdvertisement')->adFrequency($data['spayc_id']);
+        
+        if($data['comment_count']>$frequency) {
+            $this->restException(['status' => 'failed', 'message' => __('Comment Count Must be less than from Comment Frequency.')], 400);
+        }
         if($cycleData){
              $cycle=$cycleData['cycle'];
              $comment_count=$cycleData['comment_count'];
@@ -507,7 +512,7 @@ class AdvertisementController extends AppController {
                 ->order(['SpaycAdvertisement.priority' => 'ASC'])
                 ->limit(1)
                 ;
-        $frequency=TableRegistry::get('Api.SpaycAdvertisement')->adFrequency($data['spayc_id']);
+        
         $data=[];
         if($ad->isEmpty()){
              $this->restException(['status'=>'failed','message'=>'Advertisement not found.'], 404);

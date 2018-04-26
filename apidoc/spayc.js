@@ -977,6 +977,7 @@ function hashTagSpaycs() { return; }
     @apiParam {String}      group_type               Spayc Group Type (Optional).
     @apiParam {String}      wrap_with_friends        Spayc having with friends (Optional).
     @apiParam {Number}      hashtag_id               Hashtag Search Filter (Optional).
+    @apiParam {Number}      category_id              Category Search Filter (Optional).
     
 @apiExample Example usage:
     {
@@ -989,7 +990,8 @@ function hashTagSpaycs() { return; }
         "spayc_type": "Event|Community",
         "group_type": "Public|Private",
         "wrap_with_friends": "yes|no",
-        "hashtag_id": xx
+        "hashtag_id": xx,
+        "category_id": "5,6"
         
     }
  *
@@ -1012,6 +1014,7 @@ function hashTagSpaycs() { return; }
                     "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180317082917.png",
                     "type": "Community",
                     "modified": "2018-03-17T08:29:17+00:00",
+                    "category_id": 5,
                     "latitude": 28.7041,
                     "longitude": 77.1025,
                     "is_joined": true,
@@ -1025,6 +1028,7 @@ function hashTagSpaycs() { return; }
                     "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180317083321.png",
                     "type": "Community",
                     "modified": "2018-03-17T08:33:21+00:00",
+                    "category_id": 6,
                     "latitude": 28.7041,
                     "longitude": 77.1025,
                     "is_joined": false,
