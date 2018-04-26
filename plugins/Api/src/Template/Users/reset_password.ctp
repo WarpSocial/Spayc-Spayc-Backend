@@ -11,7 +11,7 @@ $input = $this->request->getData();
     <title>Spayc Reset Password</title>
     <!--===============stylesheet=================-->
     <?=$this->Html->css('bootstrap.min.css');?>
-    <?=$this->Html->css('style.css');?>
+    <?=$this->Html->css('Api.style.css');?>
     <style>
         .form-group input.form-control.reset-alert {
             border-color: red;
@@ -37,38 +37,34 @@ $input = $this->request->getData();
         <!--================forgot password=====================-->
         <div class="forgot-password-box forgot-password-web">
           <div class="logo-wrap">
-            <?php echo $this->Html->image('logo-gr.png', ['alt' => 'Spayc']);?>
+            <?php echo $this->Html->image('Api.logo.png', ['alt' => 'Spayc']);?>
           </div>
             <?php
             if($status == 'done'){
               ?>
             <div class="success-reset-password">
-            <div class="logo-wrap hide">
-                <?php echo $this->Html->image('logo-gr.png', ['alt' => 'Spayc']);?>
-            </div>
             <span>Your password has been reset successfully.</span>
           </div>
             <?php
             }elseif($status == 'error'){
                // echo '<h4>Reset Password</h4>';
-                echo '<p class="mb-30">'.$this->Flash->render().'</p>';
+                echo $this->Flash->render();
             }else{
             ?>
-          <?php echo $this->Form->create('Users', ['id'=>'resetpaswd-frm','context' => ['validator' => 'reset'],'class'=>['reset-password']
-]);?>
+          <?php echo $this->Form->create($user, ['id'=>'resetpaswd-frm','class'=>'reset-password','novalidate']);?>
             <h4>Reset Password</h4>
             <p class="mb-30">Enter new password and confirm it.</p>
             <p><?php echo $this->Flash->render() ?></p>
             <?php
-                $pinputClass = !empty($input['password'])?'form-control form-input filled':"form-control form-input";
+                $pinputClass = !empty($input['new_password'])?'form-control form-input filled':"form-control form-input";
                 $cpinputClass = !empty($input['confirm_password'])?'form-control form-input filled':"form-control form-input";
-                $cfocused = !empty($input['password'])?'focused':"";
+                $cfocused = !empty($input['new_password'])?'focused':"";
                 $cpfocused = !empty($input['confirm_password'])?'focused':"";
                 ?>
             <div class="form-group <?= $cfocused ?>">
                 <label class="form-label <?= $cfocused ?>" for="password">New Password</label>
                 
-                <?php echo $this->Form->control('password', ['type'=>'password', 'class'=>$pinputClass, 'label'=>false]);?>
+                <?php echo $this->Form->control('new_password', ['type'=>'password', 'class'=>$pinputClass, 'label'=>false]);?>
                 <small class="hint">Hint: Requires at least 1 number and 1 letter.</small>
 
             </div>

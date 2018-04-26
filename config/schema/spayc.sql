@@ -52,6 +52,7 @@ CREATE TABLE user_logs (
     "token" character varying(255) NOT NULL,
     "plain_token" character varying(255) NOT NULL,
     "device_id" character varying(255),
+    "device_token" character varying(1000),
     "matrix_access_token" character varying(1000),
     "matrix_user_id" character varying(255),
     "login_status" integer DEFAULT 0 NOT NULL,

@@ -137,11 +137,14 @@ class HashtagsTable extends Table
         if(empty($hashTags) || empty($spaycId)) {
             return false;
         }
-        preg_match_all('/#([^\s,#]+)/', $hashTags, $matches);
+        $spHashtags = TableRegistry::get('Api.SpaycHashtags');
+        $spHashtags->deleteAll(['spayc_id'=>$spaycId]);
+        preg_match_all('/#([^\s,#]+)/', $hashTags, $matches);        
         if(empty($matches[1])) {
             return false;
         }
-        $spHashtags = TableRegistry::get('Api.SpaycHashtags');
+        
+        $spHashtags->deleteAll(['spayc_id'=>$spaycId]);
         foreach($matches[1] as $key=>$hash) {
             $entity = $this->find("all")->select(["id", "name"])->where(['LOWER(name)'=>  strtolower($hash)]);
             if(!$entity->isEmpty()) {

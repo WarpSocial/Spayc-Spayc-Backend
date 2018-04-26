@@ -597,8 +597,8 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>'Spayc id is required.'], 400);
         }
         $entities = $this->Spaycs->find();
-         if(!empty($data['latitude']) || !empty($data['longitude'])){
-             $entities->contain('JoinedSpayc',function($q)use($data){
+        if(!empty($data['latitude']) || !empty($data['longitude'])){
+            $entities->contain('JoinedSpayc',function($q)use($data){
                     $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id','pl.current_latitude','pl.current_longitude']);
                     $dckey = [':lat',':long','Spaycs.latitude','Spaycs.longitude'];
                     $rckey = [$data['latitude'],$data['longitude'],'pl.current_latitude','pl.current_longitude'];
@@ -612,8 +612,13 @@ class SpaycsController extends AppController {
                         ]
                     ]);
                     return $q;
-                });
-         }
+            });
+        }else{
+            $entities->contain('JoinedSpayc',function($q){
+                    $q->select(['distance'=>'NULL','JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id']);
+                    return $q;
+            });
+        }
                 
                 
         $entities->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
@@ -621,13 +626,13 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Invalid spayc id.')], 400);
         }
         
-        $entity = $entities->first();                
+        $entity = $entities->first();
         $eventType = $entity->type;
         if($user['id'] != $entity->user_id){
             $this->restException(['status'=>'failed','message'=>__('Insufficient privileges to edit this space.')], 400);
         }        
         unset($data['spayc_id']);   
-        if(is_null($entity->parent_id)){            
+        if(is_null($entity->parent_id)){
             $items = $this->Spaycs->patchEntity($entity, $data,['associated'=>['JoinedSpayc']]);
             if(!empty($items->errors())) {
                 $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
@@ -656,17 +661,15 @@ class SpaycsController extends AppController {
             $this->restException(['status' => "failed", 'message' =>__('Third party updation failed.')], 400);
         }
         
-        if($items['description'] != $entity->description) {
-            TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
-        }
         $prevLocation = $entity->getOriginal('location');
+        $prevDescription = $entity->getOriginal('description');
         if($this->Spaycs->save($items)){
-            if(!empty($items['description'])) {
-                //TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
+            if($prevDescription != $entity->get('description')) {
+                TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
             }
-            if($prevLocation != $entity->get('location')){
-                $this->Spaycs->updateDistance($items);                
-            }
+            //if($prevLocation != $entity->get('location')){
+            $this->Spaycs->updateDistance($items);                
+            //}
             if(!empty($entity['joined_spayc'])){
                 unset($items->joined_spayc);
             }

@@ -1,25 +1,7 @@
-https://jira.kiwitech.com/browse/SPAYCBKND-587 = Done
-https://jira.kiwitech.com/browse/SPAYCBKND-579 = Done
-https://jira.kiwitech.com/browse/SPAYCBKND-558 = Done
-https://jira.kiwitech.com/browse/SPAYCBKND-553 = Done
-https://jira.kiwitech.com/browse/SPAYCBKND-493 = Done
+https://jira.kiwitech.com/browse/SPAYCBKND-392 = Fixed Only message has been changed
+https://jira.kiwitech.com/browse/SPAYCBKND-393 = Discussion
+https://jira.kiwitech.com/browse/SPAYCBKND-468 = Discussion
+https://jira.kiwitech.com/browse/SPAYCBKND-599 = Disucssion
+https://jira.kiwitech.com/browse/SPAYCBKND-603 = Discussion
 
-https://jira.kiwitech.com/browse/SPAYCBKND-593 = Fixed
-https://jira.kiwitech.com/browse/SPAYCBKND-522 = Later
-https://jira.kiwitech.com/browse/SPAYCBKND-520 = Later
-https://jira.kiwitech.com/browse/SPAYCBKND-519 = It is keyword which filter on both either spayc, user or hashtag
-https://jira.kiwitech.com/browse/SPAYCBKND-518 = Need to talk with Dhirender
-https://jira.kiwitech.com/browse/SPAYCBKND-358 = Need to fix
-478
-539
-345
-476
-
-https://jira.kiwitech.com/browse/SPAYCBKND-339 = We are not keeping the device id it is device token
-
-https://jira.kiwitech.com/browse/SPAYCBKND-581 = Fixed but It should be handled by front end
-
-Story
-https://jira.kiwitech.com/browse/SPAYCBKND-510
-https://jira.kiwitech.com/browse/SPAYCBKND-488
-
+https://jira.kiwitech.com/browse/SPAYCBKND-661 = Fixed
