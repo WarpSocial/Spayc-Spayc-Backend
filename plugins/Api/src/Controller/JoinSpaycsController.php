@@ -414,6 +414,9 @@ class JoinSpaycsController extends AppController {
         $spaycs = TableRegistry::get('Api.Spaycs')->find()
                 ->contain([
                     'Users',
+                    'SubSpaycs.JoinedSpayc'=>function($q)use($data){
+                        return $q->select(['id','spayc_id','user_id'])->where(['JoinedSpayc.user_id'=>$data['user_id']]);
+                    }, 
                     'JoinedSpayc' => function($q)use($data,$user) {
                         return $q
                                 ->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.is_admin'])
@@ -454,14 +457,17 @@ class JoinSpaycsController extends AppController {
         $removeMatrixUser = TableRegistry::get('Api.Users')->get($removeUserStatus['user_id'],['fields'=>['matrix_user_id']]);
         $data['matrix_user_id'] = $removeMatrixUser->matrix_user_id;
         $data['matrix_room_id'] = $spayc->matrix_room_id;
-        $data['matrix_token'] = $spayc['user']->matrix_access_token;        
-        //$matrix = $this->Matrix->removeMember($data);
+        $data['matrix_token'] = $spayc['user']->matrix_access_token; 
+        //$matrix = $this->Matrix->removeMember($data);      
         $matrix = $this->Matrix->leaveRoom($data['matrix_room_id'],$removeUserStatus->user->matrix_access_token);
         if(is_string($matrix)) {
             $this->restException(['status'=>'failed','message'=>__($matrix)],400);
         }
         $this->Matrix->muteUnmute('mute',$removeUserStatus->user->matrix_access_token, $spayc->matrix_room_id);
+        
         if($jsModel->delete($removeUserStatus)){
+            $this->removeFromSubspayc($spayc->sub_spaycs, $removeUserStatus->user->matrix_access_token);
+            //TableRegistry::get('Api.JoinedSpayc')->deleteAll(['spayc_id IN' => $child]);
             $push = [
                 'slug' => 'kick-from-spayc',
                 'requested_by' => $user['id'],
@@ -588,4 +594,22 @@ class JoinSpaycsController extends AppController {
         }
         $this->set($response);
     }
+    
+    public function removeFromSubspayc($subspaycs, $accessToken=null) {
+        if (empty($subspaycs) || is_null($accessToken)) {
+            return;
+        }        
+        $jsModel = TableRegistry::get('Api.JoinedSpayc');
+        foreach ($subspaycs as $subspayc) {
+            if (!empty($subspayc['joined_spayc'])) {
+                foreach ($subspayc['joined_spayc'] as $joinspayc) {
+                    if($jsModel->delete($joinspayc)){
+                        $this->Matrix->leaveRoom($subspayc['matrix_room_id'], $accessToken);
+                        $this->Matrix->muteUnmute('mute', $accessToken,$subspayc['matrix_room_id']);
+                    }                    
+                }
+            }
+        }
+    }
+
 }
