@@ -1381,6 +1381,54 @@ function userAdvertisement() { return; }
 function deleteAdvertisement() { return; }
 
 /**
+ @api {post} /ad-logic-start.json Advertisement Logic Start
+ @apiVersion 0.1.0
+ @apiName adLogicStart
+ @apiGroup Advertisement
+ @apiPermission private
+
+ @apiDescription Advertisement Logic.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+    @apiParam {Number}      spayc_id            Spayc Id (Required).
+
+    @apiExample Example usage:
+    {
+        "spayc_id":"5"
+    }
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Advertisement Find Successfully",
+    "data": {
+        "advertisement": {
+            "name": "test",
+            "price": "250.00",
+            "image": null,
+            "description": "test test",
+            "url": "http:\/\/www.xyz.com"
+        },
+        "priority": {
+            "cycle": 1,
+            "comment_count": 0
+        },
+        "frequency": 16
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function adLogicStart() { return; }
+
+
+/**
  @api {post} /ad-logic.json Advertisement Logic
  @apiVersion 0.1.0
  @apiName adLogic
@@ -1409,11 +1457,22 @@ function deleteAdvertisement() { return; }
  * @apiSuccessExample {json} Success-Response: 
  *      HTTP/1.1 200 OK
 {
-        "status": "success",
-        "message": "Advertisement Details",
-        "data": {
-           
-        }
+    "status": "success",
+    "message": "Advertisement Find Successfully",
+    "data": {
+        "advertisement": {
+            "name": "test",
+            "price": "250.00",
+            "image": null,
+            "description": "test test",
+            "url": "http:\/\/www.xyz.com"
+        },
+        "priority": {
+            "cycle": 1,
+            "comment_count": 0
+        },
+        "frequency": 16
+    }
 }
  *
  * @apiUse UserErrorResponse

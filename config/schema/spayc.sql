@@ -220,7 +220,7 @@ CREATE TABLE "advertisement" (
     "id" BIGSERIAL NOT NULL,
     "user_id" BIGINT NOT NULL,
     "name" character varying(255) NOT NULL,
-    "price" decimal(12,2) NOT NULL,
+    "price" decimal(12,2) NULL,
     "views" BIGINT NOT NULL,
     "balance" BIGINT NOT NULL,
     "description" text NULL,
@@ -229,7 +229,6 @@ CREATE TABLE "advertisement" (
     "status" row_status DEFAULT 'Pending' NOT NULL,
     "created" timestamp NOT NULL,
     "modified" timestamp,
-    "expired" timestamp,
     PRIMARY KEY (id,created)
 );
 SELECT create_hypertable('advertisement', 'created');

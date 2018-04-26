@@ -96,7 +96,7 @@ class SpaycAdvertisementTable extends Table
                     ]
                 ]
             )
-                 ->where(['spayc_id'=>$spayc_id,"balance > 0","advertisement_status"=>1]);
+                 ->where(['spayc_id'=>$spayc_id,"balance > 0","advertisement_status"=>1,'advertisement.status'=>'Active']);
  
          if(!$ad->isEmpty()){
              $list=$ad->toArray();
@@ -190,7 +190,7 @@ class SpaycAdvertisementTable extends Table
                             ]
                         ]
                 )
-                ->where(['spayc_id'=>$spayc_id,"balance > 0","advertisement_status"=>1])
+                ->where(['spayc_id'=>$spayc_id,"balance > 0","advertisement_status"=>1,'advertisement.status'=>'Active'])
                 ->count()
                 ;
           
@@ -254,7 +254,7 @@ class SpaycAdvertisementTable extends Table
                             ]
                         ]
                 )
-                ->where(['spayc_id'=>$spayc_id,"balance > 0","advertisement_status"=>1])
+                ->where(['spayc_id'=>$spayc_id,"balance > 0","advertisement_status"=>1,'advertisement.status'=>'Active'])
                 ->order(['SpaycAdvertisement.priority' => 'ASC'])
                 ->limit(1)
                 ;
@@ -280,7 +280,6 @@ class SpaycAdvertisementTable extends Table
         $joined_users=TableRegistry::get('Api.JoinedSpayc')->getJoinedUserIds($spayc_id);
        
         $views=count($joined_users)*$display_times;
-        $views=500*$display_times;
         $final_balance= $balance-$views;
         
         $data=TableRegistry::get('Api.Advertisement')
