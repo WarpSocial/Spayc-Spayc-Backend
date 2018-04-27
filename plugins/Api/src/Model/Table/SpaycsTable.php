@@ -13,6 +13,7 @@ use Cake\Controller\ComponentRegistry;
 use Api\Utils\Utils;
 use Api\Controller\Component\PushComponent;
 use Api\Controller\Component\MatrixComponent;
+use Cake\Database\Expression\QueryExpression;
 
 /**
  * Spaycs Model
@@ -397,6 +398,12 @@ class SpaycsTable extends Table {
                     }
                 ])
                 ->order(['distance'=>'ASC','created'=>'DESC']);
+                $bannedSpayc = $this->bannedSpayc($userId);    
+                if(!empty($bannedSpayc)){
+                    $spaycs->where(function (QueryExpression $exp, Query $q)use($bannedSpayc) {
+                        return $exp->notIn('Spaycs.id', $bannedSpayc);
+                     });
+                }
         
         if(!empty($request['keyword'])) {
             $spaycs->where(["LOWER(Spaycs.name) LIKE"=>"%".strtolower($request['keyword'])."%"]);
@@ -813,6 +820,14 @@ class SpaycsTable extends Table {
         }else{
             return ['id'=>$spaycId];
         }
+    }
+    
+    public function bannedSpayc($userId){
+        $banned = TableRegistry::get('Api.JoinedSpayc')->find()->where(['user_id'=>$userId,'status'=>BANNED])->extract('spayc_id');
+        if($banned->isEmpty()){
+            return false;
+        }
+        return $banned->toArray();
     }
 
 }

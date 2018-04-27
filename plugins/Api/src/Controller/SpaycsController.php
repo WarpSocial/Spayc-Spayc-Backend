@@ -11,6 +11,8 @@ use Cake\Core\Configure;
 use Api\Auth\ApiHasher;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
+use Cake\Database\Expression\QueryExpression;
+use Cake\ORM\Query;
 
 /**
  * Spaycs Controller
@@ -267,7 +269,7 @@ class SpaycsController extends AppController {
             ->where(['Spaycs.status'=>'Active','parent_id IS'=>null,'Spaycs.group_type !='=>'trusted_private'])
             ->contain([                    
                 'JoinedSpayc' => function($q) {
-                    return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.distance'])->where(['JoinedSpayc.status'=>'Joined']);
+                    return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.distance'])->where(['JoinedSpayc.status !='=>'Banned']);
                 },
                 'SubscribedUsers' => function($q) {
                     return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
@@ -276,6 +278,12 @@ class SpaycsController extends AppController {
                     return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
                 }
             ]);
+        $bannedSpayc = $this->Spaycs->bannedSpayc($loggedUser);    
+        if(!empty($bannedSpayc)){
+            $spaycs->where(function (QueryExpression $exp, Query $q)use($bannedSpayc) {
+                return $exp->notIn('Spaycs.id', $bannedSpayc);
+             });
+        }
          if($lat != null && $long != null){
             $distance = "ROUND( CAST(".str_replace(':long',$long,str_replace(':lat',$lat,$this->Spaycs->distanceInMiles))." AS numeric), 3)";
             $spaycs->select(['distance'=>$distance])
@@ -286,7 +294,7 @@ class SpaycsController extends AppController {
             $spaycs->select(['distance'=>0])
                     ->order(['Spaycs.created'=>'DESC']);
         } 
-        
+        //pr($spaycs->toArray());die;
         $spaycs->limit($limit);
         if($this->request->query('list_by')=='created') {
             $spaycs->where(['Spaycs.user_id'=>$userId]);
@@ -503,12 +511,19 @@ class SpaycsController extends AppController {
         $userId = $this->Auth->user('id');
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Accepted');
         
+        $bannedSpayc = $this->Spaycs->bannedSpayc($userId);
         $spayc = $this->Spaycs->find();
         $spayc->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.parent_id','Spaycs.created','Spaycs.modified'])
                 ->where(['status'=>'Active', 'OR'=>['matrix_room_id'=>$id,'id'=>$id]])
                 ->contain([
-                    'SubSpaycs' => function($q) {
-                        return  $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'SubSpaycs.location', 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id']);
+                    'SubSpaycs' => function($q)use($bannedSpayc) {
+                        $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'SubSpaycs.location', 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id']);
+                        if(!empty($bannedSpayc)){
+                            $q->where(function (QueryExpression $exp, Query $q)use($bannedSpayc) {
+                                return $exp->notIn('SubSpaycs.id', $bannedSpayc);
+                             });
+                        }
+                        return $q;
                     },
                     'JoinedSpayc' => function($q) {
                         return  $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin','JoinedSpayc.distance']);
@@ -520,7 +535,6 @@ class SpaycsController extends AppController {
                         return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
                     }
                 ]);
-        
         if($lat != null && $long != null){
             $distance = "ROUND( CAST(".str_replace(':long',$long,str_replace(':lat',$lat,$this->Spaycs->distanceInMiles))." AS numeric), 3)";
             $spayc->select(['distance'=>$distance])
