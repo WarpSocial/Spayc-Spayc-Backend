@@ -119,27 +119,32 @@ class PushComponent extends Component {
             $notificationType = $notificationType->first();
             $deviceId = TableRegistry::get("Api.UserLogs")->findByUserId($data['requested_to'])->select(['id', 'user_id', 'device_id','device_token']);
             if($deviceId->isEmpty()) {
-                return false;
+                //return false;
+                $deviceToken = '';
+            }else{
+                $deviceToken= $deviceId->first()->device_token;
             }
-            $deviceId = $deviceId->first();
-            
-            if($notificationType->slug == 'friend-request') {
-                $notificationType->message = str_replace("<USERNAME>", ucwords($data['display_name']), $notificationType->message);
-            }
-            if($notificationType->slug == 'new-spayc') {
-                $notificationType->message = str_replace("<X>", $data['distance'], $notificationType->message);
-                $notificationType->message = str_replace("<SpaycName>", $data['spayc_name'], $notificationType->message);
-            }
-            if($notificationType->slug == 'friend-join-spayc') {
-                $notificationType->message = str_replace("<SpaycName>", $data['spayc_name'], $notificationType->message);
-            }
-            if($notificationType->slug == 'user-joined-your-spayc') {
-                $notificationType->message = str_replace("<USERNAME>", ucwords($data['display_name']), $notificationType->message);
-                $notificationType->message = str_replace("<SpaycName>", $data['spayc_name'], $notificationType->message);
-            }
-            if(($notificationType->slug == 'user-subscribed-to-your-spayc') || ( $notificationType->slug == 'friend-subscribed-to-your-spayc' )) {
-                $notificationType->message = str_replace("<USERNAME>", ucwords($data['display_name']), $notificationType->message);
-                $notificationType->message = str_replace("<SpaycName>", $data['spayc_name'], $notificationType->message);
+            switch($notificationType->slug){
+                case "friend-request":
+                case "join-request":
+                    $notificationType->message = str_replace("<USERNAME>", ucwords($data['display_name']), $notificationType->message);
+                    break;
+                case "new-spayc":                    
+                    $notificationType->message = str_replace(["<X>","<SpaycName>"], [$data['distance'],$data['spayc_name']], $notificationType->message);
+                
+                    break;
+                case "friend-join-spayc":
+                case "accept-join-request":
+                   $notificationType->message = str_replace("<SpaycName>", $data['spayc_name'], $notificationType->message);
+                    break;
+                case "user-joined-your-spayc":
+                    $notificationType->message = str_replace(["<USERNAME>","<SpaycName>"], [ucwords($data['display_name']),$data['spayc_name']], $notificationType->message);
+                    break;
+                case "user-subscribed-to-your-spayc":
+                case "friend-subscribed-to-your-spayc":
+                     $notificationType->message = str_replace(["<USERNAME>","<SpaycName>"], [ucwords($data['display_name']),$data['spayc_name']], $notificationType->message);
+                    break;
+                
             }
             $userImages = TableRegistry::get("Api.UserImages")->findByUserIdAndIsProfile($data['requested_by'], 'Yes');
             if(!$userImages->isEmpty()) {
@@ -150,7 +155,7 @@ class PushComponent extends Component {
             //$userInputTime = new \DateTime("now", new \DateTimeZone('America/New_York') );
             //echo $userInputTime->format('Y-m-d H:i:s');
             $data['time'] =  $userInputTime->format("m-d-Y H:i:s");
-            $data['device_token'] = $deviceId->device_token;
+            $data['device_token'] = $deviceToken;
             $data['notification_type'] = $notificationType->type;
             //pr($data);die;
             /* Save the record in db*/
@@ -160,14 +165,8 @@ class PushComponent extends Component {
             $data['created'] = date("Y-m-d H:i:s"); //pr($data);exit;
             $items = TableRegistry::get("Api.Notifications")->addNotification($data);
             /* end of saving  */
-            /* Send notification */
-            if(!empty($data['device_token'])) {
-                if(strlen($deviceId->device_token)<64) {
-                    //return false;
-                }
-                TableRegistry::get('Queue.QueuedJobs')->createJob('Notification',$data);
-                //$sent = $this->sendOnIOS($data);
-            }            
+            /* create a job in queue */
+            TableRegistry::get('Queue.QueuedJobs')->createJob('Notification',$data);
         }
     }
 }

@@ -51,7 +51,14 @@ class PlansTable extends Table {
         $validator = new Validator();
         $validator
                 ->requirePresence('spayc_id','create', __('Please provide the spayc id'))
-                ->notEmpty('spayc_id',__('Please provide the spayc id'));                
+                ->notEmpty('spayc_id',__('Please provide the spayc id'))
+                ->add('spayc_id','uniquekey',[
+                    'rule'=>function($value,$context){
+                        $array = explode(',',$value);
+                        return (count($array) == count(array_unique($array)));
+                    },
+                    'message'=>__('Warp must not be repeated.') 
+                ]);                
         $validator
                 ->requirePresence('spayc_promotional_id','create', __('Please provide promotional spayc.'))
                 ->integer('spayc_promotional_id',__('Please provide integer value for promotional spayc.'))

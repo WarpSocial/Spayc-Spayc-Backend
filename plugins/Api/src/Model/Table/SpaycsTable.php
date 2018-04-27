@@ -459,8 +459,8 @@ class SpaycsTable extends Table {
              'UserImages'=>function($q) {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
             },
-            'SubscribedUsers' => function($q) {
-                return $q->select(['SubscribedUsers.id','SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])->where(['SubscribedUsers.status'=>'Active']);
+            'SubscribedUsers' => function($q)use($spaceid) {
+                return $q->select(['SubscribedUsers.id','SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])->where(['SubscribedUsers.status'=>'Active','SubscribedUsers.spayc_id'=>$spaceid]);
             },        
             'Requestedby' => function($q)use($loggedUser) {
                 return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_to','Requestedby.requested_status','Requestedby.matrix_room_id','Requestedby.action_by'])->where(['OR'=>[['Requestedby.requested_by'=>$loggedUser['id']],['Requestedby.requested_to'=>$loggedUser['id']]]]);
@@ -515,8 +515,7 @@ class SpaycsTable extends Table {
                 $miles = Configure::read('miles');
                  $row->physically_present = ($row->_matchingData['JoinedSpayc']->distance <= $miles)?true:false;
             }
-            
-            $row->is_subscribed = !empty($row->subscribed_users)?true:false;
+            $row->is_subscribed = !empty($row->subscribed_users[0])?true:false;
             
             $row->image_url = !empty($row->user_images[0]['image_url'])?$row->user_images[0]['image_url']:"";
             

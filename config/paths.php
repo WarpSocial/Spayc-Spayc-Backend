@@ -90,3 +90,5 @@ define('BANNED','Banned');
 define('JOINED','Joined');
 define('SUPERADMIN',2);
 define('ADMIN',1);
+define('PRIVATETYPE','Private');
+define('PUBLICTYPE','Public');
