@@ -495,10 +495,10 @@ class UsersController extends AppController {
         }
         $user = $this->Users->findByEmail($data['email']);
         if(!$user->count()) {
-            $this->restException(['status'=>'failed', 'message'=>__('Email does not exists.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('Something went wrong.')], 400);
         }
         $user = $user->first();
-        $user['forgot_password_token'] = $data['forgot_password_token'] = Security::hash($data['email'], 'sha1', true);
+        $user['forgot_password_token'] = $data['forgot_password_token'] = sha1(uniqid(rand(), true));
         $data['forgot_password_timestamp'] = time();
         $d = $this->Users->updateAll($data, ['email'=>$data['email']]);
         $this->getMailer('Api.User')->send('forgotPassword', [$user]);
@@ -519,7 +519,8 @@ class UsersController extends AppController {
             $status = 'error';
             $this->Flash->error(__('Password reset link has either expired or invalid.'));
         }
-        if ($token != Security::hash($user->email, 'sha1', true)) {
+//        if ($token != Security::hash($user->email, 'sha1', true)) {
+        if ($token != $user->forgot_password_token) {
             $status = 'error';
             $this->Flash->error(__('Password reset link has either expired or invalid.'));
         }        
@@ -662,6 +663,7 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
         $data = $this->request->getData();
+        $loggedUser = $this->Auth->user();   
         $errors = $this->Users->friendRequestValidate($data);
         if(!empty($errors)) {
             $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($errors)], 400);
@@ -672,7 +674,10 @@ class UsersController extends AppController {
         if(!$spaceUsr){
             $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
         }
-        $loggedUser = $this->Auth->user();   
+        if($data['friend_id'] == $loggedUser['id']){
+            $this->restException(['status'=>'failed','message'=>__('You could not {0} himself.', strtolower($data['friend_status']))],400);
+        }
+        
         
         $requestedFrnd = $frObj->find()->Where(['OR'=>[
             ['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']],
@@ -1194,7 +1199,7 @@ class UsersController extends AppController {
                 $row->image_url = !empty($row['user_images'][0]['image_url'])?$row['user_images'][0]['image_url']:'';
                 //unset($row['requestedto']);
                 //unset($row['requestedby']);
-                unset($row['user_images']);
+                unset($row['user_images'],$row['matrix_access_token']);
                 return $row;
             });
         });
@@ -1472,7 +1477,10 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
         $jsModel = TableRegistry::get('Api.JoinedSpayc');
-        $entities = $jsModel->find()->where(['spayc_id'=>$data['spayc_id'],'user_id IN'=>[$data['user_id'],$user['id']]]);
+        $entities = $jsModel->find()
+                ->contain(['Spaycs' => function($q) {
+                    return $q->select(['Spaycs.id', 'Spaycs.name', 'Spaycs.matrix_room_id', 'Spaycs.image']);
+            }])->where(['JoinedSpayc.spayc_id'=>$data['spayc_id'],'JoinedSpayc.user_id IN'=>[$data['user_id'],$user['id']]]);
         if($entities->isEmpty()){
             $this->restException(['status'=>'failed','message'=>__('User has not joined this spayc.')], 400);
         }
@@ -1500,7 +1508,6 @@ class UsersController extends AppController {
         if($entity->is_admin == $data['role']){
             $this->restException(['status'=>'failed','message'=>__('User has already been admin.')], 400);
         }
-        
         $entity->is_admin = $data['role'];
         $entity->modified = new \Cake\I18n\Time();
         $entity->updated_by = $this->Auth->user('id');
@@ -1509,6 +1516,7 @@ class UsersController extends AppController {
             $push['username'] = $user['username'];
             $push['display_name'] = $user['display_name'];
             $push['requested_to'] = $data['user_id'];
+            $push['matrix_room_id'] = $entity->spayc->matrix_room_id;
             $push['spayc_id'] = $data['spayc_id']; //provide spayc id if push related to spayc
             $push['slug'] = 'admin-asigned';
             $this->Push->sendPushNotification($push);
@@ -1571,7 +1579,15 @@ class UsersController extends AppController {
         if($user->isEmpty()){
             $this->restException(['status'=>'failed', 'message'=>__('Invalid user')], 400);
         }
-        $response = ['status'=>'success', 'message'=>__('Unread Notification Count.'), 'data'=> $user->first()];
+        $notification=$user->first();
+        if($notification['unread_notifications']){
+            $data['is_unread_count']=true;
+            $response = ['status'=>'success', 'message'=>__('Unread Notification Status.'), 'data'=> $data];
+        }else{
+            $data['is_unread_count']=false;
+            $response = ['status'=>'success', 'message'=>__('No Unread count found.'), 'data'=> $data];
+        }
+        
         $this->set($response);
     }
 }

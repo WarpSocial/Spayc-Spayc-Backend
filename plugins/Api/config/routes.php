@@ -32,7 +32,6 @@ Router::plugin(
         $routes->connect('/reset-password/:token/:email', ['controller' => 'Users', 'action' => 'resetPassword', 'ext'=>'html'], ['pass' => ['token', 'email']]);
         $routes->connect('/user-profile/:id', ['controller' => 'Users', 'action' => 'viewProfile'], ['pass'=>['id']]);
         $routes->connect('/change-password', ['controller' => 'Users', 'action' => 'changePassword']);
-        $routes->connect('/update-device-token', ['controller'=>'Users', 'action'=>'updateDeviceToken']);
         $routes->connect('/change-role', ['controller'=>'Users', 'action'=>'changeRole']);
         
         $routes->connect('/set-profile-image/:id', ['controller' => 'Users', 'action' => 'setProfileImage'], ['pass'=>['id']]);
@@ -61,6 +60,9 @@ Router::plugin(
         $routes->connect('/advertisement-edit', ['controller' => 'Advertisement', 'action' => 'edit']);
         $routes->connect('/advertisement-delete', ['controller' => 'Advertisement', 'action' => 'delete']);
         
+        $routes->connect('/ad-logic-start', ['controller' => 'Advertisement', 'action' => 'adLogicStart']);
+        $routes->connect('/ad-logic', ['controller' => 'Advertisement', 'action' => 'adLogic']);
+        
         $routes->connect('/unread-notification', ['controller' => 'Users', 'action' => 'unreadNotification']);
         
         $routes->connect('/join-spayc', ['controller'=>'JoinSpaycs', 'action'=>'joinSpayc']);
@@ -70,6 +72,11 @@ Router::plugin(
         $routes->connect('/remove-spayc-member', ['controller'=>'JoinSpaycs', 'action'=>'removeFromSpayc']);
         $routes->connect('/read-notifications', ['controller' => 'Users', 'action' => 'readNotification']);
         $routes->connect('/transactions/:id', ['controller' => 'Spaycs', 'action' => 'matrixApplicationService'],['pass'=>['id']]);
+        
+        /* for plan */
+        $routes->connect('/meta-data', ['controller' => 'Plans', 'action' => 'metaData']);
+        $routes->connect('/add-promotional-spayc', ['controller' => 'Plans', 'action' => 'addPromotionalSpayc']);
+        
         
         $routes->fallbacks(DashedRoute::class);
     }

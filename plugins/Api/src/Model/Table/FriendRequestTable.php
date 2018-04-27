@@ -268,7 +268,7 @@ class FriendRequestTable extends Table
             
              $friends = TableRegistry::get('Api.Users')->find('all',['fields'=>[
 //                 'distance' => $distanceField,
-                 'id', 'display_name', 'email', 'address','latitude','longitude']])
+                 'id', 'display_name', 'email', 'address','latitude','longitude','modified']])
                 ->where(["$distanceField <=" => $distance, 'status'=>'Active'])
                      ->where("id in (". implode($child,",").")")
                 ->bind(':latitude', $request['center_latitude'], 'float')
@@ -291,13 +291,13 @@ class FriendRequestTable extends Table
         // Unread Notification
         
         
-         $page = (!empty($request['page']) && is_numeric($request['page']))?$request['page']:1;
-        if($page < 0) {
-            $page = $page*-1;
-            $friends->page($page);
-        } else {
-            $friends->page($page);
-        }
+//         $page = (!empty($request['page']) && is_numeric($request['page']))?$request['page']:1;
+//        if($page < 0) {
+//            $page = $page*-1;
+//            $friends->page($page);
+//        } else {
+//            $friends->page($page);
+//        }
         $newQuery = clone $friends;
         $data['count'] = $newQuery->count();
         $data['records'] = [];

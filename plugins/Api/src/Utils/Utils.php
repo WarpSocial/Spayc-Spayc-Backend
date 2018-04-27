@@ -153,9 +153,9 @@ class Utils {
      * @return string sanitized string
      */
     public static function stripAll($str) {
-        return Sanitize::stripScripts(
-                        Sanitize::stripImages(
-                                Sanitize::stripWhitespace($str)
+        return self::stripScripts(
+                        self::stripImages(
+                                self::stripWhitespace($str)
                         )
         );
     }
@@ -222,7 +222,7 @@ class Utils {
 
         if (is_array($data)) {
             foreach ($data as $key => $val) {
-                $data[$key] = Sanitize::clean($val, $options);
+                $data[$key] = self::clean($val, $options);
             }
             return $data;
         }
@@ -231,7 +231,7 @@ class Utils {
             $data = str_replace(chr(0xCA), '', $data);
         }
         if ($options['encode']) {
-            $data = Sanitize::html($data, array('remove' => $options['remove_html']));
+            $data = self::html($data, array('remove' => $options['remove_html']));
         }
         if ($options['dollar']) {
             $data = str_replace("\\\$", "$", $data);
@@ -243,7 +243,7 @@ class Utils {
             $data = preg_replace("/&amp;#([0-9]+);/s", "&#\\1;", $data);
         }
         if ($options['escape']) {
-            $data = Sanitize::escape($data, $options['connection']);
+            $data = self::escape($data, $options['connection']);
         }
         if ($options['backslash']) {
             $data = preg_replace("/\\\(?!&amp;#|\?#)/", "\\", $data);

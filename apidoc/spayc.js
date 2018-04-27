@@ -832,11 +832,12 @@ function getnearAboutSpayces() { return; }
  @apiGroup Spayc
  @apiPermission private
 
- @apiDescription Get list of public and joined spayces.Spaycs must not be expired according to the spayc end date.Listing will be ordered on created.
+ @apiDescription Get list of public and joined spayces.Spaycs must not be expired according to the spayc end date.Listing will be ordered on miles and then on created.
  
  @apiHeader {String} TOKEN            * A token send by header as TOKEN
  @apiHeader {String} timezone         * User time zone
  
+ @apiParam {String}      keyword     keyword which filter on spayc name only(Optional).
  @apiParam {Number}      page            Page number in query string (Optional).
  @apiParam {Number}      limit           Limit in query string (Optional).
 
@@ -976,6 +977,7 @@ function hashTagSpaycs() { return; }
     @apiParam {String}      group_type               Spayc Group Type (Optional).
     @apiParam {String}      wrap_with_friends        Spayc having with friends (Optional).
     @apiParam {Number}      hashtag_id               Hashtag Search Filter (Optional).
+    @apiParam {Number}      category_id              Category Search Filter (Optional).
     
 @apiExample Example usage:
     {
@@ -988,7 +990,8 @@ function hashTagSpaycs() { return; }
         "spayc_type": "Event|Community",
         "group_type": "Public|Private",
         "wrap_with_friends": "yes|no",
-        "hashtag_id": xx
+        "hashtag_id": xx,
+        "category_id": "5,6"
         
     }
  *
@@ -1002,7 +1005,7 @@ function hashTagSpaycs() { return; }
     "message": "List of Data.",
     "data": {
         "spaycs": {
-            "count": 1,
+            "count": 2,
             "records": [
                 {
                     "id": "3",
@@ -1010,11 +1013,27 @@ function hashTagSpaycs() { return; }
                     "matrix_room_id": "!MvOssNcvbePXoBUIjC:spayc-dev.kiwireader.com",
                     "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180317082917.png",
                     "type": "Community",
+                    "modified": "2018-03-17T08:29:17+00:00",
+                    "category_id": 5,
                     "latitude": 28.7041,
                     "longitude": 77.1025,
                     "is_joined": true,
-                    "joined_users": 3,
+                    "joined_users": 2,
                     "is_subscribed": true
+                },
+                {
+                    "id": "4",
+                    "name": "Community Type Sub Spyac",
+                    "matrix_room_id": "!nQPjgmlBePZsAyVvQH:spayc-dev.kiwireader.com",
+                    "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180317083321.png",
+                    "type": "Community",
+                    "modified": "2018-03-17T08:33:21+00:00",
+                    "category_id": 6,
+                    "latitude": 28.7041,
+                    "longitude": 77.1025,
+                    "is_joined": false,
+                    "joined_users": 0,
+                    "is_subscribed": false
                 }
             ]
         },
@@ -1028,6 +1047,7 @@ function hashTagSpaycs() { return; }
                     "address": null,
                     "latitude": 28.579403737919,
                     "longitude": 77.320890067264,
+                    "modified": "2018-03-16T09:36:35+00:00",
                     "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
                 },
                 {
@@ -1037,6 +1057,7 @@ function hashTagSpaycs() { return; }
                     "address": null,
                     "latitude": 28.7041,
                     "longitude": 77.1025,
+                    "modified": "2018-03-17T08:21:47+00:00",
                     "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
                 }
             ]
@@ -1062,6 +1083,11 @@ function mapSpaycs() { return; }
     @apiParam {Number}      price            Advertisement Price (Required).
     @apiParam {String}      url            Advertisement URL (Required).
     @apiParam {String}      description            Advertisement Description (Required).
+    @apiParam {String}      spayc_id            Spayc List (Required).
+    @apiParam {Number}      plan_id            Plan ID (Required).
+    @apiParam {Number}      receipt            Plan Receipt (Required).
+    @apiParam {String}      platform            Platform (Optional).
+    @apiParam {String}      purchase_date       Plan Purchase Date (Optional).
     @apiParam {File}      image               Advertisement Image (Optional).
 
     @apiExample Example usage:
@@ -1072,6 +1098,11 @@ function mapSpaycs() { return; }
         "url": "http://www.xyz.com",
         "image":"file.png",
         "spayc_id":"5,6"
+
+        "plan_id":"1",
+        "receipt":"test12345",
+        "platform":"IOS",
+        "purchase_date":"2018-04-17 10:36:52"
     }
 
  *
@@ -1089,8 +1120,8 @@ function mapSpaycs() { return; }
             "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type ",
             "url": "http://www.xyz.com",
             "user_id": "1",
-            "modified": "2018-04-13 06:35:39",
-            "created": "2018-04-13 06:35:39",
+            "modified": "2018-04-17 11:16:28",
+            "created": "2018-04-17 11:16:28",
             "id": 101,
             "created_spayc": "94,95"
         }
@@ -1119,15 +1150,17 @@ function createAdvertisement() { return; }
         "price": "250",
         "description": "Test Test Test ",
         "url": "http://www.xyz.com",
+        "spayc_id": "2,3,4,1",
         "image":"file.png",
     }
 
     @apiParam {Number}      id            Advertisement ID - Update by(Required).
-    @apiParam {String}      name            Advertisement Name.
-    @apiParam {Number}      price            Advertisement Price.
-    @apiParam {String}      url            Advertisement URL.
-    @apiParam {String}      description            Advertisement Description.
-    @apiParam {File}      image               Advertisement Image.
+    @apiParam {String}      name            Advertisement Name.(Required).
+    @apiParam {Number}      price            Advertisement Price.(Required).
+    @apiParam {String}      url            Advertisement URL.(Required).
+    @apiParam {String}      spayc_id            Spayc List (Required).
+    @apiParam {String}      description            Advertisement Description.(Required).
+    @apiParam {File}      image               Advertisement Image.(Optional).
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message List of spaycs..
@@ -1138,16 +1171,19 @@ function createAdvertisement() { return; }
     "status": "success",
     "message": "Advertisement Updated Successfully",
     "data": {
-        "id": 47,
+        "id": 127,
         "user_id": 1,
-        "name": "New",
-        "price": 255,
-        "description": "description",
-        "url": "www.test.com",
+        "name": "Test",
+        "price": 250,
+        "description": "test test",
+        "url": "http:\/\/www.xyz.com",
         "image": "https://spayc-qa.s3.amazonaws.com/room/handle_slider_20180405094347.png",
-        "status": "Pending",
-        "created": "2018-04-02T09:21:30+00:00",
-        "modified": "2018-04-05T09:43:46+00:00"
+        "status": "Active",
+        "created": "04-20-2018 10:36:52",
+        "modified": "2018-04-20 12:54:59",
+        "views": 500,
+        "balance": 500,
+        "created_spayc": "2,3,4,1"
     }
 }
  *
@@ -1181,13 +1217,44 @@ function editAdvertisement() { return; }
     "status": "success",
     "message": "Advertisement Details",
     "data": {
-        "id": 47,
-        "name": "New",
-        "image": "https://spayc-qa.s3.amazonaws.com/room/handle_slider_20180405094347.png",
-        "price": 255,
-        "description": "description",
-        "url": "www.test.com"
-        }
+        "advertisement": {
+            "id": 308,
+            "name": "Test",
+            "image": null,
+            "price": 250,
+            "description": "test test",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Active",
+            "views": 500,
+            "balance": 500
+        },
+        "spaycs": [
+            {
+                "name": "Sam First Spyac",
+                "id": "2",
+                "type": "Community",
+                "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180322083256.png"
+            },
+            {
+                "name": "Community Type Sub Spyac",
+                "id": "4",
+                "type": "Community",
+                "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180317083321.png"
+            },
+            {
+                "name": "@bot_1521192995:spayc-dev.kiwireader.com-@top_1521192957:spayc-dev.kiwireader.com",
+                "id": "1",
+                "type": "Community",
+                "image": null
+            },
+            {
+                "name": "Sam Second Community Spyace",
+                "id": "3",
+                "type": "Community",
+                "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180317082917.png"
+            }
+        ]
+    }
 }
  *
  * @apiUse UserErrorResponse
@@ -1220,46 +1287,61 @@ function viewAdvertisement() { return; }
 {
     "status": "success",
     "message": "List of Advertisement.",
-    "data": [
+   "data": [
         {
-            "id": 48,
-            "name": "asd",
-            "image": "https://spayc-qa.s3.amazonaws.com/room/test_20180402092149.png",
+            "id": 311,
+            "name": "test",
+            "image": null,
             "price": 250,
-            "description": "asdasd",
-            "url": null
+            "description": "test test",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Active",
+            "views": 500,
+            "balance": 500
         },
         {
-            "id": 49,
-            "name": "asd",
-            "image": "https://spayc-qa.s3.amazonaws.com/room/test_20180402092707.png",
+            "id": 309,
+            "name": "test",
+            "image": null,
             "price": 250,
-            "description": "asdasd",
-            "url": null
+            "description": "test test",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Active",
+            "views": 500,
+            "balance": 500
         },
         {
-            "id": 50,
-            "name": "asd",
-            "image": "https://spayc-qa.s3.amazonaws.com/room/test_20180402092717.png",
+            "id": 310,
+            "name": "test",
+            "image": null,
             "price": 250,
-            "description": "asdasd",
-            "url": null
+            "description": "test test",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Active",
+            "views": 500,
+            "balance": 500
         },
         {
-            "id": 51,
-            "name": "asd",
-            "image": "https://spayc-qa.s3.amazonaws.com/room/test_20180402092736.png",
+            "id": 307,
+            "name": "test",
+            "image": null,
             "price": 250,
-            "description": "asdasd",
-            "url": null
+            "description": "test test",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Active",
+            "views": 500,
+            "balance": 0
         },
         {
-            "id": 52,
+            "id": 308,
             "name": "Test",
-            "image": "https://spayc-qa.s3.amazonaws.com/room/test_20180402092815.png",
+            "image": null,
             "price": 250,
-            "description": "asdasd",
-            "url": null
+            "description": "test test",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Active",
+            "views": 500,
+            "balance": 500
         }
     ]
 }
@@ -1301,7 +1383,114 @@ function userAdvertisement() { return; }
  * @apiUse UserErrorResponse
  */
 function deleteAdvertisement() { return; }
-<<<<<<< HEAD
+
+/**
+ @api {post} /ad-logic-start.json Advertisement Logic Start
+ @apiVersion 0.1.0
+ @apiName adLogicStart
+ @apiGroup Advertisement
+ @apiPermission private
+
+ @apiDescription Advertisement Logic.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+    @apiParam {Number}      spayc_id            Spayc Id (Required).
+
+    @apiExample Example usage:
+    {
+        "spayc_id":"5"
+    }
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Advertisement Find Successfully",
+    "data": {
+        "advertisement": {
+            "user_id": 1,
+            "name": "Space Ad",
+            "price": "250.00",
+            "image": null,
+            "description": "Test Test Test ",
+            "url": "http:\/\/www.xyz.com"
+        },
+        "priority": {
+            "cycle": 2,
+            "comment_count": 19
+        },
+        "friend_request": {
+            "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
+        },
+        "frequency": 19
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function adLogicStart() { return; }
+
+
+/**
+ @api {post} /ad-logic.json Advertisement Logic
+ @apiVersion 0.1.0
+ @apiName adLogic
+ @apiGroup Advertisement
+ @apiPermission private
+
+ @apiDescription Advertisement Logic.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+    @apiParam {Number}      spayc_id            Spayc Id (Required).
+    @apiParam {Number}      cycle               Current Cycle (Required).
+    @apiParam {Number}      comment_count       Comment Count (Required).
+
+    @apiExample Example usage:
+    {
+        "spayc_id":"5",
+        "cycle":"1",
+        "comment_count":"20"
+    }
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Advertisement Find Successfully",
+    "data": {
+        "advertisement": {
+            "user_id": 1,
+            "name": "Space Ad",
+            "price": "250.00",
+            "image": null,
+            "description": "Test Test Test ",
+            "url": "http:\/\/www.xyz.com"
+        },
+        "priority": {
+            "cycle": 2,
+            "comment_count": 19
+        },
+        "friend_request": {
+            "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
+        },
+        "frequency": 19
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function adLogic() { return; }
+
 
 
 
@@ -1337,7 +1526,6 @@ function deleteAdvertisement() { return; }
  */
 function unreadNotification() { return; }
 
-=======
 /**
 @api {post} /accept-join-request.json Accept/Decline Join Request
 @apiVersion 0.1.0
@@ -1373,8 +1561,9 @@ function unreadNotification() { return; }
 @apiUse errorResponse
  */
 function postAcceptJoinedRequest() { return; }
+
 /**
-@api {post} /remove-spayc-member.json Remove/Kick Remove user from spayc
+@api {post} /remove-spayc-member.json Remove/Kick user from spayc
 @apiVersion 0.1.0
 @apiName postRemoveFromSpayc
 @apiGroup Spayc
@@ -1406,4 +1595,3 @@ function postAcceptJoinedRequest() { return; }
 @apiUse errorResponse
  */
 function postRemoveFromSpayc() { return; }
->>>>>>> c27ed5bcc024d10d2752b0ebf58dcfae629bc146
