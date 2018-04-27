@@ -719,7 +719,7 @@ class SpaycsTable extends Table {
                     'type' => 'INNER',
                     'conditions' => [
                          'Spaycs.id = spayc_hashtags.spayc_id',
-                        'spayc_hashtags.hashtag_id' => $request['hashtag_id'],
+                        'spayc_hashtags.hashtag_id IN  ('.$request['hashtag_id'].')',
                     ]
                 ]
             );
