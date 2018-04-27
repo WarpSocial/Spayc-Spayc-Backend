@@ -88,3 +88,5 @@ define('INACTIVE','Inactive');
 define('UNBANNED','Unbanned');
 define('BANNED','Banned');
 define('JOINED','Joined');
+define('SUPERADMIN',2);
+define('ADMIN',1);
