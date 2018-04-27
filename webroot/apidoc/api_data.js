@@ -1,6 +1,268 @@
 define({ "api": [
   {
     "type": "post",
+    "url": "/ad-logic.json",
+    "title": "Advertisement Logic",
+    "version": "0.1.0",
+    "name": "adLogic",
+    "group": "Advertisement",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>Advertisement Logic.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "spayc_id",
+            "description": "<p>Spayc Id (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "cycle",
+            "description": "<p>Current Cycle (Required).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "comment_count",
+            "description": "<p>Comment Count (Required).</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "{\n    \"spayc_id\":\"5\",\n    \"cycle\":\"1\",\n    \"comment_count\":\"20\"\n}",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>List of spaycs..</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>List of Spaycs.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Advertisement Find Successfully\",\n    \"data\": {\n        \"advertisement\": {\n            \"user_id\": 1,\n            \"name\": \"Space Ad\",\n            \"price\": \"250.00\",\n            \"image\": null,\n            \"description\": \"Test Test Test \",\n            \"url\": \"http:\\/\\/www.xyz.com\"\n        },\n        \"priority\": {\n            \"cycle\": 2,\n            \"comment_count\": 19\n        },\n        \"friend_request\": {\n            \"matrix_room_id\": \"!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com\"\n        },\n        \"frequency\": 19\n    }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/spayc.js",
+    "groupTitle": "Advertisement",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/ad-logic.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/ad-logic-start.json",
+    "title": "Advertisement Logic Start",
+    "version": "0.1.0",
+    "name": "adLogicStart",
+    "group": "Advertisement",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>Advertisement Logic.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "spayc_id",
+            "description": "<p>Spayc Id (Required).</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "{\n    \"spayc_id\":\"5\"\n}",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>List of spaycs..</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>List of Spaycs.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Advertisement Find Successfully\",\n    \"data\": {\n        \"advertisement\": {\n            \"user_id\": 1,\n            \"name\": \"Space Ad\",\n            \"price\": \"250.00\",\n            \"image\": null,\n            \"description\": \"Test Test Test \",\n            \"url\": \"http:\\/\\/www.xyz.com\"\n        },\n        \"priority\": {\n            \"cycle\": 2,\n            \"comment_count\": 19\n        },\n        \"friend_request\": {\n            \"matrix_room_id\": \"!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com\"\n        },\n        \"frequency\": 19\n    }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/spayc.js",
+    "groupTitle": "Advertisement",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/ad-logic-start.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
     "url": "/create-advertisement.json",
     "title": "Create Advertisement",
     "version": "0.1.0",
@@ -82,7 +344,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "platform",
-            "description": "<p>Platform (Required).</p>"
+            "description": "<p>Platform (Optional).</p>"
           },
           {
             "group": "Parameter",
@@ -104,7 +366,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "{\n    \"name\": \"Space Ad\",\n    \"price\": \"250\",\n    \"description\": \"Test Test Test \",\n    \"url\": \"http://www.xyz.com\",\n    \"image\":\"file.png\",\n    \"spayc_id\":\"5,6\"\n\n    \"plan_id\":\"1\",\n    \"receipt\":\"test12345\",\n    \"platform\":\"IOS\",\n    \"purchase_date\":\"2018-04-17\"\n}",
+        "content": "{\n    \"name\": \"Space Ad\",\n    \"price\": \"250\",\n    \"description\": \"Test Test Test \",\n    \"url\": \"http://www.xyz.com\",\n    \"image\":\"file.png\",\n    \"spayc_id\":\"5,6\"\n\n    \"plan_id\":\"1\",\n    \"receipt\":\"test12345\",\n    \"platform\":\"IOS\",\n    \"purchase_date\":\"2018-04-17 10:36:52\"\n}",
         "type": "json"
       }
     ],
@@ -544,7 +806,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"List of Advertisement.\",\n    \"data\": [\n        {\n            \"id\": 127,\n            \"name\": \"Test\",\n            \"image\": null,\n            \"price\": 250,\n            \"description\": \"test test\",\n            \"url\": \"http:\\/\\/www.xyz.com\",\n            \"status\": \"Pending\",\n            \"expired\": \"04-20-2018 13:57:20\"\n        },\n        {\n            \"id\": 126,\n            \"name\": \"test\",\n            \"image\": null,\n            \"price\": 250,\n            \"description\": \"Advertisement creating\",\n            \"url\": \"http:\\/\\/www.xyz.com\",\n            \"status\": \"Pending\",\n            \"expired\": null\n        },\n        {\n            \"id\": 125,\n            \"name\": \"test\",\n            \"image\": null,\n            \"price\": 250,\n            \"description\": \"Advertisement creating\",\n            \"url\": \"http:\\/\\/www.xyz.com\",\n            \"status\": \"Pending\",\n            \"expired\": null\n        },\n        {\n            \"id\": 124,\n            \"name\": \"test\",\n            \"image\": null,\n            \"price\": 250,\n            \"description\": \"Advertisement creating\",\n            \"url\": \"http:\\/\\/www.xyz.com\",\n            \"status\": \"Pending\",\n            \"expired\": null\n        },\n        {\n            \"id\": 123,\n            \"name\": \"test\",\n            \"image\": null,\n            \"price\": 250,\n            \"description\": \"Advertisement creating\",\n            \"url\": \"http:\\/\\/www.xyz.com\",\n            \"status\": \"Pending\",\n            \"expired\": null\n        }\n    ]\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"List of Advertisement.\",\n   \"data\": [\n        {\n            \"id\": 311,\n            \"name\": \"test\",\n            \"image\": null,\n            \"price\": 250,\n            \"description\": \"test test\",\n            \"url\": \"http:\\/\\/www.xyz.com\",\n            \"status\": \"Active\",\n            \"views\": 500,\n            \"balance\": 500\n        },\n        {\n            \"id\": 309,\n            \"name\": \"test\",\n            \"image\": null,\n            \"price\": 250,\n            \"description\": \"test test\",\n            \"url\": \"http:\\/\\/www.xyz.com\",\n            \"status\": \"Active\",\n            \"views\": 500,\n            \"balance\": 500\n        },\n        {\n            \"id\": 310,\n            \"name\": \"test\",\n            \"image\": null,\n            \"price\": 250,\n            \"description\": \"test test\",\n            \"url\": \"http:\\/\\/www.xyz.com\",\n            \"status\": \"Active\",\n            \"views\": 500,\n            \"balance\": 500\n        },\n        {\n            \"id\": 307,\n            \"name\": \"test\",\n            \"image\": null,\n            \"price\": 250,\n            \"description\": \"test test\",\n            \"url\": \"http:\\/\\/www.xyz.com\",\n            \"status\": \"Active\",\n            \"views\": 500,\n            \"balance\": 0\n        },\n        {\n            \"id\": 308,\n            \"name\": \"Test\",\n            \"image\": null,\n            \"price\": 250,\n            \"description\": \"test test\",\n            \"url\": \"http:\\/\\/www.xyz.com\",\n            \"status\": \"Active\",\n            \"views\": 500,\n            \"balance\": 500\n        }\n    ]\n}",
           "type": "json"
         }
       ]
@@ -661,7 +923,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Advertisement Details\",\n    \"data\": {\n        \"advertisement\": {\n            \"id\": 127,\n            \"name\": \"Test\",\n            \"image\": null,\n            \"price\": 250,\n            \"description\": \"test test\",\n            \"url\": \"http:\\/\\/www.xyz.com\",\n            \"status\": \"Pending\",\n            \"expired\": \"04-20-2018 13:57:20\"\n        },\n        \"spaycs\": [\n            {\n                \"name\": \"Sam First Spyac\",\n                \"id\": \"2\",\n                \"type\": \"Community\",\n                \"image\": \"https:\\/\\/spayc-dev.s3.amazonaws.com\\/room\\/image_20180322083256.png\"\n            },\n            {\n                \"name\": \"Community Type Sub Spyac\",\n                \"id\": \"4\",\n                \"type\": \"Community\",\n                \"image\": \"https:\\/\\/spayc-dev.s3.amazonaws.com\\/room\\/image_20180317083321.png\"\n            },\n            {\n                \"name\": \"@bot_1521192995:spayc-dev.kiwireader.com-@top_1521192957:spayc-dev.kiwireader.com\",\n                \"id\": \"1\",\n                \"type\": \"Community\",\n                \"image\": null\n            },\n            {\n                \"name\": \"Sam Second Community Spyace\",\n                \"id\": \"3\",\n                \"type\": \"Community\",\n                \"image\": \"https:\\/\\/spayc-dev.s3.amazonaws.com\\/room\\/image_20180317082917.png\"\n            }\n        ]\n    }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Advertisement Details\",\n    \"data\": {\n        \"advertisement\": {\n            \"id\": 308,\n            \"name\": \"Test\",\n            \"image\": null,\n            \"price\": 250,\n            \"description\": \"test test\",\n            \"url\": \"http:\\/\\/www.xyz.com\",\n            \"status\": \"Active\",\n            \"views\": 500,\n            \"balance\": 500\n        },\n        \"spaycs\": [\n            {\n                \"name\": \"Sam First Spyac\",\n                \"id\": \"2\",\n                \"type\": \"Community\",\n                \"image\": \"https:\\/\\/spayc-dev.s3.amazonaws.com\\/room\\/image_20180322083256.png\"\n            },\n            {\n                \"name\": \"Community Type Sub Spyac\",\n                \"id\": \"4\",\n                \"type\": \"Community\",\n                \"image\": \"https:\\/\\/spayc-dev.s3.amazonaws.com\\/room\\/image_20180317083321.png\"\n            },\n            {\n                \"name\": \"@bot_1521192995:spayc-dev.kiwireader.com-@top_1521192957:spayc-dev.kiwireader.com\",\n                \"id\": \"1\",\n                \"type\": \"Community\",\n                \"image\": null\n            },\n            {\n                \"name\": \"Sam Second Community Spyace\",\n                \"id\": \"3\",\n                \"type\": \"Community\",\n                \"image\": \"https:\\/\\/spayc-dev.s3.amazonaws.com\\/room\\/image_20180317082917.png\"\n            }\n        ]\n    }\n}",
           "type": "json"
         }
       ]
@@ -1654,7 +1916,7 @@ define({ "api": [
         "name": "private"
       }
     ],
-    "description": "<p>create spayc which you want to promote in communication center.</p> ",
+    "description": "<p>create spayc which you want to promote in communication center.</p>",
     "header": {
       "fields": {
         "Header": [
@@ -1663,7 +1925,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token must be in header.</li> </ul> "
+            "description": "<ul> <li>A token must be in header.</li> </ul>"
           }
         ]
       }
@@ -1676,42 +1938,42 @@ define({ "api": [
             "type": "Integer",
             "optional": false,
             "field": "spayc_promotional_id",
-            "description": "<ul> <li>promotional spayc id (Required).</li> </ul> "
+            "description": "<ul> <li>promotional spayc id (Required).</li> </ul>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "spayc_id",
-            "description": "<ul> <li>List of selected spayc ids in comma separated (Required).</li> </ul> "
+            "description": "<ul> <li>List of selected spayc ids in comma separated (Required).</li> </ul>"
           },
           {
             "group": "Parameter",
             "type": "Integer",
             "optional": false,
             "field": "plan_id",
-            "description": "<ul> <li>Selected plan id (Required).</li> </ul> "
+            "description": "<ul> <li>Selected plan id (Required).</li> </ul>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "receipt",
-            "description": "<p>Receipt details (Optional).</p> "
+            "description": "<p>Receipt details (Optional).</p>"
           },
           {
             "group": "Parameter",
             "type": "DateTime",
             "optional": false,
             "field": "purchase_date",
-            "description": "<ul> <li>Date of purchase the plan (Required).</li> </ul> "
+            "description": "<ul> <li>Date of purchase the plan (Required).</li> </ul>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "platform",
-            "description": "<ul> <li>Device platform details (Required).</li> </ul> "
+            "description": "<ul> <li>Device platform details (Required).</li> </ul>"
           }
         ]
       }
@@ -1731,21 +1993,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p> "
+            "description": "<p>success.</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Promotion has been created successfully.</p> "
+            "description": "<p>Promotion has been created successfully.</p>"
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>requested input.</p> "
+            "description": "<p>requested input.</p>"
           }
         ]
       },
@@ -1772,7 +2034,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p> "
+            "description": "<p>Returns a json Object.</p>"
           }
         ],
         "Error-Response Object": [
@@ -1781,14 +2043,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p> "
+            "description": "<p>failed.</p>"
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p> "
+            "description": "<p>Message.</p>"
           }
         ]
       },
@@ -3571,6 +3833,13 @@ define({ "api": [
             "optional": false,
             "field": "hashtag_id",
             "description": "<p>Hashtag Search Filter (Optional).</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "category_id",
+            "description": "<p>Category Search Filter (Optional).</p>"
           }
         ]
       }
@@ -3578,7 +3847,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "{\n    \"center_latitude\": \"28.6367\",\n    \"center_longitude\": \"77.2748\",\n    \"endpoint_latitude\": \"19.0760\",\n    \"endpoint_longitude\": \"72.8777\",\n    \n    \"time\": \"present|past|future\",\n    \"spayc_type\": \"Event|Community\",\n    \"group_type\": \"Public|Private\",\n    \"wrap_with_friends\": \"yes|no\",\n    \"hashtag_id\": xx\n    \n}",
+        "content": "{\n    \"center_latitude\": \"28.6367\",\n    \"center_longitude\": \"77.2748\",\n    \"endpoint_latitude\": \"19.0760\",\n    \"endpoint_longitude\": \"72.8777\",\n    \n    \"time\": \"present|past|future\",\n    \"spayc_type\": \"Event|Community\",\n    \"group_type\": \"Public|Private\",\n    \"wrap_with_friends\": \"yes|no\",\n    \"hashtag_id\": xx,\n    \"category_id\": \"5,6\"\n    \n}",
         "type": "json"
       }
     ],
@@ -3611,7 +3880,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"List of Data.\",\n    \"data\": {\n        \"spaycs\": {\n            \"count\": 1,\n            \"records\": [\n                {\n                    \"id\": \"3\",\n                    \"name\": \"Sam Second Community Spyace\",\n                    \"matrix_room_id\": \"!MvOssNcvbePXoBUIjC:spayc-dev.kiwireader.com\",\n                    \"image\": \"https://spayc-dev.s3.amazonaws.com/room/image_20180317082917.png\",\n                    \"type\": \"Community\",\n                    \"latitude\": 28.7041,\n                    \"longitude\": 77.1025,\n                    \"is_joined\": true,\n                    \"joined_users\": 3,\n                    \"is_subscribed\": true\n                }\n            ]\n        },\n        \"friends\": {\n            \"count\": 2,\n            \"records\": [\n                {\n                    \"id\": \"2\",\n                    \"display_name\": null,\n                    \"email\": \"bot@gmail.com\",\n                    \"address\": null,\n                    \"latitude\": 28.579403737919,\n                    \"longitude\": 77.320890067264,\n                    \"matrix_room_id\": \"!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com\"\n                },\n                {\n                    \"id\": \"3\",\n                    \"display_name\": \"sam\",\n                    \"email\": \"sam@yopmail.com\",\n                    \"address\": null,\n                    \"latitude\": 28.7041,\n                    \"longitude\": 77.1025,\n                    \"matrix_room_id\": \"!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com\"\n                }\n            ]\n        }\n    }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"List of Data.\",\n    \"data\": {\n        \"spaycs\": {\n            \"count\": 2,\n            \"records\": [\n                {\n                    \"id\": \"3\",\n                    \"name\": \"Sam Second Community Spyace\",\n                    \"matrix_room_id\": \"!MvOssNcvbePXoBUIjC:spayc-dev.kiwireader.com\",\n                    \"image\": \"https://spayc-dev.s3.amazonaws.com/room/image_20180317082917.png\",\n                    \"type\": \"Community\",\n                    \"modified\": \"2018-03-17T08:29:17+00:00\",\n                    \"category_id\": 5,\n                    \"latitude\": 28.7041,\n                    \"longitude\": 77.1025,\n                    \"is_joined\": true,\n                    \"joined_users\": 2,\n                    \"is_subscribed\": true\n                },\n                {\n                    \"id\": \"4\",\n                    \"name\": \"Community Type Sub Spyac\",\n                    \"matrix_room_id\": \"!nQPjgmlBePZsAyVvQH:spayc-dev.kiwireader.com\",\n                    \"image\": \"https://spayc-dev.s3.amazonaws.com/room/image_20180317083321.png\",\n                    \"type\": \"Community\",\n                    \"modified\": \"2018-03-17T08:33:21+00:00\",\n                    \"category_id\": 6,\n                    \"latitude\": 28.7041,\n                    \"longitude\": 77.1025,\n                    \"is_joined\": false,\n                    \"joined_users\": 0,\n                    \"is_subscribed\": false\n                }\n            ]\n        },\n        \"friends\": {\n            \"count\": 2,\n            \"records\": [\n                {\n                    \"id\": \"2\",\n                    \"display_name\": null,\n                    \"email\": \"bot@gmail.com\",\n                    \"address\": null,\n                    \"latitude\": 28.579403737919,\n                    \"longitude\": 77.320890067264,\n                    \"modified\": \"2018-03-16T09:36:35+00:00\",\n                    \"matrix_room_id\": \"!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com\"\n                },\n                {\n                    \"id\": \"3\",\n                    \"display_name\": \"sam\",\n                    \"email\": \"sam@yopmail.com\",\n                    \"address\": null,\n                    \"latitude\": 28.7041,\n                    \"longitude\": 77.1025,\n                    \"modified\": \"2018-03-17T08:21:47+00:00\",\n                    \"matrix_room_id\": \"!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com\"\n                }\n            ]\n        }\n    }\n}",
           "type": "json"
         }
       ]

@@ -970,13 +970,7 @@ class SpaycsController extends AppController {
          }
         $user = $this->Auth->user();
         $pquery = TableRegistry::get('Api.PhysicalLocation')->findByUserId($user['id']);
-//        if(!$pquery->isEmpty()){
-//            $lat = $pquery->latitude;
-//            $long = $pquery->longitude;
-//        }else{
-//            $lat = $user['latitude'];
-//            $long = $user['latitude'];
-//        }
+        
         $spayc=TableRegistry::get('Api.Spaycs')->getNearBySpaycsOnMap($this->request->getData(),$user['id']);
         $friends = TableRegistry::get('Api.FriendRequest')->getNearByFriendsOnMap($this->request->getData(), $user['id']);
 //        print_R($friends);die;

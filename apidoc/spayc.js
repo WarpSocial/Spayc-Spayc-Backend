@@ -977,6 +977,7 @@ function hashTagSpaycs() { return; }
     @apiParam {String}      group_type               Spayc Group Type (Optional).
     @apiParam {String}      wrap_with_friends        Spayc having with friends (Optional).
     @apiParam {Number}      hashtag_id               Hashtag Search Filter (Optional).
+    @apiParam {Number}      category_id              Category Search Filter (Optional).
     
 @apiExample Example usage:
     {
@@ -989,7 +990,8 @@ function hashTagSpaycs() { return; }
         "spayc_type": "Event|Community",
         "group_type": "Public|Private",
         "wrap_with_friends": "yes|no",
-        "hashtag_id": xx
+        "hashtag_id": xx,
+        "category_id": "5,6"
         
     }
  *
@@ -1012,6 +1014,7 @@ function hashTagSpaycs() { return; }
                     "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180317082917.png",
                     "type": "Community",
                     "modified": "2018-03-17T08:29:17+00:00",
+                    "category_id": 5,
                     "latitude": 28.7041,
                     "longitude": 77.1025,
                     "is_joined": true,
@@ -1025,6 +1028,7 @@ function hashTagSpaycs() { return; }
                     "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180317083321.png",
                     "type": "Community",
                     "modified": "2018-03-17T08:33:21+00:00",
+                    "category_id": 6,
                     "latitude": 28.7041,
                     "longitude": 77.1025,
                     "is_joined": false,
@@ -1082,7 +1086,7 @@ function mapSpaycs() { return; }
     @apiParam {String}      spayc_id            Spayc List (Required).
     @apiParam {Number}      plan_id            Plan ID (Required).
     @apiParam {Number}      receipt            Plan Receipt (Required).
-    @apiParam {String}      platform            Platform (Required).
+    @apiParam {String}      platform            Platform (Optional).
     @apiParam {String}      purchase_date       Plan Purchase Date (Optional).
     @apiParam {File}      image               Advertisement Image (Optional).
 
@@ -1098,7 +1102,7 @@ function mapSpaycs() { return; }
         "plan_id":"1",
         "receipt":"test12345",
         "platform":"IOS",
-        "purchase_date":"2018-04-17"
+        "purchase_date":"2018-04-17 10:36:52"
     }
 
  *
@@ -1214,14 +1218,15 @@ function editAdvertisement() { return; }
     "message": "Advertisement Details",
     "data": {
         "advertisement": {
-            "id": 127,
+            "id": 308,
             "name": "Test",
             "image": null,
             "price": 250,
             "description": "test test",
             "url": "http:\/\/www.xyz.com",
-            "status": "Pending",
-            "expired": "04-20-2018 13:57:20"
+            "status": "Active",
+            "views": 500,
+            "balance": 500
         },
         "spaycs": [
             {
@@ -1282,56 +1287,61 @@ function viewAdvertisement() { return; }
 {
     "status": "success",
     "message": "List of Advertisement.",
-    "data": [
+   "data": [
         {
-            "id": 127,
+            "id": 311,
+            "name": "test",
+            "image": null,
+            "price": 250,
+            "description": "test test",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Active",
+            "views": 500,
+            "balance": 500
+        },
+        {
+            "id": 309,
+            "name": "test",
+            "image": null,
+            "price": 250,
+            "description": "test test",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Active",
+            "views": 500,
+            "balance": 500
+        },
+        {
+            "id": 310,
+            "name": "test",
+            "image": null,
+            "price": 250,
+            "description": "test test",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Active",
+            "views": 500,
+            "balance": 500
+        },
+        {
+            "id": 307,
+            "name": "test",
+            "image": null,
+            "price": 250,
+            "description": "test test",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Active",
+            "views": 500,
+            "balance": 0
+        },
+        {
+            "id": 308,
             "name": "Test",
             "image": null,
             "price": 250,
             "description": "test test",
             "url": "http:\/\/www.xyz.com",
-            "status": "Pending",
-            "expired": "04-20-2018 13:57:20"
-        },
-        {
-            "id": 126,
-            "name": "test",
-            "image": null,
-            "price": 250,
-            "description": "Advertisement creating",
-            "url": "http:\/\/www.xyz.com",
-            "status": "Pending",
-            "expired": null
-        },
-        {
-            "id": 125,
-            "name": "test",
-            "image": null,
-            "price": 250,
-            "description": "Advertisement creating",
-            "url": "http:\/\/www.xyz.com",
-            "status": "Pending",
-            "expired": null
-        },
-        {
-            "id": 124,
-            "name": "test",
-            "image": null,
-            "price": 250,
-            "description": "Advertisement creating",
-            "url": "http:\/\/www.xyz.com",
-            "status": "Pending",
-            "expired": null
-        },
-        {
-            "id": 123,
-            "name": "test",
-            "image": null,
-            "price": 250,
-            "description": "Advertisement creating",
-            "url": "http:\/\/www.xyz.com",
-            "status": "Pending",
-            "expired": null
+            "status": "Active",
+            "views": 500,
+            "balance": 500
         }
     ]
 }
@@ -1373,6 +1383,116 @@ function userAdvertisement() { return; }
  * @apiUse UserErrorResponse
  */
 function deleteAdvertisement() { return; }
+
+/**
+ @api {post} /ad-logic-start.json Advertisement Logic Start
+ @apiVersion 0.1.0
+ @apiName adLogicStart
+ @apiGroup Advertisement
+ @apiPermission private
+
+ @apiDescription Advertisement Logic.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+    @apiParam {Number}      spayc_id            Spayc Id (Required).
+
+    @apiExample Example usage:
+    {
+        "spayc_id":"5"
+    }
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Advertisement Find Successfully",
+    "data": {
+        "advertisement": {
+            "user_id": 1,
+            "name": "Space Ad",
+            "price": "250.00",
+            "image": null,
+            "description": "Test Test Test ",
+            "url": "http:\/\/www.xyz.com"
+        },
+        "priority": {
+            "cycle": 2,
+            "comment_count": 19
+        },
+        "friend_request": {
+            "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
+        },
+        "frequency": 19
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function adLogicStart() { return; }
+
+
+/**
+ @api {post} /ad-logic.json Advertisement Logic
+ @apiVersion 0.1.0
+ @apiName adLogic
+ @apiGroup Advertisement
+ @apiPermission private
+
+ @apiDescription Advertisement Logic.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+    @apiParam {Number}      spayc_id            Spayc Id (Required).
+    @apiParam {Number}      cycle               Current Cycle (Required).
+    @apiParam {Number}      comment_count       Comment Count (Required).
+
+    @apiExample Example usage:
+    {
+        "spayc_id":"5",
+        "cycle":"1",
+        "comment_count":"20"
+    }
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Advertisement Find Successfully",
+    "data": {
+        "advertisement": {
+            "user_id": 1,
+            "name": "Space Ad",
+            "price": "250.00",
+            "image": null,
+            "description": "Test Test Test ",
+            "url": "http:\/\/www.xyz.com"
+        },
+        "priority": {
+            "cycle": 2,
+            "comment_count": 19
+        },
+        "friend_request": {
+            "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
+        },
+        "frequency": 19
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function adLogic() { return; }
+
+
+
 
 /**
  @api {get} /unread-notification.json Unread Notification
