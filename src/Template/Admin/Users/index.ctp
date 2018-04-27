@@ -99,14 +99,14 @@ if(isset($this->request->query['sort'])) {
                   <span><?= !empty($user->address)?h($user->address):BLANK ?></span>
                 </div>
                 <div class="table-data flex-basis9">
-                  <span><?= !empty($user->joined_spayc[0]->joined_spaycs)?
-                            $this->Html->link($user->joined_spayc[0]->joined_spaycs,['controller' => 'Spaycs', 'action' => 'joined-warps',$user->id], ['class' => 'num-letter-spacing']):
+                  <span><?= !empty($user->joinedSpayc)?
+                            $this->Html->link($user->joinedSpayc,['controller' => 'Spaycs', 'action' => 'joined-warps',$user->id], ['class' => 'num-letter-spacing']):
                             BLANK_COUNT ?>
                   </span>
                 </div>
                 <div class="table-data flex-basis9">
-                  <span><?= !empty($user->spaycs[0]->created_spaycs)?
-                          $this->Html->link($user->spaycs[0]->created_spaycs,['controller' => 'Spaycs', 'action' => 'createdWarps',$user->id], ['class' => 'num-letter-spacing']):
+                  <span><?= !empty($user->createdSpayc)?
+                          $this->Html->link($user->createdSpayc,['controller' => 'Spaycs', 'action' => 'createdWarps',$user->id], ['class' => 'num-letter-spacing']):
                             BLANK_COUNT ?>
                   </span>
                 </div>
