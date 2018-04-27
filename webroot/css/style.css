@@ -911,7 +911,7 @@ input[type=radio]:checked + span {
 }
 button:disabled,
 input:disabled {
-  color: #2D8F30;
+  color: #2d8f30;
   cursor: not-allowed;
 }
 .login-page {
@@ -2317,6 +2317,12 @@ input:disabled {
   font-size: 1.25rem;
   font-weight: 600;
   line-height: 24px;
+}
+.event-view-wrapper .count-box.count-box-three .user-box,
+.event-view-wrapper .count-box.count-box-three .subscriber,
+.event-view-wrapper .count-box.count-box-three .present-people,
+.event-view-wrapper .count-box.count-box-three .comment {
+  width: 33%;
 }
 /*============.subspayc ============*/
 .subspayc {
