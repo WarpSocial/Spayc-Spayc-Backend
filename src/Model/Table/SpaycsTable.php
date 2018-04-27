@@ -231,4 +231,15 @@ class SpaycsTable extends Table
 
     //     return $rules;
     // }
+    public function joinedSpayc($userId){
+        $jsRepo = TableRegistry::get('JoinedSpayc');
+        return $jsRepo->find()->select(['spayc_id'])
+                ->distinct()->where(['JoinedSpayc.status'=>JOINED,'JoinedSpayc.user_id'=>$userId]);
+    }
+
+    public function createdSpayc($userId){
+        $jsRepo = TableRegistry::get('JoinedSpayc');
+        return $jsRepo->find()->select(['spayc_id'])
+                ->distinct()->where(['JoinedSpayc.status'=>JOINED,'JoinedSpayc.user_id'=>$userId,'JoinedSpayc.is_admin'=>SUPERADMIN]);
+    }
 }

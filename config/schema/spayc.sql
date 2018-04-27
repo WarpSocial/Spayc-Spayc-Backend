@@ -221,7 +221,7 @@ CREATE TABLE "advertisement" (
     "id" BIGSERIAL NOT NULL,
     "user_id" BIGINT NOT NULL,
     "name" character varying(255) NOT NULL,
-    "price" decimal(12,2) NOT NULL,
+    "price" decimal(12,2) NULL,
     "views" BIGINT NOT NULL,
     "balance" BIGINT NOT NULL,
     "description" text NULL,
@@ -230,7 +230,6 @@ CREATE TABLE "advertisement" (
     "status" row_status DEFAULT 'Pending' NOT NULL,
     "created" timestamp NOT NULL,
     "modified" timestamp,
-    "expired" timestamp,
     PRIMARY KEY (id,created)
 );
 SELECT create_hypertable('advertisement', 'created');
@@ -238,6 +237,9 @@ CREATE TABLE "spayc_advertisement" (
     "id" BIGSERIAL NOT NULL,
     "advertisement_id" BIGINT NOT NULL,
     "spayc_id" BIGINT NOT NULL,
+    "priority" INTEGER NULL,
+    "advertisement_status" INTEGER NULL DEFAULT '0',
+    "display_times" INTEGER NULL DEFAULT '0',
     "created" timestamp NOT NULL,
     "modified" timestamp,
     PRIMARY KEY (id,created)
@@ -252,7 +254,7 @@ ALTER TABLE "joined_spayc" ADD "is_admin" smallint NOT NULL DEFAULT '0';
 CREATE TABLE "spayc_advertisement_priority" (
     "id" BIGSERIAL NOT NULL,
     "spayc_id" BIGINT NULL,
-    "priority" INTEGER NULL,
+    "cycle" INTEGER NULL,
     "comment_count" INTEGER NULL,
     "created" timestamp,
     "modified" timestamp,

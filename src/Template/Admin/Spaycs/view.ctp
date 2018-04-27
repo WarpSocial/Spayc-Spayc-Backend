@@ -68,10 +68,14 @@ $groupTypeArr = unserialize(GROUP_TYPE_ARR);
               </div>
             </div>
             <!--========event count======-->
-            <div class="count-box">
+          <div class="count-box <?php echo (!empty($subspayc))?'count-box-three':''?> ">
               <div class="user-box"><span><?= !empty($spayc->joined_users)?$spayc->joined_users:BLANK_COUNT ?></span> Users</div>
+               <?php if(empty($subspayc)) {?>
               <div class="subscriber"><span><?= !empty($spayc->subscribed_users)?$spayc->subscribed_users:BLANK_COUNT ?></span> Subscribers</div>
               <div class="present-people"><span><?= !empty($spayc->total_presents)?$spayc->total_presents:BLANK_COUNT ?></span> Present People</div>
+              <?php } else {?>
+              <div class="subscriber"><span><?= !empty($spayc->friends)?$spayc->friends:BLANK_COUNT ?></span> Friends</div>
+              <?php } ?>
               <div class="comment"><span><?= !empty($spayc->total_comments)?$spayc->total_comments:BLANK_COUNT ?></span> Comments</div>
             </div>
 

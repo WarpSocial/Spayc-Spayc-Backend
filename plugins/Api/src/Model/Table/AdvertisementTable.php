@@ -68,19 +68,19 @@ class AdvertisementTable extends Table {
                 ->maxLength('name', 255, 'Name should not exceed more then 255 characters.')
                 ->notEmpty('name', __('Spayc name is required.'))
                 ->notBlank('name', __('Spayc name is required.'));
-        $validator
-                ->requirePresence('price', 'create', __('Price key is missing.'))
-                ->notEmpty('price', __('Price is required.'));
+//        $validator
+//                ->requirePresence('price', 'create', __('Price key is missing.'))
+//                ->notEmpty('price', __('Price is required.'));
 
         $validator
                 ->requirePresence('spayc_id', 'create', __('Spayc key is missing.'))
                 ->notEmpty('spayc_id', __('Spayc is required.'));
 
-        $validator
-                ->requirePresence('description', 'create', __('Description key is missing.'))
-                ->maxLength('description', 250, __('Description must be less than 250 characters.'))
-                ->allowEmpty('description');
-
+//        $validator
+//                ->requirePresence('description', 'create', __('Description key is missing.'))
+//                ->maxLength('description', 250, __('Description must be less than 250 characters.'))
+//                ->allowEmpty('description');
+//
         
         $validator
                 ->requirePresence('plan_id', 'create', __('Plan key is missing.'))
@@ -89,11 +89,6 @@ class AdvertisementTable extends Table {
         $validator
                 ->requirePresence('receipt', 'create', __('Receipt key is missing.'))
                 ->notEmpty('receipt', __('Receipt key is required.'));
-        
-        $validator
-                ->requirePresence('platform', 'create', __('Platform key is missing.'))
-                ->notEmpty('platform', __('Platform key is required.'));
-        
         
         $validator
                 ->allowEmpty('image')
