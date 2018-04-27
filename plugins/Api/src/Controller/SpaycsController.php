@@ -367,10 +367,12 @@ class SpaycsController extends AppController {
         $data['spaycs'] = [];
         if(!$spaycs->isEmpty()) {
             $data['spaycs'] = $spaycs->toArray();
+            $response = ['status'=>'success','message'=>__('Spayc lists.'), 'data'=>$data];
         } else {
-            $this->response->statusCode(204);
+            $this->response->statusCode(404);
+            $response = ['status'=>'failed','message'=>__('Record not found.')];
         }
-        $response = ['status'=>'success','message'=>__('Spayc lists.'), 'data'=>$data];
+        
         $this->set($response);
     }
 
@@ -586,7 +588,7 @@ class SpaycsController extends AppController {
                 $this->restException(['status'=>'failed','message'=>__('You have banned with this spayc')],400);
             }
         } else {
-            $this->response->statusCode(204);
+            $this->response->statusCode(404);
         }
         $response = ['status'=>'success', 'message'=>__('Spayc Details.'), 'data'=>$data];
         $this->set($response);
@@ -952,7 +954,7 @@ class SpaycsController extends AppController {
         $query->limit($limit)->page($page);
        // pr($query->toArray());die;
         if($query->isEmpty()){
-             $this->restException(['status'=>'failed','message'=>'Record not found.'], 204);
+             $this->restException(['status'=>'failed','message'=>'Record not found.'], 404);
         }
         $result = $query->map(function ($row)use($lat,$long) {
             $row->distance = $row->_matchingData['JoinedSpayc']->distance;
@@ -981,6 +983,12 @@ class SpaycsController extends AppController {
                  || empty($this->request->getData('endpoint_longitude'))
                  ) {
             $this->restException(['status'=>'failed', 'message'=> __('Parameter Invalid.')], 400);
+         }
+         if($this->request->getData('hashtag_id') && $this->request->getData('hashtag_id')) {
+            $hashtag=explode(",", $this->request->getData('hashtag_id'));
+            if(count($hashtag)>3){
+                 $this->restException(['status'=>'failed', 'message'=> __('Maximum 3 Hashtag Allowed.')], 400);
+            }
          }
         $user = $this->Auth->user();
         $pquery = TableRegistry::get('Api.PhysicalLocation')->findByUserId($user['id']);
@@ -1033,7 +1041,7 @@ class SpaycsController extends AppController {
         $query->order(['Spaycs.created'=>'DESC']);
         $query->limit($limit)->page($page);
         if($query->isEmpty()){
-             $this->restException(['status'=>'failed','message'=>'Record not found.'], 204);
+             $this->restException(['status'=>'failed','message'=>'Record not found.'], 404);
         }        
         $result = $query->map(function ($row)use($subQuery) {
             $joinedId = \Cake\Utility\Hash::extract($subQuery->toArray(),'{n}[spayc_id='.$row->id.']');
