@@ -1,4 +1,4 @@
--- CREATE TYPE row_status AS ENUM('Active','Inactive','Pending','Approved');
+-- CREATE TYPE row_status AS ENUM('Active','Inactive','Pending','Approved','Removed');
 DROP TABLE "comments";
 DROP TABLE "friend_request";
 DROP TABLE "hashtags";

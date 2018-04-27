@@ -55,24 +55,53 @@ class PlansController extends AppController {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
         $user = $this->Auth->user();
-        $data['pspaycs'] = explode(',', $data['spayc_promotional_id'].','.$data['spayc_id']) ;
+        $data['pspaycs'] = explode(',', $data['spayc_promotional_id'].','.$data['spayc_id']) ;        
         $sRepo = TableRegistry::get('Api.Spaycs');
-        $spaycs = $sRepo->find('list')->where(['id IN'=> $data['pspaycs']])->toArray();
-        $spaycIds = array_keys($spaycs);
-        if(!in_array($data['spayc_promotional_id'],$spaycIds)){
-            $this->restException(['status'=>'failed', 'message'=> __('Promotional Spayc is no longer available.')], 400);
+        $spaycs = $sRepo->find()->contain('JoinedSpayc')->where(['id IN'=> $data['pspaycs']]);
+        $pspayc = false;$wherePromote = [];
+        foreach($spaycs as $spayc){
+//            if($spayc->group_type == PRIVATETYPE){
+//                if(empty($spayc->joined_spayc)){
+//                     $this->restException(['status'=>'failed', 'message'=> __('You have not join with this private warp.')], 400);
+//                }
+//            }
+            if($spayc->id == $data['spayc_promotional_id']){
+                $pspayc = true;
+                $promotionalSpaycRole = Hash::extract($spayc->joined_spayc, '{n}[user_id='.$user['id'].']');
+                if(empty($spayc->joined_spayc) || empty($promotionalSpaycRole[0])){
+                    $this->restException(['status'=>'failed', 'message'=> __('You have not join with this warp.')], 400);
+                }
+                if($promotionalSpaycRole[0]['is_admin'] <= 0 ){
+                    $this->restException(['status'=>'failed', 'message'=> __('You have not access to promote this warp.')], 400);
+                }
+                
+                
+            }
+            if(in_array($spayc->id, explode(',',$data['spayc_id']))){
+                array_push($wherePromote, $spayc->id);
+            }            
         }
-        if(!empty(array_diff($data['pspaycs'],$spaycIds))){
+        
+        if(!$pspayc){
+             $this->restException(['status'=>'failed', 'message'=> __('Promotional Spayc is no longer available.')], 400);
+        }
+        if(count($wherePromote) != count(explode(',',$data['spayc_id']))){
             $this->restException(['status'=>'failed', 'message'=> __('Some of spayc id is no longer available.')], 400);
         }
         
+        
         $plan = $this->Plans->get($data['plan_id']);
+        
         $purchase = [
             'plan_id'=>$data['plan_id'],
             'receipt'=>$data['receipt'],
             'platform'=>$data['platform'],
             'purchase_date'=> Utils::toUtc($data['purchase_date']),
         ];
+        $pRepo = TableRegistry::get('Api.Promotions');
+        if($pRepo->exists(['spayc_id'=>$data['spayc_promotional_id']])){
+            $this->restException(['status'=>'failed', 'message'=> __('This warp has been already promoted.')], 400);
+        }
         $promotions = [
             'spayc_id'=>$data['spayc_promotional_id'],
             'user_id'=>$user['id'],
@@ -83,9 +112,8 @@ class PlansController extends AppController {
             'purchase'=>$purchase
         ];
         
-        $pRepo = TableRegistry::get('Api.Promotions');
-        $pRepo->getConnection()->begin();        
         
+        $pRepo->getConnection()->begin(); 
         $pEntity = $pRepo->newEntity();
         $items = $pRepo->patchEntity($pEntity,$promotions);
         if($items->errors()) {
