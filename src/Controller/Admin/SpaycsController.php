@@ -214,8 +214,8 @@ class SpaycsController extends AdminController
         $user = $this->Users->get($userId);
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, $this->FRIEND_REQUESTED_STATUS_ARR['accepted']);
         $spaycs = $this->Spaycs->find();
-        $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date'])
-            ->where(['parent_id IS'=>null,'Spaycs.group_type !='=>'trusted_private'])
+        $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date'])            
+             ->where(['Spaycs.group_type !='=>'trusted_private', 'Spaycs.id IN'=>$this->Spaycs->createdSpayc($userId),'Spaycs.parent_id IS'=>null])
             ->contain([                    
                 'JoinedSpayc' => function($q) {
                     return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.distance']);
@@ -280,11 +280,11 @@ class SpaycsController extends AdminController
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, $this->FRIEND_REQUESTED_STATUS_ARR['accepted']);
         $spaycs = $this->Spaycs->find();
         $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date'])
-            ->where(['Spaycs.group_type !='=>'trusted_private'])
-            ->contain([                    
-                'JoinedSpayc' => function($q) {
-                    return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.distance']);
-                },
+            ->where(['Spaycs.group_type !='=>'trusted_private','Spaycs.id IN'=>$this->Spaycs->joinedSpayc($userId),'Spaycs.parent_id IS'=>null])
+            ->contain([
+                 'JoinedSpayc' => function($q) {
+                     return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.distance'])->where(['JoinedSpayc.status'=>JOINED]);
+                 },               
                 'SubscribedUsers' => function($q) {
                     return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
                 },
@@ -305,7 +305,7 @@ class SpaycsController extends AdminController
                     $miles = Configure::read('miles');
                     $physicalPresent = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[distance <='.$miles.']');
                     $present = count($physicalPresent);
-                }
+                }                
                 $row['joined_spayc_status'] = !empty($status[0])?$status[0]:'';
 
                 $row['is_joined'] = !empty($status[0])?true:false;
@@ -325,7 +325,7 @@ class SpaycsController extends AdminController
         if(!empty($keyword)){            
             $spaycs->where(['OR' => ['LOWER(Spaycs.name) LIKE' => "%".$keyword."%"]]);
         } 
-        $spaycs = $this->paginate($spaycs)->toArray();   
+        $spaycs = $this->paginate($spaycs)->toArray();           
         $this->set(compact('spaycs','keyword','user'));        
         $this->set('_serialize', ['spaycs']);
     }
