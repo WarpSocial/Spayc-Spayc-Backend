@@ -57,9 +57,12 @@ class PlansController extends AppController {
         $user = $this->Auth->user();
         $data['pspaycs'] = explode(',', $data['spayc_promotional_id'].','.$data['spayc_id']) ;        
         $sRepo = TableRegistry::get('Api.Spaycs');
-        $spaycs = $sRepo->find()->contain('JoinedSpayc')->where(['id IN'=> $data['pspaycs']]);
+        $spaycs = $sRepo->find()->contain(['JoinedSpayc'=>function($q)use($user){
+            return $q->where(['JoinedSpayc.status'=>JOINED,'JoinedSpayc.user_id'=>$user['id']]);
+        }])->where(['id IN'=> $data['pspaycs']]);
         $pspayc = false;$wherePromote = [];
         foreach($spaycs as $spayc){
+            //echo $spayc->group_type .'=='. PRIVATETYPE.'<br>';
             if($spayc->group_type == PRIVATETYPE){
                 if(empty($spayc->joined_spayc)){
                      $this->restException(['status'=>'failed', 'message'=> __('You have not join with this private warp.')], 400);
@@ -74,14 +77,11 @@ class PlansController extends AppController {
                 if($promotionalSpaycRole[0]['is_admin'] <= 0 ){
                     $this->restException(['status'=>'failed', 'message'=> __('You have not access to promote this warp.')], 400);
                 }
-                
-                
             }
             if(in_array($spayc->id, explode(',',$data['spayc_id']))){
                 array_push($wherePromote, $spayc->id);
             }            
         }
-        
         if(!$pspayc){
              $this->restException(['status'=>'failed', 'message'=> __('Promotional Spayc is no longer available.')], 400);
         }

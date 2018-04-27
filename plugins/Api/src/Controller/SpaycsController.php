@@ -222,7 +222,7 @@ class SpaycsController extends AppController {
         $items->set('status', 'Active');
         if (!$items->errors()) {
             if($this->Spaycs->save($items)) {
-                
+                $this->Matrix->joinRoom(['status'=>JOINED,'matrix_token'=>$data['matrix_token'],'matrix_room_id'=>$matrix['room_id']]);
                 TableRegistry::get('Api.FriendRequest')->updateRoomId($items['invite'], $this->Auth->user('id'), $matrix['room_id']);
                 $items['is_direct'] = true;
                 $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
