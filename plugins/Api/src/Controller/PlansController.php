@@ -60,11 +60,11 @@ class PlansController extends AppController {
         $spaycs = $sRepo->find()->contain('JoinedSpayc')->where(['id IN'=> $data['pspaycs']]);
         $pspayc = false;$wherePromote = [];
         foreach($spaycs as $spayc){
-//            if($spayc->group_type == PRIVATETYPE){
-//                if(empty($spayc->joined_spayc)){
-//                     $this->restException(['status'=>'failed', 'message'=> __('You have not join with this private warp.')], 400);
-//                }
-//            }
+            if($spayc->group_type == PRIVATETYPE){
+                if(empty($spayc->joined_spayc)){
+                     $this->restException(['status'=>'failed', 'message'=> __('You have not join with this private warp.')], 400);
+                }
+            }
             if($spayc->id == $data['spayc_promotional_id']){
                 $pspayc = true;
                 $promotionalSpaycRole = Hash::extract($spayc->joined_spayc, '{n}[user_id='.$user['id'].']');
@@ -99,9 +99,9 @@ class PlansController extends AppController {
             'purchase_date'=> Utils::toUtc($data['purchase_date']),
         ];
         $pRepo = TableRegistry::get('Api.Promotions');
-        if($pRepo->exists(['spayc_id'=>$data['spayc_promotional_id']])){
-            $this->restException(['status'=>'failed', 'message'=> __('This warp has been already promoted.')], 400);
-        }
+//        if($pRepo->exists(['spayc_id'=>$data['spayc_promotional_id']])){
+//            $this->restException(['status'=>'failed', 'message'=> __('This warp has been already promoted.')], 400);
+//        }
         $promotions = [
             'spayc_id'=>$data['spayc_promotional_id'],
             'user_id'=>$user['id'],
