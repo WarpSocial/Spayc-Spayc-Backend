@@ -1413,17 +1413,21 @@ function deleteAdvertisement() { return; }
     "message": "Advertisement Find Successfully",
     "data": {
         "advertisement": {
-            "name": "test",
+            "user_id": 1,
+            "name": "Space Ad",
             "price": "250.00",
             "image": null,
-            "description": "test test",
+            "description": "Test Test Test ",
             "url": "http:\/\/www.xyz.com"
         },
         "priority": {
-            "cycle": 1,
-            "comment_count": 0
+            "cycle": 2,
+            "comment_count": 19
         },
-        "frequency": 16
+        "friend_request": {
+            "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
+        },
+        "frequency": 19
     }
 }
  *
@@ -1465,17 +1469,21 @@ function adLogicStart() { return; }
     "message": "Advertisement Find Successfully",
     "data": {
         "advertisement": {
-            "name": "test",
+            "user_id": 1,
+            "name": "Space Ad",
             "price": "250.00",
             "image": null,
-            "description": "test test",
+            "description": "Test Test Test ",
             "url": "http:\/\/www.xyz.com"
         },
         "priority": {
-            "cycle": 1,
-            "comment_count": 0
+            "cycle": 2,
+            "comment_count": 19
         },
-        "frequency": 16
+        "friend_request": {
+            "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
+        },
+        "frequency": 19
     }
 }
  *

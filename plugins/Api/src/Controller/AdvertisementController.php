@@ -480,6 +480,7 @@ class AdvertisementController extends AppController {
         $ad = TableRegistry::get('Api.SpaycAdvertisement')->find('all',
                 ['fields'=>
                     [
+                        'advertisement.user_id',
                         'advertisement.name',
                         'advertisement.price',
                         'advertisement.image',
@@ -487,6 +488,7 @@ class AdvertisementController extends AppController {
                         'advertisement.url',
                         'priority.cycle',
                         'priority.comment_count',
+                        'friend_request.matrix_room_id',
                         
                         ]])
                 ->join(
@@ -508,6 +510,23 @@ class AdvertisementController extends AppController {
                             ]
                         ]
                 )
+                     ->join(
+        [
+        'table' => 'friend_request',
+        'type' => 'LEFT',
+        'conditions' =>
+        [
+            'OR' =>[
+            [
+                'friend_request.requested_by = advertisement.user_id', 'friend_request.requested_to = '.$user['id']
+            ],
+            [
+                'friend_request.requested_to = advertisement.user_id', 'friend_request.requested_by = '.$user['id']
+            ]
+                             ]
+        ]
+        ]
+        )
                 ->where(['SpaycAdvertisement.spayc_id'=>$data['spayc_id'],"balance > 0","advertisement_status"=>1,'advertisement.status'=>'Active'])
                 ->order(['SpaycAdvertisement.priority' => 'ASC'])
                 ->limit(1)
