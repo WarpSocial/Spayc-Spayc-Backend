@@ -861,6 +861,12 @@ class SpaycsController extends AppController {
                         return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);                        
                     }
                 ]);
+        $bannedSpayc = $this->Spaycs->bannedSpayc($user['id']);    
+        if(!empty($bannedSpayc)){
+            $query->where(function (QueryExpression $exp, Query $q)use($bannedSpayc) {
+                return $exp->notIn('Spaycs.id', $bannedSpayc);
+             });
+        }        
         if($lat != null && $long != null){
             $distance = "ROUND( CAST(".str_replace(':long',$long,str_replace(':lat',$lat,$this->Spaycs->distanceInMiles))." AS numeric), 3)";
             $query->select(['distance'=>$distance])
@@ -942,6 +948,12 @@ class SpaycsController extends AppController {
         $query = $this->Spaycs->find();
         $query->select(['Spaycs.id', 'Spaycs.name','Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.matrix_room_id']);
         $query->where(['Spaycs.status'=>'Active','Spaycs.parent_id IS'=>null,'Spaycs.group_type !='=>'trusted_private','OR'=>[['Spaycs.end_date >='=>$date],['Spaycs.end_date IS'=>null]]]);
+        $bannedSpayc = $this->Spaycs->bannedSpayc($user['id']);    
+        if(!empty($bannedSpayc)){
+            $query->where(function (QueryExpression $exp, Query $q)use($bannedSpayc) {
+                return $exp->notIn('Spaycs.id', $bannedSpayc);
+             });
+        } 
         $query->contain(['SubscribedUsers' => function($q)use($user) {
                 return $q->select(['SubscribedUsers.id','SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])->where(['SubscribedUsers.status'=>'Active','SubscribedUsers.user_id'=>$user['id']]);
             }]);
@@ -1027,6 +1039,12 @@ class SpaycsController extends AppController {
         $query = $this->Spaycs->find();
         $query->select(['Spaycs.id', 'Spaycs.name','Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.matrix_room_id']);
         $query->where(['Spaycs.status'=>'Active','Spaycs.parent_id IS'=>null,'OR'=>[['Spaycs.id IN'=>$subQuery],['Spaycs.group_type'=>'Public']]]);
+        $bannedSpayc = $this->Spaycs->bannedSpayc($user['id']);    
+        if(!empty($bannedSpayc)){
+            $query->where(function (QueryExpression $exp, Query $q)use($bannedSpayc) {
+                return $exp->notIn('Spaycs.id', $bannedSpayc);
+             });
+        } 
         if(!empty($keyword)){
             $search = Utils::clean(strtolower($keyword));
             $keyString = explode(' ', $search);
@@ -1069,6 +1087,7 @@ class SpaycsController extends AppController {
         $user = $this->Auth->user();
         $pquery = TableRegistry::get('Api.PhysicalLocation')->findByUserId($user['id']);
         if(!$pquery->isEmpty()){
+            $pquery = $pquery->first();
             $lat = $pquery->current_latitude;
             $long = $pquery->current_longitude;
         }else{
@@ -1109,7 +1128,6 @@ class SpaycsController extends AppController {
                         return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);                        
                     }
                 ]);
-      
         if(!empty($lat) && !empty($long)){
             $distance = "ROUND( CAST(".str_replace(':long',$long,str_replace(':lat',$lat,$this->Spaycs->distanceInMiles))." AS numeric), 3)";
             $spaycs->select(['distance'=>$distance])
