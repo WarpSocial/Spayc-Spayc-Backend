@@ -1321,7 +1321,6 @@ class UsersController extends AppController {
 //            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
 //        }
 //        
-        
         $data = $this->request->getData();
         $pushData['post_value'] = json_encode($data);
         $pushData['created'] = date("Y-m-d H:i:s");
@@ -1330,7 +1329,8 @@ class UsersController extends AppController {
         $push = $pusher->newEntity();
         $item = $pusher->patchEntity($push, $pushData,['validate'=>false]);
         $pusher->save($item);
-        echo json_encode (json_decode ("{}"));die;
+        $blankObj = new \stdClass();
+        $this->restException($blankObj);  
         if(empty($data['notification']['devices'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Notification data not found.')], 400);
         }
@@ -1341,8 +1341,6 @@ class UsersController extends AppController {
                 $this->Push->sendOnIOS($send, $message);
             }
         }
-        echo json_encode (json_decode ("{}"));die;
-       //$this->restException();
     }
     
     public function testPushnotification() {

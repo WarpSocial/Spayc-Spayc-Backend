@@ -1,7 +1,1 @@
-https://jira.kiwitech.com/browse/SPAYCBKND-392 = Fixed Only message has been changed
-https://jira.kiwitech.com/browse/SPAYCBKND-393 = Discussion
-https://jira.kiwitech.com/browse/SPAYCBKND-468 = Discussion
-https://jira.kiwitech.com/browse/SPAYCBKND-599 = Disucssion
-https://jira.kiwitech.com/browse/SPAYCBKND-603 = Discussion
-
-https://jira.kiwitech.com/browse/SPAYCBKND-661 = Fixed
+https://matrix.org/blog/category/tech/tutorials/
