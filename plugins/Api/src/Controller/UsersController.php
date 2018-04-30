@@ -37,7 +37,7 @@ class UsersController extends AppController {
     
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
-        $this->Auth->allow(['login', 'add', 'facebookSignup', 'forgotPassword', 'reverification', 'verifyAccount', 'resetPassword', 'pushNotification','facebookFriends']);
+        $this->Auth->allow(['login', 'add', 'facebookSignup', 'forgotPassword', 'reverification', 'verifyAccount', 'resetPassword', 'pushNotification','facebookFriends','testPushnotification']);
     }
     
     public function avatars() {
@@ -1377,7 +1377,8 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
         $data = $this->request->getData();
-        $this->Push->sendOnIOS($data['device_token'], "test push notification for spayc");
+        //$data['message'] = "test push notification for spayc";
+        $this->Push->sendOnIOS($data);
         $response = ['status'=>'success', 'message'=>__('notification sent')];
         $this->set($response);
     }
