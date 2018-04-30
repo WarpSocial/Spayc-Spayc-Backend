@@ -173,9 +173,9 @@ class SpaycAdvertisementTable extends Table
                 ;
         $adids = \Cake\Utility\Hash::extract($ad->toArray(), '{n}.id');
         $update['advertisement_status'] = 1;
-        $expired=TableRegistry::get('Api.SpaycAdvertisement')
+        $success=TableRegistry::get('Api.SpaycAdvertisement')
                 ->UpdateAll($update, ["id in (" . implode(",", $adids) . ")"]);
-        return $expired;
+        return $success;
     }
     
     public function adFrequency($spayc_id) {
