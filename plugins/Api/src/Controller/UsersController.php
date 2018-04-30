@@ -1378,7 +1378,8 @@ class UsersController extends AppController {
         }
         $data = $this->request->getData();
         //$data['message'] = "test push notification for spayc";
-        $this->Push->sendOnIOS($data);
+        //$this->Push->sendOnIOS($data);
+        $this->Push->sendPushNotification($data);
         $response = ['status'=>'success', 'message'=>__('notification sent')];
         $this->set($response);
     }
