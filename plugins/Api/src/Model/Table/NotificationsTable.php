@@ -115,4 +115,12 @@ class NotificationsTable extends Table
             }
         }
     }
+    
+    public function message($slug){
+        $query = TableRegistry::get("Api.NotificationTypes")->findBySlug($slug);
+            if($query->isEmpty()) {
+                return false;
+            }
+        return $query->first();
+    }
 }
