@@ -340,6 +340,9 @@ class AdvertisementController extends AppController {
             $entity->created = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
             $createdPriority = $priorityModel->save($entity);
             }
+            //Ad Bucket Active & Expire
+                 TableRegistry::get('Api.SpaycAdvertisement')->updateAdActive($v);
+                 TableRegistry::get('Api.SpaycAdvertisement')->updateAdExpired($v);
             $ad_spayc[] = $v;
         }
         
