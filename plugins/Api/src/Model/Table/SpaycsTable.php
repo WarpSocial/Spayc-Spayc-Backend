@@ -652,7 +652,7 @@ class SpaycsTable extends Table {
                     'modified', 
 //                    'group_type', 
 //                    'passcode',
-                    'category_id',
+                    'spayc_category_id',
                     'latitude','longitude'])
                 ->where(["$distanceField <=" => $distance, 'Spaycs.status'=>'Active',
                     'Spaycs.group_type !='=>'trusted_private', 
@@ -702,7 +702,7 @@ class SpaycsTable extends Table {
         }
         
         if(isset($request['category_id'])) {
-            $spaycs->where(['Spaycs.category_id in ('.$request['category_id'].')']);
+            $spaycs->where(['Spaycs.spayc_category_id in ('.$request['category_id'].')']);
         }
         
         if(isset($request['wrap_with_friends']) && $request['wrap_with_friends']=="yes") {
