@@ -399,7 +399,7 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('This spayc is no longer exist.')], 400);
         }
         $spayc = $spaycs->first();
-        $friend = TableRegistry::get('Api.FriendRequest')->myFriend($user['id'],$spayc->user_id);
+        $friend = TableRegistry::get('Api.FriendRequest')->userFriend($user['id'],$spayc->user_id);
         $entities = $scModel->find('all',['field'=>['id','user_id','spayc_id','status']])->where(['spayc_id'=>$spayc->id,'user_id'=>$data['user_id']]);
         if($entities->isEmpty()){
             $entity = $scModel->newEntity();
