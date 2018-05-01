@@ -167,7 +167,7 @@ class SpaycAdvertisementTable extends Table
                             ]
                         ]
                 )
-                ->where(['spayc_id' => $spayc_id, "balance > 0"])
+                ->where(['spayc_id' => $spayc_id, "balance > 0","advertisement_status != 2"])
                 ->order(['SpaycAdvertisement.id' => 'ASC'])
                 ->limit(10)
                 ;
