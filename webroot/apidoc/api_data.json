@@ -3832,7 +3832,7 @@
             "type": "Number",
             "optional": false,
             "field": "hashtag_id",
-            "description": "<p>Hashtag Search Filter (Optional).</p>"
+            "description": "<p>Hashtag Search Filter | MAx 3 hashtag (Optional).</p>"
           },
           {
             "group": "Parameter",
@@ -3847,7 +3847,7 @@
     "examples": [
       {
         "title": "Example usage:",
-        "content": "{\n    \"center_latitude\": \"28.6367\",\n    \"center_longitude\": \"77.2748\",\n    \"endpoint_latitude\": \"19.0760\",\n    \"endpoint_longitude\": \"72.8777\",\n    \n    \"time\": \"present|past|future\",\n    \"spayc_type\": \"Event|Community\",\n    \"group_type\": \"Public|Private\",\n    \"wrap_with_friends\": \"yes|no\",\n    \"hashtag_id\": xx,\n    \"category_id\": \"5,6\"\n    \n}",
+        "content": "{\n    \"center_latitude\": \"28.6367\",\n    \"center_longitude\": \"77.2748\",\n    \"endpoint_latitude\": \"19.0760\",\n    \"endpoint_longitude\": \"72.8777\",\n    \n    \"time\": \"present|past|future\",\n    \"spayc_type\": \"Event|Community\",\n    \"group_type\": \"Public|Private\",\n    \"wrap_with_friends\": \"yes|no\",\n    \"hashtag_id\": \"1,2,3\",\n    \"category_id\": \"5,6\"\n    \n}",
         "type": "json"
       }
     ],
