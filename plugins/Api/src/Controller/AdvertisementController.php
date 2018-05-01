@@ -172,7 +172,7 @@ class AdvertisementController extends AppController {
         }
         $user = $this->Auth->user();
         $entity = $this->Advertisement->find()
-                ->where(['id' => $id, 'user_id' => $user['id']]);
+                ->where(['id' => $id, 'user_id' => $user['id'],"status != 'Removed'"]);
         if ($entity->isEmpty()) {
             $this->restException(['status' => 'failed', 'message' => 'Record not found.'], 404);
         }
