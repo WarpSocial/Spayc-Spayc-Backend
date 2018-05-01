@@ -331,7 +331,7 @@ CREATE TABLE "spayc_categories" (
     "id" BIGSERIAL NOT NULL,
     "parent_id" bigint NULL,
     "lft" integer NULL,
-    "right" integer NULL,
+    "rght" integer NULL,
     "name" character varying(100),
     "slug" character varying(100),
     "description" character varying(200),

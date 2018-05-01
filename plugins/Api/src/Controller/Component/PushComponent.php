@@ -166,7 +166,8 @@ class PushComponent extends Component {
             $data['message'] = $notificationType->message;
             $data['status'] = 'Unread';
             $data['created'] = date("Y-m-d H:i:s"); //pr($data);exit;
-            $data['id'] = TableRegistry::get("Api.Notifications")->addNotification($data);
+            $saveNotification = TableRegistry::get("Api.Notifications")->addNotification($data);
+            $data['id'] = $saveNotification->id;
             /* end of saving  */
             /* create a job in queue */
             TableRegistry::get('Queue.QueuedJobs')->createJob('Notification',$data);

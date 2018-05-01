@@ -41,6 +41,7 @@ class SpaycCategoriesTable extends Table {
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+        $this->addBehavior('Tree');
 
         $this->belongsTo('ParentSpaycCategories', [
             'className' => 'Api.SpaycCategories',
@@ -54,43 +55,6 @@ class SpaycCategoriesTable extends Table {
             'foreignKey' => 'spayc_category_id',
             'className' => 'Api.Spaycs'
         ]);
-    }
-
-    /**
-     * Default validation rules.
-     *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
-     */
-    public function validationDefault(Validator $validator) {
-        $validator
-                ->allowEmpty('id', 'create');
-
-        $validator
-                ->integer('right')
-                ->allowEmpty('right');
-
-        $validator
-                ->scalar('name')
-                ->maxLength('name', 100)
-                ->allowEmpty('name');
-
-        $validator
-                ->scalar('slug')
-                ->maxLength('slug', 100)
-                ->allowEmpty('slug');
-
-        $validator
-                ->scalar('description')
-                ->maxLength('description', 200)
-                ->allowEmpty('description');
-
-        $validator
-                ->scalar('status')
-                ->requirePresence('status', 'create')
-                ->notEmpty('status');
-
-        return $validator;
     }
 
     /**
