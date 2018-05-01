@@ -37,7 +37,7 @@ class UsersController extends AppController {
     
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
-        $this->Auth->allow(['login', 'add', 'facebookSignup', 'forgotPassword', 'reverification', 'verifyAccount', 'resetPassword', 'pushNotification','facebookFriends']);
+        $this->Auth->allow(['login', 'add', 'facebookSignup', 'forgotPassword', 'reverification', 'verifyAccount', 'resetPassword', 'pushNotification','facebookFriends','testPushnotification']);
     }
     
     public function avatars() {
@@ -1317,30 +1317,59 @@ class UsersController extends AppController {
     }
     
     public function pushNotification() {
-//        if(!$this->request->is(['post'])) {
-//            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
-//        }
-//        
+        $blankObj = new \stdClass();
+        if(!$this->request->is(['post'])) {
+            $this->restException($blankObj); 
+        }
+        
         $data = $this->request->getData();
+        if(!empty($data['notification']['content']['msgtype'])){
+            $msgType = $data['notification']['content']['msgtype'];
+        }else{
+            return;
+        }
+        
+        pr($data['notification']);die;
         $pushData['post_value'] = json_encode($data);
         $pushData['created'] = date("Y-m-d H:i:s");
         Log::info(json_encode($pushData,JSON_PRETTY_PRINT));
         $pusher = TableRegistry::get("Api.PusherData");
         $push = $pusher->newEntity();
-        $item = $pusher->patchEntity($push, $pushData,['validate'=>false]);
-        $pusher->save($item);
-        $blankObj = new \stdClass();
-        $this->restException($blankObj);  
+        $entity = $pusher->patchEntity($push, $pushData,['validate'=>false]);
+        $pusher->save($entity);
         if(empty($data['notification']['devices'])) {
-            $this->restException(['status'=>'failed', 'message'=>__('Notification data not found.')], 400);
+            $this->restException($blankObj);  
         }
-        $message = !empty($data['notification']['content']['body'])?$data['notification']['content']['body']:'';
+        $items = ['message'=>''];
+        $spayc  = TableRegistry::get('Api.Spaycs')->findByMatrixRoomId($data['notification']['room_id'])->first();
+        if(!empty($spayc)){
+            $items['spayc_image'] = $spayc->image;
+        }
+        $items['matrix_room_id'] = $data['notification']['room_id'];        
+        if($msgType == 'm.likeMessage'){
+            $notify = TableRegistry::get('Api.Notifications')->message('a-user-liked-your-comment');
+            if(!empty($notify)){
+                $items['message'] = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);
+                $items['notification_type'] = $notify->type;
+            }
+        }if($msgType == 'm.replyText'){
+            $notify = TableRegistry::get('Api.Notifications')->message('someone-replyed-to-your-comment');
+            if(!empty($notify)){
+                $items['message'] = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);
+                $items['notification_type'] = $notify->type;
+            }
+        }else{
+            $items['message'] = !empty($data['notification']['content']['body'])?$data['notification']['content']['body']:'';
+            $items['notification_type'] = 'inbox';
+        }
         foreach($data['notification']['devices'] as $key=>$device) {
             if(!empty($device['pushkey']) && !empty($message)) {
-                $send['device_token'] = $device['pushkey'];
-                $this->Push->sendOnIOS($send, $message);
+                $items['device_token'] = $device['pushkey'];
+                $items['date_time'] = date('m-d-Y H:i:s',$device['pushkey_ts']);   
+                $this->Push->sendOnIOS($items);
             }
         }
+        $this->restException($blankObj); 
     }
     
     public function testPushnotification() {
@@ -1348,7 +1377,9 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
         $data = $this->request->getData();
-        $this->Push->sendOnIOS($data['device_token'], "test push notification for spayc");
+        //$data['message'] = "test push notification for spayc";
+        //$this->Push->sendOnIOS($data);
+        $this->Push->sendPushNotification($data);
         $response = ['status'=>'success', 'message'=>__('notification sent')];
         $this->set($response);
     }
