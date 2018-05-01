@@ -73,7 +73,7 @@ if($this->request->query())
                       </div>
                       <?php } if(!empty($spayc->total_presents)) { ?>
                       <div class="presented-row info-data ell">
-                          <span><?= $spayc->total_presents ?> Presented</span>
+                          <span><?= $spayc->total_presents ?> Present</span>
                       </div>
                       <?php } if(!empty($spayc->joined_users)) { ?>
                       <div class="friends-row info-data ell">
