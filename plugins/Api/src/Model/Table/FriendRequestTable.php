@@ -243,7 +243,7 @@ class FriendRequestTable extends Table
                 ->Where(['OR'=>[
                     ['requested_by' => $selfId,'requested_to'=>$frndId],
                     ['requested_by' => $frndId,'requested_to'=>$selfId]
-                ]]);
+                ],'requested_status'=>'Accepted']);
         if($friend->isEmpty()){
             return [];
         }else{
