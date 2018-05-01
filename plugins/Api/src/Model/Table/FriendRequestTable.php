@@ -243,6 +243,20 @@ class FriendRequestTable extends Table
                 ->Where(['OR'=>[
                     ['requested_by' => $selfId,'requested_to'=>$frndId],
                     ['requested_by' => $frndId,'requested_to'=>$selfId]
+                ]]);
+        if($friend->isEmpty()){
+            return [];
+        }else{
+            return $friend->first();
+        }
+    }
+    
+    public function userFriend($selfId,$frndId){
+        $friend = $this->find()
+                ->select(['id','requested_by', 'requested_status', 'requested_to','matrix_room_id','action_by'])
+                ->Where(['OR'=>[
+                    ['requested_by' => $selfId,'requested_to'=>$frndId],
+                    ['requested_by' => $frndId,'requested_to'=>$selfId]
                 ],'requested_status'=>'Accepted']);
         if($friend->isEmpty()){
             return [];
