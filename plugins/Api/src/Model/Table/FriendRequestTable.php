@@ -269,11 +269,27 @@ class FriendRequestTable extends Table
              $friends = TableRegistry::get('Api.Users')->find('all',['fields'=>[
 //                 'distance' => $distanceField,
                  'id', 'display_name', 'email', 'address','latitude','longitude','modified']])
+                     
                 ->where(["$distanceField <=" => $distance, 'status'=>'Active'])
                      ->where("id in (". implode($child,",").")")
                 ->bind(':latitude', $request['center_latitude'], 'float')
                 ->bind(':longitude', $request['center_longitude'], 'float');
              
+             // Getting User image
+             $friends->contain([
+            'UserImages'=>function($q) {
+                return $q->select(['UserImages.user_id', 'UserImages.image_url'])->where(['UserImages.is_profile'=>'Yes']);
+            }
+            
+        ]);
+        
+          $friends->formatResults(function (\Cake\Collection\CollectionInterface $results) {
+            return $results->map(function ($row) {
+                $row['image_url'] = !empty($row['user_images'][0]['image_url'])?$row['user_images'][0]['image_url']:'';
+                unset($row['user_images']);
+                return $row;
+            });
+        });
              // Unread Notification
 //              $friends->contain([
 //            'NotificationTo'=>function($q)use($userId) {

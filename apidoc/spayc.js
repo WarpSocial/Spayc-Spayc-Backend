@@ -1041,23 +1041,14 @@ function hashTagSpaycs() { return; }
             "count": 2,
             "records": [
                 {
-                    "id": "2",
-                    "display_name": null,
-                    "email": "bot@gmail.com",
-                    "address": null,
-                    "latitude": 28.579403737919,
-                    "longitude": 77.320890067264,
-                    "modified": "2018-03-16T09:36:35+00:00",
-                    "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
-                },
-                {
                     "id": "3",
                     "display_name": "sam",
-                    "email": "sam@yopmail.com",
+                    "email": "test@kiwitech.com",
                     "address": null,
                     "latitude": 28.7041,
                     "longitude": 77.1025,
                     "modified": "2018-03-17T08:21:47+00:00",
+                    "image_url": "https:\/\/spayc-dev.s3.amazonaws.com\/profile\/26168111_1523380557779310_7695911840919952448_n_20180320030546.jpg%3Foh%3D046ac3312ac9b797e1f0b12c0505572c%26oe%3D5b2ed73a",
                     "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
                 }
             ]

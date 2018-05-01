@@ -139,7 +139,7 @@ class SpaycAdvertisementTable extends Table
                             ]
                         ]
                 )
-                ->where(['spayc_id' => $spayc_id, "balance < 1 "]);
+                ->where(['spayc_id' => $spayc_id, " (balance < 1 OR status != 'Active') "]);
         $ad_spayc_ids = \Cake\Utility\Hash::extract($ad->toArray(), '{n}.id');
         $adids = \Cake\Utility\Hash::extract($ad->toArray(), '{n}.advertisement_id');
         $expired=false;
@@ -167,7 +167,7 @@ class SpaycAdvertisementTable extends Table
                             ]
                         ]
                 )
-                ->where(['spayc_id' => $spayc_id, "balance > 0"])
+                ->where(['spayc_id' => $spayc_id, "balance > 0","advertisement_status != 2"])
                 ->order(['SpaycAdvertisement.id' => 'ASC'])
                 ->limit(10)
                 ;
