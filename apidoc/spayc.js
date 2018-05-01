@@ -976,7 +976,7 @@ function hashTagSpaycs() { return; }
     @apiParam {String}      spayc_type               Spayc Type (Optional).
     @apiParam {String}      group_type               Spayc Group Type (Optional).
     @apiParam {String}      wrap_with_friends        Spayc having with friends (Optional).
-    @apiParam {Number}      hashtag_id               Hashtag Search Filter (Optional).
+    @apiParam {Number}      hashtag_id               Hashtag Search Filter | MAx 3 hashtag (Optional).
     @apiParam {Number}      category_id              Category Search Filter (Optional).
     
 @apiExample Example usage:
@@ -990,7 +990,7 @@ function hashTagSpaycs() { return; }
         "spayc_type": "Event|Community",
         "group_type": "Public|Private",
         "wrap_with_friends": "yes|no",
-        "hashtag_id": xx,
+        "hashtag_id": "1,2,3",
         "category_id": "5,6"
         
     }
