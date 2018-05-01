@@ -1337,7 +1337,7 @@ class UsersController extends AppController {
         $push = $pusher->newEntity();
         $entity = $pusher->patchEntity($push, $pushData,['validate'=>false]);
         $pusher->save($entity);
-        if(empty($data['notification']['devices'])) {
+        if(empty($data['notification']['devices'])) { 
             $this->restException($blankObj);  
         }
         $items = ['message'=>''];
@@ -1363,9 +1363,10 @@ class UsersController extends AppController {
             $items['notification_type'] = 'inbox';
         }
         foreach($data['notification']['devices'] as $key=>$device) {
-            if(!empty($device['pushkey']) && !empty($message)) {
+            if(!empty($device['pushkey']) && !empty($items['message'])) {
                 $items['device_token'] = $device['pushkey'];
                 $items['date_time'] = date('m-d-Y H:i:s',$device['pushkey_ts']);   
+                Log::info($items);
                 $this->Push->sendOnIOS($items);
             }
         }

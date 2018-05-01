@@ -61,7 +61,7 @@ class WebApiController extends AppController {
     public function apilog(){
         $del = $this->request->getQuery('clean');
         $file = new \Cake\Filesystem\File(LOGS.'api.log');
-        if(!empty($del)){
+        if(!empty($del) && ($del == 1)){
             $file->write(null);
         }
         $errorfile = $file->read();
