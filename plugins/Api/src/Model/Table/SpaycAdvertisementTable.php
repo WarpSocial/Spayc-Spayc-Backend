@@ -118,10 +118,11 @@ class SpaycAdvertisementTable extends Table
     
      public function updateAdvertisementStatus($spayc_id){
          
-         
+        
+          $this->updateAdExpired($spayc_id);
          $this->updateAdActive($spayc_id);
            $this->calculateView($spayc_id);
-         $this->updateAdExpired($spayc_id);
+        
          
            return true;
     }
@@ -171,6 +172,7 @@ class SpaycAdvertisementTable extends Table
                 ->order(['SpaycAdvertisement.id' => 'ASC'])
                 ->limit(10)
                 ;
+//        print_R($ad->toArray());die;
         $adids = \Cake\Utility\Hash::extract($ad->toArray(), '{n}.id');
         $update['advertisement_status'] = 1;
         $success=TableRegistry::get('Api.SpaycAdvertisement')
