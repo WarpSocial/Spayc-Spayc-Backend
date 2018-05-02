@@ -106,7 +106,7 @@ class PlansController extends AppController {
             'spayc_id'=>$data['spayc_promotional_id'],
             'user_id'=>$user['id'],
             'views'=>$plan->views,
-            'balanced_views'=>$plan->views,
+            'balance'=>$plan->views,
             'amount'=>$plan->amount,
             //'spaycs'=>['_ids'=>explode(',',$data['spayc_id'])],
             'purchase'=>$purchase
@@ -127,9 +127,12 @@ class PlansController extends AppController {
                 $pRepo->SpaycPromotion->save($spEntity);
                 
                 if(!$sppRepo->exists(['spayc_id'=>$value])){
-                    $sppItems = $sppRepo->newEntity(['spayc_id'=>$value,'priority'=>0,'comment_count'=>0]);
+                    $sppItems = $sppRepo->newEntity(['spayc_id'=>$value,'cycle'=>0,'comment_count'=>0]);
                     $sppRepo->save($sppItems);
                 }
+                 //Ad Bucket Active & Expire         
+             TableRegistry::get('Api.SpaycPromotion')->updatePromotionExpired($value);
+             TableRegistry::get('Api.SpaycPromotion')->updatePromotionActive($value);
             }
             $pRepo->getConnection()->commit();
             $this->response->statusCode(201);
@@ -141,5 +144,231 @@ class PlansController extends AppController {
         }
         
         $this->set($response);
+    }
+    
+    
+    //Ad Logic
+     public function promotionLogic() {
+        if (!$this->request->is('post')) {
+            $this->restException(['status' => 'failed', 'message' => __('Method not allowed.')], 405);
+        }
+        $data = $this->request->getData();
+        $user = $this->Auth->user();
+         if(!isset($data['spayc_id'])) {
+            $this->restException(['status' => 'failed', 'message' => __('Spayc ID field required.')], 400);
+        }
+         if(!isset($data['cycle'])) {
+            $this->restException(['status' => 'failed', 'message' => __('Cycle field required.')], 400);
+        }
+         if(!isset($data['comment_count'])) {
+            $this->restException(['status' => 'failed', 'message' => __('Comment Count field required.')], 400);
+        }
+        $spaycRow = TableRegistry::get('Api.Spaycs')->find()
+                ->join(
+                        [
+                            'table' => 'spayc_promotion',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'Spaycs.id = spayc_promotion.spayc_id',
+                                'promotion_status != 2',
+                            ]
+                        ]
+                )->where(['spayc_id' =>  $data['spayc_id']])
+                ->distinct(['Spaycs.id']);;
+        
+        if($spaycRow->isEmpty()){
+//             $this->restException(['status'=>'failed','message'=>'Spayc not Authorized with any Promotion .'], 404);
+             $this->restException(['status'=>'failed','message'=>'Promotion could not be found.'], 404);
+        }
+        
+        
+        $spayc=$spaycRow->first();
+        
+         $cycleRow = TableRegistry::get('Api.SpaycPromotionPriority')->find()->where(['spayc_id' =>  $data['spayc_id']])
+                 ->order(['id' => 'DESC']);
+         
+         //Ad Bucket Active & Expire         
+             TableRegistry::get('Api.SpaycPromotion')->updatePromotionExpired($data['spayc_id']);
+             TableRegistry::get('Api.SpaycPromotion')->updatePromotionActive($data['spayc_id']);
+             
+        $cycleData=$cycleRow->first();
+        $frequency=TableRegistry::get('Api.SpaycPromotion')->adFrequency($data['spayc_id']);
+        
+        if($data['comment_count']>$frequency) {
+            $this->restException(['status' => 'failed', 'message' => __('Comment Count Must be less than from Comment Frequency.')], 400);
+        }
+       
+        if($cycleData){
+             $cycle=$cycleData['cycle'];
+             $comment_count=$cycleData['comment_count'];
+             
+            
+             if($data['cycle']<=$cycle && $data['comment_count']<=$comment_count){ 
+                 // If Cycle Same or Low Count Comment or Low Cycle
+//                 $this->restException(['status' => 'failed', 'message' => __('Cycle Already Inserted.')], 400);
+             }elseif($data['cycle']==$cycle && $data['comment_count']>=$comment_count){ 
+                 // If Cycle Same and Count Comment Greater
+                 $update['comment_count']=$data['comment_count'];
+                 $condition['spayc_id']=$data['spayc_id'];
+                 $condition['cycle']=$data['cycle'];
+                 TableRegistry::get('Api.SpaycPromotionPriority')->UpdateAll($update, $condition);
+             }elseif($data['cycle']>$cycle || !$cycleData){
+                 
+                 //Ad Expire,Active,View Balance
+                 TableRegistry::get('Api.SpaycPromotion')->updatePromotionStatus($data['spayc_id']);
+                 
+                 // If Cycle Greater, Update Cycle
+                    $update['comment_count']=$data['comment_count'];
+                    $update['cycle']=$data['cycle'];
+                    $condition['spayc_id']=$data['spayc_id'];
+                    TableRegistry::get('Api.SpaycPromotionPriority')->UpdateAll($update, $condition);
+                    
+                    $priority = TableRegistry::get('Api.SpaycPromotion')
+                            ->setPriority($data['spayc_id']);
+                    
+             }
+     }
+         
+        $ad = TableRegistry::get('Api.SpaycPromotion')->find('all',
+                ['fields'=>
+                    [
+                        'promotions.user_id',
+                        'priority.cycle',
+                        'priority.comment_count',
+                        'friend_request.matrix_room_id',
+                        
+                        ]])
+                ->join(
+                        [
+                            'table' => 'promotions',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'promotions.id = SpaycPromotion.promotion_id',
+                            ]
+                        ]
+                )
+                ->join(
+                        [
+                            'table' => 'spayc_promotion_priority',
+                            'alias' => 'priority',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'priority.spayc_id = SpaycPromotion.spayc_id',
+                            ]
+                        ]
+                )
+                     ->join(
+        [
+        'table' => 'friend_request',
+        'type' => 'LEFT',
+        'conditions' =>
+        [
+            'OR' =>[
+            [
+                'friend_request.requested_by = promotions.user_id', 'friend_request.requested_to = '.$user['id']
+            ],
+            [
+                'friend_request.requested_to = promotions.user_id', 'friend_request.requested_by = '.$user['id']
+            ]
+                             ]
+        ]
+        ]
+        )
+                ->where(['SpaycPromotion.spayc_id'=>$data['spayc_id'],"balance > 0","promotion_status"=>1,'promotions.status'=>'Active'])
+                ->order(['SpaycPromotion.priority' => 'ASC'])
+                ->limit(1)
+                ;
+        
+        $data=[];
+        if($ad->isEmpty()){
+             $this->restException(['status'=>'failed','message'=>'Promotion not found.'], 404);
+        }else{
+            $data=$ad->first();
+        }
+        $data['frequency']=$frequency;
+        $response = ['status' => 'success', 'message' => __('Promotion Find Successfully'), 'data' => $data];
+        $this->set($response);
+    }
+    
+    //Ad Logic First Time Enter
+     public function promotionLogicStart() {
+        if (!$this->request->is('post')) {
+            $this->restException(['status' => 'failed', 'message' => __('Method not allowed.')], 405);
+        }
+        $data = $this->request->getData();
+        $user = $this->Auth->user();
+         if(!isset($data['spayc_id'])) {
+            $this->restException(['status' => 'failed', 'message' => __('Spayc ID field required.')], 400);
+        }
+        
+        
+        $spaycRow = TableRegistry::get('Api.Spaycs')->find()
+                ->join(
+                        [
+                            'table' => 'spayc_promotion',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'Spaycs.id = spayc_promotion.spayc_id',
+                                'promotion_status != 2',
+                            ]
+                        ]
+                )->where(['spayc_id' =>  $data['spayc_id']])
+                ->distinct(['Spaycs.id']);;
+        
+        if($spaycRow->isEmpty()){
+//             $this->restException(['status'=>'failed','message'=>'Spayc not Authorized with any Promotion .'], 404);
+             $this->restException(['status'=>'failed','message'=>'Promotion could not be found.'], 404);
+        }
+        
+        //Ad Bucket Active & Expire
+                 TableRegistry::get('Api.SpaycPromotion')->updatePromotionExpired($data['spayc_id']);
+                 TableRegistry::get('Api.SpaycPromotion')->updatePromotionActive($data['spayc_id']);
+        
+        
+         
+        $ad = TableRegistry::get('Api.SpaycPromotion')->find('all',
+                ['fields'=>
+                    [
+                        'priority.cycle',
+                        'priority.comment_count',
+                        
+                        ]])
+                ->join(
+                        [
+                            'table' => 'promotions',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'promotions.id = SpaycPromotion.promotion_id',
+                            ]
+                        ]
+                )
+                ->join(
+                        [
+                            'table' => 'spayc_promotion_priority',
+                            'alias' => 'priority',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'priority.spayc_id = SpaycPromotion.spayc_id',
+                            ]
+                        ]
+                )
+                ->where(['SpaycPromotion.spayc_id'=>$data['spayc_id'],"balance > 0",'promotions.status'=>'Active'])
+                ->order(['SpaycPromotion.priority' => 'ASC'])
+                ->limit(1)
+                ;
+        $frequency=TableRegistry::get('Api.SpaycPromotion')->adFrequency($data['spayc_id']);
+        $data=[];
+        if($ad->isEmpty()){
+             $this->restException(['status'=>'failed','message'=>'Promotion not found.'], 404);
+        }else{
+            $data=$ad->first();
+        }
+        $data['frequency']=$frequency;
+        $response = ['status' => 'success', 'message' => __('Promotion Find Successfully'), 'data' => $data];
+        $this->set($response);
+    }
+    
+    public function isCurrency($number) {
+        return preg_match("/^-?[0-9]+(?:\.[0-9]{1,2})?$/", $number);
     }
 }

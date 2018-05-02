@@ -348,7 +348,7 @@ CREATE TABLE "promotions" (
     "spayc_id" BIGINT NULL,
     "user_id" BIGINT NULL,
     "views" numeric(50) NULL,
-    "balanced_views" numeric(50) NULL,
+    "balance" numeric(50) NULL,
     "amount" DECIMAL(7,2) NULL,
     "status" row_status NOT NULL DEFAULT 'Active',
     "created" timestamp,
@@ -361,6 +361,8 @@ CREATE TABLE "spayc_promotion" (
     "promotion_id" BIGINT NULL,
     "spayc_id" BIGINT NULL,
     "priority" INTEGER NULL,
+    "advertisement_status" INTEGER NULL DEFAULT '0',
+    "display_times" INTEGER NULL DEFAULT '0',
     "created" timestamp,
     "modified" timestamp,
     PRIMARY KEY ("id","created")
