@@ -360,6 +360,8 @@ CREATE TABLE "spayc_promotion" (
     "promotion_id" BIGINT NULL,
     "spayc_id" BIGINT NULL,
     "priority" INTEGER NULL,
+    "advertisement_status" INTEGER NULL DEFAULT '0',
+    "display_times" INTEGER NULL DEFAULT '0',
     "created" timestamp,
     "modified" timestamp,
     PRIMARY KEY ("id","created")
