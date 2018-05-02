@@ -403,7 +403,7 @@ class AdvertisementController extends AppController {
     }
 
     
-    //Priority
+    //Ad Logic
      public function adLogic() {
         if (!$this->request->is('post')) {
             $this->restException(['status' => 'failed', 'message' => __('Method not allowed.')], 405);
@@ -443,15 +443,16 @@ class AdvertisementController extends AppController {
          $cycleRow = TableRegistry::get('Api.SpaycAdvertisementPriority')->find()->where(['spayc_id' =>  $data['spayc_id']])
                  ->order(['id' => 'DESC']);
          
+         //Ad Bucket Active & Expire         
+             TableRegistry::get('Api.SpaycAdvertisement')->updateAdExpired($data['spayc_id']);
+             TableRegistry::get('Api.SpaycAdvertisement')->updateAdActive($data['spayc_id']);
+         
         $cycleData=$cycleRow->first();
         $frequency=TableRegistry::get('Api.SpaycAdvertisement')->adFrequency($data['spayc_id']);
         
         if($data['comment_count']>$frequency) {
             $this->restException(['status' => 'failed', 'message' => __('Comment Count Must be less than from Comment Frequency.')], 400);
         }
-         //Ad Bucket Active & Expire         
-             TableRegistry::get('Api.SpaycAdvertisement')->updateAdExpired($data['spayc_id']);
-             TableRegistry::get('Api.SpaycAdvertisement')->updateAdActive($data['spayc_id']);
         if($cycleData){
              $cycle=$cycleData['cycle'];
              $comment_count=$cycleData['comment_count'];
@@ -549,7 +550,7 @@ class AdvertisementController extends AppController {
         $this->set($response);
     }
     
-    //Priority
+    //Ad Logic First Time Enter
      public function adLogicStart() {
         if (!$this->request->is('post')) {
             $this->restException(['status' => 'failed', 'message' => __('Method not allowed.')], 405);
@@ -560,9 +561,6 @@ class AdvertisementController extends AppController {
             $this->restException(['status' => 'failed', 'message' => __('Spayc ID field required.')], 400);
         }
         
-        //Ad Bucket Active & Expire
-                 TableRegistry::get('Api.SpaycAdvertisement')->updateAdExpired($data['spayc_id']);
-                 TableRegistry::get('Api.SpaycAdvertisement')->updateAdActive($data['spayc_id']);
         
         $spaycRow = TableRegistry::get('Api.Spaycs')->find()
                 ->join(
@@ -582,6 +580,9 @@ class AdvertisementController extends AppController {
              $this->restException(['status'=>'failed','message'=>'Advertisement could not be found.'], 404);
         }
         
+        //Ad Bucket Active & Expire
+                 TableRegistry::get('Api.SpaycAdvertisement')->updateAdExpired($data['spayc_id']);
+                 TableRegistry::get('Api.SpaycAdvertisement')->updateAdActive($data['spayc_id']);
         
          
         $ad = TableRegistry::get('Api.SpaycAdvertisement')->find('all',
