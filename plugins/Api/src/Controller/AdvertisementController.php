@@ -449,11 +449,14 @@ class AdvertisementController extends AppController {
         if($data['comment_count']>$frequency) {
             $this->restException(['status' => 'failed', 'message' => __('Comment Count Must be less than from Comment Frequency.')], 400);
         }
+         //Ad Bucket Active & Expire         
+             TableRegistry::get('Api.SpaycAdvertisement')->updateAdExpired($data['spayc_id']);
+             TableRegistry::get('Api.SpaycAdvertisement')->updateAdActive($data['spayc_id']);
         if($cycleData){
              $cycle=$cycleData['cycle'];
              $comment_count=$cycleData['comment_count'];
              
-             
+            
              if($data['cycle']<=$cycle && $data['comment_count']<=$comment_count){ 
                  // If Cycle Same or Low Count Comment or Low Cycle
 //                 $this->restException(['status' => 'failed', 'message' => __('Cycle Already Inserted.')], 400);
@@ -556,6 +559,10 @@ class AdvertisementController extends AppController {
          if(!isset($data['spayc_id'])) {
             $this->restException(['status' => 'failed', 'message' => __('Spayc ID field required.')], 400);
         }
+        
+        //Ad Bucket Active & Expire
+                 TableRegistry::get('Api.SpaycAdvertisement')->updateAdExpired($data['spayc_id']);
+                 TableRegistry::get('Api.SpaycAdvertisement')->updateAdActive($data['spayc_id']);
         
         $spaycRow = TableRegistry::get('Api.Spaycs')->find()
                 ->join(
