@@ -1484,6 +1484,105 @@ function adLogic() { return; }
 
 
 
+/**
+ @api {post} /promotion-logic-start.json Promotion Logic Start
+ @apiVersion 0.1.0
+ @apiName promotionLogicStart
+ @apiGroup Promotion
+ @apiPermission private
+
+ @apiDescription Promotion Logic.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+    @apiParam {Number}      spayc_id            Spayc Id (Required).
+
+    @apiExample Example usage:
+    {
+        "spayc_id":"5"
+    }
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Promotion Find Successfully",
+    "data": {
+        "promotions": {
+            "user_id": 1
+        },
+        "priority": {
+            "cycle": 3,
+            "comment_count": 2
+        },
+        "friend_request": {
+            "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
+        },
+        "frequency": 11
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function promotionLogicStart() { return; }
+
+
+/**
+ @api {post} /ad-logic.json Promotion Logic
+ @apiVersion 0.1.0
+ @apiName promotionLogic
+ @apiGroup Promotion
+ @apiPermission private
+
+ @apiDescription Promotion Logic.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+    @apiParam {Number}      spayc_id            Spayc Id (Required).
+    @apiParam {Number}      cycle               Current Cycle (Required).
+    @apiParam {Number}      comment_count       Comment Count (Required).
+
+    @apiExample Example usage:
+    {
+        "spayc_id":"5",
+        "cycle":"1",
+        "comment_count":"20"
+    }
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Promotion Find Successfully",
+    "data": {
+        "promotions": {
+            "user_id": 1
+        },
+        "priority": {
+            "cycle": 3,
+            "comment_count": 2
+        },
+        "friend_request": {
+            "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
+        },
+        "frequency": 11
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function promotionLogic() { return; }
+
+
+
 
 /**
  @api {get} /unread-notification.json Unread Notification
