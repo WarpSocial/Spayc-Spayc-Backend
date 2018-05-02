@@ -347,7 +347,7 @@ CREATE TABLE "promotions" (
     "spayc_id" BIGINT NULL,
     "user_id" BIGINT NULL,
     "views" numeric(50) NULL,
-    "balanced_views" numeric(50) NULL,
+    "balance" numeric(50) NULL,
     "amount" DECIMAL(7,2) NULL,
     "status" row_status NOT NULL DEFAULT 'Active',
     "created" timestamp,

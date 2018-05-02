@@ -73,14 +73,14 @@ class SpaycPromotionTable extends Table {
          $pro=TableRegistry::get('Api.SpaycPromotion')->find()
                   ->join(
                 [
-                    'table' => 'promotion',
+                    'table' => 'promotions',
                     'type' => 'INNER',
                     'conditions' => [
-                        'promotion.id = SpaycPromotion.promotion_id',
+                        'promotions.id = SpaycPromotion.promotion_id',
                     ]
                 ]
             )
-                 ->where(['spayc_id'=>$spayc_id,"balance > 0","promotion_status"=>1,'promotion.status'=>'Active']);
+                 ->where(['SpaycPromotion.spayc_id'=>$spayc_id,"balance > 0","promotion_status"=>1,'promotions.status'=>'Active']);
  
          if(!$pro->isEmpty()){
              $list=$pro->toArray();
@@ -117,14 +117,14 @@ class SpaycPromotionTable extends Table {
         $pro = TableRegistry::get('Api.SpaycPromotion')->find()
                 ->join(
                         [
-                            'table' => 'promotion',
+                            'table' => 'promotions',
                             'type' => 'INNER',
                             'conditions' => [
-                                'promotion.id = SpaycPromotion.promotion_id',
+                                'promotions.id = SpaycPromotion.promotion_id',
                             ]
                         ]
                 )
-                ->where(['spayc_id' => $spayc_id, " (balance < 1 OR status != 'Active') "]);
+                ->where(['SpaycPromotion.spayc_id' => $spayc_id, " (balance < 1 OR status != 'Active') "]);
         $pro_spayc_ids = \Cake\Utility\Hash::extract($pro->toArray(), '{n}.id');
         $proids = \Cake\Utility\Hash::extract($pro->toArray(), '{n}.promotion_id');
         $expired=false;
@@ -134,7 +134,7 @@ class SpaycPromotionTable extends Table {
         }
         if($proids){
         $update_ad['status'] = "Inactive";
-        $expired=TableRegistry::get('Api.Promotion')
+        $expired=TableRegistry::get('Api.Promotions')
                 ->UpdateAll($update_ad, ["id in (" . implode(",", $proids) . ")"]);
         }
         return $expired;
@@ -145,14 +145,14 @@ class SpaycPromotionTable extends Table {
         $pro = TableRegistry::get('Api.SpaycPromotion')->find()
                 ->join(
                         [
-                            'table' => 'promotion',
+                            'table' => 'promotions',
                             'type' => 'INNER',
                             'conditions' => [
-                                'promotion.id = SpaycPromotion.promotion_id',
+                                'promotions.id = SpaycPromotion.promotion_id',
                             ]
                         ]
                 )
-                ->where(['spayc_id' => $spayc_id, "balance > 0","promotion_status != 2"])
+                ->where(['SpaycPromotion.spayc_id' => $spayc_id, "balance > 0","promotion_status != 2"])
                 ->order(['SpaycPromotion.id' => 'ASC'])
                 ->limit(10)
                 ;
@@ -169,14 +169,14 @@ class SpaycPromotionTable extends Table {
           $pro_count = TableRegistry::get('Api.SpaycPromotion')->find()
                   ->join(
                         [
-                            'table' => 'promotion',
+                            'table' => 'promotions',
                             'type' => 'INNER',
                             'conditions' => [
-                                'promotion.id = SpaycPromotion.promotion_id',
+                                'promotions.id = SpaycPromotion.promotion_id',
                             ]
                         ]
                 )
-                ->where(['spayc_id'=>$spayc_id,"balance > 0","promotion_status"=>1,'promotion.status'=>'Active'])
+                ->where(['SpaycPromotion.spayc_id'=>$spayc_id,"balance > 0","promotion_status"=>1,'promotions.status'=>'Active'])
                 ->count()
                 ;
           
@@ -228,19 +228,19 @@ class SpaycPromotionTable extends Table {
                         'SpaycPromotion.id',
                         'SpaycPromotion.promotion_id',
                         'SpaycPromotion.display_times',
-                        'promotion.balance'
+                        'promotions.balance'
                         
                         ]])
                 ->join(
                         [
-                            'table' => 'promotion',
+                            'table' => 'promotions',
                             'type' => 'INNER',
                             'conditions' => [
-                                'promotion.id = SpaycPromotion.promotion_id',
+                                'promotions.id = SpaycPromotion.promotion_id',
                             ]
                         ]
                 )
-                ->where(['spayc_id'=>$spayc_id,"balance > 0","promotion_status"=>1,'promotion.status'=>'Active'])
+                ->where(['SpaycPromotion.spayc_id'=>$spayc_id,"balance > 0","promotion_status"=>1,'promotions.status'=>'Active'])
                 ->order(['SpaycPromotion.priority' => 'ASC'])
                 ->limit(1)
                 ;
@@ -252,7 +252,7 @@ class SpaycPromotionTable extends Table {
         $display_times=$array['display_times']+1;
         $pro_spayc_id=$array['id'];
         $pro_id=$array['promotion_id'];
-        $balance=$array['promotion']['balance'];
+        $balance=$array['promotions']['balance'];
         $data=TableRegistry::get('Api.SpaycPromotion')
                 ->UpdateAll(array('display_times' => $display_times)
                         , ["id"=>$pro_spayc_id]);
@@ -268,7 +268,7 @@ class SpaycPromotionTable extends Table {
         $views=count($joined_users)*$display_times;
         $final_balance= $balance-$views;
         
-        $data=TableRegistry::get('Api.Promotion')
+        $data=TableRegistry::get('Api.Promotions')
                 ->UpdateAll(array('balance' => $final_balance)
                           , ["id"=>$pro_id]);
         return $data;

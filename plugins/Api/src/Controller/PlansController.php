@@ -106,7 +106,7 @@ class PlansController extends AppController {
             'spayc_id'=>$data['spayc_promotional_id'],
             'user_id'=>$user['id'],
             'views'=>$plan->views,
-            'balanced_views'=>$plan->views,
+            'balance'=>$plan->views,
             'amount'=>$plan->amount,
             //'spaycs'=>['_ids'=>explode(',',$data['spayc_id'])],
             'purchase'=>$purchase
@@ -127,9 +127,12 @@ class PlansController extends AppController {
                 $pRepo->SpaycPromotion->save($spEntity);
                 
                 if(!$sppRepo->exists(['spayc_id'=>$value])){
-                    $sppItems = $sppRepo->newEntity(['spayc_id'=>$value,'priority'=>0,'comment_count'=>0]);
+                    $sppItems = $sppRepo->newEntity(['spayc_id'=>$value,'cycle'=>0,'comment_count'=>0]);
                     $sppRepo->save($sppItems);
                 }
+                 //Ad Bucket Active & Expire         
+             TableRegistry::get('Api.SpaycPromotion')->updatePromotionExpired($value);
+             TableRegistry::get('Api.SpaycPromotion')->updatePromotionActive($value);
             }
             $pRepo->getConnection()->commit();
             $this->response->statusCode(201);
@@ -185,8 +188,8 @@ class PlansController extends AppController {
                  ->order(['id' => 'DESC']);
          
          //Ad Bucket Active & Expire         
-             TableRegistry::get('Api.SpaycPromotion')->updateAdExpired($data['spayc_id']);
-             TableRegistry::get('Api.SpaycPromotion')->updateAdActive($data['spayc_id']);
+             TableRegistry::get('Api.SpaycPromotion')->updatePromotionExpired($data['spayc_id']);
+             TableRegistry::get('Api.SpaycPromotion')->updatePromotionActive($data['spayc_id']);
              
         $cycleData=$cycleRow->first();
         $frequency=TableRegistry::get('Api.SpaycPromotion')->adFrequency($data['spayc_id']);
@@ -229,12 +232,7 @@ class PlansController extends AppController {
         $ad = TableRegistry::get('Api.SpaycPromotion')->find('all',
                 ['fields'=>
                     [
-                        'promotion.user_id',
-                        'promotion.name',
-                        'promotion.price',
-                        'promotion.image',
-                        'promotion.description',
-                        'promotion.url',
+                        'promotions.user_id',
                         'priority.cycle',
                         'priority.comment_count',
                         'friend_request.matrix_room_id',
@@ -242,10 +240,10 @@ class PlansController extends AppController {
                         ]])
                 ->join(
                         [
-                            'table' => 'promotion',
+                            'table' => 'promotions',
                             'type' => 'INNER',
                             'conditions' => [
-                                'promotion.id = SpaycPromotion.promotion_id',
+                                'promotions.id = SpaycPromotion.promotion_id',
                             ]
                         ]
                 )
@@ -267,16 +265,16 @@ class PlansController extends AppController {
         [
             'OR' =>[
             [
-                'friend_request.requested_by = promotion.user_id', 'friend_request.requested_to = '.$user['id']
+                'friend_request.requested_by = promotions.user_id', 'friend_request.requested_to = '.$user['id']
             ],
             [
-                'friend_request.requested_to = promotion.user_id', 'friend_request.requested_by = '.$user['id']
+                'friend_request.requested_to = promotions.user_id', 'friend_request.requested_by = '.$user['id']
             ]
                              ]
         ]
         ]
         )
-                ->where(['SpaycPromotion.spayc_id'=>$data['spayc_id'],"balance > 0","promotion_status"=>1,'promotion.status'=>'Active'])
+                ->where(['SpaycPromotion.spayc_id'=>$data['spayc_id'],"balance > 0","promotion_status"=>1,'promotions.status'=>'Active'])
                 ->order(['SpaycPromotion.priority' => 'ASC'])
                 ->limit(1)
                 ;
@@ -331,21 +329,16 @@ class PlansController extends AppController {
         $ad = TableRegistry::get('Api.SpaycPromotion')->find('all',
                 ['fields'=>
                     [
-                        'promotion.name',
-                        'promotion.price',
-                        'promotion.image',
-                        'promotion.description',
-                        'promotion.url',
                         'priority.cycle',
                         'priority.comment_count',
                         
                         ]])
                 ->join(
                         [
-                            'table' => 'promotion',
+                            'table' => 'promotions',
                             'type' => 'INNER',
                             'conditions' => [
-                                'promotion.id = SpaycPromotion.promotion_id',
+                                'promotions.id = SpaycPromotion.promotion_id',
                             ]
                         ]
                 )
@@ -359,7 +352,7 @@ class PlansController extends AppController {
                             ]
                         ]
                 )
-                ->where(['SpaycPromotion.spayc_id'=>$data['spayc_id'],"balance > 0",'promotion.status'=>'Active'])
+                ->where(['SpaycPromotion.spayc_id'=>$data['spayc_id'],"balance > 0",'promotions.status'=>'Active'])
                 ->order(['SpaycPromotion.priority' => 'ASC'])
                 ->limit(1)
                 ;
