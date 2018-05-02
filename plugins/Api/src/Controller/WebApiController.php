@@ -21,7 +21,7 @@ class WebApiController extends AppController {
     }
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
-        $this->Auth->allow('addCategory');
+        $this->Auth->allow(['addCategory','apilog']);
     }
     
     public function addCategory(){
@@ -57,5 +57,16 @@ class WebApiController extends AppController {
         }
         die("END");
     }
+    
+    public function apilog(){
+        $del = $this->request->getQuery('clean');
+        $file = new \Cake\Filesystem\File(LOGS.'api.log');
+        if(!empty($del) && ($del == 1)){
+            $file->write(null);
+        }
+        $errorfile = $file->read();
+        $this->set($errorfile);
+    }
+
 
 }
