@@ -1328,7 +1328,6 @@ class UsersController extends AppController {
         }else{
             return;
         }
-        
         //pr($data['notification']);die;
         $pushData['post_value'] = json_encode($data);
         $pushData['created'] = date("Y-m-d H:i:s");
@@ -1340,7 +1339,7 @@ class UsersController extends AppController {
         if(empty($data['notification']['devices'])) { 
             $this->restException($blankObj);  
         }
-        $items = ['message'=>''];
+        $items = ['message'=>'','event_id'=>$data['notification']['content']['eventId']];
         $spayc  = TableRegistry::get('Api.Spaycs')->findByMatrixRoomId($data['notification']['room_id'])->first();
         if(!empty($spayc)){
             $items['spayc_image'] = $spayc->image;
@@ -1362,11 +1361,15 @@ class UsersController extends AppController {
             $items['message'] = !empty($data['notification']['content']['body'])?$data['notification']['content']['body']:'';
             $items['notification_type'] = 'inbox';
         }
+        $spaycEntity = TableRegistry::get('Api.Spaycs')->findByMatrixRoomId($items['matrix_room_id'])->select(['id'])->first();
+        if(!empty($spaycEntity)){            
+            TableRegistry::get('Api.Comments')->spaycActivities($spaycEntity->id,$items);
+        }        
         foreach($data['notification']['devices'] as $key=>$device) {
             if(!empty($device['pushkey']) && !empty($items['message'])) {
                 $items['device_token'] = $device['pushkey'];
-                $items['date_time'] = date('m-d-Y H:i:s',$device['pushkey_ts']);   
-                Log::info($items);
+                $items['date_time'] = date('m-d-Y H:i:s',$device['pushkey_ts']);
+                //Log::info($items);
                 $this->Push->sendOnIOS($items);
             }
         }

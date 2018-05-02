@@ -21,8 +21,10 @@ class WebApiController extends AppController {
     }
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
-        $this->Auth->allow(['addCategory','apilog']);
+        $this->Auth->allow(['addCategory','apilog','addComment']);
     }
+    
+    
     
     public function addCategory(){
         $cats = [

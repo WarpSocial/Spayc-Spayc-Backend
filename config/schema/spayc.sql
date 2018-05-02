@@ -65,12 +65,13 @@ SELECT create_hypertable('user_logs', 'created');
 CREATE TABLE comments (
     id BIGSERIAL NOT NULL,
     "spayc_id" bigint NOT NULL,
-    "user_id" bigint NOT NULL,
-    "comment" text,
-    "status" row_status DEFAULT 'Pending' NOT NULL,
+    "user_id" bigint NULL,
+    "comment" integer NOT NULL,
+    "event_id" varchar(150) NULL,
+    "status" row_status DEFAULT 'Active' NOT NULL,
     "created" timestamp NOT NULL,
-    "modified" timestamp NOT NULL,
-    PRIMARY KEY(id,spayc_id,user_id,created)
+    "modified" timestamp NULL,
+    PRIMARY KEY(id,spayc_id,created)
 );
 SELECT create_hypertable('comments', 'created');
 CREATE TABLE friend_request (

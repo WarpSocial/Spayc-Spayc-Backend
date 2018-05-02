@@ -275,7 +275,7 @@ class SpaycsController extends AppController {
                     return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
                 },
                 'Comments' => function($q) {
-                    return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
+                    return $q->select(['Comments.spayc_id', 'Comments.comment']);
                 }
             ]);
         $bannedSpayc = $this->Spaycs->bannedSpayc($loggedUser);    
@@ -354,7 +354,7 @@ class SpaycsController extends AppController {
                 }
                 $row['subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):0;
                 $row['is_subscribed'] = !empty($subUserId[0])?true:false;
-                $row['total_comments'] = !empty($row['comments'][0]['total_comment'])?$row['comments'][0]['total_comment']:0;
+                $row['total_comments'] = !empty($row['comments'][0]['comment'])?$row['comments'][0]['comment']:0;
                 unset($row['comments']);
                 $row['total_presents'] = $present;
                 return $row;
@@ -531,7 +531,7 @@ class SpaycsController extends AppController {
                         return  $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin','JoinedSpayc.distance']);
                     },
                     'Comments' => function($q) {
-                        return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
+                        return $q->select(['Comments.spayc_id', 'Comments.comment']);
                     },
                     'SubscribedUsers' => function($q) {
                         return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
@@ -575,7 +575,7 @@ class SpaycsController extends AppController {
                 }
                 $row['subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):0;
                 $row['is_subscribed'] = !empty($subUserId[0])?true:false;
-                $row['total_comments'] = !empty($row['comments'][0]['total_comment'])?$row['comments'][0]['total_comment']:0;
+                $row['total_comments'] = !empty($row['comments'][0]['comment'])?$row['comments'][0]['comment']:0;
                 unset($row['comments'],$row['joined_spayc']);
                 $row['total_presents'] = $present;
                 return $row;
@@ -858,7 +858,7 @@ class SpaycsController extends AppController {
                         return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
                     },
                     'Comments' => function($q) {
-                        return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);                        
+                      return $q->select(['Comments.spayc_id', 'Comments.comment']);                     
                     }
                 ]);
         $bannedSpayc = $this->Spaycs->bannedSpayc($user['id']);    
@@ -904,7 +904,7 @@ class SpaycsController extends AppController {
                 }
                 $row->subscribed_users = !empty($row->subscribed_users)?count($row->subscribed_users):0;
                 $row->is_subscribed = !empty($subUserId[0])?true:false;
-                $row->total_comments = !empty($row->comments[0]['total_comment'])?$row->comments[0]['total_comment']:0;
+                $row->total_comments = !empty($row->comments[0]['comment'])?$row->comments[0]['comment']:0;
                 unset($row->joined_spayc,$row->comments);
                 return $row;
             });
@@ -1125,7 +1125,7 @@ class SpaycsController extends AppController {
                         return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
                     },
                     'Comments' => function($q) {
-                        return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);                        
+                        return $q->select(['Comments.spayc_id', 'Comments.comment']);
                     }
                 ]);
         if(!empty($lat) && !empty($long)){
@@ -1164,7 +1164,7 @@ class SpaycsController extends AppController {
                 }
                 $row->subscribed_users = !empty($row->subscribed_users)?count($row->subscribed_users):0;
                 $row->is_subscribed = !empty($subUserId[0])?true:false;
-                $row->total_comments = !empty($row->comments[0]['total_comment'])?$row->comments[0]['total_comment']:0;
+                $row->total_comments = !empty($row->comments[0]['comment'])?$row->comments[0]['comment']:0;
                 unset($row->joined_spayc,$row->comments);
                 return $row;
             });
