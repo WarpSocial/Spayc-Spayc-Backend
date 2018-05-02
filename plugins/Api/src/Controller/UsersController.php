@@ -1321,17 +1321,17 @@ class UsersController extends AppController {
         if(!$this->request->is(['post'])) {
             $this->restException($blankObj); 
         }
-        
+        //Log::info(json_encode($pushData,JSON_PRETTY_PRINT));
         $data = $this->request->getData();
         if(!empty($data['notification']['content']['msgtype'])){
             $msgType = $data['notification']['content']['msgtype'];
         }else{
-            return;
+            $this->restException($blankObj); 
         }
         //pr($data['notification']);die;
         $pushData['post_value'] = json_encode($data);
         $pushData['created'] = date("Y-m-d H:i:s");
-        //Log::info(json_encode($pushData,JSON_PRETTY_PRINT));
+        Log::info(json_encode($pushData,JSON_PRETTY_PRINT));
         $pusher = TableRegistry::get("Api.PusherData");
         $push = $pusher->newEntity();
         $entity = $pusher->patchEntity($push, $pushData,['validate'=>false]);
@@ -1369,7 +1369,7 @@ class UsersController extends AppController {
             if(!empty($device['pushkey']) && !empty($items['message'])) {
                 $items['device_token'] = $device['pushkey'];
                 $items['date_time'] = date('m-d-Y H:i:s',$device['pushkey_ts']);
-                //Log::info($items);
+                Log::info($items);
                 $this->Push->sendOnIOS($items);
             }
         }
