@@ -1369,7 +1369,7 @@ class UsersController extends AppController {
             if(!empty($device['pushkey']) && !empty($items['message'])) {
                 $items['device_token'] = $device['pushkey'];
                 $items['date_time'] = date('m-d-Y H:i:s',$device['pushkey_ts']);
-                Log::info($items);
+                //Log::info($items);
                 $this->Push->sendOnIOS($items);
             }
         }
