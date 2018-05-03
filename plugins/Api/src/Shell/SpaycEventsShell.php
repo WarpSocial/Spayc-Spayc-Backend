@@ -54,8 +54,8 @@ class SpaycEventsShell extends Shell {
             $this->sendNotification('inactive');
         }
         
-        $this->sendNotification('active');
-
+        $data=$this->sendNotification('active');
+        \Cake\Log\Log::info(json_encode($data,JSON_PRETTY_PRINT));
 
     }
     public function sendNotification($type) {
@@ -118,12 +118,7 @@ class SpaycEventsShell extends Shell {
             }
         }
         }
-        $data = $success;
-        print_R($success);die;
-       
-            $response = ['status'=>'success','message'=>__(count($data). ' Process Run Successfully'),'data'=>$data];
-        
-        $this->set($response);
+      return $success;
     
 
     }
