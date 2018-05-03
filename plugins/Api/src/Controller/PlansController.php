@@ -228,6 +228,29 @@ class PlansController extends AppController {
                     
              }
      }
+     
+     
+        //Getting Distance 
+                 $pquery = TableRegistry::get('Api.PhysicalLocation')->findByUserId($user['id']);
+        if(!$pquery->isEmpty()){
+            $pquery = $pquery->first();
+            $lat = $pquery->current_latitude;
+            $long = $pquery->current_longitude;
+        }else{
+            $lat = $user['latitude'];
+            $long = $user['longitude'];
+        }
+                    
+        if(!empty($lat) && !empty($long)){
+            $distance = "ROUND( CAST(".str_replace(':long',$long,str_replace(':lat',$lat,
+                    str_replace('Spaycs.','spayc.',TableRegistry::get('Api.Spaycs')->distanceInMiles)
+                    ))." AS numeric), 3)";
+            $distance_condition=$distance;
+        }else{
+            $distance_condition=0;
+        }
+            //Getting Distance 
+            
          
         $ad = TableRegistry::get('Api.SpaycPromotion')->find('all',
                 ['fields'=>
@@ -238,7 +261,9 @@ class PlansController extends AppController {
                         'spayc.id',
                         'spayc.name',
                         'spayc.location',
+                        'spayc.description',
                         'spayc.matrix_room_id',
+                        'distance'=>$distance_condition,
                         'spayc.image',
                         'spayc.type',
                         'spayc.group_type',
@@ -341,7 +366,27 @@ class PlansController extends AppController {
                  TableRegistry::get('Api.SpaycPromotion')->updatePromotionActive($data['spayc_id']);
         
         
-         
+        //Getting Distance 
+                 $pquery = TableRegistry::get('Api.PhysicalLocation')->findByUserId($user['id']);
+        if(!$pquery->isEmpty()){
+            $pquery = $pquery->first();
+            $lat = $pquery->current_latitude;
+            $long = $pquery->current_longitude;
+        }else{
+            $lat = $user['latitude'];
+            $long = $user['longitude'];
+        }
+                    
+        if(!empty($lat) && !empty($long)){
+            $distance = "ROUND( CAST(".str_replace(':long',$long,str_replace(':lat',$lat,
+                    str_replace('Spaycs.','spayc.',TableRegistry::get('Api.Spaycs')->distanceInMiles)
+                    ))." AS numeric), 3)";
+            $distance_condition=$distance;
+        }else{
+            $distance_condition=0;
+        }
+            //Getting Distance 
+            
         $ad = TableRegistry::get('Api.SpaycPromotion')->find('all',
                 ['fields'=>
                     [
@@ -351,7 +396,9 @@ class PlansController extends AppController {
                         'spayc.id',
                         'spayc.name',
                         'spayc.location',
+                        'spayc.description',
                         'spayc.matrix_room_id',
+                        'distance'=>$distance_condition,
                         'spayc.image',
                         'spayc.type',
                         'spayc.group_type',
