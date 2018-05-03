@@ -88,7 +88,7 @@
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Advertisement Find Successfully\",\n    \"data\": {\n        \"advertisement\": {\n            \"user_id\": 1,\n            \"name\": \"Space Ad\",\n            \"price\": \"250.00\",\n            \"image\": null,\n            \"description\": \"Test Test Test \",\n            \"url\": \"http:\\/\\/www.xyz.com\"\n        },\n        \"priority\": {\n            \"cycle\": 2,\n            \"comment_count\": 19\n        },\n        \"friend_request\": {\n            \"matrix_room_id\": \"!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com\"\n        },\n        \"frequency\": 19\n    }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Advertisement Find Successfully\",\n    \"data\": {\n        \"matrix_room_id\": \"!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com\",\n        \"matrix_user_id\": \"@top_1521192957:spayc-dev.kiwireader.com\",\n        \"advertisement\": {\n            \"name\": \"Space Ad\",\n            \"price\": \"250.00\",\n            \"image\": null,\n            \"description\": \"Test Test Test \",\n            \"url\": \"http://www.xyz.com\"\n        },\n        \"priority\": {\n            \"cycle\": 6,\n            \"comment_count\": 11\n        },\n        \"frequency\": 11\n    }\n}",
           "type": "json"
         }
       ]
@@ -212,7 +212,7 @@
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Advertisement Find Successfully\",\n    \"data\": {\n        \"advertisement\": {\n            \"user_id\": 1,\n            \"name\": \"Space Ad\",\n            \"price\": \"250.00\",\n            \"image\": null,\n            \"description\": \"Test Test Test \",\n            \"url\": \"http:\\/\\/www.xyz.com\"\n        },\n        \"priority\": {\n            \"cycle\": 2,\n            \"comment_count\": 19\n        },\n        \"friend_request\": {\n            \"matrix_room_id\": \"!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com\"\n        },\n        \"frequency\": 19\n    }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Advertisement Find Successfully\",\n    \"data\": {\n        \"matrix_room_id\": \"!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com\",\n        \"matrix_user_id\": \"@top_1521192957:spayc-dev.kiwireader.com\",\n        \"advertisement\": {\n            \"name\": \"Space Ad\",\n            \"price\": \"250.00\",\n            \"image\": null,\n            \"description\": \"Test Test Test \",\n            \"url\": \"http://www.xyz.com\"\n        },\n        \"priority\": {\n            \"cycle\": 6,\n            \"comment_count\": 11\n        },\n        \"frequency\": 11\n    }\n}",
           "type": "json"
         }
       ]
@@ -2065,7 +2065,7 @@
   },
   {
     "type": "post",
-    "url": "/ad-logic.json",
+    "url": "/promotion-logic.json",
     "title": "Promotion Logic",
     "version": "0.1.0",
     "name": "promotionLogic",
@@ -2152,7 +2152,7 @@
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Promotion Find Successfully\",\n    \"data\": {\n        \"promotions\": {\n            \"user_id\": 1\n        },\n        \"priority\": {\n            \"cycle\": 3,\n            \"comment_count\": 2\n        },\n        \"friend_request\": {\n            \"matrix_room_id\": \"!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com\"\n        },\n        \"frequency\": 11\n    }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Promotion Find Successfully\",\n    \"data\": {\n        \"promotions\": {\n            \"user_id\": 1\n        },\n        \"priority\": {\n            \"cycle\": 3,\n            \"comment_count\": 2\n        },\n        \"spayc\": {\n            \"id\": 2,\n            \"name\": \"Sam First Spyac\",\n            \"location\": \"India\",\n            \"matrix_room_id\": \"!IbdrZkFigJihWjiTWU:spayc-dev.kiwireader.com\",\n            \"image\": \"https://spayc-dev.s3.amazonaws.com/room/image_20180322083256.png\",\n            \"type\": \"Community\",\n            \"start_date\": \"2018-05-01 16:46:55\",\n            \"end_date\": \"2018-05-03 10:46:00\"\n        },\n        \"frequency\": 11\n    }\n}",
           "type": "json"
         }
       ]
@@ -2161,7 +2161,7 @@
     "groupTitle": "Promotion",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/ad-logic.json"
+        "url": "http://spayc.com/api/promotion-logic.json"
       }
     ],
     "error": {
@@ -2276,7 +2276,7 @@
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Promotion Find Successfully\",\n    \"data\": {\n        \"promotions\": {\n            \"user_id\": 1\n        },\n        \"priority\": {\n            \"cycle\": 3,\n            \"comment_count\": 2\n        },\n        \"friend_request\": {\n            \"matrix_room_id\": \"!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com\"\n        },\n        \"frequency\": 11\n    }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Promotion Find Successfully\",\n    \"data\": {\n        \"promotions\": {\n            \"user_id\": 1\n        },\n        \"priority\": {\n            \"cycle\": 3,\n            \"comment_count\": 2\n        },\n        \"spayc\": {\n            \"id\": 2,\n            \"name\": \"Sam First Spyac\",\n            \"location\": \"India\",\n            \"matrix_room_id\": \"!IbdrZkFigJihWjiTWU:spayc-dev.kiwireader.com\",\n            \"image\": \"https://spayc-dev.s3.amazonaws.com/room/image_20180322083256.png\",\n            \"type\": \"Community\",\n            \"start_date\": \"2018-05-01 16:46:55\",\n            \"end_date\": \"2018-05-03 10:46:00\"\n        },\n        \"frequency\": 11\n    }\n}",
           "type": "json"
         }
       ]
