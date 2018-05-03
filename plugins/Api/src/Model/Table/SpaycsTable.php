@@ -640,56 +640,30 @@ class SpaycsTable extends Table {
     
             $spaycs = $this->find()
                 ->select([
-//                    'distance' => $distanceField,
                     'id', 
                     'name', 
-//                    'location', 
                     'matrix_room_id', 
-//                    'start_date', 
-//                    'end_date', 
                     'image', 
                     'type', 
                     'modified', 
-//                    'group_type', 
-//                    'passcode',
                     'spayc_category_id',
                     'latitude','longitude'])
                 ->where(["$distanceField <=" => $distance, 'Spaycs.status'=>'Active',
                     'Spaycs.group_type !='=>'trusted_private', 
                     'Spaycs.parent_id IS'=>null
                     ])
-//                    ->where(["end_date >="=>$date])
                 ->bind(':latitude', $request['center_latitude'], 'float')
                 ->bind(':longitude', $request['center_longitude'], 'float');
           
-//        if(isset($request['start_date']) && $request['start_date'] && isset($request['end_date']) && $request['end_date']) {
-//            $d1 = new \Cake\I18n\Time($request['start_date']);
-//            $startDate = Utils::setUtc($d1->format('Y-m-d H:i:s'), Configure::read("timezone"));
-//            $spaycs->where(["Spaycs.start_date >="=>$startDate]);
-//            
-//            
-//            $d2 = new \Cake\I18n\Time($request['end_date']);
-//            $endDate = Utils::setUtc($d2->format('Y-m-d H:i:s'), Configure::read("timezone"));
-//            $spaycs->where(["Spaycs.end_date <="=>$endDate]);
-//        }else{
-//            $spaycs->where(["end_date >="=>$today_date]);
-//        }
-        
         if(isset($request['time']) && $request['time']=="past") {
-//            $spaycs->where(["Spaycs.end_date <"=>$today_date]);
             $spaycs->where(['OR'=>[['Spaycs.end_date <'=>$today_date],['Spaycs.end_date IS'=>null]]]);
         }else if(isset($request['time']) && $request['time']=="present") {
-//            $spaycs->where(["Spaycs.start_date <="=>$today_date]);
             $spaycs->where(['OR'=>[['Spaycs.start_date <='=>$today_date],['Spaycs.end_date IS'=>null]]]);
-//            $spaycs->where(["Spaycs.end_date >="=>$today_date]);
             $spaycs->where(['OR'=>[['Spaycs.end_date >='=>$today_date],['Spaycs.end_date IS'=>null]]]);
         }else if(isset($request['time']) && $request['time']=="future") {
-//            $spaycs->where(["Spaycs.start_date >"=>$today_date]);
             $spaycs->where(['OR'=>[['Spaycs.start_date >'=>$today_date],['Spaycs.end_date IS'=>null]]]);
         }else{
-//            $spaycs->where(["Spaycs.start_date <="=>$today_date]);
             $spaycs->where(['OR'=>[['Spaycs.start_date <='=>$today_date],['Spaycs.end_date IS'=>null]]]);
-//            $spaycs->where(["Spaycs.end_date >="=>$today_date]);
             $spaycs->where(['OR'=>[['Spaycs.end_date >='=>$today_date],['Spaycs.end_date IS'=>null]]]);
         }
         
@@ -750,14 +724,12 @@ class SpaycsTable extends Table {
                     $totalJoined = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[status=Joined].status');
                     $status = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.'].status');
                 }
-//                $row['joined_spayc_status'] = !empty($status[0])?$status[0]:null;
                 $row['is_joined'] = !empty($status[0])?true:false;
                 $row['joined_users'] = !empty($row['joined_spayc'])?count($totalJoined):0;
                 unset($row['joined_spayc']);
                 if(!empty($row['subscribed_users'])) {
                     $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');
                 }
-//                $row['subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):0;
                 unset($row['subscribed_users']);
                 $row['is_subscribed'] = !empty($subUserId[0])?true:false;
                 return $row;
@@ -766,13 +738,6 @@ class SpaycsTable extends Table {
         
         $spaycs->distinct('spaycs.id');
         
-//        $page = (!empty($request['page']) && is_numeric($request['page']))?$request['page']:1;
-//        if($page < 0) {
-//            $page = $page*-1;
-//            $spaycs->page($page);
-//        } else {
-//            $spaycs->page($page);
-//        }
         $newQuery = clone $spaycs;
         $data['count'] = $newQuery->count();
         $data['records'] = [];

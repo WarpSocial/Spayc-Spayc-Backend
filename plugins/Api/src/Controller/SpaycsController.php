@@ -377,7 +377,7 @@ class SpaycsController extends AppController {
     }
 
     /**
-     * unSubscribeSpayc method to unsubscribe the user from the spayc
+     * subscribeSpayc method to subscribe the user from the spayc
      * 
      * @param String|Number $spayc_id Either spayc id or matrix room id
      * @return Object Json object
@@ -993,7 +993,7 @@ class SpaycsController extends AppController {
          if (!$this->request->is(['post'])) {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);
         }
-//        echo $this->request->getData('center_latitude');die;
+        
          if(empty($this->request->getData('center_latitude'))
                  || empty($this->request->getData('center_longitude'))
                  || empty($this->request->getData('endpoint_latitude'))
@@ -1003,8 +1003,8 @@ class SpaycsController extends AppController {
          }
          if($this->request->getData('hashtag_id') && $this->request->getData('hashtag_id')) {
             $hashtag=explode(",", $this->request->getData('hashtag_id'));
-            if(count($hashtag)>3){
-                 $this->restException(['status'=>'failed', 'message'=> __('Maximum 3 Hashtag Allowed.')], 400);
+            if(count($hashtag)>MAX_HASHTAG){
+                 $this->restException(['status'=>'failed', 'message'=> __('Maximum '.MAX_HASHTAG.' Hashtag Allowed.')], 400);
             }
          }
         $user = $this->Auth->user();

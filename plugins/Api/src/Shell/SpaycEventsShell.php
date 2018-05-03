@@ -51,11 +51,12 @@ class SpaycEventsShell extends Shell {
         $now = (new \Cake\I18n\Time('now','UTC'))->format('H:i:s');
         $now='00:00:00';
         if($now=='00:00:00'){
-            $this->sendNotification('inactive');
+            $data['inactive']=$this->sendNotification('inactive');
         }
         
         $data=$this->sendNotification('active');
-        \Cake\Log\Log::info(json_encode($data,JSON_PRETTY_PRINT));
+//        \Cake\Log\Log::info(json_encode($data,JSON_PRETTY_PRINT));
+        Log::write('info', "test", ['scope' => 'queue']);
 
     }
     public function sendNotification($type) {

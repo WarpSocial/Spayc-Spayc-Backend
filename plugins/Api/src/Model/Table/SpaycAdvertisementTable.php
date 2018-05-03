@@ -43,16 +43,6 @@ class SpaycAdvertisementTable extends Table
         $this->addBehavior('Timestamp');
         $this->addBehavior('Api.Priority');
 
-//        $this->belongsTo('Advertisements', [
-//            'foreignKey' => 'advertisement_id',
-//            'joinType' => 'INNER',
-//            'className' => 'Api.Advertisements'
-//        ]);
-//        $this->belongsTo('Spaycs', [
-//            'foreignKey' => 'spayc_id',
-//            'joinType' => 'INNER',
-//            'className' => 'Api.Spaycs'
-//        ]);
     }
 
     /**
@@ -78,9 +68,6 @@ class SpaycAdvertisementTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-//        $rules->add($rules->existsIn(['advertisement_id'], 'Advertisements'));
-//        $rules->add($rules->existsIn(['spayc_id'], 'Spaycs'));
-
         return $rules;
     }
     
@@ -96,7 +83,7 @@ class SpaycAdvertisementTable extends Table
                     ]
                 ]
             )
-                 ->where(['spayc_id'=>$spayc_id,"balance > 0","advertisement_status"=>1,'advertisement.status'=>'Active']);
+                 ->where(['spayc_id'=>$spayc_id,"balance > 0","advertisement_status"=>ACTIVE_AD_STATUS,'advertisement.status'=>'Active']);
  
          if(!$ad->isEmpty()){
              $list=$ad->toArray();
@@ -119,11 +106,15 @@ class SpaycAdvertisementTable extends Table
      public function updateAdvertisementStatus($spayc_id){
          
         
+         // Expiring the Ads which is inactive & 0 Balance
           $this->updateAdExpired($spayc_id);
+          
+         // Activating the Ads ( Moving into tyhe Buckets)
          $this->updateAdActive($spayc_id);
-           $this->calculateView($spayc_id);
-        
          
+         // Calculating the Views(After Ad display time)
+         $this->calculateView($spayc_id);
+        
            return true;
     }
     
@@ -145,7 +136,7 @@ class SpaycAdvertisementTable extends Table
         $adids = \Cake\Utility\Hash::extract($ad->toArray(), '{n}.advertisement_id');
         $expired=false;
         if($ad_spayc_ids){
-        $update['advertisement_status'] = 2;
+        $update['advertisement_status'] = EXPIRED_AD_STATUS;
         $expired=TableRegistry::get('Api.SpaycAdvertisement')->UpdateAll($update, ["id in (" . implode(",", $ad_spayc_ids) . ")"]);
         }
         if($adids){
@@ -168,13 +159,13 @@ class SpaycAdvertisementTable extends Table
                             ]
                         ]
                 )
-                ->where(['spayc_id' => $spayc_id, "balance > 0","advertisement_status != 2"])
+                ->where(['spayc_id' => $spayc_id, "balance > 0","advertisement_status != ".EXPIRED_AD_STATUS])
                 ->order(['SpaycAdvertisement.id' => 'ASC'])
-                ->limit(10)
+                ->limit(AD_BUCKET)
                 ;
 //        print_R($ad->toArray());die;
         $adids = \Cake\Utility\Hash::extract($ad->toArray(), '{n}.id');
-        $update['advertisement_status'] = 1;
+        $update['advertisement_status'] = ACTIVE_AD_STATUS;
         $success=TableRegistry::get('Api.SpaycAdvertisement')
                 ->UpdateAll($update, ["id in (" . implode(",", $adids) . ")"]);
         return $success;
@@ -192,10 +183,12 @@ class SpaycAdvertisementTable extends Table
                             ]
                         ]
                 )
-                ->where(['spayc_id'=>$spayc_id,"balance > 0","advertisement_status"=>1,'advertisement.status'=>'Active'])
+                ->where(['spayc_id'=>$spayc_id,"balance > 0","advertisement_status"=>ACTIVE_AD_STATUS,'advertisement.status'=>'Active'])
                 ->count()
                 ;
           
+          
+          // Checking Ad Frequency Ad count wise
         switch ($ad_count) {
             case 1:
                 $comments=20;
@@ -256,7 +249,7 @@ class SpaycAdvertisementTable extends Table
                             ]
                         ]
                 )
-                ->where(['spayc_id'=>$spayc_id,"balance > 0","advertisement_status"=>1,'advertisement.status'=>'Active'])
+                ->where(['spayc_id'=>$spayc_id,"balance > 0","advertisement_status"=>ACTIVE_AD_STATUS,'advertisement.status'=>'Active'])
                 ->order(['SpaycAdvertisement.priority' => 'ASC'])
                 ->limit(1)
                 ;
