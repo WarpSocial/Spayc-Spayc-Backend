@@ -502,6 +502,7 @@ class MatrixComponent extends Component {
      * muteUnmute function to mute and unmute the user
      */
     public function muteUnmute($rule='mute',$matrixToken = null,$matrixRoomId=null){
+        return true;
         if(is_null($matrixToken) || is_null($matrixRoomId)){
             return false;
         }
