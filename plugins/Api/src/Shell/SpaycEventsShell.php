@@ -18,6 +18,8 @@ use Cake\Event\EventManager;
 use Api\Model\Entity\UserImage;
 use Cake\Utility\Text;
 use Cake\Utility\Hash;
+use Cake\Controller\ComponentRegistry;
+use Api\Controller\Component\PushComponent;
 /**
  * SpaycEvents shell command.
  */
@@ -45,8 +47,14 @@ class SpaycEventsShell extends Shell {
         $this->out($this->OptionParser->help());
         $this->out("here i m ");
         
-         
-        $this->sendNotification('inactive');
+        $this->Push=new PushComponent(new ComponentRegistry());
+        $now = (new \Cake\I18n\Time('now','UTC'))->format('H:i:s');
+        $now='00:00:00';
+        if($now=='00:00:00'){
+            $this->sendNotification('inactive');
+        }
+        
+        $this->sendNotification('active');
 
 
     }
