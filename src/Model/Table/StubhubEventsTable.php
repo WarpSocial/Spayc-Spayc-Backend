@@ -36,14 +36,8 @@ class StubhubEventsTable extends Table
 
         $this->setTable('stubhub_events');
         $this->setDisplayField('name');
-        $this->setPrimaryKey(['id', 'stubhub_event_id', 'created']);
-
+        $this->setPrimaryKey('id');
         $this->addBehavior('Timestamp');
-
-        $this->belongsTo('StubhubEvents', [
-            'foreignKey' => 'stubhub_event_id',
-            'joinType' => 'INNER'
-        ]);
     }
 
     /**
@@ -110,8 +104,7 @@ class StubhubEventsTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['stubhub_event_id'], 'StubhubEvents'));
-
-        return $rules;
+        // $rules->add($rules->existsIn(['stubhub_event_id'], 'StubhubEvents'));
+         return $rules;
     }
 }

@@ -36,14 +36,8 @@ class TicketmasterEventsTable extends Table
 
         $this->setTable('ticketmaster_events');
         $this->setDisplayField('name');
-        $this->setPrimaryKey(['id', 'ticketmaster_event_id', 'created']);
-
+        $this->setPrimaryKey(['id']);
         $this->addBehavior('Timestamp');
-
-        $this->belongsTo('TicketmasterEvents', [
-            'foreignKey' => 'ticketmaster_event_id',
-            'joinType' => 'INNER'
-        ]);
     }
 
     /**
@@ -110,8 +104,7 @@ class TicketmasterEventsTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['ticketmaster_event_id'], 'TicketmasterEvents'));
-
+        //$rules->add($rules->existsIn(['ticketmaster_event_id'], 'TicketmasterEvents'));
         return $rules;
     }
 }

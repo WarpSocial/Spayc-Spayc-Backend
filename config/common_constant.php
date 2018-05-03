@@ -19,6 +19,8 @@ $grouptype_arr= array('Public'=>'Public','Private'=>'Private');
 $spaycuserstatus_arr= array('1'=>'Admin','2'=>'Super Admin');
 $push_notification_admin_slug= array('blocked'=>'blocked-by-admin','unblocked'=>'unblocked-by-admin');
 $txt_massage= array('block'=>'Blocked','unblock'=>'Unblocked');
+$scraperStates = array('New York','NY','NEW YORK','new york','ny'); 
+$scraperCountries = array('US','us','United States','united states','United States of America','USA'); 
 define('USER_GENDER', serialize($user_gender));
 define('USER_AGE', serialize($user_age));
 define('STATUS_ARR', serialize($status_arr));
@@ -27,7 +29,26 @@ define('GROUP_TYPE_ARR', serialize($grouptype_arr));
 define('SPAYC_USER_STATUS_ARR', serialize($spaycuserstatus_arr));
 define('FRIEND_REQUESTED_STATUS_ARR', serialize($friend_requested_status_arr));
 define('PUSH_NOTIFICATION_ADMIN_SLUG', serialize($push_notification_admin_slug));
+define('SCRAPERSTATES', serialize($scraperStates));
+define('SCRAPERCOUNTRIES', serialize($scraperCountries));
 define('TEXT_MASSAGE', serialize($txt_massage));
+define('TODAY_DATE', date('Y-m-d'));
+define('AFTER14DAYS_DATE', date('Y-m-d', strtotime(' +14 day')));
+
+
+$scraperRootUrl=array('eventbriteurl'=> 'https://www.eventbriteapi.com/v3/',
+    'ticketmasterurl'=> 'https://app.ticketmaster.com/discovery/v2/events.json',
+    'stubhuburl'=> 'https://api.stubhub.com/search/catalog/events/v3/',
+    );
+$scraperRootUrlToken = array('eventbritetoken'=> 'JRTJ7FHW3TG7F5U535RN',
+    'ticketmastertoken'=> 'FGCdJbUpn9mAmyE9Rlqdi8CYfdhNQMsa',
+    'stubhubtoken'=> 'c4ef9246-56c6-3024-a5ba-32f737a1c2b4',
+    );
+$scraperWebSite = array('eventbrite'=>'1','ticketmaster'=>'2','stubhub'=>'3');
+define('SCRAPER_WEBSITE', serialize($scraperWebSite));
+define('SCRAPER_ROOT_URL', serialize($scraperRootUrl));
+define('SCRAPER_ROOT_URL_TOKEN', serialize($scraperRootUrlToken));
+define('SCRAPER_EMAIL', 'ankur.indiacp@gmail.com');
 
 $config =array();
 $config['SITETITLEMESSAGE'] = [

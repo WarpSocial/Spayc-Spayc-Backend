@@ -36,14 +36,8 @@ class EventbriteEventsTable extends Table
 
         $this->setTable('eventbrite_events');
         $this->setDisplayField('name');
-        $this->setPrimaryKey(['id', 'eventbrite_event_id', 'created']);
-
+        $this->setPrimaryKey(['id']);
         $this->addBehavior('Timestamp');
-
-        $this->belongsTo('EventbriteEvents', [
-            'foreignKey' => 'eventbrite_event_id',
-            'joinType' => 'INNER'
-        ]);
     }
 
     /**
@@ -110,8 +104,7 @@ class EventbriteEventsTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['eventbrite_event_id'], 'EventbriteEvents'));
-
+        //$rules->add($rules->existsIn(['eventbrite_event_id'], 'EventbriteEvents'));
         return $rules;
     }
 }

@@ -35,7 +35,6 @@ class StubhubEvent extends Entity
      * @var array
      */
     protected $_accessible = [
-        '*' => true,
-        'id' => false
+        '*' => true
     ];
 }

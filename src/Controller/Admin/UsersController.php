@@ -26,12 +26,13 @@ class UsersController extends AdminController
     public function initialize() {
         parent::initialize();        
         $this->loadComponent('Api.Push');
+        $this->loadComponent('Scraper');
         $this->Spaycs = TableRegistry::get('Spaycs');
     }
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
-        $this->Auth->allow(['login', 'logout','forgotPassword', 'resetPassword','getUserObj', 'success']);
+        $this->Auth->allow(['login', 'logout','forgotPassword', 'resetPassword','getUserObj', 'success','scraperCall']);
     }
 
     /**
@@ -413,6 +414,23 @@ class UsersController extends AdminController
         }
         $this->set(compact('user'));
     }
+
+    public function scraperCall($site=null, $saveData=null) {
+        if(isset($site) && !empty($site)){
+            if($site='eventbrite'){
+                $this->Scraper->getEventbriteData(1);
+            } else if($site='ticketmaster'){
+                $this->Scraper->getTicketmasterData(TODAY_DATE, AFTER14DAYS_DATE);
+            } else if($site='stubhub'){
+                $this->Scraper->getStubhubData();
+            }
+        }
+
+        if(isset($saveData) && !empty($saveData))
+            $this->Scraper->saveDataSpaceTable();
+    }
+
+
 }
 
 
