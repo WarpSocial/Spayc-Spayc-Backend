@@ -235,8 +235,14 @@ class PlansController extends AppController {
                         'promotions.user_id',
                         'priority.cycle',
                         'priority.comment_count',
-                        'friend_request.matrix_room_id',
-                        
+                        'spayc.id',
+                        'spayc.name',
+                        'spayc.location',
+                        'spayc.matrix_room_id',
+                        'spayc.image',
+                        'spayc.type',
+                        'spayc.start_date',
+                        'spayc.end_date',
                         ]])
                 ->join(
                         [
@@ -254,6 +260,15 @@ class PlansController extends AppController {
                             'type' => 'INNER',
                             'conditions' => [
                                 'priority.spayc_id = SpaycPromotion.spayc_id',
+                            ]
+                        ]
+                )->join(
+                        [
+                            'table' => 'spaycs',
+                            'alias' => 'spayc',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'spayc.id = promotions.spayc_id',
                             ]
                         ]
                 )
@@ -329,8 +344,17 @@ class PlansController extends AppController {
         $ad = TableRegistry::get('Api.SpaycPromotion')->find('all',
                 ['fields'=>
                     [
+                        'promotions.user_id',
                         'priority.cycle',
                         'priority.comment_count',
+                        'spayc.id',
+                        'spayc.name',
+                        'spayc.location',
+                        'spayc.matrix_room_id',
+                        'spayc.image',
+                        'spayc.type',
+                        'spayc.start_date',
+                        'spayc.end_date',
                         
                         ]])
                 ->join(
@@ -349,6 +373,15 @@ class PlansController extends AppController {
                             'type' => 'INNER',
                             'conditions' => [
                                 'priority.spayc_id = SpaycPromotion.spayc_id',
+                            ]
+                        ]
+                )->join(
+                        [
+                            'table' => 'spaycs',
+                            'alias' => 'spayc',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'spayc.id = promotions.spayc_id',
                             ]
                         ]
                 )

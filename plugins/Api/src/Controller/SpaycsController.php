@@ -749,11 +749,11 @@ class SpaycsController extends AppController {
         if($entity->isEmpty()){
             $this->restException(['status'=>'failed','message'=>'This spayc is no longer exist.'], 404);
         }
-        
+
         $spayc = $entity->first();
         $spayc->set('matrix_access_token',$user['matrix_access_token']);
         /* To queue the job to process from backend system */
-        TableRegistry::get('Queue.QueuedJobs')->createJob('Delete',$spayc->toArray());
+//        TableRegistry::get('Queue.QueuedJobs')->createJob('Delete',$spayc->toArray());
         
         $matrixRoomIds = \Cake\Utility\Hash::extract($spayc->sub_spaycs, '{n}.matrix_room_id');
         array_push($matrixRoomIds, $spayc->matrix_room_id);
@@ -766,6 +766,11 @@ class SpaycsController extends AppController {
             TableRegistry::get('Api.SubscribedUsers')->deleteAll(['spayc_id IN' => $child]);
             TableRegistry::get('Api.SpaycHashtags')->deleteAll(['spayc_id IN' => $child]);
             TableRegistry::get('Api.SpaycAdvertisement')->deleteAll(['spayc_id IN' => $child]);
+             $ids = TableRegistry::get('Api.Promotions')->find()
+                     ->select(['id'])
+                     ->where(['spayc_id IN' => $child]);
+            TableRegistry::get('Api.SpaycPromotion')->deleteAll(['promotion_id IN' => $ids]);
+            TableRegistry::get('Api.Promotions')->deleteAll(['spayc_id IN' => $child]);
             $response = ['status'=>'success','message'=>__('The spayc has been deleted.')];
         } else {
             $response = ['status'=>'failed','message'=>__('Spayc could not be deleted.')];

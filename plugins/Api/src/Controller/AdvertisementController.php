@@ -495,7 +495,8 @@ class AdvertisementController extends AppController {
                         'advertisement.url',
                         'priority.cycle',
                         'priority.comment_count',
-                        'friend_request.matrix_room_id',
+                        'matrix_room_id'=>'friend_request.matrix_room_id',
+                        'matrix_user_id'=>'users.matrix_user_id',
                         
                         ]])
                 ->join(
@@ -514,6 +515,15 @@ class AdvertisementController extends AppController {
                             'type' => 'INNER',
                             'conditions' => [
                                 'priority.spayc_id = SpaycAdvertisement.spayc_id',
+                            ]
+                        ]
+                )->join(
+                        [
+                            'table' => 'users',
+                            'alias' => 'users',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'users.id = advertisement.user_id',
                             ]
                         ]
                 )
@@ -595,6 +605,8 @@ class AdvertisementController extends AppController {
                         'advertisement.url',
                         'priority.cycle',
                         'priority.comment_count',
+                        'matrix_room_id'=>'friend_request.matrix_room_id',
+                        'matrix_user_id'=>'users.matrix_user_id',
                         
                         ]])
                 ->join(
@@ -615,7 +627,32 @@ class AdvertisementController extends AppController {
                                 'priority.spayc_id = SpaycAdvertisement.spayc_id',
                             ]
                         ]
-                )
+                )->join(
+                        [
+                            'table' => 'users',
+                            'alias' => 'users',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'users.id = advertisement.user_id',
+                            ]
+                        ]
+                )->join(
+        [
+        'table' => 'friend_request',
+        'type' => 'LEFT',
+        'conditions' =>
+        [
+            'OR' =>[
+            [
+                'friend_request.requested_by = advertisement.user_id', 'friend_request.requested_to = '.$user['id']
+            ],
+            [
+                'friend_request.requested_to = advertisement.user_id', 'friend_request.requested_by = '.$user['id']
+            ]
+                             ]
+        ]
+        ]
+        )
                 ->where(['SpaycAdvertisement.spayc_id'=>$data['spayc_id'],"balance > 0",'advertisement.status'=>'Active'])
                 ->order(['SpaycAdvertisement.priority' => 'ASC'])
                 ->limit(1)
