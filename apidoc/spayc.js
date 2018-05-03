@@ -1403,22 +1403,20 @@ function deleteAdvertisement() { return; }
     "status": "success",
     "message": "Advertisement Find Successfully",
     "data": {
+        "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com",
+        "matrix_user_id": "@top_1521192957:spayc-dev.kiwireader.com",
         "advertisement": {
-            "user_id": 1,
             "name": "Space Ad",
             "price": "250.00",
             "image": null,
             "description": "Test Test Test ",
-            "url": "http:\/\/www.xyz.com"
+            "url": "http://www.xyz.com"
         },
         "priority": {
-            "cycle": 2,
-            "comment_count": 19
+            "cycle": 6,
+            "comment_count": 11
         },
-        "friend_request": {
-            "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
-        },
-        "frequency": 19
+        "frequency": 11
     }
 }
  *
@@ -1459,22 +1457,20 @@ function adLogicStart() { return; }
     "status": "success",
     "message": "Advertisement Find Successfully",
     "data": {
+        "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com",
+        "matrix_user_id": "@top_1521192957:spayc-dev.kiwireader.com",
         "advertisement": {
-            "user_id": 1,
             "name": "Space Ad",
             "price": "250.00",
             "image": null,
             "description": "Test Test Test ",
-            "url": "http:\/\/www.xyz.com"
+            "url": "http://www.xyz.com"
         },
         "priority": {
-            "cycle": 2,
-            "comment_count": 19
+            "cycle": 6,
+            "comment_count": 11
         },
-        "friend_request": {
-            "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
-        },
-        "frequency": 19
+        "frequency": 11
     }
 }
  *
@@ -1519,8 +1515,15 @@ function adLogic() { return; }
             "cycle": 3,
             "comment_count": 2
         },
-        "friend_request": {
-            "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
+        "spayc": {
+            "id": 2,
+            "name": "Sam First Spyac",
+            "location": "India",
+            "matrix_room_id": "!IbdrZkFigJihWjiTWU:spayc-dev.kiwireader.com",
+            "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180322083256.png",
+            "type": "Community",
+            "start_date": "2018-05-01 16:46:55",
+            "end_date": "2018-05-03 10:46:00"
         },
         "frequency": 11
     }
@@ -1532,7 +1535,7 @@ function promotionLogicStart() { return; }
 
 
 /**
- @api {post} /ad-logic.json Promotion Logic
+ @api {post} /promotion-logic.json Promotion Logic
  @apiVersion 0.1.0
  @apiName promotionLogic
  @apiGroup Promotion
@@ -1570,8 +1573,15 @@ function promotionLogicStart() { return; }
             "cycle": 3,
             "comment_count": 2
         },
-        "friend_request": {
-            "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
+        "spayc": {
+            "id": 2,
+            "name": "Sam First Spyac",
+            "location": "India",
+            "matrix_room_id": "!IbdrZkFigJihWjiTWU:spayc-dev.kiwireader.com",
+            "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180322083256.png",
+            "type": "Community",
+            "start_date": "2018-05-01 16:46:55",
+            "end_date": "2018-05-03 10:46:00"
         },
         "frequency": 11
     }
