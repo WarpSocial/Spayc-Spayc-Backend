@@ -241,6 +241,7 @@ class PlansController extends AppController {
                         'spayc.matrix_room_id',
                         'spayc.image',
                         'spayc.type',
+                        'spayc.group_type',
                         'spayc.start_date',
                         'spayc.end_date',
                         ]])
@@ -353,6 +354,7 @@ class PlansController extends AppController {
                         'spayc.matrix_room_id',
                         'spayc.image',
                         'spayc.type',
+                        'spayc.group_type',
                         'spayc.start_date',
                         'spayc.end_date',
                         

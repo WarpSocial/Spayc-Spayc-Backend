@@ -1522,6 +1522,7 @@ function adLogic() { return; }
             "matrix_room_id": "!IbdrZkFigJihWjiTWU:spayc-dev.kiwireader.com",
             "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180322083256.png",
             "type": "Community",
+            "group_type": "Public",
             "start_date": "2018-05-01 16:46:55",
             "end_date": "2018-05-03 10:46:00"
         },
@@ -1580,6 +1581,7 @@ function promotionLogicStart() { return; }
             "matrix_room_id": "!IbdrZkFigJihWjiTWU:spayc-dev.kiwireader.com",
             "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180322083256.png",
             "type": "Community",
+            "group_type": "Public",
             "start_date": "2018-05-01 16:46:55",
             "end_date": "2018-05-03 10:46:00"
         },
