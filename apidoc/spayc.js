@@ -1508,6 +1508,7 @@ function adLogic() { return; }
     "status": "success",
     "message": "Promotion Find Successfully",
     "data": {
+        "distance": "15.795",
         "promotions": {
             "user_id": 1
         },
@@ -1519,9 +1520,11 @@ function adLogic() { return; }
             "id": 2,
             "name": "Sam First Spyac",
             "location": "India",
+            "description": "",
             "matrix_room_id": "!IbdrZkFigJihWjiTWU:spayc-dev.kiwireader.com",
-            "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180322083256.png",
+            "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180322083256.png",
             "type": "Community",
+            "group_type": "Public",
             "start_date": "2018-05-01 16:46:55",
             "end_date": "2018-05-03 10:46:00"
         },
@@ -1566,6 +1569,7 @@ function promotionLogicStart() { return; }
     "status": "success",
     "message": "Promotion Find Successfully",
     "data": {
+        "distance": "15.795",
         "promotions": {
             "user_id": 1
         },
@@ -1577,9 +1581,11 @@ function promotionLogicStart() { return; }
             "id": 2,
             "name": "Sam First Spyac",
             "location": "India",
+            "description": "",
             "matrix_room_id": "!IbdrZkFigJihWjiTWU:spayc-dev.kiwireader.com",
-            "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180322083256.png",
+            "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180322083256.png",
             "type": "Community",
+            "group_type": "Public",
             "start_date": "2018-05-01 16:46:55",
             "end_date": "2018-05-03 10:46:00"
         },
