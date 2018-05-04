@@ -50,23 +50,28 @@ class ScraperComponent extends Component {
 
     public function getLoctaion($name, $address, $city, $state, $zipCode, $country)
     { 
-        $location = '';
+        $location = [];
         if(isset($name) && !empty($name))
-            $location = $name.', ';
+            $location[] = $name;
 
         if(isset($address) && !empty($address))
-            $location .= $address.', ';
+            $location[] = $address;            
 
         if(isset($city) && !empty($city))
-            $location .= $city.', ';
+            $location[] = $city;
 
         if(isset($state) && !empty($state)) 
-            $location .= $state.', ';
+            $location[] = $state;
 
         if(isset($zipCode) && !empty($zipCode)) 
-            $location .= $zipCode.', ';
+            $location[] = $zipCode;
         if(isset($country) && !empty($country)) 
-            $location .= $country;
+            $location[] = $country;
+
+        if(!empty($location))
+          $location =implode(", ",$location);
+        else
+          $location =''; 
 
         return $location;
         
@@ -91,7 +96,8 @@ class ScraperComponent extends Component {
             $events[$i]['end_date'] =(isset($value['end']['utc']) && !empty($value['end']['utc']))?new time($value['end']['utc']):null;
             $events[$i]['description'] = (isset($value['description']['text']) && !empty($value['description']['text']))?trim($value['description']['text']):null;
             $events[$i]['image'] = (isset($value['logo']['original']['url']) && !empty($value['logo']['original']['url']))?$value['logo']['original']['url']:null;
-            $location=$eventsCategory='';
+            $eventsCategory='';
+            $location=[];
             if(isset($value['venue_id']) && !empty($value['venue_id'])){
                $venueUrl = $this->SCRAPER_ROOT_URL['eventbriteurl'].'venues/'.trim($value['venue_id']).'/?token='.$this->SCRAPER_ROOT_URL_TOKEN['eventbritetoken'];
                $venueResp=$this->curlRequest($venueUrl);
@@ -99,11 +105,11 @@ class ScraperComponent extends Component {
                $events[$i]['longitude'] = (isset($venueResp['longitude']) && !empty($venueResp['longitude']))?trim($venueResp['longitude']):null;
 
                 if(isset($venueResp['name']) && !empty($venueResp['name']))
-                     $location = $venueResp['name'].',&nbsp;';
+                     $location[] = $venueResp['name'];
                 if(isset($venueResp['address']['localized_address_display']) && !empty($venueResp['address']['localized_address_display']))
-                    $location .= $venueResp['address']['localized_address_display'].',&nbsp;';
+                    $location[] = $venueResp['address']['localized_address_display'];
                 if(isset($venueResp['address']['country']) && !empty($venueResp['address']['country']))
-                    $location .= $venueResp['address']['country'];
+                    $location[] = $venueResp['address']['country'];
 
                 if(isset($venueResp['address']['city']) && !empty($venueResp['address']['city'])){
                     $events[$i]['city']= $venueResp['address']['city'];
@@ -136,7 +142,11 @@ class ScraperComponent extends Component {
                 $eventsCategory = $value['category_id'];
             if(isset($value['subcategory_id']) && !empty($value['subcategory_id']))
                 $eventsCategory .= ', '.$value['subcategory_id'];
-              
+            if(!empty($location))
+              $location =implode(", ",$location);
+            else
+              $location =''; 
+
             $events[$i]['location'] = $location;
             $events[$i]['category'] = $eventsCategory;
             $events[$i]['modified'] = (isset($value['changed']) && !empty($value['changed']))?new time($value['changed']):null;
@@ -187,6 +197,17 @@ class ScraperComponent extends Component {
             $events[$i]['longitude'] = (isset($value['venue']['longitude']) && !empty($value['venue']['longitude']))?trim($value['venue']['longitude']):null;
             $events[$i]['image'] = (isset($value['imageUrl']) && !empty($value['imageUrl']))?$value['imageUrl']:null;
             $events[$i]['location'] = $this->getLoctaion($value['venue']['name'], $value['venue']['address1'], $value['venue']['city'], $value['venue']['state'], $value['venue']['postal_code'], $value['venue']['country']);
+            if(isset($value['venue']['city']) && !empty($value['venue']['city']))
+                $events[$i]['city'] = trim($value['venue']['city']);
+            
+            if(isset($value['venue']['state']) && !empty($value['venue']['state']))
+                $events[$i]['region'] = trim($value['venue']['state']);
+               
+            if(isset($value['venue']['postalCode']) && !empty($value['venue']['postalCode']))
+                $events[$i]['postal_code'] = trim($value['venue']['postalCode']);
+            
+            if(isset($value['venue']['country']) && !empty($value['venue']['country']))
+                $events[$i]['country'] = trim($value['venue']['country']);
 
             $eventsCategory = '';
             if(count($value['categories'])){
@@ -251,6 +272,18 @@ class ScraperComponent extends Component {
             $events[$i]['image'] = (isset($value['images']['0']['url']) && !empty($value['images']['0']['url']))?$value['images']['0']['url']:null;
             
             $events[$i]['location'] = $this->getLoctaion($value['_embedded']['venues']['0']['name'], $value['_embedded']['venues']['0']['address']['line1'], $value['_embedded']['venues']['0']['city']['name'], $value['_embedded']['venues']['0']['state']['name'], $value['_embedded']['venues']['0']['postalCode'], $value['_embedded']['venues']['0']['country']['countryCode']);
+
+            if(!empty($value['_embedded']['venues']['0']['city']['name']))
+            $events[$i]['city'] = $value['_embedded']['venues']['0']['city']['name'];
+            
+            if(!empty($value['_embedded']['venues']['0']['state']['name']))
+            $events[$i]['region'] = $value['_embedded']['venues']['0']['state']['name'];
+                
+            if(!empty($value['_embedded']['venues']['0']['postalCode']))
+            $events[$i]['postal_code'] = $value['_embedded']['venues']['0']['postalCode'];
+               
+            if(!empty($value['_embedded']['venues']['0']['country']['countryCode']))
+            $events[$i]['country'] = $value['_embedded']['venues']['0']['country']['countryCode'];
 
             $eventsCategory = [];
             if(!empty($value['classifications']['0']['segment']['name']))

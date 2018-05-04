@@ -426,8 +426,10 @@ class UsersController extends AdminController
     }
 
     public function scraperCall($site=null, $saveData=null) {
+        $this->viewBuilder()->layout('');
+        $this->autoRender = false;
         if(isset($site) && !empty($site)){
-            if($site='eventbrite'){
+            if($site='eventbrite'){               
                 $this->Scraper->getEventbriteData(1);
             } else if($site='ticketmaster'){
                 $this->Scraper->getTicketmasterData(TODAY_DATE, AFTER14DAYS_DATE);
