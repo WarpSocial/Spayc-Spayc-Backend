@@ -73,13 +73,12 @@ class CommentsTable extends Table {
             $comment->comment = 1;
             $comment->event_id = $data['event_id'];
         }else{
-            if($comment->event_id == $data['event_id']){
+            if( ($comment->event_id == $data['event_id']) ){
                 return;
             }
             $comment->comment = $comment->comment+1;
             $comment->event_id = $data['event_id'];
         }
-        
         if(!$this->save($comment)){
             \Cake\Log\Log::info(['message'=>'Record not saved','data'=>$data]);
         }
