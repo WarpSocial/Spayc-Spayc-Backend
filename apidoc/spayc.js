@@ -1509,6 +1509,7 @@ function adLogic() { return; }
     "message": "Promotion Find Successfully",
     "data": {
         "distance": "15.795",
+        "joined_spayc_status": "Joined",
         "promotions": {
             "user_id": 1
         },
@@ -1570,6 +1571,7 @@ function promotionLogicStart() { return; }
     "message": "Promotion Find Successfully",
     "data": {
         "distance": "15.795",
+        "joined_spayc_status": "Joined",
         "promotions": {
             "user_id": 1
         },
