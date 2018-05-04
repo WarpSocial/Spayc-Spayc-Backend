@@ -96,3 +96,10 @@ define('PUBLICTYPE','Public');
 define('SUPERADMIN',2);
 define('ADMIN',1);
 
+
+define('MAX_HASHTAG','3');
+define('EXPIRED_AD_STATUS','2');
+define('ACTIVE_AD_STATUS','1');
+
+define('AD_BUCKET','10');
+

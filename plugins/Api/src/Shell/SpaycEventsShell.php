@@ -49,13 +49,21 @@ class SpaycEventsShell extends Shell {
         
         $this->Push=new PushComponent(new ComponentRegistry());
         $now = (new \Cake\I18n\Time('now','UTC'))->format('H:i:s');
-        $now='00:00:00';
+        $data['inactive']=$now;
         if($now=='00:00:00'){
-            $this->sendNotification('inactive');
+            $data['inactive']=$this->sendNotification('inactive');
         }
         
-        $data=$this->sendNotification('active');
-        \Cake\Log\Log::info(json_encode($data,JSON_PRETTY_PRINT));
+        $data['active']=$this->sendNotification('active');
+//        \Cake\Log\Log::info(json_encode($data,JSON_PRETTY_PRINT));
+//        Log::write('info', "test", ['scope' => 'queue']);
+        $pushData['post_value'] = json_encode($data);
+        $pushData['created'] = date("Y-m-d H:i:s");
+        Log::info(json_encode($pushData,JSON_PRETTY_PRINT));
+        $pusher = TableRegistry::get("Api.PusherData");
+        $push = $pusher->newEntity();
+        $entity = $pusher->patchEntity($push, $pushData,['validate'=>false]);
+        $pusher->save($entity);
 
     }
     public function sendNotification($type) {
