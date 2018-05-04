@@ -148,8 +148,7 @@ class ScraperComponent extends Component {
               $location =''; 
 
             $events[$i]['location'] = $location;
-            $events[$i]['category'] = $eventsCategory;
-            $events[$i]['modified'] = (isset($value['changed']) && !empty($value['changed']))?new time($value['changed']):null;
+            $events[$i]['category'] = $eventsCategory;           
             $events[$i]['website'] = $this->SCRAPER_WEBSITE['eventbrite'];
             if($stateExist !='' || $stateExist===0){
                 unset($events[$stateExist]);
@@ -159,16 +158,18 @@ class ScraperComponent extends Component {
         }         
         $getIds = $this->EventbriteEvents->find()->select(['eventbrite_event_id'])->
         where(['eventbrite_event_id IN' => $eventIds])->extract('eventbrite_event_id')->toList();
-        $diffIds=array_diff($eventIds,$getIds);       
+        $diffIds=array_diff($eventIds,$getIds);              
         if(count($diffIds)){
             $getuniqueevents =[];
             foreach ($events as $val) {
                 if (in_array($val['eventbrite_event_id'],$diffIds))
                     $getuniqueevents[]=$val;
             }
+            if(!empty($getuniqueevents)){
             $eventbriteEvents = TableRegistry::get('EventbriteEvents');        
             $entities = $eventbriteEvents->newEntities($getuniqueevents);
             $result = $eventbriteEvents->saveMany($entities);
+            }
         }       
         if($resp['pagination']['has_more_items']){
             $pageNumber=$pageNumber+1;
@@ -229,10 +230,12 @@ class ScraperComponent extends Component {
             foreach ($events as $val) {
                 if (in_array($val['stubhub_event_id'],$diffIds))
                     $getuniqueevents[]=$val;
-            }        
+            } 
+            if(!empty($getuniqueevents)){       
             $stubhubEvent = TableRegistry::get('StubhubEvents');        
             $entities = $stubhubEvent->newEntities($getuniqueevents);
             $result = $stubhubEvent->saveMany($entities);
+            }
         }
         $dataLimit=500;  
         $countNoOfHits=ceil($resp['numFound']/$dataLimit);
@@ -309,9 +312,11 @@ class ScraperComponent extends Component {
                 if (in_array($val['ticketmaster_event_id'],$diffIds))
                     $getuniqueevents[]=$val;
             }  
+            if(!empty($getuniqueevents)){
             $ticketmasterEvents = TableRegistry::get('TicketmasterEvents');        
             $entities = $ticketmasterEvents->newEntities($getuniqueevents);
             $result = $ticketmasterEvents->saveMany($entities);
+            }
         }
         if($startDate <= $endDate){
             $nextDate = date('Y-m-d', strtotime($startDate . ' +1 day'));
