@@ -1385,6 +1385,11 @@ class UsersController extends AppController {
         }
         //Log::info(json_encode($pushData,JSON_PRETTY_PRINT));
         $data = $this->request->getData();
+        if(!empty($data['notification']['content']['msgtype'])){
+            if( ($data['notification']['content']['msgtype'] == 'm.likeMessage') && !empty($data['notification']['content']['disLikeMembers'])){
+                $this->restException($blankObj); 
+            }
+        }
         //$this->Users->pusherNotification($data);
         TableRegistry::get('Queue.QueuedJobs')->createJob('Pusher',$data);
         $this->restException($blankObj);  

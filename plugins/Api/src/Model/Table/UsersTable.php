@@ -737,14 +737,14 @@ class UsersTable extends Table {
         if(!empty($spayc)){
             $items['spayc_image'] = $spayc->image;
         }
-        $items['matrix_room_id'] = $data['notification']['room_id'];        
+        $items['matrix_room_id'] = $data['notification']['room_id'];
         if($msgType == 'm.likeMessage'){
             $notify = TableRegistry::get('Api.Notifications')->message('a-user-liked-your-comment');
             if(!empty($notify)){
                 $items['message'] = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);
                 $items['notification_type'] = $notify->type;
             }
-        }if($msgType == 'm.replyText'){
+        }elseif($msgType == 'm.replyText'){
             $notify = TableRegistry::get('Api.Notifications')->message('someone-replyed-to-your-comment');
             if(!empty($notify)){
                 $items['message'] = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);
