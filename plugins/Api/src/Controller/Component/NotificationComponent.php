@@ -50,9 +50,16 @@ class NotificationComponent extends Component {
 
         // Create the payload body
         $body['aps'] = [
-            'alert' =>  $data['message'],
+            'alert' =>  !empty($data['message'])?$data['message']:null,
             'sound' => 'default',
-            'badge'=>1
+            'badge'=>1,
+            'user_id'=>!empty($data['requested_by'])?$data['requested_by']:null,
+            'matrix_room_id'=>!empty($data['matrix_room_id'])?$data['matrix_room_id']:null,
+            'notification_type'=>!empty($data['notification_type'])?$data['notification_type']:null,
+            'user_image'=>!empty($data['user_image'])?$data['user_image']:null,
+            'spayc_image'=>!empty($data['spayc_image'])?$data['spayc_image']:null,
+            'date_time'=>!empty($data['time'])?$data['time']:null,
+            'id'=>!empty($data['id'])?$data['id']:null
         ];
 
         // Encode the payload as JSON
@@ -63,7 +70,7 @@ class NotificationComponent extends Component {
 
         // Send it to the server
         $result = fwrite($fp, $msg, strlen($msg));
-
+        
         // Close the connection to the server
         fclose($fp);
         pr($result);die;
