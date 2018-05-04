@@ -1404,6 +1404,7 @@ class UsersController extends AppController {
         if(!$send){
             $this->restException($blankObj);  
         }
+        $this->restException($blankObj);  
         #TableRegistry::get('Queue.QueuedJobs')->createJob('Pusher',$data);
         
     }
