@@ -35,7 +35,15 @@ class PlansController extends AppController {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
         }
         $items['categories'] = TableRegistry::get('Api.SpaycCategories')->allCategories();
-        $items['plans'] = TableRegistry::get('Api.Plans')->allPlans();
+        $plans = TableRegistry::get('Api.Plans')->allPlans();
+        foreach($plans as $plan){
+            if($plan->type == 'advertisement'){
+                $items['plan'][] = $plan;
+            }else{
+                $items['promotional_plan'][]  = $plan;
+            }
+            
+        }
         $response = ['status'=>'success','Message'=>'List of meta-data details.','data'=>$items];
         $this->set($response);
     }

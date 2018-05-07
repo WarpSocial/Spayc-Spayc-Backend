@@ -101,7 +101,7 @@ class PlansTable extends Table {
      */
     public function allPlans() {
         $items = $this->find()
-                ->select(['id', 'name', 'slug', 'amount', 'currency', 'views', 'created', 'modified'])
+                ->select(['id','type', 'name', 'slug', 'amount', 'currency', 'views', 'created', 'modified'])
                 ->where(['status' => ACTIVE])
                 ->order(['name'=>'ASC'])
                 ->map(function($row) {

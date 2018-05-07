@@ -73,7 +73,7 @@ class QueueGenericTask extends QueueTask {
                 'date_time'=>$data['created_duration']
             ];
             $notify = $notificationRepo->addNotification($notificationItems);
-            pr($notificationItems);
+            
             $items = [
                 'requested_by'=>$data['user_id'],
                 'id'=>$notify->id,
@@ -85,8 +85,7 @@ class QueueGenericTask extends QueueTask {
                 'date_time'=>$data['created_duration']
             ];
             $push->sendOnIOS($items);
-            $this->hr();
-            $this->out('->Success, Puhser Notification has been sent successfully.');
+            
         }
     }
 }
