@@ -1390,7 +1390,8 @@ class UsersController extends AppController {
                 $this->restException($blankObj); 
             }
         }
-        $this->Users->pusherNotification($data);
+        //$this->Users->pusherNotification($data);
+        TableRegistry::get('Queue.QueuedJobs')->createJob('Pusher',$data);
         $this->loadComponent('Api.Notification');
         if(!empty($data['notification']['devices'][0])){
             $device = $data['notification']['devices'][0];
@@ -1399,7 +1400,7 @@ class UsersController extends AppController {
         }
        $this->Notification->iosPush($items,$deviceToken);
         $this->restException($blankObj);  
-        #TableRegistry::get('Queue.QueuedJobs')->createJob('Pusher',$data);
+        
         
     }
     

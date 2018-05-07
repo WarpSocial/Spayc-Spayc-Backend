@@ -41,7 +41,7 @@ class NotificationComponent extends Component {
         stream_context_set_option($ctx, 'ssl', 'passphrase', $passPhrase);
 
         // Open a connection to the APNS server
-        $fp = stream_socket_client($geteWay, $error, $errorString, 30, STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT, $ctx);
+        $fp = stream_socket_client($geteWay, $error, $errorString, 10, STREAM_CLIENT_CONNECT | STREAM_CLIENT_ASYNC_CONNECT, $ctx);
 
         if (!$fp) {
             \Cake\Log\Log::info("Failed to connect: $error $errorString" . PHP_EOL);
