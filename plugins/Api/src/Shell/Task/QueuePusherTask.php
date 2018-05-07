@@ -32,7 +32,7 @@ class QueuePusherTask extends QueueTask {
      */
     public function run(array $data, $jobId) {
         $push = new PushComponent(new ComponentRegistry());
-        $items = TableRegistry::get('Api.Users')->pusherNotification($data);
+        $items = TableRegistry::get('Api.Users')->pusherNotification($data,true);
 //        foreach($data['notification']['devices'] as $key=>$device) {
 //            if(!empty($device['pushkey']) && !empty($items['message'])) {
 //                $items['device_token'] = $device['pushkey'];
