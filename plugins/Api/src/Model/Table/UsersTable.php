@@ -714,7 +714,7 @@ class UsersTable extends Table {
      * @param Array $data array of object containing pusher data
      * @return Array|false either array containig push data or false
      */
-    public function pusherNotification($data = []){
+    public function pusherNotification($data = [],$comment=false){
         if(empty($data['notification']['devices'])) { 
             \Cake\Log\Log::info(__('Device token is not available.'));
             return false;
@@ -754,9 +754,11 @@ class UsersTable extends Table {
             $items['message'] = !empty($data['notification']['content']['body'])?$data['notification']['content']['body']:'';
             $items['notification_type'] = 'inbox';
         }
-        $spaycEntity = TableRegistry::get('Api.Spaycs')->findByMatrixRoomId($items['matrix_room_id'])->select(['id'])->first();
-        if(!empty($spaycEntity)){            
-            TableRegistry::get('Api.Comments')->spaycActivities($spaycEntity->id,$items);
+        if($comment){
+            $spaycEntity = TableRegistry::get('Api.Spaycs')->findByMatrixRoomId($items['matrix_room_id'])->select(['id'])->first();
+            if(!empty($spaycEntity)){            
+                TableRegistry::get('Api.Comments')->spaycActivities($spaycEntity->id,$items);
+            }
         }
         return $items;
     }
