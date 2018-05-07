@@ -91,10 +91,10 @@ class PlansController extends AppController {
             }            
         }
         if(!$pspayc){
-             $this->restException(['status'=>'failed', 'message'=> __('Promotional Spayc is no longer available.')], 400);
+             $this->restException(['status'=>'failed', 'message'=> __('Promotional warp is no longer available.')], 400);
         }
         if(count($wherePromote) != count(explode(',',$data['spayc_id']))){
-            $this->restException(['status'=>'failed', 'message'=> __('Some of spayc id is no longer available.')], 400);
+            $this->restException(['status'=>'failed', 'message'=> __('Some of warp id is no longer available.')], 400);
         }
         
         
@@ -163,7 +163,7 @@ class PlansController extends AppController {
         $data = $this->request->getData();
         $user = $this->Auth->user();
          if(!isset($data['spayc_id'])) {
-            $this->restException(['status' => 'failed', 'message' => __('Spayc ID field required.')], 400);
+            $this->restException(['status' => 'failed', 'message' => __('Warp ID field required.')], 400);
         }
          if(!isset($data['cycle'])) {
             $this->restException(['status' => 'failed', 'message' => __('Cycle field required.')], 400);
@@ -358,7 +358,7 @@ class PlansController extends AppController {
         $data = $this->request->getData();
         $user = $this->Auth->user();
          if(!isset($data['spayc_id'])) {
-            $this->restException(['status' => 'failed', 'message' => __('Spayc ID field required.')], 400);
+            $this->restException(['status' => 'failed', 'message' => __('Warp ID field required.')], 400);
         }
         
         

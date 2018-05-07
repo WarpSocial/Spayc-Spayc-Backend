@@ -685,8 +685,8 @@ class UsersTable extends Table {
     }
     public function ValidatechangeRole($data){
         $validator = new Validator();
-        $validator->requirePresence('spayc_id', true,__('Spayc id key is missing.'))
-                ->notEmpty('spayc_id', __('Please enter Spayc id.'));
+        $validator->requirePresence('spayc_id', true,__('Warp id key is missing.'))
+                ->notEmpty('spayc_id', __('Please enter warp id.'));
         $validator->requirePresence('user_id', true,__('User id key is missing.'))
                 ->notEmpty('user_id', __('Please enter User id.'));
         $validator->requirePresence('user_id', true,__('User id key is missing.'))

@@ -50,8 +50,8 @@ class PlansTable extends Table {
     public function validatePromotionalSpayc($data){
         $validator = new Validator();
         $validator
-                ->requirePresence('spayc_id','create', __('Please provide the spayc id'))
-                ->notEmpty('spayc_id',__('Please provide the spayc id'))
+                ->requirePresence('spayc_id','create', __('Please provide the warp id'))
+                ->notEmpty('spayc_id',__('Please provide the warp id'))
                 ->add('spayc_id','uniquekey',[
                     'rule'=>function($value,$context){
                         $array = explode(',',$value);
@@ -60,9 +60,9 @@ class PlansTable extends Table {
                     'message'=>__('Warp must not be repeated.') 
                 ]);                
         $validator
-                ->requirePresence('spayc_promotional_id','create', __('Please provide promotional spayc.'))
-                ->integer('spayc_promotional_id',__('Please provide integer value for promotional spayc.'))
-                ->notEmpty('spayc_promotional_id',__('Please provide promotional spayc.'));
+                ->requirePresence('spayc_promotional_id','create', __('Please provide promotional warp.'))
+                ->integer('spayc_promotional_id',__('Please provide integer value for promotional warp.'))
+                ->notEmpty('spayc_promotional_id',__('Please provide promotional warp.'));
         
         $validator
                 ->requirePresence('plan_id','create', __('Please provide the plan.'))

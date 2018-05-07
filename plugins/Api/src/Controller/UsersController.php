@@ -678,7 +678,7 @@ class UsersController extends AppController {
         $frObj = TableRegistry::get('Api.FriendRequest');
         $spaceUsr = $this->Users->exists(['id'=>$data['friend_id']]);
         if(!$spaceUsr){
-            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with warp.')], 400);
         }
         if($data['friend_id'] == $loggedUser['id']){
             $this->restException(['status'=>'failed','message'=>__('You could not {0} himself.', strtolower($data['friend_status']))],400);
@@ -793,7 +793,7 @@ class UsersController extends AppController {
         $frObj = TableRegistry::get('Api.FriendRequest');
         $spaceUsr = $this->Users->exists(['id'=>$data['friend_id']]);
         if(!$spaceUsr){
-            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with warp.')], 400);
         }
         $loggedUser = $this->Auth->user();   
         
@@ -892,7 +892,7 @@ class UsersController extends AppController {
         $frObj = TableRegistry::get('Api.FriendRequest');
         $spaceUsr = $this->Users->exists(['id'=>$data['friend_id']]);
         if(!$spaceUsr) {
-            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with warp.')], 400);
         }
         $loggedUser = $this->Auth->user();
         $requestedFrnd = $frObj->find()->Where(['OR'=>[
@@ -957,7 +957,7 @@ class UsersController extends AppController {
         $frObj = TableRegistry::get('Api.FriendRequest');
         $spaceUsr = $this->Users->exists(['id'=>$data['friend_id']]);
         if(!$spaceUsr) {
-            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with warp.')], 400);
         }
         $requestedFrnd = $frObj->find()->Where(['OR'=>[
             ['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']],
@@ -1046,7 +1046,7 @@ class UsersController extends AppController {
         $frObj = TableRegistry::get('Api.FriendRequest');
         $spaceUsr = $this->Users->exists(['id'=>$data['friend_id']]);
         if(!$spaceUsr) {
-            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with warp.')], 400);
         }
         $loggedUser = $this->Auth->user();
         $requestedFrnd = $frObj->find()->Where(['OR'=>[
@@ -1098,7 +1098,7 @@ class UsersController extends AppController {
         $frObj = TableRegistry::get('Api.FriendRequest');
         $spaceUsr = $this->Users->exists(['id'=>$data['friend_id']]);
         if(!$spaceUsr) {
-            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with warp.')], 400);
         }
         $loggedUser = $this->Auth->user();
         $requestedFrnd = $frObj->find()->Where(['OR'=>[
@@ -1150,7 +1150,7 @@ class UsersController extends AppController {
         $frObj = TableRegistry::get('Api.FriendRequest');
         $spaceUsr = $this->Users->exists(['id'=>$data['friend_id']]);
         if(!$spaceUsr){
-             $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
+             $this->restException(['status'=>'failed', 'message'=>__('User is not registered with warp.')], 400);
         }
         $loggedUser = $this->Auth->user();     
          if(in_array($data['friend_status'],['Decline','Unfriend'])){
@@ -1560,15 +1560,15 @@ class UsersController extends AppController {
                     return $q->select(['Spaycs.id', 'Spaycs.name', 'Spaycs.matrix_room_id', 'Spaycs.image']);
             }])->where(['JoinedSpayc.spayc_id'=>$data['spayc_id'],'JoinedSpayc.user_id IN'=>[$data['user_id'],$user['id']]]);
         if($entities->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>__('User has not joined this spayc.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('User has not joined this warp.')], 400);
         }
         $adminEntity = Hash::extract($entities->toArray(), '{n}[user_id='.$user['id'].']');
         $userEntity = Hash::extract($entities->toArray(), '{n}[user_id='.$data['user_id'].']');
         if(empty($adminEntity[0]) || ($adminEntity[0]['status'] != 'Joined')){
-            $this->restException(['status'=>'failed','message'=>__('You are not joined with this spayc.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('You are not joined with this warp.')], 400);
         }
         if(empty($userEntity[0]) || ($userEntity[0]['status'] != 'Joined')){
-            $this->restException(['status'=>'failed','message'=>__('user is not joined with this spayc.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('user is not joined with this warp.')], 400);
         }
         if($adminEntity[0]['is_admin'] <= 0){
             $this->restException(['status'=>'failed','message'=>__('You have no privileges to make someone admin.')], 400);

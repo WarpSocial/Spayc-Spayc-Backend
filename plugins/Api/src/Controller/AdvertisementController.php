@@ -85,7 +85,7 @@ class AdvertisementController extends AppController {
         $spayc_id = explode(",", $data['spayc_id']);
 
         if (count($exist->toArray()) != count($spayc_id)) {
-            $this->restException(['status' => 'failed', 'message' => __('Not Authorized to Create Ad in listed Spaycs.')], 400);
+            $this->restException(['status' => 'failed', 'message' => __('Not Authorized to Create Ad in listed warps.')], 400);
         }
         // Check IF Exist 
         $items = $this->Advertisement->patchEntity($entity, $data);
@@ -150,7 +150,7 @@ class AdvertisementController extends AppController {
 
             $response = ['status' => 'success', 'message' => __('Advertisement Updated Successfully'), 'data' => $success];
         } else {
-            $this->restException(['status' => 'failed', 'message' => __('The spayc could not be updated. Please, try again.')], 400);
+            $this->restException(['status' => 'failed', 'message' => __('The warp could not be updated. Please, try again.')], 400);
         }
         $this->set($response);
     }
@@ -277,7 +277,7 @@ class AdvertisementController extends AppController {
         $spayc_id = explode(",", $data['spayc_id']);
 
         if (count($exist->toArray()) != count($spayc_id)) {
-            $this->restException(['status' => 'failed', 'message' => __('Not Authorized to Create Ad in listed Spaycs.')], 400);
+            $this->restException(['status' => 'failed', 'message' => __('Not Authorized to Create Ad in listed warps.')], 400);
         }
         $data['spaycs'] = ['_ids' => [1]];
         $items = $advModel->patchEntity($entity, $data);
@@ -402,7 +402,7 @@ class AdvertisementController extends AppController {
         $data = $this->request->getData();
         $user = $this->Auth->user();
         if (!isset($data['spayc_id'])) {
-            $this->restException(['status' => 'failed', 'message' => __('Spayc ID field required.')], 400);
+            $this->restException(['status' => 'failed', 'message' => __('Warp ID field required.')], 400);
         }
         if (!isset($data['cycle'])) {
             $this->restException(['status' => 'failed', 'message' => __('Cycle field required.')], 400);
@@ -555,7 +555,7 @@ class AdvertisementController extends AppController {
         $data = $this->request->getData();
         $user = $this->Auth->user();
         if (!isset($data['spayc_id'])) {
-            $this->restException(['status' => 'failed', 'message' => __('Spayc ID field required.')], 400);
+            $this->restException(['status' => 'failed', 'message' => __('Warp ID field required.')], 400);
         }
 
 
