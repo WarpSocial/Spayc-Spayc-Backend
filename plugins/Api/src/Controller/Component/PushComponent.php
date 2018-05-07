@@ -191,10 +191,11 @@ class PushComponent extends Component {
                     [
                         'UserLogs.user_id',
                         'UserLogs.device_id',
+                        'UserLogs.device_token',
                         'users.email',                        
                         'users.display_name',                        
                         ]])
-                    ->select(['id', 'user_id', 'device_id'])
+                    ->select(['id', 'user_id', 'device_id','device_token'])
                     ->join(
                 [
                     'table' => 'users',
@@ -224,7 +225,7 @@ class PushComponent extends Component {
             //Send Email
             }
             
-            if(strlen($deviceId->device_id)<64) {
+            if(strlen($deviceId->device_token)<64) {
                 return ['status'=>'failed','message'=>"Device ID Characters not Valid"];
             }
             if($notificationType->slug == 'spayc-start-event' || $notificationType->slug == 'spayc-end-event') {
@@ -235,7 +236,7 @@ class PushComponent extends Component {
             //$userInputTime = new \DateTime("now", new \DateTimeZone('America/New_York') );
             //echo $userInputTime->format('Y-m-d H:i:s');
             $data['time'] =  $userInputTime->format("m-d-Y H:i:s");
-            $data['device_token'] = $deviceId->device_id;
+            $data['device_token'] = $deviceId->device_token;
             $data['notification_type'] = $notificationType->type;
 //            pr($data);die;
             $sent = false;
