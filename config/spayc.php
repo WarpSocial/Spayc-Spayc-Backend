@@ -26,6 +26,8 @@ return [
     'adminEmail' =>'kiwitech@gmail.com',
     'reverification_subject'=>'Re-Verifiaction',
     'forgotpassword_subject'=>'Forgot Password',
+    'startevent_subject'=>'Start Event',
+    'endevent_subject'=>'End Event',
     'mimetype' => [
         'image/png' => 'png',
         'image/jpe' => 'jpeg',
