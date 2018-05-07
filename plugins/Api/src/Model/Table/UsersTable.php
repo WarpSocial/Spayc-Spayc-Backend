@@ -754,12 +754,7 @@ class UsersTable extends Table {
             $items['message'] = !empty($data['notification']['content']['body'])?$data['notification']['content']['body']:'';
             $items['notification_type'] = 'inbox';
         }
-        if($comment){
-            $spaycEntity = TableRegistry::get('Api.Spaycs')->findByMatrixRoomId($items['matrix_room_id'])->select(['id'])->first();
-            if(!empty($spaycEntity)){            
-                TableRegistry::get('Api.Comments')->spaycActivities($spaycEntity->id,$items);
-            }
-        }
+        TableRegistry::get('Api.Comments')->spaycActivities($spayc->id,$items);
         return $items;
     }
     

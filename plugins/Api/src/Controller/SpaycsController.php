@@ -71,6 +71,9 @@ class SpaycsController extends AppController {
         $items->set('user_id', $this->Auth->user('id'));
         if (!$items->errors()) {
             if($this->Spaycs->save($items)) {
+                $items->job_type = 'new-spayc';
+                $items->created_duration = Utils::toClient($items->created);
+                TableRegistry::get('Queue.QueuedJobs')->createJob('Generic',$items->toArray());
                 //Joined the invite to the room//
                 $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
                 if(!empty($items['description'])) {
