@@ -21,7 +21,7 @@ class WebApiController extends AppController {
     }
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
-        $this->Auth->allow(['addCategory','apilog','addComment']);
+        $this->Auth->allow(['addCategory','apilog','addComment','notify']);
     }
     
     
@@ -61,6 +61,7 @@ class WebApiController extends AppController {
     }
     
     public function apilog(){
+         
         $del = $this->request->getQuery('clean');
         $logfile = $this->request->getQuery('file','api.log');
         $file = new \Cake\Filesystem\File(LOGS.$logfile);
@@ -69,6 +70,16 @@ class WebApiController extends AppController {
         }
         $errorfile = $file->read();
         $this->set($errorfile);
+    }
+    
+    public function notify(){
+         $this->loadComponent('Api.Notification');
+         $deviceToken = $this->request->getData('device_token');
+         $data=[
+            'message'=>$this->request->getData('message'),
+            'slug' =>$this->request->getData('slug')
+         ];
+         $this->Notification->iosPush($data,$deviceToken);
     }
 
 
