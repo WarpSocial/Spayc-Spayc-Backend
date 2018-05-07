@@ -225,9 +225,9 @@ class PushComponent extends Component {
             //Send Email
             }
             
-            if(strlen($deviceId->device_token)<64) {
-                return ['status'=>'failed','message'=>"Device ID Characters not Valid"];
-            }
+//            if(strlen($deviceId->device_token)<64) {
+//                return ['status'=>'failed','message'=>"Device ID Characters not Valid"];
+//            }
             if($notificationType->slug == 'spayc-start-event' || $notificationType->slug == 'spayc-end-event') {
                 $notificationType->message = str_replace("<WarpName>", ucwords($data['spayc_name']), $notificationType->message);
             }
@@ -238,10 +238,11 @@ class PushComponent extends Component {
             $data['time'] =  $userInputTime->format("m-d-Y H:i:s");
             $data['device_token'] = $deviceId->device_token;
             $data['notification_type'] = $notificationType->type;
+            $data['message'] = $notificationType->message;
 //            pr($data);die;
             $sent = false;
             if(!empty($data['device_token'])) {
-                $sent = $this->sendOnIOS($data, $notificationType->message);
+                $sent = $this->sendOnIOS($data);
             }
             return $sent;
         }
