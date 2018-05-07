@@ -73,7 +73,6 @@ class NotificationComponent extends Component {
         
         // Close the connection to the server
         fclose($fp);
-        pr($result);die;
         return $result;
     }
 
