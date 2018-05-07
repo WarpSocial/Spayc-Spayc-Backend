@@ -38,7 +38,7 @@ class PlansController extends AppController {
         $plans = TableRegistry::get('Api.Plans')->allPlans();
         foreach($plans as $plan){
             if($plan->type == 'advertisement'){
-                $items['plan'][] = $plan;
+                $items['plans'][] = $plan;
             }else{
                 $items['promotional_plan'][]  = $plan;
             }
