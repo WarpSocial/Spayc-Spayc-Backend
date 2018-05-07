@@ -4,6 +4,7 @@
 namespace Api\Controller\Component;
 
 use Cake\Controller\Component;
+use Cake\Mailer\MailerAwareTrait;
 use Cake\Controller\ComponentRegistry;
 use Cake\Network\Http\Client;
 use Cake\Core\Configure;
@@ -13,6 +14,7 @@ use Cake\I18n\Time;
 
 
 class PushComponent extends Component {
+    use MailerAwareTrait;
 
     public $SnsClient;
     public $snsConfig;
