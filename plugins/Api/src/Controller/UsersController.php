@@ -317,10 +317,10 @@ class UsersController extends AppController {
                     'username'=>$data['username'],
                     'display_name'=>$data['display_name'],
                     'email'=>$data['email'],
-                    'dob'=>$data['dob'],
-                    'gender'=>trim($data['gender']),
+                    'dob'=> Utils::getVar('dob',$data),
+                    'gender'=> Utils::getVar('gender',$data),
                     'country_code'=> Utils::getVar('country_code',$data),
-                    'phone'=>$data['phone'],
+                    'phone'=>Utils::getVar('phone',$data),
                     'latitude'=>  Utils::getVar('latitude',$data),
                     'longitude'=>Utils::getVar('longitude',$data)
                 ]];

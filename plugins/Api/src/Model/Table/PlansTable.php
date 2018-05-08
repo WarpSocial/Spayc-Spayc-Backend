@@ -67,11 +67,11 @@ class PlansTable extends Table {
         $validator
                 ->requirePresence('plan_id','create', __('Please provide the plan.'))
                 ->notEmpty('plan_id',__('Please provide the plan.'))
-                ->integer('plan_id',__('Please provide integer value for plan.'))
+                //->integer('plan_id',__('Please provide integer value for plan.'))
                 ->add('plan_id','exist',[
                     'rule'=>function($value,$context){
                         if(!empty($value)){
-                            return  TableRegistry::get('Api.Plans')->exists(['id'=>$value]);
+                            return  TableRegistry::get('Api.Plans')->exists(['OR'=>[['id'=>$value],'app_plan_id'=>$value]]);
                         }else{
                             return false;
                         }
@@ -101,7 +101,7 @@ class PlansTable extends Table {
      */
     public function allPlans() {
         $items = $this->find()
-                ->select(['id','type', 'name', 'slug', 'amount', 'currency', 'views', 'created', 'modified'])
+                ->select(['id','app_plan_id','type', 'name', 'slug', 'amount', 'currency', 'views', 'created', 'modified'])
                 ->where(['status' => ACTIVE])
                 ->order(['name'=>'ASC'])
                 ->map(function($row) {

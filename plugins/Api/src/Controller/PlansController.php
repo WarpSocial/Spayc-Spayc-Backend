@@ -98,7 +98,7 @@ class PlansController extends AppController {
         }
         
         
-        $plan = $this->Plans->get($data['plan_id']);
+        $plan = $this->Plans->find()->where(['OR'=>['id'=>$data['plan_id'],'app_plan_id'=>$data['plan_id']]])->first();
         
         $purchase = [
             'plan_id'=>$data['plan_id'],
