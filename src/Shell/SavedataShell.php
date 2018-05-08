@@ -57,14 +57,19 @@ class SavedataShell extends Shell
                             'limit' => '1'
                 ])->first();
         $pageLimit=10;
-        $token = TableRegistry::get("Api.UserLogs")->findByUserId($obj->id)->select(['plain_token'])->first();      
+        $token = TableRegistry::get("Api.UserLogs")->findByUserId($obj->id)->select(['plain_token'])->first();  
+        $token->plain_token="04d903e2d89fda57517fe4d6e917507effe329bb0ec96365e23671f049e8e96e";
         if(isset($token) && !empty($token)) {
 
-            $url= 'http://localhost/spayc/api/spaycs.json';             
+            $url= 'http://172.16.145.210/spayc/api/spaycs.json';             
             $totalRecord = $this->StubhubEvents->find('all')->count();
             $totalPageNumber = round($totalRecord/$pageLimit);        
             $record = $this->StubhubEvents->find('all',['conditions' => 
-                            ['StubhubEvents.is_status' => 0],'limit' => $pageLimit])->page($page)->toArray();           
+                            ['StubhubEvents.is_status' => 0],
+//                'limit' => $pageLimit
+                    ])
+                    ->page($page)
+                    ->toArray();           
             $getIds=$createSpaceData=[];
             $i=0;
             foreach ($record as $value) {   
@@ -76,34 +81,34 @@ class SavedataShell extends Shell
                 $createSpaceData['start_date']=$value['start_date']->format('m-d-Y H:i:s');
                 $createSpaceData['end_date']=$value['start_date']->format('m-d-Y H:i:s');
                 $createSpaceData['description']=$value['description'];
-                $createSpaceData['image']=null;
-                $createSpaceData['longitude']=null;
+                $createSpaceData['image']=$value['image'];
+                $createSpaceData['longitude']=$value['longitude'];
                 $createSpaceData['latitude']=$value['latitude'];          
                 $http = new Client(['headers' => ['token' => $token->plain_token]]);
                 $httpResponse = $http->post($url,$createSpaceData);
                 $response = json_decode($httpResponse->body,true);
-                if($i%5 == 0) 
-                    sleep(30);
+//                if($i%5 == 0) 
+//                    sleep(30);
                 pr($response);
                 $this->out($i);
                 if($httpResponse->isOk()){
                     $i++;
                 }
             }
-            if($i >=10) { 
-                $query = $this->StubhubEvents->query();
-                $query->update()
-                    ->set(['is_status' => true])
-                    ->where(['id IN' => $getIds])
-                    ->execute();
-                if($page <= 2){
-                if($page <= $totalPageNumber){
-                    $page = $page+1;                    
-                    $this->saveDataSpaceTable($page);
-                    //sleep(110);
-                }
-                }
-            } 
+//            if($i >=10) { 
+//                $query = $this->StubhubEvents->query();
+//                $query->update()
+//                    ->set(['is_status' => true])
+//                    ->where(['id IN' => $getIds])
+//                    ->execute();
+//                if($page <= 2){
+//                if($page <= $totalPageNumber){
+//                    $page = $page+1;                    
+//                    $this->saveDataSpaceTable($page);
+//                    //sleep(110);
+//                }
+//                }
+//            } 
         }
     }
 }
