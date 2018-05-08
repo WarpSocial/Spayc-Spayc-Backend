@@ -56,17 +56,19 @@ class SavedataShell extends Shell
                             ['Users.email' => trim(SCRAPER_EMAIL)],
                             'limit' => '1'
                 ])->first();
-        $pageLimit=10;
+        $pageLimit=5;
         $token = TableRegistry::get("Api.UserLogs")->findByUserId($obj->id)->select(['plain_token'])->first();  
-        $token->plain_token="04d903e2d89fda57517fe4d6e917507effe329bb0ec96365e23671f049e8e96e";
+//        $token->plain_token="04d903e2d89fda57517fe4d6e917507effe329bb0ec96365e23671f049e8e96e";
+        $token->plain_token="8bfa1623f5366cc966add372b5834cfdc52136daac6fe2bb16b4c2893f9dbd3c";
         if(isset($token) && !empty($token)) {
 
-            $url= 'http://172.16.145.210/spayc/api/spaycs.json';             
+//            $url= 'http://172.16.145.210/spayc/api/spaycs.json';             
+            $url= 'http://spayc-dev.kiwireader.com/api/spaycs.json';             
             $totalRecord = $this->StubhubEvents->find('all')->count();
             $totalPageNumber = round($totalRecord/$pageLimit);        
             $record = $this->StubhubEvents->find('all',['conditions' => 
                             ['StubhubEvents.is_status' => 0],
-//                'limit' => $pageLimit
+                'limit' => $pageLimit
                     ])
                     ->page($page)
                     ->toArray();           
@@ -81,7 +83,7 @@ class SavedataShell extends Shell
                 $createSpaceData['start_date']=$value['start_date']->format('m-d-Y H:i:s');
                 $createSpaceData['end_date']=$value['start_date']->format('m-d-Y H:i:s');
                 $createSpaceData['description']=$value['description'];
-                $createSpaceData['image']=$value['image'];
+//                $createSpaceData['image']=$value['image'];
                 $createSpaceData['longitude']=$value['longitude'];
                 $createSpaceData['latitude']=$value['latitude'];          
                 $http = new Client(['headers' => ['token' => $token->plain_token]]);
