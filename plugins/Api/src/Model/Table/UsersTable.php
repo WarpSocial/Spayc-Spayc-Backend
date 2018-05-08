@@ -732,6 +732,7 @@ class UsersTable extends Table {
             return false;
             
         }
+        \Cake\Log\Log::info($data);
         $msgType = $data['notification']['content']['msgtype'];
         $items['spayc_image'] = null;
         if(!empty($spayc)){
@@ -751,8 +752,12 @@ class UsersTable extends Table {
                 $items['notification_type'] = $notify->type;
             }
         }else{
-            $items['message'] = !empty($data['notification']['content']['body'])?$data['notification']['content']['body']:'';
-            $items['notification_type'] = 'inbox';
+            $notify = TableRegistry::get('Api.Notifications')->message('someone-commented');
+             if(!empty($notify)){
+                $items['message'] = str_replace(["<USERNAME>","<COMMENT>","<SpaycName>"],[ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body'],ucwords($data['notification']['room_name'])], $notify->message);
+                $items['notification_type'] = $notify->type;
+            }
+           
         }
         TableRegistry::get('Api.Comments')->spaycActivities($spayc->id,$items);
         return $items;

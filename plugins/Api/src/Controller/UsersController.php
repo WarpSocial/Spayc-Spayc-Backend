@@ -1385,6 +1385,11 @@ class UsersController extends AppController {
         }
         //Log::info(json_encode($pushData,JSON_PRETTY_PRINT));
         $data = $this->request->getData();
+        /* by cron notificaiton */
+        //TableRegistry::get('Queue.QueuedJobs')->createJob('Pusher',$data);
+        //$this->restException($blankObj);
+        
+        /* for direct notification */
         if(!empty($data['notification']['content']['msgtype'])){
             if( ($data['notification']['content']['msgtype'] == 'm.likeMessage') && !empty($data['notification']['content']['disLikeMembers'])){
                 $this->restException($blankObj); 
@@ -1394,7 +1399,7 @@ class UsersController extends AppController {
         if(!$items){
             $this->restException($blankObj); 
         }
-        //TableRegistry::get('Queue.QueuedJobs')->createJob('Pusher',$data);
+        
         $this->loadComponent('Api.Notification');
         if(!empty($data['notification']['devices'][0])){
             $device = $data['notification']['devices'][0];
