@@ -350,7 +350,7 @@ class AdvertisementController extends AppController {
             if (isset($data['platform']))
                 $entity->platform = $data['platform'];
             if (isset($data['purchase_date']) && $data['purchase_date'])
-                $entity->purchase_date = $data['purchase_date'];
+                $entity->purchase_date =  Utils::toUtc($data['purchase_date']);
             $entity->modified = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
             $entity->created = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
             $purchase = $purchaseModel->save($entity);
