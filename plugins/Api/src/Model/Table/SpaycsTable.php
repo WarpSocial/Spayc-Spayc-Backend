@@ -245,7 +245,9 @@ class SpaycsTable extends Table {
                 ->allowEmpty('image')
                 ->add('image','isfile',[
                     'rule'=>function($value,$context){
-                        if(!is_array($value) && !is_file($value)){
+                        if(filter_var($value, FILTER_VALIDATE_URL)){
+                            return true;
+                        }elseif(!is_array($value) && !is_file($value)){
                             return false;
                         }else{
                             return true;
