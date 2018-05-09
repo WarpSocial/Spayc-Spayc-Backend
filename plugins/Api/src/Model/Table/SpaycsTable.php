@@ -245,7 +245,9 @@ class SpaycsTable extends Table {
                 ->allowEmpty('image')
                 ->add('image','isfile',[
                     'rule'=>function($value,$context){
-                        if(!is_array($value) && !is_file($value)){
+                        if(filter_var($value, FILTER_VALIDATE_URL)){
+                            return true;
+                        }elseif(!is_array($value) && !is_file($value)){
                             return false;
                         }else{
                             return true;
@@ -647,6 +649,7 @@ class SpaycsTable extends Table {
                     'type', 
                     'modified', 
                     'spayc_category_id',
+//                    'parent_id',
                     'latitude','longitude'])
                 ->where(["$distanceField <=" => $distance, 'Spaycs.status'=>'Active',
                     'Spaycs.group_type !='=>'trusted_private', 
@@ -725,6 +728,8 @@ class SpaycsTable extends Table {
                     $status = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.'].status');
                 }
                 $row['is_joined'] = !empty($status[0])?true:false;
+//                $row['spayc_type'] = ($row['parent_id']==NULL || $row['parent_id']=="" )?"Spayc":"SubSpayc";
+//                unset($row['parent_id']);
                 $row['joined_users'] = !empty($row['joined_spayc'])?count($totalJoined):0;
                 unset($row['joined_spayc']);
                 if(!empty($row['subscribed_users'])) {

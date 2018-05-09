@@ -169,6 +169,10 @@ class ImgUploadBehavior extends Behavior {
                 #$fileExt = $this->fileAttrbute($fileName,'extension');
                 $filePath = $this->__saveToAWS($requestField,$fileName);                
                 $entity->set($config['field'], $filePath);                
+            }else if(isset($requestField) && filter_var($requestField, FILTER_VALIDATE_URL)) {
+                   $fileName= pathinfo($requestField,PATHINFO_BASENAME);
+                   $filePath = $this->__saveToAWS($requestField,$fileName);                
+                   $entity->set($config['field'], $filePath);    
             }else{
                 $entity->unsetProperty($config['field']);
             }
@@ -192,8 +196,12 @@ class ImgUploadBehavior extends Behavior {
     
     private function __saveToAWS($requestField,$fileName){        
         try {
-            $resource = fopen($requestField['tmp_name'], 'r');
-            $AWS3File = $this->aws3Obj->upload($this->_aws3['bucket'], $fileName, $resource, 'public-read');         
+             if (!empty($requestField['tmp_name'])) {
+                $resource = fopen($requestField['tmp_name'], 'r');
+             }else if(isset($requestField) && filter_var($requestField, FILTER_VALIDATE_URL)) {
+                 $resource = fopen($requestField, 'r');
+             }
+             $AWS3File = $this->aws3Obj->upload($this->_aws3['bucket'], $fileName, $resource, 'public-read');
         } catch (S3Exception $e) {
             echo "There was an error uploading the file. s3 error ".$e->getMessage();
         }
