@@ -47,7 +47,7 @@ class SavedataShell extends Shell
         return date(DATE_TIME_FORMAT);
     }
 
-    public function saveDataSpaceTable($page=1)
+    public function saveDataSpaceTable($page=5)
     {       
 
         // ini_set('max_execution_time', 0);        
@@ -56,7 +56,7 @@ class SavedataShell extends Shell
                             ['Users.email' => trim(SCRAPER_EMAIL)],
                             'limit' => '1'
                 ])->first();
-        $pageLimit=5;
+        $pageLimit=15;
         $token = TableRegistry::get("Api.UserLogs")->findByUserId($obj->id)->select(['plain_token'])->first();  
 //        $token->plain_token="04d903e2d89fda57517fe4d6e917507effe329bb0ec96365e23671f049e8e96e";
         $token->plain_token="8bfa1623f5366cc966add372b5834cfdc52136daac6fe2bb16b4c2893f9dbd3c";
@@ -68,9 +68,9 @@ class SavedataShell extends Shell
             $totalPageNumber = round($totalRecord/$pageLimit);        
             $record = $this->StubhubEvents->find('all',['conditions' => 
                             ['StubhubEvents.is_status' => 0],
-                'limit' => $pageLimit
+//                'limit' => $pageLimit
                     ])
-                    ->page($page)
+//                    ->page($page)
                     ->toArray();           
             $getIds=$createSpaceData=[];
             $i=0;
@@ -83,7 +83,7 @@ class SavedataShell extends Shell
                 $createSpaceData['start_date']=$value['start_date']->format('m-d-Y H:i:s');
                 $createSpaceData['end_date']=$value['start_date']->format('m-d-Y H:i:s');
                 $createSpaceData['description']=$value['description'];
-//                $createSpaceData['image']=$value['image'];
+                $createSpaceData['image']=$value['image'];
                 $createSpaceData['longitude']=$value['longitude'];
                 $createSpaceData['latitude']=$value['latitude'];          
                 $http = new Client(['headers' => ['token' => $token->plain_token]]);
@@ -93,9 +93,9 @@ class SavedataShell extends Shell
 //                    sleep(30);
                 pr($response);
                 $this->out($i);
-                if($httpResponse->isOk()){
+//                if($httpResponse->isOk()){
                     $i++;
-                }
+//                }
             }
 //            if($i >=10) { 
 //                $query = $this->StubhubEvents->query();
