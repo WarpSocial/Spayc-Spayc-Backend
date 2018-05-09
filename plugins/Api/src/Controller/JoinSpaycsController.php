@@ -49,15 +49,15 @@ class JoinSpaycsController extends AppController {
                 ])
                 ->where(['id'=>$data['spayc_id']]);
         if($spaycs->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>__('Spayc is no longer available..')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Warp is no longer available..')], 400);
         }
         $spayc = $spaycs->first();
         if(!empty($spayc->parent_id)){
-            $this->restException(['status'=>'failed','message'=>__('Not allowed to join sub spayc.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Not allowed to join sub warp.')], 400);
         }
         
         if(($spayc->group_type == 'Public') && ($data['status'] == 'Pending')){
-            $this->restException(['status'=>'failed','message'=>__('Invalid status for public spayc.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Invalid status for public warp.')], 400);
         }
         $currentUserStatus = Hash::extract($spayc->joined_spayc, '{n}[user_id='.$user['id'].']');
         if(!empty($currentUserStatus[0])){
@@ -66,11 +66,11 @@ class JoinSpaycsController extends AppController {
                 $this->restException(['status'=>'failed','message'=>__('Admin could\'t change their own role.')], 400);
             }
             if(($currentUserStatus->status == 'Joined') && ($data['status'] == 'Pending')){
-                $this->restException(['status'=>'failed','message'=>__('You are already part of this spayc.')], 400);
+                $this->restException(['status'=>'failed','message'=>__('You are already part of this warp.')], 400);
             }
             if($currentUserStatus->status == $data['status']){
                 if($data['status'] == 'Joined'){
-                    $message = __('You have already joined with this spayc');
+                    $message = __('You have already joined with this warp');
                 }else{
                     $message = __('Your could\'t join with same status.');
                 }
@@ -182,14 +182,14 @@ class JoinSpaycsController extends AppController {
                 ])
                 ->where(['id'=>$data['spayc_id']]);
         if($spaycs->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>__('Spayc is not exist.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Warp is not exist.')], 400);
         }
         $spayc = $spaycs->first();
         if(empty($spayc->parent_id)){
-            $this->restException(['status'=>'failed','message'=>__('Only subspayc is allowed.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Only subwarp is allowed.')], 400);
         }
         if(($spayc->group_type == 'Public') && ($data['status'] == 'Pending')){
-            $this->restException(['status'=>'failed','message'=>__('Invalid status for public sub-spayc.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Invalid status for public sub-warp.')], 400);
         }
         $currentUserStatus = Hash::extract($spayc->joined_spayc, '{n}[user_id='.$user['id'].']');
         if(!empty($currentUserStatus[0])){
@@ -198,11 +198,11 @@ class JoinSpaycsController extends AppController {
                 $this->restException(['status'=>'failed','message'=>__('Admin could\'t change their own status')], 400);
             }
             if(($currentUserStatus->status == 'Joined') && ($data['status'] == 'Pending')){
-                $this->restException(['status'=>'failed','message'=>__('Request is not valid because of you have joined this sub spayc.')], 400);
+                $this->restException(['status'=>'failed','message'=>__('Request is not valid because of you have joined this sub warp.')], 400);
             }
             if($currentUserStatus->status == $data['status']){
                 if($data['status'] == 'Joined'){
-                    $message = __('You have already joined with this spayc');
+                    $message = __('You have already joined with this warp');
                 }else{
                     $message = __('Your could\'t join with same status.');
                 }
@@ -329,17 +329,17 @@ class JoinSpaycsController extends AppController {
                 ])
                 ->where(['Spaycs.id'=>$data['spayc_id']]);
         if($spaycs->isEmpty()) {
-            $this->restException(['status'=>'failed','message'=>__('Spayc is no longer available.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Sarp is no longer available.')], 400);
         }
         $spayc = $spaycs->first();
         #pj($spayc);die;
         if(empty($spayc->joined_spayc)){
-             $this->restException(['status'=>'failed','message'=>__('User is not member of this spayc.')], 400);
+             $this->restException(['status'=>'failed','message'=>__('User is not member of this warp.')], 400);
         }
         $currentUserStatus = Hash::extract($spayc->joined_spayc, '{n}[user_id='.$user['id'].']');
         $BannedUserStatus = Hash::extract($spayc->joined_spayc, '{n}[user_id='.$data['user_id'].']');
         if(empty($currentUserStatus[0]) || empty($BannedUserStatus[0])){
-            $this->restException(['status'=>'failed','message'=>__('User is not member of this spayc.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('User is not member of this warp.')], 400);
         }
         $currentUserStatus = $currentUserStatus[0];
         if($currentUserStatus['is_admin'] != 2){
@@ -356,14 +356,14 @@ class JoinSpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Only joined member who has admin rights can ban or unban any user.')], 400);
         }
         if($BannedUserStatus['status'] == $data['status']){
-            $this->restException(['status'=>'failed','message'=>__('User has already '. strtolower($data['status']).' with this spayc.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('User has already '. strtolower($data['status']).' with this warp.')], 400);
         }
         if(($BannedUserStatus['status'] == JOINED) && ($data['status'] == UNBANNED)){
             $this->restException(['status'=>'failed','message'=>__('Cannot unban user who was not banned.')], 400);
         }       
         
         if(!in_array($BannedUserStatus['status'],['Joined',BANNED])){
-            $this->restException(['status'=>'failed','message'=>__('User is not joined with this spayc.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('User is not joined with this warp.')], 400);
         }
         $data['matrix_user_id'] = $BannedUserStatus->user->matrix_user_id;
         $data['matrix_room_id'] = $spayc->matrix_room_id;
@@ -429,16 +429,16 @@ class JoinSpaycsController extends AppController {
                 ])
                 ->where(['Spaycs.id'=>$data['spayc_id']]);
         if($spaycs->isEmpty()) {
-            $this->restException(['status'=>'failed','message'=>__('Spayc is no longer available.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Warp is no longer available.')], 400);
         }
         $spayc = $spaycs->first();        
         if(empty($spayc->joined_spayc)){
-             $this->restException(['status'=>'failed','message'=>__('User is not member of this spayc.')], 400);
+             $this->restException(['status'=>'failed','message'=>__('User is not member of this warp.')], 400);
         }
         $currentUserStatus = Hash::extract($spayc->joined_spayc, '{n}[user_id='.$user['id'].']');
         $removeUserStatus = Hash::extract($spayc->joined_spayc, '{n}[user_id='.$data['user_id'].']');
         if(empty($currentUserStatus[0]) || empty($removeUserStatus[0])){
-            $this->restException(['status'=>'failed','message'=>__('User is not member of this spayc.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('User is not member of this warp.')], 400);
         }
         $currentUserStatus = $currentUserStatus[0];
         $removeUserStatus = $removeUserStatus[0];
@@ -513,19 +513,19 @@ class JoinSpaycsController extends AppController {
                 ])
                 ->where(['Spaycs.id'=>$data['spayc_id']]);
         if($spaycs->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>__('Spayc is no longer available.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Warp is no longer available.')], 400);
         }
         $spayc = $spaycs->first();       
         
         if(($spayc->group_type == 'Public')){
-            $this->restException(['status'=>'failed','message'=>__('Spayc must be private only.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Warp must be private only.')], 400);
         }
         $currentUserStatus = Hash::extract($spayc->joined_spayc, '{n}[user_id='.$user['id'].']');
         $requestedUserStatus = Hash::extract($spayc->joined_spayc, '{n}[user_id='.$data['user_id'].']');
         if(empty($currentUserStatus[0])){
-            $this->restException(['status'=>'failed','message'=>__('You are not member of this spayc.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('You are not member of this warp.')], 400);
         }elseif(empty($requestedUserStatus[0])){
-            $this->restException(['status'=>'failed','message'=>__('User is not member of this spayc.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('User is not member of this warp.')], 400);
         }
         $currentUserStatus = $currentUserStatus[0];
         $requestedUserStatus = $requestedUserStatus[0];
@@ -536,13 +536,13 @@ class JoinSpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('You have no rights to accept or decline a user which has same level of access.')], 400);
         }
         if(($requestedUserStatus['status'] == 'Joined')){
-            $this->restException(['status'=>'failed','message'=>__('User already joined with this spayc.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('User already joined with this warp.')], 400);
         }       
         if(($requestedUserStatus['status'] != 'Pending')){
             $this->restException(['status'=>'failed','message'=>__('Only pending user will be accepted.')], 400);
         }       
         if($requestedUserStatus['status'] == $data['status']){
-            $this->restException(['status'=>'failed','message'=>__('User has alreadyd '. strtolower($data['status']).' with this spayc.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('User has alreadyd '. strtolower($data['status']).' with this warp.')], 400);
         }
       
         $requestedMatrixUser = TableRegistry::get('Api.Users')->get($requestedUserStatus['user_id'],['fields'=>['matrix_user_id','matrix_access_token']]);

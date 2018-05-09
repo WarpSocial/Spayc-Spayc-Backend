@@ -66,15 +66,15 @@ class AdvertisementTable extends Table {
         $validator
                 ->requirePresence('name', 'create', __('Name key is missing.'))
                 ->maxLength('name', 255, 'Name should not exceed more then 255 characters.')
-                ->notEmpty('name', __('Spayc name is required.'))
-                ->notBlank('name', __('Spayc name is required.'));
+                ->notEmpty('name', __('Warp name is required.'))
+                ->notBlank('name', __('Warp name is required.'));
 //        $validator
 //                ->requirePresence('price', 'create', __('Price key is missing.'))
 //                ->notEmpty('price', __('Price is required.'));
 
         $validator
-                ->requirePresence('spayc_id', 'create', __('Spayc key is missing.'))
-                ->notEmpty('spayc_id', __('Spayc is required.'));
+                ->requirePresence('spayc_id', 'create', __('Warp key is missing.'))
+                ->notEmpty('spayc_id', __('Warp is required.'));
 
 //        $validator
 //                ->requirePresence('description', 'create', __('Description key is missing.'))

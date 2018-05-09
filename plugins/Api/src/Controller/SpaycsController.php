@@ -71,6 +71,9 @@ class SpaycsController extends AppController {
         $items->set('user_id', $this->Auth->user('id'));
         if (!$items->errors()) {
             if($this->Spaycs->save($items)) {
+                $items->job_type = 'new-spayc';
+                $items->created_duration = Utils::toClient($items->created);
+                TableRegistry::get('Queue.QueuedJobs')->createJob('Generic',$items->toArray());
                 //Joined the invite to the room//
                 $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
                 if(!empty($items['description'])) {
@@ -79,7 +82,7 @@ class SpaycsController extends AppController {
                 $items->created = Utils::toClient($items->created);
                 $items->modified = Utils::toClient($items->modified);
                 $this->response->statusCode(201);
-                $response = ['status'=>'success','message'=>__('Your spayc '.ucfirst($data['name']).', has been created.'),'data'=>$items];
+                $response = ['status'=>'success','message'=>__('Your warp '.ucfirst($data['name']).', has been created.'),'data'=>$items];
                 /*Event to bind to update the set upload room image */
                 $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
                     'options' => [
@@ -90,10 +93,10 @@ class SpaycsController extends AppController {
                 ]);
                 EventManager::instance()->dispatch($event);
             }else{
-                $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be saved. Please, try again.')], 400);
+                $this->restException(['status'=>'failed', 'message'=>__('The warp could not be saved. Please, try again.')], 400);
             }
         } else {
-            $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be saved. Please, try again.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('The warp could not be saved. Please, try again.')], 400);
         }
         $this->set($response);
     }
@@ -120,18 +123,18 @@ class SpaycsController extends AppController {
         $entity->where($this->Spaycs->spaycPk($data['parent_matrix_room_id']));
         $entity->where(['group_type !='=>'trusted_private']);        
         if($entity->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>__('Parent spayc is no longer available.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Parent warp is no longer available.')], 400);
         }
         
         $parentObj = $entity->first();
         if(!empty($parentObj->parent_id)){
-            $this->restException(['status'=>'failed','message'=>__('Spayc inside subspayc is not allowed.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Warp inside subwarp is not allowed.')], 400);
         }
         if(empty($parentObj->joined_spayc)){
             $this->restException(['status'=>'failed','message'=>__('You don\'t have sufficient right to create subspace.')], 400);
         }
         if(!empty($parentObj->parent_id)){
-            $this->restException(['status'=>'failed','message'=>__('Not allowd to create subspayc of subspayc.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Not allowd to create subwarp of subwarp.')], 400);
         }
         $data['parent_id'] = $parentObj->id;
         $data['start_date'] = $parentObj->start_date;
@@ -166,7 +169,7 @@ class SpaycsController extends AppController {
                 }
                 $this->response->statusCode(201);
                 $data['id'] = $items->id;
-                $response = ['status'=>'success','message'=>__('SubSpayc Created Successfully'),'data'=>$data];
+                $response = ['status'=>'success','message'=>__('Subwarp Created Successfully'),'data'=>$data];
                 /*Event to bind to update the set upload room image */
                 $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
                     'options' => [
@@ -239,10 +242,10 @@ class SpaycsController extends AppController {
                 ]);
                 EventManager::instance()->dispatch($event);*/
             } else {
-                $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be saved. Please, try again.')], 400);
+                $this->restException(['status'=>'failed', 'message'=>__('The warp could not be saved. Please, try again.')], 400);
             }
         } else {
-            $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be saved. Please, try again.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('The warp could not be saved. Please, try again.')], 400);
         }
         $this->set($response);
     }
@@ -367,7 +370,7 @@ class SpaycsController extends AppController {
         $data['spaycs'] = [];
         if(!$spaycs->isEmpty()) {
             $data['spaycs'] = $spaycs->toArray();
-            $response = ['status'=>'success','message'=>__('Spayc lists.'), 'data'=>$data];
+            $response = ['status'=>'success','message'=>__('Warp lists.'), 'data'=>$data];
         } else {
             $this->response->statusCode(404);
             $response = ['status'=>'failed','message'=>__('Record not found.')];
@@ -391,12 +394,12 @@ class SpaycsController extends AppController {
         $user = $this->Auth->user();
         $data['user_id'] = $user['id'];
         if(empty($data['spayc_id'])) {
-            $this->restException(['status'=>'failed','message'=>__('Spayc id is required fields.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Warp id is required fields.')], 400);
         }
         $data['spayc_id'] = ApiHasher::decrypt($data['spayc_id']);
         $spaycs = TableRegistry::get('Api.Spaycs')->find('all',['fields'=>['id','name','image','matrix_room_id','user_id']])->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
         if($spaycs->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>__('This spayc is no longer exist.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('This warp is no longer exist.')], 400);
         }
         $spayc = $spaycs->first();
         $friend = TableRegistry::get('Api.FriendRequest')->myFriend($user['id'],$spayc->user_id);
@@ -456,11 +459,11 @@ class SpaycsController extends AppController {
         $data['user_id'] = $user['id'];
         
         if(empty($data['spayc_id'])) {
-            $this->restException(['status'=>'failed','message'=>__('Spayc id is required fields.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Warp id is required fields.')], 400);
         }
         $spaycs = TableRegistry::get('Api.Spaycs')->find()->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
         if($spaycs->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>__('Invalid spayc id.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Invalid warp id.')], 400);
         }
         $spayc = $spaycs->first();
         $entities = $scModel->find('all',['field'=>['id','user_id','spayc_id','status']])->where(['spayc_id'=>$spayc->id,'user_id'=>$data['user_id']]);      
@@ -493,7 +496,7 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
         if(empty($this->request->query('id'))) {
-            $this->restException(['status'=>'failed', 'message'=>__('Spayc id is required field.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('Warp id is required field.')], 400);
         }
         $lat = $this->request->getQuery('latitude',null);
         $long = $this->request->getQuery('longitude',null);
@@ -508,7 +511,7 @@ class SpaycsController extends AppController {
         
         $exists = $this->Spaycs->exists(['OR'=>['matrix_room_id'=>$id,'id'=>$id]]);
         if(!$exists) {
-            $this->restException(['status'=>'failed', 'message'=>__('This spayc is no longer exist.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('This warp is no longer exist.')], 400);
         }
         $userId = $this->Auth->user('id');
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Accepted');
@@ -585,12 +588,12 @@ class SpaycsController extends AppController {
         if(!$spayc->isEmpty()) {
             $data = $spayc->first();
             if($data['joined_spayc_status'] == 'Banned'){
-                $this->restException(['status'=>'failed','message'=>__('You have banned with this spayc')],400);
+                $this->restException(['status'=>'failed','message'=>__('You have banned with this warp')],400);
             }
         } else {
             $this->response->statusCode(404);
         }
-        $response = ['status'=>'success', 'message'=>__('Spayc Details.'), 'data'=>$data];
+        $response = ['status'=>'success', 'message'=>__('Warp Details.'), 'data'=>$data];
         $this->set($response);
     }
 
@@ -639,7 +642,7 @@ class SpaycsController extends AppController {
                 
         $entities->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
         if($entities->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>__('Invalid spayc id.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Invalid warp id.')], 400);
         }
         
         $entity = $entities->first();
@@ -694,7 +697,7 @@ class SpaycsController extends AppController {
             $items['modified'] = Utils::toClient($items['modified']);
             $items['start_date']=  Utils::toClient($items['start_date']);
             $items['end_date'] = Utils::toClient($items['end_date']);
-            $response = ['status'=>'success','message'=>__('The spayc has been updated successfully.'),'data'=>$items];
+            $response = ['status'=>'success','message'=>__('The warp has been updated successfully.'),'data'=>$items];
             /*Event to bind to update the set upload room image */
             $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
                 'options' => [
@@ -705,7 +708,7 @@ class SpaycsController extends AppController {
             ]);
             EventManager::instance()->dispatch($event);
         }else{
-            $this->restException(['status'=>'failed', 'message'=>__('The spayc could not be updated. Please, try again.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('The warp could not be updated. Please, try again.')], 400);
         }
         $this->set($response);        
     }
@@ -771,9 +774,9 @@ class SpaycsController extends AppController {
                      ->where(['spayc_id IN' => $child]);
             TableRegistry::get('Api.SpaycPromotion')->deleteAll(['promotion_id IN' => $ids]);
             TableRegistry::get('Api.Promotions')->deleteAll(['spayc_id IN' => $child]);
-            $response = ['status'=>'success','message'=>__('The spayc has been deleted.')];
+            $response = ['status'=>'success','message'=>__('The warp has been deleted.')];
         } else {
-            $response = ['status'=>'failed','message'=>__('Spayc could not be deleted.')];
+            $response = ['status'=>'failed','message'=>__('Warp could not be deleted.')];
         }
          $this->set($response);
     }
@@ -803,14 +806,14 @@ class SpaycsController extends AppController {
         }
         $user = $this->Auth->user();
         if($this->Spaycs->JoinedSpayc->exists(['user_id'=>$user['id'],'status'=>BANNED,'spayc_id'=>$spaycId])){
-            $this->restException(['status'=>'failed','message'=>__('Your status with this spayc has been banned.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Your status with this warp has been banned.')], 400);
         }
         $query = $this->Spaycs->spaycMember($spaycId,$status,$page,$limit);        
         if(empty($query)){
 //            $this->response->statusCode(204);
-            $response = ['status'=>'success', 'message'=>__('List of spayc member.'), 'data'=>[]];
+            $response = ['status'=>'success', 'message'=>__('List of warp member.'), 'data'=>[]];
         }else{
-            $response = ['status'=>'success', 'message'=>__('List of spayc member.'), 'data'=>$query];
+            $response = ['status'=>'success', 'message'=>__('List of warp member.'), 'data'=>$query];
         }        
         $this->set($response);
     }

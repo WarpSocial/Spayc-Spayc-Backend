@@ -35,7 +35,15 @@ class PlansController extends AppController {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
         }
         $items['categories'] = TableRegistry::get('Api.SpaycCategories')->allCategories();
-        $items['plans'] = TableRegistry::get('Api.Plans')->allPlans();
+        $plans = TableRegistry::get('Api.Plans')->allPlans();
+        foreach($plans as $plan){
+            if($plan->type == 'advertisement'){
+                $items['plans'][] = $plan;
+            }else{
+                $items['promotional_plan'][]  = $plan;
+            }
+            
+        }
         $response = ['status'=>'success','Message'=>'List of meta-data details.','data'=>$items];
         $this->set($response);
     }
@@ -83,14 +91,14 @@ class PlansController extends AppController {
             }            
         }
         if(!$pspayc){
-             $this->restException(['status'=>'failed', 'message'=> __('Promotional Spayc is no longer available.')], 400);
+             $this->restException(['status'=>'failed', 'message'=> __('Promotional warp is no longer available.')], 400);
         }
         if(count($wherePromote) != count(explode(',',$data['spayc_id']))){
-            $this->restException(['status'=>'failed', 'message'=> __('Some of spayc id is no longer available.')], 400);
+            $this->restException(['status'=>'failed', 'message'=> __('Some of warp id is no longer available.')], 400);
         }
         
         
-        $plan = $this->Plans->get($data['plan_id']);
+        $plan = $this->Plans->find()->where(['OR'=>['id'=>$data['plan_id'],'app_plan_id'=>$data['plan_id']]])->first();
         
         $purchase = [
             'plan_id'=>$data['plan_id'],
@@ -155,7 +163,7 @@ class PlansController extends AppController {
         $data = $this->request->getData();
         $user = $this->Auth->user();
          if(!isset($data['spayc_id'])) {
-            $this->restException(['status' => 'failed', 'message' => __('Spayc ID field required.')], 400);
+            $this->restException(['status' => 'failed', 'message' => __('Warp ID field required.')], 400);
         }
          if(!isset($data['cycle'])) {
             $this->restException(['status' => 'failed', 'message' => __('Cycle field required.')], 400);
@@ -350,7 +358,7 @@ class PlansController extends AppController {
         $data = $this->request->getData();
         $user = $this->Auth->user();
          if(!isset($data['spayc_id'])) {
-            $this->restException(['status' => 'failed', 'message' => __('Spayc ID field required.')], 400);
+            $this->restException(['status' => 'failed', 'message' => __('Warp ID field required.')], 400);
         }
         
         

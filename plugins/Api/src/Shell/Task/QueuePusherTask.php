@@ -33,13 +33,13 @@ class QueuePusherTask extends QueueTask {
     public function run(array $data, $jobId) {
         $push = new PushComponent(new ComponentRegistry());
         $items = TableRegistry::get('Api.Users')->pusherNotification($data,true);
-//        foreach($data['notification']['devices'] as $key=>$device) {
-//            if(!empty($device['pushkey']) && !empty($items['message'])) {
-//                $items['device_token'] = $device['pushkey'];
-//                $items['date_time'] = date('m-d-Y H:i:s',$device['pushkey_ts']);
-//                $push->sendOnIOS($items);
-//            }
-//        }
+        foreach($data['notification']['devices'] as $key=>$device) {
+            if(!empty($device['pushkey']) && !empty($items['message'])) {
+                $items['device_token'] = $device['pushkey'];
+                $items['date_time'] = date('m-d-Y H:i:s',$device['pushkey_ts']);
+                $push->sendOnIOS($items);
+            }
+        }
         $this->hr();
         $this->out('Proccessing to send pusher notification');
         $this->hr();

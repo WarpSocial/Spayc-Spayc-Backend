@@ -139,7 +139,7 @@ class SpaycsTable extends Table {
         $validator
                 ->requirePresence('name','create', __('Name key is missing.'))
                 ->maxLength('name', 255,'Name text is too long.')
-                ->notEmpty('name',__('Spayc name is required.'));
+                ->notEmpty('name',__('Warp name is required.'));
 
         $validator
                 ->maxLength('location', 255,__('Location test is too long.'))
@@ -230,9 +230,9 @@ class SpaycsTable extends Table {
         $validator
                 ->requirePresence('passcode', function($context){
                     return (isset($context['data']['group_type']) && ($context['data']['group_type'] =='Private'));
-                },__('Passcode is required for private spayc.'))
+                },__('Passcode is required for private warp.'))
                 ->maxLength('passcode', 30,__('Max 30 character is allowed for passcode.'))
-                ->notEmpty('passcode',__('Passcode is required for private spayc.'),function($context){             
+                ->notEmpty('passcode',__('Passcode is required for private warp.'),function($context){             
                     return (isset($context['data']['group_type']) && ($context['data']['group_type'] =='Private'));
                 });
 
@@ -310,8 +310,8 @@ class SpaycsTable extends Table {
         $validator
                 ->requirePresence('name','create', __('Name key is missing.'))
                 ->maxLength('name', 255,'Name text is too long.')
-                ->notEmpty('name',__('Spayc name is required.'))
-                ->notBlank('name',__('Spayc name is required.'));
+                ->notEmpty('name',__('Warp name is required.'))
+                ->notBlank('name',__('Warp name is required.'));
 
         $validator
                 ->requirePresence('group_type', 'create',__('Group key is missing.'))
@@ -321,12 +321,12 @@ class SpaycsTable extends Table {
         $validator
                 ->requirePresence('passcode', function($context){
                     return (isset($context['data']['group_type']) && ($context['data']['group_type'] =='Private'));
-                },__('Passcode is required for private sub-spayc.'))
+                },__('Passcode is required for private sub-warp.'))
                 ->maxLength('passcode', 30,__('Max 30 character is allowed for passcode.'))
                 ->notBlank('passcode',__('Passcode is required in case of private group type.'),function($context){                    
                      return (isset($context['data']['group_type']) && ($context['data']['group_type'] =='Private'));
                 })        
-                ->notEmpty('passcode',__('Passcode is required for private spayc.'),function($context){             
+                ->notEmpty('passcode',__('Passcode is required for private warp.'),function($context){             
                     return (isset($context['data']['group_type']) && ($context['data']['group_type'] =='Private'));
                 });
 

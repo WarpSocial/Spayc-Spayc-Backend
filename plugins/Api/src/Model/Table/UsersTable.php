@@ -685,8 +685,8 @@ class UsersTable extends Table {
     }
     public function ValidatechangeRole($data){
         $validator = new Validator();
-        $validator->requirePresence('spayc_id', true,__('Spayc id key is missing.'))
-                ->notEmpty('spayc_id', __('Please enter Spayc id.'));
+        $validator->requirePresence('spayc_id', true,__('Warp id key is missing.'))
+                ->notEmpty('spayc_id', __('Please enter warp id.'));
         $validator->requirePresence('user_id', true,__('User id key is missing.'))
                 ->notEmpty('user_id', __('Please enter User id.'));
         $validator->requirePresence('user_id', true,__('User id key is missing.'))
@@ -732,6 +732,7 @@ class UsersTable extends Table {
             return false;
             
         }
+        \Cake\Log\Log::info($data);
         $msgType = $data['notification']['content']['msgtype'];
         $items['spayc_image'] = null;
         if(!empty($spayc)){
@@ -751,15 +752,14 @@ class UsersTable extends Table {
                 $items['notification_type'] = $notify->type;
             }
         }else{
-            $items['message'] = !empty($data['notification']['content']['body'])?$data['notification']['content']['body']:'';
-            $items['notification_type'] = 'inbox';
-        }
-        if($comment){
-            $spaycEntity = TableRegistry::get('Api.Spaycs')->findByMatrixRoomId($items['matrix_room_id'])->select(['id'])->first();
-            if(!empty($spaycEntity)){            
-                TableRegistry::get('Api.Comments')->spaycActivities($spaycEntity->id,$items);
+            $notify = TableRegistry::get('Api.Notifications')->message('someone-commented');
+             if(!empty($notify)){
+                $items['message'] = str_replace(["<USERNAME>","<COMMENT>","<SpaycName>"],[ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body'],ucwords($data['notification']['room_name'])], $notify->message);
+                $items['notification_type'] = $notify->type;
             }
+           
         }
+        TableRegistry::get('Api.Comments')->spaycActivities($spayc->id,$items);
         return $items;
     }
     
