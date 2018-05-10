@@ -269,6 +269,7 @@ class PlansController extends AppController {
                         'spayc.group_type',
                         'spayc.start_date',
                         'spayc.end_date',
+                        'joined_spayc_status'=>'joined_spayc.status',
                         ]])
                 ->join(
                         [
@@ -295,6 +296,16 @@ class PlansController extends AppController {
                             'type' => 'INNER',
                             'conditions' => [
                                 'spayc.id = promotions.spayc_id',
+                            ]
+                        ]
+                )->join(
+                        [
+                            'table' => 'joined_spayc',
+                            'type' => 'LEFT',
+                            'conditions' => [
+                                'joined_spayc.user_id'=>$user['id'],
+                                'spayc.id = joined_spayc.spayc_id',
+                                "joined_spayc.status != 'BANNED'",
                             ]
                         ]
                 )
@@ -404,6 +415,7 @@ class PlansController extends AppController {
                         'spayc.group_type',
                         'spayc.start_date',
                         'spayc.end_date',
+                        'joined_spayc_status'=>'joined_spayc.status',
                         
                         ]])
                 ->join(
@@ -431,6 +443,16 @@ class PlansController extends AppController {
                             'type' => 'INNER',
                             'conditions' => [
                                 'spayc.id = promotions.spayc_id',
+                            ]
+                        ]
+                )->join(
+                        [
+                            'table' => 'joined_spayc',
+                            'type' => 'LEFT',
+                            'conditions' => [
+                                'joined_spayc.user_id'=>$user['id'],
+                                'spayc.id = joined_spayc.spayc_id',
+                                "joined_spayc.status != 'BANNED'",
                             ]
                         ]
                 )

@@ -86,6 +86,7 @@ define('CAKE', CORE_PATH . 'src' . DS);
 define('ACTIVE','Active');
 define('INACTIVE','Inactive');
 define('UNBANNED','Unbanned');
+define('UNFRIEND','Unfriend');
 define('BANNED','Banned');
 define('JOINED','Joined');
 

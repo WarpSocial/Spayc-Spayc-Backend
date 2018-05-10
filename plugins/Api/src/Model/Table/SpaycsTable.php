@@ -245,7 +245,9 @@ class SpaycsTable extends Table {
                 ->allowEmpty('image')
                 ->add('image','isfile',[
                     'rule'=>function($value,$context){
-                        if(!is_array($value) && !is_file($value)){
+                        if(filter_var($value, FILTER_VALIDATE_URL)){
+                            return true;
+                        }elseif(!is_array($value) && !is_file($value)){
                             return false;
                         }else{
                             return true;
@@ -258,10 +260,19 @@ class SpaycsTable extends Table {
                     'rule' => ['extension', ['jpeg', 'png','jpg']],
                     'message'=>__('Please select only jpg,jpeg,png.')
                 ])
-                ->add('image','size',[
-                    'rule' => ['fileSize', '<=',\Cake\Core\Configure::read('maxupload')],
-                    'message'=>__('Image size must be less than '.\Cake\Core\Configure::read('maxupload').'.')
-                ]);
+                ->add('image', 'size', [
+                    'rule' => function($value,$context){                    
+                        if(!empty($value['error']) && ($value['error'] == 0)){
+                            $sizeLimit =\Cake\Utility\Text::parseFileSize(Configure::read('maxupload'));
+                            //$sizeLimit = 2536;//4793432
+                            return (bool)($value['size'] <= $sizeLimit );
+                        }else{
+                            return true;
+                        }
+                       //$file = new \Cake\Filesystem\File($value['tmp_name'])
+                    },
+                    'message' => __('Image size must be less than ' . Configure::read('maxupload'). '.')
+        ]);
         $validator
                 ->allowEmpty('longitude')
                 //->requirePresence('longitude', 'create',__('Longitude key is missing.'))
@@ -647,6 +658,7 @@ class SpaycsTable extends Table {
                     'type', 
                     'modified', 
                     'spayc_category_id',
+//                    'parent_id',
                     'latitude','longitude'])
                 ->where(["$distanceField <=" => $distance, 'Spaycs.status'=>'Active',
                     'Spaycs.group_type !='=>'trusted_private', 
@@ -725,6 +737,8 @@ class SpaycsTable extends Table {
                     $status = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.'].status');
                 }
                 $row['is_joined'] = !empty($status[0])?true:false;
+//                $row['spayc_type'] = ($row['parent_id']==NULL || $row['parent_id']=="" )?"Spayc":"SubSpayc";
+//                unset($row['parent_id']);
                 $row['joined_users'] = !empty($row['joined_spayc'])?count($totalJoined):0;
                 unset($row['joined_spayc']);
                 if(!empty($row['subscribed_users'])) {

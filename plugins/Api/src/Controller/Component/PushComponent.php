@@ -4,6 +4,7 @@
 namespace Api\Controller\Component;
 
 use Cake\Controller\Component;
+use Cake\Mailer\MailerAwareTrait;
 use Cake\Controller\ComponentRegistry;
 use Cake\Network\Http\Client;
 use Cake\Core\Configure;
@@ -13,6 +14,7 @@ use Cake\I18n\Time;
 
 
 class PushComponent extends Component {
+    use MailerAwareTrait;
 
     public $SnsClient;
     public $snsConfig;
@@ -189,10 +191,11 @@ class PushComponent extends Component {
                     [
                         'UserLogs.user_id',
                         'UserLogs.device_id',
+                        'UserLogs.device_token',
                         'users.email',                        
                         'users.display_name',                        
                         ]])
-                    ->select(['id', 'user_id', 'device_id'])
+                    ->select(['id', 'user_id', 'device_id','device_token'])
                     ->join(
                 [
                     'table' => 'users',
@@ -222,9 +225,9 @@ class PushComponent extends Component {
             //Send Email
             }
             
-            if(strlen($deviceId->device_id)<64) {
-                return ['status'=>'failed','message'=>"Device ID Characters not Valid"];
-            }
+//            if(strlen($deviceId->device_token)<64) {
+//                return ['status'=>'failed','message'=>"Device ID Characters not Valid"];
+//            }
             if($notificationType->slug == 'spayc-start-event' || $notificationType->slug == 'spayc-end-event') {
                 $notificationType->message = str_replace("<WarpName>", ucwords($data['spayc_name']), $notificationType->message);
             }
@@ -233,12 +236,13 @@ class PushComponent extends Component {
             //$userInputTime = new \DateTime("now", new \DateTimeZone('America/New_York') );
             //echo $userInputTime->format('Y-m-d H:i:s');
             $data['time'] =  $userInputTime->format("m-d-Y H:i:s");
-            $data['device_token'] = $deviceId->device_id;
+            $data['device_token'] = $deviceId->device_token;
             $data['notification_type'] = $notificationType->type;
+            $data['message'] = $notificationType->message;
 //            pr($data);die;
             $sent = false;
             if(!empty($data['device_token'])) {
-                $sent = $this->sendOnIOS($data, $notificationType->message);
+                $sent = $this->sendOnIOS($data);
             }
             return $sent;
         }

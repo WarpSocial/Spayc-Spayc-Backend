@@ -708,4 +708,57 @@ class UsersTable extends Table {
         }
     }
     
+    /**
+     * pusherNotification method to manage the chat data
+     * 
+     * @param Array $data array of object containing pusher data
+     * @return Array|false either array containig push data or false
+     */
+    public function pusherNotification($data = []){
+        if(empty($data['notification']['devices'])) { 
+            \Cake\Log\Log::info(__('Device token is not available.'));
+            return false;
+        }
+        
+        $items = ['message'=>'','event_id'=>''];
+        if(!empty($data['notification']['content']['eventId'])){
+            $items['event_id'] = $data['notification']['content']['eventId'];
+        }elseif(!empty($data['notification']['event_id'])){
+            $items['event_id'] = $data['notification']['event_id'];
+        }
+        $spayc  = TableRegistry::get('Api.Spaycs')->findByMatrixRoomId($data['notification']['room_id'])->first();
+        if(empty($data['notification']['content']['msgtype'])){
+            \Cake\Log\Log::info(['message'=>__('Pusher didn\'t get messagetype.'),'data'=>$data]);
+            return false;
+            
+        }
+        $msgType = $data['notification']['content']['msgtype'];
+        $items['spayc_image'] = null;
+        if(!empty($spayc)){
+            $items['spayc_image'] = $spayc->image;
+        }
+        $items['matrix_room_id'] = $data['notification']['room_id'];        
+        if($msgType == 'm.likeMessage'){
+            $notify = TableRegistry::get('Api.Notifications')->message('a-user-liked-your-comment');
+            if(!empty($notify)){
+                $items['message'] = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);
+                $items['notification_type'] = $notify->type;
+            }
+        }if($msgType == 'm.replyText'){
+            $notify = TableRegistry::get('Api.Notifications')->message('someone-replyed-to-your-comment');
+            if(!empty($notify)){
+                $items['message'] = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);
+                $items['notification_type'] = $notify->type;
+            }
+        }else{
+            $items['message'] = !empty($data['notification']['content']['body'])?$data['notification']['content']['body']:'';
+            $items['notification_type'] = 'inbox';
+        }
+        $spaycEntity = TableRegistry::get('Api.Spaycs')->findByMatrixRoomId($items['matrix_room_id'])->select(['id'])->first();
+        if(!empty($spaycEntity)){            
+            TableRegistry::get('Api.Comments')->spaycActivities($spaycEntity->id,$items);
+        }
+        return $items;
+    }
+    
 }

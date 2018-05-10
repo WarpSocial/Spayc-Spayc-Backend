@@ -507,6 +507,11 @@ class UsersController extends AppController {
         $this->set($response);
     }
     
+     /**
+     * resetPassword to reset the user password
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+    */
     public function resetPassword($token, $email) {
         $status = 'success';
         $done = $this->request->getQuery('status');
@@ -556,6 +561,13 @@ class UsersController extends AppController {
         $this->render('Users/reset_password',false);
     }
     
+    /**
+     * changePassword method to change the user password
+     *
+     * @param string|null $id User id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     */
     public function changePassword() {
         if (!$this->request->is('post')) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
@@ -684,19 +696,6 @@ class UsersController extends AppController {
                 $this->restException(['status'=>'failed', 'message'=>__('User has been blocked.')], 400);
             }
         }
-//         if(in_array($data['friend_status'], ['Decline','Unfriend'])){
-//            if($frObj->deleteAll(['OR'=>[
-//                ['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']],
-//                ['requested_by' => $data['friend_id'],'requested_to'=>$loggedUser['id']]
-//            ]])){
-//                $this->restException(['status'=>'success', 'message'=>Configure::read('requestMsg.'.$data['friend_status'])]);
-//            }
-//        }
-//        $requestedFrnd = $frObj->find()->Where(['OR'=>[
-//            ['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']],
-//            ['requested_by' => $data['friend_id'],'requested_to'=>$loggedUser['id']]
-//            ]]);
-        //debug($requestedFrnd->toArray());die;
         
         if($requestedFrnd->isEmpty()){
             $newObj = $frObj->newEntity();
@@ -773,7 +772,14 @@ class UsersController extends AppController {
         }
     }
     
-    
+    /**
+     * addFriend method to send the friend request
+     * 
+     * @param Integer $user_id Logged user id
+     * @param String $friend_status status of the friend like accepted or pending
+     * @return Object Json object containig http response and message
+     * 
+     */
     public function addFriend() {
         if (!$this->request->is(['post'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
@@ -865,7 +871,14 @@ class UsersController extends AppController {
             }
         }
     }
-    
+    /**
+     * requestAcceptDeclined method to accept or declined the request
+     * 
+     * @param Integer $user_id Logged user id
+     * @param String $friend_status status of the friend like accepted or pending
+     * @return Object Json object containig http response and message
+     * 
+     */
     public function requestAcceptDeclined() {
         if(!$this->request->is(['post'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
@@ -919,7 +932,14 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Failed to update friend status.')],400);
         }
     }
-    
+    /**
+     * blockFriend method to block the friend
+     * 
+     * @param Integer $user_id Logged user id
+     * @param String $friend_status status of the friend like accepted or pending
+     * @return Object Json object containig http response and message
+     * 
+     */
     public function blockFriend() {
         if(!$this->request->is(['post'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
@@ -1005,7 +1025,14 @@ class UsersController extends AppController {
             }
         }
     }
-    
+    /**
+     * unblockFriend method to unblock the friends
+     * 
+     * @param Integer $user_id Logged user id
+     * @param String $friend_status status of the friend like accepted or pending
+     * @return Object Json object containig http response and message
+     * 
+     */
     public function unblockFriend() {
         if(!$this->request->is(['post'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
@@ -1050,6 +1077,14 @@ class UsersController extends AppController {
         }
     }
     
+    /**
+     * unfriendRequest method to view the logged user friends
+     * 
+     * @param Integer $user_id Logged user id
+     * @param String $friend_status status of the friend like accepted or pending
+     * @return Object Json object containig http response and message
+     * 
+     */
     public function unfriendRequest() {
         if(!$this->request->is(['post'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
@@ -1094,6 +1129,14 @@ class UsersController extends AppController {
         }
     }
     
+    /**
+     * setFriendResponse method to accept,block or decline the request
+     * 
+     * @param Integer $user_id Logged user id
+     * @param Object $_POST containing friend id and status
+     * @return Object Json object containig http response and message
+     * 
+     */
     public function setFriendResponse() {
         if (!$this->request->is(['put'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
@@ -1152,6 +1195,14 @@ class UsersController extends AppController {
         }
     }
     
+    /**
+     * getFriends method to view the logged user friends
+     * 
+     * @param Integer $user_id Logged user id
+     * @param String $friend_status status of the friend like accepted or pending
+     * @return Object Json object containig http response and message
+     * 
+     */
     public function getFriends() {
         if (!$this->request->is(['get'])) {
             $this->restException(['status'=>'failed','message'=>__('Method not allowed.')], 405);
@@ -1169,30 +1220,19 @@ class UsersController extends AppController {
             $this->restException(["status"=>"success",'message'=>__("Record not found")],204);
         }
         $friends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username','Users.display_name', 'Users.matrix_user_id', 'Users.matrix_access_token'], 'conditions'=>['Users.id IN'=>$friend, 'Users.id !='=>$userId, 'Users.status'=>'Active']]);
-        $friends->contain([
-            /*'Requestedby' => function($q) use($userId) {
-                return $q->select(['Requestedby.id','Requestedby.requested_by', 'Requestedby.requested_status', 'Requestedby.requested_to', 'Requestedby.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
-            },
-            'Requestedto' => function($q) use($userId) {
-                return $q->select(['Requestedto.id', 'Requestedto.requested_by', 'Requestedto.requested_to', 'Requestedto.requested_status', 'Requestedto.matrix_room_id'])->Where([['OR'=>['requested_by'=>$userId, 'requested_to'=>$userId]]]);
-            },*/
+        $friends->contain([          
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
             }
         ]);
         $friends->formatResults(function (\Cake\Collection\CollectionInterface $results) use($loggedUser) {
-            return $results->map(function ($row) use($loggedUser) {
-                /*$row->friend = !empty($row['requestedto'][0])? $row['requestedto'][0] : [];
-                $row->friend = !empty($row['requestedby'][0]) && empty($row->friend)? $row['requestedby'][0] : $row->friend;
-                $row['matrix_room_id'] = !empty($row['friend']['matrix_room_id'])?$row['friend']['matrix_room_id']:null;
-                unset($row['friend']['matrix_room_id']);*/
+            return $results->map(function ($row) use($loggedUser) {                
                 $uId = ApiHasher::decrypt($row['id']);
                 $row['friend'] = TableRegistry::get('Api.FriendRequest')->myFriend($uId, $loggedUser['id']);
                 $row['matrix_room_id'] = !empty($row['friend']['matrix_room_id'])?$row['friend']['matrix_room_id']:null;
                 unset($row['friend']['matrix_room_id']);
                 $row->image_url = !empty($row['user_images'][0]['image_url'])?$row['user_images'][0]['image_url']:'';
-                //unset($row['requestedto']);
-                //unset($row['requestedby']);
+                
                 unset($row['user_images'],$row['matrix_access_token']);
                 return $row;
             });
@@ -1219,6 +1259,14 @@ class UsersController extends AppController {
         $this->set($response);
     }
     
+    /**
+     * viewProfile method to view the logged user profile
+     * 
+     * @param Integer $id Logged user id
+     * @return Object Json object containig http response and message
+     * 
+     */
+    
     public function viewProfile($id = null) {
         if(!$this->request->is(['get'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
@@ -1234,9 +1282,7 @@ class UsersController extends AppController {
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.id', 'UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile', 'UserImages.order_index']);
             },
-//            'JoinedSpayc'=>function($q) {
-//                return $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id']);
-//            },
+
             'NotificationTo'=>function($q) {
                 return $q->select(['NotificationTo.requested_to', 'unread_notification'=>$q->func()->count('NotificationTo.id')])->group(['NotificationTo.requested_to'])->where(['NotificationTo.status'=>'Unread']);
             },
@@ -1266,6 +1312,13 @@ class UsersController extends AppController {
         $response = ['status'=>'success', 'message'=>__('User profile.'), 'data'=> $user->first()];
         $this->set($response);
     }
+    
+    /**
+     * getFacebookFriends the the list of facebook friends from facebook portal
+     * 
+     * @param Object $_GET get the list of friend details
+     * @return Object Response json object
+     */
     
     public function getFacebookFriends() {
         if (!$this->request->is(['get'])) {
@@ -1316,64 +1369,25 @@ class UsersController extends AppController {
         $this->set($response);
     }
     
+    /**
+     * pushNotification method to get matrix notify data and send notification by using Queue workers
+     * 
+     * @param Request Object $_POST pusher data in post
+     * @return Object Blank Object
+     * 
+     */
+    
     public function pushNotification() {
         $blankObj = new \stdClass();
+        
         if(!$this->request->is(['post'])) {
             $this->restException($blankObj); 
         }
         //Log::info(json_encode($pushData,JSON_PRETTY_PRINT));
         $data = $this->request->getData();
-        if(!empty($data['notification']['content']['msgtype'])){
-            $msgType = $data['notification']['content']['msgtype'];
-        }else{
-            $this->restException($blankObj); 
-        }
-        //pr($data['notification']);die;
-        $pushData['post_value'] = json_encode($data);
-        $pushData['created'] = date("Y-m-d H:i:s");
-        Log::info(json_encode($pushData,JSON_PRETTY_PRINT));
-        $pusher = TableRegistry::get("Api.PusherData");
-        $push = $pusher->newEntity();
-        $entity = $pusher->patchEntity($push, $pushData,['validate'=>false]);
-        $pusher->save($entity);
-        if(empty($data['notification']['devices'])) { 
-            $this->restException($blankObj);  
-        }
-        $items = ['message'=>'','event_id'=>$data['notification']['content']['eventId']];
-        $spayc  = TableRegistry::get('Api.Spaycs')->findByMatrixRoomId($data['notification']['room_id'])->first();
-        if(!empty($spayc)){
-            $items['spayc_image'] = $spayc->image;
-        }
-        $items['matrix_room_id'] = $data['notification']['room_id'];        
-        if($msgType == 'm.likeMessage'){
-            $notify = TableRegistry::get('Api.Notifications')->message('a-user-liked-your-comment');
-            if(!empty($notify)){
-                $items['message'] = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);
-                $items['notification_type'] = $notify->type;
-            }
-        }if($msgType == 'm.replyText'){
-            $notify = TableRegistry::get('Api.Notifications')->message('someone-replyed-to-your-comment');
-            if(!empty($notify)){
-                $items['message'] = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);
-                $items['notification_type'] = $notify->type;
-            }
-        }else{
-            $items['message'] = !empty($data['notification']['content']['body'])?$data['notification']['content']['body']:'';
-            $items['notification_type'] = 'inbox';
-        }
-        $spaycEntity = TableRegistry::get('Api.Spaycs')->findByMatrixRoomId($items['matrix_room_id'])->select(['id'])->first();
-        if(!empty($spaycEntity)){            
-            TableRegistry::get('Api.Comments')->spaycActivities($spaycEntity->id,$items);
-        }        
-        foreach($data['notification']['devices'] as $key=>$device) {
-            if(!empty($device['pushkey']) && !empty($items['message'])) {
-                $items['device_token'] = $device['pushkey'];
-                $items['date_time'] = date('m-d-Y H:i:s',$device['pushkey_ts']);
-                Log::info($items);
-                $this->Push->sendOnIOS($items);
-            }
-        }
-        $this->restException($blankObj); 
+        //$this->Users->pusherNotification($data);
+        TableRegistry::get('Queue.QueuedJobs')->createJob('Pusher',$data);
+        $this->restException($blankObj);  
     }
     
     public function testPushnotification() {
@@ -1417,6 +1431,15 @@ class UsersController extends AppController {
         $this->set($response);
     }
     
+    /**
+     * getNotifications method to get the list of user notification
+     * 
+     * @param Int $limit no of record to retrieve
+     * @param Int $page offset of pagination
+     * 
+     * @return Object json object of notification details
+     * 
+     */
     public function getNotifications() {
         if(!$this->request->is(['get'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
@@ -1467,6 +1490,14 @@ class UsersController extends AppController {
         $this->set($response);
     }
     
+    /**
+     * updateDeviceToken update the device token 
+     * 
+     * @param Bool $is_notify to keep the status of notification
+     * @param String $device_token device token
+     * 
+     * @return Object Json object containing the request message
+     */
     public function updateDeviceToken() {
         if(!$this->request->is(['post'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
@@ -1564,6 +1595,12 @@ class UsersController extends AppController {
         $this->set($response);
     }
     
+    /**
+     * readNotification to read the notification
+     * 
+     * @param Int $notification_ids id of notification
+     * @return Object Json object containing the request message
+     */
     public function readNotification() {
         if(!$this->request->is('post')) {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
@@ -1583,6 +1620,13 @@ class UsersController extends AppController {
         $response = ['status'=>'success','message'=>__('Notification read successfully.')];
         $this->set($response);
     }
+    
+    /**
+     * unreadNotification method to retrieve the list of unread notification
+     * 
+     * @param Int $id id of logged user
+     * @return Object Json object containing the request message
+     */
     
     public function unreadNotification($id = null) {
         if(!$this->request->is(['get'])) {

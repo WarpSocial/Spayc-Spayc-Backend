@@ -316,6 +316,13 @@ class MatrixComponent extends Component {
         return $response;
     }
     
+    /**
+     * setAvatarUrl to set the profile image url on matrix server
+     * 
+     * @param String $matrixuri matrix generated url for image
+     * @param Array $options containing matrix user id, access token and room id
+     * @return Bool true or false
+     */
     public function setAvatarUrl($matrixuri = null,$options){        
         if(empty($options['matrix_token'])){
             return;
@@ -370,6 +377,13 @@ class MatrixComponent extends Component {
         }        
     }
     
+    /**
+     * leaveRoom to leave from joined room
+     * 
+     * @param String $matrix_room_id matrix room id
+     * @param String $matrix_token user matrix access token
+     * @return Bool true or false
+     */
     public function leaveRoom($matrix_room_id = null,$matrix_token = null){
         if(empty($matrix_room_id) || empty($matrix_token)){
             return false;
@@ -391,6 +405,13 @@ class MatrixComponent extends Component {
             return true;
         }
     }
+    
+    /**
+     * TO JOINE THE MATRIXROOM
+     * @param sTRING $status like joined,pending
+     * @param String $matrix_room_id matrix room id
+     * @return BOOl true or false
+     */
     public function joinRoom($data = []){
         if(empty($data['status']) || empty($data['matrix_token']) || empty($data['matrix_room_id'])){
             return false;
@@ -426,7 +447,11 @@ class MatrixComponent extends Component {
             return false;
         }
     }
-    
+    /**
+     * banMember method to ban the user from the room
+     * @param Array $data include the matrix_user_id,matrix_token,matrix_room_id
+     * @param Bool true|false
+     */
     public function banMember($data = []) {
         if(empty($data['matrix_user_id']) || empty($data['matrix_token']) || empty($data['matrix_room_id'])){
             return false;
@@ -502,7 +527,6 @@ class MatrixComponent extends Component {
      * muteUnmute function to mute and unmute the user
      */
     public function muteUnmute($rule='mute',$matrixToken = null,$matrixRoomId=null){
-        return true;
         if(is_null($matrixToken) || is_null($matrixRoomId)){
             return false;
         }
@@ -567,7 +591,12 @@ class MatrixComponent extends Component {
             ];
         return $body;
     }
-    
+    /**
+     * deleteRoom to delete the all record which is associated with matrix room id
+     * 
+     * @param String $roomId matrix room id
+     * @return Bool true or false
+     */
     public function deleteRoom($roomId){
         $conn = \Cake\Datasource\ConnectionManager::get('matrix');
         $conn->transactional(function ($conn)use($roomId) {
