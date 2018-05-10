@@ -143,6 +143,7 @@ class SpaycsController extends AppController {
         $data['longitude'] = $parentObj->longitude;
         $data['type'] = $parentObj->type;
         $data['location'] = $parentObj->location;
+        $data['spayc_category_id'] = $parentObj->spayc_category_id;
         $items = $this->Spaycs->newEntity($data,['validate'=>false]);
         
         if($data['group_type'] == 'Public'){ /* in community no need to keep start or end date*/
@@ -268,7 +269,7 @@ class SpaycsController extends AppController {
         $lat = $this->request->getQuery('latitude',null);
         $long = $this->request->getQuery('longitude',null);
         $spaycs = $this->Spaycs->find();
-        $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id'])
+        $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.spayc_category_id'])
             ->where(['Spaycs.status'=>'Active','parent_id IS'=>null,'Spaycs.group_type !='=>'trusted_private'])
             ->contain([                    
                 'JoinedSpayc' => function($q) {
