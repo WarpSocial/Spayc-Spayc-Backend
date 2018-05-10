@@ -1226,25 +1226,29 @@ function editAdvertisement() { return; }
                 "name": "Sam First Spyac",
                 "id": "2",
                 "type": "Community",
-                "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180322083256.png"
+                "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180322083256.png",
+                "parent_id": null
             },
             {
                 "name": "Community Type Sub Spyac",
                 "id": "4",
                 "type": "Community",
-                "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180317083321.png"
+                "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180317083321.png",
+                "parent_id": 3
             },
             {
                 "name": "@bot_1521192995:spayc-dev.kiwireader.com-@top_1521192957:spayc-dev.kiwireader.com",
                 "id": "1",
                 "type": "Community",
-                "image": null
+                "image": null,
+                "parent_id": 4
             },
             {
                 "name": "Sam Second Community Spyace",
                 "id": "3",
                 "type": "Community",
-                "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180317082917.png"
+                "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180317082917.png",
+                "parent_id": null
             }
         ]
     }
