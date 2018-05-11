@@ -6,4 +6,7 @@ return [
         'm.likeMessage'=>'',
         'm.replyText'=>''
     ],
+    'Queue'=>[
+        'sleeptime'=>2
+    ]
 ];

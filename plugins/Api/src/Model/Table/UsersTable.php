@@ -732,35 +732,40 @@ class UsersTable extends Table {
             return false;
             
         }
-        \Cake\Log\Log::info($data);
+        //\Cake\Log\Log::info($data);
         $msgType = $data['notification']['content']['msgtype'];
         $items['spayc_image'] = null;
         if(!empty($spayc)){
             $items['spayc_image'] = $spayc->image;
         }
         $items['matrix_room_id'] = $data['notification']['room_id'];
+        
         if($msgType == 'm.likeMessage'){
-            $notify = TableRegistry::get('Api.Notifications')->message('a-user-liked-your-comment');
-            if(!empty($notify)){
-                $items['message'] = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);
-                $items['notification_type'] = $notify->type;
-            }
+            $notify = $this->storeMsg('a-user-liked-your-comment', $data['notification']['sender_display_name'], $data['notification']['content']['body']);          
         }elseif($msgType == 'm.replyText'){
-            $notify = TableRegistry::get('Api.Notifications')->message('someone-replyed-to-your-comment');
-            if(!empty($notify)){
-                $items['message'] = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);
-                $items['notification_type'] = $notify->type;
-            }
+            $notify = $this->storeMsg('someone-replyed-to-your-comment', $data['notification']['sender_display_name'], $data['notification']['content']['body']);
         }else{
-            $notify = TableRegistry::get('Api.Notifications')->message('someone-commented');
-             if(!empty($notify)){
-                $items['message'] = str_replace(["<USERNAME>","<COMMENT>","<SpaycName>"],[ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body'],ucwords($data['notification']['room_name'])], $notify->message);
-                $items['notification_type'] = $notify->type;
-            }
-           
+            $notify = $this->storeMsg('someone-commented', $data['notification']['sender_display_name'], $data['notification']['content']['body']);
         }
+        
+        $items['message']  = $notify->message;
+        $items['notification_type'] = $notify->type; 
+        $items['spayc_id'] = $spayc->id;
         TableRegistry::get('Api.Comments')->spaycActivities($spayc->id,$items);
         return $items;
+    }
+    
+    public function storeMsg($slug,$username,$body){
+        if (($notify = \Cake\Cache\Cache::read($slug)) === false) {
+            $notify = TableRegistry::get('Api.Notifications')->message($slug);
+            if(!empty($notify)){
+                $notify->message = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($username),$body], $notify->message);
+                $notify->notification_type = $notify->type;
+            }
+            \Cake\Cache\Cache::write($slug, $notify,'long');
+        }
+       
+        return $notify;
     }
     
 }

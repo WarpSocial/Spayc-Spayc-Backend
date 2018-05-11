@@ -173,12 +173,21 @@ class MatrixComponent extends Component {
             //'join_rule'=>'public',
             'invite' => !empty($items['invite'])?explode(',',$items['invite']):""
         ];
+        if(!empty($items['spayc_category_id'])){
+            $category = \Cake\ORM\TableRegistry::get('Api.SpaycCategories')->get($items['spayc_category_id']);
+        }
         if(!empty($items['is_direct'])){
             $validInput['is_direct'] = $items['is_direct'];
             $validInput['room_alias_name'] = 'direct_'.$validInput['room_alias_name'];
         }elseif(!empty($items['parent_matrix_room_id'])){
+            if(!empty($category->name)){
+                $validInput['room_alias_name'] = $category->name.'_'.$validInput['room_alias_name'];
+            }
             $validInput['room_alias_name'] = 'subspayc_'.$validInput['room_alias_name'];
         }else{
+            if(!empty($category->name)){
+                $validInput['room_alias_name'] = $category->name.'_'.$validInput['room_alias_name'];
+            }
             $validInput['room_alias_name'] = 'parentspayc_'.$validInput['room_alias_name'];
         }
        #pr($validInput);die;

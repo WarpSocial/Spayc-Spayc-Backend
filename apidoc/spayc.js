@@ -42,6 +42,7 @@
 @apiParam {String} image            Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
 @apiParam {String} longitude        Langitude from google map (Required).
 @apiParam {String} latitude         Latitude from google map (Required).
+@apiParam {Integer} spayc_category_id  existing Category id(Required).
 @apiParam {String} invite           Matrix user id is optional in query string(Optional).
 
 @apiExample Example usage:
@@ -116,6 +117,7 @@ function postSpaycs() { return; }
 @apiParam {String} passcode         Passcode is required in case of private group type.
 @apiParam {String} description      Description for SPAYC (Optional).
 @apiParam {String} image            Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
+@apiParam {Integer} spayc_category_id  existing Category id(Required).
 @apiParam {String} longitude        Langitude from google map (Required).
 @apiParam {String} latitude         Latitude from google map (Required).
 

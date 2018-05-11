@@ -1385,20 +1385,15 @@ class UsersController extends AppController {
         }
         //Log::info(json_encode($pushData,JSON_PRETTY_PRINT));
         $data = $this->request->getData();
-        /* by cron notificaiton */
-        //TableRegistry::get('Queue.QueuedJobs')->createJob('Pusher',$data);
-        //$this->restException($blankObj);
         
         /* for direct notification */
-        if(!empty($data['notification']['content']['msgtype'])){
-            if( ($data['notification']['content']['msgtype'] == 'm.likeMessage') && !empty($data['notification']['content']['disLikeMembers'])){
+        $msgType = $data['notification']['content']['msgtype'];
+        if(!empty($msgType)){
+            if( ($msgType == 'm.likeMessage') && !empty($data['notification']['content']['disLikeMembers'])){
                 $this->restException($blankObj); 
             }
         }
         $items = $this->Users->pusherNotification($data);
-        if(!$items){
-            $this->restException($blankObj); 
-        }
         
         $this->loadComponent('Api.Notification');
         if(!empty($data['notification']['devices'][0])){
@@ -1406,7 +1401,11 @@ class UsersController extends AppController {
             $deviceToken = $device['pushkey'];
             $items['date_time'] = date('m-d-Y H:i:s',$device['pushkey_ts']);
         }
+        
         $this->Notification->iosPush($items,$deviceToken);        
+        /* Rest job will be done by workers */
+        //$data['items'] = $items;
+        //TableRegistry::get('Queue.QueuedJobs')->createJob('Pusher',$data);
         $this->restException($blankObj);  
         
     }

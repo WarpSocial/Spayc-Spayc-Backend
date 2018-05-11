@@ -409,14 +409,14 @@ CREATE TABLE "plans" (
 );
 SELECT create_hypertable('plans', 'created');
 INSERT INTO "plans" ("id","app_plan_id","type", "name","slug", "amount", "currency", "views", "status", "created", "modified") VALUES
-(1, 'com.warp.warpapp.adviews500', 'advertisement',	'Plan I',	'plan-1',	'1.00',	'USD',	500,	'Active',	'2018-04-20 15:07:23.713696',	'2018-04-20 15:07:23.713696'),
-(2, 'com.warp.warpapp.adviews1000', 'advertisement',	'Plan II',	'plan-2',	'2.00',	'USD',	1000,	'Active',	'2018-04-20 15:08:21.355268',	'2018-04-20 15:08:21.355268'),
-(3, 'com.warp.warpapp.adviews2500', 'advertisement',	'Plan III',	'plan-3',	'5.00',	'USD',	2500,	'Active',	'2018-04-20 15:10:22.46612',	'2018-04-20 15:10:22.46612'),
-(4, 'com.warp.warpapp.adviews6000', 'advertisement',	'Plan IV',	'plan-4',	'10.00',	'USD',	6000,	'Active',	'2018-04-20 15:10:22.46612',	'2018-04-20 15:10:22.46612'),
-(5, NULL, 'promotional',	'Plan I',	'plan-1',	'1.00',	'USD',	500,	'Active',	'2018-04-20 15:07:23.713696',	'2018-04-20 15:07:23.713696'),
-(6, NULL, 'promotional',	'Plan II',	'plan-2',	'2.00',	'USD',	1000,	'Active',	'2018-04-20 15:08:21.355268',	'2018-04-20 15:08:21.355268'),
-(7, NULL, 'promotional',	'Plan III',	'plan-3',	'5.00',	'USD',	2500,	'Active',	'2018-04-20 15:10:22.46612',	'2018-04-20 15:10:22.46612'),
-(8, NULL, 'promotional',	'Plan IV',	'plan-4',	'10.00',	'USD',	6000,	'Active',	'2018-04-20 15:10:22.46612',	'2018-04-20 15:10:22.46612');
+(1, 'com.warp.warpapp.adviews500', 'advertisement',	'Plan I',	'plan-1',	'0.99',	'USD',	500,	'Active',	'2018-04-20 15:07:23.713696',	'2018-04-20 15:07:23.713696'),
+(2, 'com.warp.warpapp.adviews1000', 'advertisement',	'Plan II',	'plan-2',	'1.99',	'USD',	1000,	'Active',	'2018-04-20 15:08:21.355268',	'2018-04-20 15:08:21.355268'),
+(3, 'com.warp.warpapp.adviews2500', 'advertisement',	'Plan III',	'plan-3',	'4.99',	'USD',	2500,	'Active',	'2018-04-20 15:10:22.46612',	'2018-04-20 15:10:22.46612'),
+(4, 'com.warp.warpapp.adviews6000', 'advertisement',	'Plan IV',	'plan-4',	'9.99',	'USD',	6000,	'Active',	'2018-04-20 15:10:22.46612',	'2018-04-20 15:10:22.46612'),
+(5, NULL, 'promotional',	'Plan I',	'plan-1',	'0.99',	'USD',	500,	'Active',	'2018-04-20 15:07:23.713696',	'2018-04-20 15:07:23.713696'),
+(6, NULL, 'promotional',	'Plan II',	'plan-2',	'1.99',	'USD',	1000,	'Active',	'2018-04-20 15:08:21.355268',	'2018-04-20 15:08:21.355268'),
+(7, NULL, 'promotional',	'Plan III',	'plan-3',	'4.99',	'USD',	2500,	'Active',	'2018-04-20 15:10:22.46612',	'2018-04-20 15:10:22.46612'),
+(8, NULL, 'promotional',	'Plan IV',	'plan-4',	'9.99',	'USD',	6000,	'Active',	'2018-04-20 15:10:22.46612',	'2018-04-20 15:10:22.46612');
 
 INSERT INTO "spayc_categories" ("id", "parent_id", "lft", "right", "name", "slug", "description", "status", "created", "modified") VALUES
 (1,	NULL,	1,	2,	'Music',	'music',	'Music',	'Active',	'2018-04-19 21:00:59.737171',	'2018-04-19 21:00:59.737171'),
