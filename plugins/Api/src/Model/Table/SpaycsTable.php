@@ -257,9 +257,22 @@ class SpaycsTable extends Table {
                     'message'=>__('Image is not valid image file.')
                 ])
                 ->add('image','extension',[
-                    'rule' => ['extension', ['jpeg', 'png','jpg']],
-                    'message'=>__('Please select only jpg,jpeg,png.')
+                'rule'=>function($value,$context){
+                    if(filter_var($value, FILTER_VALIDATE_URL)){
+                        return true;
+                    }elseif($value['type'] == 'image/jpeg' || $value['type'] == 'image/jpg' || $value['type'] == 'image/png'){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                },
+                    'last' => true,
+                     'message'=>__('Please select only jpg,jpeg,png.')
                 ])
+//                ->add('image','extension',[
+//                    'rule' => ['extension', ['jpeg', 'png','jpg']],
+//                    'message'=>__('Please select only jpg,jpeg,png.')
+//                ])
                 ->add('image', 'size', [
                     'rule' => function($value,$context){                    
                         if(!empty($value['error']) && ($value['error'] == 0)){

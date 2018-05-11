@@ -54,6 +54,8 @@ define('SCRAPER_WEBSITE', serialize($scraperWebSite));
 define('SCRAPER_ROOT_URL', serialize($scraperRootUrl));
 define('SCRAPER_ROOT_URL_TOKEN', serialize($scraperRootUrlToken));
 define('SCRAPER_EMAIL', 'ankur.indiacp@gmail.com');
+define('MAX_CATEGORY_PERCENTAGE', '90');
+define('OTHER_CAT_NAME', 'Other');
 
 $config =array();
 $config['SITETITLEMESSAGE'] = [

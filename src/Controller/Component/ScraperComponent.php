@@ -417,61 +417,283 @@ class ScraperComponent extends Component {
         return $getSubcategory;
     }
 
-    public function saveDataSpaceTable($page=1)
-    {        
-        ini_set('max_execution_time', 0);        
-        $obj = TableRegistry::get("Users")->find('all', ['conditions' => 
-                            ['Users.email' => trim(SCRAPER_EMAIL)],
-                            'limit' => '1'
-                ])->first();
-        $pageLimit=10;
-        $token = TableRegistry::get("Api.UserLogs")->findByUserId($obj->id)->select(['plain_token'])->first();      
-        if(isset($token) && !empty($token)) {
-
-            $url= Router::url('/', true).'api/spaycs.json'; 
-            $totalRecord = $this->StubhubEvents->find('all')->count();
-            $totalPageNumber = round($totalRecord/$pageLimit);        
-            $record = $this->StubhubEvents->find('all',['conditions' => 
-                            ['StubhubEvents.is_status' => 0],'limit' => $pageLimit])->page($page)->toArray();           
-            $getIds=$createSpaceData=[];
-            $i=0;
-            foreach ($record as $value) {   
-                $getIds[] = $value['id'];
-                $createSpaceData['name']=$value['name'];
-                $createSpaceData['location']=$value['location'];
-                $createSpaceData['type']='Event';
-                $createSpaceData['group_type']='Public';
-                $createSpaceData['start_date']=$value['start_date']->format('m-d-Y H:i:s');
-                $createSpaceData['end_date']=$value['start_date']->format('m-d-Y H:i:s');
-                $createSpaceData['description']=$value['description'];
-                $createSpaceData['image']=null;
-                $createSpaceData['longitude']=null;
-                $createSpaceData['latitude']=$value['latitude'];          
-                $http = new Client(['headers' => ['token' => $token->plain_token]]);
-                $httpResponse = $http->post($url,$createSpaceData);
-                $response = json_decode($httpResponse->body,true);
-                if($httpResponse->isOk()){
-                    $i++;
-                }
+//    public function saveDataSpaceTable($page=1)
+//    {        
+//        ini_set('max_execution_time', 0);        
+//        $obj = TableRegistry::get("Users")->find('all', ['conditions' => 
+//                            ['Users.email' => trim(SCRAPER_EMAIL)],
+//                            'limit' => '1'
+//                ])->first();
+//        $pageLimit=10;
+//        $token = TableRegistry::get("Api.UserLogs")->findByUserId($obj->id)->select(['plain_token'])->first();      
+//        if(isset($token) && !empty($token)) {
+//
+//            $url= Router::url('/', true).'api/spaycs.json'; 
+//            $totalRecord = $this->StubhubEvents->find('all')->count();
+//            $totalPageNumber = round($totalRecord/$pageLimit);        
+//            $record = $this->StubhubEvents->find('all',['conditions' => 
+//                            ['StubhubEvents.is_status' => 0],'limit' => $pageLimit])->page($page)->toArray();           
+//            $getIds=$createSpaceData=[];
+//            $i=0;
+//            foreach ($record as $value) {   
+//                $getIds[] = $value['id'];
+//                $createSpaceData['name']=$value['name'];
+//                $createSpaceData['location']=$value['location'];
+//                $createSpaceData['type']='Event';
+//                $createSpaceData['group_type']='Public';
+//                $createSpaceData['start_date']=$value['start_date']->format('m-d-Y H:i:s');
+//                $createSpaceData['end_date']=$value['start_date']->format('m-d-Y H:i:s');
+//                $createSpaceData['description']=$value['description'];
+//                $createSpaceData['image']=null;
+//                $createSpaceData['longitude']=null;
+//                $createSpaceData['latitude']=$value['latitude'];          
+//                $http = new Client(['headers' => ['token' => $token->plain_token]]);
+//                $httpResponse = $http->post($url,$createSpaceData);
+//                $response = json_decode($httpResponse->body,true);
+//                if($httpResponse->isOk()){
+//                    $i++;
+//                }
+//            }
+//            if($i >=10) { 
+//                $query = $this->StubhubEvents->query();
+//                $query->update()
+//                    ->set(['is_status' => true])
+//                    ->where(['id IN' => $getIds])
+//                    ->execute();
+//                if($page <= 2){
+//                if($page < $totalPageNumber){
+//                    $page = $page+1;
+//                    $this->saveDataSpaceTable($page);
+//                }
+//                }
+//            } else {
+//                die($i);
+//            }
+//          
+//
+//        }
+//    }
+    
+    // Update Category in Scraping table
+    
+    public function updateScraperCategory()
+    {       
+        $spaycCategories = $this->getSpaycCategories();
+        $scraperCategories = $this->getScraperCategories();
+        $response=[];
+        //Fuzzy Logic
+        $fuzz = new Fuzz();
+        $process = new Process($fuzz);
+        
+        if($spaycCategories){
+            foreach ($spaycCategories as $spayc){
+                foreach ($scraperCategories as $scrap){
+                    if(!$scrap['spayc_category_id']){
+                    $percentage=$fuzz->tokenSetRatio($spayc['name'], $scrap['name']);
+                    if($percentage>MAX_CATEGORY_PERCENTAGE){
+                            $update['spayc_category_id'] = $spayc['id'];
+                            $condition['id'] = $scrap['id'];
+                            $response[]= TableRegistry::get('scraper_categories')->UpdateAll($update, $condition);
+                    }
+                    }
+            }   
             }
-            if($i >=10) { 
-                $query = $this->StubhubEvents->query();
-                $query->update()
-                    ->set(['is_status' => true])
-                    ->where(['id IN' => $getIds])
-                    ->execute();
-                if($page <= 2){
-                if($page < $totalPageNumber){
-                    $page = $page+1;
-                    $this->saveDataSpaceTable($page);
-                }
-                }
-            } else {
-                die($i);
-            }
-          
-
+            print_R($response);die;
         }
     }
+    
+     public function getSpaycCategories() {
+       $categories = TableRegistry::get('Api.SpaycCategories')->find('all')->toArray();
+       return $categories;
+    }
+    
+    
+     public function getScraperCategories() {
+       $categories = TableRegistry::get('scraper_categories')->find('all')->toArray();
+       return $categories;
+    }
+    
+    // Update Category in Scraping table
+    
+    //Create & Update Spayc Logic
+    
+    public function saveDataSpaceTable($page=1)
+    {       
+
+        $this->StubhubEvents = TableRegistry::get('StubhubEvents');
+        $this->TicketmasterEvents = TableRegistry::get('TicketmasterEvents');
+        $this->EventbriteEvents = TableRegistry::get('EventbriteEvents');
+        
+        //Getting Token User
+        $plain_token= $this->getUserToken();
+        
+        
+        //Moving Events from 3 Tables into Spayc
+         if(isset($plain_token) && !empty($plain_token)) {
+            $this->createSpayc($plain_token);
+         }
+    }
+    
+     public function getUserToken() {
+        $obj = TableRegistry::get("Users")->find('all',
+                ['fields' =>['user_logs.plain_token',]])
+                ->join([
+                            'table' => 'user_logs',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'Users.id = user_logs.user_id',
+                                'Users.email' => trim(SCRAPER_EMAIL),
+                            ]])
+                ->first();
+        return $plain_token=$obj->user_logs['plain_token'];
+    }
+    
+   
+    
+    public function createSpayc($plain_token) {
+          
+        // Should be Removed
+          $pageLimit=10; 
+        //        $plain_token="04d903e2d89fda57517fe4d6e917507effe329bb0ec96365e23671f049e8e96e";
+              
+        
+//          $plain_token="8bfa1623f5366cc966add372b5834cfdc52136daac6fe2bb16b4c2893f9dbd3c";
+          
+          // Should be Removed
+          
+          
+          //Stubhub
+          $stubhub_data = $this->StubhubEvents->find('all',
+                  [
+//                      'conditions' => ['StubhubEvents.is_status' => 0],
+                       'limit' => $pageLimit
+                    ])
+//                    ->page($page)
+                    ->toArray();           
+            $this->cURLProcess($stubhub_data,$plain_token,$this->StubhubEvents,$this->SCRAPER_WEBSITE['stubhub']);
+            
+            
+          //TicketMaster
+          $ticketmaster_data = $this->TicketmasterEvents->find('all',
+                 [
+//                      'conditions' => ['StubhubEvents.is_status' => 0],
+                       'limit' => $pageLimit
+                    ])
+//                    ->page($page)
+                    ->toArray();           
+            $this->cURLProcess($ticketmaster_data,$plain_token,$this->TicketmasterEvents,$this->SCRAPER_WEBSITE['ticketmaster']);
+            
+            
+            
+          //EventbriteEvents
+          $eventbrite_data = $this->EventbriteEvents->find('all',
+                  [
+//                      'conditions' => ['StubhubEvents.is_status' => 0],
+                       'limit' => $pageLimit
+                    ])
+//                    ->page($page)
+                    ->toArray();           
+            $this->cURLProcess($eventbrite_data,$plain_token, $this->EventbriteEvents,$this->SCRAPER_WEBSITE['eventbrite']);
+            
+            
+            
+        
+    }
+    
+    public function cURLProcess($record, $plain_token, $obj,$website) {
+        $base_url = Configure::read('App.BASE_URL');
+        //            $url= 'http://172.16.145.210/spayc/api/spaycs.json';   
+//            $url= 'http://spayc-dev.kiwireader.com/api/spaycs.json';  
+        $url = $base_url . 'api/spaycs.json';
+//            $update_url= 'http://spayc-dev.kiwireader.com/api/spayc-edit.json';  
+        $update_url = $base_url . 'api/spayc-edit.json';
+        $getIds = $createSpaceData = [];
+        $i = 0;
+        foreach ($record as $value) {
+
+            $getIds[] = $value['id'];
+            $createSpaceData['name'] = $value['name'];
+            $createSpaceData['location'] = $value['location'];
+            $createSpaceData['type'] = 'Event';
+            $createSpaceData['group_type'] = 'Public';
+            $createSpaceData['start_date'] = $value['start_date']->format('m-d-Y H:i:s');
+            $date1 = str_replace('-', '/', $createSpaceData['start_date']);
+            $next = date('m-d-Y H:i:s', strtotime($date1 . "+1 days"));
+            $createSpaceData['end_date'] = $next;
+            $description = substr($value['description'], 0, 250);
+            if ($description) {
+                $createSpaceData['description'] = $description;
+            } else {
+                $createSpaceData['description'] = "";
+            }
+            $createSpaceData['image'] = $value['image'];
+            $createSpaceData['longitude'] = $value['longitude'];
+            $createSpaceData['latitude'] = $value['latitude'];
+            $http = new Client(['headers' => ['token' => $plain_token]]);
+            
+
+                if ($value['spayc_id']) {
+                    $createSpaceData['spayc_id'] = $value['spayc_id'];
+
+                    //cUrl Request for Update Spayc Details
+                    $httpResponse = $http->post($update_url, $createSpaceData);
+                    $response = json_decode($httpResponse->body, true);
+                } else {
+
+                    $category = $this->isCatExist($value['category'],$website);
+
+                    //If Category Exist in Spayc
+                    if ($category) {
+                        $createSpaceData['spayc_category_id'] = $category;
+                        $httpResponse = $http->post($url, $createSpaceData);
+                        $response = json_decode($httpResponse->body, true);
+
+                        //Updating Spayc ID in Related tables
+                        if ($response['status'] != 'failed') {
+                            $update['spayc_id'] = $response['data']['id'];
+                            $condition['id'] = $value['id'];
+                            $response = $obj->UpdateAll($update, $condition);
+                        }
+                    } else {
+                        $response[] = $value['category'] . " - Category Not Exist";
+                    }
+                }
+            
+            pr($response);
+//                $this->out($i);
+//                $this->out($value['id']);
+//                if($httpResponse->isOk()){
+            $i++;
+//                }
+        }
+    }
+
+    public function isCatExist($category,$website) {
+        if($category){
+         $ids=explode(',',$category);
+        $obj = TableRegistry::get("scraper_categories")->find('all',
+                ['fields' =>['spayc_category_id',]])
+                ->where([
+                    'scraper_category_id IN '=>$ids,
+                    'website'=>$website,
+                    'spayc_category_id IS NOT NULL'])
+                ->first();
+        }else{
+            $obj = TableRegistry::get("scraper_categories")->find('all',
+                ['fields' =>['spayc_category_id',]])
+                ->where([
+                     "name LIKE" => "%".OTHER_CAT_NAME."%",
+                     'website'=>$website,
+                     'spayc_category_id IS NOT NULL'])
+                ->first();
+        }
+        
+         if(!empty($obj)){
+            return $obj->spayc_category_id;
+        }else{
+            return false;
+        }
+    }
+    //Create & Update Spayc Logic
 }
 /**** End ThirdPartyData Component*******/
