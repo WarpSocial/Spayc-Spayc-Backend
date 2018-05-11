@@ -1093,7 +1093,7 @@ function mapSpaycs() { return; }
         "plan_id":"1",
         "receipt":"test12345",
         "platform":"IOS",
-        "purchase_date":"2018-04-17 10:36:52"
+        "purchase_date":"05-04-2018 04:02:20"
     }
 
  *
