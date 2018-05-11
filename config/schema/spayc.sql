@@ -419,3 +419,131 @@ INSERT INTO "spayc_categories" ("id", "parent_id", "lft", "right", "name", "slug
 (4,	1,	8,	10,	'Classical',	'classical',	'Classical',	'Active',	'2018-04-19 21:03:00.810881',	'2018-04-19 21:03:00.810881'),
 (5,	NULL,	11,	13,	'Science & Technology',	'science-technology',	'Science & Technology',	'Active',	'2018-04-19 21:03:43.820194',	'2018-04-19 21:03:43.820194'),
 (6,	NULL,	13,	14,	'Business & Professional',	'business-professional',	'Business & Professional',	'Active',	'2018-04-19 21:04:33.062492',	'2018-04-19 21:04:33.062492');
+
+/*** For Scrapper Tables ***/
+CREATE TABLE eventbrite_events (
+    "id" BIGSERIAL NOT NULL,
+    "eventbrite_event_id"  character varying(255) NOT NULL,
+    "name" character varying(255)  NULL,
+    "location" character varying(255) NULL,
+    "latitude" double precision NULL,
+    "longitude" double precision NULL,    
+    "start_date" timestamp DEFAULT NULL,
+    "end_date" timestamp DEFAULT NULL,
+    "description" text NULL,
+    "image" character varying(255) DEFAULT NULL,
+    "category" character varying(255) DEFAULT NULL,
+    "created" timestamp NOT NULL,
+    "modified" timestamp DEFAULT NULL,     
+    "city" character varying(100) NULL,  
+    "region" character varying(100) NULL,
+    "postal_code" character varying(100) NULL,
+    "country" character varying(100) NULL,
+    "website" integer DEFAULT NULL,
+    "event_status" character varying(255) DEFAULT NULL,
+    "group_id" character varying(255) DEFAULT NULL,
+    "spayc_id" bigint DEFAULT NULL,
+    CONSTRAINT "eventbrite_events_pkey" PRIMARY KEY ("id", "eventbrite_event_id", "created")
+);
+COMMENT ON COLUMN "eventbrite_events"."start_date" IS 'eventbrite start_date is inside start obj utc';
+COMMENT ON COLUMN "eventbrite_events"."end_date" IS 'eventbrite end_date is inside end obj utc';
+COMMENT ON COLUMN "eventbrite_events"."location" IS 'venue name, address obj, city, region, postalCode, country';
+COMMENT ON COLUMN "eventbrite_events"."category" IS 'category_id, subcategory_id';
+COMMENT ON COLUMN "eventbrite_events"."website" IS '1 for eventbrite, 2 for ticketmaster, 3 for stubhub';
+
+CREATE TABLE stubhub_events (
+    "id" BIGSERIAL NOT NULL,
+    "stubhub_event_id" character varying(255) NOT NULL,
+    "name" character varying(255) NOT NULL,
+    "location" character varying(255) NULL,
+    "latitude" double precision,
+    "longitude" double precision,    
+    "start_date" timestamp DEFAULT NULL,
+    "end_date" timestamp DEFAULT NULL,
+    "description" text,
+    "image" character varying(255),
+    "category" character varying(255) DEFAULT NULL,
+    "created" timestamp NOT NULL,
+    "modified" timestamp DEFAULT NULL,  
+    "city" character varying(100) NULL,  
+    "region" character varying(100) NULL,
+    "postal_code" character varying(100) NULL,
+    "country" character varying(100) NULL,   
+    "website" integer DEFAULT NULL,
+    "event_status" character varying(255) DEFAULT NULL,
+    "group_id" character varying(255) DEFAULT NULL,
+    "spayc_id" bigint DEFAULT NULL,
+    CONSTRAINT "stubhub_events_pkey" PRIMARY KEY ("id", "stubhub_event_id", "created")
+);
+COMMENT ON COLUMN "stubhub_events"."start_date" IS 'stubhub start_date id eventDateUTC';
+COMMENT ON COLUMN "stubhub_events"."location" IS 'venue name, address1, city, state, postalCode, country';
+COMMENT ON COLUMN "stubhub_events"."category" IS 'categories array';
+COMMENT ON COLUMN "stubhub_events"."website" IS '1 for eventbrite, 2 for ticketmaster, 3 for stubhub';
+
+CREATE TABLE ticketmaster_events (
+    "id" BIGSERIAL NOT NULL,
+    "ticketmaster_event_id" character varying(255) NOT NULL,
+    "name" character varying(255) NOT NULL,
+    "location" character varying(255) NULL,
+    "latitude" double precision,
+    "longitude" double precision,    
+    "start_date" timestamp DEFAULT NULL,
+    "end_date" timestamp DEFAULT NULL,
+    "description" text,
+    "image" character varying(255),
+    "category" character varying(255) DEFAULT NULL,
+    "created" timestamp NOT NULL,
+    "modified" timestamp DEFAULT NULL,     
+    "city" character varying(100) NULL,  
+    "region" character varying(100) NULL,
+    "postal_code" character varying(100) NULL,
+    "country" character varying(100) NULL,   
+    "website" integer DEFAULT NULL, 
+    "event_status" character varying(255) DEFAULT NULL,
+    "group_id" character varying(255) DEFAULT NULL,
+    "spayc_id" bigint DEFAULT NULL,
+    CONSTRAINT "ticketmaster_events_pkey" PRIMARY KEY ("id", "ticketmaster_event_id", "created")
+);
+COMMENT ON COLUMN "ticketmaster_events"."start_date" IS 'ticketmaster start_date is inside dates obj dateTime';
+COMMENT ON COLUMN "ticketmaster_events"."location" IS 'venue name, address, city, state, postalCode, country';
+COMMENT ON COLUMN "ticketmaster_events"."category" IS 'category is classifications array';
+COMMENT ON COLUMN "ticketmaster_events"."website" IS '1 for eventbrite, 2 for ticketmaster, 3 for stubhub';
+
+ALTER TABLE "spaycs" ADD "is_admin_update" smallint NULL DEFAULT '0';
+ALTER TABLE "spaycs" ADD "website" integer DEFAULT NULL;
+
+CREATE TABLE scraper_categories (
+    id BIGSERIAL NOT NULL,
+    "name" character varying(250) NULL,
+    "scraper_category_id" character varying(255) NOT NULL,
+    "spayc_category_id" character varying(255) NULL,
+    "website" integer DEFAULT NULL,
+    "created" timestamp NOT NULL,
+    "modified" timestamp NULL,   
+    primary key (id,created)
+);
+COMMENT ON COLUMN "scraper_categories"."website" IS '1 for eventbrite, 2 for ticketmaster, 3 for stubhub';
+
+CREATE TABLE scraper_spayc_categories (
+    "id" BIGSERIAL NOT NULL,
+    "spayc_id" bigint NOT NULL,
+    "category_id" bigint NOT NULL,
+    "status" row_status DEFAULT 'Inactive',
+    "created" timestamp NOT NULL,
+    "modified" timestamp,
+    PRIMARY KEY (id)
+);
+
+CREATE OR REPLACE FUNCTION public.gc_dist(alat double precision, alng double precision, blat double precision, blng double precision)
+RETURNS double precision AS
+$BODY$
+SELECT asin(
+  sqrt(
+    sin(radians($3-$1)/2)^2 +
+    sin(radians($4-$2)/2)^2 *
+    cos(radians($1)) *
+    cos(radians($3))
+  )
+) * 7926.3352 * 1609.34 AS distance;
+$BODY$
+LANGUAGE sql IMMUTABLE;
