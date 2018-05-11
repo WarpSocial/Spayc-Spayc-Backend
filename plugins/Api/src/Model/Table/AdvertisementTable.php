@@ -89,7 +89,10 @@ class AdvertisementTable extends Table {
         $validator
                 ->requirePresence('receipt', 'create', __('Receipt key is missing.'))
                 ->notEmpty('receipt', __('Receipt key is required.'));
-        
+        $validator
+                ->requirePresence('purchase_date','create', __('Please provide the purchase date.'))
+                ->allowEmpty('purchase_date',__('Please provide the purchase date.'))
+                ->dateTime('purchase_date','mdy',__('Purchase date is not valid.'));
         $validator
                 ->allowEmpty('image')
                 ->add('image', 'extension', [
