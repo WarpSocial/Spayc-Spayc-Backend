@@ -15,7 +15,6 @@ use Api\Auth\ApiHasher;
 use Cake\Utility\Security;
 use Cake\Validation\Validator;
 use Api\Utils\Utils;
-use Cake\Datasource\ConnectionManager;
 /**
  * Users Controller
  *
@@ -29,11 +28,8 @@ class UsersController extends AdminController
         $this->loadComponent('Api.Push');
         $this->loadComponent('Scraper');
         $this->Spaycs = TableRegistry::get('Spaycs');
-        $this->StubhubEvents = TableRegistry::get('StubhubEvents');
-        $this->TicketmasterEvents = TableRegistry::get('TicketmasterEvents');
-        $this->EventbriteEvents = TableRegistry::get('EventbriteEvents');
-        $this->SCRAPER_WEBSITE = array_flip(unserialize(SCRAPER_WEBSITE));  
     }
+
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
@@ -429,150 +425,58 @@ class UsersController extends AdminController
         }
         $this->set(compact('user'));
     }
-
-    /*** Takes an array and returns an array of duplicate items */
-    public function get_duplicates($array) {
-        return array_unique(array_diff_assoc($array, array_unique($array)));
-    }
-
-    /** First step assign group for same(under 100 meter) lat long*****/
-    public function filterByLatLong() {
-        $lat_long_group = $this->getUnionData('ORDER BY A.latitude, A.longitude desc');
-        if(count($lat_long_group)){
-            foreach ($lat_long_group as $key => $value) {
-                $this->updateScraper($this->SCRAPER_WEBSITE['3'], $this->StubhubEvents, $value, SCRAPERGROUPFILTER, $key);
-                $this->updateScraper($this->SCRAPER_WEBSITE['2'], $this->TicketmasterEvents, $value, SCRAPERGROUPFILTER, $key);
-                $this->updateScraper($this->SCRAPER_WEBSITE['1'], $this->EventbriteEvents, $value, SCRAPERGROUPFILTER, $key);
-            } 
-        }
-    }
-
-    /** Second step Re-assign group for same lat long and same date*****/
-    public function filterByDate($type) {  
-         
-        if($type==SCRAPERUNIQUEFILTER){
-            $groupByDate = $this->getUnionDataWithCommonDate('having count(group_id)=1');
-        } else if($type==SCRAPERCOMMONDATEFILTER){
-            $groupByDate = $this->getUnionDataWithCommonDate('having count(group_id)>1');            
-        }
-        if(count($groupByDate)){     
-            foreach ($groupByDate as $key => $value) { 
-                $array_agg=str_replace(["{","}"], "", $value['array_agg']);
-                $array_agg=explode(',', $array_agg);                
-                if($type!=SCRAPERUNIQUEFILTER)
-                    $duplicateDates = $this->get_duplicates($array_agg);   
-
-                if(!empty($duplicateDates)){ 
-                    $start_date=str_replace('"', "'",implode(",",$duplicateDates));
-                    $value['start_date']=$start_date;
-                    $this->updateScraper($this->SCRAPER_WEBSITE['3'], $this->StubhubEvents, $value, $type, NULL);
-                    $this->updateScraper($this->SCRAPER_WEBSITE['2'], $this->TicketmasterEvents, $value, $type, NULL);
-                    $this->updateScraper($this->SCRAPER_WEBSITE['1'], $this->EventbriteEvents, $value, $type, NULL);
-                } else{
-                    $start_date=str_replace('"', "'",implode(",",$array_agg));
-                    $value['start_date']=$start_date;
-                    $this->updateScraper($this->SCRAPER_WEBSITE['3'], $this->StubhubEvents, $value, SCRAPERUNIQUEFILTER, NULL);
-                    $this->updateScraper($this->SCRAPER_WEBSITE['2'], $this->TicketmasterEvents, $value, SCRAPERUNIQUEFILTER, NULL);
-                    $this->updateScraper($this->SCRAPER_WEBSITE['1'], $this->EventbriteEvents, $value, SCRAPERUNIQUEFILTER, NULL);
-                }
-            }
-        }
-
-    }
-   
-    /** Third step Re -assign group for same lat-long, date, name*****/
-    public function filterByName() {
-        $groupBydateAndLatLong = $this->getUnionData('where A.group_id IS NOT NULL ORDER BY group_id,start_date desc');
-        if(count($groupBydateAndLatLong)){
-            foreach ($groupBydateAndLatLong as $key => $value) {
-               
-            } 
-        }
-    }
+    
+    /*** for testing purpose check all cron data get and save in db***/
     public function runScrapper() {          
         $this->autoRender = false ;      
-        // $conn = ConnectionManager::get('default');
-        // $conn->execute('update stubhub_events set group_id= NULL');
-        // $conn->execute('update eventbrite_events set group_id= NULL');
-        // $conn->execute('update ticketmaster_events set group_id= NULL');
-        // $this->filterByLatLong();
-        // $this->filterByDate(SCRAPERUNIQUEFILTER);
-        //$this->filterByDate(SCRAPERCOMMONDATEFILTER);
-         $this->filterByName();
-        die('ankur');
+        $conn = ConnectionManager::get('default');
+        $conn->execute('update stubhub_events set group_id= NULL');
+        $conn->execute('update eventbrite_events set group_id= NULL');
+        $conn->execute('update ticketmaster_events set group_id= NULL');
+        $this->Scraper->getEventbriteData(1);
+        $this->Scraper->getTicketmasterData(TODAY_DATE, AFTER14DAYS_DATE);
+        $response = $this->Scraper->getEventBriteCategories(1, NULL,'subcategories');
+        $response = $this->Scraper->filterByLatLong();
+        if($response)
+            $response = $this->Scraper->filterByDate(SCRAPERUNIQUEFILTER);
+        if($response)
+            $response = $this->Scraper->filterByDate(SCRAPERCOMMONDATEFILTER);
+        if($response)
+            $response = $this->Scraper->filterByName();
+       $this->Scraper->filterByName();
+       
 
     }
+
+    /*** for testing purpose check all cron data get and save in db***/
     public function scraperCall($site=null) {  
         $this->autoRender = false ;        
         if(isset($site) && !empty($site)){
-            if($site=='eventbrite'){                  
+            if($site=='eventbrite') {                  
                 $this->Scraper->getEventbriteData(1);
-            } else if($site=='ticketmaster'){
+            } else if($site=='ticketmaster') {
                 $this->Scraper->getTicketmasterData(TODAY_DATE, AFTER14DAYS_DATE);
-            } else if($site=='stubhub'){               
+            } else if($site=='stubhub') {               
                 $this->Scraper->getStubhubData(0);
-            } else if($site=='savedata'){                 
-                $this->Scraper->saveDataSpaceTable();
+            } else if($site=='getallcategory') {               
+                $response = $this->Scraper->getEventBriteCategories(1, NULL,'categories');
+                if($response)
+                $response = $this->Scraper->getEventBriteCategories(1, NULL,'subcategories');
+                if($response)
+                $response = $this->Scraper->getTicketmasterCategories();
+            } else if($site=='filterdata') {                 
+                $response = $this->Scraper->filterByLatLong();
+                if($response)
+                    $response = $this->Scraper->filterByDate(SCRAPERUNIQUEFILTER);
+                if($response)
+                    $response = $this->Scraper->filterByDate(SCRAPERCOMMONDATEFILTER);
+                if($response)
+                    $response = $this->Scraper->filterByName();
             }
         }
     }
 
-     /** common query for union table *****/
-    public function unionCommonQuery(){
-        return "select eventbrite_event_id  as event_id,'eventbrite' as type,name,start_date,latitude,longitude,group_id from eventbrite_events where latitude IS NOT NULL and longitude IS NOT NULL 
-        UNION 
-        select stubhub_event_id as event_id,'stubhub' as type,name,start_date,latitude,longitude,group_id from stubhub_events where latitude IS NOT NULL and longitude IS NOT NULL 
-        UNION 
-        select ticketmaster_event_id as event_id,'ticketmaster' as type,name,start_date,latitude,longitude,group_id from ticketmaster_events where latitude IS NOT NULL and longitude IS NOT NULL"; 
-    }
-
-    /**  Get All Date from eventbrite,ticketmaster and stubhub table *****/
-    public function getUnionData($condition) {  
-        $conn = ConnectionManager::get('default');
-        $sql="select event_id,type,name,start_date,latitude,longitude,group_id from 
-        (
-        ".$this->unionCommonQuery()."
-        ) as A ".$condition;
-        $stmt = $conn->execute($sql);
-        $rows = $stmt->fetchAll('assoc');
-        return $rows;
-    }
-
-    /**  Get All Common Date data from eventbrite,ticketmaster and stubhub table *****/
-    public function getUnionDataWithCommonDate($having) {  
-        $conn = ConnectionManager::get('default');
-        $sql="select count(group_id),group_id,array_agg(start_date) from 
-        (".$this->unionCommonQuery()."
-        ) as A group by A.group_id ".$having;
-
-        $stmt = $conn->execute($sql);
-        $rows = $stmt->fetchAll('assoc');
-        return $rows;
-    }
-
-    public function updateScraper($table, $tableObj, $value, $type, $group_id) {  
-        if(!empty($type)) {
-            $conn = ConnectionManager::get('default');        
-            if($type == SCRAPERGROUPFILTER){
-                $sql=" select ".$table."_event_id from ".$table."_events where gc_dist(latitude,longitude,".$value['latitude'].",".$value['longitude'].") <= ".DISTANCEINMETER." and group_id IS NULL";
-            } else if ($type == SCRAPERCOMMONDATEFILTER){
-                $sql=" select ".$table."_event_id from ".$table."_events where group_id=".$value['group_id']." and start_date NOT IN (".$value['start_date'].")";
-            } else if ($type == SCRAPERUNIQUEFILTER){
-                $sql=" select ".$table."_event_id from ".$table."_events where group_id=".$value['group_id']." and start_date IN (".$value['start_date'].")";
-            }            
-            $stmt = $conn->execute($sql);
-            $rows = $stmt->fetchAll('assoc');
-            if(!empty($rows)){
-              $masterIds = array_column($rows, $table.'_event_id');
-              $eventsquery = $tableObj->query();
-              $res = $eventsquery->update()
-                        ->set(['group_id' => $group_id])
-                        ->where([$table.'_event_id IN ' => $masterIds])
-                        ->execute();
-            }
-        }   
-        
-    }
+    
 
 
 

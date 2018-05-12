@@ -107,4 +107,36 @@ class StubhubEventsTable extends Table
         // $rules->add($rules->existsIn(['stubhub_event_id'], 'StubhubEvents'));
          return $rules;
     }
+
+    public function saveNupdateData($events, $eventIds) {
+        $getIds = $this->find()->select(['stubhub_event_id'])->
+            where(['stubhub_event_id IN' => $eventIds])->extract('stubhub_event_id')->toList();
+        $diffIds=array_diff($eventIds,$getIds);       
+        if(count($diffIds)){
+            $getuniqueevents =[];           
+            foreach ($events as $val) {
+                if (in_array($val['stubhub_event_id'],$diffIds)){
+                    $Entity = $this->newEntity($events[$val['stubhub_event_id']]);
+                    $result = $this->save($Entity);
+                } else if(in_array($val['stubhub_event_id'],$getIds)) {
+                    $query = $this->query();
+                    $query->update()
+                    ->set($events[$val['stubhub_event_id']])
+                    ->where(['stubhub_event_id' => $val['stubhub_event_id']])
+                    ->execute();
+                } else {
+                    continue;
+                }
+            }
+        }  else {
+            foreach ($getIds as $id) {
+                $query = $this->query();
+                $query->update()
+                ->set($events[$id])
+                ->where(['stubhub_event_id' => $id])
+                ->execute();
+            } 
+        } 
+    }
+
 }

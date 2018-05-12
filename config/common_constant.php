@@ -39,10 +39,10 @@ define('SCRAPERCOUNTRIES', serialize($scraperCountries));
 define('TEXT_MASSAGE', serialize($txt_massage));
 define('TODAY_DATE', date('Y-m-d'));
 define('AFTER14DAYS_DATE', date('Y-m-d', strtotime(' +14 day')));
-
+define('FUZZYPERCENT', 90);
 
 $scraperRootUrl=array('eventbriteurl'=> 'https://www.eventbriteapi.com/v3/',
-    'ticketmasterurl'=> 'https://app.ticketmaster.com/discovery/v2/events.json',
+    'ticketmasterurl'=> 'https://app.ticketmaster.com/discovery/v2/',
     'stubhuburl'=> 'https://api.stubhub.com/search/catalog/events/v3/',
     );
 $scraperRootUrlToken = array('eventbritetoken'=> 'JRTJ7FHW3TG7F5U535RN',
