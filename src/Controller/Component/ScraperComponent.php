@@ -570,7 +570,7 @@ class ScraperComponent extends Component {
                     ])
 //                    ->page($page)
                     ->toArray();           
-            $this->cURLProcess($stubhub_data,$plain_token,$this->StubhubEvents,$this->SCRAPER_WEBSITE['stubhub']);
+//            $this->cURLProcess($stubhub_data,$plain_token,$this->StubhubEvents,$this->SCRAPER_WEBSITE['stubhub']);
             
             
           //TicketMaster
@@ -581,7 +581,7 @@ class ScraperComponent extends Component {
                     ])
 //                    ->page($page)
                     ->toArray();           
-            $this->cURLProcess($ticketmaster_data,$plain_token,$this->TicketmasterEvents,$this->SCRAPER_WEBSITE['ticketmaster']);
+//            $this->cURLProcess($ticketmaster_data,$plain_token,$this->TicketmasterEvents,$this->SCRAPER_WEBSITE['ticketmaster']);
             
             
             
@@ -634,17 +634,19 @@ class ScraperComponent extends Component {
 
                 if ($value['spayc_id']) {
                     $createSpaceData['spayc_id'] = $value['spayc_id'];
+                    $createSpaceData['is_update'] = 1;
 
                     //cUrl Request for Update Spayc Details
                     $httpResponse = $http->post($update_url, $createSpaceData);
                     $response = json_decode($httpResponse->body, true);
+                    
                 } else {
-
-                    $category = $this->isCatExist($value['category'],$website);
-
+                   
+                     $category = $this->isCatExist(str_replace(" ", "", $value['category']),$website);
+//                     print_R($category);break;
                     //If Category Exist in Spayc
                     if ($category) {
-                        $createSpaceData['spayc_category_id'] = $category;
+                        $createSpaceData['spayc_category_id'] = $category[1];
                         $httpResponse = $http->post($url, $createSpaceData);
                         $response = json_decode($httpResponse->body, true);
 
@@ -653,6 +655,17 @@ class ScraperComponent extends Component {
                             $update['spayc_id'] = $response['data']['id'];
                             $condition['id'] = $value['id'];
                             $response = $obj->UpdateAll($update, $condition);
+                            
+                        //Saving All Categories with Spayc
+                                if(!empty($category[0])){
+                                $scrapModel = TableRegistry::get('scraper_spayc_categories');
+                                    foreach ($category[0] as $val){
+                                        $entity = $scrapModel->newEntity();
+                                        $entity->category_id = $val->spayc_category_id;
+                                        $entity->spayc_id = $response['data']['id'];
+                                        $created = $scrapModel->save($entity);
+                                    }
+                                }
                         }
                     } else {
                         $response[] = $value['category'] . " - Category Not Exist";
@@ -669,6 +682,7 @@ class ScraperComponent extends Component {
     }
 
     public function isCatExist($category,$website) {
+        $data=false;
         if($category){
          $ids=explode(',',$category);
         $obj = TableRegistry::get("scraper_categories")->find('all',
@@ -676,8 +690,12 @@ class ScraperComponent extends Component {
                 ->where([
                     'scraper_category_id IN '=>$ids,
                     'website'=>$website,
-                    'spayc_category_id IS NOT NULL'])
-                ->first();
+                    'spayc_category_id IS NOT NULL'
+                    ])
+                ->toArray();
+        if(!empty($obj[0]))
+            $data=[$obj,$obj[0]->spayc_category_id];;
+        
         }else{
             $obj = TableRegistry::get("scraper_categories")->find('all',
                 ['fields' =>['spayc_category_id',]])
@@ -685,11 +703,13 @@ class ScraperComponent extends Component {
                      "name LIKE" => "%".OTHER_CAT_NAME."%",
                      'website'=>$website,
                      'spayc_category_id IS NOT NULL'])
-                ->first();
+               ->first();
+            if(!empty($obj))
+            $data=[0,$obj->spayc_category_id];
         }
         
-         if(!empty($obj)){
-            return $obj->spayc_category_id;
+         if(!empty($data)){
+            return $data;
         }else{
             return false;
         }
