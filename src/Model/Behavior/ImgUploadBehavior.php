@@ -166,14 +166,13 @@ class ImgUploadBehavior extends Behavior {
                     $requestField['name'] = $requestField['tmp_name'];
                 }
                 $fileName = $config['uploadPath'].$this->uniqueString($requestField['name']);
-                //echo $fileName;die;
-                #$fileExt = $this->fileAttrbute($fileName,'extension');
                 $filePath = $this->__saveToAWS($requestField,$fileName);                
                 $entity->set($config['field'], $filePath);                
             }else if(isset($requestField) && filter_var($requestField, FILTER_VALIDATE_URL)) {
-                   $fileName= pathinfo($requestField,PATHINFO_BASENAME);
-                   $filePath = $this->__saveToAWS($requestField,$fileName);                
-                   $entity->set($config['field'], $filePath);    
+                //For Upload on AWS Code
+//                   $fileName= pathinfo($requestField,PATHINFO_BASENAME);
+//                   $filePath = $this->__saveToAWS($requestField,$fileName);                
+                   $entity->set($config['field'], $requestField);    
             }else{
                 $entity->unsetProperty($config['field']);
             }

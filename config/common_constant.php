@@ -58,7 +58,7 @@ define('MAX_CATEGORY_PERCENTAGE', '90');
 define('OTHER_CAT_NAME', 'Other');
 define('DUPLICATE', 'duplicate');
 define('UNIQUE', 'unique');
-define('MAX_DESCRIPTION', '250');
+define('MAX_DESCRIPTION', '235');
 
 define('THUMBNAIL_IMAGE_MAX_WIDTH', 480);
 define('THUMBNAIL_IMAGE_MAX_HEIGHT', 320);

@@ -425,46 +425,21 @@ class ScraperComponent extends Component {
     
     public function createSpayc($plain_token) {
           
-        // Should be Removed
-          $pageLimit=2; 
-          
-          // Should be Removed
-       
-
           //Stubhub
-          $stubhub_data = $this->StubhubEvents->find('all',
-                    [
-                        'conditions' => ['group_id' => NULL],
-//                       'limit' => $pageLimit
-                    ])
-                    ->toArray();           
-            $this->cURLProcess($stubhub_data,$plain_token,$this->StubhubEvents,$this->SCRAPER_WEBSITE['stubhub'],UNIQUE);
-            
-            
+          $stubhub_data = $this->StubhubEvents->find('all',['conditions' => ['group_id IS' => NULL]])->toArray();           
+          $this->cURLProcess($stubhub_data,$plain_token,$this->StubhubEvents,$this->SCRAPER_WEBSITE['stubhub'],UNIQUE);
+
           //TicketMaster
-          $ticketmaster_data = $this->TicketmasterEvents->find('all',
-                    [
-                        'conditions' => ['group_id' => NULL],
-//                       'limit' => $pageLimit
-                    ])
-                    ->toArray();           
-            $this->cURLProcess($ticketmaster_data,$plain_token,$this->TicketmasterEvents,$this->SCRAPER_WEBSITE['ticketmaster'],UNIQUE);
-            
-            
-            
+          $ticketmaster_data = $this->TicketmasterEvents->find('all',['conditions' => ['group_id IS' => NULL]])->toArray();
+          $this->cURLProcess($ticketmaster_data,$plain_token,$this->TicketmasterEvents,$this->SCRAPER_WEBSITE['ticketmaster'],UNIQUE);
+          
           //EventbriteEvents
-          $eventbrite_data = $this->EventbriteEvents->find('all',
-                    [
-                        'conditions' => ['group_id' => NULL],
-//                       'limit' => $pageLimit
-                    ])
-//                    ->page($page)
-                    ->toArray();           
-            $this->cURLProcess($eventbrite_data,$plain_token, $this->EventbriteEvents,$this->SCRAPER_WEBSITE['eventbrite'],UNIQUE);
+          $eventbrite_data = $this->EventbriteEvents->find('all',['conditions' => ['group_id IS' => NULL]])->toArray();           
+          $this->cURLProcess($eventbrite_data,$plain_token, $this->EventbriteEvents,$this->SCRAPER_WEBSITE['eventbrite'],UNIQUE);
             
             
             
-            //Duplicate Data
+           //Duplicate Data
                
             $duplicate_date = $this->getDuplicateData('eventbrite_events');   
             if($duplicate_date)
@@ -489,18 +464,18 @@ class ScraperComponent extends Component {
         $url = $base_url . 'api/spaycs.json';
         $update_url = $base_url . 'api/spayc-edit.json';
         $getIds = $createSpaceData = [];
-        $i = 0;
         foreach ($record as $value) {
             
             $spayc_id=0;    //Default Spayc Define
+            $response=[];
             $getIds[] = $value['id'];
             $createSpaceData['name'] = $value['name'];
             $createSpaceData['location'] = $value['location'];
             $createSpaceData['type'] = 'Event';
             $createSpaceData['group_type'] = 'Public';
             $createSpaceData['start_date'] = date('m-d-Y H:i:s', strtotime($value['start_date']));
-            $next = date('m-d-Y H:i:s', strtotime($value['start_date'] . "+1 days"));
-            $createSpaceData['end_date'] = $next;
+//            $next = date('m-d-Y H:i:s', strtotime($value['start_date'] . "+1 days"));
+            $createSpaceData['end_date'] = date('m-d-Y H:i:s', strtotime($value['start_date']));
             $description = substr($value['description'], 0, MAX_DESCRIPTION);
             if ($description) {
                 $createSpaceData['description'] = $description;
@@ -522,12 +497,15 @@ class ScraperComponent extends Component {
                     $response['Update Spayc'][] = json_decode($httpResponse->body, true);
                     $spayc_id=$value['spayc_id'];
                 } else {
-                   
-                     $category = $this->isCatExist(str_replace(" ", "", $value['category']),$website);
+                    $cat =str_replace(" ", "", $value['category']);
+                     $category = $this->isCatExist($cat,$website);
                     //If Category Exist in Spayc
                     if ($category) {
                         $createSpaceData['spayc_category_id'] = $category[1];
-                        $httpResponse = $http->post($url, $createSpaceData);
+                        if($category[2]){
+                            $createSpaceData['description'].= " #".str_replace(" ", "", $category[2]);
+                        }
+                       $httpResponse = $http->post($url, $createSpaceData);
                         $response['Create New Spayc'][] =$created= json_decode($httpResponse->body, true);
                         //Updating Spayc ID in Related tables
                         if ($created['status'] == 'success') {
@@ -563,12 +541,7 @@ class ScraperComponent extends Component {
                     $this->TicketmasterEvents->UpdateAll($update_duplicate, $condition_duplicate);
                     $this->StubhubEvents->UpdateAll($update_duplicate, $condition_duplicate);
                 }
-            pr($response);
-//                $this->out($i);
-//                $this->out($value['id']);
-//                if($httpResponse->isOk()){
-            $i++;
-//                }
+            pr(json_encode($response,JSON_PRETTY_PRINT));
         }
     }
     
@@ -587,15 +560,20 @@ class ScraperComponent extends Component {
         if($category){
          $ids=explode(',',$category);
         $obj = TableRegistry::get("scraper_categories")->find('all',
-                ['fields' =>['spayc_category_id',]])
+                ['fields' =>['spayc_category_id','name']])
+               ->join([
+                            'table' => 'spayc_categories',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'scraper_categories.spayc_category_id = spayc_categories.id',
+                            ]])
                 ->where([
                     'scraper_category_id IN '=>$ids,
                     'website'=>$website,
                     'spayc_category_id IS NOT NULL'
-                    ])
-                ->toArray();
+                    ])->toArray();
         if(!empty($obj[0]))
-            $data=[$obj,$obj[0]->spayc_category_id];;
+            $data=[$obj,$obj[0]->spayc_category_id,$obj[0]->name];
         
         }else{
             $obj = TableRegistry::get("scraper_categories")->find('all',
@@ -606,7 +584,7 @@ class ScraperComponent extends Component {
                      'spayc_category_id IS NOT NULL'])
                ->first();
             if(!empty($obj))
-            $data=[0,$obj->spayc_category_id];
+            $data=[0,$obj->spayc_category_id,0];
         }
         
          if(!empty($data)){

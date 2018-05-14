@@ -516,7 +516,7 @@ CREATE TABLE scraper_categories (
     id BIGSERIAL NOT NULL,
     "name" character varying(250) NULL,
     "scraper_category_id" character varying(255) NOT NULL,
-    "spayc_category_id" character varying(255) NULL,
+    "spayc_category_id" bigint DEFAULT NULL,
     "website" integer DEFAULT NULL,
     "created" timestamp NOT NULL,
     "modified" timestamp NULL,   
