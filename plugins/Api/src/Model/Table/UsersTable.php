@@ -727,11 +727,7 @@ class UsersTable extends Table {
             $items['event_id'] = $data['notification']['event_id'];
         }
         $spayc  = TableRegistry::get('Api.Spaycs')->findByMatrixRoomId($data['notification']['room_id'])->first();
-        if(empty($data['notification']['content']['msgtype'])){
-            \Cake\Log\Log::info(['message'=>__('Pusher didn\'t get messagetype.'),'data'=>$data]);
-            return false;
-            
-        }
+        
         //\Cake\Log\Log::info($data);
         $msgType = $data['notification']['content']['msgtype'];
         $items['spayc_image'] = null;
@@ -742,10 +738,13 @@ class UsersTable extends Table {
         
         if($msgType == 'm.likeMessage'){
             $notify = $this->storeMsg('a-user-liked-your-comment', $data['notification']['sender_display_name'], $data['notification']['content']['body']);          
+             $notify->message = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);;
         }elseif($msgType == 'm.replyText'){
             $notify = $this->storeMsg('someone-replyed-to-your-comment', $data['notification']['sender_display_name'], $data['notification']['content']['body']);
+            $notify->message = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);;
         }else{
             $notify = $this->storeMsg('someone-commented', $data['notification']['sender_display_name'], $data['notification']['content']['body']);
+            $notify->message = str_replace(["<USERNAME>","<COMMENT>","<SpaycName>"],[ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body'],ucwords($data['notification']['room_name'])], $notify->message);
         }
         
         $items['message']  = $notify->message;
@@ -763,9 +762,19 @@ class UsersTable extends Table {
                 $notify->notification_type = $notify->type;
             }
             \Cake\Cache\Cache::write($slug, $notify,'long');
+            
         }
        
         return $notify;
+    }
+    
+    public function pusherData($data){
+        $pushData['post_value'] = json_encode($data);
+        $pushData['created'] = date("Y-m-d H:i:s");
+        $pusher = TableRegistry::get("Api.PusherData");
+        $push = $pusher->newEntity();
+        $item = $pusher->patchEntity($push, $pushData);
+        return $pusher->save($item);
     }
     
 }

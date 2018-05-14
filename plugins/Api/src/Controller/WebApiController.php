@@ -72,15 +72,13 @@ class WebApiController extends AppController {
         $this->set($errorfile);
     }
     
-    public function notify(){
+    public function notify(){ 
          $this->loadComponent('Api.Notification');
+         $items = $this->request->getData();
          $deviceToken = $this->request->getData('device_token');
-         $data=[
-            'message'=>$this->request->getData('message'),
-            'slug' =>$this->request->getData('slug')
-         ];
-         $this->Notification->iosPush($data,$deviceToken);
+         $this->Push->sendOnIOS($items);
+         //$this->Notification->iosPush($data,$deviceToken);
     }
-
+    
 
 }

@@ -1383,25 +1383,36 @@ class UsersController extends AppController {
         if(!$this->request->is(['post'])) {
             $this->restException($blankObj); 
         }
-        //Log::info(json_encode($pushData,JSON_PRETTY_PRINT));
-        $data = $this->request->getData();
         
+        $data = $this->request->getData();
+        #Log::info($data);
+        //$this->Users->pusherData($data);
         /* for direct notification */
-        $msgType = $data['notification']['content']['msgtype'];
+        
+        if(!empty($data['notification']['content']['msgtype'])){
+            $msgType = $data['notification']['content']['msgtype'];
+        }else{
+            $this->restException($blankObj); 
+        }
         if(!empty($msgType)){
             if( ($msgType == 'm.likeMessage') && !empty($data['notification']['content']['disLikeMembers'])){
                 $this->restException($blankObj); 
             }
         }
         $items = $this->Users->pusherNotification($data);
+        if(empty($items)){
+            $this->restException($blankObj);
+        }
         
         $this->loadComponent('Api.Notification');
         if(!empty($data['notification']['devices'][0])){
             $device = $data['notification']['devices'][0];
-            $deviceToken = $device['pushkey'];
+            $items['device_token'] = $deviceToken = $device['pushkey'];
             $items['date_time'] = date('m-d-Y H:i:s',$device['pushkey_ts']);
+            //$this->Push->sendOnIOS($items);
+            //Log::info($items);
+            
         }
-        
         $this->Notification->iosPush($items,$deviceToken);        
         /* Rest job will be done by workers */
         //$data['items'] = $items;
