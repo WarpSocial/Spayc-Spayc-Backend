@@ -1,10 +1,12 @@
 -- Spayc table
+--TRUNCATE TABLE notification_types;
+--TRUNCATE TABLE plans;
 TRUNCATE TABLE physical_location;
 TRUNCATE TABLE users;
 TRUNCATE TABLE advertisement;
 TRUNCATE TABLE spayc_advertisement;
 TRUNCATE TABLE pusher_data;
---TRUNCATE TABLE queue_phinxlog;
+TRUNCATE TABLE queue_phinxlog;
 TRUNCATE TABLE joined_spayc;
 TRUNCATE TABLE queued_jobs;
 TRUNCATE TABLE queue_processes;
@@ -17,7 +19,12 @@ TRUNCATE TABLE friend_request;
 TRUNCATE TABLE subscribed_users;
 TRUNCATE TABLE notifications;
 TRUNCATE TABLE spayc_hashtags;
---TRUNCATE TABLE notification_types;
+TRUNCATE TABLE promotions;
+TRUNCATE TABLE purchase;
+TRUNCATE TABLE spayc_advertisement_priority;
+TRUNCATE TABLE spayc_promotion;
+TRUNCATE TABLE spayc_promotion_priority;
+
 
 -- Matrix table
 --TRUNCATE TABLE schema_version;

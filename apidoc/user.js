@@ -227,7 +227,11 @@ function postUser() { return; }
                     "joined_spayc_status": null,
                     "is_joined": false,
                     "joined_users": 0,
-                    "is_subscribed": false
+                    "is_subscribed": false,
+                    "spayc_category": {
+                        "id": 560,
+                        "name": "Softball"
+                    },
                 },
                 {
                     "distance": "15.5999136892407",
@@ -245,7 +249,11 @@ function postUser() { return; }
                     "joined_spayc_status": null,
                     "is_joined": false,
                     "joined_users": 1,
-                    "is_subscribed": false
+                    "is_subscribed": false,
+                    "spayc_category": {
+                        "id": 560,
+                        "name": "Softball"
+                    },
                 }
             ]
         },

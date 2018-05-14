@@ -60,7 +60,7 @@ class SpaycsTable extends Table {
         ]);
         $this->belongsTo('SpaycCategories', [
             'foreignKey' => 'spayc_category_id',
-            'joinType' => 'INNER',
+            'joinType' => 'LEFT',
             'className' => 'Api.SpaycCategories'
         ]);
         
@@ -398,17 +398,20 @@ class SpaycsTable extends Table {
         
         $spaycs = $this->find()
                 ->select([
-                    'distance' => $distance, 'id', 'name', 'location', 'matrix_room_id', 'start_date', 'end_date', 'image', 'type', 'group_type', 'passcode'])
-                ->where(['status'=>'Active','Spaycs.group_type !='=>'trusted_private', 'Spaycs.parent_id IS'=>null])
+                    'distance' => $distance, 'Spaycs.id', 'Spaycs.name', 'Spaycs.location', 'Spaycs.matrix_room_id', 'Spaycs.start_date', 'Spaycs.end_date', 'Spaycs.image', 'Spaycs.type', 'Spaycs.group_type', 'Spaycs.passcode','Spaycs.spayc_category_id'])
+                ->where(['Spaycs.status'=>'Active','Spaycs.group_type !='=>'trusted_private', 'Spaycs.parent_id IS'=>null])
                ->contain([
                     'JoinedSpayc' => function($q) {
                         return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status'])->where(['JoinedSpayc.status'=>'Joined']);
                     },
                     'SubscribedUsers' => function($q) {
                         return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
+                    },
+                    'SpaycCategories' => function($q) {
+                        return $q->select(['SpaycCategories.id', 'SpaycCategories.name']);
                     }
                 ])
-                ->order(['distance'=>'ASC','created'=>'DESC']);
+                ->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
                 $bannedSpayc = $this->bannedSpayc($userId);    
                 if(!empty($bannedSpayc)){
                     $spaycs->where(function (QueryExpression $exp, Query $q)use($bannedSpayc) {

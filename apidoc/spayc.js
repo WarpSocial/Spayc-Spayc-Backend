@@ -303,6 +303,10 @@ function postSubspaycs() { return; }
                 "group_type": "Public",
                 "passcode": "",
                 "subscribed_users": 0,
+                "spayc_category": {
+                    "id": 560,
+                    "name": "Softball"
+                },
                 "friends": 0,
                 "joined_spayc_status": '',
                 "is_joined": false,
@@ -320,6 +324,10 @@ function postSubspaycs() { return; }
                 "start_date": "01-11-2019 01:02:00",
                 "end_date": "01-12-2019 01:02:00",
                 "image": "",
+                "spayc_category": {
+                    "id": 560,
+                    "name": "Softball"
+                },
                 "type": "Event",
                 "group_type": "Public",
                 "passcode": "s5d4f87sdf4545",
@@ -456,13 +464,21 @@ function postUnSubscribeSpayc() { return; }
                 "start_date": "2018-03-11T09:16:00+00:00",
                 "end_date": "2018-03-12T09:23:00+00:00",
                 "passcode": "",
-                "matrix_room_id": "!gERdbhptfHdVQrcnse:127.0.0.1"
+                "matrix_room_id": "!gERdbhptfHdVQrcnse:127.0.0.1",
+                 "spayc_category": {
+                    "id": 560,
+                    "name": "Softball"
+                }
             }
         ],
         "friends": 0,
         "joined_spayc_status": "Joined",
         "joined_users": 1,
         "is_admin": 1,
+        "spayc_category": {
+            "id": 560,
+            "name": "Softball"
+        },
         "is_subscribed": false,
         "total_comments": 0,
         "total_presents": 0
@@ -763,6 +779,10 @@ function postBanSpaycMember() { return; }
             "is_joined": false,
             "joined_users": 0,
             "is_subscribed": false,
+            "spayc_category": {
+                "id": 560,
+                "name": "Softball"
+            },
             "total_comments": 0
         }
     ]
@@ -805,6 +825,10 @@ function getSubSpaycs() { return; }
             "end_date": "05-30-2018 14:32:20",
             "matrix_room_id": "!LEHgeQLltxEMrDOZgh:127.0.0.1",
             "distance": 0.32,
+            "spayc_category": {
+                "id": 560,
+                "name": "Softball"
+            },
             "is_subscribed": true,
             "joined_status": "Joined"
         },
@@ -818,6 +842,10 @@ function getSubSpaycs() { return; }
             "end_date": "06-28-2018 20:26:20",
             "matrix_room_id": "!IBoaOQvLREneRQCFYy:127.0.0.1",
             "distance": 1,
+            "spayc_category": {
+                "id": 560,
+                "name": "Softball"
+            },
             "is_subscribed": false,
             "joined_status": "Joined"
         }
@@ -862,6 +890,10 @@ function getnearAboutSpayces() { return; }
             "start_date": null,
             "end_date": null,
             "matrix_room_id": "!SaAsSnzeUOFGqlsKgr:127.0.0.1",
+            "spayc_category": {
+                "id": 560,
+                "name": "Softball"
+            },
             "joined_status": "Joined"
         },
         {
@@ -873,6 +905,10 @@ function getnearAboutSpayces() { return; }
             "start_date": null,
             "end_date": null,
             "matrix_room_id": "!cQgXksBtaXDSkAoRpk:127.0.0.1",
+            "spayc_category": {
+                "id": 560,
+                "name": "Softball"
+            },
             "joined_status": "Joined"
         }
     ]
