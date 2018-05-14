@@ -181,12 +181,12 @@ class MatrixComponent extends Component {
             $validInput['room_alias_name'] = 'direct_'.$validInput['room_alias_name'];
         }elseif(!empty($items['parent_matrix_room_id'])){
             if(!empty($category->name)){
-                $validInput['room_alias_name'] = $category->name.'_'.$validInput['room_alias_name'];
+               // $validInput['room_alias_name'] = $category->name.'_'.$validInput['room_alias_name'];
             }
             $validInput['room_alias_name'] = 'subspayc_'.$validInput['room_alias_name'];
         }else{
             if(!empty($category->name)){
-                $validInput['room_alias_name'] = $category->name.'_'.$validInput['room_alias_name'];
+                //$validInput['room_alias_name'] = $category->name.'_'.$validInput['room_alias_name'];
             }
             $validInput['room_alias_name'] = 'parentspayc_'.$validInput['room_alias_name'];
         }
