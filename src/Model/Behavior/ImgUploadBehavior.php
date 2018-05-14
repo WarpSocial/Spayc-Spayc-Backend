@@ -200,7 +200,7 @@ class ImgUploadBehavior extends Behavior {
              if (!empty($requestField['tmp_name'])) {
                 $resource = fopen($requestField['tmp_name'], 'r');
              }else if(isset($requestField) && filter_var($requestField, FILTER_VALIDATE_URL)) {
-                $requestField=$this->cropImage($requestField,480,320);
+                $requestField=$this->cropImage($requestField);
                   $resource = fopen($requestField, 'r');
              }
              $AWS3File = $this->aws3Obj->upload($this->_aws3['bucket'], $fileName, $resource, 'public-read');
@@ -285,7 +285,7 @@ class ImgUploadBehavior extends Behavior {
     }
 
 
-      function cropImage($imgUrl, $dst_w, $dst_h) { 
+      function cropImage($imgUrl) { 
          
         $types = array(1 => "gif", "jpeg", "png", "swf", "psd", "wbmp"); // used to determine image type 
          
@@ -295,67 +295,58 @@ class ImgUploadBehavior extends Behavior {
         list($w, $h, $type) = getimagesize($imgUrl);
 //        echo $image;die;
         $path=TMP.'/scapper.'.$types[$type];  
-        $r = $w / $h;
-        $dst_r = $dst_w / $dst_h;
-        
-        if ($r > $dst_r) {
-            $src_w = $h * $dst_r;
-            $src_h = $h;
-            $src_x = ($w - $src_w) / 2;
-            $src_y = 0;
-        } else {
-            $src_w = $w;
-            $src_h = $w / $dst_r;
-            $src_x = 0;
-            $src_y = ($h - $src_h) / 2;
-        }
-        $data = [
-            "file"=>$url,
-            "w"=>$dst_w,
-            "h"=>$dst_h,
-            "x"=>$src_x,
-            "y"=>$src_y,
-            "output"=>$imgUrl,
-        ];
-			// Validates params
-			if (!isset($data['file']) ||
-			    !isset($data['w']) ||
-			    !isset($data['h']) ||
-			    !isset($data['x']) ||
-			    !isset($data['y']) ||
-			    !isset($data['output'])) {
-				 $this->errors[] = 'Params missing!';
-			}
-			
-			
-			// Get image data
-			$img = getimagesize($data['file']);
-			$createFunction = $this->_getCreateFunction($img['mime']);
-			$finishFunction = $this->_getFinishFunction($img['mime']);
-			// Create source and destination image
-			$src_img = $createFunction($data['file']);
-			$dst_img = imagecreatetruecolor($data['w'], $data['h']);
-			// Crop image
-			imagecopyresampled($dst_img, 
-					   $src_img, 
-					   0, 
-					   0, 
-					   (int) $data['x'], 
-					   (int) $data['y'],
-	        			   (int) $data['w'],
-	        			   (int) $data['h'],
-	        			   (int) $src_w, 
-	        			   (int) $src_h);
-			// Finish image
-			if ($img['mime'] == 'image/jpeg' || $img['mime'] == 'image/pjpeg'){
-				$finishFunction($dst_img, $path, (int) 100);
-			} else {
-				$finishFunction($dst_img, $path);
-			}
-		
+        		
+        $this->generate_image_thumbnail($path, $path);
+    
        return $url;
     }
    
+    
+    function generate_image_thumbnail($source_image_path, $thumbnail_image_path)
+{
+    list($source_image_width, $source_image_height, $source_image_type) = getimagesize($source_image_path);
+    switch ($source_image_type) {
+        case IMAGETYPE_GIF:
+            $source_gd_image = imagecreatefromgif($source_image_path);
+            break;
+        case IMAGETYPE_JPEG:
+            $source_gd_image = imagecreatefromjpeg($source_image_path);
+            break;
+        case IMAGETYPE_PNG:
+            $source_gd_image = imagecreatefrompng($source_image_path);
+            break;
+    }
+    if ($source_gd_image === false) {
+        return false;
+    }
+    $source_aspect_ratio = $source_image_width / $source_image_height;
+    $thumbnail_aspect_ratio = THUMBNAIL_IMAGE_MAX_WIDTH / THUMBNAIL_IMAGE_MAX_HEIGHT;
+    if ($source_image_width <= THUMBNAIL_IMAGE_MAX_WIDTH && $source_image_height <= THUMBNAIL_IMAGE_MAX_HEIGHT) {
+        $thumbnail_image_width = $source_image_width;
+        $thumbnail_image_height = $source_image_height;
+    } elseif ($thumbnail_aspect_ratio > $source_aspect_ratio) {
+        $thumbnail_image_width = (int) (THUMBNAIL_IMAGE_MAX_HEIGHT * $source_aspect_ratio);
+        $thumbnail_image_height = THUMBNAIL_IMAGE_MAX_HEIGHT;
+    } else {
+        $thumbnail_image_width = THUMBNAIL_IMAGE_MAX_WIDTH;
+        $thumbnail_image_height = (int) (THUMBNAIL_IMAGE_MAX_WIDTH / $source_aspect_ratio);
+    }
+    $thumbnail_gd_image = imagecreatetruecolor($thumbnail_image_width, $thumbnail_image_height);
+    imagecopyresampled($thumbnail_gd_image, $source_gd_image, 0, 0, 0, 0, $thumbnail_image_width, $thumbnail_image_height, $source_image_width, $source_image_height);
+
+    $img_disp = imagecreatetruecolor(THUMBNAIL_IMAGE_MAX_WIDTH,THUMBNAIL_IMAGE_MAX_HEIGHT);
+    $backcolor = imagecolorallocate($img_disp,0,0,0);
+    imagefill($img_disp,0,0,$backcolor);
+
+        imagecopy($img_disp, $thumbnail_gd_image, (imagesx($img_disp)/2)-(imagesx($thumbnail_gd_image)/2), (imagesy($img_disp)/2)-(imagesy($thumbnail_gd_image)/2), 0, 0, imagesx($thumbnail_gd_image), imagesy($thumbnail_gd_image));
+
+    imagejpeg($img_disp, $thumbnail_image_path, 90);
+    imagedestroy($source_gd_image);
+    imagedestroy($thumbnail_gd_image);
+    imagedestroy($img_disp);
+    return true;
+}
+
     
      public function openImage($imgUrl){
        $http = new \Cake\Http\Client();

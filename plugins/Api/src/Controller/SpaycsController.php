@@ -637,9 +637,9 @@ class SpaycsController extends AppController {
         }
                 
         // If User Update Spayc once Scraper will not update
-        if(isset($data['is_update'])){
-            $entities->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]],['is_update'=>0]);
-            unset($data['is_update']);
+        if(isset($data['is_admin_update'])){
+            $entities->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']],['is_admin_update'=>0]]);
+            unset($data['is_admin_update']);
         }else{        
         $entities->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
         }

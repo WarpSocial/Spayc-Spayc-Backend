@@ -371,8 +371,8 @@ class ScraperComponent extends Component {
                     }
             }   
             }
-            print_R($response);die;
         }
+        return $response;
     }
     
      public function getSpaycCategories() {
@@ -390,7 +390,7 @@ class ScraperComponent extends Component {
     
     //Create & Update Spayc Logic
     
-    public function saveDataSpaceTable($page=1)
+    public function saveDataSpaceTable()
     {       
 
         $this->StubhubEvents = TableRegistry::get('StubhubEvents');
@@ -426,74 +426,82 @@ class ScraperComponent extends Component {
     public function createSpayc($plain_token) {
           
         // Should be Removed
-          $pageLimit=10; 
-        //        $plain_token="04d903e2d89fda57517fe4d6e917507effe329bb0ec96365e23671f049e8e96e";
-              
-        
-//          $plain_token="8bfa1623f5366cc966add372b5834cfdc52136daac6fe2bb16b4c2893f9dbd3c";
+          $pageLimit=2; 
           
           // Should be Removed
-          
-          
+       
+
           //Stubhub
           $stubhub_data = $this->StubhubEvents->find('all',
-                  [
-//                      'conditions' => ['StubhubEvents.is_status' => 0],
-                       'limit' => $pageLimit
+                    [
+                        'conditions' => ['group_id' => NULL],
+//                       'limit' => $pageLimit
                     ])
-//                    ->page($page)
                     ->toArray();           
-//            $this->cURLProcess($stubhub_data,$plain_token,$this->StubhubEvents,$this->SCRAPER_WEBSITE['stubhub']);
+            $this->cURLProcess($stubhub_data,$plain_token,$this->StubhubEvents,$this->SCRAPER_WEBSITE['stubhub'],UNIQUE);
             
             
           //TicketMaster
           $ticketmaster_data = $this->TicketmasterEvents->find('all',
-                 [
-//                      'conditions' => ['StubhubEvents.is_status' => 0],
-                       'limit' => $pageLimit
+                    [
+                        'conditions' => ['group_id' => NULL],
+//                       'limit' => $pageLimit
                     ])
-//                    ->page($page)
                     ->toArray();           
-//            $this->cURLProcess($ticketmaster_data,$plain_token,$this->TicketmasterEvents,$this->SCRAPER_WEBSITE['ticketmaster']);
+            $this->cURLProcess($ticketmaster_data,$plain_token,$this->TicketmasterEvents,$this->SCRAPER_WEBSITE['ticketmaster'],UNIQUE);
             
             
             
           //EventbriteEvents
           $eventbrite_data = $this->EventbriteEvents->find('all',
-                  [
-//                      'conditions' => ['StubhubEvents.is_status' => 0],
-                       'limit' => $pageLimit
+                    [
+                        'conditions' => ['group_id' => NULL],
+//                       'limit' => $pageLimit
                     ])
 //                    ->page($page)
                     ->toArray();           
-            $this->cURLProcess($eventbrite_data,$plain_token, $this->EventbriteEvents,$this->SCRAPER_WEBSITE['eventbrite']);
+            $this->cURLProcess($eventbrite_data,$plain_token, $this->EventbriteEvents,$this->SCRAPER_WEBSITE['eventbrite'],UNIQUE);
             
             
+            
+            //Duplicate Data
+               
+            $duplicate_date = $this->getDuplicateData('eventbrite_events');   
+            if($duplicate_date)
+            $this->cURLProcess($duplicate_date,$plain_token,$this->EventbriteEvents,$this->SCRAPER_WEBSITE['eventbrite'],DUPLICATE);
+    
+            
+            $duplicate_date = $this->getDuplicateData('stubhub_events');   
+            if($duplicate_date)
+            $this->cURLProcess($duplicate_date,$plain_token,$this->StubhubEvents,$this->SCRAPER_WEBSITE['stubhub'],DUPLICATE);
+    
+            
+            $duplicate_date = $this->getDuplicateData('ticketmaster_events');   
+            if($duplicate_date)
+            $this->cURLProcess($duplicate_date,$plain_token,$this->TicketmasterEvents,$this->SCRAPER_WEBSITE['ticketmaster'],DUPLICATE);
+    
             
         
     }
     
-    public function cURLProcess($record, $plain_token, $obj,$website) {
+    public function cURLProcess($record, $plain_token, $obj,$website,$duplicate) {
         $base_url = Configure::read('App.BASE_URL');
-        //            $url= 'http://172.16.145.210/spayc/api/spaycs.json';   
-//            $url= 'http://spayc-dev.kiwireader.com/api/spaycs.json';  
         $url = $base_url . 'api/spaycs.json';
-//            $update_url= 'http://spayc-dev.kiwireader.com/api/spayc-edit.json';  
         $update_url = $base_url . 'api/spayc-edit.json';
         $getIds = $createSpaceData = [];
         $i = 0;
         foreach ($record as $value) {
-
+            
+            $spayc_id=0;    //Default Spayc Define
             $getIds[] = $value['id'];
             $createSpaceData['name'] = $value['name'];
             $createSpaceData['location'] = $value['location'];
             $createSpaceData['type'] = 'Event';
             $createSpaceData['group_type'] = 'Public';
-            $createSpaceData['start_date'] = $value['start_date']->format('m-d-Y H:i:s');
-            $date1 = str_replace('-', '/', $createSpaceData['start_date']);
-            $next = date('m-d-Y H:i:s', strtotime($date1 . "+1 days"));
+            $createSpaceData['start_date'] = date('m-d-Y H:i:s', strtotime($value['start_date']));
+            $next = date('m-d-Y H:i:s', strtotime($value['start_date'] . "+1 days"));
             $createSpaceData['end_date'] = $next;
-            $description = substr($value['description'], 0, 250);
+            $description = substr($value['description'], 0, MAX_DESCRIPTION);
             if ($description) {
                 $createSpaceData['description'] = $description;
             } else {
@@ -504,27 +512,25 @@ class ScraperComponent extends Component {
             $createSpaceData['latitude'] = $value['latitude'];
             $http = new Client(['headers' => ['token' => $plain_token]]);
             
-
+            
                 if ($value['spayc_id']) {
                     $createSpaceData['spayc_id'] = $value['spayc_id'];
-                    $createSpaceData['is_update'] = 1;
+                    $createSpaceData['is_admin_update'] = 1;
 
                     //cUrl Request for Update Spayc Details
-//                    $httpResponse = $http->post($update_url, $createSpaceData);
-//                    $response['Update Spayc'] = json_decode($httpResponse->body, true);
-                    
+                    $httpResponse = $http->post($update_url, $createSpaceData);
+                    $response['Update Spayc'][] = json_decode($httpResponse->body, true);
+                    $spayc_id=$value['spayc_id'];
                 } else {
                    
                      $category = $this->isCatExist(str_replace(" ", "", $value['category']),$website);
-//                     print_R($category);break;
                     //If Category Exist in Spayc
                     if ($category) {
                         $createSpaceData['spayc_category_id'] = $category[1];
                         $httpResponse = $http->post($url, $createSpaceData);
-                        $response['Create New Spayc'] =$created= json_decode($httpResponse->body, true);
-                        print_R($response);die;
+                        $response['Create New Spayc'][] =$created= json_decode($httpResponse->body, true);
                         //Updating Spayc ID in Related tables
-                        if ($created['status'] != 'failed') {
+                        if ($created['status'] == 'success') {
                             $update['spayc_id'] = $created['data']['id'];
                             $condition['id'] = $value['id'];
                             $response['Update 3 Scrap Tables Spayc_id'] = $obj->UpdateAll($update, $condition);
@@ -533,7 +539,6 @@ class ScraperComponent extends Component {
                                 if(!empty($category[0])){
                                 $scrapModel = TableRegistry::get('scraper_spayc_categories');
                                     foreach ($category[0] as $val){
-//                                        print_R($val);die;
                                         $entity = $scrapModel->newEntity();
                                         $entity->category_id = $val->spayc_category_id;
                                         $entity->spayc_id = $update['spayc_id'];
@@ -542,12 +547,22 @@ class ScraperComponent extends Component {
                                         $created = $scrapModel->save($entity);
                                     }
                                 }
+                                 $spayc_id=$update['spayc_id'];
                         }
                     } else {
-                        $response['Category'] = $value['category'] . " - Category Not Exist";
+                        $response['Category'][] = $value['category'] . " - Category Not Exist";
                     }
                 }
             
+                //Updating Group ID in 3 tables
+                if($spayc_id && $duplicate==DUPLICATE){
+                    $update_duplicate['spayc_id'] = $spayc_id;
+                    $condition_duplicate['group_id'] = $value['group_id'];
+                    $condition_duplicate['start_date'] = $value['start_date'];
+                    $this->EventbriteEvents->UpdateAll($update_duplicate, $condition_duplicate);
+                    $this->TicketmasterEvents->UpdateAll($update_duplicate, $condition_duplicate);
+                    $this->StubhubEvents->UpdateAll($update_duplicate, $condition_duplicate);
+                }
             pr($response);
 //                $this->out($i);
 //                $this->out($value['id']);
@@ -556,6 +571,16 @@ class ScraperComponent extends Component {
 //                }
         }
     }
+    
+   public function array_flatten($array) { 
+    foreach ($array as $childArray) {
+        foreach ($childArray as $value) {
+            $flattenArray[] = $value;
+        }
+    }
+    return $flattenArray;
+} 
+
 
     public function isCatExist($category,$website) {
         $data=false;
@@ -654,11 +679,11 @@ class ScraperComponent extends Component {
 
      /*** common query for union all scraper table ***/
     public function unionCommonQuery(){
-        return "select eventbrite_event_id  as event_id,'eventbrite' as type,name,start_date,latitude,longitude,group_id,location,category from eventbrite_events where latitude IS NOT NULL and longitude IS NOT NULL 
+        return "select eventbrite_event_id  as event_id,'eventbrite' as type,name,start_date,latitude,longitude,group_id,location,category from eventbrite_events where latitude IS NOT NULL and longitude IS NOT NULL and spayc_id IS NULL 
         UNION 
-        select stubhub_event_id as event_id,'stubhub' as type,name,start_date,latitude,longitude,group_id,location,category from stubhub_events where latitude IS NOT NULL and longitude IS NOT NULL 
+        select stubhub_event_id as event_id,'stubhub' as type,name,start_date,latitude,longitude,group_id,location,category from stubhub_events where latitude IS NOT NULL and longitude IS NOT NULL and spayc_id IS NULL 
         UNION 
-        select ticketmaster_event_id as event_id,'ticketmaster' as type,name,start_date,latitude,longitude,group_id,location,category from ticketmaster_events where latitude IS NOT NULL and longitude IS NOT NULL"; 
+        select ticketmaster_event_id as event_id,'ticketmaster' as type,name,start_date,latitude,longitude,group_id,location,category from ticketmaster_events where latitude IS NOT NULL and longitude IS NOT NULL and spayc_id IS NULL "; 
     }
 
     /*** Get all union data from eventbrite,ticketmaster and stubhub table ***/
@@ -672,7 +697,25 @@ class ScraperComponent extends Component {
         $rows = $stmt->fetchAll('assoc');
         return $rows;
     }
-
+    
+     /*** Get all union data from  eventbrite,ticketmaster and stubhub table ***/
+    public function getDuplicateData($table) {  
+        $conn = ConnectionManager::get('default');
+        $sql="select * from $table where latitude IS NOT NULL and longitude IS NOT NULL and spayc_id IS NULL AND group_id IS NOT NULL ORDER BY group_id,start_date desc";
+        $stmt = $conn->execute($sql);
+        $rows = $stmt->fetchAll('assoc');
+        $duplicate=[];
+        $duplicate_date=[];
+        if($rows){
+        foreach ($rows as $key => $value) {            
+           $duplicate[$value['group_id']][$value['start_date']]=$value;
+            }  
+        
+        $duplicate_date=$this->array_flatten($duplicate);
+        }
+        return $duplicate_date;
+    }
+    
     /***  Get all Common Date data from eventbrite,ticketmaster and stubhub table ***/
     public function getUnionDataWithCommonDate($having) {  
         $conn = ConnectionManager::get('default');

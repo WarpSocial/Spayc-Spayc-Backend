@@ -56,6 +56,12 @@ define('SCRAPER_ROOT_URL_TOKEN', serialize($scraperRootUrlToken));
 define('SCRAPER_EMAIL', 'ankur.indiacp@gmail.com');
 define('MAX_CATEGORY_PERCENTAGE', '90');
 define('OTHER_CAT_NAME', 'Other');
+define('DUPLICATE', 'duplicate');
+define('UNIQUE', 'unique');
+define('MAX_DESCRIPTION', '250');
+
+define('THUMBNAIL_IMAGE_MAX_WIDTH', 480);
+define('THUMBNAIL_IMAGE_MAX_HEIGHT', 320);
 
 $config =array();
 $config['SITETITLEMESSAGE'] = [

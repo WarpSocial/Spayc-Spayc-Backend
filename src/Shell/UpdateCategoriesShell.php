@@ -46,10 +46,7 @@ class UpdateCategoriesShell extends Shell
     {
        $this->out('Process start at '.$this->currentDateTime());
         $response = $this->Scraper->updateScraperCategory();
-//        if($response)
-//        $response = $this->Scraper->getEventBriteCategories(1, NULL,'subcategories');
-//        if($response)
-//        $response = $this->Scraper->getTicketmasterCategories();
+        $this->out($response);
         $this->out('Process end at '.$this->currentDateTime());
     }
 
