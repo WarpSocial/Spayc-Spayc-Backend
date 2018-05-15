@@ -6,6 +6,7 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
+use Cake\ORM\TableRegistry;
 /**
  * ScraperCategories Model
  *
@@ -94,5 +95,46 @@ class ScraperCategoriesTable extends Table
                 } 
             }
         }
+    }
+    
+    
+     public function isCatExist($category,$website) {
+        $data=false;
+        if($category){
+         $ids=explode(',',$category);
+        $obj = $this->find('all',
+                ['fields' =>['spayc_category_id','name']])
+               ->join([
+                            'table' => 'spayc_categories',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'spayc_category_id = spayc_categories.id',
+                            ]])
+                ->where([
+                    'scraper_category_id IN '=>$ids,
+                    'website'=>$website,
+                    'spayc_category_id IS NOT NULL'
+                    ])->toArray();
+        if(!empty($obj[0]))
+            $data=[$obj,$obj[0]->spayc_category_id,$obj[0]->name];
+        
+        }else{
+            $obj = $this->find('all',
+                ['fields' =>['spayc_category_id',]])
+                ->where([
+                     "name LIKE" => "%".OTHER_CAT_NAME."%",
+                     'website'=>$website,
+                     'spayc_category_id IS NOT NULL'])
+               ->first();
+            if(!empty($obj))
+            $data=[0,$obj->spayc_category_id,0];
+        }
+        
+         if(!empty($data)){
+            return $data;
+        }else{
+            return false;
+        }
+        
     }
 }

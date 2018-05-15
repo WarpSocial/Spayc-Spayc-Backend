@@ -198,4 +198,18 @@ class UsersTable extends Table
 
         return $rules;
     }
+      
+    public function getUserTokenScraper() {
+        $obj = TableRegistry::get("Users")->find('all',
+                ['fields' =>['user_logs.plain_token',]])
+                ->join([
+                            'table' => 'user_logs',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'Users.id = user_logs.user_id',
+                                'Users.email' => trim(SCRAPER_EMAIL),
+                            ]])
+                ->first();
+        return $plain_token=$obj->user_logs['plain_token'];
+    }
 }
