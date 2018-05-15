@@ -8,6 +8,7 @@ use Cake\Network\Http\Client;
 use Cake\Core\Configure;
 use Cake\Routing\Router;
 use Cake\ORM\TableRegistry;
+use Cake\Log\Log;
 use Cake\I18n\Time;
 use Api\Utils\Utils;
 use FuzzyWuzzy\Fuzz;
