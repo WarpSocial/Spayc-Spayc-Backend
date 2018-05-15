@@ -523,7 +523,7 @@ class ScraperComponent extends Component {
                     $this->StubhubEvents->UpdateAll($update_duplicate, $condition_duplicate);
                 }
                 $endtime = microtime(true);       //Checking time
-                $response['Time Difference']=$endtime - $starttime;
+                $response['Time Taken']=$endtime - $starttime;
             pr(json_encode($response,JSON_PRETTY_PRINT));
         }
     }
