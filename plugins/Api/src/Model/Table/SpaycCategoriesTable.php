@@ -77,9 +77,9 @@ class SpaycCategoriesTable extends Table {
      * 
      */
     public function allCategories(){
-        $categories = $this->find('threaded');
-        $categories->cache('spayc_categories','long');
-        $categories->select(['SpaycCategories.id','SpaycCategories.parent_id','SpaycCategories.name','SpaycCategories.slug','SpaycCategories.code','SpaycCategories.description','SpaycCategories.created','SpaycCategories.modified'])
+        if (($categories = \Cake\Cache\Cache::read('spayc_categories','long')) === false) {
+            $spaycCategory = $this->find('threaded')        
+                ->select(['SpaycCategories.id','SpaycCategories.parent_id','SpaycCategories.name','SpaycCategories.slug','SpaycCategories.code','SpaycCategories.description','SpaycCategories.created','SpaycCategories.modified'])
                 ->where(['SpaycCategories.status'=>ACTIVE])
                 ->order(['SpaycCategories.name'=>'ASC'])        
                 ->map(function($row){
@@ -89,13 +89,16 @@ class SpaycCategoriesTable extends Table {
                         foreach($row->children as $skey => $subrow){
                             $row->children[$skey]->created = Utils::toClient($subrow->created);
                             $row->children[$skey]->modified = Utils::toClient($subrow->modified);
+                            unset($row->children[$skey]->children);
                         };
                     }
                     $row->sub_categories = $row->children;
                     unset($row->children);
                     return $row;
                 });
-        
+            $categories = $spaycCategory->toArray();    
+            \Cake\Cache\Cache::write('spayc_categories', $categories,'long');    
+        }
         return $categories;        
     }
 
