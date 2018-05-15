@@ -238,7 +238,7 @@ class SpaycsTable extends Table {
 
         $validator
                 ->requirePresence('description', 'create',__('Description key is missing.'))
-                ->maxLength('description', 250,__('Description must be less than 250 characters.'))
+//                ->maxLength('description', 250,__('Description must be less than 250 characters.'))
                 ->allowEmpty('description');
         
         $validator

@@ -465,7 +465,7 @@ class ScraperComponent extends Component {
         $update_url = $base_url . 'api/spayc-edit.json';
         $getIds = $createSpaceData = [];
         foreach ($record as $value) {
-            
+            $starttime = microtime(true);       //Checking time
             $spayc_id=0;    //Default Spayc Define
             $response=[];
             $getIds[] = $value['id'];
@@ -474,9 +474,9 @@ class ScraperComponent extends Component {
             $createSpaceData['type'] = 'Event';
             $createSpaceData['group_type'] = 'Public';
             $createSpaceData['start_date'] = date('m-d-Y H:i:s', strtotime($value['start_date']));
-//            $next = date('m-d-Y H:i:s', strtotime($value['start_date'] . "+1 days"));
             $createSpaceData['end_date'] = date('m-d-Y H:i:s', strtotime($value['start_date']));
-            $description = substr($value['description'], 0, MAX_DESCRIPTION);
+//            $description = substr($value['description'], 0, MAX_DESCRIPTION);
+            $description = $value['description'];
             if ($description) {
                 $createSpaceData['description'] = $description;
             } else {
@@ -485,6 +485,7 @@ class ScraperComponent extends Component {
             $createSpaceData['image'] = $value['image'];
             $createSpaceData['longitude'] = $value['longitude'];
             $createSpaceData['latitude'] = $value['latitude'];
+            $createSpaceData['website'] = $website;
             $http = new Client(['headers' => ['token' => $plain_token]]);
             
             
@@ -541,6 +542,8 @@ class ScraperComponent extends Component {
                     $this->TicketmasterEvents->UpdateAll($update_duplicate, $condition_duplicate);
                     $this->StubhubEvents->UpdateAll($update_duplicate, $condition_duplicate);
                 }
+                $endtime = microtime(true);       //Checking time
+                $response['Time Difference']=$endtime - $starttime;
             pr(json_encode($response,JSON_PRETTY_PRINT));
         }
     }
