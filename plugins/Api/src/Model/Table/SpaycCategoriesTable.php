@@ -77,6 +77,9 @@ class SpaycCategoriesTable extends Table {
      * 
      */
     public function allCategories(){
+        if(!empty(\Cake\Routing\Router::getRequest()->getQuery('clear'))){
+            \Cake\Cache\Cache::delete('spayc_categories', 'long'); 
+        }
         if (($categories = \Cake\Cache\Cache::read('spayc_categories','long')) === false) {
             $spaycCategory = $this->find('threaded')        
                 ->select(['SpaycCategories.id','SpaycCategories.parent_id','SpaycCategories.name','SpaycCategories.slug','SpaycCategories.code','SpaycCategories.description','SpaycCategories.created','SpaycCategories.modified'])
