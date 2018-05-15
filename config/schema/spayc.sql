@@ -335,6 +335,7 @@ CREATE TABLE "spayc_categories" (
     "rght" integer NULL,
     "name" character varying(100),
     "slug" character varying(100),
+    "code" character varying(50),
     "description" character varying(200),
     "status" row_status DEFAULT 'Active' NOT NULL,
     "created" timestamp,

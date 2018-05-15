@@ -590,7 +590,13 @@ class SpaycsTable extends Table {
                 'matrix_token'=>$val->matrix_access_token
             ];
             //if($val->id != $adminUser){
-            TableRegistry::get('Queue.QueuedJobs')->createJob('MuteUnmute',['join'=>true,'rule'=>'mute','status'=>'Joined','matrix_token'=>$val->matrix_access_token,'matrix_room_id'=>$items['matrix_room_id']]);                
+            TableRegistry::get('Queue.QueuedJobs')->createJob('MuteUnmute',[
+                'join'=>true,
+                'rule'=>'mute',
+                'status'=>'Joined',
+                'matrix_token'=>$val->matrix_access_token,
+                'matrix_room_id'=>$items['matrix_room_id']
+                ]);                
             //}
             $push['requested_by'] = $adminUser;
             $push['requested_to'] = $val->id;

@@ -77,8 +77,9 @@ class SpaycCategoriesTable extends Table {
      * 
      */
     public function allCategories(){
-        $categories = $this->find('threaded')
-                ->select(['SpaycCategories.id','SpaycCategories.parent_id','SpaycCategories.name','SpaycCategories.slug','SpaycCategories.description','SpaycCategories.created','SpaycCategories.modified'])
+        $categories = $this->find('threaded');
+        $categories->cache('spayc_categories','long');
+        $categories->select(['SpaycCategories.id','SpaycCategories.parent_id','SpaycCategories.name','SpaycCategories.slug','SpaycCategories.code','SpaycCategories.description','SpaycCategories.created','SpaycCategories.modified'])
                 ->where(['SpaycCategories.status'=>ACTIVE])
                 ->order(['SpaycCategories.name'=>'ASC'])        
                 ->map(function($row){
@@ -94,6 +95,7 @@ class SpaycCategoriesTable extends Table {
                     unset($row->children);
                     return $row;
                 });
+        
         return $categories;        
     }
 

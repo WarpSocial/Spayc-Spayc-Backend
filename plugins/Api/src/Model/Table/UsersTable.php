@@ -755,7 +755,7 @@ class UsersTable extends Table {
     }
     
     public function storeMsg($slug,$username,$body){
-        if (($notify = \Cake\Cache\Cache::read($slug)) === false) {
+        if (($notify = \Cake\Cache\Cache::read($slug,'long')) === false) {
             $notify = TableRegistry::get('Api.Notifications')->message($slug);
             if(!empty($notify)){
                 $notify->message = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($username),$body], $notify->message);
