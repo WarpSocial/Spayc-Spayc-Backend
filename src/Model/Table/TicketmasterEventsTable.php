@@ -107,4 +107,35 @@ class TicketmasterEventsTable extends Table
         //$rules->add($rules->existsIn(['ticketmaster_event_id'], 'TicketmasterEvents'));
         return $rules;
     }
+
+    public function saveNupdateData($events, $eventIds) {
+        $getIds = $this->find()->select(['ticketmaster_event_id'])->
+            where(['ticketmaster_event_id IN' => $eventIds])->extract('ticketmaster_event_id')->toList();
+        $diffIds=array_diff($eventIds,$getIds);       
+        if(count($diffIds)){
+            $getuniqueevents =[];           
+            foreach ($events as $val) {
+                if (in_array($val['ticketmaster_event_id'],$diffIds)){
+                    $Entity = $this->newEntity($events[$val['ticketmaster_event_id']]);
+                    $result = $this->save($Entity);
+                } else if(in_array($val['ticketmaster_event_id'],$getIds)) {
+                    $query = $this->query();
+                    $query->update()
+                    ->set($events[$val['ticketmaster_event_id']])
+                    ->where(['ticketmaster_event_id' => $val['ticketmaster_event_id']])
+                    ->execute();
+                } else {
+                    continue;
+                }
+            }
+        }  else {
+            foreach ($getIds as $id) {
+                $query = $this->query();
+                $query->update()
+                ->set($events[$id])
+                ->where(['ticketmaster_event_id' => $id])
+                ->execute();
+            } 
+        } 
+    }
 }

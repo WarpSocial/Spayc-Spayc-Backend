@@ -29,10 +29,11 @@ class UsersController extends AdminController
         $this->loadComponent('Scraper');
         $this->Spaycs = TableRegistry::get('Spaycs');
     }
+
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
-        $this->Auth->allow(['login', 'logout','forgotPassword', 'resetPassword','getUserObj', 'success','scraperCall']);
+        $this->Auth->allow(['login', 'logout','forgotPassword', 'resetPassword','getUserObj', 'success','scraperCall','runScrapper']);
     }
 
     /**
@@ -425,24 +426,33 @@ class UsersController extends AdminController
         $this->set(compact('user'));
     }
 
-    public function scraperCall($site=null, $saveData=null) {
-        $this->viewBuilder()->layout('');
-        $this->autoRender = false;
+    /*** for testing purpose check all cron data get and save in db***/
+    public function scraperCall($site=null) {  
+        $this->autoRender = false ;        
         if(isset($site) && !empty($site)){
-            if($site='eventbrite'){               
+            if($site=='eventbrite') {                  
                 $this->Scraper->getEventbriteData(1);
-            } else if($site='ticketmaster'){
+            } else if($site=='ticketmaster') {
                 $this->Scraper->getTicketmasterData(TODAY_DATE, AFTER14DAYS_DATE);
-            } else if($site='stubhub'){
-                $this->Scraper->getStubhubData();
+            } else if($site=='stubhub') {               
+                $this->Scraper->getStubhubData(0);
+            } else if($site=='getallcategory') {               
+                $response = $this->Scraper->getEventBriteCategories(1, NULL,'categories');
+                if($response)
+                $response = $this->Scraper->getEventBriteCategories(1, NULL,'subcategories');
+                if($response)
+                $response = $this->Scraper->getTicketmasterCategories();
+            } else if($site=='filterdata') {                 
+                $response = $this->Scraper->filterByLatLong();
+                if($response)
+                    $response = $this->Scraper->filterByDate(SCRAPERUNIQUEFILTER);
+                if($response)
+                    $response = $this->Scraper->filterByDate(SCRAPERCOMMONDATEFILTER);
+                if($response)
+                    $response = $this->Scraper->filterByName();
             }
         }
-
-        if(isset($saveData) && !empty($saveData))
-            $this->Scraper->saveDataSpaceTable();
     }
-
-
 }
 
 
