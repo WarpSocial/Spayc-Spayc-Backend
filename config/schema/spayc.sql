@@ -528,7 +528,7 @@ CREATE TABLE scraper_spayc_categories (
     "id" BIGSERIAL NOT NULL,
     "spayc_id" bigint NOT NULL,
     "category_id" bigint NOT NULL,
-    "status" row_status DEFAULT 'Inactive',
+    "status" row_status DEFAULT 'Active',
     "created" timestamp NOT NULL,
     "modified" timestamp,
     PRIMARY KEY (id)

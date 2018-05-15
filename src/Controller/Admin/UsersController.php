@@ -425,28 +425,6 @@ class UsersController extends AdminController
         }
         $this->set(compact('user'));
     }
-    
-    /*** for testing purpose check all cron data get and save in db***/
-    public function runScrapper() {          
-        $this->autoRender = false ;      
-        $conn = ConnectionManager::get('default');
-        $conn->execute('update stubhub_events set group_id= NULL');
-        $conn->execute('update eventbrite_events set group_id= NULL');
-        $conn->execute('update ticketmaster_events set group_id= NULL');
-        $this->Scraper->getEventbriteData(1);
-        $this->Scraper->getTicketmasterData(TODAY_DATE, AFTER14DAYS_DATE);
-        $response = $this->Scraper->getEventBriteCategories(1, NULL,'subcategories');
-        $response = $this->Scraper->filterByLatLong();
-        if($response)
-            $response = $this->Scraper->filterByDate(SCRAPERUNIQUEFILTER);
-        if($response)
-            $response = $this->Scraper->filterByDate(SCRAPERCOMMONDATEFILTER);
-        if($response)
-            $response = $this->Scraper->filterByName();
-       $this->Scraper->filterByName();
-       
-
-    }
 
     /*** for testing purpose check all cron data get and save in db***/
     public function scraperCall($site=null) {  
@@ -475,11 +453,6 @@ class UsersController extends AdminController
             }
         }
     }
-
-    
-
-
-
 }
 
 
