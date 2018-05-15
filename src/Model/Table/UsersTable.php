@@ -210,6 +210,11 @@ class UsersTable extends Table
                                 'Users.email' => trim(SCRAPER_EMAIL),
                             ]])
                 ->first();
-        return $plain_token=$obj->user_logs['plain_token'];
+        if(!empty($obj)){
+            return $plain_token=$obj->user_logs['plain_token'];
+        }else{
+            return false;
+        }
+        
     }
 }

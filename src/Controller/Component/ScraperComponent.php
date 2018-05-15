@@ -399,11 +399,10 @@ class ScraperComponent extends Component {
         //Moving Events from 3 Tables into Spayc
          if(isset($plain_token) && !empty($plain_token)) {
             $this->createSpayc($plain_token);
+         }else{
+             return "Invalid User or Token";
          }
     }
-    
-    
-   
     
     public function createSpayc($plain_token) {
           
