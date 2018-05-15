@@ -21,6 +21,7 @@ use Cake\Event\Event;
  * @property string $description
  * @property string $status
  * @property string $image
+ * @property int $website
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
  *

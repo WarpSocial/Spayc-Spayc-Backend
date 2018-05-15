@@ -22,6 +22,7 @@ class ScraperComponent extends Component {
 	    $this->StubhubEvents = TableRegistry::get('StubhubEvents');
 	    $this->TicketmasterEvents = TableRegistry::get('TicketmasterEvents');
 	    $this->EventbriteEvents = TableRegistry::get('EventbriteEvents');
+	    $this->Users = TableRegistry::get('Users');
 	    $this->SCRAPER_ROOT_URL = unserialize(SCRAPER_ROOT_URL);
 	    $this->SCRAPER_ROOT_URL_TOKEN = unserialize(SCRAPER_ROOT_URL_TOKEN);
 	    $this->STATES = unserialize(SCRAPERSTATES);
@@ -392,36 +393,16 @@ class ScraperComponent extends Component {
     
     public function saveDataSpaceTable()
     {       
-
-        $this->StubhubEvents = TableRegistry::get('StubhubEvents');
-        $this->TicketmasterEvents = TableRegistry::get('TicketmasterEvents');
-        $this->EventbriteEvents = TableRegistry::get('EventbriteEvents');
-        
         //Getting Token User
-        $plain_token= $this->getUserToken();
-        
+        $plain_token= $this->Users->getUserTokenScraper();
         
         //Moving Events from 3 Tables into Spayc
          if(isset($plain_token) && !empty($plain_token)) {
             $this->createSpayc($plain_token);
+         }else{
+             return "Invalid User or Token";
          }
     }
-    
-     public function getUserToken() {
-        $obj = TableRegistry::get("Users")->find('all',
-                ['fields' =>['user_logs.plain_token',]])
-                ->join([
-                            'table' => 'user_logs',
-                            'type' => 'INNER',
-                            'conditions' => [
-                                'Users.id = user_logs.user_id',
-                                'Users.email' => trim(SCRAPER_EMAIL),
-                            ]])
-                ->first();
-        return $plain_token=$obj->user_logs['plain_token'];
-    }
-    
-   
     
     public function createSpayc($plain_token) {
           
@@ -465,7 +446,7 @@ class ScraperComponent extends Component {
         $update_url = $base_url . 'api/spayc-edit.json';
         $getIds = $createSpaceData = [];
         foreach ($record as $value) {
-            
+            $starttime = microtime(true);       //Checking time
             $spayc_id=0;    //Default Spayc Define
             $response=[];
             $getIds[] = $value['id'];
@@ -474,9 +455,8 @@ class ScraperComponent extends Component {
             $createSpaceData['type'] = 'Event';
             $createSpaceData['group_type'] = 'Public';
             $createSpaceData['start_date'] = date('m-d-Y H:i:s', strtotime($value['start_date']));
-//            $next = date('m-d-Y H:i:s', strtotime($value['start_date'] . "+1 days"));
             $createSpaceData['end_date'] = date('m-d-Y H:i:s', strtotime($value['start_date']));
-            $description = substr($value['description'], 0, MAX_DESCRIPTION);
+            $description = $value['description'];
             if ($description) {
                 $createSpaceData['description'] = $description;
             } else {
@@ -485,6 +465,7 @@ class ScraperComponent extends Component {
             $createSpaceData['image'] = $value['image'];
             $createSpaceData['longitude'] = $value['longitude'];
             $createSpaceData['latitude'] = $value['latitude'];
+            $createSpaceData['website'] = $website;
             $http = new Client(['headers' => ['token' => $plain_token]]);
             
             
@@ -498,7 +479,7 @@ class ScraperComponent extends Component {
                     $spayc_id=$value['spayc_id'];
                 } else {
                     $cat =str_replace(" ", "", $value['category']);
-                     $category = $this->isCatExist($cat,$website);
+                     $category = $this->ScraperCategories->isCatExist($cat,$website);
                     //If Category Exist in Spayc
                     if ($category) {
                         $createSpaceData['spayc_category_id'] = $category[1];
@@ -541,6 +522,8 @@ class ScraperComponent extends Component {
                     $this->TicketmasterEvents->UpdateAll($update_duplicate, $condition_duplicate);
                     $this->StubhubEvents->UpdateAll($update_duplicate, $condition_duplicate);
                 }
+                $endtime = microtime(true);       //Checking time
+                $response['Time Taken']=$endtime - $starttime;
             pr(json_encode($response,JSON_PRETTY_PRINT));
         }
     }
@@ -555,45 +538,7 @@ class ScraperComponent extends Component {
 } 
 
 
-    public function isCatExist($category,$website) {
-        $data=false;
-        if($category){
-         $ids=explode(',',$category);
-        $obj = TableRegistry::get("scraper_categories")->find('all',
-                ['fields' =>['spayc_category_id','name']])
-               ->join([
-                            'table' => 'spayc_categories',
-                            'type' => 'INNER',
-                            'conditions' => [
-                                'scraper_categories.spayc_category_id = spayc_categories.id',
-                            ]])
-                ->where([
-                    'scraper_category_id IN '=>$ids,
-                    'website'=>$website,
-                    'spayc_category_id IS NOT NULL'
-                    ])->toArray();
-        if(!empty($obj[0]))
-            $data=[$obj,$obj[0]->spayc_category_id,$obj[0]->name];
-        
-        }else{
-            $obj = TableRegistry::get("scraper_categories")->find('all',
-                ['fields' =>['spayc_category_id',]])
-                ->where([
-                     "name LIKE" => "%".OTHER_CAT_NAME."%",
-                     'website'=>$website,
-                     'spayc_category_id IS NOT NULL'])
-               ->first();
-            if(!empty($obj))
-            $data=[0,$obj->spayc_category_id,0];
-        }
-        
-         if(!empty($data)){
-            return $data;
-        }else{
-            return false;
-        }
-        
-    }
+   
     //Create & Update Spayc Logic
     
     /** get primary,secondary and Tertiary categories level form Ticketmaster API and Save it *****/

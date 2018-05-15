@@ -15,7 +15,7 @@ use App\Controller\Component\ScraperComponent;
 /**
  * Savedata shell command.
  */
-class SavedataShell extends Shell
+class CreateUpdateSpaycShell extends Shell
 {
 
     /**
@@ -46,6 +46,7 @@ class SavedataShell extends Shell
         $this->out($this->OptionParser->help());
         $this->out('Process start at '.$this->currentDateTime());
          $response = $this->Scraper->saveDataSpaceTable();
+        $this->out('Response - '.$response);
         $this->out('Completed at '.$this->currentDateTime());
     }
 

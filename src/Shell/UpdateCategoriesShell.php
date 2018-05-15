@@ -45,8 +45,12 @@ class UpdateCategoriesShell extends Shell
     public function main()
     {
        $this->out('Process start at '.$this->currentDateTime());
+        $starttime = microtime(true);       //Checking time
         $response = $this->Scraper->updateScraperCategory();
         $this->out($response);
+        $endtime = microtime(true);       //Checking time
+        $response=$endtime - $starttime;
+        $this->out("Time Taken ".$response);
         $this->out('Process end at '.$this->currentDateTime());
     }
 
