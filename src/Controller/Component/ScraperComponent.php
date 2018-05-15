@@ -451,7 +451,8 @@ class ScraperComponent extends Component {
             $response=[];
             $getIds[] = $value['id'];
             $createSpaceData['name'] = $value['name'];
-            $createSpaceData['location'] = $value['location'];
+            if($value['location']){ $createSpaceData['location'] = $value['location'];}
+            else{$createSpaceData['location'] = "NA";}
             $createSpaceData['type'] = 'Event';
             $createSpaceData['group_type'] = 'Public';
             $createSpaceData['start_date'] = date('m-d-Y H:i:s', strtotime($value['start_date']));
