@@ -405,17 +405,19 @@ class ScraperComponent extends Component {
     }
     
     public function createSpayc($plain_token) {
-          
+        
+            
+            $where=['group_id IS' => NULL,'latitude IS NOT' => NULL,'longitude IS NOT' => NULL];
           //Stubhub
-          $stubhub_data = $this->StubhubEvents->find('all',['conditions' => ['group_id IS' => NULL]])->toArray();           
+          $stubhub_data = $this->StubhubEvents->find('all',['conditions' => $where])->toArray();
           $this->cURLProcess($stubhub_data,$plain_token,$this->StubhubEvents,$this->SCRAPER_WEBSITE['stubhub'],UNIQUE);
 
           //TicketMaster
-          $ticketmaster_data = $this->TicketmasterEvents->find('all',['conditions' => ['group_id IS' => NULL]])->toArray();
+          $ticketmaster_data = $this->TicketmasterEvents->find('all',['conditions' => $where])->toArray();
           $this->cURLProcess($ticketmaster_data,$plain_token,$this->TicketmasterEvents,$this->SCRAPER_WEBSITE['ticketmaster'],UNIQUE);
           
           //EventbriteEvents
-          $eventbrite_data = $this->EventbriteEvents->find('all',['conditions' => ['group_id IS' => NULL]])->toArray();           
+          $eventbrite_data = $this->EventbriteEvents->find('all',['conditions' => $where])->toArray();           
           $this->cURLProcess($eventbrite_data,$plain_token, $this->EventbriteEvents,$this->SCRAPER_WEBSITE['eventbrite'],UNIQUE);
             
             
@@ -508,6 +510,15 @@ class ScraperComponent extends Component {
                                     }
                                 }
                                  $spayc_id=$update['spayc_id'];
+                        }else{
+                            //Saving logs
+                            $pushData['post_value'] = json_encode($created);
+                            $pushData['created'] = date("Y-m-d H:i:s");
+                            Log::info(json_encode($pushData,JSON_PRETTY_PRINT));
+                            $pusher = TableRegistry::get("Api.PusherData");
+                            $push = $pusher->newEntity();
+                            $entity = $pusher->patchEntity($push, $pushData,['validate'=>false]);
+                            $pusher->save($entity);
                         }
                     } else {
                         $response['Category'][] = $value['category'] . " - Category Not Exist";
