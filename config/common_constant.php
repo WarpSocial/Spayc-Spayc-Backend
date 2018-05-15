@@ -38,7 +38,7 @@ define('SCRAPERSTATES', serialize($scraperStates));
 define('SCRAPERCOUNTRIES', serialize($scraperCountries));
 define('TEXT_MASSAGE', serialize($txt_massage));
 define('TODAY_DATE', date('Y-m-d'));
-define('AFTER14DAYS_DATE', date('Y-m-d', strtotime(' +14 day')));
+define('AFTER14DAYS_DATE', date('Y-m-d', strtotime(' +3 day')));
 define('FUZZYPERCENT', 90);
 
 $scraperRootUrl=array('eventbriteurl'=> 'https://www.eventbriteapi.com/v3/',
@@ -49,6 +49,7 @@ $scraperRootUrlToken = array('eventbritetoken'=> 'JRTJ7FHW3TG7F5U535RN',
     'ticketmastertoken'=> 'FGCdJbUpn9mAmyE9Rlqdi8CYfdhNQMsa',
     'stubhubtoken'=> 'c4ef9246-56c6-3024-a5ba-32f737a1c2b4',
     );
+define('EVENTBRITESECONDTOKEN', 'GFPN63QGWCRIURIWT5DN');
 $scraperWebSite = array('eventbrite'=>'1','ticketmaster'=>'2','stubhub'=>'3');
 define('SCRAPER_WEBSITE', serialize($scraperWebSite));
 define('SCRAPER_ROOT_URL', serialize($scraperRootUrl));

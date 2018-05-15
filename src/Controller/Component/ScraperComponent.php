@@ -69,7 +69,7 @@ class ScraperComponent extends Component {
             $events[$eventId]['event_status'] = (isset($value['status']) && !empty($value['status']))?trim($value['status']):null;            
             if(isset($value['venue_id']) && !empty($value['venue_id'])) {
 
-               $venueUrl = $this->SCRAPER_ROOT_URL['eventbriteurl'].'venues/'.trim($value['venue_id']).'/?token='.$this->SCRAPER_ROOT_URL_TOKEN['eventbritetoken'];
+               $venueUrl = $this->SCRAPER_ROOT_URL['eventbriteurl'].'venues/'.trim($value['venue_id']).'/?token='.EVENTBRITESECONDTOKEN;
                $venueResp=$this->curlRequest($venueUrl);            
                $events[$eventId]['latitude'] = (isset($venueResp['latitude']) && !empty($venueResp['latitude']))?trim($venueResp['latitude']):null;
                $events[$eventId]['longitude'] = (isset($venueResp['longitude']) && !empty($venueResp['longitude']))?trim($venueResp['longitude']):null;
