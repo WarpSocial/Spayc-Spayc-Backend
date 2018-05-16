@@ -39,7 +39,7 @@ class ScraperEventbriteDataShell extends Shell
     public function main() {
         $this->out('Process start at '.$this->Scraper->currentDateTime());
         $this->Scraper->setScraperLog('get data from eventbrite process start');
-        //$this->Scraper->getEventbriteData(1);
+        $this->Scraper->getEventbriteData(1);
         $this->Scraper->setScraperLog('get data from eventbrite process end');
         $this->out('Process end at '.$this->Scraper->currentDateTime());
     }

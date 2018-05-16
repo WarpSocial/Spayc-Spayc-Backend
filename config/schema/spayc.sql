@@ -562,3 +562,10 @@ CREATE TABLE scraper_logs (
     "modified" timestamp,
     PRIMARY KEY (id)
 );
+
+ALTER TABLE "spaycs"
+ALTER "name" TYPE character varying(250),
+ALTER "name" DROP DEFAULT,
+ALTER "name" DROP NOT NULL;
+COMMENT ON COLUMN "spaycs"."name" IS '';
+COMMENT ON TABLE "spaycs" IS '';
