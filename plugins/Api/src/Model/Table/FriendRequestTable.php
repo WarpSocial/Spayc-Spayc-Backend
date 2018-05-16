@@ -315,5 +315,21 @@ class FriendRequestTable extends Table {
         //echo '<br/>'.$km;
         return $km;
     }
+    
+    /**
+     * friendSubquery method to return the query of friend
+     * 
+     * @param Integer $userId
+     * @return sql query
+     */
+    public function friendSubquery($userId){
+        if(empty($userId)){
+            return false;
+        }
+        $requestedTo = $this->find()->select('requested_to')->where(['requested_by'=>$userId,'requested_status'=>ACCEPTED]);
+        $requestedBy = $this->find()->select('requested_by')->where(['requested_to'=>$userId,'requested_status'=>ACCEPTED]);
+        $query = $requestedBy->union($requestedTo);
+        return $query;
+    }
 
 }

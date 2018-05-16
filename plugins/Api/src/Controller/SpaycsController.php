@@ -276,6 +276,7 @@ class SpaycsController extends AppController {
             ->contain([                    
                 'JoinedSpayc' => function($q) {
                     return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.distance'])->where(['JoinedSpayc.status !='=>'Banned']);
+                //return $q->select(['JoinedSpayc.spayc_id','total_joined'=>$q->func()->count('JoinedSpayc.id')])->group('JoinedSpayc.spayc_id');
                 },
                 'SubscribedUsers' => function($q) {
                     return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
@@ -331,7 +332,30 @@ class SpaycsController extends AppController {
         if(in_array(ucfirst($this->request->query('group_type')), ['Public', 'Private'])) {
             $spaycs->where(["Spaycs.group_type"=>ucfirst($this->request->query('group_type'))]);
         }
-        
+        if(!empty($this->request->query('categories'))) {
+            $cats = explode(',',$this->request->query('categories'));
+            $spaycs->where(["Spaycs.spayc_category_id IN"=>$cats],['spayc_category_id' => 'integer[]']);
+        }
+        if(!empty($this->request->query('friends')) && $this->request->query('friends') == 'yes') {
+            $subQuery = $this->Spaycs->spaycWithFriends($loggedUser);
+            $spaycs->where(["Spaycs.id IN"=>$subQuery]);
+        }
+        if(!empty($this->request->query('hot'))) {
+           // $spaycs->select(['JoinedSpayc.totalJoined']);
+            $jsTable = TableRegistry::get('Api.JoinedSpayc');
+            $jsquery = $jsTable->find();
+            //$jquery->select(['JoinedSpayc.spayc_id','totalJoined'=>$jquery->func()->count('JoinedSpayc.id')])->groupBy('JoinedSpayc.spayc_id');
+            $spaycs->select(['js.spayc_id','total_joined'=>$spaycs->func()->count('js.id')])->group('js.spayc_id');
+            $spaycs->join([
+                'table'=>'joined_spayc',
+                'alias'=>'js',
+                'type' => 'INNER',
+                'conditions'=>[
+                    'js.spayc_id=Spayc.id'
+                ]
+            ]);
+            
+        }
         if($page < 0){
             $page = $page*-1;
             $spaycs->page($page);

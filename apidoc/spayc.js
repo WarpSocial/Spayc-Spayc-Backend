@@ -278,6 +278,10 @@ function postSubspaycs() { return; }
     @apiParam {String}      longitude       Longitude is required in query string(Optional in case of created, joined).
     @apiParam {String}      list_by         List by is optional in query string(created|joined|all).
     @apiParam {Number}      user_id         User id  of any user and if id is not available it will get the logged user data(Required).
+    @apiParam {String}  categories  List of comma separeted categoires (Optional)
+    @apiParam {String}   friends   Value must be either yes or no (Optional)
+    @apiParam {String}   hot   Value must be either yes or no (Optional)
+    
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Spayc lists.

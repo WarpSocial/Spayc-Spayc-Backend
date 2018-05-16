@@ -749,7 +749,10 @@ class SpaycsTable extends Table {
             'SubscribedUsers' => function($q) {
                 return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])
                         ->where(['SubscribedUsers.status' => "Active"]);;
-            }
+            },
+            'SpaycCategories' => function($q) {
+                return $q->select(['SpaycCategories.id', 'SpaycCategories.name']);
+            }        
         ]);
         $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($userId) {
             return $results->map(function ($row) use($userId) {
@@ -829,6 +832,18 @@ class SpaycsTable extends Table {
             return false;
         }
         return $banned->toArray();
+    }
+    public function spaycWithFriends($userId){
+        if($userId == null){
+            return false;
+        }
+        $subQuery = TableRegistry::get('Api.FriendRequest')->friendSubquery($userId);        
+        $query = TableRegistry::get('Api.JoinedSpayc')->find()
+                ->select(['spayc_id'])
+                ->distinct()
+                ->where(['user_id IN' => $subQuery,'status'=>'Joined']);
+        //pr($query->toArray());die;
+        return $query;
     }
 
 }
