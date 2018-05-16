@@ -342,18 +342,18 @@ class SpaycsController extends AppController {
         }
         if(!empty($this->request->query('hot'))) {
            // $spaycs->select(['JoinedSpayc.totalJoined']);
-            $jsTable = TableRegistry::get('Api.JoinedSpayc');
-            $jsquery = $jsTable->find();
-            //$jquery->select(['JoinedSpayc.spayc_id','totalJoined'=>$jquery->func()->count('JoinedSpayc.id')])->groupBy('JoinedSpayc.spayc_id');
-            $spaycs->select(['js.spayc_id','total_joined'=>$spaycs->func()->count('js.id')])->group('js.spayc_id');
-            $spaycs->join([
-                'table'=>'joined_spayc',
-                'alias'=>'js',
-                'type' => 'INNER',
-                'conditions'=>[
-                    'js.spayc_id=Spayc.id'
-                ]
-            ]);
+//            $jsTable = TableRegistry::get('Api.JoinedSpayc');
+//            $jsquery = $jsTable->find();
+//            //$jquery->select(['JoinedSpayc.spayc_id','totalJoined'=>$jquery->func()->count('JoinedSpayc.id')])->groupBy('JoinedSpayc.spayc_id');
+//            $spaycs->select(['js.spayc_id','total_joined'=>$spaycs->func()->count('js.id')])->group('js.spayc_id');
+//            $spaycs->join([
+//                'table'=>'joined_spayc',
+//                'alias'=>'js',
+//                'type' => 'INNER',
+//                'conditions'=>[
+//                    'js.spayc_id=Spayc.id'
+//                ]
+//            ]);
             
         }
         if($page < 0){
