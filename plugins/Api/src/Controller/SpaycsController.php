@@ -212,7 +212,6 @@ class SpaycsController extends AppController {
         if($items->errors()) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
         }
-        
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
         $matrixData = $data;
         $matrixData['name'] = '';
@@ -232,6 +231,7 @@ class SpaycsController extends AppController {
                 TableRegistry::get('Api.FriendRequest')->updateRoomId($items['invite'], $this->Auth->user('id'), $matrix['room_id']);
                 $items['is_direct'] = true;
                 $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
+                
                 $this->response->statusCode(201);
                 $response = ['status'=>'success','message'=>__('Your room, '.ucfirst($data['name']).', has been created.'), 'data'=>$items];
                 /*Event to bind to update the set upload room image */
@@ -464,7 +464,10 @@ class SpaycsController extends AppController {
             if(!empty($friend)){
                 $push['slug'] = 'friend-subscribed-to-your-spayc';
             }
-            $this->Push->sendPushNotification($push);
+            /* spayc owner will not get notification*/
+            if($spayc->user_id != $user['id']){
+                $this->Push->sendPushNotification($push);
+            }
              
             $response = ['status'=>'success','message'=>__('User has been subcribed successfully.')];
         }else{

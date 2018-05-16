@@ -597,19 +597,18 @@ class SpaycsTable extends Table {
                 'is_admin'=>($val->id != $adminUser)?0:2
             ];
 
-            $joinData = [
-                'status'=>'Joined',
-                'matrix_room_id'=>$items['matrix_room_id'],
-                'matrix_token'=>$val->matrix_access_token
-            ];
-            //if($val->id != $adminUser){
-            TableRegistry::get('Queue.QueuedJobs')->createJob('MuteUnmute',[
+            $Queue = [
                 'join'=>true,
                 'rule'=>'mute',
                 'status'=>'Joined',
                 'matrix_token'=>$val->matrix_access_token,
                 'matrix_room_id'=>$items['matrix_room_id']
-                ]);                
+            ];
+            if($items['is_direct']){
+                $Queue['rule'] = 'unmute';
+            }
+            //if($val->id != $adminUser){
+            TableRegistry::get('Queue.QueuedJobs')->createJob('MuteUnmute',$Queue);                
             //}
             $push['requested_by'] = $adminUser;
             $push['requested_to'] = $val->id;

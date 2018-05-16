@@ -112,7 +112,9 @@ class JoinSpaycsController extends AppController {
             }
             if($this->Matrix->joinRoom($data)) {
                 if($spayc->group_type == "Public"){
-                    $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);
+                    if(!TableRegistry::get('Api.SubscribedUsers')->isSubscribed($user['id'],ACTIVE)){
+                        $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);
+                    }
                 }
                 $jsModel->getConnection()->commit();
                 $friends = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($user['id'], 'Accepted');
@@ -247,7 +249,9 @@ class JoinSpaycsController extends AppController {
             }
             if($this->Matrix->joinRoom($data)) {
                 if($spayc->group_type == "Public"){
-                    $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);
+                    if(!TableRegistry::get('Api.SubscribedUsers')->isSubscribed($user['id'],ACTIVE)){
+                        $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);
+                    }
                 }
                 $jsModel->getConnection()->commit();
                 $friends = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($user['id'], 'Accepted');
