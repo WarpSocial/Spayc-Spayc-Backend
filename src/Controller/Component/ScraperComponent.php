@@ -30,6 +30,7 @@ class ScraperComponent extends Component {
 	    $this->COUNTRIES = unserialize(SCRAPERCOUNTRIES); 
         $this->SCRAPER_WEBSITE = unserialize(SCRAPER_WEBSITE);   
         $this->ScraperCategories = TableRegistry::get('ScraperCategories');
+        $this->ScraperLogs = TableRegistry::get('ScraperLogs');
         $this->SCRAPER_WEBSITE_FLIP = array_flip(unserialize(SCRAPER_WEBSITE));
     }
 
@@ -54,45 +55,40 @@ class ScraperComponent extends Component {
     /*************  get Events from Eventbrite API and Save it *********************/
      public function getEventbriteData($pageNumber=1) { 
 
-        $url= $this->SCRAPER_ROOT_URL['eventbriteurl'].'events/search/?token='.$this->SCRAPER_ROOT_URL_TOKEN['eventbritetoken'].'&sort_by=date&start_date.range_start='.TODAY_DATE.'T00%3A00%3A00&start_date.range_end='.AFTER14DAYS_DATE.'T23%3A59%3A00&location.address=New+York%2C+NY&page='.$pageNumber;
-        $resp=$this->curlRequest($url);
+        $url= $this->SCRAPER_ROOT_URL['eventbriteurl'].'events/search/?expand=venue&token='.$this->SCRAPER_ROOT_URL_TOKEN['eventbritetoken'].'&sort_by=date&start_date.range_start='.TODAY_DATE.'T00%3A00%3A00&start_date.range_end='.AFTER14DAYS_DATE.'T23%3A59%3A00&location.address=New+York%2C+NY&page='.$pageNumber;
+        $resp=$this->curlRequest($url);      
         if((isset($resp['events']) && !empty($resp['events'])) && count($resp['events'])) {        
         $events=$eventIds= array();
-        foreach ($resp['events'] as $value) {          
+        foreach ($resp['events'] as $value) {                      
             $stateExist='';
             $eventIds[]=$eventId=trim($value['id']);  
             $events[$eventId]['eventbrite_event_id'] = trim($value['id']);
-            $events[$eventId]['name'] = (isset($value['name']['text']) && !empty($value['name']))?trim($value['name']['text']):null;
+            $events[$eventId]['name'] = (isset($value['name']['text']) && !empty($value['name']))?html_entity_decode(trim($value['name']['text'])):null;
             $events[$eventId]['start_date'] = (isset($value['start']['utc']) && !empty($value['start']['utc']))?new time($value['start']['utc']):null;
             $events[$eventId]['end_date'] =(isset($value['end']['utc']) && !empty($value['end']['utc']))?new time($value['end']['utc']):null;
-            $events[$eventId]['description'] = (isset($value['description']['text']) && !empty($value['description']['text']))?trim($value['description']['text']):null;
+            $events[$eventId]['description'] = (isset($value['description']['text']) && !empty($value['description']['text']))?html_entity_decode(strip_tags(trim($value['description']['text']))):null;
             $events[$eventId]['image'] = (isset($value['logo']['original']['url']) && !empty($value['logo']['original']['url']))?$value['logo']['original']['url']:null;            
-            $events[$eventId]['event_status'] = (isset($value['status']) && !empty($value['status']))?trim($value['status']):null;            
-            if(isset($value['venue_id']) && !empty($value['venue_id'])) {
+            $events[$eventId]['event_status'] = (isset($value['status']) && !empty($value['status']))?trim($value['status']):null;
 
-               $venueUrl = $this->SCRAPER_ROOT_URL['eventbriteurl'].'venues/'.trim($value['venue_id']).'/?token='.EVENTBRITESECONDTOKEN;
-               $venueResp=$this->curlRequest($venueUrl);            
-               $events[$eventId]['latitude'] = (isset($venueResp['latitude']) && !empty($venueResp['latitude']))?trim($venueResp['latitude']):null;
-               $events[$eventId]['longitude'] = (isset($venueResp['longitude']) && !empty($venueResp['longitude']))?trim($venueResp['longitude']):null;
+            if(isset($value['venue']) && !empty($value['venue'])) {
+               $events[$eventId]['latitude'] = (isset($value['venue']['latitude']) && !empty($value['venue']['latitude']))?trim($value['venue']['latitude']):null;
+               $events[$eventId]['longitude'] = (isset($value['venue']['longitude']) && !empty($value['venue']['longitude']))?trim($value['venue']['longitude']):null;
+               $events[$eventId]['location'] = $this->createEventLoctaionData($value['venue'], $this->SCRAPER_WEBSITE['eventbrite']);
 
-                $events[$eventId]['location'] = $this->createEventLoctaionData($venueResp, $this->SCRAPER_WEBSITE['eventbrite']);
-                if(isset($venueResp['address']['city']) && !empty($venueResp['address']['city']))
-                    $events[$eventId]['city']= $venueResp['address']['city'];
-
-                if(isset($venueResp['address']['region']) && !empty($venueResp['address']['region'])) {
-                 $events[$eventId]['region']= $venueResp['address']['region'];
-                 if (!in_array(strtolower(trim($venueResp['address']['region'])), $this->STATES))
+               $events[$eventId]['city'] = (isset($value['venue']['address']['city']) && !empty($value['venue']['address']['city']))?trim($value['venue']['address']['city']):null;
+               if(isset($value['venue']['address']['region']) && !empty($value['venue']['address']['region'])) {
+                 $events[$eventId]['region']= $value['venue']['address']['region'];
+                if (!in_array(strtolower(trim($value['venue']['address']['region'])), $this->STATES))
                     $stateExist = $eventId;                   
                 }
-                if(isset($venueResp['address']['postal_code']) && !empty($venueResp['address']['postal_code']))
-                    $events[$eventId]['postal_code']= $venueResp['address']['postal_code'];
+                $events[$eventId]['postal_code'] = (isset($value['venue']['address']['postal_code']) && !empty($value['venue']['address']['postal_code']))?trim($value['venue']['address']['postal_code']):null;
 
-                if(isset($venueResp['address']['country']) && !empty($venueResp['address']['country'])){
-                 $events[$eventId]['country']= $venueResp['address']['country'];
-                 if (($stateExist =='') && !in_array(strtolower(trim($venueResp['address']['country'])), $this->COUNTRIES))
+               if(isset($value['venue']['address']['country']) && !empty($value['venue']['address']['country'])){
+                 $events[$eventId]['country']= $value['venue']['address']['country'];
+                 if (($stateExist =='') && !in_array(strtolower(trim($value['venue']['address']['country'])), $this->COUNTRIES))
                       $stateExist = $eventId;
                 }
-            }                       
+            }                                 
             $events[$eventId]['category'] = $this->createEventCategoryData($value, $this->SCRAPER_WEBSITE['eventbrite']);
             $events[$eventId]['website'] = $this->SCRAPER_WEBSITE['eventbrite'];
             if(!empty($stateExist)){
@@ -122,10 +118,10 @@ class ScraperComponent extends Component {
         foreach ($resp['events'] as $value) {
             $eventIds[]= $eventId = trim($value['id']);
             $events[$eventId]['stubhub_event_id'] = trim($value['id']);
-            $events[$eventId]['name'] = (isset($value['name']) && !empty($value['name']))?trim($value['name']):null;
+            $events[$eventId]['name'] = (isset($value['name']) && !empty($value['name']))?html_entity_decode(trim($value['name'])):null;
             $events[$eventId]['start_date'] = (isset($value['eventDateUTC']) && !empty($value['eventDateUTC']))?new time($value['eventDateUTC']):null;
             $events[$eventId]['end_date'] = null;
-            $events[$eventId]['description'] = (isset($value['description']) && !empty($value['description']))?trim($value['description']):null;
+            $events[$eventId]['description'] = (isset($value['description']) && !empty($value['description']))? html_entity_decode(trim($value['description'])):null;
             $events[$eventId]['latitude'] = (isset($value['venue']['latitude']) && !empty($value['venue']['latitude']))?trim($value['venue']['latitude']):null;
             $events[$eventId]['longitude'] = (isset($value['venue']['longitude']) && !empty($value['venue']['longitude']))?trim($value['venue']['longitude']):null;
             $events[$eventId]['image'] = (isset($value['imageUrl']) && !empty($value['imageUrl']))?$value['imageUrl']:null;
@@ -193,9 +189,9 @@ class ScraperComponent extends Component {
             if(($startDateTime < new time(date('Y-m-d', strtotime($startDate . ' +1 day')))) && ($startDateTime >= new time(date('Y-m-d', strtotime($startDate . ' -1 day'))))){
             $eventIds[]= $eventId =trim($value['id']);
             $events[$eventId]['ticketmaster_event_id'] = trim($value['id']);
-            $events[$eventId]['name'] = (isset($value['name']) && !empty($value['name']))?trim($value['name']):null;
+            $events[$eventId]['name'] = (isset($value['name']) && !empty($value['name']))?html_entity_decode(trim($value['name'])):null;
             $events[$eventId]['start_date'] = $startDateTime;                    
-            $events[$eventId]['description'] = (isset($value['info']) && !empty($value['info']))?trim($value['info']):null;
+            $events[$eventId]['description'] = (isset($value['info']) && !empty($value['info']))?html_entity_decode(trim($value['info'])):null;
             $events[$eventId]['latitude'] = (isset($value['_embedded']['venues']['0']['location']['latitude']) && !empty($value['_embedded']['venues']['0']['location']['latitude']))?trim($value['_embedded']['venues']['0']['location']['latitude']):null;
             $events[$eventId]['longitude'] = (isset($value['_embedded']['venues']['0']['location']['longitude']) && !empty($value['_embedded']['venues']['0']['location']['longitude']))?trim($value['_embedded']['venues']['0']['location']['longitude']):null;
             $events[$eventId]['image'] = (isset($value['images']['0']['url']) && !empty($value['images']['0']['url']))?$value['images']['0']['url']:null;
@@ -752,7 +748,7 @@ class ScraperComponent extends Component {
         return $checkStatus;
     }
 
-    /** compare events name which belong to same date and lat-long**/
+    /*** compare events name which belong to same date and lat-long***/
     public function checkNameByFuzzyLogic($eventName, $eventType, $value){
         if(!empty($eventName) && !empty($value)){
             $fuzz = new Fuzz();
@@ -780,7 +776,17 @@ class ScraperComponent extends Component {
         }
     }
 
-    /** Get all events name which belong to same date and lat-long**/
+    /*** set log for scraper to identify all process running smoothly ***/
+    public function setScraperLog($status){
+        if(!empty($status)){ 
+            $data['status'] = trim($status);
+            $scraperlogs = $this->ScraperLogs->newEntity();
+            $scraperlog = $this->ScraperLogs->patchEntity($scraperlogs,$data);
+            $this->ScraperLogs->save($scraperlog); 
+        }
+    }
+
+    /*** Get all events name which belong to same date and lat-long ***/
     public function checkEventName($data){
         if(!empty($data)){        
             foreach ($data as $key => $value) { 
@@ -791,7 +797,7 @@ class ScraperComponent extends Component {
         }
     }
 
-    /** Third step Re -assign group for same lat-long, date, name*****/
+    /*** Third step Re -assign group for same lat-long, date, name ***/
     public function filterByName() {
         $groupBydateAndLatLong = $this->getUnionData('where A.group_id IS NOT NULL ORDER BY group_id,start_date desc');    
         $checkStatus=false;   

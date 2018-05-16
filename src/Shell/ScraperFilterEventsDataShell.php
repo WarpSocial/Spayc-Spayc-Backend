@@ -37,6 +37,7 @@ class ScraperFilterEventsDataShell extends Shell
 
     /*** Filter common events based on same lat-long,date and Name ***/ 
     public function main() {
+        $this->Scraper->setScraperLog('filter events based on same lat-long,date and name precess start');
         $this->out('Process start at '.$this->Scraper->currentDateTime());       
         $response = $this->Scraper->filterByLatLong();
         if($response)
@@ -46,5 +47,6 @@ class ScraperFilterEventsDataShell extends Shell
         if($response)
          $response = $this->Scraper->filterByName();
         $this->out('Process end at '.$this->Scraper->currentDateTime());
+        $this->Scraper->setScraperLog('filter events based on same lat-long,date and name precess end');
     }
 }
