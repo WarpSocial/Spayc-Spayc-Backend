@@ -13,7 +13,8 @@
         "dereuromark/cakephp-queue": "3.7",
         "facebook/graph-sdk": "^5.6",
         "josegonzalez/dotenv": "2.*",
-        "mobiledetect/mobiledetectlib": "2.*"
+        "mobiledetect/mobiledetectlib": "2.*",
+        "wyndow/fuzzywuzzy": "@stable"
     },
     "require-dev": {
         "cakephp/bake": "^1.1",

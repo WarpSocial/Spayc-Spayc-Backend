@@ -685,8 +685,8 @@ class UsersTable extends Table {
     }
     public function ValidatechangeRole($data){
         $validator = new Validator();
-        $validator->requirePresence('spayc_id', true,__('Spayc id key is missing.'))
-                ->notEmpty('spayc_id', __('Please enter Spayc id.'));
+        $validator->requirePresence('spayc_id', true,__('Warp id key is missing.'))
+                ->notEmpty('spayc_id', __('Please enter warp id.'));
         $validator->requirePresence('user_id', true,__('User id key is missing.'))
                 ->notEmpty('user_id', __('Please enter User id.'));
         $validator->requirePresence('user_id', true,__('User id key is missing.'))
@@ -706,6 +706,75 @@ class UsersTable extends Table {
         }else{
             return $joinedSpayc->toArray();
         }
+    }
+    
+    /**
+     * pusherNotification method to manage the chat data
+     * 
+     * @param Array $data array of object containing pusher data
+     * @return Array|false either array containig push data or false
+     */
+    public function pusherNotification($data = [],$comment=false){
+        if(empty($data['notification']['devices'])) { 
+            \Cake\Log\Log::info(__('Device token is not available.'));
+            return false;
+        }
+        
+        $items = ['message'=>'','event_id'=>''];
+        if(!empty($data['notification']['content']['eventId'])){
+            $items['event_id'] = $data['notification']['content']['eventId'];
+        }elseif(!empty($data['notification']['event_id'])){
+            $items['event_id'] = $data['notification']['event_id'];
+        }
+        $spayc  = TableRegistry::get('Api.Spaycs')->findByMatrixRoomId($data['notification']['room_id'])->first();
+        
+        //\Cake\Log\Log::info($data);
+        $msgType = $data['notification']['content']['msgtype'];
+        $items['spayc_image'] = null;
+        if(!empty($spayc)){
+            $items['spayc_image'] = $spayc->image;
+        }
+        $items['matrix_room_id'] = $data['notification']['room_id'];
+        
+        if($msgType == 'm.likeMessage'){
+            $notify = $this->storeMsg('a-user-liked-your-comment', $data['notification']['sender_display_name'], $data['notification']['content']['body']);          
+             $notify->message = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);;
+        }elseif($msgType == 'm.replyText'){
+            $notify = $this->storeMsg('someone-replyed-to-your-comment', $data['notification']['sender_display_name'], $data['notification']['content']['body']);
+            $notify->message = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);;
+        }else{
+            $notify = $this->storeMsg('someone-commented', $data['notification']['sender_display_name'], $data['notification']['content']['body']);
+            $notify->message = str_replace(["<USERNAME>","<COMMENT>","<SpaycName>"],[ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body'],ucwords($data['notification']['room_name'])], $notify->message);
+        }
+        
+        $items['message']  = $notify->message;
+        $items['notification_type'] = $notify->type; 
+        $items['spayc_id'] = $spayc->id;
+        TableRegistry::get('Api.Comments')->spaycActivities($spayc->id,$items);
+        return $items;
+    }
+    
+    public function storeMsg($slug,$username,$body){
+        if (($notify = \Cake\Cache\Cache::read($slug,'long')) === false) {
+            $notify = TableRegistry::get('Api.Notifications')->message($slug);
+            if(!empty($notify)){
+                $notify->message = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($username),$body], $notify->message);
+                $notify->notification_type = $notify->type;
+            }
+            \Cake\Cache\Cache::write($slug, $notify,'long');
+            
+        }
+       
+        return $notify;
+    }
+    
+    public function pusherData($data){
+        $pushData['post_value'] = json_encode($data);
+        $pushData['created'] = date("Y-m-d H:i:s");
+        $pusher = TableRegistry::get("Api.PusherData");
+        $push = $pusher->newEntity();
+        $item = $pusher->patchEntity($push, $pushData);
+        return $pusher->save($item);
     }
     
 }

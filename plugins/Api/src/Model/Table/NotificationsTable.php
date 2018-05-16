@@ -123,4 +123,43 @@ class NotificationsTable extends Table
             }
         return $query->first();
     }
+    public function pusherMessage($data = []){
+        $items = ['message'=>'','event_id'=>''];
+        if(!empty($data['notification']['content']['eventId'])){
+            $items['event_id'] = $data['notification']['content']['eventId'];
+        }elseif(!empty($data['notification']['event_id'])){
+            $items['event_id'] = $data['notification']['event_id'];
+        }
+        $spayc  = TableRegistry::get('Api.Spaycs')->findByMatrixRoomId($data['notification']['room_id'])->first();
+        if(empty($data['notification']['content']['msgtype'])){
+            \Cake\Log\Log::info(['message'=>__('Pusher didn\'t get messagetype.'),'data'=>$data]);
+            return false;
+            
+        }
+        $msgType = $data['notification']['content']['msgtype'];
+        $items['spayc_image'] = null;
+        if(!empty($spayc)){
+            $items['spayc_image'] = $spayc->image;
+        }
+        $items['matrix_room_id'] = $data['notification']['room_id'];
+        if($msgType == 'm.likeMessage'){
+            $notify = $this->message('a-user-liked-your-comment');
+            if(!empty($notify)){
+                $items['message'] = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);
+                $items['notification_type'] = $notify->type;
+            }
+        }elseif($msgType == 'm.replyText'){
+            $notify = $this->message('someone-replyed-to-your-comment');
+            if(!empty($notify)){
+                $items['message'] = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);
+                $items['notification_type'] = $notify->type;
+            }
+        }else{
+            $items['message'] = !empty($data['notification']['content']['body'])?$data['notification']['content']['body']:'';
+            $items['notification_type'] = 'inbox';
+        }
+        return $items;
+    }
+    
+    
 }

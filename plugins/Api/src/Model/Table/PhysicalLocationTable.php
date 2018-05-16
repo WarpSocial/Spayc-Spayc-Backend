@@ -86,5 +86,22 @@ class PhysicalLocationTable extends Table {
             return false;
         }
     }
+    
+    public function userNearSpayc($latitude,$longitude){
+        //$distance = "ROUND( CAST({$this->Users->Spaycs->distanceInMiles} AS numeric), 3)";    
+        $equation = TableRegistry::get('Api.Spaycs')->distanceInMiles;
+        $dckey = [':lat',':long','Spaycs.latitude','Spaycs.longitude'];
+        $rckey = [$latitude,$longitude,'PhysicalLocation.current_latitude','PhysicalLocation.current_longitude'];
+        $distance = "ROUND(CAST(".str_replace($dckey,$rckey,$equation)." AS numeric), 5)";
+        $milesDistance = Configure::read('newSpaycDistance');
+        $query = $this->find()
+                ->select(['PhysicalLocation.id','PhysicalLocation.user_id','Users.id','distance'=>$distance])
+                ->innerJoinWith('Users.UserLogs',function($q){
+                    return $q->select(['UserLogs.id','UserLogs.user_id','UserLogs.device_token']);
+                })
+                ->where([$distance.' <='=>$milesDistance]);
+       # pj($query);die;
+        return $query;
+    }
 
 }

@@ -42,6 +42,7 @@
 @apiParam {String} image            Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
 @apiParam {String} longitude        Langitude from google map (Required).
 @apiParam {String} latitude         Latitude from google map (Required).
+@apiParam {Integer} spayc_category_id  existing Category id(Required).
 @apiParam {String} invite           Matrix user id is optional in query string(Optional).
 
 @apiExample Example usage:
@@ -116,6 +117,7 @@ function postSpaycs() { return; }
 @apiParam {String} passcode         Passcode is required in case of private group type.
 @apiParam {String} description      Description for SPAYC (Optional).
 @apiParam {String} image            Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
+@apiParam {Integer} spayc_category_id  existing Category id(Required).
 @apiParam {String} longitude        Langitude from google map (Required).
 @apiParam {String} latitude         Latitude from google map (Required).
 
@@ -276,6 +278,10 @@ function postSubspaycs() { return; }
     @apiParam {String}      longitude       Longitude is required in query string(Optional in case of created, joined).
     @apiParam {String}      list_by         List by is optional in query string(created|joined|all).
     @apiParam {Number}      user_id         User id  of any user and if id is not available it will get the logged user data(Required).
+    @apiParam {String}  categories  List of comma separeted categoires (Optional)
+    @apiParam {String}   friends   Value must be either yes or no (Optional)
+    @apiParam {String}   hot   Value must be either yes or no (Optional)
+    
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Spayc lists.
@@ -301,6 +307,10 @@ function postSubspaycs() { return; }
                 "group_type": "Public",
                 "passcode": "",
                 "subscribed_users": 0,
+                "spayc_category": {
+                    "id": 560,
+                    "name": "Softball"
+                },
                 "friends": 0,
                 "joined_spayc_status": '',
                 "is_joined": false,
@@ -318,6 +328,10 @@ function postSubspaycs() { return; }
                 "start_date": "01-11-2019 01:02:00",
                 "end_date": "01-12-2019 01:02:00",
                 "image": "",
+                "spayc_category": {
+                    "id": 560,
+                    "name": "Softball"
+                },
                 "type": "Event",
                 "group_type": "Public",
                 "passcode": "s5d4f87sdf4545",
@@ -454,13 +468,21 @@ function postUnSubscribeSpayc() { return; }
                 "start_date": "2018-03-11T09:16:00+00:00",
                 "end_date": "2018-03-12T09:23:00+00:00",
                 "passcode": "",
-                "matrix_room_id": "!gERdbhptfHdVQrcnse:127.0.0.1"
+                "matrix_room_id": "!gERdbhptfHdVQrcnse:127.0.0.1",
+                 "spayc_category": {
+                    "id": 560,
+                    "name": "Softball"
+                }
             }
         ],
         "friends": 0,
         "joined_spayc_status": "Joined",
         "joined_users": 1,
         "is_admin": 1,
+        "spayc_category": {
+            "id": 560,
+            "name": "Softball"
+        },
         "is_subscribed": false,
         "total_comments": 0,
         "total_presents": 0
@@ -761,6 +783,10 @@ function postBanSpaycMember() { return; }
             "is_joined": false,
             "joined_users": 0,
             "is_subscribed": false,
+            "spayc_category": {
+                "id": 560,
+                "name": "Softball"
+            },
             "total_comments": 0
         }
     ]
@@ -803,6 +829,10 @@ function getSubSpaycs() { return; }
             "end_date": "05-30-2018 14:32:20",
             "matrix_room_id": "!LEHgeQLltxEMrDOZgh:127.0.0.1",
             "distance": 0.32,
+            "spayc_category": {
+                "id": 560,
+                "name": "Softball"
+            },
             "is_subscribed": true,
             "joined_status": "Joined"
         },
@@ -816,6 +846,10 @@ function getSubSpaycs() { return; }
             "end_date": "06-28-2018 20:26:20",
             "matrix_room_id": "!IBoaOQvLREneRQCFYy:127.0.0.1",
             "distance": 1,
+            "spayc_category": {
+                "id": 560,
+                "name": "Softball"
+            },
             "is_subscribed": false,
             "joined_status": "Joined"
         }
@@ -860,6 +894,10 @@ function getnearAboutSpayces() { return; }
             "start_date": null,
             "end_date": null,
             "matrix_room_id": "!SaAsSnzeUOFGqlsKgr:127.0.0.1",
+            "spayc_category": {
+                "id": 560,
+                "name": "Softball"
+            },
             "joined_status": "Joined"
         },
         {
@@ -871,6 +909,10 @@ function getnearAboutSpayces() { return; }
             "start_date": null,
             "end_date": null,
             "matrix_room_id": "!cQgXksBtaXDSkAoRpk:127.0.0.1",
+            "spayc_category": {
+                "id": 560,
+                "name": "Softball"
+            },
             "joined_status": "Joined"
         }
     ]
@@ -976,7 +1018,7 @@ function hashTagSpaycs() { return; }
     @apiParam {String}      spayc_type               Spayc Type (Optional).
     @apiParam {String}      group_type               Spayc Group Type (Optional).
     @apiParam {String}      wrap_with_friends        Spayc having with friends (Optional).
-    @apiParam {Number}      hashtag_id               Hashtag Search Filter (Optional).
+    @apiParam {Number}      hashtag_id               Hashtag Search Filter | MAx 3 hashtag (Optional).
     @apiParam {Number}      category_id              Category Search Filter (Optional).
     
 @apiExample Example usage:
@@ -990,7 +1032,7 @@ function hashTagSpaycs() { return; }
         "spayc_type": "Event|Community",
         "group_type": "Public|Private",
         "wrap_with_friends": "yes|no",
-        "hashtag_id": xx,
+        "hashtag_id": "1,2,3",
         "category_id": "5,6"
         
     }
@@ -1093,7 +1135,7 @@ function mapSpaycs() { return; }
         "plan_id":"1",
         "receipt":"test12345",
         "platform":"IOS",
-        "purchase_date":"2018-04-17 10:36:52"
+        "purchase_date":"05-04-2018 04:02:20"
     }
 
  *
@@ -1224,25 +1266,29 @@ function editAdvertisement() { return; }
                 "name": "Sam First Spyac",
                 "id": "2",
                 "type": "Community",
-                "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180322083256.png"
+                "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180322083256.png",
+                "parent_id": null
             },
             {
                 "name": "Community Type Sub Spyac",
                 "id": "4",
                 "type": "Community",
-                "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180317083321.png"
+                "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180317083321.png",
+                "parent_id": 3
             },
             {
                 "name": "@bot_1521192995:spayc-dev.kiwireader.com-@top_1521192957:spayc-dev.kiwireader.com",
                 "id": "1",
                 "type": "Community",
-                "image": null
+                "image": null,
+                "parent_id": 4
             },
             {
                 "name": "Sam Second Community Spyace",
                 "id": "3",
                 "type": "Community",
-                "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180317082917.png"
+                "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180317082917.png",
+                "parent_id": null
             }
         ]
     }
@@ -1403,22 +1449,20 @@ function deleteAdvertisement() { return; }
     "status": "success",
     "message": "Advertisement Find Successfully",
     "data": {
+        "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com",
+        "matrix_user_id": "@top_1521192957:spayc-dev.kiwireader.com",
         "advertisement": {
-            "user_id": 1,
             "name": "Space Ad",
             "price": "250.00",
             "image": null,
             "description": "Test Test Test ",
-            "url": "http:\/\/www.xyz.com"
+            "url": "http://www.xyz.com"
         },
         "priority": {
-            "cycle": 2,
-            "comment_count": 19
+            "cycle": 6,
+            "comment_count": 11
         },
-        "friend_request": {
-            "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
-        },
-        "frequency": 19
+        "frequency": 11
     }
 }
  *
@@ -1459,28 +1503,147 @@ function adLogicStart() { return; }
     "status": "success",
     "message": "Advertisement Find Successfully",
     "data": {
+        "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com",
+        "matrix_user_id": "@top_1521192957:spayc-dev.kiwireader.com",
         "advertisement": {
-            "user_id": 1,
             "name": "Space Ad",
             "price": "250.00",
             "image": null,
             "description": "Test Test Test ",
-            "url": "http:\/\/www.xyz.com"
+            "url": "http://www.xyz.com"
         },
         "priority": {
-            "cycle": 2,
-            "comment_count": 19
+            "cycle": 6,
+            "comment_count": 11
         },
-        "friend_request": {
-            "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
-        },
-        "frequency": 19
+        "frequency": 11
     }
 }
  *
  * @apiUse UserErrorResponse
  */
 function adLogic() { return; }
+
+
+
+/**
+ @api {post} /promotion-logic-start.json Promotion Logic Start
+ @apiVersion 0.1.0
+ @apiName promotionLogicStart
+ @apiGroup Promotion
+ @apiPermission private
+
+ @apiDescription Promotion Logic.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+    @apiParam {Number}      spayc_id            Spayc Id (Required).
+
+    @apiExample Example usage:
+    {
+        "spayc_id":"5"
+    }
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Promotion Find Successfully",
+    "data": {
+        "distance": "15.795",
+        "joined_spayc_status": "Joined",
+        "promotions": {
+            "user_id": 1
+        },
+        "priority": {
+            "cycle": 3,
+            "comment_count": 2
+        },
+        "spayc": {
+            "id": 2,
+            "name": "Sam First Spyac",
+            "location": "India",
+            "description": "",
+            "matrix_room_id": "!IbdrZkFigJihWjiTWU:spayc-dev.kiwireader.com",
+            "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180322083256.png",
+            "type": "Community",
+            "group_type": "Public",
+            "start_date": "2018-05-01 16:46:55",
+            "end_date": "2018-05-03 10:46:00"
+        },
+        "frequency": 11
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function promotionLogicStart() { return; }
+
+
+/**
+ @api {post} /promotion-logic.json Promotion Logic
+ @apiVersion 0.1.0
+ @apiName promotionLogic
+ @apiGroup Promotion
+ @apiPermission private
+
+ @apiDescription Promotion Logic.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+    @apiParam {Number}      spayc_id            Spayc Id (Required).
+    @apiParam {Number}      cycle               Current Cycle (Required).
+    @apiParam {Number}      comment_count       Comment Count (Required).
+
+    @apiExample Example usage:
+    {
+        "spayc_id":"5",
+        "cycle":"1",
+        "comment_count":"20"
+    }
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Promotion Find Successfully",
+    "data": {
+        "distance": "15.795",
+        "joined_spayc_status": "Joined",
+        "promotions": {
+            "user_id": 1
+        },
+        "priority": {
+            "cycle": 3,
+            "comment_count": 2
+        },
+        "spayc": {
+            "id": 2,
+            "name": "Sam First Spyac",
+            "location": "India",
+            "description": "",
+            "matrix_room_id": "!IbdrZkFigJihWjiTWU:spayc-dev.kiwireader.com",
+            "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180322083256.png",
+            "type": "Community",
+            "group_type": "Public",
+            "start_date": "2018-05-01 16:46:55",
+            "end_date": "2018-05-03 10:46:00"
+        },
+        "frequency": 11
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function promotionLogic() { return; }
 
 
 

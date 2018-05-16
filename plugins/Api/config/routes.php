@@ -78,6 +78,10 @@ Router::plugin(
         $routes->connect('/add-promotional-spayc', ['controller' => 'Plans', 'action' => 'addPromotionalSpayc']);
         
         
+        $routes->connect('/promotion-logic-start', ['controller' => 'Plans', 'action' => 'promotionLogicStart']);
+        $routes->connect('/promotion-logic', ['controller' => 'Plans', 'action' => 'promotionLogic']);
+        
+        
         $routes->fallbacks(DashedRoute::class);
     }
 );

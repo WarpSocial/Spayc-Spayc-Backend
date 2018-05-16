@@ -6,6 +6,7 @@ return [
     'grouptype'=>['Public', 'Private'],
     'pagelimit'=>5,
     'miles'=>1,
+    'newSpaycDistance'=>25,/* Miles*/
     'friend_requested_status'=>['Pending', 'Accepted', 'Blocked','Unblock','is_direct','Decline','Unfriend'],
     'add_friend'=>['Pending'],
     'accept_decline_status'=>['Accepted', 'Decline'],
@@ -26,6 +27,8 @@ return [
     'adminEmail' =>'kiwitech@gmail.com',
     'reverification_subject'=>'Re-Verifiaction',
     'forgotpassword_subject'=>'Forgot Password',
+    'startevent_subject'=>'Start Event',
+    'endevent_subject'=>'End Event',
     'mimetype' => [
         'image/png' => 'png',
         'image/jpe' => 'jpeg',

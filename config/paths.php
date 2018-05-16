@@ -86,6 +86,8 @@ define('CAKE', CORE_PATH . 'src' . DS);
 define('ACTIVE','Active');
 define('INACTIVE','Inactive');
 define('UNBANNED','Unbanned');
+define('UNFRIEND','Unfriend');
+define('ACCEPTED','Accepted');
 define('BANNED','Banned');
 define('JOINED','Joined');
 
@@ -94,4 +96,11 @@ define('PUBLICTYPE','Public');
 
 define('SUPERADMIN',2);
 define('ADMIN',1);
+
+
+define('MAX_HASHTAG','3');
+define('EXPIRED_AD_STATUS','2');
+define('ACTIVE_AD_STATUS','1');
+
+define('AD_BUCKET','10');
 

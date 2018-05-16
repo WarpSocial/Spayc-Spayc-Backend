@@ -10,6 +10,11 @@ define('DATEFORMAT','Y-m-d');
 define('FRIEND_REQUESTED_STATUS','Accepted');
 define('BLANK_COUNT',0);
 define('BLANK','--');
+define('DATE_TIME_FORMAT','Y-m-d H:i:s');
+define('DISTANCEINMETER','100');
+define('SCRAPERCOMMONDATEFILTER','date');
+define('SCRAPERGROUPFILTER','group');
+define('SCRAPERUNIQUEFILTER','unique');
 $friend_requested_status_arr=array('accepted'=>'Accepted','decline'=>'Decline','pending'=>'Pending','blocked'=>'Blocked');
 $user_gender=array('1'=>'All','2'=>'Male','3'=>'Female','4'=>'Other');
 $user_age=array('1'=>'13-20','2'=>'21-30','3'=>'31-40','4'=>'41-50','5'=>'51-above');
@@ -19,6 +24,8 @@ $grouptype_arr= array('Public'=>'Public','Private'=>'Private');
 $spaycuserstatus_arr= array('1'=>'Admin','2'=>'Super Admin');
 $push_notification_admin_slug= array('blocked'=>'blocked-by-admin','unblocked'=>'unblocked-by-admin');
 $txt_massage= array('block'=>'Blocked','unblock'=>'Unblocked');
+$scraperStates = array('New York','NY','NEW YORK','new york','ny','New York City','new york city'); 
+$scraperCountries = array('US','us','United States','united states','United States of America','USA'); 
 define('USER_GENDER', serialize($user_gender));
 define('USER_AGE', serialize($user_age));
 define('STATUS_ARR', serialize($status_arr));
@@ -27,7 +34,35 @@ define('GROUP_TYPE_ARR', serialize($grouptype_arr));
 define('SPAYC_USER_STATUS_ARR', serialize($spaycuserstatus_arr));
 define('FRIEND_REQUESTED_STATUS_ARR', serialize($friend_requested_status_arr));
 define('PUSH_NOTIFICATION_ADMIN_SLUG', serialize($push_notification_admin_slug));
+define('SCRAPERSTATES', serialize($scraperStates));
+define('SCRAPERCOUNTRIES', serialize($scraperCountries));
 define('TEXT_MASSAGE', serialize($txt_massage));
+define('TODAY_DATE', date('Y-m-d'));
+define('AFTER14DAYS_DATE', date('Y-m-d', strtotime(' +3 day')));
+define('FUZZYPERCENT', 90);
+
+$scraperRootUrl=array('eventbriteurl'=> 'https://www.eventbriteapi.com/v3/',
+    'ticketmasterurl'=> 'https://app.ticketmaster.com/discovery/v2/',
+    'stubhuburl'=> 'https://api.stubhub.com/search/catalog/events/v3/',
+    );
+$scraperRootUrlToken = array('eventbritetoken'=> 'JRTJ7FHW3TG7F5U535RN',
+    'ticketmastertoken'=> 'FGCdJbUpn9mAmyE9Rlqdi8CYfdhNQMsa',
+    'stubhubtoken'=> 'c4ef9246-56c6-3024-a5ba-32f737a1c2b4',
+    );
+define('EVENTBRITESECONDTOKEN', 'GFPN63QGWCRIURIWT5DN');
+$scraperWebSite = array('eventbrite'=>'1','ticketmaster'=>'2','stubhub'=>'3');
+define('SCRAPER_WEBSITE', serialize($scraperWebSite));
+define('SCRAPER_ROOT_URL', serialize($scraperRootUrl));
+define('SCRAPER_ROOT_URL_TOKEN', serialize($scraperRootUrlToken));
+define('SCRAPER_EMAIL', 'scraping@spayc.com');
+define('MAX_CATEGORY_PERCENTAGE', '90');
+define('OTHER_CAT_NAME', 'Other');
+define('DUPLICATE', 'duplicate');
+define('UNIQUE', 'unique');
+define('MAX_DESCRIPTION', '235');
+
+define('THUMBNAIL_IMAGE_MAX_WIDTH', 480);
+define('THUMBNAIL_IMAGE_MAX_HEIGHT', 320);
 
 $config =array();
 $config['SITETITLEMESSAGE'] = [

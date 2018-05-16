@@ -14,6 +14,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\Filesystem\File;
 use Cake\Filesystem\Folder;
+use Cake\Core\Configure;
 
 use Aws\S3\S3Client;
 use Aws\S3\Exception\S3Exception;
@@ -165,10 +166,13 @@ class ImgUploadBehavior extends Behavior {
                     $requestField['name'] = $requestField['tmp_name'];
                 }
                 $fileName = $config['uploadPath'].$this->uniqueString($requestField['name']);
-                //echo $fileName;die;
-                #$fileExt = $this->fileAttrbute($fileName,'extension');
                 $filePath = $this->__saveToAWS($requestField,$fileName);                
                 $entity->set($config['field'], $filePath);                
+            }else if(isset($requestField) && filter_var($requestField, FILTER_VALIDATE_URL)) {
+                //For Upload on AWS Code
+//                   $fileName= pathinfo($requestField,PATHINFO_BASENAME);
+//                   $filePath = $this->__saveToAWS($requestField,$fileName);                
+                   $entity->set($config['field'], $requestField);    
             }else{
                 $entity->unsetProperty($config['field']);
             }
@@ -192,8 +196,13 @@ class ImgUploadBehavior extends Behavior {
     
     private function __saveToAWS($requestField,$fileName){        
         try {
-            $resource = fopen($requestField['tmp_name'], 'r');
-            $AWS3File = $this->aws3Obj->upload($this->_aws3['bucket'], $fileName, $resource, 'public-read');         
+             if (!empty($requestField['tmp_name'])) {
+                $resource = fopen($requestField['tmp_name'], 'r');
+             }else if(isset($requestField) && filter_var($requestField, FILTER_VALIDATE_URL)) {
+                $requestField=$this->cropImage($requestField);
+                  $resource = fopen($requestField, 'r');
+             }
+             $AWS3File = $this->aws3Obj->upload($this->_aws3['bucket'], $fileName, $resource, 'public-read');
         } catch (S3Exception $e) {
             echo "There was an error uploading the file. s3 error ".$e->getMessage();
         }
@@ -274,6 +283,132 @@ class ImgUploadBehavior extends Behavior {
         }
     }
 
-    
 
+      function cropImage($imgUrl) { 
+         
+        $types = array(1 => "gif", "jpeg", "png", "swf", "psd", "wbmp"); // used to determine image type 
+         
+        
+        list($url,$image) = $this->openImage($imgUrl);
+        
+        list($w, $h, $type) = getimagesize($imgUrl);
+//        echo $image;die;
+        $path=TMP.'/scapper.'.$types[$type];  
+        		
+        $this->generate_image_thumbnail($path, $path);
+    
+       return $url;
+    }
+   
+    
+    function generate_image_thumbnail($source_image_path, $thumbnail_image_path)
+{
+    list($source_image_width, $source_image_height, $source_image_type) = getimagesize($source_image_path);
+    switch ($source_image_type) {
+        case IMAGETYPE_GIF:
+            $source_gd_image = imagecreatefromgif($source_image_path);
+            break;
+        case IMAGETYPE_JPEG:
+            $source_gd_image = imagecreatefromjpeg($source_image_path);
+            break;
+        case IMAGETYPE_PNG:
+            $source_gd_image = imagecreatefrompng($source_image_path);
+            break;
+    }
+    if ($source_gd_image === false) {
+        return false;
+    }
+    $source_aspect_ratio = $source_image_width / $source_image_height;
+    $thumbnail_aspect_ratio = THUMBNAIL_IMAGE_MAX_WIDTH / THUMBNAIL_IMAGE_MAX_HEIGHT;
+    if ($source_image_width <= THUMBNAIL_IMAGE_MAX_WIDTH && $source_image_height <= THUMBNAIL_IMAGE_MAX_HEIGHT) {
+        $thumbnail_image_width = $source_image_width;
+        $thumbnail_image_height = $source_image_height;
+    } elseif ($thumbnail_aspect_ratio > $source_aspect_ratio) {
+        $thumbnail_image_width = (int) (THUMBNAIL_IMAGE_MAX_HEIGHT * $source_aspect_ratio);
+        $thumbnail_image_height = THUMBNAIL_IMAGE_MAX_HEIGHT;
+    } else {
+        $thumbnail_image_width = THUMBNAIL_IMAGE_MAX_WIDTH;
+        $thumbnail_image_height = (int) (THUMBNAIL_IMAGE_MAX_WIDTH / $source_aspect_ratio);
+    }
+    $thumbnail_gd_image = imagecreatetruecolor($thumbnail_image_width, $thumbnail_image_height);
+    imagecopyresampled($thumbnail_gd_image, $source_gd_image, 0, 0, 0, 0, $thumbnail_image_width, $thumbnail_image_height, $source_image_width, $source_image_height);
+
+    $img_disp = imagecreatetruecolor(THUMBNAIL_IMAGE_MAX_WIDTH,THUMBNAIL_IMAGE_MAX_HEIGHT);
+    $backcolor = imagecolorallocate($img_disp,0,0,0);
+    imagefill($img_disp,0,0,$backcolor);
+
+        imagecopy($img_disp, $thumbnail_gd_image, (imagesx($img_disp)/2)-(imagesx($thumbnail_gd_image)/2), (imagesy($img_disp)/2)-(imagesy($thumbnail_gd_image)/2), 0, 0, imagesx($thumbnail_gd_image), imagesy($thumbnail_gd_image));
+
+    imagejpeg($img_disp, $thumbnail_image_path, 90);
+    imagedestroy($source_gd_image);
+    imagedestroy($thumbnail_gd_image);
+    imagedestroy($img_disp);
+    return true;
+}
+
+    
+     public function openImage($imgUrl){
+       $http = new \Cake\Http\Client();
+       $response = $http->get($imgUrl);
+       $mimeType = $response->getHeaderLine('content-type');
+       if(empty($mimeType)){
+           return false;
+       }
+       $allMimeType = Configure::read('mimetype');
+       if(empty($allMimeType[$mimeType])){
+           return false;
+       }
+       $ext = $allMimeType[$mimeType];
+       $newImg = TMP.'/scapper.'.$ext;
+        
+        file_put_contents($newImg,$response->getBody());
+         //echo mime_content_type($newImg);die;
+        switch ($ext) {
+            case 'gif' :
+                $srcImg = imagecreatefromgif($newImg);
+                break;
+            case 'png' :
+                $srcImg = imagecreatefrompng($newImg);
+                break;
+            case 'jpg' :
+            case 'jpeg' :
+                $srcImg = imagecreatefromjpeg($newImg);
+                break;
+            default :
+                $srcImg = $imgUrl;
+                break;
+        }
+        return [$newImg,$srcImg];
+    }
+
+    private function _getCreateFunction($mime){
+		    if ($mime == 'image/jpeg' || $mime == 'image/pjpeg'){
+	            	return 'imagecreatefromjpeg';
+		    } elseif ($mime == 'image/gif') {
+		        return 'imagecreatefromgif';
+		    } elseif ($mime == 'image/png') {
+		        return 'imagecreatefrompng';
+		    } else {
+		        $this->errors[] = 'Invalid file type!';
+		        return false;
+		    }
+		}
+		/**
+		 * Method to get the specific function to finish an image
+		 *
+		 * @param string $mime
+		 * @return string
+		 */
+		private function _getFinishFunction($mime) {
+			if ($mime == 'image/jpeg' || $mime == 'image/pjpeg'){
+				return 'imagejpeg';
+			} elseif ($mime == 'image/gif') {
+				return 'imagegif';
+			} elseif ($mime == 'image/png') {
+				return 'imagepng';
+			} else {
+				$this->errors[] = 'Invalid file type.';
+				return false;	
+			}
+		}
 }

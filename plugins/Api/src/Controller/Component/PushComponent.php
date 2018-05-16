@@ -4,6 +4,7 @@
 namespace Api\Controller\Component;
 
 use Cake\Controller\Component;
+use Cake\Mailer\MailerAwareTrait;
 use Cake\Controller\ComponentRegistry;
 use Cake\Network\Http\Client;
 use Cake\Core\Configure;
@@ -13,6 +14,7 @@ use Cake\I18n\Time;
 
 
 class PushComponent extends Component {
+    use MailerAwareTrait;
 
     public $SnsClient;
     public $snsConfig;
@@ -171,6 +173,78 @@ class PushComponent extends Component {
             /* end of saving  */
             /* create a job in queue */
             TableRegistry::get('Queue.QueuedJobs')->createJob('Notification',$data);
+        }
+    }
+    
+     
+    public function sendPushNotificationSpaycEvent($data) {
+        if(!empty($data['slug'])) { 
+            $notificationType = TableRegistry::get("Api.NotificationTypes")->findBySlug($data['slug']);
+            if($notificationType->isEmpty()) {
+                return false;
+            }
+           
+            $notificationType = $notificationType->first();
+            $deviceId = TableRegistry::get("Api.UserLogs")->findByUserId($data['requested_to'])
+                    ->find('all',
+                ['fields'=>
+                    [
+                        'UserLogs.user_id',
+                        'UserLogs.device_id',
+                        'UserLogs.device_token',
+                        'users.email',                        
+                        'users.display_name',                        
+                        ]])
+                    ->select(['id', 'user_id', 'device_id','device_token'])
+                    ->join(
+                [
+                    'table' => 'users',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'UserLogs.user_id = users.id',
+                    ]
+                ]);
+//            print_R($deviceId->first());die;
+            if($deviceId->isEmpty()) {
+                return ['status'=>'failed','message'=>"Device ID Not Found"];
+            }
+           
+            $deviceId = $deviceId->first();
+            if($deviceId['users']['email']) {
+//                print_R($deviceId['users']['email']);die;
+            $mail = (object)[];
+            $mail->email=$deviceId['users']['email'];
+            $mail->display_name=$deviceId['users']['display_name'];
+            $mail->spayc_name=$data['spayc_name'];
+            //Send Email
+            if($notificationType->slug == 'spayc-start-event'){
+            $success =    $this->getMailer('Api.User')->send('eventStartCron', [$mail]);
+            }elseif ($notificationType->slug == 'spayc-end-event') {
+                    $success =    $this->getMailer('Api.User')->send('eventEndCron', [$mail]);
+            }
+            //Send Email
+            }
+            
+//            if(strlen($deviceId->device_token)<64) {
+//                return ['status'=>'failed','message'=>"Device ID Characters not Valid"];
+//            }
+            if($notificationType->slug == 'spayc-start-event' || $notificationType->slug == 'spayc-end-event') {
+                $notificationType->message = str_replace("<WarpName>", ucwords($data['spayc_name']), $notificationType->message);
+            }
+            $timezone = Configure::read('timezone');
+            $userInputTime = new Time('now',$timezone);
+            //$userInputTime = new \DateTime("now", new \DateTimeZone('America/New_York') );
+            //echo $userInputTime->format('Y-m-d H:i:s');
+            $data['time'] =  $userInputTime->format("m-d-Y H:i:s");
+            $data['device_token'] = $deviceId->device_token;
+            $data['notification_type'] = $notificationType->type;
+            $data['message'] = $notificationType->message;
+//            pr($data);die;
+            $sent = false;
+            if(!empty($data['device_token'])) {
+                $sent = $this->sendOnIOS($data);
+            }
+            return $sent;
         }
     }
 }

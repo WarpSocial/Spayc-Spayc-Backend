@@ -1,4 +1,5 @@
 <?php
+
 namespace Api\Model\Table;
 
 use Cake\ORM\Query;
@@ -22,8 +23,7 @@ use Cake\Validation\Validator;
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class CommentsTable extends Table
-{
+class CommentsTable extends Table {
 
     /**
      * Initialize method
@@ -31,8 +31,7 @@ class CommentsTable extends Table
      * @param array $config The configuration for the Table.
      * @return void
      */
-    public function initialize(array $config)
-    {
+    public function initialize(array $config) {
         parent::initialize($config);
 
         $this->setTable('comments');
@@ -52,36 +51,38 @@ class CommentsTable extends Table
     }
 
     /**
-     * Default validation rules.
-     *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
-     */
-    public function validationDefault(Validator $validator)
-    {
-        $validator
-            ->integer('id')
-            ->allowEmpty('id', 'create');
-
-        $validator
-            ->scalar('comment')
-            ->allowEmpty('comment');
-
-        return $validator;
-    }
-
-    /**
      * Returns a rules checker object that will be used for validating
      * application integrity.
      *
      * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
      * @return \Cake\ORM\RulesChecker
      */
-    public function buildRules(RulesChecker $rules)
-    {
+    public function buildRules(RulesChecker $rules) {
         $rules->add($rules->existsIn(['spayc_id'], 'Spaycs'));
         $rules->add($rules->existsIn(['user_id'], 'Users'));
 
         return $rules;
     }
+    
+    public function spaycActivities($spaycId,$data){
+        $comment = $this->findBySpaycId($spaycId)->first();
+        if(empty($comment)){
+            $comment = $this->newEntity();
+            $comment->status = ACTIVE;
+            $comment->spayc_id = $spaycId;
+            $comment->comment = 1;
+            $comment->event_id = $data['event_id'];
+        }else{
+            if( ($comment->event_id == $data['event_id']) ){
+                return;
+            }
+            $comment->comment = $comment->comment+1;
+            $comment->event_id = $data['event_id'];
+        }
+        if(!$this->save($comment)){
+            \Cake\Log\Log::info(['message'=>'Record not saved','data'=>$data]);
+        }
+        return;
+    }
+
 }
