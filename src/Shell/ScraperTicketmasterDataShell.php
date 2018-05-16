@@ -37,7 +37,9 @@ class ScraperTicketmasterDataShell extends Shell
     /*** save events current date to 14days from Ticketmaster API ***/ 
     public function main() {        
         $this->out('Process start at '.$this->Scraper->currentDateTime());
+        $this->Scraper->setScraperLog('get data from ticketmaster process start');
         $this->Scraper->getTicketmasterData(TODAY_DATE, AFTER14DAYS_DATE);
+        $this->Scraper->setScraperLog('get data from ticketmaster process end');
         $this->out('Process end at '.$this->Scraper->currentDateTime());
     }
 }

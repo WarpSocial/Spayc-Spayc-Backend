@@ -109,6 +109,7 @@ class StubhubEventsTable extends Table
     }
 
     public function saveNupdateData($events, $eventIds) {
+        $this->deleteAll([['start_date <'=> date('Y-m-d 23:59:59', strtotime(' -1 day'))]]);
         $getIds = $this->find()->select(['stubhub_event_id'])->
             where(['stubhub_event_id IN' => $eventIds])->extract('stubhub_event_id')->toList();
         $diffIds=array_diff($eventIds,$getIds);       

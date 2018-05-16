@@ -109,6 +109,7 @@ class EventbriteEventsTable extends Table
     }
 
     public function saveNupdateData($events, $eventIds) {
+        $this->deleteAll([['start_date <'=> date('Y-m-d 23:59:59', strtotime(' -1 day'))]]);
         $getIds = $this->find()->select(['eventbrite_event_id'])->
             where(['eventbrite_event_id IN' => $eventIds])->extract('eventbrite_event_id')->toList();
         $diffIds=array_diff($eventIds,$getIds);       
