@@ -38,7 +38,9 @@ class ScraperEventbriteDataShell extends Shell
     /*** save events current date to 14days from Eventbrite API ***/ 
     public function main() {
         $this->out('Process start at '.$this->Scraper->currentDateTime());
+        $this->Scraper->setScraperLog('get data from eventbrite process start');
         $this->Scraper->getEventbriteData(1);
+        $this->Scraper->setScraperLog('get data from eventbrite process end');
         $this->out('Process end at '.$this->Scraper->currentDateTime());
     }
 }

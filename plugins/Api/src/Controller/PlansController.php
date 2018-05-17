@@ -476,9 +476,15 @@ class PlansController extends AppController {
         $data=[];
         if($ad->isEmpty()){
              $this->restException(['status'=>'failed','message'=>'Promotion not found.'], 404);
-        }else{
-            $data=$ad->first();
         }
+        
+        $data=$ad->first();
+        $timezone = Configure::read('timezone');
+        $sd = new \Cake\I18n\Time($data->spayc['start_date'], 'UTC');
+        $data->spayc['start_date'] = $sd->setTimezone(new \DateTimeZone($timezone))->format('Y-m-d H:i:s');
+        $ed = new \Cake\I18n\Time($data->spayc['end_date'], 'UTC');
+        $data->spayc['end_date'] = $ed->setTimezone(new \DateTimeZone($timezone))->format('Y-m-d H:i:s');
+        
         $data['frequency']=$frequency;
         $response = ['status' => 'success', 'message' => __('Promotion Find Successfully'), 'data' => $data];
         $this->set($response);

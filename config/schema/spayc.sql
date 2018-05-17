@@ -554,3 +554,18 @@ SELECT asin(
 ) * 7926.3352 * 1609.34 AS distance;
 $BODY$
 LANGUAGE sql IMMUTABLE;
+
+CREATE TABLE scraper_logs (
+    "id" BIGSERIAL NOT NULL,
+    "status" character varying(255) NULL,
+    "created" timestamp NOT NULL,
+    "modified" timestamp,
+    PRIMARY KEY (id)
+);
+
+ALTER TABLE "spaycs"
+ALTER "name" TYPE character varying(250),
+ALTER "name" DROP DEFAULT,
+ALTER "name" DROP NOT NULL;
+COMMENT ON COLUMN "spaycs"."name" IS '';
+COMMENT ON TABLE "spaycs" IS '';

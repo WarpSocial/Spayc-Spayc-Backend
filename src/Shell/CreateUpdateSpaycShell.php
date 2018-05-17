@@ -44,9 +44,11 @@ class CreateUpdateSpaycShell extends Shell
     public function main()
     {
         $this->out($this->OptionParser->help());
+        $this->Scraper->setScraperLog('create and update spayc process start');
         $this->out('Process start at '.$this->currentDateTime());
          $response = $this->Scraper->saveDataSpaceTable();
         $this->out('Response - '.$response);
+        $this->Scraper->setScraperLog('create and update spayc process end');
         $this->out('Completed at '.$this->currentDateTime());
     }
 
