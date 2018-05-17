@@ -291,6 +291,7 @@ class WebApiController extends AppController {
                 }
             }
         }
+         \Cake\Cache\Cache::delete('spayc_categories', 'long'); 
         die("END");
     }
 

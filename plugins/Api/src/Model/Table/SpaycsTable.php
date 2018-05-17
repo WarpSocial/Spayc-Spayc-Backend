@@ -597,19 +597,18 @@ class SpaycsTable extends Table {
                 'is_admin'=>($val->id != $adminUser)?0:2
             ];
 
-            $joinData = [
-                'status'=>'Joined',
-                'matrix_room_id'=>$items['matrix_room_id'],
-                'matrix_token'=>$val->matrix_access_token
-            ];
-            //if($val->id != $adminUser){
-            TableRegistry::get('Queue.QueuedJobs')->createJob('MuteUnmute',[
+            $Queue = [
                 'join'=>true,
                 'rule'=>'mute',
                 'status'=>'Joined',
                 'matrix_token'=>$val->matrix_access_token,
                 'matrix_room_id'=>$items['matrix_room_id']
-                ]);                
+            ];
+            if($items['is_direct']){
+                $Queue['rule'] = 'unmute';
+            }
+            //if($val->id != $adminUser){
+            TableRegistry::get('Queue.QueuedJobs')->createJob('MuteUnmute',$Queue);                
             //}
             $push['requested_by'] = $adminUser;
             $push['requested_to'] = $val->id;
@@ -759,7 +758,10 @@ class SpaycsTable extends Table {
             'SubscribedUsers' => function($q) {
                 return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])
                         ->where(['SubscribedUsers.status' => "Active"]);;
-            }
+            },
+            'SpaycCategories' => function($q) {
+                return $q->select(['SpaycCategories.id', 'SpaycCategories.name']);
+            }        
         ]);
         $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($userId) {
             return $results->map(function ($row) use($userId) {
@@ -839,6 +841,18 @@ class SpaycsTable extends Table {
             return false;
         }
         return $banned->toArray();
+    }
+    public function spaycWithFriends($userId){
+        if($userId == null){
+            return false;
+        }
+        $subQuery = TableRegistry::get('Api.FriendRequest')->friendSubquery($userId);        
+        $query = TableRegistry::get('Api.JoinedSpayc')->find()
+                ->select(['spayc_id'])
+                ->distinct()
+                ->where(['user_id IN' => $subQuery,'status'=>'Joined']);
+        //pr($query->toArray());die;
+        return $query;
     }
 
 }

@@ -212,7 +212,6 @@ class SpaycsController extends AppController {
         if($items->errors()) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
         }
-        
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
         $matrixData = $data;
         $matrixData['name'] = '';
@@ -232,6 +231,7 @@ class SpaycsController extends AppController {
                 TableRegistry::get('Api.FriendRequest')->updateRoomId($items['invite'], $this->Auth->user('id'), $matrix['room_id']);
                 $items['is_direct'] = true;
                 $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
+                
                 $this->response->statusCode(201);
                 $response = ['status'=>'success','message'=>__('Your room, '.ucfirst($data['name']).', has been created.'), 'data'=>$items];
                 /*Event to bind to update the set upload room image */
@@ -276,6 +276,7 @@ class SpaycsController extends AppController {
             ->contain([                    
                 'JoinedSpayc' => function($q) {
                     return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.distance'])->where(['JoinedSpayc.status !='=>'Banned']);
+                //return $q->select(['JoinedSpayc.spayc_id','total_joined'=>$q->func()->count('JoinedSpayc.id')])->group('JoinedSpayc.spayc_id');
                 },
                 'SubscribedUsers' => function($q) {
                     return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
@@ -331,7 +332,30 @@ class SpaycsController extends AppController {
         if(in_array(ucfirst($this->request->query('group_type')), ['Public', 'Private'])) {
             $spaycs->where(["Spaycs.group_type"=>ucfirst($this->request->query('group_type'))]);
         }
-        
+        if(!empty($this->request->query('categories'))) {
+            $cats = explode(',',$this->request->query('categories'));
+            $spaycs->where(["Spaycs.spayc_category_id IN"=>$cats],['spayc_category_id' => 'integer[]']);
+        }
+        if(!empty($this->request->query('friends')) && $this->request->query('friends') == 'yes') {
+            $subQuery = $this->Spaycs->spaycWithFriends($loggedUser);
+            $spaycs->where(["Spaycs.id IN"=>$subQuery]);
+        }
+        if(!empty($this->request->query('hot'))) {
+           // $spaycs->select(['JoinedSpayc.totalJoined']);
+//            $jsTable = TableRegistry::get('Api.JoinedSpayc');
+//            $jsquery = $jsTable->find();
+//            //$jquery->select(['JoinedSpayc.spayc_id','totalJoined'=>$jquery->func()->count('JoinedSpayc.id')])->groupBy('JoinedSpayc.spayc_id');
+//            $spaycs->select(['js.spayc_id','total_joined'=>$spaycs->func()->count('js.id')])->group('js.spayc_id');
+//            $spaycs->join([
+//                'table'=>'joined_spayc',
+//                'alias'=>'js',
+//                'type' => 'INNER',
+//                'conditions'=>[
+//                    'js.spayc_id=Spayc.id'
+//                ]
+//            ]);
+            
+        }
         if($page < 0){
             $page = $page*-1;
             $spaycs->page($page);
@@ -408,7 +432,7 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('This warp is no longer exist.')], 400);
         }
         $spayc = $spaycs->first();
-        $friend = TableRegistry::get('Api.FriendRequest')->myFriend($user['id'],$spayc->user_id);
+        $friend = TableRegistry::get('Api.FriendRequest')->userFriend($user['id'],$spayc->user_id);
         $entities = $scModel->find('all',['field'=>['id','user_id','spayc_id','status']])->where(['spayc_id'=>$spayc->id,'user_id'=>$data['user_id']]);
         if($entities->isEmpty()){
             $entity = $scModel->newEntity();
@@ -440,7 +464,10 @@ class SpaycsController extends AppController {
             if(!empty($friend)){
                 $push['slug'] = 'friend-subscribed-to-your-spayc';
             }
-            $this->Push->sendPushNotification($push);
+            /* spayc owner will not get notification*/
+            if($spayc->user_id != $user['id']){
+                $this->Push->sendPushNotification($push);
+            }
              
             $response = ['status'=>'success','message'=>__('User has been subcribed successfully.')];
         }else{

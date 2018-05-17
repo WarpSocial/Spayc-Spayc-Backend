@@ -23,7 +23,7 @@ class NotificationComponent extends Component {
         ],
         'ios' => [
             'passphrase' => '123',
-            'certificate_file'=>'warp_apns_developement.pem',
+            'certificate_file'=>'Spayc_Push_Certificates.pem',
             'gateway' => 'ssl://gateway.sandbox.push.apple.com:2195'
         ],
         'windows' => [

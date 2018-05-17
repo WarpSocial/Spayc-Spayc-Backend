@@ -63,6 +63,10 @@ class PlansController extends AppController {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
         $user = $this->Auth->user();
+        $sps = explode(',', $data['spayc_promotional_id']);
+        if(in_array($data['spayc_id'],$sps)){
+            $this->restException(['status'=>'failed', 'message'=> __('You couldn\'t promote same warp from existing warp.')], 400);
+        }
         $data['pspaycs'] = explode(',', $data['spayc_promotional_id'].','.$data['spayc_id']) ;        
         $sRepo = TableRegistry::get('Api.Spaycs');
         $spaycs = $sRepo->find()->contain(['JoinedSpayc'=>function($q)use($user){
