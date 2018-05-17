@@ -1385,7 +1385,7 @@ class UsersController extends AppController {
         }
         
         $data = $this->request->getData();
-        Log::info($data);
+        //Log::info($data);
         //$this->Users->pusherData($data);
         /* for direct notification */
         
