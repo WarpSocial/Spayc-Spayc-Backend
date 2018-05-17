@@ -701,12 +701,22 @@ class SpaycsTable extends Table {
             $spaycs->where(['OR'=>[['Spaycs.end_date >='=>$today_date],['Spaycs.end_date IS'=>null]]]);
         }
         
-        if(isset($request['spayc_type']) && in_array(ucfirst($request['spayc_type']), ['Event', 'Community'])) {
-            $spaycs->where(["Spaycs.type"=>ucfirst($request['spayc_type'])]);
+//        if(isset($request['spayc_type']) && in_array(ucfirst($request['spayc_type']), ['Event', 'Community'])) {
+//            $spaycs->where(["Spaycs.type"=>ucfirst($request['spayc_type'])]);
+//        }
+        
+        if(isset($request['spayc_type']) && $request['spayc_type']) {
+            $spayc_type = explode("|",ucfirst($request['spayc_type']));
+            $spaycs->where(["Spaycs.type IN "=>$spayc_type]);
         }
         
-        if(isset($request['group_type']) && in_array(ucfirst($request['group_type']), ['Public', 'Private'])) {
-            $spaycs->where(["Spaycs.group_type"=>ucfirst($request['group_type'])]);
+//        if(isset($request['group_type']) && in_array(ucfirst($request['group_type']), ['Public', 'Private'])) {
+//            $spaycs->where(["Spaycs.group_type"=>ucfirst($request['group_type'])]);
+//        }
+        
+        if(isset($request['group_type']) && $request['group_type']) {
+            $group_type = explode("|",ucfirst($request['group_type']));
+            $spaycs->where(["Spaycs.group_type IN "=>$group_type]);
         }
         
         if(isset($request['category_id'])) {
