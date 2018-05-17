@@ -1098,6 +1098,16 @@ class SpaycsController extends AppController {
             $this->restException(__('Page and limit value must be integer.'),400);
         }
         $date = (new Time('now', Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i:s");
+        $pquery = TableRegistry::get('Api.PhysicalLocation')->findByUserId($user['id']);
+        if(!$pquery->isEmpty()){
+            $pquery = $pquery->first();
+            $lat = $pquery->current_latitude;
+            $long = $pquery->current_longitude;
+        }else{
+            $lat = null;
+            $long = null;
+                    
+        }
         $subQuery = TableRegistry::get('Api.JoinedSpayc')->joinedSpaycQuery($user['id']);
         $query = $this->Spaycs->find();
         $query->select(['Spaycs.id', 'Spaycs.name','Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.matrix_room_id','Spaycs.spayc_category_id']);
@@ -1124,7 +1134,15 @@ class SpaycsController extends AppController {
             }
             $query->where(['OR'=>$keyQuery]);
         }
-        $query->order(['Spaycs.created'=>'DESC']);
+        if(!empty($lat) && !empty($long)){
+            $distance = "ROUND( CAST(".str_replace(':long',$long,str_replace(':lat',$lat,$this->Spaycs->distanceInMiles))." AS numeric), 3)";
+            $query->select(['distance'=>$distance])                    
+                    ->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
+        }else{
+            $query->select(['distance'=>0])
+                    ->order(['created'=>'DESC']);
+        }
+       
         $query->limit($limit)->page($page);
         if($query->isEmpty()){
              $this->restException(['status'=>'failed','message'=>'Record not found.'], 404);
