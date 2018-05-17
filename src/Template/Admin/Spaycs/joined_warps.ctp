@@ -1,5 +1,6 @@
 <?php 
 use Cake\Routing\Router;
+$statusArr = unserialize(STATUS_ARR);
 $spaycTypeArr = unserialize(SPAYC_TYPE_ARR);
 $groupTypeArr = unserialize(GROUP_TYPE_ARR);
 $txtMassage = unserialize(TEXT_MASSAGE);  
@@ -57,7 +58,7 @@ if($this->request->query())
                           <?= $this->Html->link("<i class='icon-view'></i>View",['controller' => 'Spaycs', 'action' => 'view',$spayc->id,$spayc->user_id], ['class' => 'dropdown-item view','escape' => false]);?>  
                           <!--<button class="dropdown-item block"> <i class="icon-block"></i>Block</button>-->
                           
-                           <?php  $blocktxt = (ucfirst($spayc->is_admin_block) == 0)?"Block":"Unblock";?>
+                           <?php  $blocktxt =(ucfirst($spayc->status) == $statusArr['active'])?"Block":"Unblock";?>
                       <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item status_<?= $spayc->id?> <?= strtolower($blocktxt)?>" page="<?php echo Router::url(['Controller' => 'Spaycs', 'action'=> 'setSpaycStatus',$spayc->id]);?>"><i class='icon-block'></i><span class="status_<?= $spayc->id?>"><?= $blocktxt?></span>
                       </a>
                           
