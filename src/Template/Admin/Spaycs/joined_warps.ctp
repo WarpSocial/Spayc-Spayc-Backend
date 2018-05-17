@@ -2,6 +2,7 @@
 use Cake\Routing\Router;
 $spaycTypeArr = unserialize(SPAYC_TYPE_ARR);
 $groupTypeArr = unserialize(GROUP_TYPE_ARR);
+$txtMassage = unserialize(TEXT_MASSAGE);  
 $spaycsCount=$filter=false;
 if(count($spaycs) > 0) 
   $spaycsCount=true; 
@@ -54,7 +55,12 @@ if($this->request->query())
                         </div>
                         <div class="dropdown-menu" aria-labelledby="table-data-dropdown_<?= $spayc->id?>">                         
                           <?= $this->Html->link("<i class='icon-view'></i>View",['controller' => 'Spaycs', 'action' => 'view',$spayc->id,$spayc->user_id], ['class' => 'dropdown-item view','escape' => false]);?>  
-                          <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
+                          <!--<button class="dropdown-item block"> <i class="icon-block"></i>Block</button>-->
+                          
+                           <?php  $blocktxt = (ucfirst($spayc->is_admin_block) == 0)?"Block":"Unblock";?>
+                      <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item status_<?= $spayc->id?> <?= strtolower($blocktxt)?>" page="<?php echo Router::url(['Controller' => 'Spaycs', 'action'=> 'setSpaycStatus',$spayc->id]);?>"><i class='icon-block'></i><span class="status_<?= $spayc->id?>"><?= $blocktxt?></span>
+                      </a>
+                          
                           <button class="dropdown-item delete"> <i class="icon-Delete"></i>Delete</button>
                         </div>
                       </div>
@@ -119,4 +125,4 @@ if($this->request->query())
       </div>
     <?php } ?>
 </section>
-<?php echo $this->Html->script(['admin/admin-manage-user']); ?>
+<?php echo $this->Html->script(['admin/spayc','admin/admin-manage-user']); ?>

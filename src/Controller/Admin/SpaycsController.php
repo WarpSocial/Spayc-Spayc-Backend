@@ -279,7 +279,7 @@ class SpaycsController extends AdminController
         $user = $this->Users->get($userId);
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, $this->FRIEND_REQUESTED_STATUS_ARR['accepted']);
         $spaycs = $this->Spaycs->find();
-        $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date'])
+        $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.is_admin_block'])
             ->where(['Spaycs.group_type !='=>'trusted_private','Spaycs.id IN'=>$this->Spaycs->joinedSpayc($userId),'Spaycs.parent_id IS'=>null])
             ->contain([
                  'JoinedSpayc' => function($q) {
@@ -328,6 +328,52 @@ class SpaycsController extends AdminController
         $spaycs = $this->paginate($spaycs)->toArray();           
         $this->set(compact('spaycs','keyword','user'));        
         $this->set('_serialize', ['spaycs']);
+    }
+    
+    
+    public function setSpaycStatus($id, $status = 'Blocked') {
+        
+        $this->viewBuilder()->layout('');
+        if (empty($id)) {
+            return $this->redirect(['action' => 'index']);  
+        }        
+        $spayc = $this->Spaycs->get($id);  
+        $statusArr = unserialize(STATUS_ARR);
+        $pushNotificationAdminSlug = unserialize(PUSH_NOTIFICATION_ADMIN_SLUG);
+        $txtMassage = unserialize(TEXT_MASSAGE);               
+        if ($this->request->is(['post','put'])) {    
+            if(!empty($spayc->is_admin_block) && ucfirst($spayc->is_admin_block) == 0 )
+                $spayc->is_admin_block = 1;
+            else
+                $spayc->is_admin_block = 0;
+            if ($this->Spaycs->save($spayc)) {
+                
+                $spayc =$this->Spaycs->get($spayc->id);
+                $displayName = !empty($spayc->name)? $spayc->name :'User';
+                if (ucfirst($spayc->is_admin_block) == 0) { 
+                    $spayc->statusTxt = $txtMassage['unblock'];
+                    $pushNotificationAdminSlug = $pushNotificationAdminSlug['unblocked'];
+                    $result_arr = ['result' => true, 'is_admin_block'=>0, 'message' => $displayName.' '.$this->errorSuccessMessage['UNBLOCKED-MSG']]; 
+                } else {                       
+                    $spayc->statusTxt = $txtMassage['block'];
+                    $pushNotificationAdminSlug = $pushNotificationAdminSlug['blocked'];
+                    $result_arr = ['result' => true, 'is_admin_block'=>1, 'message' => $displayName.' '.$this->errorSuccessMessage['BLOCKED-MSG']];   
+                }                
+                if(!empty($spayc->email))
+                    $this->getMailer('User')->send('userStatus', [$spayc]);   
+                // for push notification
+                $push['requested_by'] = $this->Auth->user('id');
+                $push['username'] = $this->Auth->user('display_name');
+                $push['requested_to'] = $spayc->id;
+                $push['slug'] = $pushNotificationAdminSlug;
+                $this->Push->sendPushNotification($push);
+            } else {                
+                $result_arr = ['result' => false, 'status'=>'', 'message' => $this->errorSuccessMessage['SYSTEMERR']];   
+            }
+            echo json_encode($result_arr);
+            die;
+        }
+        $this->set(compact('spayc'));
     }
 
     
