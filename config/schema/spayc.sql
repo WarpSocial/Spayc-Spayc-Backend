@@ -372,7 +372,7 @@ SELECT create_hypertable('spayc_promotion', 'created');
 CREATE TABLE "spayc_promotion_priority" (
     "id" BIGSERIAL NOT NULL,
     "spayc_id" BIGINT NULL,
-    "priority" INTEGER NULL,
+    "cycle" INTEGER NULL,
     "comment_count" INTEGER NULL,
     "created" timestamp,
     "modified" timestamp,
