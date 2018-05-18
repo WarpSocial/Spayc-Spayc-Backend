@@ -1411,7 +1411,7 @@ class UsersController extends AppController {
             $items['date_time'] = date('m-d-Y H:i:s',$device['pushkey_ts']);
             //$this->Push->sendOnIOS($items);
         }
-        //Log::info($items);
+        Log::info($items);
         $this->Notification->iosPush($items,$deviceToken);        
         /* Rest job will be done by workers */
         //$data['items'] = $items;
