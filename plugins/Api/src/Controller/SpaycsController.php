@@ -341,19 +341,9 @@ class SpaycsController extends AppController {
             $spaycs->where(["Spaycs.id IN"=>$subQuery]);
         }
         if(!empty($this->request->query('hot'))) {
-           // $spaycs->select(['JoinedSpayc.totalJoined']);
-//            $jsTable = TableRegistry::get('Api.JoinedSpayc');
-//            $jsquery = $jsTable->find();
-//            //$jquery->select(['JoinedSpayc.spayc_id','totalJoined'=>$jquery->func()->count('JoinedSpayc.id')])->groupBy('JoinedSpayc.spayc_id');
-//            $spaycs->select(['js.spayc_id','total_joined'=>$spaycs->func()->count('js.id')])->group('js.spayc_id');
-//            $spaycs->join([
-//                'table'=>'joined_spayc',
-//                'alias'=>'js',
-//                'type' => 'INNER',
-//                'conditions'=>[
-//                    'js.spayc_id=Spayc.id'
-//                ]
-//            ]);
+//           $spaycs->leftJoinWith('JoinedSpayc',function($q){
+//                return $q->select(['joined_spaycs'=>$q->func()->count('JoinedSpayc.spayc_id')])->group(['JoinedSpayc.spayc_id']);
+//            });
             
         }
         if($page < 0){

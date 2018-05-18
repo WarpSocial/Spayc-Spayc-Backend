@@ -21,15 +21,25 @@ class NotificationComponent extends Component {
             'access_key' => 'AIzaSyDG3fYAj1uW7VB-wejaMJyJXiO5JagAsYI',
             'url' => 'https://android.googleapis.com/gcm/send'
         ],
-        'ios' => [
-            'passphrase' => '123',
-            'certificate_file'=>'Spayc_Push_Certificates.pem',
-            'gateway' => 'ssl://gateway.push.apple.com:2195'
-        ],
+        
         'windows' => [
             'channelName' => 'ioskiwitech'
         ]
     ];
+    
+    /**
+     * initialize function to initialize the current component config with new more config param
+     * 
+     * @param array $config config related to the current component
+     * @return void nothing
+     */
+    public function initialize(array $config) {
+        parent::initialize($config);
+        $iosconfig = Configure::read('IOSPUSH');
+        $config = !empty($config)?$config:array();
+        $this->_config = array_merge($this->_defaultConfig , $config);
+        $this->_config['ios'] = $iosconfig;
+    }
     // Sends Push notification for iOS users
     public function iosPush($data, $deviceToken) {
         $passPhrase = $this->getConfig('ios.passphrase');
