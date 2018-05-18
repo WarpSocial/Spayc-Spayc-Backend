@@ -270,8 +270,9 @@ class SpaycsController extends AppController {
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Accepted');
         $lat = $this->request->getQuery('latitude',null);
         $long = $this->request->getQuery('longitude',null);
+        
         $spaycs = $this->Spaycs->find();
-        $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.spayc_category_id'])
+        $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.spayc_category_id','distance'=>0])
             ->where(['Spaycs.status'=>'Active','Spaycs.parent_id IS'=>null,'Spaycs.group_type !='=>'trusted_private'])
             ->contain([                    
                 'JoinedSpayc' => function($q) {
@@ -300,9 +301,10 @@ class SpaycsController extends AppController {
                     //->bind(':lat', $lat, 'float')
                     //->bind(':long', $long, 'float')
                     ->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
+        }else if(!empty($this->request->query('hot'))) {
+            
         }else{
-            $spaycs->select(['distance'=>0])
-                    ->order(['Spaycs.created'=>'DESC']);
+            $spaycs->order(['Spaycs.created'=>'DESC']);
         } 
         #pr($spaycs->toArray());die;
         $spaycs->limit($limit);
@@ -341,10 +343,11 @@ class SpaycsController extends AppController {
             $spaycs->where(["Spaycs.id IN"=>$subQuery]);
         }
         if(!empty($this->request->query('hot'))) {
-//           $spaycs->leftJoinWith('JoinedSpayc',function($q){
-//                return $q->select(['joined_spaycs'=>$q->func()->count('JoinedSpayc.spayc_id')])->group(['JoinedSpayc.spayc_id']);
-//            });
-            
+            $spaycs->select(['joined_user'=>$spaycs->func()->count('JoinedSpayc.spayc_id')]);
+           $spaycs->leftJoinWith('JoinedSpayc');
+           $spaycs->group(['Spaycs.id, Spaycs.name,Spaycs.user_id, Spaycs.location, Spaycs.image, Spaycs.group_type, Spaycs.type,Spaycs.start_date,
+Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,SpaycCategories.id,SpaycCategories.name,Spaycs.created']);
+           $spaycs->order(['joined_user'=>'DESC','Spaycs.created'=>'DESC'],Query::OVERWRITE);
         }
         if($page < 0){
             $page = $page*-1;
@@ -352,6 +355,7 @@ class SpaycsController extends AppController {
         } else {
             $spaycs->page($page);
         }
+        //pj($spaycs->toArray());die;
         $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend,$userId,$loggedUser){
             return $results->map(function ($row) use($friend,$userId,$loggedUser) {
                 $spaycId = ApiHasher::decrypt($row->id);
