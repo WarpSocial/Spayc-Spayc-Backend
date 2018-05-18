@@ -40,6 +40,7 @@ define('TEXT_MASSAGE', serialize($txt_massage));
 define('TODAY_DATE', date('Y-m-d'));
 define('AFTER14DAYS_DATE', date('Y-m-d', strtotime(' +3 day')));
 define('FUZZYPERCENT', 90);
+define('SPAYC_TABLE', 'spaycs');
 
 $scraperRootUrl=array('eventbriteurl'=> 'https://www.eventbriteapi.com/v3/',
     'ticketmasterurl'=> 'https://app.ticketmaster.com/discovery/v2/',
@@ -97,4 +98,5 @@ $config['ERRORANDSUCCESSMSG'] = [
     'RESETLINKMSG'=>'A link to reset your password has been sent to your work email.',
     'BLOCKED-MSG'=>'has been Blocked.',
     'UNBLOCKED-MSG'=>'has been Unblocked.',
+    'DELETED-MSG'=>'has been deleted.',
 ];

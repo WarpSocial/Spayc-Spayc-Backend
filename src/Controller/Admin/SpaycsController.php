@@ -2,6 +2,7 @@
 namespace App\Controller\Admin;
 
 use App\Controller\AdminController;
+use Cake\Datasource\ConnectionManager;
 use Cake\Network\Exception\ForbiddenException;
 use Cake\Network\Exception\NotFoundException;
 use Cake\View\Exception\MissingTemplateException;
@@ -344,7 +345,6 @@ class SpaycsController extends AdminController
         if ($this->request->is(['post','put'])) {    
             if(!empty($spayc->status) && ucfirst($spayc->status) == $statusArr['active'] ){
                 $spayc->status = $statusArr['inactive'];
-                $spayc->old_status = $spayc->status;
             }else{
                 $spayc->status = $statusArr['active'];
             }
@@ -352,16 +352,17 @@ class SpaycsController extends AdminController
             if ($this->Spaycs->save($spayc)) {
                 
                 $spayc =$this->Spaycs->get($spayc->id);
-                pr($spayc);die;
                 $displayName = !empty($spayc->name)? $spayc->name :'Spayc';
                 if (ucfirst($spayc->status) == $statusArr['active']) {
                     $spayc->statusTxt = $txtMassage['unblock'];
                     $pushNotificationAdminSlug = $pushNotificationAdminSlug['unblocked'];
                     $result_arr = ['result' => true, 'status'=>$statusArr['active'], 'message' => $displayName.' '.$this->errorSuccessMessage['UNBLOCKED-MSG']]; 
+                     $this->activeSubSpaycStatus($spayc->id,$statusArr['active']);
                 } else {                       
                     $spayc->statusTxt = $txtMassage['block'];
                     $pushNotificationAdminSlug = $pushNotificationAdminSlug['blocked'];
                     $result_arr = ['result' => true, 'status'=>$statusArr['inactive'], 'message' => $displayName.' '.$this->errorSuccessMessage['BLOCKED-MSG']];   
+                     $update=$this->inactiveSubSpaycStatus($spayc->id,$statusArr['inactive']);
                 }                
                 if(!empty($spayc->email))
                     $this->getMailer('User')->send('userStatus', [$spayc]);   
@@ -378,6 +379,57 @@ class SpaycsController extends AdminController
             die;
         }
         $this->set(compact('spayc'));
+    }
+    
+    
+    public function deleteSpayc($id) {
+        
+        $this->viewBuilder()->layout('');
+        if (empty($id)) {
+            return $this->redirect(['action' => 'index']);  
+        }        
+        $spayc = $this->Spaycs->get($id);    
+        if ($this->request->is(['post','put'])) {    
+            if(!empty($spayc)){
+            $displayName = !empty($spayc->name)? $spayc->name :'Spayc';
+            if ($this->Spaycs->delete($spayc)) {
+                
+              $result_arr = ['result' => true,  'message' => $displayName.' '.$this->errorSuccessMessage['DELETED-MSG']]; 
+            } else {                
+                $result_arr = ['result' => false, 'status'=>'', 'message' => $this->errorSuccessMessage['SYSTEMERR']];   
+            }
+            } else {                
+                $result_arr = ['result' => false, 'status'=>'', 'message' => $this->errorSuccessMessage['SYSTEMERR']];   
+            }
+            echo json_encode($result_arr);
+            die;
+        }
+        $this->set(compact('spayc'));
+    }
+    
+    
+    public function inactiveSubSpaycStatus($parent_id,$status) {
+         $conn = ConnectionManager::get('default');
+        $sql="UPDATE ".SPAYC_TABLE." set last_status = status where parent_id = $parent_id ";
+        $stmt = $conn->execute($sql);
+        $rows = $stmt->fetchAll('assoc');
+        
+        $sql="UPDATE ".SPAYC_TABLE." set status = '".$status."' where parent_id = $parent_id ";
+        $stmt = $conn->execute($sql);
+        $rows = $stmt->fetchAll('assoc');
+        return $rows;
+    }
+    
+    public function activeSubSpaycStatus($parent_id,$status) {
+         $conn = ConnectionManager::get('default');
+        $sql="UPDATE ".SPAYC_TABLE." set status = last_status where parent_id = $parent_id AND last_status is NOT NULL";
+        $stmt = $conn->execute($sql);
+        $rows = $stmt->fetchAll('assoc');
+        
+        $sql="UPDATE ".SPAYC_TABLE." set last_status = NULL where parent_id = $parent_id ";
+        $stmt = $conn->execute($sql);
+        $rows = $stmt->fetchAll('assoc');
+        return $rows;
     }
 
     

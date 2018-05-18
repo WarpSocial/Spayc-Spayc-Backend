@@ -20,7 +20,7 @@ if($this->request->query())
       </div>
 
 <section class="content-wrapper content-filter">
- <span class="error-alert users-msg header-alert" style="display: none;"></span>
+ <span class="error-alert spaycs-msg header-alert" style="display: none;"></span>
         <!--===========filter================-->        
         <?php if($spaycsCount || $filter){ 
                 echo $this->element('admin/user-filter', ['userFilter'=> false]);
@@ -62,7 +62,9 @@ if($this->request->query())
                       <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item status_<?= $spayc->id?> <?= strtolower($blocktxt)?>" page="<?php echo Router::url(['Controller' => 'Spaycs', 'action'=> 'setSpaycStatus',$spayc->id]);?>"><i class='icon-block'></i><span class="status_<?= $spayc->id?>"><?= $blocktxt?></span>
                       </a>
                           
-                          <button class="dropdown-item delete"> <i class="icon-Delete"></i>Delete</button>
+                          <!--<button class="dropdown-item delete"> <i class="icon-Delete"></i>Delete</button>-->
+                          <a href="javascript:void(0)" rel="modal-dialog-xs" class="pop dropdown-item delete" page="<?php echo Router::url(['Controller' => 'Spaycs', 'action'=> 'deleteSpayc',$spayc->id]);?>"><i class='icon-Delete'></i>
+                              <span>Delete</span></a>
                         </div>
                       </div>
                   </div>
