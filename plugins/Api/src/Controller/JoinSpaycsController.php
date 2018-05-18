@@ -116,10 +116,11 @@ class JoinSpaycsController extends AppController {
                         $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);
                     }
                 }
-                $jsModel->getConnection()->commit();
+                //$jsModel->getConnection()->commit();
                 $friends = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($user['id'], 'Accepted');
+                
                 //$userIds = $jsModel->getJoinedUserIds($data['spayc_id']);
-                if($data['status'] = 'Joined'){
+                if($data['status'] == 'Joined'){
                     if($friends && in_array($spayc->user_id, $friends)) {
                         $push['slug'] = 'friend-join-spayc';
                     } else {
@@ -136,6 +137,7 @@ class JoinSpaycsController extends AppController {
                 $push['matrix_room_id'] = $spayc->matrix_room_id;
                 $push['display_name'] = $user['display_name'];
                 $this->Push->sendPushNotification($push);
+                
                 if($data['status'] == 'Joined'){
                     $msg = __('User has been joined successfully.');
                 }else{
