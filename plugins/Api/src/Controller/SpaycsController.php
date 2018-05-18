@@ -1140,7 +1140,7 @@ class SpaycsController extends AppController {
                     ->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
         }else{
             $query->select(['distance'=>0])
-                    ->order(['created'=>'DESC']);
+                    ->order(['Spaycs.created'=>'DESC']);
         }
        
         $query->limit($limit)->page($page);
