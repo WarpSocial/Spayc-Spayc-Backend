@@ -116,7 +116,7 @@ class JoinSpaycsController extends AppController {
                         $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);
                     }
                 }
-                //$jsModel->getConnection()->commit();
+                $jsModel->getConnection()->commit();
                 $friends = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($user['id'], 'Accepted');
                 
                 //$userIds = $jsModel->getJoinedUserIds($data['spayc_id']);
