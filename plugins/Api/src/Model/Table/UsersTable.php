@@ -744,15 +744,12 @@ class UsersTable extends Table {
             $notify->message = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);;
         }else{
             $notify = $this->storeMsg('someone-commented', $data['notification']['sender_display_name'], $data['notification']['content']['body']);
-            if(strstr($data['notification']['content']['room_name'],'#direct')){
-                $notify->message = str_replace(["<USERNAME>","<COMMENT>","<SpaycName>"],[ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body'],""], $notify->message);
+            if(strstr($data['notification']['room_name'],'#direct')){
+                $notify->message = str_replace(["<USERNAME>","<COMMENT>","in your warp, <SpaycName>"],[ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body'],""], $notify->message);
             }else{
                 $notify->message = str_replace(["<USERNAME>","<COMMENT>","<SpaycName>"],[ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body'],ucwords($data['notification']['room_name'])], $notify->message);
-            }
-            
-            
+            }            
         }
-        
         $items['message']  = $notify->message;
         $items['notification_type'] = $notify->type; 
         $items['spayc_id'] = $spayc->id;
