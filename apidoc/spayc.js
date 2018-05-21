@@ -1014,7 +1014,7 @@ function hashTagSpaycs() { return; }
     @apiParam {String}      endpoint_latitude          Corner Screen Latitude (Required).
     @apiParam {String}      endpoint_longitude         Corner Screen Longitude (Required).
 
-    @apiParam {String}      time                     Spayc Time (Optional).
+    @apiParam {String}      time                     Spayc Time must be comma separated if more than one and value must be present|past|future(Optional).
     @apiParam {String}      spayc_type               Spayc Type (Optional).
     @apiParam {String}      group_type               Spayc Group Type (Optional).
     @apiParam {String}      wrap_with_friends        Spayc having with friends (Optional).
@@ -1028,7 +1028,7 @@ function hashTagSpaycs() { return; }
         "endpoint_latitude": "19.0760",
         "endpoint_longitude": "72.8777",
         
-        "time": "present|past|future",
+        "time": "present,past,future",
         "spayc_type": "Event|Community",
         "group_type": "Public|Private",
         "wrap_with_friends": "yes|no",

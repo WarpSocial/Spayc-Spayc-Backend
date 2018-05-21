@@ -661,7 +661,8 @@ class SpaycsTable extends Table {
     
     
     public function getNearBySpaycsOnMap($request = [], $userId=null) {
-   $today_date = (new Time('now', Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i:s");
+   $today_date = (new Time('now', Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i");
+   
             //To search by kilometers instead of miles, replace 3959 with 6371.
               $distanceField = '( 3959 * ACOS( COS( RADIANS(:latitude) ) *
                 COS( RADIANS(  latitude ) ) *
@@ -687,17 +688,30 @@ class SpaycsTable extends Table {
                     ])
                 ->bind(':latitude', $request['center_latitude'], 'float')
                 ->bind(':longitude', $request['center_longitude'], 'float');
-          
-        if(isset($request['time']) && $request['time']=="past") {
-            $spaycs->where(['OR'=>[['Spaycs.end_date <'=>$today_date],['Spaycs.end_date IS'=>null]]]);
-        }else if(isset($request['time']) && $request['time']=="present") {
-            $spaycs->where(['OR'=>[['Spaycs.start_date <='=>$today_date],['Spaycs.end_date IS'=>null]]]);
-            $spaycs->where(['OR'=>[['Spaycs.end_date >='=>$today_date],['Spaycs.end_date IS'=>null]]]);
-        }else if(isset($request['time']) && $request['time']=="future") {
-            $spaycs->where(['OR'=>[['Spaycs.start_date >'=>$today_date],['Spaycs.end_date IS'=>null]]]);
+        $period = null;
+        if(!empty($request['time'])){
+            $period = $request['time'];
+            $startDate = "to_date(cast(Spaycs.start_date as TEXT),'YYYY-MM-DD HH24:MI')";
+            $endDate = "to_date(cast(Spaycs.end_date as TEXT),'YYYY-MM-DD HH24:MI')";             
+        }
+        if(preg_match('/present/i', $period) && preg_match('/past/i', $period) && preg_match('/future/i', $period)) {
+            
+        }else if(preg_match('/present/i', $period) && preg_match('/past/i', $period)) {
+            $spaycs->where(['OR'=>[[$startDate.' <='=>$today_date],['Spaycs.end_date IS'=>null]]]);
+        }else if(preg_match('/present/i', $period) && preg_match('/future/i', $period)) {
+            $spaycs->where(['OR'=>[[$startDate.' >='=>$today_date],[$endDate.' >='=>$today_date],['Spaycs.end_date IS'=>null]]]);
+        }else if(preg_match('/past/i', $period) && preg_match('/future/i', $period)) {
+            $spaycs->where(['OR'=>[[$startDate.' !='=>$today_date],['Spaycs.end_date IS'=>null]]]);
+        }else if( $period == "present" ) {
+            $spaycs->where(['OR'=>[["$startDate = "=>$today_date],['Spaycs.end_date IS'=>null]]]);
+            //$spaycs->where(['OR'=>[[$endDate.' >='=>$today_date],['Spaycs.end_date IS'=>null]]]);
+        }elseif($period == "past") {
+            $spaycs->where(['OR'=>[[$endDate.' <'=>$today_date],['Spaycs.end_date IS'=>null]]]);
+        }else if( $period == "future" ) {
+            $spaycs->where(['OR'=>[[$startDate.' >'=>$today_date],['Spaycs.end_date IS'=>null]]]);
         }else{
-            $spaycs->where(['OR'=>[['Spaycs.start_date <='=>$today_date],['Spaycs.end_date IS'=>null]]]);
-            $spaycs->where(['OR'=>[['Spaycs.end_date >='=>$today_date],['Spaycs.end_date IS'=>null]]]);
+            $spaycs->where(['OR'=>[[$startDate.' >='=>$today_date],['Spaycs.end_date IS'=>null]]]);
+            //$spaycs->where(['OR'=>[[$endDate.' >='=>$today_date],['Spaycs.end_date IS'=>null]]]);
         }
         
 //        if(isset($request['spayc_type']) && in_array(ucfirst($request['spayc_type']), ['Event', 'Community'])) {
@@ -783,7 +797,7 @@ class SpaycsTable extends Table {
                 return $row;
             });
         });
-        
+        #$spaycs->order(['Spaycs.id'=>'DESC']);
         $spaycs->distinct('spaycs.id');
         
         $newQuery = clone $spaycs;
