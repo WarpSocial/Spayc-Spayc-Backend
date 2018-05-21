@@ -8,7 +8,7 @@ $input = $this->request->getData();
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <?=  $this->Html->meta('favicon.ico','favicon.ico',['type' => 'icon']); ?>
-    <title>Spayc Reset Password</title>
+    <title>Warp Reset Password</title>
     <!--===============stylesheet=================-->
     <?=$this->Html->css('bootstrap.min.css');?>
     <?=$this->Html->css('Api.style.css');?>
@@ -37,7 +37,7 @@ $input = $this->request->getData();
         <!--================forgot password=====================-->
         <div class="forgot-password-box forgot-password-web">
           <div class="logo-wrap">
-            <?php echo $this->Html->image('Api.logo.png', ['alt' => 'Spayc']);?>
+            <?php echo $this->Html->image('Api.logo.png', ['alt' => 'Warp']);?>
           </div>
             <?php
             if($status == 'done'){

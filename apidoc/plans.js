@@ -125,5 +125,5 @@ function getView() { return; }
 }
 
 @apiUse errorResponse
- */
+*/
 function postAddPromotionalSpayc() { return; }

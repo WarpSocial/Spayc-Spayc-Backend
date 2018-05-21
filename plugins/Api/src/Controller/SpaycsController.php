@@ -342,7 +342,7 @@ class SpaycsController extends AppController {
             $subQuery = $this->Spaycs->spaycWithFriends($loggedUser);
             $spaycs->where(["Spaycs.id IN"=>$subQuery]);
         }
-        if(!empty($this->request->query('hot'))) {
+        if(!empty($this->request->query('hot')) && (strtolower($this->request->query('hot')) == 'yes')) {
             $spaycs->select(['joined_user'=>$spaycs->func()->count('JoinedSpayc.spayc_id')]);
            $spaycs->leftJoinWith('JoinedSpayc');
            $spaycs->group(['Spaycs.id, Spaycs.name,Spaycs.user_id, Spaycs.location, Spaycs.image, Spaycs.group_type, Spaycs.type,Spaycs.start_date,

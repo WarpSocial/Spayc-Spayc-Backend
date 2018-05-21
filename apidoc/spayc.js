@@ -268,85 +268,85 @@ function postSubspaycs() { return; }
  * 
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
-    @apiParam {Number}      page            Page number in query string (Optional).
-    @apiParam {Number}      limit           Limit in query string (Optional).
-    @apiParam {Timestamp}   start_date      Spayc start date in query string(1515542400) (Optional).
-    @apiParam {Timestamp}   end_date        Spayc end date in query string(1515715200) (Optional).
-    @apiParam {String}      group_type      Group type must be any one from the following (Public|Private) (Optional).
-    @apiParam {String}      type            Spayc type must be any one from the following (Event|Community) (Optional).
-    @apiParam {String}      latitude        Latitude is required in query string(Optional in case of created, joined).
-    @apiParam {String}      longitude       Longitude is required in query string(Optional in case of created, joined).
-    @apiParam {String}      list_by         List by is optional in query string(created|joined|all).
-    @apiParam {Number}      user_id         User id  of any user and if id is not available it will get the logged user data(Required).
-    @apiParam {String}  categories  List of comma separeted categoires (Optional)
-    @apiParam {String}   friends   Value must be either yes or no (Optional)
-    @apiParam {String}   hot   Value must be either yes or no (Optional)
-    
+ *    @apiParam {Number}      page            Page number in query string (Optional).
+ *    @apiParam {Number}      limit           Limit in query string (Optional).
+ *    @apiParam {Timestamp}   start_date      Spayc start date in query string(1515542400) (Optional).
+ *    @apiParam {Timestamp}   end_date        Spayc end date in query string(1515715200) (Optional).
+ *    @apiParam {String}      group_type      Group type must be any one from the following (Public|Private) (Optional).
+ *    @apiParam {String}      type            Spayc type must be any one from the following (Event|Community) (Optional).
+ *    @apiParam {String}      latitude        Latitude is required in query string(Optional in case of created, joined).
+ *    @apiParam {String}      longitude       Longitude is required in query string(Optional in case of created, joined).
+ *    @apiParam {String}      list_by         List by is optional in query string(created|joined|all).
+ *    @apiParam {Number}      user_id         User id  of any user and if id is not available it will get the logged user data(Required).
+ *    @apiParam {String}  categories  List of comma separeted categoires (Optional).
+ *    @apiParam {String}   friends   Value must be either yes or no (Optional).
+ *    @apiParam {String}   hot   Value must be either yes or no (Optional).
+ *    
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Spayc lists.
  * @apiSuccess {Object} data List of spayc details.
  * @apiSuccessExample {json} Success-Response: 
  *      HTTP/1.1 200 OK
-{
-    "status": "success",
-    "message": "Spayc lists.",
-    "data": {
-        "count": 22,
-        "spaycs": [
-            {
-                "distance": "0",
-                "id": "33",
-                "name": "spaycdev13",
-                "location": "Your address",
-                "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
-                "start_date": "01-11-2019 01:02:00",
-                "end_date": "01-12-2019 01:02:00",
-                "image": "",
-                "type": "Community",
-                "group_type": "Public",
-                "passcode": "",
-                "subscribed_users": 0,
-                "spayc_category": {
-                    "id": 560,
-                    "name": "Softball"
-                },
-                "friends": 0,
-                "joined_spayc_status": '',
-                "is_joined": false,
-                "joined_users": 0,
-                "is_subscribed": false,
-                "total_comments": 0,
-                "total_presents": 0
-            },
-            {
-                "distance": "0",
-                "id": "5",
-                "name": "spaycdev13",
-                "location": "Your address",
-                "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
-                "start_date": "01-11-2019 01:02:00",
-                "end_date": "01-12-2019 01:02:00",
-                "image": "",
-                "spayc_category": {
-                    "id": 560,
-                    "name": "Softball"
-                },
-                "type": "Event",
-                "group_type": "Public",
-                "passcode": "s5d4f87sdf4545",
-                "subscribed_users": 1,
-                "friends": 0,
-                "joined_spayc_status": "Pending",
-                "is_joined": false,
-                "joined_users": 3,
-                "is_subscribed": true,
-                "total_comments": 1,
-                "total_presents": 0
-            }
-        ]
-    }
-}
+ *{
+ *    "status": "success",
+ *    "message": "Spayc lists.",
+ *    "data": {
+ *        "count": 22,
+ *        "spaycs": [
+ *            {
+ *                "distance": "0",
+ *                "id": "33",
+ *                "name": "spaycdev13",
+ *                "location": "Your address",
+ *                "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
+ *                "start_date": "01-11-2019 01:02:00",
+ *                "end_date": "01-12-2019 01:02:00",
+ *                "image": "",
+ *                "type": "Community",
+ *                "group_type": "Public",
+ *                "passcode": "",
+ *                "subscribed_users": 0,
+ *                "spayc_category": {
+ *                    "id": 560,
+ *                    "name": "Softball"
+ *                },
+ *                "friends": 0,
+ *                "joined_spayc_status": '',
+ *                "is_joined": false,
+ *                "joined_users": 0,
+ *                "is_subscribed": false,
+ *                "total_comments": 0,
+ *                "total_presents": 0
+ *            },
+ *            {
+ *                "distance": "0",
+ *                "id": "5",
+ *                "name": "spaycdev13",
+ *                "location": "Your address",
+ *                "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
+ *                "start_date": "01-11-2019 01:02:00",
+ *                "end_date": "01-12-2019 01:02:00",
+ *                "image": "",
+ *                "spayc_category": {
+ *                    "id": 560,
+ *                    "name": "Softball"
+ *                },
+ *                "type": "Event",
+ *                "group_type": "Public",
+ *                "passcode": "s5d4f87sdf4545",
+ *                "subscribed_users": 1,
+ *                "friends": 0,
+ *                "joined_spayc_status": "Pending",
+ *                "is_joined": false,
+ *                "joined_users": 3,
+ *                "is_subscribed": true,
+ *                "total_comments": 1,
+ *                "total_presents": 0
+ *            }
+ *        ]
+ *    }
+ *}
  *
  * @apiUse UserErrorResponse
  */
@@ -1747,5 +1747,6 @@ function postAcceptJoinedRequest() { return; }
 }
 
 @apiUse errorResponse
- */
+
+*/
 function postRemoveFromSpayc() { return; }

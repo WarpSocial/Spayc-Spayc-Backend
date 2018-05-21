@@ -3529,6 +3529,27 @@ define({ "api": [
             "optional": false,
             "field": "user_id",
             "description": "<p>User id  of any user and if id is not available it will get the logged user data(Required).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "categories",
+            "description": "<p>List of comma separeted categoires (Optional).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "friends",
+            "description": "<p>Value must be either yes or no (Optional).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "hot",
+            "description": "<p>Value must be either yes or no (Optional).</p> "
           }
         ]
       }
