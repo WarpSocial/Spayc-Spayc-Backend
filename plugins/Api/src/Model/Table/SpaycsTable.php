@@ -297,7 +297,7 @@ class SpaycsTable extends Table {
                 ->allowEmpty('latitude')
                 ->latitude('latitude',__('Please enter valid latitude.'));  
         $validator                
-                ->allowEmpty('spayc_category_id')
+                ->notEmpty('spayc_category_id',__('Please select category.'))
                 ->integer('spayc_category_id',__('Please enter valid category.'))
                 ->add('spayc_category_id','validcategoryid',[
                     'rule'=>function($value,$context){

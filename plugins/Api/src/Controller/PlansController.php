@@ -281,8 +281,11 @@ class PlansController extends AppController {
                         'spayc.group_type',
                         'spayc.start_date',
                         'spayc.end_date',
+                        'spayc.spayc_category_id',
+                        'sc.id',
+                        'sc.name',
                         'joined_spayc_status'=>'joined_spayc.status',
-                        ]])
+                        ]])                
                 ->join(
                         [
                             'table' => 'promotions',
@@ -321,33 +324,43 @@ class PlansController extends AppController {
                             ]
                         ]
                 )
-                     ->join(
-        [
-        'table' => 'friend_request',
-        'type' => 'LEFT',
-        'conditions' =>
-        [
-            'OR' =>[
-            [
-                'friend_request.requested_by = promotions.user_id', 'friend_request.requested_to = '.$user['id']
-            ],
-            [
-                'friend_request.requested_to = promotions.user_id', 'friend_request.requested_by = '.$user['id']
-            ]
-                             ]
-        ]
-        ]
-        )
+                ->join([
+                    'table' => 'spayc_categories',
+                    'alias' => 'sc',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'sc.id = spayc.spayc_category_id',
+                    ]
+                ])
+                ->join([
+                    'table' => 'friend_request',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'OR' =>[
+                            [
+                                'friend_request.requested_by = promotions.user_id', 'friend_request.requested_to = '.$user['id']
+                            ],
+                            [
+                                'friend_request.requested_to = promotions.user_id', 'friend_request.requested_by = '.$user['id']
+                            ]
+                        ]
+                    ]
+                ])
+                
+                
                 ->where(['SpaycPromotion.spayc_id'=>$data['spayc_id'],"balance > 0","promotion_status"=>1,'promotions.status'=>'Active'])
                 ->order(['SpaycPromotion.priority' => 'ASC'])
                 ->limit(1)
                 ;
-        
         $data=[];
         if($ad->isEmpty()){
              $this->restException(['status'=>'failed','message'=>'Promotion not found.'], 404);
         }
         $data=$ad->first();
+        if(!empty($data['sc'])){
+            $data['spayc']['spayc_category'] = $data['sc'];
+            unset($data['sc']);
+        }
         if($data->spayc['type']=='Event'){
         $timezone = Configure::read('timezone');
         $sd = new \Cake\I18n\Time($data->spayc['start_date'], 'UTC');
@@ -436,6 +449,8 @@ class PlansController extends AppController {
                         'spayc.group_type',
                         'spayc.start_date',
                         'spayc.end_date',
+                        'sc.id',
+                        'sc.name',
                         'joined_spayc_status'=>'joined_spayc.status',
                         
                         ]])
@@ -477,6 +492,14 @@ class PlansController extends AppController {
                             ]
                         ]
                 )
+                ->join([
+                    'table' => 'spayc_categories',
+                    'alias' => 'sc',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'sc.id = spayc.spayc_category_id',
+                    ]
+                ])
                 ->where(['SpaycPromotion.spayc_id'=>$data['spayc_id'],"balance > 0",'promotions.status'=>'Active'])
                 ->order(['SpaycPromotion.priority' => 'ASC'])
                 ->limit(1)
@@ -488,6 +511,10 @@ class PlansController extends AppController {
         }
         
         $data=$ad->first();
+        if(!empty($data['sc'])){
+            $data['spayc']['spayc_category'] = $data['sc'];
+            unset($data['sc']);
+        }
         if($data->spayc['type']=='Event'){
         $timezone = Configure::read('timezone');
         $sd = new \Cake\I18n\Time($data->spayc['start_date'], 'UTC');
