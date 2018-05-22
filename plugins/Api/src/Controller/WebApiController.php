@@ -296,7 +296,7 @@ class WebApiController extends AppController {
     }
 
     public function apilog() {
-
+        \Cake\Log\Log::info('test');
         $del = $this->request->getQuery('clean');
         $logfile = $this->request->getQuery('file', 'api.log');
         $file = new \Cake\Filesystem\File(LOGS . $logfile);
