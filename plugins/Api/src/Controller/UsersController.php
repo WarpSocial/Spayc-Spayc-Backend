@@ -1399,19 +1399,34 @@ class UsersController extends AppController {
                 $this->restException($blankObj); 
             }
         }
+        if(empty($data['notification']['devices'][0])){
+            $this->restException($blankObj); 
+        }
+        $device = $data['notification']['devices'][0];
+        $users = $this->Users->findByDeviceTokenOrMatrixUserId($device['pushkey'],$data['notification']['sender'])->select(['id','matrix_user_id','device_token']);
+        
+        $senderId = null;$receiverId = null;
+        if(!$users->isEmpty()) {
+            #pj($users);die;
+            $senderId = $users->firstMatch(['matrix_user_id'=>$data['notification']['sender']]);
+            $receiverId = $users->firstMatch(['device_token'=>$device['pushkey']]);
+        }
+        
         $items = $this->Users->pusherNotification($data);
         if(empty($items)){
             $this->restException($blankObj);
         }
-        
-        $this->loadComponent('Api.Notification');
-        if(!empty($data['notification']['devices'][0])){
-            $device = $data['notification']['devices'][0];
-            $items['device_token'] = $deviceToken = $device['pushkey'];
-            $items['date_time'] = date('m-d-Y H:i:s',$device['pushkey_ts']);
-            //$this->Push->sendOnIOS($items);
+        $items['device_token'] = $deviceToken = $device['pushkey'];
+        $items['date_time'] = date('m-d-Y H:i:s',$device['pushkey_ts']);
+        if(!empty($senderId) && !empty($receiverId) && in_array($msgType,['m.replyText','m.likeMessage'])){
+            if($device['pushkey'] == $senderId->device_token){
+                $this->restException($blankObj);
+            }
+            $saveNotification = TableRegistry::get("Api.Notifications")->addNotification(array_merge($items,['requested_by'=>$senderId->id,'requested_to'=>$receiverId->id,'date_time'=>$items['date_time']]));            $items['id'] = $saveNotification->id;
         }
-        Log::info($items);
+        $this->loadComponent('Api.Notification');
+        //$this->Push->sendOnIOS($items);
+        //Log::info($items);
         $this->Notification->iosPush($items,$deviceToken);        
         /* Rest job will be done by workers */
         //$data['items'] = $items;
@@ -1548,7 +1563,7 @@ class UsersController extends AppController {
         }*/
         
         $modified = new \Cake\I18n\Time();        
-        $this->Users->UpdateAll(['is_notify'=>$isNotify, 'modified'=>$modified], ['Users.id'=>$this->Auth->user('id')]);
+        $this->Users->UpdateAll(['is_notify'=>$isNotify,'device_token'=>$data['device_token'], 'modified'=>$modified], ['Users.id'=>$this->Auth->user('id')]);
         TableRegistry::get('Api.UserLogs')->UpdateAll(['device_token'=>$data['device_token'], 'modified'=>$modified], ['user_id'=>$this->Auth->user('id')]);
         $response = ['status'=>'success', 'message'=>__('Device token updated successfully.')];
         $this->set($response);

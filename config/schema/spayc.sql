@@ -42,6 +42,7 @@ CREATE TABLE users (
     "is_notify" character varying(10),
     "current_latitude" double precision,
     "current_longitude" double precision,
+    "device_token" varchar(100) default null,
     primary key (id,created),
     unique (username,email,created)
 );

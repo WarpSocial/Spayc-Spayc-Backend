@@ -343,7 +343,7 @@ class SpaycsController extends AppController {
             $spaycs->where(["Spaycs.id IN"=>$subQuery]);
         }
         if(!empty($this->request->query('hot')) && (strtolower($this->request->query('hot')) == 'yes')) {
-            $spaycs->select(['joined_user'=>$spaycs->func()->count('JoinedSpayc.spayc_id')]);
+           $spaycs->select(['joined_user'=>$spaycs->func()->count('JoinedSpayc.spayc_id')]);
            $spaycs->leftJoinWith('JoinedSpayc');
            $spaycs->group(['Spaycs.id, Spaycs.name,Spaycs.user_id, Spaycs.location, Spaycs.image, Spaycs.group_type, Spaycs.type,Spaycs.start_date,
 Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,SpaycCategories.id,SpaycCategories.name,Spaycs.created']);
@@ -445,6 +445,13 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         $entity->created = new \Cake\I18n\Time();
         if($scModel->save($entity,['checkRules' => false, 'atomic' => false])){
             $this->Matrix->muteUnmute('Unmute',$user['UserLogs']['matrix_access_token'], $spayc->matrix_room_id);
+            if(!(TableRegistry::get('Api.JoinedSpayc')->exists(['user_id'=>$data['user_id'],'spayc_id'=>$spayc->id]))){
+                $this->Matrix->joinRoom([
+                    'status'=>'Joined',
+                    'matrix_token'=>$user['UserLogs']['matrix_access_token'],
+                    'matrix_room_id' => $spayc->matrix_room_id
+                ]);
+            }
             $push = [
                 'slug' => 'user-subscribed-to-your-spayc',
                 'requested_by' => $user['id'],
@@ -1249,6 +1256,24 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
                 return $row;
             });
         $response = ['status'=>'success','message'=>'List of spaycs.','data'=>$result];
+        $this->set($response);
+    }
+    
+    public function userSubscribedSpaycs(){
+        if (!$this->request->is(['get'])) {
+            $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);
+        }
+        $status = $this->request->getQuery('status',ACTIVE);
+        $page = $this->request->getQuery('page',1);
+        $limit = $this->request->getQuery('limit',Configure::read('pagelimit'));
+        $user = $this->Auth->user();
+        $spaycs = TableRegistry::get('Api.SubscribedUsers')->subscribedSpayc($user['id'],$status,$page,$limit);
+        if(!$spaycs->isEmpty()){
+//            $this->response->statusCode(204);
+            $response = ['status'=>'success', 'message'=>__('List of subscribed warp.'), 'data'=>$spaycs];
+        }else{
+            $response = ['status'=>'success', 'message'=>__('User has not been subscribed to any warp.'), 'data'=>[]];
+        }        
         $this->set($response);
     }
     

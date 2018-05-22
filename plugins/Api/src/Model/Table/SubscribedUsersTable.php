@@ -100,5 +100,42 @@ class SubscribedUsersTable extends Table {
         }
         return $this->exists(['user_id'=>$userId,'status'=>$status]);
     }
+    
+    /**
+     * subscribedSpayc to give the list of spayc whom user subscribed
+     * 
+     * @param integer $userId get user subscribed user
+     * @return Object array of object of spayc list
+     */
+    public function subscribedSpayc($userId = null,$status = null,$page = null,$limit =null){
+        if(empty($userId)){
+            return [];
+        }
+        $query = $this->Spaycs->find();
+        $query->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.parent_id','Spaycs.created','Spaycs.modified','Spaycs.spayc_category_id'])
+                ->where(['Spaycs.status'=>'Active','Spaycs.group_type !='=>'trusted_private'])
+                ->contain([
+                    'SpaycCategories' => function($q) {
+                        return $q->select(['SpaycCategories.id', 'SpaycCategories.name']);
+                    }                    
+                ]);
+        $query->innerJoinWith('SubscribedUsers',function($q)use($userId,$status) {
+            if(!empty($status)){
+                $q->where(['SubscribedUsers.status'=>$status]);
+            }
+            $q->where(['SubscribedUsers.user_id'=>$userId]);
+            return $q;
+        });
+        $query->order(['Spaycs.created'=>'DESC']);
+        if(!empty($limit)){
+            $query->limit($limit);
+        }
+        
+        if(!empty($page)){
+            $query->page($page);
+        }
+        
+        return $query;
+    }
 
 }

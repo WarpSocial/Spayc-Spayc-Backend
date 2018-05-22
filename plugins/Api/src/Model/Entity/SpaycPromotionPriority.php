@@ -27,11 +27,8 @@ class SpaycPromotionPriority extends Entity
      *
      * @var array
      */
-    protected $_accessible = [
-        'spayc_id' => true,
-        'priority' => true,
-        'comment_count' => true,
-        'modified' => true,
-        'spayc' => true
+     protected $_accessible = [
+        '*' => true,
+        'id' => false
     ];
 }

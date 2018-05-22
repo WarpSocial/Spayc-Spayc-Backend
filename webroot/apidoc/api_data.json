@@ -3786,6 +3786,130 @@
   },
   {
     "type": "get",
+    "url": "/subscribed-spaycs.json?page=:page&limit=:limit",
+    "title": "User Subscribed Warp",
+    "version": "0.1.0",
+    "name": "getSubscribedSpaycs",
+    "group": "Spayc",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>Get the list warp to whom user has been subscribed.</p> ",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "page",
+            "description": "<p>Page number in query string (Optional).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>Limit in query string (Optional).</p> "
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p> "
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>List of subscribed warp.</p> "
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>List of subscribed warp.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "     HTTP/1.1 200 OK\n {\n    \"status\": \"success\",\n    \"message\": \"List of subscribed warp.\",\n    \"data\": [\n        {\n            \"id\": \"737\",\n            \"name\": \"followfe\",\n            \"user_id\": 130,\n            \"location\": \"Delhi\",\n            \"image\": null,\n            \"description\": \"life is   #art and living\",\n            \"group_type\": \"Private\",\n            \"type\": \"Community\",\n            \"start_date\": null,\n            \"end_date\": null,\n            \"passcode\": \"\",\n            \"matrix_room_id\": \"!ZwytxQYsolMOARuMmZ:127.0.0.1\",\n            \"parent_id\": null,\n            \"created\": \"2018-05-16T15:14:25+00:00\",\n            \"modified\": \"2018-05-16T15:14:25+00:00\",\n            \"spayc_category_id\": null,\n            \"spayc_category\": null\n        }\n    ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/spayc.js",
+    "groupTitle": "Spayc",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/subscribed-spaycs.json?page=:page&limit=:limit"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p> "
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p> "
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
     "url": "/physical-present-spaycs.json?latitude=:latitude&longitude=:longitude",
     "title": "Communication Center Spayces",
     "version": "0.1.0",

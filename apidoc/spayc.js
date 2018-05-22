@@ -1750,3 +1750,53 @@ function postAcceptJoinedRequest() { return; }
 
 */
 function postRemoveFromSpayc() { return; }
+/**
+ * @api {get} /subscribed-spaycs.json?page=:page&limit=:limit User Subscribed Warp
+ * @apiVersion 0.1.0
+ * @apiName getSubscribedSpaycs
+ * @apiGroup Spayc
+ * @apiPermission private
+ *
+ * @apiDescription Get the list warp to whom user has been subscribed.
+ * 
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * 
+ *    @apiParam {Number}      page            Page number in query string (Optional).
+ *    @apiParam {Number}      limit           Limit in query string (Optional).
+ 
+ *    
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of subscribed warp.
+ * @apiSuccess {Object} data List of subscribed warp.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+ {
+    "status": "success",
+    "message": "List of subscribed warp.",
+    "data": [
+        {
+            "id": "737",
+            "name": "followfe",
+            "user_id": 130,
+            "location": "Delhi",
+            "image": null,
+            "description": "life is   #art and living",
+            "group_type": "Private",
+            "type": "Community",
+            "start_date": null,
+            "end_date": null,
+            "passcode": "",
+            "matrix_room_id": "!ZwytxQYsolMOARuMmZ:127.0.0.1",
+            "parent_id": null,
+            "created": "2018-05-16T15:14:25+00:00",
+            "modified": "2018-05-16T15:14:25+00:00",
+            "spayc_category_id": null,
+            "spayc_category": null
+        }
+    ]
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function getSubscribedSpaycs() { return; }

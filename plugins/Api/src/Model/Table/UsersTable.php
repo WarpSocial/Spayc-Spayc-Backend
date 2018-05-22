@@ -738,10 +738,10 @@ class UsersTable extends Table {
         
         if($msgType == 'm.likeMessage'){
             $notify = $this->storeMsg('a-user-liked-your-comment', $data['notification']['sender_display_name'], $data['notification']['content']['body']);          
-             $notify->message = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);;
+             $notify->message = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);
         }elseif($msgType == 'm.replyText'){
             $notify = $this->storeMsg('someone-replyed-to-your-comment', $data['notification']['sender_display_name'], $data['notification']['content']['body']);
-            $notify->message = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);;
+            $notify->message = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);
         }else{
             $notify = $this->storeMsg('someone-commented', $data['notification']['sender_display_name'], $data['notification']['content']['body']);
             if(strstr($data['notification']['room_name'],'#direct')){
@@ -766,6 +766,10 @@ class UsersTable extends Table {
         return $notify;
     }
     
+    
+    /**
+     * pusherData to store the post data comes from matrix pusher
+     */
     public function pusherData($data){
         $pushData['post_value'] = json_encode($data);
         $pushData['created'] = date("Y-m-d H:i:s");
@@ -774,5 +778,6 @@ class UsersTable extends Table {
         $item = $pusher->patchEntity($push, $pushData);
         return $pusher->save($item);
     }
+    
     
 }
