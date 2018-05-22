@@ -180,17 +180,17 @@ class MatrixComponent extends Component {
             $validInput['is_direct'] = $items['is_direct'];
             $validInput['room_alias_name'] = 'direct_'.$validInput['room_alias_name'];
         }elseif(!empty($items['parent_matrix_room_id'])){
-            if(!empty($category->name)){
-                $validInput['room_alias_name'] = $category->slug.'_'.$validInput['room_alias_name'];
-            }
             $validInput['room_alias_name'] = 'subspayc_'.$validInput['room_alias_name'];
+            if(!empty($category->id)){
+                $validInput['room_alias_name'] = $category->id.'_'.$validInput['room_alias_name'];
+            }            
         }else{
-            if(!empty($category->name)){
-                $validInput['room_alias_name'] = $category->slug.'_'.$validInput['room_alias_name'];
-            }
             $validInput['room_alias_name'] = 'parentspayc_'.$validInput['room_alias_name'];
+            if(!empty($category->id)){
+                $validInput['room_alias_name'] = $category->id.'_'.$validInput['room_alias_name'];
+            }
         }
-       #pr($validInput);die;
+       pr($validInput);die;
         $url = $this->config('url') .DS.$this->config('client'). DS.'createRoom';
         $http = new Client(['headers' => ['Authorization' => 'Bearer ' . $items['matrix_token']]]);
         $httpResponse = $http->post(

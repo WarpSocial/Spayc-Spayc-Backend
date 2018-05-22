@@ -8,6 +8,7 @@ use Cake\Http\Client;
 use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Cake\I18n\Time;
+use Api\Utils\Utils;
 
 class NotificationComponent extends Component {
 
@@ -60,16 +61,17 @@ class NotificationComponent extends Component {
 
         // Create the payload body
         $body['aps'] = [
-            'alert' =>  !empty($data['message'])?$data['message']:null,
+            'alert' => Utils::getVar('message',$data),
             'sound' => 'default',
             'badge'=>1,
-            'user_id'=>!empty($data['requested_by'])?$data['requested_by']:null,
-            'matrix_room_id'=>!empty($data['matrix_room_id'])?$data['matrix_room_id']:null,
-            'notification_type'=>!empty($data['notification_type'])?$data['notification_type']:null,
-            'user_image'=>!empty($data['user_image'])?$data['user_image']:null,
-            'spayc_image'=>!empty($data['spayc_image'])?$data['spayc_image']:null,
-            'date_time'=>!empty($data['time'])?$data['time']:null,
-            'id'=>!empty($data['id'])?$data['id']:null
+            'user_id'=> Utils::getVar('requested_by',$data),
+            'matrix_room_id'=> Utils::getVar('matrix_room_id',$data),
+            'notification_type'=> Utils::getVar('notification_type',$data),
+            'user_image'=> Utils::getVar('user_image',$data),
+            'spayc_image'=> Utils::getVar('spayc_image',$data),
+            'date_time'=> Utils::getVar('date_time',$data),
+            'id'=> Utils::getVar('id',$data),
+            'spayc_id'=> Utils::getVar('spayc_id',$data)
         ];
 
         // Encode the payload as JSON

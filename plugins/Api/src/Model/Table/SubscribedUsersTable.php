@@ -112,13 +112,8 @@ class SubscribedUsersTable extends Table {
             return [];
         }
         $query = $this->Spaycs->find();
-        $query->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.parent_id','Spaycs.created','Spaycs.modified','Spaycs.spayc_category_id'])
-                ->where(['Spaycs.status'=>'Active','Spaycs.group_type !='=>'trusted_private'])
-                ->contain([
-                    'SpaycCategories' => function($q) {
-                        return $q->select(['SpaycCategories.id', 'SpaycCategories.name']);
-                    }                    
-                ]);
+        $query->select(['Spaycs.id', 'Spaycs.matrix_room_id'])
+                ->where(['Spaycs.status'=>'Active','Spaycs.group_type !='=>'trusted_private']);
         $query->innerJoinWith('SubscribedUsers',function($q)use($userId,$status) {
             if(!empty($status)){
                 $q->where(['SubscribedUsers.status'=>$status]);

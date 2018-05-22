@@ -1268,7 +1268,6 @@ class UsersController extends AppController {
      */
     
     public function viewProfile($id = null) {
-        Log::info($this->request);
         if(!$this->request->is(['get'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
@@ -1389,7 +1388,9 @@ class UsersController extends AppController {
         Log::info($data);
         //$this->Users->pusherData($data);
         /* for direct notification */
-        
+        if(!empty($data['notification']['content']['actionBy']) && ($data['notification']['content']['actionBy'] == 'Self' )){
+            $this->restException($blankObj); 
+        }
         if(!empty($data['notification']['content']['msgtype'])){
             $msgType = $data['notification']['content']['msgtype'];
         }else{
@@ -1420,10 +1421,9 @@ class UsersController extends AppController {
         $items['device_token'] = $deviceToken = $device['pushkey'];
         $items['date_time'] = date('m-d-Y H:i:s',$device['pushkey_ts']);
         if(!empty($senderId) && !empty($receiverId) && in_array($msgType,['m.replyText','m.likeMessage'])){
-            if($device['pushkey'] == $senderId->device_token){
-                $this->restException($blankObj);
-            }
-            $saveNotification = TableRegistry::get("Api.Notifications")->addNotification(array_merge($items,['requested_by'=>$senderId->id,'requested_to'=>$receiverId->id,'date_time'=>$items['date_time']]));            $items['id'] = $saveNotification->id;
+            $saveNotification = TableRegistry::get("Api.Notifications")->addNotification(array_merge($items,['requested_by'=>$senderId->id,'requested_to'=>$receiverId->id,'date_time'=>$items['date_time']]));            
+            $items['id'] = $saveNotification->id;
+            $items['requested_by'] = $senderId->id;
         }
         $this->loadComponent('Api.Notification');
         //$this->Push->sendOnIOS($items);
@@ -1549,6 +1549,8 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
         $data = $this->request->getData();
+        $user = $this->Auth->user();
+        pr($user);die;
         if(empty($data['is_notify'])) {
             $this->restException(['status'=>'failed','message'=>'is_notify is required field.'], 400);
         }
@@ -1563,8 +1565,17 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed','message'=>'Invalid device token'], 400);
         }*/
         
-        $modified = new \Cake\I18n\Time();        
-        $this->Users->UpdateAll(['is_notify'=>$isNotify,'device_token'=>$data['device_token'], 'modified'=>$modified], ['Users.id'=>$this->Auth->user('id')]);
+        $modified = new \Cake\I18n\Time();
+        $userToken = $this->Users->findByDeviceToken($data['device_token'])->first();
+        /* if device token exist for different user then will reset previous value */
+        if(!empty($userToken)){
+            if($userToken->id != $user['id']){
+                $userToken->device_token = null;
+                $this->Users->save($userToken);
+            }
+        }
+        $this->Users->UpdateAll(['is_notify'=>$isNotify,'device_token'=>$data['device_token'], 'modified'=>$modified], ['Users.id'=>$user['id']]);
+        
         TableRegistry::get('Api.UserLogs')->UpdateAll(['device_token'=>$data['device_token'], 'modified'=>$modified], ['user_id'=>$this->Auth->user('id')]);
         $response = ['status'=>'success', 'message'=>__('Device token updated successfully.')];
         $this->set($response);
