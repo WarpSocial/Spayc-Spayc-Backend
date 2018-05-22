@@ -1386,7 +1386,7 @@ class UsersController extends AppController {
         }
         
         $data = $this->request->getData();
-        //Log::info($data);
+        Log::info($data);
         //$this->Users->pusherData($data);
         /* for direct notification */
         
@@ -1427,7 +1427,7 @@ class UsersController extends AppController {
         }
         $this->loadComponent('Api.Notification');
         //$this->Push->sendOnIOS($items);
-        //Log::info($items);
+        Log::info($items);
         $this->Notification->iosPush($items,$deviceToken);        
         /* Rest job will be done by workers */
         //$data['items'] = $items;
