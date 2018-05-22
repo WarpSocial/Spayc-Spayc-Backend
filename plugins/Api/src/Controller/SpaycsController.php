@@ -1265,7 +1265,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         }
         $status = $this->request->getQuery('status',ACTIVE);
         $page = $this->request->getQuery('page',1);
-        $limit = $this->request->getQuery('limit',Configure::read('pagelimit'));
+        $limit = $this->request->getQuery('limit',100);
         $user = $this->Auth->user();
         $spaycs = TableRegistry::get('Api.SubscribedUsers')->subscribedSpayc($user['id'],$status,$page,$limit);
         if(!$spaycs->isEmpty()){
