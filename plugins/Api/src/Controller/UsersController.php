@@ -1268,6 +1268,7 @@ class UsersController extends AppController {
      */
     
     public function viewProfile($id = null) {
+        Log::info($this->request);
         if(!$this->request->is(['get'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
