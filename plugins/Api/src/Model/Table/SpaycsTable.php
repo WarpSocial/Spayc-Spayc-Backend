@@ -186,7 +186,7 @@ class SpaycsTable extends Table {
                                 $startDate = strtotime($startDate->format('Y-m-d H:i'));
                                 $now = strtotime($now->format('Y-m-d H:i'));
                                 $currentDate = strtotime($currentDate->format('Y-m-d H:i'));
-                                return (bool) ($startDate >= $now && $startDate <= $currentDate);
+                                return (bool) ($startDate <= $currentDate);
                             }
                         },
                         'message'=>__('Start date can\'t be more than 1 year ahead or any past date.')
