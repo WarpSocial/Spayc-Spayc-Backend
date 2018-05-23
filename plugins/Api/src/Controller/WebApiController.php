@@ -178,7 +178,7 @@ class WebApiController extends AppController {
                 ["title" => "Swimming ", "code" => "1F3CA"],
                 ["title" => "Table Tennis ", "code" => "1F3BE"],
                 ["title" => "Tennis ", "code" => "1F3BE"],
-                ["title" => "Track and Field ", "code" => ""],
+                ["title" => "Track and Field ", "code" => "1F3BD"],
                 ["title" => "Volleyball ", "code" => "1F3D0"],
                 ["title" => "Waterpolo ", "code" => "1F93D"],
                 ["title" => "Winter Sports ", "code" => "26F7"],
@@ -263,7 +263,7 @@ class WebApiController extends AppController {
             ]]
         ];
         $catEntity = \Cake\ORM\TableRegistry::get('Api.SpaycCategories');
-        $catEntity->connection()->query('TRUNCATE TABLE spayc_categories')->execute();
+        $catEntity->connection()->query('TRUNCATE TABLE spayc_categories RESTART IDENTITY')->execute();
         foreach ($cats as $cat => $item) {
             $pcat = $catEntity->newEntity([
                 'name' => trim($item['title']),
