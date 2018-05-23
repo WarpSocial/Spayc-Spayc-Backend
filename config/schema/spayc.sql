@@ -565,7 +565,7 @@ CREATE TABLE scraper_logs (
 );
 
 ALTER TABLE "spaycs"
-ALTER "name" TYPE character varying(250),
+ALTER "name" TYPE character varying(255),
 ALTER "name" DROP DEFAULT,
 ALTER "name" DROP NOT NULL;
 COMMENT ON COLUMN "spaycs"."name" IS '';
