@@ -691,9 +691,9 @@ class SpaycsTable extends Table {
         $period = null;
         if(!empty($request['time'])){
             $period = $request['time'];
-            $startDate = "to_date(cast(Spaycs.start_date as TEXT),'YYYY-MM-DD HH24:MI')";
-            $endDate = "to_date(cast(Spaycs.end_date as TEXT),'YYYY-MM-DD HH24:MI')";             
         }
+        $startDate = "to_date(cast(Spaycs.start_date as TEXT),'YYYY-MM-DD HH24:MI')";
+        $endDate = "to_date(cast(Spaycs.end_date as TEXT),'YYYY-MM-DD HH24:MI')";  
         if(preg_match('/present/i', $period) && preg_match('/past/i', $period) && preg_match('/future/i', $period)) {
             
         }else if(preg_match('/present/i', $period) && preg_match('/past/i', $period)) {
