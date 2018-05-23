@@ -38,7 +38,8 @@ define('SCRAPERSTATES', serialize($scraperStates));
 define('SCRAPERCOUNTRIES', serialize($scraperCountries));
 define('TEXT_MASSAGE', serialize($txt_massage));
 define('TODAY_DATE', date('Y-m-d'));
-define('AFTER14DAYS_DATE', date('Y-m-d', strtotime(' +14 day')));
+define('SCRAPER_DAYS', ' +14 day');
+define('AFTER14DAYS_DATE', date('Y-m-d', strtotime(SCRAPER_DAYS)));
 define('FUZZYPERCENT', 90);
 
 $scraperRootUrl=array('eventbriteurl'=> 'https://www.eventbriteapi.com/v3/',
