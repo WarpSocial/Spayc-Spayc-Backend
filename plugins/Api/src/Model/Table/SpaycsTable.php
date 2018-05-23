@@ -144,8 +144,8 @@ class SpaycsTable extends Table {
         $validator
                 ->maxLength('location', 255,__('Location test is too long.'))
                 ->requirePresence('location', 'create',__('Location key is missing.'))
-                ->notEmpty('location',__('Location is required field.'))
-                ->regex('location','/[\w\s]+$/',__('Location must be alpha numeric only.'));
+                ->notEmpty('location',__('Location is required field.'));
+                // ->regex('location','/[\w\s]+$/',__('Location must be alpha numeric only.'));
 
         $validator
                 ->requirePresence('type', 'create',__('Type key is missing.'))

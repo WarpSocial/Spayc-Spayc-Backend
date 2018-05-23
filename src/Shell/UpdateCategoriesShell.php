@@ -47,8 +47,7 @@ class UpdateCategoriesShell extends Shell
        $this->out('Process start at '.$this->currentDateTime());
        $this->Scraper->setScraperLog('update scraper category based on spayc category process start');
         $starttime = microtime(true);       //Checking time
-        $response = $this->Scraper->updateScraperCategory();
-        $this->out($response);
+        $response = $this->Scraper->updateScraperCategory();        
         $endtime = microtime(true);       //Checking time
         $response=$endtime - $starttime;
         $this->out("Time Taken ".$response);

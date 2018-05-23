@@ -455,7 +455,7 @@ class ScraperComponent extends Component {
             $createSpaceData['type'] = 'Event';
             $createSpaceData['group_type'] = 'Public';
             $createSpaceData['start_date'] = date('m-d-Y H:i:s', strtotime($value['start_date']));
-            $createSpaceData['end_date'] = date('m-d-Y H:i:s', strtotime($value['start_date']));
+            $createSpaceData['end_date'] = !empty($value['end_date']) ? date('m-d-Y H:i:s', strtotime($value['end_date'])) : date('m-d-Y H:i:s', strtotime('+1 day', strtotime($value['start_date'])));
             $description = $value['description'];
             if ($description) {
                 $createSpaceData['description'] = $description;
@@ -533,7 +533,7 @@ class ScraperComponent extends Component {
                 }
                 $endtime = microtime(true);       //Checking time
                 $response['Time Taken']=$endtime - $starttime;
-            pr(json_encode($response,JSON_PRETTY_PRINT));
+            // pr(json_encode($response,JSON_PRETTY_PRINT));
         }
     }
     
