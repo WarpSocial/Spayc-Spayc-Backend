@@ -1050,31 +1050,41 @@ function hashTagSpaycs() { return; }
             "count": 2,
             "records": [
                 {
-                    "id": "3",
-                    "name": "Sam Second Community Spyace",
-                    "matrix_room_id": "!MvOssNcvbePXoBUIjC:spayc-dev.kiwireader.com",
-                    "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180317082917.png",
-                    "type": "Community",
-                    "modified": "2018-03-17T08:29:17+00:00",
-                    "category_id": 5,
-                    "latitude": 28.7041,
-                    "longitude": 77.1025,
-                    "is_joined": true,
-                    "joined_users": 2,
-                    "is_subscribed": true
-                },
-                {
-                    "id": "4",
-                    "name": "Community Type Sub Spyac",
-                    "matrix_room_id": "!nQPjgmlBePZsAyVvQH:spayc-dev.kiwireader.com",
-                    "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180317083321.png",
-                    "type": "Community",
-                    "modified": "2018-03-17T08:33:21+00:00",
-                    "category_id": 6,
-                    "latitude": 28.7041,
-                    "longitude": 77.1025,
+                    "distance": 0,
+                    "id": "2109",
+                    "name": "Perfect Crime New York",
+                    "matrix_room_id": "!eHnEYoZchHVKuuyRvT:spayc-dev.kiwireader.com",
+                    "image": "http://i.ebayimg.com/images/g/TTwAAOSwpDdVXg8t/s-l1600.jpg",
+                    "type": "Event",
+                    "modified": "2018-05-15T12:18:40+00:00",
+                    "spayc_category_id": 180,
+                    "latitude": 40.76146,
+                    "longitude": -73.984547,
+                    "spayc_category": {
+                            "id": 180,
+                            "name": "Arts and Theater"
+                            },
                     "is_joined": false,
-                    "joined_users": 0,
+                    "joined_users": 1,
+                    "is_subscribed": false
+                 },
+                 {
+                    "distance": 0,
+                    "id": "2135",
+                    "name": "Perfect Crime New York",
+                    "matrix_room_id": "!poSQfNdqYsHGrhqbUI:spayc-dev.kiwireader.com",
+                    "image": "http://i.ebayimg.com/images/g/TTwAAOSwpDdVXg8t/s-l1600.jpg",
+                    "type": "Event",
+                    "modified": "2018-05-15T12:21:39+00:00",
+                    "spayc_category_id": 180,
+                    "latitude": 40.76146,
+                    "longitude": -73.984547,
+                    "spayc_category": {
+                            "id": 180,
+                            "name": "Arts and Theater"
+                            },
+                    "is_joined": false,
+                    "joined_users": 1,
                     "is_subscribed": false
                 }
             ]

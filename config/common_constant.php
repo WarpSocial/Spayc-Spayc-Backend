@@ -41,6 +41,7 @@ define('TODAY_DATE', date('Y-m-d'));
 define('SCRAPER_DAYS', ' +14 day');
 define('AFTER14DAYS_DATE', date('Y-m-d', strtotime(SCRAPER_DAYS)));
 define('FUZZYPERCENT', 90);
+define('MAP_LIMIT', 50);
 
 $scraperRootUrl=array('eventbriteurl'=> 'https://www.eventbriteapi.com/v3/',
     'ticketmasterurl'=> 'https://app.ticketmaster.com/discovery/v2/',
