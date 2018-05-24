@@ -47,12 +47,33 @@ class SpaycsController extends AdminController
      */
     public function index()
     {
-        // $this->paginate = [
-        //     'contain' => ['Users', 'MatrixRooms', 'ParentSpaycs']
-        // ];
-        // $spaycs = $this->paginate($this->Spaycs);
+        $this->set('title', $this->siteTitleMessage['MANAGEWARPS']);
+        $keyword=($this->request->query('keyword'))?trim(strtolower($this->request->query('keyword'))):'';
+        $query = $this->Spaycs->getWarpList();
+        if(!empty($keyword))
+            $query->where(['OR' => [['LOWER(name) LIKE' => "%".$keyword."%"]]]);
 
-        // $this->set(compact('spaycs'));
+        $spaycs = $this->paginate($query);           
+        $this->set(compact('spaycs','keyword'));
+        $this->set('_serialize', ['spaycs']);
+    }
+
+    /*** get list of warp members ***/
+    public function spaycMembers($spaycId){
+
+        if(empty($spaycId))
+            return $this->redirect(['action' => 'index']);        
+        $this->set('title', $this->siteTitleMessage['MANAGE-WARP-MEMBERS']);
+        $keyword=($this->request->query('keyword'))?trim(strtolower($this->request->query('keyword'))):''; 
+        $query = $this->Spaycs->getWarpMembers($spaycId);       
+        if(!empty($keyword)){
+            $query->where(['OR' => [['LOWER(Users.display_name) LIKE' => "%".$keyword."%"], ['LOWER(Users.email) LIKE' => "%".$keyword."%"], ['LOWER(Users.address) LIKE' => "%".$keyword."%"],['LOWER(Users.username) LIKE' => "%".$keyword."%"]]]);
+        } 
+        $this->paginate = ['order' => ['Users.display_name' => 'ASC']];
+        $users = $this->paginate($query);   
+        $this->set(compact('users','keyword'));
+        $this->set('_serialize', ['users']);
+        $this->render('../Users/index');
     }
 
     /**

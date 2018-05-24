@@ -214,6 +214,52 @@ class SpaycsTable extends Table
         return $validator;
     }
 
+    public function getWarpMembers($spaycId){
+        $query = TableRegistry::get('Users')->find();
+        $query->innerJoinWith('JoinedSpayc',function($q) {
+            $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin','JoinedSpayc.distance'])->where(['JoinedSpayc.status'=>JOINED]);     
+            $q->innerJoinWith('Spaycs',function($qq) {
+                $qq->select(['Spaycs.user_id','Spaycs.id','Spaycs.parent_id'])->where(['Spaycs.group_type !=' =>'trusted_private','Spaycs.parent_id IS'=>null]); 
+                return $qq;                        
+            });      
+            return $q;
+        });
+        $query->where(['JoinedSpayc.spayc_id'=> $spaycId]);
+        $query->contain([                                       
+            'JoinedSpayc'=>function($q) {
+                $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin','JoinedSpayc.distance'])->where(['JoinedSpayc.status'=>JOINED]);                  
+                $q->innerJoinWith('Spaycs',function($qq) {
+                    $qq->select(['Spaycs.user_id','Spaycs.id','Spaycs.parent_id'])->where(['Spaycs.group_type !=' =>'trusted_private','Spaycs.parent_id IS'=>null]); 
+                    return $qq;                        
+                });
+                return $q;
+            },
+            'Requestedby' => function($q) {
+               return $q->select(['Requestedby.requested_by','count' => $q->func()->count('Requestedby.id')])->group(['Requestedby.requested_by'])->Where(['Requestedby.requested_status'=>FRIEND_REQUESTED_STATUS]);
+            },
+            'Requestedto' => function($q) {
+               return $q->select(['Requestedto.requested_to','count' => $q->func()->count('Requestedto.id')])->group(['Requestedto.requested_to'])->Where(['Requestedto.requested_status'=>FRIEND_REQUESTED_STATUS]);
+            }              
+        ]); 
+        $query->formatResults(function (\Cake\Collection\CollectionInterface $results) {
+            return $results->map(function ($row) {                
+                $present = 0;$totalJoined=[];
+                 if(isset($row['joined_spayc']) && !empty($row['joined_spayc'])) {
+                $joinedSpayc = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[status=Joined]');
+                $createdSpayc = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[is_admin=2,status=Joined]');
+                $row->joinedSpayc=count($joinedSpayc);
+                $row->createdSpayc=count($createdSpayc);
+                unset($row['joined_spayc']);
+                }              
+                $row->friend = !empty($row['requestedto'][0]['count'])? $row['requestedto'][0]['count'] : BLANK_COUNT;
+                $row->friend += !empty($row['requestedby'][0]['count'])? $row['requestedby'][0]['count'] : BLANK_COUNT;
+                unset($row['requestedby']);
+                unset($row['requestedto']);
+                return $row;
+            });
+        });
+        return $query;
+    }
     
 
     // /**
@@ -241,5 +287,50 @@ class SpaycsTable extends Table
         $jsRepo = TableRegistry::get('JoinedSpayc');
         return $jsRepo->find()->select(['spayc_id'])
                 ->distinct()->where(['JoinedSpayc.status'=>JOINED,'JoinedSpayc.user_id'=>$userId,'JoinedSpayc.is_admin'=>SUPERADMIN]);
+    }
+
+    public function getWarpList(){
+        $query = $this->find();
+        $query->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.spayc_category_id'])
+            ->where(['Spaycs.parent_id IS'=>null,'Spaycs.group_type !='=>'trusted_private'])
+            ->contain([
+                'SubSpaycs' => function($q) {                    
+                        return  $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'SubSpaycs.location', 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.matrix_room_id']);
+                },
+                'JoinedSpayc' => function($q) {
+                        return  $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin','JoinedSpayc.distance']);//joinded
+                },
+                'JoinedSpayc.Users' => function($q) {
+                        return  $q->select(['Users.id','Users.display_name','Users.email']);//joinded
+                },
+                'Comments' => function($q) {
+                        return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
+                    },
+                'SubscribedUsers' => function($q) {
+                    return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
+                }
+        ]);       
+        $query->formatResults(function (\Cake\Collection\CollectionInterface $results) {
+            return $results->map(function ($row) {   
+                $row['spayc_admin'] = TableRegistry::get('Users')->get($row->user_id)->display_name;
+                $present = 0;$totalJoined=[];
+                if(!empty($row['joined_spayc'])) {                   
+                    $totalJoined = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[status=Joined].status');
+                    $miles = Configure::read('miles');
+                    $physicalPresent = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[distance <='.$miles.']');
+                    $present = count($physicalPresent);
+                }                 
+                $row['joined_users'] =!empty($row['joined_spayc'])?count($totalJoined):BLANK_COUNT;
+                $row['total_subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):BLANK_COUNT;   
+                $row['total_subspaycs'] = !empty($row['sub_spaycs'])?count($row['sub_spaycs']):BLANK_COUNT;                
+                $row['total_comments'] = !empty($row['comments'][0]['total_comment'])?$row['comments'][0]['total_comment']:BLANK_COUNT;
+                $row['total_presents'] = $present;
+                unset($row['comments']);
+                unset($row['subscribed_users']);
+                unset($row['sub_spaycs']);
+                return $row;
+            });
+        });
+        return $query;
     }
 }

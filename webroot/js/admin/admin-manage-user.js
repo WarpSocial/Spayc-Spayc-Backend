@@ -32,7 +32,39 @@
 			}
 	  	});
 	}
-
-
+	$(document).on('click', '#advertisement_delete_btn', function (e) {                         
+      form = $("form#advertisement_delete_form");  
+      $(".loader").addClass('show-loader');          
+      setTimeout(function(){
+	      $.ajax({
+	       type:'POST',
+	       url:form.prop('action'),
+	       data: form.serialize(),
+	       dataType:'JSON',
+	       async: false,             
+	       success:function(data){               	
+	          $(".loader").removeClass('show-loader'); 
+	          $( ".skip-popup").trigger('click');                            
+	            if ((data.result) && (data.total > 0)) {
+	              $( "div #"+data.id).remove();
+	              $('.users-msg').text(data.message);
+	              messageFadeOut('users-msg',data.message);
+	            } else {
+	            	location.reload();
+	            } 
+	       },
+	       error: function (e,x,t) {
+	        $(".loader").removeClass('show-loader'); 
+	        ajax_error(e);
+	      }
+	   	  });
+  	  });
+   	  e.preventDefault();
+  	});  
 
  }); 
+
+function showModel(description){
+	$("#advertisement-desc-modal").modal('show');
+	$('.advertisement-desc').text(description);
+}

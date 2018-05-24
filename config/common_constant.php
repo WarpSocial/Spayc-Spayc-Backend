@@ -15,6 +15,7 @@ define('DISTANCEINMETER','100');
 define('SCRAPERCOMMONDATEFILTER','date');
 define('SCRAPERGROUPFILTER','group');
 define('SCRAPERUNIQUEFILTER','unique');
+define('DOLLARSIGN','$');
 $friend_requested_status_arr=array('accepted'=>'Accepted','decline'=>'Decline','pending'=>'Pending','blocked'=>'Blocked');
 $user_gender=array('1'=>'All','2'=>'Male','3'=>'Female','4'=>'Other');
 $user_age=array('1'=>'13-20','2'=>'21-30','3'=>'31-40','4'=>'41-50','5'=>'51-above');
@@ -40,6 +41,7 @@ define('TEXT_MASSAGE', serialize($txt_massage));
 define('TODAY_DATE', date('Y-m-d'));
 define('AFTER14DAYS_DATE', date('Y-m-d', strtotime(' +14 day')));
 define('FUZZYPERCENT', 90);
+define('ADVERTISEMENTSTATUS', 'Removed');
 
 $scraperRootUrl=array('eventbriteurl'=> 'https://www.eventbriteapi.com/v3/',
     'ticketmasterurl'=> 'https://app.ticketmaster.com/discovery/v2/',
@@ -71,8 +73,9 @@ $config['SITETITLEMESSAGE'] = [
     'MANAGEUSER'=>'Manage Users',
     'FORGOTPASSWORD'=>'Forgot Password',
     'RESETPASSWORD'=>'Reset Password',
-    'MANAGEUSER'=>'Manage Users',
-    'MANAGEUSER'=>'Manage Users',    
+    'MANAGEWARPS'=>'Manage Warps',
+    'MANAGE-WARP-MEMBERS'=>'Warps Members',
+    'MANAGE-ADVERTISEMENTS'=>'Manage Advertisements',    
     'WARPCREATED'=>'Warps Created',
     'WARPJOINED'=>SITE_TITLE.'s Joined',
     'WARPDETAIL'=>SITE_TITLE.' Detail',
@@ -97,4 +100,6 @@ $config['ERRORANDSUCCESSMSG'] = [
     'RESETLINKMSG'=>'A link to reset your password has been sent to your work email.',
     'BLOCKED-MSG'=>'has been Blocked.',
     'UNBLOCKED-MSG'=>'has been Unblocked.',
+    'DELETED-MSG'=>'has been deleted.',
+
 ];
