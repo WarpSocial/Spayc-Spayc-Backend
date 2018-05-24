@@ -253,12 +253,12 @@ class WebApiController extends AppController {
                 ["title" => "Other ", "code" => ""],
                 ["title" => "Seminar ", "code" => "270F"],
                 ["title" => "Gala ", "code" => "1F91D"],
-                ["title" => "Attraction ", "code" => ""],
+                ["title" => "Attraction ", "code" => "1F365"],
                 ["title" => "Conference ", "code" => "1F91D"],
                 ["title" => "Game ", "code" => "1F3AE"],
                 ["title" => "Screening ", "code" => "1F3AC"],
                 ["title" => "Tournament ", "code" => "1F3C6"],
-                ["title" => "Retreat ", "code" => ""],
+                ["title" => "Retreat ", "code" => "1F365"],
                 ["title" => "Expo ", "code" => "1F91D"]
             ]]
         ];

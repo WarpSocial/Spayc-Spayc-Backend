@@ -1,6 +1,6 @@
 <?php
 return [
-    'title' =>'SPAYC',
+    'title' =>'Warp',
     'gender'=>['Male', 'Female', 'Other'],
     'spayctype'=>['Event', 'Community'],
     'grouptype'=>['Public', 'Private'],

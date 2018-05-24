@@ -3796,7 +3796,7 @@ define({ "api": [
         "name": "private"
       }
     ],
-    "description": "<p>Get the list warp to whom user has been subscribed.</p> ",
+    "description": "<p>Get the list warp to whom user has been subscribed but not joined the warp.</p> ",
     "header": {
       "fields": {
         "Header": [
@@ -3859,7 +3859,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n {\n    \"status\": \"success\",\n    \"message\": \"List of subscribed warp.\",\n    \"data\": [\n        {\n            \"id\": \"737\",\n            \"name\": \"followfe\",\n            \"user_id\": 130,\n            \"location\": \"Delhi\",\n            \"image\": null,\n            \"description\": \"life is   #art and living\",\n            \"group_type\": \"Private\",\n            \"type\": \"Community\",\n            \"start_date\": null,\n            \"end_date\": null,\n            \"passcode\": \"\",\n            \"matrix_room_id\": \"!ZwytxQYsolMOARuMmZ:127.0.0.1\",\n            \"parent_id\": null,\n            \"created\": \"2018-05-16T15:14:25+00:00\",\n            \"modified\": \"2018-05-16T15:14:25+00:00\",\n            \"spayc_category_id\": null,\n            \"spayc_category\": null\n        }\n    ]\n}",
+          "content": "     HTTP/1.1 200 OK\n {\n    \"status\": \"success\",\n    \"message\": \"List of subscribed warp.\",\n    \"data\": [\n        {\n            \"id\": \"734\",\n            \"matrix_room_id\": \"!VIaNrDKuzkBQEVgtNI:127.0.0.1\"\n        },\n        {\n            \"id\": \"732\",\n            \"matrix_room_id\": \"!fueGNjtYWCpzMcTbtI:127.0.0.1\"\n        }\n    ]\n}",
           "type": "json"
         }
       ]

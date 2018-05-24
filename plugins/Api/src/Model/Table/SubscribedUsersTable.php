@@ -6,6 +6,8 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Database\Expression\QueryExpression;
+use Cake\ORM\TableRegistry;
 
 /**
  * SubscribedUsers Model
@@ -111,6 +113,10 @@ class SubscribedUsersTable extends Table {
         if(empty($userId)){
             return [];
         }
+        $joinedQuery = TableRegistry::get('Api.JoinedSpayc')->find()
+                ->select(['spayc_id'])
+                ->distinct()
+                ->where(['user_id' => $userId]);
         $query = $this->Spaycs->find();
         $query->select(['Spaycs.id', 'Spaycs.matrix_room_id'])
                 ->where(['Spaycs.status'=>'Active','Spaycs.group_type !='=>'trusted_private']);
@@ -121,6 +127,9 @@ class SubscribedUsersTable extends Table {
             $q->where(['SubscribedUsers.user_id'=>$userId]);
             return $q;
         });
+        $query->where(function (QueryExpression $exp, Query $q) use ($joinedQuery) {
+            return $exp->notIn('Spaycs.id',$joinedQuery);
+        });
         $query->order(['Spaycs.created'=>'DESC']);
         if(!empty($limit)){
             $query->limit($limit);
@@ -129,7 +138,6 @@ class SubscribedUsersTable extends Table {
         if(!empty($page)){
             $query->page($page);
         }
-        
         return $query;
     }
 

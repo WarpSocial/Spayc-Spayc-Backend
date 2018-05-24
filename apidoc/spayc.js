@@ -1757,7 +1757,7 @@ function postRemoveFromSpayc() { return; }
  * @apiGroup Spayc
  * @apiPermission private
  *
- * @apiDescription Get the list warp to whom user has been subscribed.
+ * @apiDescription Get the list warp to whom user has been subscribed but not joined the warp.
  * 
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
@@ -1776,23 +1776,12 @@ function postRemoveFromSpayc() { return; }
     "message": "List of subscribed warp.",
     "data": [
         {
-            "id": "737",
-            "name": "followfe",
-            "user_id": 130,
-            "location": "Delhi",
-            "image": null,
-            "description": "life is   #art and living",
-            "group_type": "Private",
-            "type": "Community",
-            "start_date": null,
-            "end_date": null,
-            "passcode": "",
-            "matrix_room_id": "!ZwytxQYsolMOARuMmZ:127.0.0.1",
-            "parent_id": null,
-            "created": "2018-05-16T15:14:25+00:00",
-            "modified": "2018-05-16T15:14:25+00:00",
-            "spayc_category_id": null,
-            "spayc_category": null
+            "id": "734",
+            "matrix_room_id": "!VIaNrDKuzkBQEVgtNI:127.0.0.1"
+        },
+        {
+            "id": "732",
+            "matrix_room_id": "!fueGNjtYWCpzMcTbtI:127.0.0.1"
         }
     ]
 }
