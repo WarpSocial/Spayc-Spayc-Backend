@@ -1291,15 +1291,19 @@ class UsersController extends AppController {
             }
         ]);
         //pj($user);die;
+        
         $user->formatResults(function (\Cake\Collection\CollectionInterface $results)use($loggedUser,$id) {
             return $results->map(function ($row)use($loggedUser,$id) {
                 $uId = ApiHasher::decrypt($row['id']);
                 $row['joined_spaycs'] = count($this->Users->findJoinedSpayc($id));
                 $row['created_spaycs'] = !empty($row['spaycs'][0]['created_spaycs'])? $row['spaycs'][0]['created_spaycs'] : 0;
                 $row['unread_notifications'] = !empty($row['notification_to'][0]['unread_notification'])? $row['notification_to'][0]['unread_notification'] : 0;
+                
                 $row['friend'] = TableRegistry::get('Api.FriendRequest')->myFriend($uId,$loggedUser['id']);
                 $row['matrix_room_id'] = !empty($row['friend']['matrix_room_id'])?$row['friend']['matrix_room_id']:null;
+                
                 unset($row['friend']['matrix_room_id']);
+                $row['friend']['pending_request'] = TableRegistry::get('Api.FriendRequest')->friendStatus($loggedUser['id'],PENDING);
                 $row['friend']['total_friends'] = TableRegistry::get('Api.FriendRequest')->getFriendCountByUserId($uId);
                 unset($row['joined_spayc'],$row['requestedto'],$row['requestedby'],$row['spaycs']);
                 unset($row['notification_to']);
