@@ -447,8 +447,8 @@ class ScraperComponent extends Component {
         $base_url = Configure::read('App.BASE_URL');
         $url = $base_url . 'api/spaycs.json';
         $update_url = $base_url . 'api/spayc-edit.json';
-        $getIds = $createSpaceData = [];
         foreach ($record as $value) {
+            $getIds = $createSpaceData = [];
             $starttime = microtime(true);       //Checking time
             $spayc_id=0;    //Default Spayc Define
             $response=[];
