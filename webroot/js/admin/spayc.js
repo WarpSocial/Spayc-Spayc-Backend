@@ -17,9 +17,11 @@ jQuery(document).ready(function ($) {
               if($('.status_'+$('#spayc-id').val()).hasClass('block')){
                 $('.status_'+$('#spayc-id').val()).removeClass('block').addClass('unblock');                      
                 $('span.status_'+$('#spayc-id').val()).text('Unblock');
+                $('.status_'+$('#spayc-id').val()).closest('.square-box').addClass('disabled');  
               } else {
                 $('.status_'+$('#spayc-id').val()).removeClass('unblock').addClass('block');                      
                 $('span.status_'+$('#spayc-id').val()).text('Block');
+                $('.status_'+$('#spayc-id').val()).closest('.square-box').removeClass('disabled');
               }
               if (data.status == 'Active') {                      
                 $('.spaycs-msg').removeClass('error-alert').addClass('success-alert');  
@@ -58,13 +60,16 @@ jQuery(document).ready(function ($) {
           $(".loader").removeClass('show-loader'); 
           $( ".skip-popup").trigger('click');                            
            if (data.result) {
+              setTimeout(function(){
               if (data.status == 'Deleted') {                      
-                $('.spaycs-msg').removeClass('error-alert').addClass('success-alert');  
+                $('.spaycs-msg').removeClass('error-alert').addClass('success-alert');    
               } else { 
                 $('.spaycs-msg').removeClass('success-alert').addClass('error-alert');
+                  $('.status_'+$('#spayc-id').val()).closest('.square-box').hide('slow').remove();  
               }
               $('.spaycs-msg').text(data.message);
               messageFadeOut('spaycs-msg',data.message);
+              },1500)
             } else {                                                 
               messageFadeOut('spaycs-msg',data.message);
             }

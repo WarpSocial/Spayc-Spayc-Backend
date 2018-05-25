@@ -38,7 +38,8 @@ if($this->request->query())
                     $spaycImgClass='';
                   }
               ?>  
-              <div class="square-box">
+              <?php  $blocktxt =(ucfirst($spayc->status) == $statusArr['active'])?"Block":"Unblock";?>
+              <div class="square-box <?php echo $blocktxt =='Block'?'':'disabled';?>">
                   <div class="image-wrap <?= $spaycImgClass?>">
                     <?= $this->Html->image($spaycImg, ["alt" => "", 'class' =>'']); ?>
                     <?= $this->Html->image($spaycImgShadow, ["alt" => "", 'class' =>'img-shadow']); ?>
@@ -58,12 +59,12 @@ if($this->request->query())
                           <?= $this->Html->link("<i class='icon-view'></i>View",['controller' => 'Spaycs', 'action' => 'view',$spayc->id,$spayc->user_id], ['class' => 'dropdown-item view','escape' => false]);?>  
                           <!--<button class="dropdown-item block"> <i class="icon-block"></i>Block</button>-->
                           
-                           <?php  $blocktxt =(ucfirst($spayc->status) == $statusArr['active'])?"Block":"Unblock";?>
+                         
                       <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item status_<?= $spayc->id?> <?= strtolower($blocktxt)?>" page="<?php echo Router::url(['Controller' => 'Spaycs', 'action'=> 'setSpaycStatus',$spayc->id]);?>"><i class='icon-block'></i><span class="status_<?= $spayc->id?>"><?= $blocktxt?></span>
                       </a>
                           
                           <!--<button class="dropdown-item delete"> <i class="icon-Delete"></i>Delete</button>-->
-                          <a href="javascript:void(0)" rel="modal-dialog-xs" class="pop dropdown-item delete" page="<?php echo Router::url(['Controller' => 'Spaycs', 'action'=> 'deleteSpayc',$spayc->id]);?>"><i class='icon-Delete'></i>
+                          <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item delete" page="<?php echo Router::url(['Controller' => 'Spaycs', 'action'=> 'deleteSpayc',$spayc->id]);?>"><i class='icon-Delete'></i>
                               <span>Delete</span></a>
                         </div>
                       </div>
