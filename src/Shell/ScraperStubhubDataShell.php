@@ -37,10 +37,11 @@ class ScraperStubhubDataShell extends Shell
 
     /*** save events current date to 14days from Stubhub API ***/ 
     public function main() {
-        $this->Scraper->setScraperLog('get data from stubhub process start');
+        $time=UNIQUE_TOKEN;
+        $this->Scraper->setScraperLog('Scraping StubHub Data',$time,'ScraperStubhubData');
         $this->out('Process start at '.$this->Scraper->currentDateTime());
-        $this->Scraper->getStubhubData(0);
+        $this->Scraper->getStubhubData(0,$time);
         $this->out('Process end at '.$this->Scraper->currentDateTime());
-        $this->Scraper->setScraperLog('get data from stubhub process end');
+        $this->Scraper->updateScraperLog($time);
     }
 }
