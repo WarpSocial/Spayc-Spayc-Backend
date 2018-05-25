@@ -55,3 +55,26 @@
 .table-wrapper .table-head .head-text span.table-filter::after {
     display: none;
 }
+.action-btn {
+    padding: 0 !important;
+}
+.action-btn:active {
+    background:none;
+}
+.z-index {
+    z-index: 9999;
+}
+.item-read-more {
+    font-size: 10px;
+    color: #156478;
+}
+.advertisement-desc {
+    padding: 30px !important;
+    font-size: 16px;
+    text-transform: none;
+}
+.user-list-modal h5 {
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 500 !important;
+}

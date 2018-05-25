@@ -65,6 +65,8 @@
  }); 
 
 function showModel(description){
-	$("#advertisement-desc-modal").modal('show');
-	$('.advertisement-desc').text(description);
+	$("#cmnPoupUp").addClass('modal-dialog-lg');
+	$("#cmnPoupUp .modal-content").addClass('user-list-modal');
+	$("#cmnPoupUp .modal-content").html("<div class='modal-header'><h5 class='modal-title'>Description</h5><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true' class='modal-close'></span></button></div><div class='advertisement-desc'>"+description+"</div>");
+	$("#cmnPoupUp").modal('show');
 }

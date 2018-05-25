@@ -64,14 +64,13 @@ if(isset($this->request->query['sort'])) {
             <div class="head-text flex-basis11"><span>Number of Total Views</span></div>
             <div class="head-text flex-basis11"><span>Number of Views Left</span></div>
             <div class="head-text flex-basis6"><span>Action</span></div>
-            <div class="head-text flex-basis6"><span class="blank"></span></div>
           </div>
           <?php   if ($advertisementsCount) {?>  
             <?php foreach($advertisements as $advertisement) { ?>
             <!--==============table data====================-->
               <div class="table-row" id="<?=$advertisement->id?>">      
                 <div class="table-data d-flex-a-center flex-basis15 text-left">
-                  <span class="data-image"><?= !empty($advertisement->image)?$this->Html->image($advertisement->image, ['alt' => 'img']):$this->Html->image('table-img.png', ['alt' => 'img'])?></span>
+                  <span class="data-image"><?= !empty($advertisement->image)?$this->Html->image($advertisement->image, ['alt' => '']):$this->Html->image('table-img.png', ['alt' => 'img'])?></span>
                   <span class="data-name"><?= !empty($advertisement->name)?h(ucwords($advertisement->name)):BLANK ?></span>
                 </div>
 
@@ -79,11 +78,14 @@ if(isset($this->request->query['sort'])) {
                   <span>$<?= !empty($advertisement->price)?($advertisement->price):BLANK_COUNT?></span>
                 </div>
                 
-                <div class="table-data flex-basis12 text-left">
-                  <span><?= !empty($advertisement->description)?h($advertisement->description):BLANK ?></span>
+                <div class="table-data flex-basis18 text-left">
+                  <span><?= !empty($advertisement->description)?$this->Text->truncate(h($advertisement->description),25,['ellipsis' => '...',
+        'exact' => false]):BLANK ?></span>
+                <?php if (!empty($advertisement->description) && (strlen($advertisement->description) > 25)) {?>
                   <span>
-                  <a href="#" onclick="showModel('<?= h($advertisement->description)?>');">+ Read more</a>
+                  <a href="javascript:void(0)" onclick="showModel('<?= h($advertisement->description)?>');" class="item-read-more">+ Read more</a>
                   </span>
+                  <?php } ?>
                 </div>
                 <div class="table-data flex-basis16 text-left">
                   <span>
@@ -101,8 +103,8 @@ if(isset($this->request->query['sort'])) {
                 <div class="table-data flex-basis11">
                   <span><?= !empty($advertisement->balance)?h($advertisement->balance):BLANK_COUNT ?></span>
                 </div>
-                <div class="table-data flex-basis11">
-                  <span><a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item status_<?= $advertisement->id?>" page="<?php echo $this->Url->build(["controller" => "Advertisement","action" => "delete",$advertisement->id,$chkAdvertisement]);?>"><?= $this->Html->image('delete-red.png')?></a>
+                <div class="table-data flex-basis6">
+                  <span><a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop action-btn dropdown-item status_<?= $advertisement->id?>" page="<?php echo $this->Url->build(["controller" => "Advertisement","action" => "delete",$advertisement->id,$chkAdvertisement]);?>"><?= $this->Html->image('delete-red.png')?></a>
                   </span>
                 </div>
               </div>
@@ -137,15 +139,4 @@ if(isset($this->request->query['sort'])) {
       </div>
     <?php } ?>
 </section>
- <div class="modal modal-center fade" id="advertisement-desc-modal" tabindex="-1" role="dialog"  aria-hidden="true">
-  <div class="modal-dialog modal-dialog-lg" role="document">
-    <div class="modal-content user-list-modal">
-        <div class="modal-header">
-          <h5 class="modal-title">Description</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="modal-close"></span></button>
-        </div>
-      <div class="modal-body advertisement-desc"></div>
-    </div>
-  </div>
-</div>
 <?php echo $this->Html->script(['admin/admin-manage-user']); ?>
