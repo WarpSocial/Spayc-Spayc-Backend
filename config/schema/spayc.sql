@@ -1,18 +1,5 @@
 -- CREATE TYPE row_status AS ENUM('Active','Inactive','Pending','Approved','Removed');
-DROP TABLE "comments";
-DROP TABLE "friend_request";
-DROP TABLE "hashtags";
-DROP TABLE "joined_spayc";
-DROP TABLE "notifications";
-DROP TABLE "notification_types";
-DROP TABLE "spayc_hashtags";
-DROP TABLE "spaycs";
-DROP TABLE "subscribed_users";
-DROP TABLE "user_images";
-DROP TABLE "user_logs";
-DROP TABLE "users";
-DROP TABLE "physical_location";
-
+DROP TABLE IF EXISTS users;
 CREATE TABLE users (
     id BIGSERIAL NOT NULL,
     "username" character varying(100) NOT NULL,
@@ -42,10 +29,12 @@ CREATE TABLE users (
     "is_notify" character varying(10),
     "current_latitude" double precision,
     "current_longitude" double precision,
+    "device_token" varchar(100) default null,
     primary key (id,created),
     unique (username,email,created)
 );
 SELECT create_hypertable('users', 'created');
+DROP TABLE IF EXISTS user_logs;
 CREATE TABLE user_logs (
     id BIGSERIAL NOT NULL,
     "user_id" bigint NOT NULL,
@@ -62,6 +51,7 @@ CREATE TABLE user_logs (
     PRIMARY KEY(id,user_id,created)
 );
 SELECT create_hypertable('user_logs', 'created');
+DROP TABLE IF EXISTS comments;
 CREATE TABLE comments (
     id BIGSERIAL NOT NULL,
     "spayc_id" bigint NOT NULL,
@@ -74,6 +64,7 @@ CREATE TABLE comments (
     PRIMARY KEY(id,spayc_id,created)
 );
 SELECT create_hypertable('comments', 'created');
+DROP TABLE IF EXISTS friend_request;
 CREATE TABLE friend_request (
     "id" BIGSERIAL NOT NULL,
     "requested_by" bigint NOT NULL,
@@ -88,6 +79,8 @@ CREATE TABLE friend_request (
     PRIMARY KEY (id,requested_by,requested_to,created)
 );
 SELECT create_hypertable('friend_request', 'created');
+
+DROP TABLE IF EXISTS joined_spayc;
 CREATE TABLE joined_spayc (
     "id" BIGSERIAL NOT NULL,
     "spayc_id" BIGINT  NOT NULL,
@@ -101,6 +94,8 @@ CREATE TABLE joined_spayc (
     PRIMARY KEY (id,spayc_id,user_id,created)
 );
 SELECT create_hypertable('joined_spayc', 'created');
+
+DROP TABLE IF EXISTS spaycs;
 CREATE TABLE spaycs (
     "id" BIGSERIAL NOT NULL,
     "user_id" bigint NOT NULL,
@@ -124,6 +119,8 @@ CREATE TABLE spaycs (
     PRIMARY KEY (id,user_id,created)
 );
 SELECT create_hypertable('spaycs', 'created');
+
+DROP TABLE IF EXISTS subscribed_users;
 CREATE TABLE subscribed_users (
     "id" BIGSERIAL NOT NULL,
     "spayc_id" bigint NOT NULL,
@@ -134,6 +131,8 @@ CREATE TABLE subscribed_users (
     PRIMARY KEY (id,spayc_id,user_id,created)
 );
 SELECT create_hypertable('subscribed_users', 'created');
+
+DROP TABLE IF EXISTS user_images;
 CREATE TABLE user_images (
     "id" BIGSERIAL NOT NULL,
     "user_id" bigint NOT NULL,
@@ -145,6 +144,8 @@ CREATE TABLE user_images (
     PRIMARY KEY (id,user_id,created)
 );
 SELECT create_hypertable('user_images', 'created');
+
+DROP TABLE IF EXISTS hashtags;
 CREATE TABLE hashtags (
     "id" BIGSERIAL NOT NULL,
     "name" character varying(255) NOT NULL,
@@ -153,6 +154,8 @@ CREATE TABLE hashtags (
     PRIMARY KEY (id,created)
 );
 SELECT create_hypertable('hashtags', 'created');
+
+DROP TABLE IF EXISTS spayc_hashtags;
 CREATE TABLE spayc_hashtags (
     "id" BIGSERIAL NOT NULL,
     "spayc_id" bigint NOT NULL,
@@ -162,6 +165,8 @@ CREATE TABLE spayc_hashtags (
     PRIMARY KEY (id,created)
 );
 SELECT create_hypertable('spayc_hashtags', 'created');
+
+DROP TABLE IF EXISTS notifications;
 CREATE TABLE notifications (
     "id" BIGSERIAL NOT NULL,
     "requested_by" bigint NOT NULL,
@@ -177,6 +182,7 @@ CREATE TABLE notifications (
 );
 SELECT create_hypertable('notifications', 'created');
 
+DROP TABLE IF EXISTS physical_location;
 CREATE TABLE physical_location (
     "id" BIGSERIAL NOT NULL,
     "user_id" BIGINT NOT NULL,
@@ -187,6 +193,7 @@ CREATE TABLE physical_location (
     PRIMARY KEY (id,user_id)
 );
 
+DROP TABLE IF EXISTS notification_types;
 CREATE TABLE "notification_types" (
     "id" BIGSERIAL NOT NULL,
     "type" character varying(200),
@@ -218,6 +225,7 @@ INSERT INTO "notification_types" ("id", "type", "message", "slug", "created", "m
 (14,	'Someone commented',	'<USERNAME> has commented, <COMMENT> in your warp, <SpaycName>',	'someone-commented',	'2018-02-28 17:27:10.578674',	NULL),
 (17,	'New Warp',	'<SpaycName> warp has been created within <X> miles of you',	'new-spayc',	'2018-02-28 17:27:10.578674',	NULL);
 
+DROP TABLE IF EXISTS advertisement;
 CREATE TABLE "advertisement" (
     "id" BIGSERIAL NOT NULL,
     "user_id" BIGINT NOT NULL,
@@ -234,6 +242,8 @@ CREATE TABLE "advertisement" (
     PRIMARY KEY (id,created)
 );
 SELECT create_hypertable('advertisement', 'created');
+
+DROP TABLE IF EXISTS spayc_advertisement;
 CREATE TABLE "spayc_advertisement" (
     "id" BIGSERIAL NOT NULL,
     "advertisement_id" BIGINT NOT NULL,
@@ -247,11 +257,7 @@ CREATE TABLE "spayc_advertisement" (
 );
 SELECT create_hypertable('spayc_advertisement', 'created');
 
-ALTER TABLE "joined_spayc" ADD "updated_by" bigint NULL;
-ALTER TABLE "spaycs" ADD "parent_id" bigint NULL;
-ALTER TABLE "joined_spayc" ADD "is_admin" smallint NOT NULL DEFAULT '0';
-
-
+DROP TABLE IF EXISTS spayc_advertisement_priority;
 CREATE TABLE "spayc_advertisement_priority" (
     "id" BIGSERIAL NOT NULL,
     "spayc_id" BIGINT NULL,
@@ -264,6 +270,7 @@ CREATE TABLE "spayc_advertisement_priority" (
 SELECT create_hypertable('spayc_advertisement_priority', 'created');
 
 -- 15-march 2018 for admin  --
+DROP TABLE IF EXISTS roles;
 CREATE TABLE roles (
    id BIGSERIAL NOT NULL,
    title VARCHAR(50) NULL, 
@@ -271,8 +278,8 @@ CREATE TABLE roles (
 );
 INSERT INTO roles (id, title) VALUES (1, 'Admin');
 ALTER TABLE "users" ADD "role_id" integer DEFAULT NULL;
-INSERT INTO "users" ("id", "username", "email", "password", "gender", "dob", "phone", "status", "website_url", "address", "bio_data", "fb_id", "fb_access_key", "longitude", "latitude", "timezone", "matrix_user_id", "matrix_access_token", "created", "modified", "token_verification", "forgot_password_token", "forgot_password_timestamp", "country_code", "is_notify", "current_latitude", "current_longitude", "role_id") VALUES
-('56',  'admin',    'ankur.gupta@kiwitech.com', 'ODIyZDBkN2MxYWVlOTcxZTZhNmMxNjhjZTNjMGQ3ZGMyYzk2ODY4MzM3MDQ3MDZmOTZhMTM0YjU1MzA1YmYzYnwyLmLenyaqlsnztYhQTM8dc+OpkWpoF/jvMx9EELyk', 'Male', NULL, NULL, 'Active',   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   '2018-03-15 15:40:41',  '2018-03-15 15:40:41',  NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,'1');
+INSERT INTO "users" ("username", "email", "password", "gender", "dob", "phone", "status", "website_url", "address", "bio_data", "fb_id", "fb_access_key", "longitude", "latitude", "timezone", "matrix_user_id", "matrix_access_token", "created", "modified", "token_verification", "forgot_password_token", "forgot_password_timestamp", "country_code", "is_notify", "current_latitude", "current_longitude", "role_id") VALUES
+('admin',    'ankur.gupta@kiwitech.com', 'ODIyZDBkN2MxYWVlOTcxZTZhNmMxNjhjZTNjMGQ3ZGMyYzk2ODY4MzM3MDQ3MDZmOTZhMTM0YjU1MzA1YmYzYnwyLmLenyaqlsnztYhQTM8dc+OpkWpoF/jvMx9EELyk', 'Male', NULL, NULL, 'Active',   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   '2018-03-15 15:40:41',  '2018-03-15 15:40:41',  NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,'1');
 
 
 -- Adminer 4.3.1 PostgreSQL dump
@@ -288,15 +295,13 @@ CREATE TABLE "public"."queue_phinxlog" (
     "start_time" timestamp,
     "end_time" timestamp,
     "breakpoint" boolean DEFAULT false NOT NULL,
-    CONSTRAINT "queue_phinxlog_pkey" PRIMARY KEY ("version")
+    PRIMARY KEY ("version")
 ) WITH (oids = false);
 
 
 DROP TABLE IF EXISTS "queued_jobs";
-CREATE SEQUENCE queued_tasks_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
-
 CREATE TABLE "public"."queued_jobs" (
-    "id" integer DEFAULT nextval('queued_tasks_id_seq') NOT NULL,
+    "id" BIGSERIAL NOT NULL,
     "job_type" character varying(45) NOT NULL,
     "data" text,
     "job_group" character varying(255),
@@ -311,23 +316,22 @@ CREATE TABLE "public"."queued_jobs" (
     "workerkey" character varying(45),
     "status" character varying(255),
     "priority" integer DEFAULT 5 NOT NULL,
-    CONSTRAINT "queued_tasks_pkey" PRIMARY KEY ("id")
-) WITH (oids = false);
+    PRIMARY KEY ("id")
+);
 
 
 DROP TABLE IF EXISTS "queue_processes";
-CREATE SEQUENCE queue_processes_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
-
-CREATE TABLE "public"."queue_processes" (
-    "id" integer DEFAULT nextval('queue_processes_id_seq') NOT NULL,
+CREATE TABLE "queue_processes" (
+    "id" BIGSERIAL NOT NULL,
     "pid" character varying(30) NOT NULL,
     "created" timestamp,
     "modified" timestamp,
-    CONSTRAINT "queue_processes_pkey" PRIMARY KEY ("id")
-) WITH (oids = false);
+    PRIMARY KEY ("id")
+);
 
 
 -- 2018-04-13 16:39:12.591553+05:30
+DROP TABLE IF EXISTS spayc_categories;
 CREATE TABLE "spayc_categories" (
     "id" BIGSERIAL NOT NULL,
     "parent_id" bigint NULL,
@@ -335,6 +339,7 @@ CREATE TABLE "spayc_categories" (
     "rght" integer NULL,
     "name" character varying(100),
     "slug" character varying(100),
+    "code" character varying(50),
     "description" character varying(200),
     "status" row_status DEFAULT 'Active' NOT NULL,
     "created" timestamp,
@@ -343,6 +348,7 @@ CREATE TABLE "spayc_categories" (
 );
 SELECT create_hypertable('spayc_categories', 'created');
 
+DROP TABLE IF EXISTS promotions;
 CREATE TABLE "promotions" (
     "id" BIGSERIAL NOT NULL,
     "spayc_id" BIGINT NULL,
@@ -356,28 +362,34 @@ CREATE TABLE "promotions" (
     PRIMARY KEY ("id","created")
 );
 SELECT create_hypertable('promotions', 'created');
+
+DROP TABLE IF EXISTS spayc_promotion;
 CREATE TABLE "spayc_promotion" (
     "id" BIGSERIAL NOT NULL,
     "promotion_id" BIGINT NULL,
     "spayc_id" BIGINT NULL,
     "priority" INTEGER NULL,
-    "advertisement_status" INTEGER NULL DEFAULT '0',
+    "promotion_status" INTEGER NULL DEFAULT '0',
     "display_times" INTEGER NULL DEFAULT '0',
     "created" timestamp,
     "modified" timestamp,
     PRIMARY KEY ("id","created")
 );
 SELECT create_hypertable('spayc_promotion', 'created');
+
+DROP TABLE IF EXISTS spayc_promotion_priority;
 CREATE TABLE "spayc_promotion_priority" (
     "id" BIGSERIAL NOT NULL,
     "spayc_id" BIGINT NULL,
-    "priority" INTEGER NULL,
+    "cycle" INTEGER NULL,
     "comment_count" INTEGER NULL,
     "created" timestamp,
     "modified" timestamp,
     PRIMARY KEY ("id","created")
 );
 SELECT create_hypertable('spayc_promotion_priority', 'created');
+
+DROP TABLE IF EXISTS purchase;
 CREATE TABLE "purchase" (
     "id" BIGSERIAL NOT NULL,
     "plan_id" BIGINT NULL,
@@ -392,10 +404,14 @@ CREATE TABLE "purchase" (
     PRIMARY KEY ("id","created")
 );
 SELECT create_hypertable('purchase', 'created');
+
+DROP TABLE IF EXISTS plans;
 CREATE TABLE "plans" (
     "id" BIGSERIAL NOT NULL,
+    "app_plan_id" VARCHAR(200) NULL,    
     "name" VARCHAR(200) NULL,    
     "slug" VARCHAR(200) NULL,
+    "type" VARCHAR(100) NULL,    
     "amount" DECIMAL(7,2) NULL,
     "currency" VARCHAR(20) NULL,
     "views" INTEGER NULL,
@@ -406,21 +422,18 @@ CREATE TABLE "plans" (
     PRIMARY KEY ("id","created")
 );
 SELECT create_hypertable('plans', 'created');
-INSERT INTO "plans" ("id", "name", "slug", "amount", "currency", "views", "status", "created", "modified") VALUES
-(1,	'Plan I',	'plan-1',	'1.00',	'USD',	500,	'Active',	'2018-04-20 15:07:23.713696',	'2018-04-20 15:07:23.713696'),
-(2,	'Plan II',	'plan-2',	'2.00',	'USD',	1000,	'Active',	'2018-04-20 15:08:21.355268',	'2018-04-20 15:08:21.355268'),
-(3,	'Plan III',	'plan-3',	'5.00',	'USD',	2500,	'Active',	'2018-04-20 15:10:22.46612',	'2018-04-20 15:10:22.46612'),
-(4,	'Plan IV',	'plan-4',	'10.00',	'USD',	6000,	'Active',	'2018-04-20 15:10:22.46612',	'2018-04-20 15:10:22.46612');
-
-INSERT INTO "spayc_categories" ("id", "parent_id", "lft", "right", "name", "slug", "description", "status", "created", "modified") VALUES
-(1,	NULL,	1,	2,	'Music',	'music',	'Music',	'Active',	'2018-04-19 21:00:59.737171',	'2018-04-19 21:00:59.737171'),
-(2,	1,	3,	4,	'Blues & Jazz',	'blues-jazz',	'Blues & Jazz',	'Active',	'2018-04-19 21:02:01.031273',	'2018-04-19 21:02:01.031273'),
-(3,	1,	5,	7,	'Alternative',	'alternative',	'Alternative',	'Active',	'2018-04-19 21:02:32.883426',	'2018-04-19 21:02:32.883426'),
-(4,	1,	8,	10,	'Classical',	'classical',	'Classical',	'Active',	'2018-04-19 21:03:00.810881',	'2018-04-19 21:03:00.810881'),
-(5,	NULL,	11,	13,	'Science & Technology',	'science-technology',	'Science & Technology',	'Active',	'2018-04-19 21:03:43.820194',	'2018-04-19 21:03:43.820194'),
-(6,	NULL,	13,	14,	'Business & Professional',	'business-professional',	'Business & Professional',	'Active',	'2018-04-19 21:04:33.062492',	'2018-04-19 21:04:33.062492');
+INSERT INTO "plans" ("app_plan_id","type", "name","slug", "amount", "currency", "views", "status", "created", "modified") VALUES
+('com.warp.warpapp.adviews500', 'advertisement',	'Plan I',	'plan-1',	'0.99',	'USD',	500,	'Active',	'2018-04-20 15:07:23.713696',	'2018-04-20 15:07:23.713696'),
+('com.warp.warpapp.adviews1000', 'advertisement',	'Plan II',	'plan-2',	'1.99',	'USD',	1000,	'Active',	'2018-04-20 15:08:21.355268',	'2018-04-20 15:08:21.355268'),
+('com.warp.warpapp.adviews2500', 'advertisement',	'Plan III',	'plan-3',	'4.99',	'USD',	2500,	'Active',	'2018-04-20 15:10:22.46612',	'2018-04-20 15:10:22.46612'),
+('com.warp.warpapp.adviews6000', 'advertisement',	'Plan IV',	'plan-4',	'9.99',	'USD',	6000,	'Active',	'2018-04-20 15:10:22.46612',	'2018-04-20 15:10:22.46612'),
+(NULL, 'promotional',	'Plan I',	'plan-1',	'0.99',	'USD',	500,	'Active',	'2018-04-20 15:07:23.713696',	'2018-04-20 15:07:23.713696'),
+(NULL, 'promotional',	'Plan II',	'plan-2',	'1.99',	'USD',	1000,	'Active',	'2018-04-20 15:08:21.355268',	'2018-04-20 15:08:21.355268'),
+(NULL, 'promotional',	'Plan III',	'plan-3',	'4.99',	'USD',	2500,	'Active',	'2018-04-20 15:10:22.46612',	'2018-04-20 15:10:22.46612'),
+(NULL, 'promotional',	'Plan IV',	'plan-4',	'9.99',	'USD',	6000,	'Active',	'2018-04-20 15:10:22.46612',	'2018-04-20 15:10:22.46612');
 
 /*** For Scrapper Tables ***/
+DROP TABLE IF EXISTS eventbrite_events;
 CREATE TABLE eventbrite_events (
     "id" BIGSERIAL NOT NULL,
     "eventbrite_event_id"  character varying(255) NOT NULL,
@@ -443,7 +456,7 @@ CREATE TABLE eventbrite_events (
     "event_status" character varying(255) DEFAULT NULL,
     "group_id" character varying(255) DEFAULT NULL,
     "spayc_id" bigint DEFAULT NULL,
-    CONSTRAINT "eventbrite_events_pkey" PRIMARY KEY ("id", "eventbrite_event_id", "created")
+    PRIMARY KEY ("id", "eventbrite_event_id", "created")
 );
 COMMENT ON COLUMN "eventbrite_events"."start_date" IS 'eventbrite start_date is inside start obj utc';
 COMMENT ON COLUMN "eventbrite_events"."end_date" IS 'eventbrite end_date is inside end obj utc';
@@ -451,6 +464,7 @@ COMMENT ON COLUMN "eventbrite_events"."location" IS 'venue name, address obj, ci
 COMMENT ON COLUMN "eventbrite_events"."category" IS 'category_id, subcategory_id';
 COMMENT ON COLUMN "eventbrite_events"."website" IS '1 for eventbrite, 2 for ticketmaster, 3 for stubhub';
 
+DROP TABLE IF EXISTS stubhub_events;
 CREATE TABLE stubhub_events (
     "id" BIGSERIAL NOT NULL,
     "stubhub_event_id" character varying(255) NOT NULL,
@@ -473,13 +487,14 @@ CREATE TABLE stubhub_events (
     "event_status" character varying(255) DEFAULT NULL,
     "group_id" character varying(255) DEFAULT NULL,
     "spayc_id" bigint DEFAULT NULL,
-    CONSTRAINT "stubhub_events_pkey" PRIMARY KEY ("id", "stubhub_event_id", "created")
+    PRIMARY KEY ("id", "stubhub_event_id", "created")
 );
 COMMENT ON COLUMN "stubhub_events"."start_date" IS 'stubhub start_date id eventDateUTC';
 COMMENT ON COLUMN "stubhub_events"."location" IS 'venue name, address1, city, state, postalCode, country';
 COMMENT ON COLUMN "stubhub_events"."category" IS 'categories array';
 COMMENT ON COLUMN "stubhub_events"."website" IS '1 for eventbrite, 2 for ticketmaster, 3 for stubhub';
 
+DROP TABLE IF EXISTS ticketmaster_events;
 CREATE TABLE ticketmaster_events (
     "id" BIGSERIAL NOT NULL,
     "ticketmaster_event_id" character varying(255) NOT NULL,
@@ -512,6 +527,7 @@ COMMENT ON COLUMN "ticketmaster_events"."website" IS '1 for eventbrite, 2 for ti
 ALTER TABLE "spaycs" ADD "is_admin_update" smallint NULL DEFAULT '0';
 ALTER TABLE "spaycs" ADD "website" integer DEFAULT NULL;
 
+DROP TABLE IF EXISTS scraper_categories;
 CREATE TABLE scraper_categories (
     id BIGSERIAL NOT NULL,
     "name" character varying(250) NULL,
@@ -524,6 +540,7 @@ CREATE TABLE scraper_categories (
 );
 COMMENT ON COLUMN "scraper_categories"."website" IS '1 for eventbrite, 2 for ticketmaster, 3 for stubhub';
 
+DROP TABLE IF EXISTS scraper_spayc_categories;
 CREATE TABLE scraper_spayc_categories (
     "id" BIGSERIAL NOT NULL,
     "spayc_id" bigint NOT NULL,
@@ -547,14 +564,19 @@ SELECT asin(
 ) * 7926.3352 * 1609.34 AS distance;
 $BODY$
 LANGUAGE sql IMMUTABLE;
-
-CREATE TABLE scraper_logs (
-    "id" BIGSERIAL NOT NULL,
-    "status" character varying(255) NULL,
+DROP TABLE IF EXISTS scraper_logs;
+CREATE TABLE "scraper_logs" (
+    "id" bigint DEFAULT nextval('scraper_logs_id_seq') NOT NULL,
+    "status" character varying(255),
     "created" timestamp NOT NULL,
-    "modified" timestamp,
-    PRIMARY KEY (id)
-);
+    "modified" timestamp NOT NULL,
+    "start_time" timestamp,
+    "end_time" timestamp,
+    "unique_time" character varying(250) NOT NULL,
+    "response" text,
+    "shell" character varying(250),
+    CONSTRAINT "scraper_logs_pkey" PRIMARY KEY ("id")
+) WITH (oids = false);
 
 ALTER TABLE "spaycs"
 ALTER "name" TYPE character varying(255),

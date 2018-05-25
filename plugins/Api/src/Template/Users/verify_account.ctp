@@ -18,12 +18,12 @@
         <!--================forgot password=====================-->
         <div class="forgot-password-box forgot-password-web">
           <div class="logo-wrap">
-            <?php echo $this->Html->image('logo-gr.png', ['alt' => 'Spayc']);?>
+            <?php echo $this->Html->image('logo-gr.png', ['alt' => 'Warp']);?>
               <h4>Account Verification</h4>
           </div>
             <div class="success-reset-password">                
             <div class="logo-wrap hide">
-                <?php echo $this->Html->image('logo-gr.png', ['alt' => 'Spayc']);?>
+                <?php echo $this->Html->image('logo-gr.png', ['alt' => 'Warp']);?>
             </div>
             <span> <?= $this->Flash->render() ?></span>
           </div>

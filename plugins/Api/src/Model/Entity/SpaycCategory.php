@@ -32,17 +32,8 @@ class SpaycCategory extends Entity
      *
      * @var array
      */
-    protected $_accessible = [
-        'parent_id' => true,
-        'lft' => true,
-        'right' => true,
-        'name' => true,
-        'slug' => true,
-        'description' => true,
-        'status' => true,
-        'created' => true,
-        'modified' => true,
-        'parent_spayc_category' => true,
-        'child_spayc_categories' => true
+     protected $_accessible = [
+        '*' => true,
+        'id' => false
     ];
 }

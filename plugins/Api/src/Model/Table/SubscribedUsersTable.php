@@ -6,6 +6,8 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Database\Expression\QueryExpression;
+use Cake\ORM\TableRegistry;
 
 /**
  * SubscribedUsers Model
@@ -92,6 +94,51 @@ class SubscribedUsersTable extends Table {
             return false;
         }
         return $this->deleteAll(['spayc_id' => $spaycId,'user_id'=>$userId]);
+    }
+    
+    public function isSubscribed($userId,$status='Active'){
+        if(empty($userId)){
+            return false;
+        }
+        return $this->exists(['user_id'=>$userId,'status'=>$status]);
+    }
+    
+    /**
+     * subscribedSpayc to give the list of spayc whom user subscribed
+     * 
+     * @param integer $userId get user subscribed user
+     * @return Object array of object of spayc list
+     */
+    public function subscribedSpayc($userId = null,$status = null,$page = null,$limit =null){
+        if(empty($userId)){
+            return [];
+        }
+        $joinedQuery = TableRegistry::get('Api.JoinedSpayc')->find()
+                ->select(['spayc_id'])
+                ->distinct()
+                ->where(['user_id' => $userId]);
+        $query = $this->Spaycs->find();
+        $query->select(['Spaycs.id', 'Spaycs.matrix_room_id'])
+                ->where(['Spaycs.status'=>'Active','Spaycs.group_type !='=>'trusted_private']);
+        $query->innerJoinWith('SubscribedUsers',function($q)use($userId,$status) {
+            if(!empty($status)){
+                $q->where(['SubscribedUsers.status'=>$status]);
+            }
+            $q->where(['SubscribedUsers.user_id'=>$userId]);
+            return $q;
+        });
+        $query->where(function (QueryExpression $exp, Query $q) use ($joinedQuery) {
+            return $exp->notIn('Spaycs.id',$joinedQuery);
+        });
+        $query->order(['Spaycs.created'=>'DESC']);
+        if(!empty($limit)){
+            $query->limit($limit);
+        }
+        
+        if(!empty($page)){
+            $query->page($page);
+        }
+        return $query;
     }
 
 }

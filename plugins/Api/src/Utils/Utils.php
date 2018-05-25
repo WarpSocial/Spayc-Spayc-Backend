@@ -402,5 +402,10 @@ class Utils {
             return number_format($miles,5);
         }
     }
+    
+    public static function uniqueInteger(){
+        list($usec, $sec) = explode(" ", microtime());
+        return ((float)$usec + (float)$sec) + strtotime();
+    }
 
 }

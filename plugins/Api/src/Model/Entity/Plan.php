@@ -28,14 +28,9 @@ class Plan extends Entity {
      *
      * @var array
      */
-    protected $_accessible = [
-        'name' => true,
-        'slug' => true,
-        'amount' => true,
-        'currency' => true,
-        'views' => true,
-        'status' => true,
-        'modified' => true
+     protected $_accessible = [
+        '*' => true,
+        'id' => false
     ];
 
 }

@@ -80,7 +80,7 @@ Router::plugin(
         
         $routes->connect('/promotion-logic-start', ['controller' => 'Plans', 'action' => 'promotionLogicStart']);
         $routes->connect('/promotion-logic', ['controller' => 'Plans', 'action' => 'promotionLogic']);
-        
+         $routes->connect('/subscribed-spaycs',['controller'=>'Spaycs', 'action'=>'userSubscribedSpaycs']);
         
         $routes->fallbacks(DashedRoute::class);
     }

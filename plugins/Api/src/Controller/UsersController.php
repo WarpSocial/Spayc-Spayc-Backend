@@ -317,10 +317,10 @@ class UsersController extends AppController {
                     'username'=>$data['username'],
                     'display_name'=>$data['display_name'],
                     'email'=>$data['email'],
-                    'dob'=>$data['dob'],
-                    'gender'=>trim($data['gender']),
+                    'dob'=> Utils::getVar('dob',$data),
+                    'gender'=> Utils::getVar('gender',$data),
                     'country_code'=> Utils::getVar('country_code',$data),
-                    'phone'=>$data['phone'],
+                    'phone'=>Utils::getVar('phone',$data),
                     'latitude'=>  Utils::getVar('latitude',$data),
                     'longitude'=>Utils::getVar('longitude',$data)
                 ]];
@@ -678,7 +678,7 @@ class UsersController extends AppController {
         $frObj = TableRegistry::get('Api.FriendRequest');
         $spaceUsr = $this->Users->exists(['id'=>$data['friend_id']]);
         if(!$spaceUsr){
-            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with warp.')], 400);
         }
         if($data['friend_id'] == $loggedUser['id']){
             $this->restException(['status'=>'failed','message'=>__('You could not {0} himself.', strtolower($data['friend_status']))],400);
@@ -793,7 +793,7 @@ class UsersController extends AppController {
         $frObj = TableRegistry::get('Api.FriendRequest');
         $spaceUsr = $this->Users->exists(['id'=>$data['friend_id']]);
         if(!$spaceUsr){
-            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with warp.')], 400);
         }
         $loggedUser = $this->Auth->user();   
         
@@ -892,7 +892,7 @@ class UsersController extends AppController {
         $frObj = TableRegistry::get('Api.FriendRequest');
         $spaceUsr = $this->Users->exists(['id'=>$data['friend_id']]);
         if(!$spaceUsr) {
-            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with warp.')], 400);
         }
         $loggedUser = $this->Auth->user();
         $requestedFrnd = $frObj->find()->Where(['OR'=>[
@@ -957,7 +957,7 @@ class UsersController extends AppController {
         $frObj = TableRegistry::get('Api.FriendRequest');
         $spaceUsr = $this->Users->exists(['id'=>$data['friend_id']]);
         if(!$spaceUsr) {
-            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with warp.')], 400);
         }
         $requestedFrnd = $frObj->find()->Where(['OR'=>[
             ['requested_by' => $loggedUser['id'],'requested_to'=>$data['friend_id']],
@@ -1046,7 +1046,7 @@ class UsersController extends AppController {
         $frObj = TableRegistry::get('Api.FriendRequest');
         $spaceUsr = $this->Users->exists(['id'=>$data['friend_id']]);
         if(!$spaceUsr) {
-            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with warp.')], 400);
         }
         $loggedUser = $this->Auth->user();
         $requestedFrnd = $frObj->find()->Where(['OR'=>[
@@ -1098,7 +1098,7 @@ class UsersController extends AppController {
         $frObj = TableRegistry::get('Api.FriendRequest');
         $spaceUsr = $this->Users->exists(['id'=>$data['friend_id']]);
         if(!$spaceUsr) {
-            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('User is not registered with warp.')], 400);
         }
         $loggedUser = $this->Auth->user();
         $requestedFrnd = $frObj->find()->Where(['OR'=>[
@@ -1150,7 +1150,7 @@ class UsersController extends AppController {
         $frObj = TableRegistry::get('Api.FriendRequest');
         $spaceUsr = $this->Users->exists(['id'=>$data['friend_id']]);
         if(!$spaceUsr){
-             $this->restException(['status'=>'failed', 'message'=>__('User is not registered with spayc.')], 400);
+             $this->restException(['status'=>'failed', 'message'=>__('User is not registered with warp.')], 400);
         }
         $loggedUser = $this->Auth->user();     
          if(in_array($data['friend_status'],['Decline','Unfriend'])){
@@ -1383,11 +1383,57 @@ class UsersController extends AppController {
         if(!$this->request->is(['post'])) {
             $this->restException($blankObj); 
         }
-        //Log::info(json_encode($pushData,JSON_PRETTY_PRINT));
+        
         $data = $this->request->getData();
-        //$this->Users->pusherNotification($data);
-        TableRegistry::get('Queue.QueuedJobs')->createJob('Pusher',$data);
+        Log::info($data);
+        //$this->Users->pusherData($data);
+        /* for direct notification */
+        if(!empty($data['notification']['content']['actionBy']) && ($data['notification']['content']['actionBy'] == 'Self' )){
+            $this->restException($blankObj); 
+        }
+        if(!empty($data['notification']['content']['msgtype'])){
+            $msgType = $data['notification']['content']['msgtype'];
+        }else{
+            $this->restException($blankObj); 
+        }
+        if(!empty($msgType)){
+            if( ($msgType == 'm.likeMessage') && !empty($data['notification']['content']['disLikeMembers'])){
+                $this->restException($blankObj); 
+            }
+        }
+        if(empty($data['notification']['devices'][0])){
+            $this->restException($blankObj); 
+        }
+        $device = $data['notification']['devices'][0];
+        $users = $this->Users->findByDeviceTokenOrMatrixUserId($device['pushkey'],$data['notification']['sender'])->select(['id','matrix_user_id','device_token']);
+        
+        $senderId = null;$receiverId = null;
+        if(!$users->isEmpty()) {
+            #pj($users);die;
+            $senderId = $users->firstMatch(['matrix_user_id'=>$data['notification']['sender']]);
+            $receiverId = $users->firstMatch(['device_token'=>$device['pushkey']]);
+        }
+        
+        $items = $this->Users->pusherNotification($data);
+        if(empty($items)){
+            $this->restException($blankObj);
+        }
+        $items['device_token'] = $deviceToken = $device['pushkey'];
+        $items['date_time'] = date('m-d-Y H:i:s',$device['pushkey_ts']);
+        if(!empty($senderId) && !empty($receiverId) && in_array($msgType,['m.replyText','m.likeMessage'])){
+            $saveNotification = TableRegistry::get("Api.Notifications")->addNotification(array_merge($items,['requested_by'=>$senderId->id,'requested_to'=>$receiverId->id,'date_time'=>$items['date_time']]));            
+            $items['id'] = $saveNotification->id;
+            $items['requested_by'] = $senderId->id;
+        }
+        $this->loadComponent('Api.Notification');
+        //$this->Push->sendOnIOS($items);
+        Log::info($items);
+        $this->Notification->iosPush($items,$deviceToken);        
+        /* Rest job will be done by workers */
+        //$data['items'] = $items;
+        //TableRegistry::get('Queue.QueuedJobs')->createJob('Pusher',$data);
         $this->restException($blankObj);  
+        
     }
     
     public function testPushnotification() {
@@ -1503,6 +1549,8 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
         $data = $this->request->getData();
+        $user = $this->Auth->user();
+        pr($user);die;
         if(empty($data['is_notify'])) {
             $this->restException(['status'=>'failed','message'=>'is_notify is required field.'], 400);
         }
@@ -1517,8 +1565,17 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed','message'=>'Invalid device token'], 400);
         }*/
         
-        $modified = new \Cake\I18n\Time();        
-        $this->Users->UpdateAll(['is_notify'=>$isNotify, 'modified'=>$modified], ['Users.id'=>$this->Auth->user('id')]);
+        $modified = new \Cake\I18n\Time();
+        $userToken = $this->Users->findByDeviceToken($data['device_token'])->first();
+        /* if device token exist for different user then will reset previous value */
+        if(!empty($userToken)){
+            if($userToken->id != $user['id']){
+                $userToken->device_token = null;
+                $this->Users->save($userToken);
+            }
+        }
+        $this->Users->UpdateAll(['is_notify'=>$isNotify,'device_token'=>$data['device_token'], 'modified'=>$modified], ['Users.id'=>$user['id']]);
+        
         TableRegistry::get('Api.UserLogs')->UpdateAll(['device_token'=>$data['device_token'], 'modified'=>$modified], ['user_id'=>$this->Auth->user('id')]);
         $response = ['status'=>'success', 'message'=>__('Device token updated successfully.')];
         $this->set($response);
@@ -1544,15 +1601,15 @@ class UsersController extends AppController {
                     return $q->select(['Spaycs.id', 'Spaycs.name', 'Spaycs.matrix_room_id', 'Spaycs.image']);
             }])->where(['JoinedSpayc.spayc_id'=>$data['spayc_id'],'JoinedSpayc.user_id IN'=>[$data['user_id'],$user['id']]]);
         if($entities->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>__('User has not joined this spayc.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('User has not joined this warp.')], 400);
         }
         $adminEntity = Hash::extract($entities->toArray(), '{n}[user_id='.$user['id'].']');
         $userEntity = Hash::extract($entities->toArray(), '{n}[user_id='.$data['user_id'].']');
         if(empty($adminEntity[0]) || ($adminEntity[0]['status'] != 'Joined')){
-            $this->restException(['status'=>'failed','message'=>__('You are not joined with this spayc.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('You are not joined with this warp.')], 400);
         }
         if(empty($userEntity[0]) || ($userEntity[0]['status'] != 'Joined')){
-            $this->restException(['status'=>'failed','message'=>__('user is not joined with this spayc.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('user is not joined with this warp.')], 400);
         }
         if($adminEntity[0]['is_admin'] <= 0){
             $this->restException(['status'=>'failed','message'=>__('You have no privileges to make someone admin.')], 400);

@@ -50,8 +50,8 @@ class PlansTable extends Table {
     public function validatePromotionalSpayc($data){
         $validator = new Validator();
         $validator
-                ->requirePresence('spayc_id','create', __('Please provide the spayc id'))
-                ->notEmpty('spayc_id',__('Please provide the spayc id'))
+                ->requirePresence('spayc_id','create', __('Please provide the warp id'))
+                ->notEmpty('spayc_id',__('Please provide the warp id'))
                 ->add('spayc_id','uniquekey',[
                     'rule'=>function($value,$context){
                         $array = explode(',',$value);
@@ -60,18 +60,18 @@ class PlansTable extends Table {
                     'message'=>__('Warp must not be repeated.') 
                 ]);                
         $validator
-                ->requirePresence('spayc_promotional_id','create', __('Please provide promotional spayc.'))
-                ->integer('spayc_promotional_id',__('Please provide integer value for promotional spayc.'))
-                ->notEmpty('spayc_promotional_id',__('Please provide promotional spayc.'));
+                ->requirePresence('spayc_promotional_id','create', __('Please provide promotional warp.'))
+                ->integer('spayc_promotional_id',__('Please provide integer value for promotional warp.'))
+                ->notEmpty('spayc_promotional_id',__('Please provide promotional warp.'));
         
         $validator
                 ->requirePresence('plan_id','create', __('Please provide the plan.'))
                 ->notEmpty('plan_id',__('Please provide the plan.'))
-                ->integer('plan_id',__('Please provide integer value for plan.'))
+                //->integer('plan_id',__('Please provide integer value for plan.'))
                 ->add('plan_id','exist',[
                     'rule'=>function($value,$context){
                         if(!empty($value)){
-                            return  TableRegistry::get('Api.Plans')->exists(['id'=>$value]);
+                            return  TableRegistry::get('Api.Plans')->exists(['OR'=>[['id'=>$value],'app_plan_id'=>$value]]);
                         }else{
                             return false;
                         }
@@ -101,7 +101,7 @@ class PlansTable extends Table {
      */
     public function allPlans() {
         $items = $this->find()
-                ->select(['id', 'name', 'slug', 'amount', 'currency', 'views', 'created', 'modified'])
+                ->select(['id','app_plan_id','type', 'name', 'slug', 'amount', 'currency', 'views', 'created', 'modified'])
                 ->where(['status' => ACTIVE])
                 ->order(['name'=>'ASC'])
                 ->map(function($row) {

@@ -35,7 +35,15 @@ class PlansController extends AppController {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
         }
         $items['categories'] = TableRegistry::get('Api.SpaycCategories')->allCategories();
-        $items['plans'] = TableRegistry::get('Api.Plans')->allPlans();
+        $plans = TableRegistry::get('Api.Plans')->allPlans();
+        foreach($plans as $plan){
+            if($plan->type == 'advertisement'){
+                $items['plans'][] = $plan;
+            }else{
+                $items['promotional_plan'][]  = $plan;
+            }
+            
+        }
         $response = ['status'=>'success','Message'=>'List of meta-data details.','data'=>$items];
         $this->set($response);
     }
@@ -55,6 +63,10 @@ class PlansController extends AppController {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
         $user = $this->Auth->user();
+        $sps = explode(',', $data['spayc_promotional_id']);
+        if(in_array($data['spayc_id'],$sps)){
+            $this->restException(['status'=>'failed', 'message'=> __('You couldn\'t promote same warp from existing warp.')], 400);
+        }
         $data['pspaycs'] = explode(',', $data['spayc_promotional_id'].','.$data['spayc_id']) ;        
         $sRepo = TableRegistry::get('Api.Spaycs');
         $spaycs = $sRepo->find()->contain(['JoinedSpayc'=>function($q)use($user){
@@ -83,14 +95,14 @@ class PlansController extends AppController {
             }            
         }
         if(!$pspayc){
-             $this->restException(['status'=>'failed', 'message'=> __('Promotional Spayc is no longer available.')], 400);
+             $this->restException(['status'=>'failed', 'message'=> __('Promotional warp is no longer available.')], 400);
         }
         if(count($wherePromote) != count(explode(',',$data['spayc_id']))){
-            $this->restException(['status'=>'failed', 'message'=> __('Some of spayc id is no longer available.')], 400);
+            $this->restException(['status'=>'failed', 'message'=> __('Some of warp id is no longer available.')], 400);
         }
         
         
-        $plan = $this->Plans->get($data['plan_id']);
+        $plan = $this->Plans->find()->where(['OR'=>['id'=>$data['plan_id'],'app_plan_id'=>$data['plan_id']]])->first();
         
         $purchase = [
             'plan_id'=>$data['plan_id'],
@@ -155,7 +167,7 @@ class PlansController extends AppController {
         $data = $this->request->getData();
         $user = $this->Auth->user();
          if(!isset($data['spayc_id'])) {
-            $this->restException(['status' => 'failed', 'message' => __('Spayc ID field required.')], 400);
+            $this->restException(['status' => 'failed', 'message' => __('Warp ID field required.')], 400);
         }
          if(!isset($data['cycle'])) {
             $this->restException(['status' => 'failed', 'message' => __('Cycle field required.')], 400);
@@ -269,8 +281,11 @@ class PlansController extends AppController {
                         'spayc.group_type',
                         'spayc.start_date',
                         'spayc.end_date',
+                        'spayc.spayc_category_id',
+                        'sc.id',
+                        'sc.name',
                         'joined_spayc_status'=>'joined_spayc.status',
-                        ]])
+                        ]])                
                 ->join(
                         [
                             'table' => 'promotions',
@@ -309,33 +324,52 @@ class PlansController extends AppController {
                             ]
                         ]
                 )
-                     ->join(
-        [
-        'table' => 'friend_request',
-        'type' => 'LEFT',
-        'conditions' =>
-        [
-            'OR' =>[
-            [
-                'friend_request.requested_by = promotions.user_id', 'friend_request.requested_to = '.$user['id']
-            ],
-            [
-                'friend_request.requested_to = promotions.user_id', 'friend_request.requested_by = '.$user['id']
-            ]
-                             ]
-        ]
-        ]
-        )
+                ->join([
+                    'table' => 'spayc_categories',
+                    'alias' => 'sc',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'sc.id = spayc.spayc_category_id',
+                    ]
+                ])
+                ->join([
+                    'table' => 'friend_request',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'OR' =>[
+                            [
+                                'friend_request.requested_by = promotions.user_id', 'friend_request.requested_to = '.$user['id']
+                            ],
+                            [
+                                'friend_request.requested_to = promotions.user_id', 'friend_request.requested_by = '.$user['id']
+                            ]
+                        ]
+                    ]
+                ])
+                
+                
                 ->where(['SpaycPromotion.spayc_id'=>$data['spayc_id'],"balance > 0","promotion_status"=>1,'promotions.status'=>'Active'])
                 ->order(['SpaycPromotion.priority' => 'ASC'])
                 ->limit(1)
                 ;
-        
         $data=[];
         if($ad->isEmpty()){
              $this->restException(['status'=>'failed','message'=>'Promotion not found.'], 404);
+        }
+        $data=$ad->first();
+        if(!empty($data['sc'])){
+            $data['spayc']['spayc_category'] = $data['sc'];
+            unset($data['sc']);
+        }
+        if($data->spayc['type']=='Event'){
+        $timezone = Configure::read('timezone');
+        $sd = new \Cake\I18n\Time($data->spayc['start_date'], 'UTC');
+        $data->spayc['start_date'] = $sd->setTimezone(new \DateTimeZone($timezone))->format('Y-m-d H:i:s');
+        $ed = new \Cake\I18n\Time($data->spayc['end_date'], 'UTC');
+        $data->spayc['end_date'] = $ed->setTimezone(new \DateTimeZone($timezone))->format('Y-m-d H:i:s');
         }else{
-            $data=$ad->first();
+            unset($data->spayc['start_date']);
+            unset($data->spayc['end_date']);
         }
         $data['frequency']=$frequency;
         $response = ['status' => 'success', 'message' => __('Promotion Find Successfully'), 'data' => $data];
@@ -350,7 +384,7 @@ class PlansController extends AppController {
         $data = $this->request->getData();
         $user = $this->Auth->user();
          if(!isset($data['spayc_id'])) {
-            $this->restException(['status' => 'failed', 'message' => __('Spayc ID field required.')], 400);
+            $this->restException(['status' => 'failed', 'message' => __('Warp ID field required.')], 400);
         }
         
         
@@ -415,6 +449,8 @@ class PlansController extends AppController {
                         'spayc.group_type',
                         'spayc.start_date',
                         'spayc.end_date',
+                        'sc.id',
+                        'sc.name',
                         'joined_spayc_status'=>'joined_spayc.status',
                         
                         ]])
@@ -456,6 +492,14 @@ class PlansController extends AppController {
                             ]
                         ]
                 )
+                ->join([
+                    'table' => 'spayc_categories',
+                    'alias' => 'sc',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'sc.id = spayc.spayc_category_id',
+                    ]
+                ])
                 ->where(['SpaycPromotion.spayc_id'=>$data['spayc_id'],"balance > 0",'promotions.status'=>'Active'])
                 ->order(['SpaycPromotion.priority' => 'ASC'])
                 ->limit(1)
@@ -464,8 +508,22 @@ class PlansController extends AppController {
         $data=[];
         if($ad->isEmpty()){
              $this->restException(['status'=>'failed','message'=>'Promotion not found.'], 404);
+        }
+        
+        $data=$ad->first();
+        if(!empty($data['sc'])){
+            $data['spayc']['spayc_category'] = $data['sc'];
+            unset($data['sc']);
+        }
+        if($data->spayc['type']=='Event'){
+        $timezone = Configure::read('timezone');
+        $sd = new \Cake\I18n\Time($data->spayc['start_date'], 'UTC');
+        $data->spayc['start_date'] = $sd->setTimezone(new \DateTimeZone($timezone))->format('Y-m-d H:i:s');
+        $ed = new \Cake\I18n\Time($data->spayc['end_date'], 'UTC');
+        $data->spayc['end_date'] = $ed->setTimezone(new \DateTimeZone($timezone))->format('Y-m-d H:i:s');
         }else{
-            $data=$ad->first();
+            unset($data->spayc['start_date']);
+            unset($data->spayc['end_date']);
         }
         $data['frequency']=$frequency;
         $response = ['status' => 'success', 'message' => __('Promotion Find Successfully'), 'data' => $data];
