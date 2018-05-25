@@ -673,6 +673,7 @@ class SpaycsTable extends Table {
     
             $spaycs = $this->find()
                 ->select([
+                    'distance' => $distanceField,
                     'id', 
                     'name', 
                     'matrix_room_id', 
@@ -681,7 +682,8 @@ class SpaycsTable extends Table {
                     'modified', 
                     'spayc_category_id',
 //                    'parent_id',
-                    'latitude','longitude'])
+                    'latitude','longitude',
+                    "score"=>"(case when website = 0 then 1 else 0 end)"])
                 ->where(["$distanceField <=" => $distance, 'Spaycs.status'=>'Active',
                     'Spaycs.group_type !='=>'trusted_private', 
                     'Spaycs.parent_id IS'=>null
@@ -738,6 +740,7 @@ class SpaycsTable extends Table {
         
         if(isset($request['wrap_with_friends']) && $request['wrap_with_friends']=="yes") {
         $child= TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId);
+        if(!empty($child)){
           $spaycs->join(
                 [
                     'table' => 'joined_spayc',
@@ -748,6 +751,7 @@ class SpaycsTable extends Table {
                     ]
                 ]
             );
+        }
            
         }
         if(isset($request['hashtag_id']) && $request['hashtag_id']) {
@@ -798,7 +802,10 @@ class SpaycsTable extends Table {
             });
         });
         #$spaycs->order(['Spaycs.id'=>'DESC']);
-        $spaycs->distinct('spaycs.id');
+//        $spaycs->group('distance HAVING distance > 0');
+        $spaycs->order(['score'=>'DESC','distance'=>'ASC','start_date'=>'ASC']);
+        $spaycs->limit(MAP_LIMIT);
+        $spaycs->groupBy('spaycs.id');
         
         $newQuery = clone $spaycs;
         $data['count'] = $newQuery->count();
