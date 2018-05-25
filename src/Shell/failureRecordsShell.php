@@ -15,7 +15,7 @@ use App\Controller\Component\ScraperComponent;
 /**
  * Savedata shell command.
  */
-class CreateUpdateSpaycShell extends Shell
+class failureRecordsShell extends Shell
 {
 
     /**
@@ -45,11 +45,20 @@ class CreateUpdateSpaycShell extends Shell
     {
         $this->out($this->OptionParser->help());
         $time=UNIQUE_TOKEN;
-        $this->Scraper->setScraperLog('Create and Update Spayc',$time);
-        $this->out('Process start at '.$this->Scraper->currentDateTime());
-         $response = $this->Scraper->saveDataSpaceTable();
-        $this->out('Response - '.$response);
-         $this->Scraper->updateScraperLog($time);
-        $this->out('Completed at '.$this->Scraper->currentDateTime());
+        $data=$this->Scraper->failureRecords();
+        if(!empty($data)){
+            foreach($data as $val){
+                $this->Scraper->updateScraperLog($val['unique_time']);
+                $this->dispatchShell($val['shell']);
+            }
+        }
+        
+        $data=$this->Scraper->failureRecords();
+        if(!empty($data)){
+            foreach($data as $val){
+                // Mail function Here
+            }
+        }
+        
     }
 }

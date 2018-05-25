@@ -39,13 +39,18 @@ class ScraperCategoriesShell extends Shell
     public function main()
     {
         $this->out('Process start at '.$this->Scraper->currentDateTime());
-        $this->Scraper->setScraperLog('save categories,subcategories from Eventbrite and Ticketmaster process start');
-        $response = $this->Scraper->getEventBriteCategories(1, NULL,'categories');
+        $time=UNIQUE_TOKEN;
+        $this->Scraper->setScraperLog('Scraping Eventbrite and TicketMaster Categories',$time,'ScraperCategories');
+        $response = $this->Scraper->getEventBriteCategories(1, NULL,'categories',$time);
         if($response)
-        $response = $this->Scraper->getEventBriteCategories(1, NULL,'subcategories');
+        $response = $this->Scraper->getEventBriteCategories(1, NULL,'subcategories',$time);
         if($response)
-        $response = $this->Scraper->getTicketmasterCategories();
-        $this->Scraper->setScraperLog('save categories,subcategories from Eventbrite and Ticketmaster process end');
+        $response = $this->Scraper->getTicketmasterCategories($time);
+        $this->Scraper->updateScraperLog($time);
         $this->out('Process end at '.$this->Scraper->currentDateTime());
     }
+     public function maina()
+    {
+         $this->out("asd");
+     }
 }
