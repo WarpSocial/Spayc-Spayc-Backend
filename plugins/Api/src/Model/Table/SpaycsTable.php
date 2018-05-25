@@ -740,6 +740,7 @@ class SpaycsTable extends Table {
         
         if(isset($request['wrap_with_friends']) && $request['wrap_with_friends']=="yes") {
         $child= TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId);
+        if(!empty($child)){
           $spaycs->join(
                 [
                     'table' => 'joined_spayc',
@@ -750,6 +751,7 @@ class SpaycsTable extends Table {
                     ]
                 ]
             );
+        }
            
         }
         if(isset($request['hashtag_id']) && $request['hashtag_id']) {
