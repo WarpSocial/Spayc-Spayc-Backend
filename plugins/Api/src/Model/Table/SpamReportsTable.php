@@ -47,12 +47,12 @@ class SpamReportsTable extends Table {
             'className' => 'Api.Spaycs'
         ]);
         
-        $this->belongsTo('ReportedBy', [
+        $this->belongsTo('Reportedby', [
             'foreignKey' => 'reported_by',
             'joinType' => 'INNER',
             'className' => 'Api.Users'
         ]);
-        $this->belongsTo('ReportedTo', [
+        $this->belongsTo('Reportedto', [
             'foreignKey' => 'reported_to',
             'joinType' => 'INNER',
             'className' => 'Api.Users'

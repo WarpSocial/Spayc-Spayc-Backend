@@ -30,18 +30,30 @@ class WebApiController extends AppController {
         if (!$this->request->is(['post'])) {
             $this->restException(['status' => 'failed', 'message' => __('Method not allowed.')], 405);
         }
+        $user = $this->Auth->user();
         $data = $this->request->getData();
         $srRegistory = TableRegistry::get('Api.SpamReports');
         $errors = $srRegistory->validateInput($data);
         if(!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
-        
-        
-        
-        $items = $srEntity->patchEntity($entity, $data,['associated'=>['PhysicalLocation']]);
-        if($items->errors()) {
-            $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
+        $reportedUser = TableRegistry::get('Api.Users')->findByMatrixUserId($data['reported_to'])->first();
+        $spaycs = TableRegistry::get('Api.Spaycs')->findByMatrixRoomId($data['matrix_room_id'])->first();
+        if($reportedUser->id == $user['id']){
+            $this->restException(['status'=>'failed', 'message'=>__('Youd couldn\'t make himself as spam user.')], 400);
+        }
+        if($srRegistory->exists(['reported_to'=>$reportedUser->id,'reported_by'=>$user['id'],'spayc_id'=>$spaycs->id])){
+            $this->restException(['status'=>'failed', 'message'=>__('You have already reported this user as spam user.Admin will take care about this reports.')], 400);
+        }
+        $srEntity = $srRegistory->newEntity();
+        $srEntity->spayc_id = $spaycs->id;
+        $srEntity->reported_by = $user['id'];
+        $srEntity->reported_to = $reportedUser->id;
+        $srEntity->event_id = $data['event_id'];
+        if($srRegistory->save($srEntity)){
+            $this->restException(['status'=>'success', 'message'=>__('You have reported successfully.')], 200);
+        }else{
+            $this->restException(['status'=>'failed', 'message'=>__('Failed to make user as spam user.')], 400);
         }
     }
 
