@@ -4,6 +4,7 @@ namespace Api\Controller;
 
 use Api\Controller\AppController;
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Hash;
 
 /**
  * WebApi Controller
@@ -37,10 +38,20 @@ class WebApiController extends AppController {
         if(!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
+        
         $reportedUser = TableRegistry::get('Api.Users')->findByMatrixUserId($data['reported_to'])->first();
         $spaycs = TableRegistry::get('Api.Spaycs')->findByMatrixRoomId($data['matrix_room_id'])->first();
         if($reportedUser->id == $user['id']){
             $this->restException(['status'=>'failed', 'message'=>__('Youd couldn\'t make himself as spam user.')], 400);
+        }
+        $joinedCheck = TableRegistry::get('Api.JoinedSpayc')->find()->where(['spayc_id'=>$spaycs->id,'user_id IN'=>[$reportedUser->id,$user['id']]])->toArray();
+        $loggedUserStatus = Hash::extract($joinedCheck, '{n}[user_id='.$user['id'].']');
+        $reportedUserStatus = Hash::extract($joinedCheck, '{n}[user_id='.$reportedUser->id.']');
+        if(empty($loggedUserStatus)){
+            $this->restException(['status'=>'failed', 'message'=>__('Your are not joined with this warp.')], 400);
+        }
+        if(empty($reportedUserStatus)){
+            $this->restException(['status'=>'failed', 'message'=>__('Reported user has not been joined with this warp.')], 400);
         }
         if($srRegistory->exists(['reported_to'=>$reportedUser->id,'reported_by'=>$user['id'],'spayc_id'=>$spaycs->id])){
             $this->restException(['status'=>'failed', 'message'=>__('You have already reported this user as spam user.Admin will take care about this reports.')], 400);
