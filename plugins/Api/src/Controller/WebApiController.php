@@ -62,7 +62,7 @@ class WebApiController extends AppController {
         $srEntity->reported_to = $reportedUser->id;
         $srEntity->event_id = $data['event_id'];
         if($srRegistory->save($srEntity)){
-            $this->restException(['status'=>'success', 'message'=>__('You have reported successfully.')], 200);
+            $this->restException(['status'=>'success', 'message'=>__('You have reported successfully.'),'data'=>[]], 200);
         }else{
             $this->restException(['status'=>'failed', 'message'=>__('Failed to make user as spam user.')], 400);
         }
