@@ -549,7 +549,7 @@ function postChatRoom() { return; }
  * 
 
     @apiParam {String}     room_id      Spayc matrix room id or spayc id in query string (Required).
-    @apiParam {String}      status     Status of user, value must be any one from following(Pending|Joined) (Optional).
+    @apiParam {String}      status     Status of user, value must be any one or comma separated from following(Pending|Joined|Banned) (Optional).
     @apiParam {Digit}      page        Page no(Optional).
     @apiParam {Digit}      limit       No of record to retrieve(Optional).
  *

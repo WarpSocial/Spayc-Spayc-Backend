@@ -322,7 +322,7 @@ class SpaycsController extends AppController {
         }
         
         if($this->request->query('end_date')) {
-            $date = new \Cake\I18n\Time($this->request->query('start_date'));
+            $date = new \Cake\I18n\Time($this->request->query('end_date'));
             $endDate = Utils::setUtc($date->format('Y-m-d H:i:s'), Configure::read("timezone"));
             $spaycs->where(["Spaycs.end_date <="=>$endDate]);
         }

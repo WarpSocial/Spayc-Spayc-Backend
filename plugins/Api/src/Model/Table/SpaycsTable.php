@@ -486,6 +486,9 @@ class SpaycsTable extends Table {
         if(empty($room_id)){
             return false;
         }
+        if(!empty($status)){
+            $status = explode(',', strtolower($status));
+        }
         $loggedUser = Configure::read('auth');
         $query = $this->Users->find();
         $query->select(['Users.id', 'Users.username','Users.display_name', 'Users.email','Users.matrix_user_id','JoinedSpayc.status']);
@@ -506,7 +509,7 @@ class SpaycsTable extends Table {
         $query->innerJoinWith('JoinedSpayc',function($q)use($room_id ,$status,$loggedUser) {
                 $condition = ['JoinedSpayc.spayc_id'=>$room_id ,'JoinedSpayc.user_id !='=>$loggedUser['id']];
                 if($status != null){
-                    $condition['JoinedSpayc.status'] = $status;
+                    $condition['LOWER(JoinedSpayc.status) IN'] = $status;
                 }
                 return $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin','JoinedSpayc.distance','JoinedSpayc.updated_by'])->where($condition)->order(['JoinedSpayc.created'=>'DESC']);;
         });

@@ -3334,7 +3334,7 @@
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>Status of user, value must be any one from following(Pending|Joined) (Optional).</p> "
+            "description": "<p>Status of user, value must be any one or comma separated from following(Pending|Joined|Banned) (Optional).</p> "
           },
           {
             "group": "Parameter",
