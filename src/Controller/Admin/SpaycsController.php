@@ -350,8 +350,28 @@ class SpaycsController extends AdminController
             }
 
             if ($this->Spaycs->save($spayc)) {
-                
-                $spayc =$this->Spaycs->get($spayc->id);
+                $spayc_id=$spayc->id;
+//                $spayc =$this->Spaycs->get($spayc->id);
+                 $spaycs = $this->Spaycs->find();
+        $spaycs->select()            
+             ->where(['id'=>$spayc->id])
+                ->contain([
+                 'JoinedSpayc' => function($q) {
+                     return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.distance'])->where(['JoinedSpayc.status'=>JOINED]);
+                 }   ]);
+            
+//                  $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($spayc_id){
+//                          return $results->map(function ($row) use($spayc_id) {
+//                $row['joined_users'] = TableRegistry::get('JoinedSpayc')->getJoinedUserIds($spayc_id);
+//                $present = 0;$totalJoined=[];
+//                if(!empty($row['joined_users'])) {
+////                    $joinedStatus = \Cake\Utility\Hash::extract($row['joined_users'],'{n}[user_id='.$userId.']');
+//                    $totalJoined = \Cake\Utility\Hash::extract($row['joined_users'],'{n}[status=Joined].status');
+//                }
+//                return $row;
+//            });
+//                  });
+                  pr($spaycs->toArray());die;
                 $displayName = !empty($spayc->name)? $spayc->name :'Spayc';
                 if (ucfirst($spayc->status) == $statusArr['active']) {
                     $spayc->statusTxt = $txtMassage['unblock'];
@@ -363,7 +383,7 @@ class SpaycsController extends AdminController
                     $pushNotificationAdminSlug = $pushNotificationAdminSlug['blocked'];
                     $result_arr = ['result' => true, 'status'=>$statusArr['inactive'], 'message' => $displayName.' '.$this->errorSuccessMessage['BLOCKED-MSG']];   
                      $update=$this->inactiveSubSpaycStatus($spayc->id,$statusArr['inactive']);
-                }                
+                }
                 if(!empty($spayc->email))
                     $this->getMailer('User')->send('userStatus', [$spayc]);   
                 // for push notification
