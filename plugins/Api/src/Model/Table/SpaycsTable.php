@@ -695,7 +695,7 @@ class SpaycsTable extends Table {
                 ->bind(':longitude', $request['center_longitude'], 'float');
         $period = null;
         if(!empty($request['time'])){
-            $period = $request['time'];
+            $period = strtolower($request['time']);
         }
         $startDate = "to_date(cast(Spaycs.start_date as TEXT),'YYYY-MM-DD HH24:MI')";
         $endDate = "to_date(cast(Spaycs.end_date as TEXT),'YYYY-MM-DD HH24:MI')";  
