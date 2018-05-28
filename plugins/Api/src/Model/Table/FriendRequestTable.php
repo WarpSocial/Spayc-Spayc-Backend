@@ -345,5 +345,22 @@ class FriendRequestTable extends Table {
         $query = $requestedBy->union($requestedTo);
         return $query;
     }
+    /**
+     * friendStatus method to return the query of friend
+     * 
+     * @param Integer $userId
+     * @return sql query
+     */
+    public function friendStatus($userId,$status = 'Accepted'){
+        if(empty($userId)){
+            return false;
+        }
+        return $this->exists(['OR' => [
+                    ['requested_by' => $userId],
+                    ['requested_to' => $userId]
+                    ],
+                    'requested_status'=>$status
+                ]);
+    }
 
 }
