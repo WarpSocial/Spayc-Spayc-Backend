@@ -59,6 +59,7 @@ class ScraperComponent extends Component {
      public function getEventbriteData($pageNumber=1,$time) { 
 
         $url= $this->SCRAPER_ROOT_URL['eventbriteurl'].'events/search/?expand=venue&token='.$this->SCRAPER_ROOT_URL_TOKEN['eventbritetoken'].'&sort_by=date&start_date.range_start='.TODAY_DATE.'T00%3A00%3A00&start_date.range_end='.AFTER14DAYS_DATE.'T23%3A59%3A00&location.address=New+York%2C+NY&page='.$pageNumber;       
+
         $resp=$this->curlRequest($url,$time);      
         if((isset($resp['events']) && !empty($resp['events'])) && count($resp['events'])) {        
         $events=$eventIds= array();
@@ -116,6 +117,7 @@ class ScraperComponent extends Component {
     public function getStubhubData($start=0,$time) {  
 
         $url =$this->SCRAPER_ROOT_URL['stubhuburl'].'?city=%22New%20York%22&state=%22NY%22%20|%22New%20York%22&country=US&date='.TODAY_DATE.'T00:00%20TO%20'.AFTER14DAYS_DATE.'T23:59&sort=eventDateUTC%20asc&rows=500&start='.$start;       
+
         $resp=$this->curlRequest($url,$time,$this->SCRAPER_ROOT_URL_TOKEN['stubhubtoken']);
         $eventsCount = count($resp['events']);       
         if((isset($resp['events']) && !empty($resp['events'])) && $eventsCount){

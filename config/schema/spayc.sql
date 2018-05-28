@@ -566,7 +566,7 @@ $BODY$
 LANGUAGE sql IMMUTABLE;
 DROP TABLE IF EXISTS scraper_logs;
 CREATE TABLE "scraper_logs" (
-    "id" bigint DEFAULT nextval('scraper_logs_id_seq') NOT NULL,
+    "id" BIGSERIAL NOT NULL,
     "status" character varying(255),
     "created" timestamp NOT NULL,
     "modified" timestamp NOT NULL,
@@ -575,8 +575,8 @@ CREATE TABLE "scraper_logs" (
     "unique_time" character varying(250) NOT NULL,
     "response" text,
     "shell" character varying(250),
-    CONSTRAINT "scraper_logs_pkey" PRIMARY KEY ("id")
-) WITH (oids = false);
+    PRIMARY KEY (id)
+);
 
 ALTER TABLE "spaycs"
 ALTER "name" TYPE character varying(255),
