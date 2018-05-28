@@ -388,7 +388,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
             });
         });
         
-        //pr($spaycs->toArray());die;
+        #pr($spaycs->toArray());die;
         //$newQuery = clone $spaycs;
         $data['count'] = $spaycs->count();
         $data['spaycs'] = [];
