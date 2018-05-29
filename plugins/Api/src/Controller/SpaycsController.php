@@ -316,15 +316,15 @@ class SpaycsController extends AppController {
         }
         
         if($this->request->query('start_date')) {
-            $date = new \Cake\I18n\Time($this->request->query('start_date'));
-            $startDate = Utils::setUtc($date->format('Y-m-d H:i:s'), Configure::read("timezone"));
-            $spaycs->where(["Spaycs.start_date >="=>$startDate]);
+            $startDate = (new \Cake\I18n\Time($this->request->query('start_date'), Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i");
+            $startDateColoumn = "TO_TIMESTAMP(cast(Spaycs.start_date as text),'YYYY-MM-DD HH24:MI')";        
+            $spaycs->where([$startDateColoumn." >="=>$startDate]);
         }
         
         if($this->request->query('end_date')) {
-            $date = new \Cake\I18n\Time($this->request->query('end_date'));
-            $endDate = Utils::setUtc($date->format('Y-m-d H:i:s'), Configure::read("timezone"));
-            $spaycs->where(["Spaycs.end_date <="=>$endDate]);
+            $endDate = (new \Cake\I18n\Time($this->request->query('end_date'), Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i");
+            $endDateColoumn = "TO_TIMESTAMP(cast(Spaycs.end_date as text),'YYYY-MM-DD HH24:MI')"; 
+            $spaycs->where([$endDateColoumn." <="=>$endDate]);
         }
         
         if(in_array(ucfirst($this->request->query('spayc_type')), ['Event', 'Community'])) {
@@ -451,6 +451,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
                     'matrix_token'=>$user['UserLogs']['matrix_access_token'],
                     'matrix_room_id' => $spayc->matrix_room_id
                 ]);
+                $this->Matrix->tagRoom($spayc->matrix_room_id,$user['UserLogs']['matrix_access_token'],$user['matrix_user_id']);
             }
             $push = [
                 'slug' => 'user-subscribed-to-your-spayc',
@@ -511,6 +512,11 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         }
         if($scModel->delete($entity)){
             $this->Matrix->muteUnmute('mute',$user['UserLogs']['matrix_access_token'], $spayc->matrix_room_id);
+            /*for subscribed user only who not joined the room but virtually joined the room*/
+            if(!(TableRegistry::get('Api.JoinedSpayc')->exists(['user_id'=>$data['user_id'],'spayc_id'=>$spayc->id]))){
+                $this->Matrix->leaveRoom($spayc->matrix_room_id,$user['UserLogs']['matrix_access_token']);
+                $this->Matrix->deleteTag($spayc->matrix_room_id,$user['UserLogs']['matrix_access_token'],$user['matrix_user_id']);
+            }
             $response = ['status'=>'success','message'=>__('User has been unsubcribed successfully.')];
         }else{
             $response = ['status'=>'failed','message'=>__('System failed to unsubscribe the user.')];

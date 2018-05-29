@@ -413,6 +413,64 @@ class MatrixComponent extends Component {
             return true;
         }
     }
+    /**
+     * tagRoom to tag to the room
+     * 
+     * @param String $matrixRoomId matrix room id
+     * @param String $matrixToken user matrix access token
+     * @param String $matrixUserId matrix user id
+     * @return Bool true or false
+     */
+    public function tagRoom($matrixRoomId = null,$matrixToken = null,$matrixUserId=null,$tag='favourite'){
+        if(empty($matrixRoomId) || empty($matrixToken) || empty($matrixUserId)){
+            return false;
+        }
+        $roomId  = $this->validRoomId($matrixRoomId);
+        $http = new Client();
+        $url = $this->config('url') .DS.$this->config('client').DS.'user'.DS.$matrixUserId.DS.'rooms'. DS.$roomId.'/tags/'.$tag.'?access_token='.$matrixToken;
+       
+        $httpResponse = $http->put(
+            $url, 
+            json_encode(['order'=>1]), 
+            $this->bodyType()
+        ); 
+        
+        $response = json_decode($httpResponse->body,true);
+        if(!empty($response['errcode'])){
+            return $response;
+        }else{
+            return true;
+        }
+    }
+    /**
+     * deleteTag to delete the tag from room
+     * 
+     * @param String $matrixRoomId matrix room id
+     * @param String $matrixToken user matrix access token
+     * @param String $matrixUserId matrix user id
+     * @return Bool true or false
+     */
+    public function deleteTag($matrixRoomId = null,$matrixToken = null,$matrixUserId=null,$tag='favourite'){
+        if(empty($matrixRoomId) || empty($matrixToken) || empty($matrixUserId)){
+            return false;
+        }
+        $roomId  = $this->validRoomId($matrixRoomId);
+        $http = new Client();
+        $url = $this->config('url') .DS.$this->config('client').DS.'user'.DS.$matrixUserId.DS.'rooms'. DS.$roomId.'/tags/'.$tag.'?access_token='.$matrixToken;
+       
+        $httpResponse = $http->delete(
+            $url, 
+            json_encode(['order'=>1]), 
+            $this->bodyType()
+        ); 
+        
+        $response = json_decode($httpResponse->body,true);
+        if(!empty($response['errcode'])){
+            return $response;
+        }else{
+            return true;
+        }
+    }
     
     /**
      * TO JOINE THE MATRIXROOM
