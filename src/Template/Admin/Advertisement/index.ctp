@@ -6,7 +6,7 @@ if(count($advertisements) > 0)
   $advertisementsCount=true; 
 if($this->request->query())
   $filter=true;
- 
+$breadcrumbsTxt = (isset($user) && !empty($user)) ? 'Advertisements created by '.ucwords($user->display_name):''; 
  $nameIconSorting=$priceIconSorting=$statusIconSorting='filter.png';
 if(isset($this->request->query['sort'])) {
 
@@ -27,20 +27,7 @@ if(isset($this->request->query['sort'])) {
 }
 ?>
 <!--=============breadcrumbs==============-->      
-      <div class="breadcrumbs">
-        <div class="container">
-          <?php 
-              $html="<h4>Manage Advertisement</h4>";
-              $chkAdvertisement='advertisement';
-              if(isset($user) && !empty($user)){
-                $chkAdvertisement='users';
-                $html="<h4>Manage Users</h4>";
-                $html.="<p><span>Users</span><span>Advertisements created by ".ucwords($user->display_name)."</span></p>";
-              }
-              echo $html;
-            ?>
-        </div>
-      </div>
+<?php echo $this->element('admin/breadcrumbs', ['action'=> $breadcrumbsTxt]);?>
 <section class="content-wrapper content-filter">
  <span class="error-alert users-msg header-alert" style="display: none;"></span>
         <!--===========filter================-->
@@ -103,6 +90,11 @@ if(isset($this->request->query['sort'])) {
                 <div class="table-data flex-basis11">
                   <span><?= !empty($advertisement->balance)?h($advertisement->balance):BLANK_COUNT ?></span>
                 </div>
+                <?php  
+                  $chkAdvertisement='advertisement';
+                  if(isset($user) && !empty($user))
+                    $chkAdvertisement='users';
+                ?>
                 <div class="table-data flex-basis6">
                   <span><a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop action-btn dropdown-item status_<?= $advertisement->id?>" page="<?php echo $this->Url->build(["controller" => "Advertisement","action" => "delete",$advertisement->id,$chkAdvertisement]);?>"><?= $this->Html->image('delete-red.png')?></a>
                   </span>

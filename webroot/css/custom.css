@@ -4,6 +4,12 @@
     left: 0;
     z-index: 4;
 }
+.breadcrumbs p a {
+    color: #000;
+}
+.breadcrumbs p a:hover{ 
+    text-decoration: none;
+}
 .modal a.button:hover, .modal a.button:hover{
 	color: #49ff00;
 	text-decoration: none;
@@ -68,6 +74,9 @@
     font-size: 10px;
     color: #156478;
 }
+.item-read-more.count {
+    text-decoration: underline !important;
+}
 .advertisement-desc {
     padding: 30px !important;
     font-size: 16px;
@@ -77,4 +86,33 @@
     color: #ffffff;
     font-size: 1rem;
     font-weight: 500 !important;
+}
+.table-wrapper .table-row .table-data span.user-name {
+    width: 100%;
+}
+.subheading-span {
+    border-left: 1px solid #ccc;
+    padding-left: 10px;
+    margin-left: 10px;
+}
+.subheading-span a{
+    font-size: 22px;
+    font-weight: 300;
+    text-decoration: underline;
+}
+.modal .modal-dialog .user-image {
+    width: 50px;
+    height: 50%;
+    border-radius: 50%;
+    overflow: hidden;
+}
+.modal .modal-dialog .user-image span {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+.modal .modal-dialog .user-image img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
 }

@@ -5,7 +5,7 @@ if(count($spaycs) > 0)
   $spaycsCount=true; 
 if($this->request->query())
   $filter=true;
- 
+ $breadcrumbsTxt='';
  $nameIconSorting=$dateIconSorting=$disNameSorting='filter.png';
 if(isset($this->request->query['sort'])) {
 
@@ -26,12 +26,7 @@ if(isset($this->request->query['sort'])) {
 }
 ?>
 <!--=============breadcrumbs==============-->      
-      <div class="breadcrumbs">
-        <div class="container">
-          <h4>Manage Warps</h4>
-          <p class="hide"><span>manage</span> <span>user</span></p>
-        </div>
-      </div>
+<?php echo $this->element('admin/breadcrumbs', ['action'=> $breadcrumbsTxt]);?>
 
 <section class="content-wrapper content-filter">
  <span class="error-alert users-msg header-alert" style="display: none;"></span>
@@ -44,11 +39,11 @@ if(isset($this->request->query['sort'])) {
         <div class="table-wrapper">      
           <div class="table-head">
             <div class="head-text flex-basis12 text-left p-info">
-            <span class="table-filter"><?php echo $this->Paginator->sort('name','Spayc').'&nbsp;<i>'.$this->Paginator->sort('name',$this->Html->image($nameIconSorting, ['alt' => 'icon']),['escape' => false]).'</i>';?>     
+            <span class="table-filter"><?php echo $this->Paginator->sort('name','Warps').'&nbsp;<i>'.$this->Paginator->sort('name',$this->Html->image($nameIconSorting, ['alt' => 'icon']),['escape' => false]).'</i>';?>     
             </span>
             </div>
             <div class="head-text flex-basis12 text-left">
-              <span class="table-filter"><?php echo $this->Paginator->sort('spayc_admin','Admin').'&nbsp;<i>'.$this->Paginator->sort('spayc_admin',$this->Html->image($disNameSorting, ['alt' => 'icon']),['escape' => false]).'</i>';?></span>
+              <span class="table-filter"><?php echo $this->Paginator->sort('Users.display_name','Admin').'&nbsp;<i>'.$this->Paginator->sort('Users.display_name',$this->Html->image($disNameSorting, ['alt' => 'icon']),['escape' => false]).'</i>';?></span>
             </div>
             <div class="head-text flex-basis10 text-left"><span class="table-filter"><?php echo $this->Paginator->sort('start_date','Date & Time').'&nbsp;<i>'.$this->Paginator->sort('start_date',$this->Html->image($dateIconSorting, ['alt' => 'icon']),['escape' => false]).'</i>';?></span>
             </div>
@@ -56,12 +51,16 @@ if(isset($this->request->query['sort'])) {
             <div class="head-text flex-basis7"><span>Members</span></div>
             <div class="head-text flex-basis10"><span>Subscribed Members</span></div>
             <div class="head-text flex-basis12"><span>Physical People Present</span></div>
-            <div class="head-text flex-basis9"><span>Number of Subspaycs</span></div>
+            <div class="head-text flex-basis9"><span>Number of Subwarps</span></div>
             <div class="head-text flex-basis9"><span>Number of Comment </span></div>
             <div class="head-text flex-basis6"><span class="blank"></span></div>
           </div>
           <?php   if ($spaycsCount) {?>  
-            <?php foreach($spaycs as $spayc) { ?>
+            <?php 
+              $totalAdmin = '';
+              foreach($spaycs as $spayc) { 
+              $totalAdmin = count($spayc['total_spayc_admin']);
+              ?>
             <!--==============table data====================-->
               <div class="table-row">               
                 <div class="table-data flex-basis12 text-left">
@@ -69,6 +68,12 @@ if(isset($this->request->query['sort'])) {
                 </div>
                 <div class="table-data flex-basis12 text-left">
                   <span><?= !empty($spayc->spayc_admin)?h(ucwords($spayc->spayc_admin)):BLANK ?></span>
+                  <?php if($totalAdmin > 1) { ?>
+                  <div id="admin_<?=$spayc->id?>" class="hide"><?= $this->element('admin/adminpopuptxt',['total_spayc_admin'=>$spayc['total_spayc_admin']])?></div>
+                  <span>
+                  <a href="javascript:void(0)" onclick="showAdmin('<?=$spayc->id?>', '<?=$totalAdmin?>');" class="item-read-more count">+ <?= ($totalAdmin -1)?></a>
+                  </span>
+                  <?php } ?>
                 </div>
 
                 <div class="table-data flex-basis10 text-left">
@@ -84,14 +89,14 @@ if(isset($this->request->query['sort'])) {
                   <span><?= !empty($spayc->joined_users)?$this->Html->link($spayc->joined_users,['controller' => 'Spaycs', 'action' => 'spayc-members',$spayc->id], ['class' => 'num-letter-spacing']):BLANK_COUNT ?></span>
                 </div>
                 <div class="table-data flex-basis10">
-                  <span><?= !empty($spayc->total_subscribed_users)?trim($spayc->total_subscribed_users):BLANK_COUNT ?></span>
+                  <span><?= !empty($spayc->total_subscribed_users)?$this->Html->link($spayc->total_subscribed_users,['controller' => 'Spaycs', 'action' => 'subscribedMembers',$spayc->id], ['class' => 'num-letter-spacing']):BLANK_COUNT ?></span>
                 </div>
 
-                 <div class="table-data flex-basis12">
-                  <span><?= !empty($spayc->total_presents)?trim($spayc->total_presents):BLANK_COUNT ?></span>
+                 <div class="table-data flex-basis12">                 
+                  <span><?= !empty($spayc->total_presents)?$this->Html->link($spayc->total_presents,['controller' => 'Spaycs', 'action' => 'physicalPresents',$spayc->id], ['class' => 'num-letter-spacing']):BLANK_COUNT ?></span>
                 </div>
                 <div class="table-data flex-basis9">
-                    <span><?= !empty($spayc->total_subspaycs)?trim($spayc->total_subspaycs):BLANK_COUNT ?></span>
+                    <span><?= !empty($spayc->total_subspaycs)?$this->Html->link($spayc->total_subspaycs,['controller' => 'Spaycs', 'action' => 'subwarps',$spayc->id], ['class' => 'num-letter-spacing']):BLANK_COUNT ?></span>
                 </div>
                 <div class="table-data flex-basis9">
                   <span><?= !empty($spayc->total_comments)?trim($spayc->total_comments):BLANK_COUNT ?></span>
@@ -99,15 +104,17 @@ if(isset($this->request->query['sort'])) {
                 <!--table dropdown-->
                 <div class="table-data flex-basis6">
                   <div class="dropdown table-view-dropdown">
-                    <div class="table-dropdown"  id="table-data-dropdown" data-toggle="dropdown">
+                    <div class="table-dropdown"  id="table-data-dropdown_<?= $spayc->id?>" data-toggle="dropdown">
                       <span></span>
                       <span></span>
                       <span></span>
                     </div>
-                    <div class="dropdown-menu" aria-labelledby="table-data-dropdown">
-                      <button class="dropdown-item block hide"> <i class="icon-block"></i>Block</button>
-                    </div>
+                  <div class="dropdown-menu" aria-labelledby="table-data-dropdown_<?= $spayc->id?>">                    
+                    <?= $this->Html->link("<i class='icon-view'></i>View",['controller' => 'Spaycs', 'action' => 'view',$spayc->id,$spayc->user_id], ['class' => 'dropdown-item view','escape' => false]);?>  
+                    <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
+                    <button class="dropdown-item delete"> <i class="icon-delete"></i>Delete</button>
                   </div>
+                </div>
                 </div>
               </div>
             <?php
@@ -134,7 +141,7 @@ if(isset($this->request->query['sort'])) {
     <?php }  else { ?>
       <div class="no-data-wrapper">
         <div class="no-data no-user" >
-            <?php echo $this->Html->image('no-user.png', ["alt" => "", 'class' =>'mb-30' ]);?>
+            <?php echo $this->Html->image('no-spayc.png', ["alt" => "", 'class' =>'mb-30' ]);?>
             <h2>No Warp Found!</h2>
             <p>Seems like no user has created the warp yet!</p>
         </div>

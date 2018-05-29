@@ -3,15 +3,10 @@ use Cake\Routing\Router;
 $spaycUserStatusArr = unserialize(SPAYC_USER_STATUS_ARR);
 $spaycTypeArr = unserialize(SPAYC_TYPE_ARR);
 $groupTypeArr = unserialize(GROUP_TYPE_ARR);
+$breadcrumbsTxt= ucfirst($spayc->name);
 ?>
 <!--=============breadcrumbs==============-->            
-  <div class="breadcrumbs">
-    <div class="container">
-      <h4>Manage Users</h4>
-      <p><span>Warps</span> <span>Warp Detail</span></p>
-    </div>
-  </div>
-
+  <?php echo $this->element('admin/breadcrumbs', ['action'=> $breadcrumbsTxt]);?>
    <section class="content-wrapper content-filter">
         <!--======= event view wrapper==========-->
         <div class="container">
@@ -27,13 +22,21 @@ $groupTypeArr = unserialize(GROUP_TYPE_ARR);
                 <h1><?= !empty($spayc->name)?$spayc->name:BLANK ?></h1>
                 <h3><?php
                     $name = '';
+                    $totalAdmin = count($spayc['total_spayc_admin']);
                     if(!empty($user->display_name))
                         $name = ucwords($user->display_name);
                     if(!empty($spayc->is_admin))
                         $name .= '&nbsp;('.$spaycUserStatusArr[$spayc->is_admin].')';
                     echo $name;
                  ?>
+                 <?php if($totalAdmin > 1) { ?>
+                  <div id="admin_<?=$spayc->id?>" class="hide"><?= $this->element('admin/adminpopuptxt',['total_spayc_admin'=>$spayc['total_spayc_admin']])?></div>
+                  <span class="subheading-span">
+                  <a href="javascript:void(0)" onclick="showAdmin('<?=$spayc->id?>', '<?=$totalAdmin?>');" class="item-read-more">+ <?= ($totalAdmin -1)?></a>
+                  </span>
+                  <?php } ?>
                 </h3>
+                  
                 <p><?= !empty($spayc->description)?$spayc->description:'' ?></p>
                 <div class="event-status">
                   <i class="icon-<?= strtolower($spayc->group_type) ?>-icon"></i>
@@ -132,3 +135,4 @@ $groupTypeArr = unserialize(GROUP_TYPE_ARR);
           </div>
         </div>
     </section>
+    <?php echo $this->Html->script(['admin/admin-manage-user']); ?>

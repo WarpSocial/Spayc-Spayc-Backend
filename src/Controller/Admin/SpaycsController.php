@@ -34,10 +34,8 @@ class SpaycsController extends AdminController
         $this->FRIEND_REQUESTED_STATUS_ARR = unserialize(FRIEND_REQUESTED_STATUS_ARR);
     }
 
-    public function beforeFilter(Event $event)
-    {
+    public function beforeFilter(Event $event) {
         parent::beforeFilter($event);
-        //$this->Auth->allow(['']);
     }
 
     /**
@@ -52,28 +50,89 @@ class SpaycsController extends AdminController
         $query = $this->Spaycs->getWarpList();
         if(!empty($keyword))
             $query->where(['OR' => [['LOWER(name) LIKE' => "%".$keyword."%"]]]);
-
+        
+        $this->paginate['sortWhitelist'] = ['name','start_date','Users.display_name'];
         $spaycs = $this->paginate($query);           
         $this->set(compact('spaycs','keyword'));
         $this->set('_serialize', ['spaycs']);
     }
 
+    public function physicalPresents($spaycId){        
+
+        $this->set('title', $this->siteTitleMessage['MANAGEWARPS']);
+        $conditions_array = [];
+        $ageArr = unserialize(USER_AGE);
+        $keyword=($this->request->query('keyword'))?trim(strtolower($this->request->query('keyword'))):'';
+        $spayc = $this->Spaycs->get($spaycId);
+        $query = $this->Users->getUsersList($spaycId, PHYSICAL_PRESENT_USERS);
+        
+        if ($this->request->query('gender') && $this->request->query('gender') !='All') {
+            $conditions_array['Users.gender'] = $this->request->query('gender');
+        }
+        if ($this->request->query('from_date')) {            
+            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') >="] = date(DATEFORMAT,strtotime($this->request->query('from_date')));
+        }
+        if ($this->request->query('to_date')) {
+            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') <="] = date(DATEFORMAT,strtotime($this->request->query('to_date')));
+        }
+        if ($this->request->query('age_filter')) {
+            $getage=$ageArr[$this->request->query('age_filter')];
+            $getage = explode("-", $getage );   
+            $conditions_array["DATE_PART('year', now()) - DATE_PART('year', dob) >="] = $getage['0'];           
+            if((int)($getage['1'])){                
+               $conditions_array["DATE_PART('year', now()) - DATE_PART('year', dob) <="] = $getage['1'];
+            } 
+        }         
+        if(!empty($keyword)){
+            $query->where(['OR' => [['LOWER(Users.display_name) LIKE' => "%".$keyword."%"], ['LOWER(Users.email) LIKE' => "%".$keyword."%"], ['LOWER(Users.address) LIKE' => "%".$keyword."%"],['LOWER(Users.username) LIKE' => "%".$keyword."%"]]]);
+        } 
+        if (count($conditions_array)) {
+            $query->where($conditions_array);
+        }         
+        $this->paginate = ['order' => ['Users.display_name' => 'ASC']];
+        $users = $this->paginate($query);   
+        $this->set(compact('users','keyword','spayc'));
+        $this->set('_serialize', ['users']);
+    }
+    
     /*** get list of warp members ***/
     public function spaycMembers($spaycId){
 
         if(empty($spaycId))
             return $this->redirect(['action' => 'index']);        
         $this->set('title', $this->siteTitleMessage['MANAGE-WARP-MEMBERS']);
+        $conditions_array = [];
+        $ageArr = unserialize(USER_AGE);
         $keyword=($this->request->query('keyword'))?trim(strtolower($this->request->query('keyword'))):''; 
-        $query = $this->Spaycs->getWarpMembers($spaycId);       
+        $spayc = $this->Spaycs->get($spaycId);
+        $query = $this->Spaycs->getWarpMembers($spaycId); 
+         if ($this->request->query('gender') && $this->request->query('gender') !='All') {
+            $conditions_array['Users.gender'] = $this->request->query('gender');
+        }
+        if ($this->request->query('from_date')) {            
+            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') >="] = date(DATEFORMAT,strtotime($this->request->query('from_date')));
+        }
+        if ($this->request->query('to_date')) {
+            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') <="] = date(DATEFORMAT,strtotime($this->request->query('to_date')));
+        }
+        if ($this->request->query('age_filter')) {
+            $getage=$ageArr[$this->request->query('age_filter')];
+            $getage = explode("-", $getage );   
+            $conditions_array["DATE_PART('year', now()) - DATE_PART('year', dob) >="] = $getage['0'];           
+            if((int)($getage['1'])){                
+               $conditions_array["DATE_PART('year', now()) - DATE_PART('year', dob) <="] = $getage['1'];
+            } 
+        }       
         if(!empty($keyword)){
             $query->where(['OR' => [['LOWER(Users.display_name) LIKE' => "%".$keyword."%"], ['LOWER(Users.email) LIKE' => "%".$keyword."%"], ['LOWER(Users.address) LIKE' => "%".$keyword."%"],['LOWER(Users.username) LIKE' => "%".$keyword."%"]]]);
         } 
+        if (count($conditions_array)) {
+            $query->where($conditions_array);
+        } 
         $this->paginate = ['order' => ['Users.display_name' => 'ASC']];
-        $users = $this->paginate($query);   
-        $this->set(compact('users','keyword'));
+        $users = $this->paginate($query);         
+        $this->set(compact('users','keyword','spayc'));
         $this->set('_serialize', ['users']);
-        $this->render('../Users/index');
     }
 
     /**
@@ -85,67 +144,17 @@ class SpaycsController extends AdminController
      */
     public function view($id= null, $userId= null, $subspayc=null)
     {   
-        $this->set('title', $this->siteTitleMessage['WARPDETAIL']);
+        $this->set('title', $this->siteTitleMessage['MANAGEWARPS']);
         if((empty($id) || !is_numeric($id)) && (empty($userId) || !is_numeric($userId)))
             return $this->redirect(['Controller'=>'Users', 'action' => 'index']);
 
         $exists = $this->Spaycs->exists(['id' => $id]);       
         if(!$exists) 
-            return $this->redirect(['Controller'=>'Users', 'action' => 'index']);       
+            return $this->redirect(['Controller'=>'Users', 'action' => 'index']);
                 
         $user = $this->Users->get($userId);
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, $this->FRIEND_REQUESTED_STATUS_ARR['accepted']);
-        $spayc = $this->Spaycs->find();
-        $spayc->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.parent_id','Spaycs.created','Spaycs.modified'])
-                ->where(['id'=>$id, 'Spaycs.group_type !=' =>'trusted_private'])
-                ->contain([
-                    'SubSpaycs' => function($q) {
-                    $exp = $q->newExpr()->addCase($q->newExpr()->add(['location IS NULL']),"");
-                        return  $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'location'=>$exp, 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id']);
-                    },
-                    'JoinedSpayc' => function($q) {
-                        return  $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin','JoinedSpayc.distance']);//joinded
-                    },
-                    'Comments' => function($q) {
-                        return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
-                    },
-                    'SubscribedUsers' => function($q) {
-                        return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
-                    }
-                ]);
-        $spayc->order(['created'=>'DESC']); 
-        $spayc->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend, $userId) {
-            return $results->map(function ($row) use($friend, $userId) {                
-                $row['friends'] = TableRegistry::get('JoinedSpayc')->getTotalJoinedFriends($row->id, $friend);
-                $present = 0;$totalJoined=[];
-                if(!empty($row['joined_spayc'])) {
-                    $joinedStatus = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.']');
-                    $totalJoined = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[status=Joined].status');
-                    $miles = Configure::read('miles');
-                    $physicalPresent = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[distance <='.$miles.']');
-                    $present = count($physicalPresent);
-                }
-                
-                if(!empty($joinedStatus[0])){
-                    $row['joined_spayc_status'] = $joinedStatus[0]['status'];
-                    $row['is_admin'] = $joinedStatus[0]['is_admin'];
-                }else{
-                    $row['joined_spayc_status'] = '';
-                    $row['is_admin'] = '';
-                }
-                $row['joined_users'] =!empty($row['joined_spayc'])?count($totalJoined):BLANK_COUNT;
-                if(!empty($row['subscribed_users'])) {
-                    $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');
-                }
-                $row['subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):BLANK_COUNT;
-                $row['is_subscribed'] = !empty($subUserId[0])?true:false;
-                $row['total_comments'] = !empty($row['comments'][0]['total_comment'])?$row['comments'][0]['total_comment']:BLANK_COUNT;
-                unset($row['joined_spayc']);
-                $row['total_presents'] = $present;
-                return $row;
-            });
-        });
-        $spayc = $spayc->first();        
+        $spayc = $this->Spaycs->getWarpsViewBySpaycId($id, $userId, $friend);     
         $this->set(compact('spayc','user','subspayc'));
         $this->set('_serialize', ['spayc']);
     }
@@ -220,136 +229,53 @@ class SpaycsController extends AdminController
         return $this->redirect(['action' => 'index']);
     }
 
-    public function createdWarps($userId = null)
-    {
-        if(empty($userId) || !is_numeric($userId))
-            return $this->redirect(['Controller'=>'Users', 'action' => 'index']);
-
-        $exists = $this->Users->exists(['id' => $userId]);       
-        if(!$exists) 
-            return $this->redirect(['Controller'=>'Users', 'action' => 'index']);  
-        
-        $this->set('title', $this->siteTitleMessage['WARPCREATED']);
+    /*** get list of warp members ***/
+    public function subscribedMembers($spaycId){    
+        $this->set('title', $this->siteTitleMessage['MANAGEWARPS']);
+        $conditions_array = [];
+        $ageArr = unserialize(USER_AGE);
         $keyword=($this->request->query('keyword'))?trim(strtolower($this->request->query('keyword'))):'';
-
-        $user = $this->Users->get($userId);
-        $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, $this->FRIEND_REQUESTED_STATUS_ARR['accepted']);
-        $spaycs = $this->Spaycs->find();
-        $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date'])            
-             ->where(['Spaycs.group_type !='=>'trusted_private', 'Spaycs.id IN'=>$this->Spaycs->createdSpayc($userId),'Spaycs.parent_id IS'=>null])
-            ->contain([                    
-                'JoinedSpayc' => function($q) {
-                    return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.distance']);
-                },
-                'SubscribedUsers' => function($q) {
-                    return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
-                },
-                'Comments' => function($q) {
-                    return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
-                }
-            ]);
-        $spaycs->where(['Spaycs.user_id'=>$userId]);
-        $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend,$userId){
-            return $results->map(function ($row) use($friend,$userId) {
-                $row['friends'] = TableRegistry::get('JoinedSpayc')->getTotalJoinedFriends($row->id, $friend);
-                 $present= 0;$totalJoined=[];
-                if(!empty($row['joined_spayc'])) {
-                    $status = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.'].status');                
-                    $totalJoined = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[status=Joined].status');
-                    
-                    $miles = Configure::read('miles');
-                    $physicalPresent = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[distance <='.$miles.']');
-                    $present = count($physicalPresent);
-                }
-                $row['joined_spayc_status'] = !empty($status[0])?$status[0]:'';
-
-                $row['is_joined'] = !empty($status[0])?true:false;
-                $row['joined_users'] =  !empty($row['joined_spayc'])?count($totalJoined):BLANK_COUNT;
-                unset($row['joined_spayc']);
-                if(!empty($row['subscribed_users'])) {
-                    $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');
-                }
-                $row['subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):BLANK_COUNT;
-                $row['is_subscribed'] = !empty($subUserId[0])?true:false;
-                $row['total_comments'] = !empty($row['comments'][0]['total_comment'])?$row['comments'][0]['total_comment']:BLANK_COUNT;
-                unset($row['comments']);
-                $row['total_presents'] = $present;
-                return $row;
-            });
-        });
-        if(!empty($keyword)){            
-            $spaycs->where(['OR' => ['LOWER(Spaycs.name) LIKE' => "%".$keyword."%"]]);
+        $spayc = $this->Spaycs->get($spaycId);
+        $query = $this->Users->getUsersList($spaycId, SUBSCRIBED_USERS);
+        
+        if ($this->request->query('gender') && $this->request->query('gender') !='All') {
+            $conditions_array['Users.gender'] = $this->request->query('gender');
+        }
+        if ($this->request->query('from_date')) {            
+            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') >="] = date(DATEFORMAT,strtotime($this->request->query('from_date')));
+        }
+        if ($this->request->query('to_date')) {
+            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') <="] = date(DATEFORMAT,strtotime($this->request->query('to_date')));
+        }
+        if ($this->request->query('age_filter')) {
+            $getage=$ageArr[$this->request->query('age_filter')];
+            $getage = explode("-", $getage );   
+            $conditions_array["DATE_PART('year', now()) - DATE_PART('year', dob) >="] = $getage['0'];           
+            if((int)($getage['1'])){                
+               $conditions_array["DATE_PART('year', now()) - DATE_PART('year', dob) <="] = $getage['1'];
+            } 
+        }         
+        if(!empty($keyword)){
+            $query->where(['OR' => [['LOWER(Users.display_name) LIKE' => "%".$keyword."%"], ['LOWER(Users.email) LIKE' => "%".$keyword."%"], ['LOWER(Users.address) LIKE' => "%".$keyword."%"],['LOWER(Users.username) LIKE' => "%".$keyword."%"]]]);
         } 
-        $spaycs = $this->paginate($spaycs)->toArray();               
-        $this->set(compact('spaycs','keyword','user'));        
-        $this->set('_serialize', ['spaycs']);
+        if (count($conditions_array)) {
+            $query->where($conditions_array);
+        }         
+        $this->paginate = ['order' => ['Users.display_name' => 'ASC']];
+        $users = $this->paginate($query);   
+        $this->set(compact('users','keyword','spayc'));
+        $this->set('_serialize', ['users']);
     }
 
-    public function joinedWarps($userId = null)
-    {
-        if(empty($userId) || !is_numeric($userId))
-            return $this->redirect(['Controller'=>'Users', 'action' => 'index']);
+    /*** get list of sub wraps by spaycId ***/
+    public function subwarps($spaycId) { 
 
-        $exists = $this->Users->exists(['id' => $userId]);       
-        if(!$exists) 
-            return $this->redirect(['Controller'=>'Users', 'action' => 'index']);  
-        
-        $this->set('title', $this->siteTitleMessage['WARPJOINED']);
-        $keyword=($this->request->query('keyword'))?trim(strtolower($this->request->query('keyword'))):'';
-
-        $user = $this->Users->get($userId);
-        $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, $this->FRIEND_REQUESTED_STATUS_ARR['accepted']);
-        $spaycs = $this->Spaycs->find();
-        $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date'])
-            ->where(['Spaycs.group_type !='=>'trusted_private','Spaycs.id IN'=>$this->Spaycs->joinedSpayc($userId),'Spaycs.parent_id IS'=>null])
-            ->contain([
-                 'JoinedSpayc' => function($q) {
-                     return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.distance'])->where(['JoinedSpayc.status'=>JOINED]);
-                 },               
-                'SubscribedUsers' => function($q) {
-                    return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
-                },
-                'Comments' => function($q) {
-                    return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
-                }
-            ]);
-        $ids = TableRegistry::get("Api.JoinedSpayc")->getJoinedSpaycIds($userId);
-        $spaycs->where(['Spaycs.id IN'=>$ids]);
-        $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend,$userId){
-            return $results->map(function ($row) use($friend,$userId) {
-                $row['friends'] = TableRegistry::get('JoinedSpayc')->getTotalJoinedFriends($row->id, $friend);
-                 $present= 0;$totalJoined=[];
-                if(!empty($row['joined_spayc'])) {
-                    $status = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.'].status');                
-                    $totalJoined = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[status=Joined].status');
-                    
-                    $miles = Configure::read('miles');
-                    $physicalPresent = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[distance <='.$miles.']');
-                    $present = count($physicalPresent);
-                }                
-                $row['joined_spayc_status'] = !empty($status[0])?$status[0]:'';
-
-                $row['is_joined'] = !empty($status[0])?true:false;
-                $row['joined_users'] =  !empty($row['joined_spayc'])?count($totalJoined):BLANK_COUNT;
-                unset($row['joined_spayc']);
-                if(!empty($row['subscribed_users'])) {
-                    $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');
-                }
-                $row['subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):BLANK_COUNT;
-                $row['is_subscribed'] = !empty($subUserId[0])?true:false;
-                $row['total_comments'] = !empty($row['comments'][0]['total_comment'])?$row['comments'][0]['total_comment']:BLANK_COUNT;
-                unset($row['comments']);
-                $row['total_presents'] = $present;
-                return $row;
-            });
-        });
-        if(!empty($keyword)){            
-            $spaycs->where(['OR' => ['LOWER(Spaycs.name) LIKE' => "%".$keyword."%"]]);
-        } 
-        $spaycs = $this->paginate($spaycs)->toArray();           
-        $this->set(compact('spaycs','keyword','user'));        
-        $this->set('_serialize', ['spaycs']);
+        if((empty($spaycId) || !is_numeric($spaycId)))
+            return $this->redirect(['action' => 'index']);
+        $this->set('title', $this->siteTitleMessage['MANAGEWARPS']);
+        $spayc = $this->Spaycs->getSubwarpsListBySpaycId($spaycId);
+        $this->set(compact('spayc'));
+        $this->set('_serialize', ['spayc']);
     }
-
     
 }

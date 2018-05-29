@@ -7,17 +7,14 @@ if(count($spaycs) > 0)
   $spaycsCount=true; 
 if($this->request->query())
   $filter=true;
-?>
-<!--=============breadcrumbs==============-->            
-      <div class="breadcrumbs">
-        <div class="container">
-          <h4>Manage Users</h4>
-          <p><span>Users</span> <span>Warps Created by <?= !empty($user->display_name)?ucwords($user->display_name):''?>  </span></p>
-        </div>
-      </div>
 
+$breadcrumbTxt = !empty($listBy) ? SITE_TITLE.'s '.$listBy.' by '.ucwords($user->display_name):''; 
+?>       
+
+<!--=============breadcrumbs==============-->      
+<?php echo $this->element('admin/breadcrumbs', ['action'=> $breadcrumbTxt]);?>
 <section class="content-wrapper content-filter">
-<span class="error-alert users-msg header-alert" style="display: none;"></span>
+ <span class="error-alert users-msg header-alert" style="display: none;"></span>
         <!--===========filter================-->        
         <?php if($spaycsCount || $filter){ 
                 echo $this->element('admin/user-filter', ['userFilter'=> false]);
@@ -26,12 +23,12 @@ if($this->request->query())
           <div class="event-box-wrapper clearfix">
             <!--=======Square-box=======-->
               <?php if ($spaycsCount) {
-                $spaycImgShadow = 'gradient-layer.png';
+                 $spaycImgShadow = 'gradient-layer.png';
                 foreach($spaycs as $spayc) {                
-                  $spaycImg ='no-image.png';
-                  $spaycImgClass ='no-image-placeholder';
+                  $spaycImg ='no-image.png';                 
+                  $spaycImgClass ='no-image-placeholder';                  
                   if(!empty($spayc->image)){
-                    $spaycImg =$spayc->image;
+                    $spaycImg =$spayc->image;                                
                     $spaycImgClass='';
                   }
               ?>  
@@ -42,7 +39,7 @@ if($this->request->query())
                       <div class="box-heading <?= strtolower($spayc->type)?>"><?= !empty($spayc->type)?$spayc->type:BLANK?></div>
                       <div class="tag-line ell">
                           <span><?= !empty($spayc->name)?$spayc->name:BLANK?></span>
-                          <i class="icon-<?= strtolower($spayc->group_type) ?>-icon"></i>
+                        <i class="icon-<?= strtolower($spayc->group_type) ?>-icon"></i>
                       </div>
                       <!--======dropdown===-->
                       <div class="dropdown table-view-dropdown square-box-dropdown">
@@ -51,8 +48,8 @@ if($this->request->query())
                           <span></span>
                           <span></span>
                         </div>
-                        <div class="dropdown-menu" aria-labelledby="table-data-dropdown_<?= $spayc->id?>">                             
-                          <?= $this->Html->link("<i class='icon-view'></i>View",['controller' => 'Spaycs', 'action' => 'view',$spayc->id,$spayc->user_id], ['class' => 'dropdown-item view','escape' => false]);?>    
+                        <div class="dropdown-menu" aria-labelledby="table-data-dropdown_<?= $spayc->id?>">                         
+                          <?= $this->Html->link("<i class='icon-view'></i>View",['controller' => 'Spaycs', 'action' => 'view',$spayc->id,$spayc->user_id], ['class' => 'dropdown-item view','escape' => false]);?>  
                           <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
                           <button class="dropdown-item delete"> <i class="icon-Delete"></i>Delete</button>
                         </div>

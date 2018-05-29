@@ -186,12 +186,19 @@ class UsersTable extends Table
            return true;
     }
 
-    public function getUsersList($userId) {
+    public function getUsersList($userId, $title=null) {
 
         $query=$this->find();
-        if(!empty($userId)){
+        if(!empty($userId) && $title== USER_FRIENDS){
             $friends = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, FRIEND_REQUESTED_STATUS);
             $query->where(['Users.id IN'=> $friends]);
+        } else if(!empty($userId) && $title== PHYSICAL_PRESENT_USERS){            
+            $physicalPresentUserIds = TableRegistry::get("JoinedSpayc")->getPhysicalPresentUsersIdBySpaycId($userId);
+            $query->where(['Users.id IN'=> $physicalPresentUserIds]);
+        } else if(!empty($userId) && $title== SUBSCRIBED_USERS){            
+            $subscribedUserIds = TableRegistry::get('SubscribedUsers')->getSubscribedUsersIdBySpaycId($userId);
+            $query->where(['Users.id IN'=> $subscribedUserIds]);
+
         }
         $query->where(['Users.role_id IS'=> null])
             ->contain([                                       

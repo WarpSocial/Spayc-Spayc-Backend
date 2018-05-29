@@ -19,7 +19,7 @@
 		window.location.replace($("form#userFilterFrm").prop('action').split('?')[0]);
 	});
 	$('#filter-reset').on('click',function(){  
-		window.location.replace(base_url_admin+'users/index');	
+		window.location.replace($("form#userFilterFrm").prop('action').split('?')[0]);
 	});
 	
 	if($("#to-date").length) {
@@ -68,5 +68,13 @@ function showModel(description){
 	$("#cmnPoupUp").addClass('modal-dialog-lg');
 	$("#cmnPoupUp .modal-content").addClass('user-list-modal');
 	$("#cmnPoupUp .modal-content").html("<div class='modal-header'><h5 class='modal-title'>Description</h5><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true' class='modal-close'></span></button></div><div class='advertisement-desc'>"+description+"</div>");
+	$("#cmnPoupUp").modal('show');
+}
+
+
+function showAdmin(id, totalAdmin){
+	$("#cmnPoupUp").addClass('modal-dialog-lg');
+	$("#cmnPoupUp .modal-content").addClass('user-list-modal');
+	$("#cmnPoupUp .modal-content").html("<div class='modal-header'><h5 class='modal-title'>Admin ("+totalAdmin+")</h5><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true' class='modal-close'></span></button></div><div>"+$('#admin_'+id).html()+"</div>");
 	$("#cmnPoupUp").modal('show');
 }

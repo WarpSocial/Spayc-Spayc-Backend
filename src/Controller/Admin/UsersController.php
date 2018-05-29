@@ -50,7 +50,7 @@ class UsersController extends AdminController
         $currUser='';
         if(!empty($userId))
             $currUser = $this->Users->get($userId);
-        $query = $this->Users->getUsersList($userId);
+        $query = $this->Users->getUsersList($userId, USER_FRIENDS);
          if ($this->request->query('gender') && $this->request->query('gender') !='All') {
             $conditions_array['Users.gender'] = $this->request->query('gender');
         }
@@ -409,6 +409,30 @@ class UsersController extends AdminController
         $this->set(compact('advertisements','user'));
         $this->render('../Advertisement/index');
     }
+
+    /*** get list of warps, joined or created by user***/
+    public function warps($listBy= null, $userId = null) {        
+        
+        $check=array('created','joined');
+        if((empty($userId) || !is_numeric($userId) || empty($listBy)) && !in_array($listBy, $check))
+            return $this->redirect(['action' => 'index']);
+        
+        $exists = $this->Users->exists(['id' => $userId]);       
+        if(!$exists) 
+            return $this->redirect(['action' => 'index']);  
+
+        $this->set('title', $this->siteTitleMessage['MANAGEUSER']);
+        $user = $this->Users->get($userId);
+        $keyword=($this->request->query('keyword'))?trim(strtolower($this->request->query('keyword'))):'';
+        $spaycs =$this->Spaycs->getWarpsCreatedNJoinedByUser($userId, ucfirst($listBy));
+        if(!empty($keyword)){            
+            $spaycs->where(['OR' => ['LOWER(Spaycs.name) LIKE' => "%".$keyword."%"]]);
+        } 
+        $spaycs = $this->paginate($spaycs); 
+        $this->set(compact('spaycs','keyword','user', 'listBy'));        
+        $this->set('_serialize', ['spaycs']);
+    }
+
 
     /*** for testing purpose check all cron data get and save in db***/
     public function scraperCall($site=null) {  

@@ -10,7 +10,7 @@ if($this->request->query('debug')&&$this->request->query('debug')=='on')
 if($this->request->query())
   $filter=true;
 
-$breadcrumbsTxt = (isset($currUser) && !empty($currUser)) ? 'friends of '.ucwords($currUser->display_name):''; 
+$breadcrumbsTxt = (isset($spayc) && !empty($spayc)) ? 'subscribed members in '.ucwords($spayc->name):''; 
 $genderIconSorting=$usernameIconSorting=$createdIconSorting=$dobIconSorting='filter.png';
 if(isset($this->request->query['sort'])) {
 
