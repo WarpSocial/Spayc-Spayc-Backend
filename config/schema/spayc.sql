@@ -115,7 +115,7 @@ CREATE TABLE spaycs (
     "created" timestamp NOT NULL,
     "modified" timestamp,
     "parent_id" bigint,
-    "category_id" bigint NULL,
+    "spayc_category_id" bigint NULL,
     PRIMARY KEY (id,user_id,created)
 );
 SELECT create_hypertable('spaycs', 'created');

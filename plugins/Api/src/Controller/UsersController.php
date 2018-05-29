@@ -1554,7 +1554,6 @@ class UsersController extends AppController {
         }
         $data = $this->request->getData();
         $user = $this->Auth->user();
-        pr($user);die;
         if(empty($data['is_notify'])) {
             $this->restException(['status'=>'failed','message'=>'is_notify is required field.'], 400);
         }
