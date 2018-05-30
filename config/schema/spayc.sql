@@ -570,3 +570,6 @@ ALTER "name" DROP DEFAULT,
 ALTER "name" DROP NOT NULL;
 COMMENT ON COLUMN "spaycs"."name" IS '';
 COMMENT ON TABLE "spaycs" IS '';
+
+INSERT INTO "notification_types" ("id", "type", "message", "slug", "created", "modified") VALUES
+('', 'Warp Deleted by admin',    'Your Warp has been deleted either by you or admin! Sorry!',    'spayc-deleted-by-admin', now(),    NULL);

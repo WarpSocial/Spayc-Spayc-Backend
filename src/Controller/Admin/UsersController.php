@@ -44,30 +44,12 @@ class UsersController extends AdminController
     public function index($userId=null)
     {           
         $this->set('title', $this->siteTitleMessage['MANAGEUSER']);
-        $conditions_array = [];
-        $ageArr = unserialize(USER_AGE);
         $keyword=($this->request->query('keyword'))?trim(strtolower($this->request->query('keyword'))):'';
         $currUser='';
         if(!empty($userId))
             $currUser = $this->Users->get($userId);
         $query = $this->Users->getUsersList($userId, USER_FRIENDS);
-         if ($this->request->query('gender') && $this->request->query('gender') !='All') {
-            $conditions_array['Users.gender'] = $this->request->query('gender');
-        }
-        if ($this->request->query('from_date')) {            
-            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') >="] = date(DATEFORMAT,strtotime($this->request->query('from_date')));
-        }
-        if ($this->request->query('to_date')) {
-            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') <="] = date(DATEFORMAT,strtotime($this->request->query('to_date')));
-        }
-        if ($this->request->query('age_filter')) {
-            $getage=$ageArr[$this->request->query('age_filter')];
-            $getage = explode("-", $getage );   
-            $conditions_array["DATE_PART('year', now()) - DATE_PART('year', dob) >="] = $getage['0'];           
-            if((int)($getage['1'])){                
-               $conditions_array["DATE_PART('year', now()) - DATE_PART('year', dob) <="] = $getage['1'];
-            } 
-        }         
+        $conditions_array = $this->filterData();
         if(!empty($keyword)){
             $query->where(['OR' => [['LOWER(Users.display_name) LIKE' => "%".$keyword."%"], ['LOWER(Users.email) LIKE' => "%".$keyword."%"], ['LOWER(Users.address) LIKE' => "%".$keyword."%"],['LOWER(Users.username) LIKE' => "%".$keyword."%"]]]);
         } 
@@ -350,6 +332,29 @@ class UsersController extends AdminController
         return $obj;
     }
 
+    public function filterData($filter=null) {  
+        $conditions_array = [];
+        $ageArr = unserialize(USER_AGE);
+        if ($this->request->query('gender') && $this->request->query('gender') !='All') {
+            $conditions_array['Users.gender'] = $this->request->query('gender');
+        }
+        if ($this->request->query('from_date')) {            
+            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') >="] = date(DATEFORMAT,strtotime($this->request->query('from_date')));
+        }
+        if ($this->request->query('to_date')) {
+            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') <="] = date(DATEFORMAT,strtotime($this->request->query('to_date')));
+        }
+        if ($this->request->query('age_filter')) {
+            $getage=$ageArr[$this->request->query('age_filter')];
+            $getage = explode("-", $getage );   
+            $conditions_array["DATE_PART('year', now()) - DATE_PART('year', dob) >="] = $getage['0'];           
+            if((int)($getage['1'])){                
+               $conditions_array["DATE_PART('year', now()) - DATE_PART('year', dob) <="] = $getage['1'];
+            } 
+        } 
+        return $conditions_array;  
+    }
+
     public function setUserStatus($id, $status = 'Blocked') {
         $this->viewBuilder()->layout('');
         if (empty($id)) {
@@ -433,34 +438,6 @@ class UsersController extends AdminController
         $this->set('_serialize', ['spaycs']);
     }
 
-
-    /*** for testing purpose check all cron data get and save in db***/
-    public function scraperCall($site=null) {  
-        $this->autoRender = false ;        
-        if(isset($site) && !empty($site)){
-            if($site=='eventbrite') {                  
-                $this->Scraper->getEventbriteData(1);
-            } else if($site=='ticketmaster') {
-                $this->Scraper->getTicketmasterData(TODAY_DATE, AFTER14DAYS_DATE);
-            } else if($site=='stubhub') {               
-                $this->Scraper->getStubhubData(0);
-            } else if($site=='getallcategory') {               
-                $response = $this->Scraper->getEventBriteCategories(1, NULL,'categories');
-                if($response)
-                $response = $this->Scraper->getEventBriteCategories(1, NULL,'subcategories');
-                if($response)
-                $response = $this->Scraper->getTicketmasterCategories();
-            } else if($site=='filterdata') {                 
-                $response = $this->Scraper->filterByLatLong();
-                if($response)
-                    $response = $this->Scraper->filterByDate(SCRAPERUNIQUEFILTER);
-                if($response)
-                    $response = $this->Scraper->filterByDate(SCRAPERCOMMONDATEFILTER);
-                if($response)
-                    $response = $this->Scraper->filterByName();
-            }
-        }
-    }
 }
 
 

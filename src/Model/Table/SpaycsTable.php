@@ -479,4 +479,41 @@ class SpaycsTable extends Table
 
         return $spayc->first();
     }
+
+    public function spaycObj($spaycId) {
+        $entity = $this->find()
+                ->where(['id'=>$spaycId])
+                ->contain([
+                    'SubSpaycs'=>function($q){
+                        return $q->select(['id','name','image','matrix_room_id','parent_id']);
+                    },
+                    'SubSpaycs.JoinedSpayc'=>function($q){
+                        return $q->select(['id','spayc_id','user_id']);
+                    },'SubSpaycs.JoinedSpayc.Users'=>function($q){
+                        return $q->select(['id','display_name','matrix_access_token','matrix_user_id']);
+                    },   
+                    'JoinedSpayc'=>function($q){
+                        return $q->select(['id','spayc_id','user_id']);
+                    },
+                    'JoinedSpayc.Users'=>function($q){
+                        return $q->select(['id','display_name','matrix_access_token','matrix_user_id']);
+                    },   
+                ]);
+        $spayc = $entity->first();
+        return $spayc;
+    }
+    public function deleteAllSpaycObj($child) {
+        if(!empty($child)){
+        TableRegistry::get('Api.JoinedSpayc')->deleteAll(['spayc_id IN' => $child]);
+        TableRegistry::get('Api.SubscribedUsers')->deleteAll(['spayc_id IN' => $child]);
+        TableRegistry::get('Api.SpaycHashtags')->deleteAll(['spayc_id IN' => $child]);
+        TableRegistry::get('Api.SpaycAdvertisement')->deleteAll(['spayc_id IN' => $child]);
+         $ids = TableRegistry::get('Api.Promotions')->find()
+                 ->select(['id'])
+                 ->where(['spayc_id IN' => $child]);
+        TableRegistry::get('Api.SpaycPromotion')->deleteAll(['promotion_id IN' => $ids]);
+        TableRegistry::get('Api.Promotions')->deleteAll(['spayc_id IN' => $child]);
+        }
+    }
+
 }

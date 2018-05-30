@@ -57,39 +57,15 @@ class SpaycsController extends AdminController
         $this->set(compact('spaycs','keyword'));
         $this->set('_serialize', ['spaycs']);
     }
-
-    public function physicalPresents($spaycId){        
+    
+    public function physicalPresents($spaycId) {
 
         $this->set('title', $this->siteTitleMessage['MANAGEWARPS']);
-        $conditions_array = [];
-        $ageArr = unserialize(USER_AGE);
         $keyword=($this->request->query('keyword'))?trim(strtolower($this->request->query('keyword'))):'';
         $spayc = $this->Spaycs->get($spaycId);
         $query = $this->Users->getUsersList($spaycId, PHYSICAL_PRESENT_USERS);
-        
-        if ($this->request->query('gender') && $this->request->query('gender') !='All') {
-            $conditions_array['Users.gender'] = $this->request->query('gender');
-        }
-        if ($this->request->query('from_date')) {            
-            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') >="] = date(DATEFORMAT,strtotime($this->request->query('from_date')));
-        }
-        if ($this->request->query('to_date')) {
-            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') <="] = date(DATEFORMAT,strtotime($this->request->query('to_date')));
-        }
-        if ($this->request->query('age_filter')) {
-            $getage=$ageArr[$this->request->query('age_filter')];
-            $getage = explode("-", $getage );   
-            $conditions_array["DATE_PART('year', now()) - DATE_PART('year', dob) >="] = $getage['0'];           
-            if((int)($getage['1'])){                
-               $conditions_array["DATE_PART('year', now()) - DATE_PART('year', dob) <="] = $getage['1'];
-            } 
-        }         
-        if(!empty($keyword)){
-            $query->where(['OR' => [['LOWER(Users.display_name) LIKE' => "%".$keyword."%"], ['LOWER(Users.email) LIKE' => "%".$keyword."%"], ['LOWER(Users.address) LIKE' => "%".$keyword."%"],['LOWER(Users.username) LIKE' => "%".$keyword."%"]]]);
-        } 
-        if (count($conditions_array)) {
-            $query->where($conditions_array);
-        }         
+        $conditions_array = $this->filterData();
+        $query = $this->filterNSearchData($query, $keyword, $conditions_array);
         $this->paginate = ['order' => ['Users.display_name' => 'ASC']];
         $users = $this->paginate($query);   
         $this->set(compact('users','keyword','spayc'));
@@ -101,35 +77,12 @@ class SpaycsController extends AdminController
 
         if(empty($spaycId))
             return $this->redirect(['action' => 'index']);        
-        $this->set('title', $this->siteTitleMessage['MANAGE-WARP-MEMBERS']);
-        $conditions_array = [];
-        $ageArr = unserialize(USER_AGE);
+        $this->set('title', $this->siteTitleMessage['MANAGE-WARP-MEMBERS']);        
         $keyword=($this->request->query('keyword'))?trim(strtolower($this->request->query('keyword'))):''; 
         $spayc = $this->Spaycs->get($spaycId);
         $query = $this->Spaycs->getWarpMembers($spaycId); 
-         if ($this->request->query('gender') && $this->request->query('gender') !='All') {
-            $conditions_array['Users.gender'] = $this->request->query('gender');
-        }
-        if ($this->request->query('from_date')) {            
-            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') >="] = date(DATEFORMAT,strtotime($this->request->query('from_date')));
-        }
-        if ($this->request->query('to_date')) {
-            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') <="] = date(DATEFORMAT,strtotime($this->request->query('to_date')));
-        }
-        if ($this->request->query('age_filter')) {
-            $getage=$ageArr[$this->request->query('age_filter')];
-            $getage = explode("-", $getage );   
-            $conditions_array["DATE_PART('year', now()) - DATE_PART('year', dob) >="] = $getage['0'];           
-            if((int)($getage['1'])){                
-               $conditions_array["DATE_PART('year', now()) - DATE_PART('year', dob) <="] = $getage['1'];
-            } 
-        }       
-        if(!empty($keyword)){
-            $query->where(['OR' => [['LOWER(Users.display_name) LIKE' => "%".$keyword."%"], ['LOWER(Users.email) LIKE' => "%".$keyword."%"], ['LOWER(Users.address) LIKE' => "%".$keyword."%"],['LOWER(Users.username) LIKE' => "%".$keyword."%"]]]);
-        } 
-        if (count($conditions_array)) {
-            $query->where($conditions_array);
-        } 
+        $conditions_array = $this->filterData();      
+        $query = $this->filterNSearchData($query, $keyword, $conditions_array);
         $this->paginate = ['order' => ['Users.display_name' => 'ASC']];
         $users = $this->paginate($query);         
         $this->set(compact('users','keyword','spayc'));
@@ -233,35 +186,11 @@ class SpaycsController extends AdminController
     /*** get list of warp members ***/
     public function subscribedMembers($spaycId){    
         $this->set('title', $this->siteTitleMessage['MANAGEWARPS']);
-        $conditions_array = [];
-        $ageArr = unserialize(USER_AGE);
         $keyword=($this->request->query('keyword'))?trim(strtolower($this->request->query('keyword'))):'';
         $spayc = $this->Spaycs->get($spaycId);
         $query = $this->Users->getUsersList($spaycId, SUBSCRIBED_USERS);
-        
-        if ($this->request->query('gender') && $this->request->query('gender') !='All') {
-            $conditions_array['Users.gender'] = $this->request->query('gender');
-        }
-        if ($this->request->query('from_date')) {            
-            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') >="] = date(DATEFORMAT,strtotime($this->request->query('from_date')));
-        }
-        if ($this->request->query('to_date')) {
-            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') <="] = date(DATEFORMAT,strtotime($this->request->query('to_date')));
-        }
-        if ($this->request->query('age_filter')) {
-            $getage=$ageArr[$this->request->query('age_filter')];
-            $getage = explode("-", $getage );   
-            $conditions_array["DATE_PART('year', now()) - DATE_PART('year', dob) >="] = $getage['0'];           
-            if((int)($getage['1'])){                
-               $conditions_array["DATE_PART('year', now()) - DATE_PART('year', dob) <="] = $getage['1'];
-            } 
-        }         
-        if(!empty($keyword)){
-            $query->where(['OR' => [['LOWER(Users.display_name) LIKE' => "%".$keyword."%"], ['LOWER(Users.email) LIKE' => "%".$keyword."%"], ['LOWER(Users.address) LIKE' => "%".$keyword."%"],['LOWER(Users.username) LIKE' => "%".$keyword."%"]]]);
-        } 
-        if (count($conditions_array)) {
-            $query->where($conditions_array);
-        }         
+        $conditions_array = $this->filterData();  
+        $query = $this->filterNSearchData($query, $keyword, $conditions_array);  
         $this->paginate = ['order' => ['Users.display_name' => 'ASC']];
         $users = $this->paginate($query);   
         $this->set(compact('users','keyword','spayc'));
@@ -354,15 +283,24 @@ class SpaycsController extends AdminController
         if (empty($id)) {
             return $this->redirect(['action' => 'index']);  
         }        
-        $spayc = $this->Spaycs->get($id);    
+        $spayc= $this->Spaycs->spaycObj($id); 
         if ($this->request->is(['post','put'])) {    
             if(!empty($spayc)){
-            $displayName = !empty($spayc->name)? ucfirst($spayc->name) : SITE_TITLE;
-            if ($this->Spaycs->delete($spayc)) {              
-              $result_arr = ['result' => true,  'message' => $displayName.' '.$this->errorSuccessMessage['DELETED-MSG']]; 
-            } else {                
-                $result_arr = ['result' => false, 'status'=>'', 'message' => $this->errorSuccessMessage['SYSTEMERR']];   
-            }
+                $displayName = !empty($spayc->name)? ucfirst($spayc->name) : SITE_TITLE;
+                $user= $this->Users->get($spayc->user_id);
+                $spayc->set('matrix_access_token',$user->matrix_access_token);
+                /* To queue the job to process from backend system */
+                TableRegistry::get('Queue.QueuedJobs')->createJob('Delete',$spayc->toArray());
+                $matrixRoomIds = \Cake\Utility\Hash::extract($spayc->sub_spaycs, '{n}.matrix_room_id');
+                array_push($matrixRoomIds, $spayc->matrix_room_id);
+                $child = \Cake\Utility\Hash::extract($spayc->sub_spaycs, '{n}.id');        
+                array_push($child,$spayc->id); 
+                if ($this->Spaycs->delete($spayc)) {
+                    $this->Spaycs->deleteAllSpaycObj($child);
+                    $result_arr = ['result' => true,  'message' => $displayName.' '.$this->errorSuccessMessage['DELETED-MSG']]; 
+                } else {                
+                    $result_arr = ['result' => false, 'status'=>'', 'message' => $this->errorSuccessMessage['SYSTEMERR']];   
+                }
             } else {                
                 $result_arr = ['result' => false, 'status'=>'', 'message' => $this->errorSuccessMessage['SYSTEMERR']];   
             }
@@ -395,5 +333,38 @@ class SpaycsController extends AdminController
         $rows = $stmt->fetchAll('assoc');
         return $rows;
     }
+
+    public function filterData($filter=null) {  
+        $conditions_array = [];
+        $ageArr = unserialize(USER_AGE);
+        if ($this->request->query('gender') && $this->request->query('gender') !='All') {
+            $conditions_array['Users.gender'] = $this->request->query('gender');
+        }
+        if ($this->request->query('from_date')) {            
+            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') >="] = date(DATEFORMAT,strtotime($this->request->query('from_date')));
+        }
+        if ($this->request->query('to_date')) {
+            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') <="] = date(DATEFORMAT,strtotime($this->request->query('to_date')));
+        }
+        if ($this->request->query('age_filter')) {
+            $getage=$ageArr[$this->request->query('age_filter')];
+            $getage = explode("-", $getage );   
+            $conditions_array["DATE_PART('year', now()) - DATE_PART('year', dob) >="] = $getage['0'];           
+            if((int)($getage['1'])){                
+               $conditions_array["DATE_PART('year', now()) - DATE_PART('year', dob) <="] = $getage['1'];
+            } 
+        } 
+        return $conditions_array;  
+    }
+
+    public function filterNSearchData($query, $keyword, $conditions_array) {  
+        if(!empty($keyword)){
+            $query->where(['OR' => [['LOWER(Users.display_name) LIKE' => "%".$keyword."%"], ['LOWER(Users.email) LIKE' => "%".$keyword."%"], ['LOWER(Users.address) LIKE' => "%".$keyword."%"],['LOWER(Users.username) LIKE' => "%".$keyword."%"]]]);
+        } 
+        if (count($conditions_array)) {
+            $query->where($conditions_array);
+        }  
+        return $query;
+    }   
 
 }
