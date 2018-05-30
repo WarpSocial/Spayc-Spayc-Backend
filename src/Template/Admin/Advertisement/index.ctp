@@ -28,7 +28,7 @@ if(isset($this->request->query['sort'])) {
 ?>
 <!--=============breadcrumbs==============-->      
 <?php echo $this->element('admin/breadcrumbs', ['action'=> $breadcrumbsTxt]);?>
-<section class="content-wrapper content-filter">
+<section class="content-wrapper content-filter main-advertisement-div">
  <span class="error-alert users-msg header-alert" style="display: none;"></span>
         <!--===========filter================-->
         <?php if($advertisementsCount || $filter){ 
@@ -90,13 +90,8 @@ if(isset($this->request->query['sort'])) {
                 <div class="table-data flex-basis11">
                   <span><?= !empty($advertisement->balance)?h($advertisement->balance):BLANK_COUNT ?></span>
                 </div>
-                <?php  
-                  $chkAdvertisement='advertisement';
-                  if(isset($user) && !empty($user))
-                    $chkAdvertisement='users';
-                ?>
                 <div class="table-data flex-basis6">
-                  <span><a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop action-btn dropdown-item status_<?= $advertisement->id?>" page="<?php echo $this->Url->build(["controller" => "Advertisement","action" => "delete",$advertisement->id,$chkAdvertisement]);?>"><?= $this->Html->image('delete-red.png')?></a>
+                  <span><a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop action-btn dropdown-item status_<?= $advertisement->id?>" page="<?php echo $this->Url->build(["controller" => "Advertisement","action" => "delete",$advertisement->id]);?>"><?= $this->Html->image('delete-red.png')?></a>
                   </span>
                 </div>
               </div>
@@ -130,5 +125,14 @@ if(isset($this->request->query['sort'])) {
         </div>
       </div>
     <?php } ?>
+     <div id="no-advertisement" class="hide">       
+    <div class="no-data-wrapper" >
+        <div class="no-data no-spayc">          
+          <?php echo $this->Html->image('no-advertisement.png', ["alt" => "", 'class' =>'mb-30' ]);?>
+          <h2>No Advertisement Found!</h2>
+          <p>Seems like no user has created the advertisement yet!</p>
+        </div>
+      </div>
+   </div>
 </section>
 <?php echo $this->Html->script(['admin/admin-manage-user']); ?>

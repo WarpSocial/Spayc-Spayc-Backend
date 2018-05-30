@@ -218,7 +218,7 @@ class SpaycsTable extends Table
     public function getWarpsCreatedNJoinedByUser($userId, $listBy){
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, $this->FRIEND_REQUESTED_STATUS_ARR['accepted']);
         $spaycs = $this->find();
-        $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date'])
+        $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date', 'Spaycs.status'])
             ->where(['Spaycs.group_type !='=>'trusted_private','Spaycs.parent_id IS'=>null]);
             if($listBy == JOINED){
                 $spaycs->where(['Spaycs.id IN'=>$this->joinedSpayc($userId)]);
@@ -351,7 +351,7 @@ class SpaycsTable extends Table
 
     public function getWarpList(){
         $query = $this->find();
-        $query->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.spayc_category_id','Users.display_name'])
+        $query->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.spayc_category_id','Users.display_name','Spaycs.status'])
             ->where(['Spaycs.parent_id IS'=>null,'Spaycs.group_type !='=>'trusted_private'])
             ->contain([
                 'Users' => function($q) {
@@ -420,12 +420,12 @@ class SpaycsTable extends Table
     }
     public function getWarpsViewBySpaycId($spaycId, $userId, $friend) {
         $spayc = $this->find();
-        $spayc->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.parent_id','Spaycs.created','Spaycs.modified'])
+        $spayc->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.parent_id','Spaycs.created','Spaycs.modified','Spaycs.status'])
                 ->where(['id'=>$spaycId, 'Spaycs.group_type !=' =>'trusted_private'])
                 ->contain([
                     'SubSpaycs' => function($q) {
                     $exp = $q->newExpr()->addCase($q->newExpr()->add(['location IS NULL']),"");
-                        return  $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'location'=>$exp, 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id']);
+                        return  $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'location'=>$exp, 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id', 'SubSpaycs.status']);
                     },
                     'JoinedSpayc' => function($q) {
                         return  $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin','JoinedSpayc.distance']);//joinded

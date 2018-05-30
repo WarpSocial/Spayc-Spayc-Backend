@@ -3,11 +3,14 @@ use Cake\Routing\Router;
 $spaycUserStatusArr = unserialize(SPAYC_USER_STATUS_ARR);
 $spaycTypeArr = unserialize(SPAYC_TYPE_ARR);
 $groupTypeArr = unserialize(GROUP_TYPE_ARR);
+$statusArr = unserialize(STATUS_ARR);
+$txtMassage = unserialize(TEXT_MASSAGE); 
 $breadcrumbsTxt= ucfirst($spayc->name);
 ?>
 <!--=============breadcrumbs==============-->            
   <?php echo $this->element('admin/breadcrumbs', ['action'=> $breadcrumbsTxt]);?>
    <section class="content-wrapper content-filter">
+   <span class="error-alert spaycs-msg header-alert" style="display: none;"></span>
         <!--======= event view wrapper==========-->
         <div class="container">
           <div class="event-view-wrapper">
@@ -85,20 +88,21 @@ $breadcrumbsTxt= ucfirst($spayc->name);
             <!--======subspayc=====-->
             <?php if(empty($subspayc)) {?>
             <div class="subspayc">
-              <h2>Subwarps <span>(<?= count($spayc->sub_spaycs)?>)</span></h2>
-              <div class="subspayc-box-wrapper clearfix">
+              <h2>Subwarps <span class="sub_spaycs_count">(<?= count($spayc->sub_spaycs)?>)</span></h2>
+              <div class="subspayc-box-wrapper clearfix main-spayc-div">
                 <?php 
                   if (count($spayc->sub_spaycs)) {
                     $spaycImgShadow = 'gradient-layer.png';
-                    foreach($spayc->sub_spaycs as $sub_spaycs ) {                
+                    foreach($spayc->sub_spaycs as $sub_spaycs ) { 
                       $subSpaycImg ='no-image.png';
+                      $blocktxt =(ucfirst($sub_spaycs->status) == $statusArr['active'])?"Block":"Unblock";
                       $spaycImgClass ='no-image-placeholder';
                       if(!empty($sub_spaycs->image)){
                         $subSpaycImg =$sub_spaycs->image;
                         $spaycImgClass='';
                       }
                 ?>  
-                <div class="subspayc-box">                 
+                <div class="subspayc-box spayc-div-listing <?php echo $blocktxt =='Block'?'':'disabled';?>">
                   <div class="subspayc-image-wrap <?= $spaycImgClass?>">
                     <?= $this->Html->image($subSpaycImg, ["alt" => "", 'class' =>'']); ?>
                     <?= $this->Html->image($spaycImgShadow, ["alt" => "", 'class' =>'img-shadow']); ?>
@@ -111,8 +115,10 @@ $breadcrumbsTxt= ucfirst($spayc->name);
                         </div>
                         <div class="dropdown-menu" aria-labelledby="table-data-dropdown_<?= $sub_spaycs->id?>">                             
                           <?= $this->Html->link("<i class='icon-view'></i>View",['controller' => 'Spaycs', 'action' => 'view',$sub_spaycs->id,$spayc->user_id,'subspayc'], ['class' => 'dropdown-item view','escape' => false]);?>    
-                          <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
-                          <button class="dropdown-item delete"> <i class="icon-Delete"></i>Delete</button>
+                          <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item status_<?= $sub_spaycs->id?> <?= strtolower($blocktxt)?>" page="<?php echo $this->Url->build(["controller" => "Spaycs","action" => "setSpaycStatus",$sub_spaycs->id]);?>"><i class='icon-block'></i><span class="status_<?= $sub_spaycs->id?>"><?= $blocktxt?></span>
+                          </a>                      
+                          <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item delete" page="<?php echo $this->Url->build(["controller" => "Spaycs","action" => "deleteSpayc",$sub_spaycs->id]);?>"><i class='icon-Delete'></i>
+                          <span>Delete</span></a>
                         </div>
                       </div>
                   </div>
@@ -134,5 +140,10 @@ $breadcrumbsTxt= ucfirst($spayc->name);
             <?php } ?>
           </div>
         </div>
+          <div id="no-spayc" class="hide">       
+            <div class="no-data no-user" >                 
+              <h2>No Result Found!</h2>
+            </div>
+          </div>
     </section>
-    <?php echo $this->Html->script(['admin/admin-manage-user']); ?>
+    <?php echo $this->Html->script(['admin/spayc','admin/admin-manage-user']); ?>

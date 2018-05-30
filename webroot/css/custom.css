@@ -19,8 +19,6 @@
     position: relative;
 }
 .success-alert, .error-alert{
-	min-height: 35px !important;
-	height: auto !important;
 }
 .content-wrapper {
     position: relative;

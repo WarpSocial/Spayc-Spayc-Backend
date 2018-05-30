@@ -105,7 +105,7 @@ class AdvertisementController extends AdminController
      * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null, $chkAdvertisement)
+    public function delete($id = null)
     {        
         $this->viewBuilder()->layout('');       
         if (empty($id)) 
@@ -116,12 +116,7 @@ class AdvertisementController extends AdminController
             $condition['id'] = $id;
             $this->Advertisement->UpdateAll($update, $condition);
             $advertisement =$this->Advertisement->get($advertisement->id);
-            $query = $this->Advertisement->find()->where(["status !=" => ADVERTISEMENTSTATUS]);
-            if($chkAdvertisement ==='users'){
-                $query->where(['Advertisement.user_id'=>$advertisement->user_id]);
-            }
-            $total = $query->count();
-            $result_arr = ['result' => true, 'status'=>$advertisement->status, 'id'=>$advertisement->id, 'total'=> $total, 'message' => ucwords($advertisement->name).' '.$this->errorSuccessMessage['DELETED-MSG']];  
+            $result_arr = ['result' => true, 'status'=>$advertisement->status, 'id'=>$advertisement->id, 'message' => ucwords($advertisement->name).' '.$this->errorSuccessMessage['DELETED-MSG']];  
             echo json_encode($result_arr);
             die;
         }

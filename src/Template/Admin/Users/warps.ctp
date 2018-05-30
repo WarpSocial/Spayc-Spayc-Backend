@@ -1,7 +1,9 @@
 <?php 
 use Cake\Routing\Router;
+$statusArr = unserialize(STATUS_ARR);
 $spaycTypeArr = unserialize(SPAYC_TYPE_ARR);
 $groupTypeArr = unserialize(GROUP_TYPE_ARR);
+$txtMassage = unserialize(TEXT_MASSAGE);  
 $spaycsCount=$filter=false;
 if(count($spaycs) > 0) 
   $spaycsCount=true; 
@@ -13,8 +15,8 @@ $breadcrumbTxt = !empty($listBy) ? SITE_TITLE.'s '.$listBy.' by '.ucwords($user-
 
 <!--=============breadcrumbs==============-->      
 <?php echo $this->element('admin/breadcrumbs', ['action'=> $breadcrumbTxt]);?>
-<section class="content-wrapper content-filter">
- <span class="error-alert users-msg header-alert" style="display: none;"></span>
+<section class="content-wrapper content-filter main-spayc-div">
+ <span class="error-alert spaycs-msg header-alert" style="display: none;"></span>
         <!--===========filter================-->        
         <?php if($spaycsCount || $filter){ 
                 echo $this->element('admin/user-filter', ['userFilter'=> false]);
@@ -32,7 +34,9 @@ $breadcrumbTxt = !empty($listBy) ? SITE_TITLE.'s '.$listBy.' by '.ucwords($user-
                     $spaycImgClass='';
                   }
               ?>  
-              <div class="square-box">
+              <?php                
+              $blocktxt =(ucfirst($spayc->status) == $statusArr['active'])?"Block":"Unblock";?>
+              <div class="square-box spayc-div-listing <?php echo $blocktxt =='Block'?'':'disabled';?>">
                   <div class="image-wrap <?= $spaycImgClass?>">
                     <?= $this->Html->image($spaycImg, ["alt" => "", 'class' =>'']); ?>
                     <?= $this->Html->image($spaycImgShadow, ["alt" => "", 'class' =>'img-shadow']); ?>
@@ -48,10 +52,12 @@ $breadcrumbTxt = !empty($listBy) ? SITE_TITLE.'s '.$listBy.' by '.ucwords($user-
                           <span></span>
                           <span></span>
                         </div>
-                        <div class="dropdown-menu" aria-labelledby="table-data-dropdown_<?= $spayc->id?>">                         
-                          <?= $this->Html->link("<i class='icon-view'></i>View",['controller' => 'Spaycs', 'action' => 'view',$spayc->id,$spayc->user_id], ['class' => 'dropdown-item view','escape' => false]);?>  
-                          <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
-                          <button class="dropdown-item delete"> <i class="icon-Delete"></i>Delete</button>
+                      <div class="dropdown-menu" aria-labelledby="table-data-dropdown_<?= $spayc->id?>">                         
+                      <?= $this->Html->link("<i class='icon-view'></i>View",['controller' => 'Spaycs', 'action' => 'view',$spayc->id,$spayc->user_id], ['class' => 'dropdown-item view','escape' => false]);?>  
+                      <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item status_<?= $spayc->id?> <?= strtolower($blocktxt)?>" page="<?php echo $this->Url->build(["controller" => "Spaycs","action" => "setSpaycStatus",$spayc->id]);?>"><i class='icon-block'></i><span class="status_<?= $spayc->id?>"><?= $blocktxt?></span>
+                      </a>                      
+                        <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item delete" page="<?php echo $this->Url->build(["controller" => "Spaycs","action" => "deleteSpayc",$spayc->id]);?>"><i class='icon-Delete'></i>
+                            <span>Delete</span></a>
                         </div>
                       </div>
                   </div>
@@ -113,6 +119,16 @@ $breadcrumbTxt = !empty($listBy) ? SITE_TITLE.'s '.$listBy.' by '.ucwords($user-
           <p>Seems like no user has created the spayc yet!</p>
         </div>
       </div>
-    <?php } ?>
+    <?php }  ?>
+    <div id="no-spayc" class="hide">       
+    <div class="no-data-wrapper" >
+        <div class="no-data no-spayc">          
+          <?php echo $this->Html->image('no-spayc.png', ["alt" => "", 'class' =>'mb-30' ]);?>
+          <h2> No Spayc Found!</h2>
+          <p>Seems like no user has created the spayc yet!</p>
+        </div>
+      </div>
+   </div>
+
 </section>
-<?php echo $this->Html->script(['admin/admin-manage-user']); ?>
+<?php echo $this->Html->script(['admin/spayc','admin/admin-manage-user']); ?>

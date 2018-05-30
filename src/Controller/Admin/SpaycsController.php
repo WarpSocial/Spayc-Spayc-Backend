@@ -2,6 +2,7 @@
 namespace App\Controller\Admin;
 
 use App\Controller\AdminController;
+use Cake\Datasource\ConnectionManager;
 use Cake\Network\Exception\ForbiddenException;
 use Cake\Network\Exception\NotFoundException;
 use Cake\View\Exception\MissingTemplateException;
@@ -269,7 +270,6 @@ class SpaycsController extends AdminController
 
     /*** get list of sub wraps by spaycId ***/
     public function subwarps($spaycId) { 
-
         if((empty($spaycId) || !is_numeric($spaycId)))
             return $this->redirect(['action' => 'index']);
         $this->set('title', $this->siteTitleMessage['MANAGEWARPS']);
@@ -278,4 +278,122 @@ class SpaycsController extends AdminController
         $this->set('_serialize', ['spayc']);
     }
     
+    public function setSpaycStatus($id, $status = 'Blocked') {
+        
+        $this->viewBuilder()->layout('');
+        if (empty($id)) {
+            return $this->redirect(['action' => 'index']);  
+        }        
+        $spayc = $this->Spaycs->get($id);  
+        $statusArr = unserialize(STATUS_ARR);
+        $pushNotificationAdminSlug = unserialize(PUSH_NOTIFICATION_ADMIN_SLUG);
+        $txtMassage = unserialize(TEXT_MASSAGE);               
+        if ($this->request->is(['post','put'])) {    
+            if(!empty($spayc->status) && ucfirst($spayc->status) == $statusArr['active'] ){
+                $spayc->status = $statusArr['inactive'];
+            }else{
+                $spayc->status = $statusArr['active'];
+            }
+
+            if ($this->Spaycs->save($spayc)) {
+                $spayc_id=$spayc->id;
+//                $spayc =$this->Spaycs->get($spayc->id);
+                 $spaycs = $this->Spaycs->find();
+        $spaycs->select()            
+             ->where(['id'=>$spayc->id])
+                ->contain([
+                 'JoinedSpayc' => function($q) {
+                     return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.distance'])->where(['JoinedSpayc.status'=>JOINED]);
+                 }   ]);
+            
+//                  $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($spayc_id){
+//                          return $results->map(function ($row) use($spayc_id) {
+//                $row['joined_users'] = TableRegistry::get('JoinedSpayc')->getJoinedUserIds($spayc_id);
+//                $present = 0;$totalJoined=[];
+//                if(!empty($row['joined_users'])) {
+////                    $joinedStatus = \Cake\Utility\Hash::extract($row['joined_users'],'{n}[user_id='.$userId.']');
+//                    $totalJoined = \Cake\Utility\Hash::extract($row['joined_users'],'{n}[status=Joined].status');
+//                }
+//                return $row;
+//            });
+//                  });
+                  // pr($spaycs->toArray());die;
+                $displayName = !empty($spayc->name)? ucfirst($spayc->name) :SITE_TITLE;
+                if (ucfirst($spayc->status) == $statusArr['active']) {
+                    $spayc->statusTxt = $txtMassage['unblock'];
+                    $pushNotificationAdminSlug = $pushNotificationAdminSlug['unblocked'];
+                    $result_arr = ['result' => true, 'status'=>$statusArr['active'], 'message' => $displayName.' '.$this->errorSuccessMessage['UNBLOCKED-MSG']]; 
+                     $this->activeSubSpaycStatus($spayc->id,$statusArr['active']);
+                } else {                       
+                    $spayc->statusTxt = $txtMassage['block'];
+                    $pushNotificationAdminSlug = $pushNotificationAdminSlug['blocked'];
+                    $result_arr = ['result' => true, 'status'=>$statusArr['inactive'], 'message' => $displayName.' '.$this->errorSuccessMessage['BLOCKED-MSG']];   
+                     $update=$this->inactiveSubSpaycStatus($spayc->id,$statusArr['inactive']);
+                }
+                if(!empty($spayc->email))
+                    $this->getMailer('User')->send('userStatus', [$spayc]);   
+                // for push notification
+                $push['requested_by'] = $this->Auth->user('id');
+                $push['username'] = $this->Auth->user('display_name');
+                $push['requested_to'] = $spayc->id;
+                $push['slug'] = $pushNotificationAdminSlug;
+                $this->Push->sendPushNotification($push);
+            } else {                
+                $result_arr = ['result' => false, 'status'=>'', 'message' => $this->errorSuccessMessage['SYSTEMERR']];   
+            }
+            echo json_encode($result_arr);
+            die;
+        }
+        $this->set(compact('spayc'));
+    }
+    
+    
+    public function deleteSpayc($id) {
+        
+        $this->viewBuilder()->layout('');
+        if (empty($id)) {
+            return $this->redirect(['action' => 'index']);  
+        }        
+        $spayc = $this->Spaycs->get($id);    
+        if ($this->request->is(['post','put'])) {    
+            if(!empty($spayc)){
+            $displayName = !empty($spayc->name)? ucfirst($spayc->name) : SITE_TITLE;
+            if ($this->Spaycs->delete($spayc)) {              
+              $result_arr = ['result' => true,  'message' => $displayName.' '.$this->errorSuccessMessage['DELETED-MSG']]; 
+            } else {                
+                $result_arr = ['result' => false, 'status'=>'', 'message' => $this->errorSuccessMessage['SYSTEMERR']];   
+            }
+            } else {                
+                $result_arr = ['result' => false, 'status'=>'', 'message' => $this->errorSuccessMessage['SYSTEMERR']];   
+            }
+            echo json_encode($result_arr);
+            die;
+        }
+        $this->set(compact('spayc'));
+    }
+    
+    
+    public function inactiveSubSpaycStatus($parent_id,$status) {
+        $conn = ConnectionManager::get('default');
+        $sql="UPDATE ".SPAYC_TABLE." set last_status = status where parent_id = $parent_id ";
+        $stmt = $conn->execute($sql);
+        $rows = $stmt->fetchAll('assoc');
+        
+        $sql="UPDATE ".SPAYC_TABLE." set status = '".$status."' where parent_id = $parent_id ";
+        $stmt = $conn->execute($sql);
+        $rows = $stmt->fetchAll('assoc');
+        return $rows;
+    }
+    
+    public function activeSubSpaycStatus($parent_id,$status) {
+        $conn = ConnectionManager::get('default');
+        $sql="UPDATE ".SPAYC_TABLE." set status = last_status where parent_id = $parent_id AND last_status is NOT NULL";
+        $stmt = $conn->execute($sql);
+        $rows = $stmt->fetchAll('assoc');
+        $sql="UPDATE ".SPAYC_TABLE." set last_status = NULL where parent_id = $parent_id ";
+        $stmt = $conn->execute($sql);
+        $rows = $stmt->fetchAll('assoc');
+        return $rows;
+    }
+
 }

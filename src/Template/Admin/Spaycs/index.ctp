@@ -1,5 +1,7 @@
 <?php 
 use Cake\Routing\Router;
+$statusArr = unserialize(STATUS_ARR);
+$txtMassage = unserialize(TEXT_MASSAGE);  
 $spaycsCount=$filter=false;
 if(count($spaycs) > 0) 
   $spaycsCount=true; 
@@ -28,8 +30,8 @@ if(isset($this->request->query['sort'])) {
 <!--=============breadcrumbs==============-->      
 <?php echo $this->element('admin/breadcrumbs', ['action'=> $breadcrumbsTxt]);?>
 
-<section class="content-wrapper content-filter">
- <span class="error-alert users-msg header-alert" style="display: none;"></span>
+<section class="content-wrapper content-filter main-spayc-div">
+<span class="error-alert spaycs-msg header-alert" style="display: none;"></span>
         <!--===========filter================-->
         <?php if($spaycsCount || $filter){ 
                 echo $this->element('admin/user-filter', ['userFilter'=> false]);
@@ -60,9 +62,10 @@ if(isset($this->request->query['sort'])) {
               $totalAdmin = '';
               foreach($spaycs as $spayc) { 
               $totalAdmin = count($spayc['total_spayc_admin']);
+              $blocktxt =(ucfirst($spayc->status) == $statusArr['active'])?"Block":"Unblock";
               ?>
             <!--==============table data====================-->
-              <div class="table-row">               
+              <div class="table-row spayc-div-listing <?php echo $blocktxt =='Block'?'':'disabled';?>">
                 <div class="table-data flex-basis12 text-left">
                   <span class="data-name"><?= !empty($spayc->name)?h(ucwords($spayc->name)):BLANK ?></span>
                 </div>
@@ -111,8 +114,10 @@ if(isset($this->request->query['sort'])) {
                     </div>
                   <div class="dropdown-menu" aria-labelledby="table-data-dropdown_<?= $spayc->id?>">                    
                     <?= $this->Html->link("<i class='icon-view'></i>View",['controller' => 'Spaycs', 'action' => 'view',$spayc->id,$spayc->user_id], ['class' => 'dropdown-item view','escape' => false]);?>  
-                    <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
-                    <button class="dropdown-item delete"> <i class="icon-delete"></i>Delete</button>
+                    <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item status_<?= $spayc->id?> <?= strtolower($blocktxt)?>" page="<?php echo $this->Url->build(["controller" => "Spaycs","action" => "setSpaycStatus",$spayc->id]);?>"><i class='icon-block'></i><span class="status_<?= $spayc->id?>"><?= $blocktxt?></span>
+                      </a> 
+                      <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item delete" page="<?php echo $this->Url->build(["controller" => "Spaycs","action" => "deleteSpayc",$spayc->id]);?>"><i class='icon-Delete'></i>
+                      <span>Delete</span></a> 
                   </div>
                 </div>
                 </div>
@@ -147,5 +152,14 @@ if(isset($this->request->query['sort'])) {
         </div>
       </div>
     <?php } ?>
+    <div id="no-spayc" class="hide">       
+    <div class="no-data-wrapper" >
+        <div class="no-data no-spayc">          
+          <?php echo $this->Html->image('no-spayc.png', ["alt" => "", 'class' =>'mb-30' ]);?>
+          <h2> No Spayc Found!</h2>
+          <p>Seems like no user has created the spayc yet!</p>
+        </div>
+      </div>
+   </div>
 </section>
-<?php echo $this->Html->script(['admin/user','admin/admin-manage-user']); ?>
+<?php echo $this->Html->script(['admin/spayc','admin/admin-manage-user']); ?>

@@ -45,12 +45,13 @@
 	       success:function(data){               	
 	          $(".loader").removeClass('show-loader'); 
 	          $( ".skip-popup").trigger('click');                            
-	            if ((data.result) && (data.total > 0)) {
+	            if (data.result) {
 	              $( "div #"+data.id).remove();
 	              $('.users-msg').text(data.message);
 	              messageFadeOut('users-msg',data.message);
-	            } else {
-	            	location.reload();
+	              if (!$(".table-row")[0]){
+	                $(".main-advertisement-div").html($("#no-advertisement").html());
+	              }
 	            } 
 	       },
 	       error: function (e,x,t) {
