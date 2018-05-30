@@ -61,5 +61,12 @@ class UserMailer extends Mailer {
             ->emailFormat('html')
             ->template('userstatus');
     }
+    public function spaycStatus($spayc) {        
+        $this->viewVars(['user' => $spayc])
+            ->to($spayc['email'])
+            ->subject(Configure::read('userstatus_subject'))
+            ->emailFormat('html')
+            ->template('userstatus');
+    }
 
 }
