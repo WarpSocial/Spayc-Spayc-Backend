@@ -82,6 +82,33 @@ class MatrixComponent extends Component {
             return false;
         }
     }
+    /**
+     * logogut to get user logout from the matrix
+     * 
+     * @param string $accessToken
+     * 
+     * @return Bool true|error
+     */
+    
+    public function logout($accessToken){
+        if(empty($accessToken)){
+            return false;
+        }
+        
+        $url = $this->config('url') .DS.$this->config('client'). DS.'logout?access_token='.$accessToken;
+        $http = new Client();
+        $httpResponse = $http->post(
+                $url, 
+                json_encode([]), 
+                $this->bodyType()
+            );
+        $response = json_decode($httpResponse->body,true);
+        if($httpResponse->isOk()){
+            return $response;
+        }else{
+            return false;
+        }
+    }
     
     /**
      * register to register new account to matrix chatserver
