@@ -223,34 +223,7 @@ class SpaycsController extends AdminController
             }else{
                 $spayc->status = $statusArr['active'];
             }
-
             if ($this->Spaycs->save($spayc)) {
-                $spayc_id=$spayc->id;
-//                $spayc =$this->Spaycs->get($spayc->id);
-                 $spaycs = $this->Spaycs->find();
-                 $spaycs->select()            
-                    ->where(['id'=>$spayc->id])
-                    ->contain([
-                     'JoinedSpayc' => function($q) {
-                         return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.distance'])->where(['JoinedSpayc.status'=>JOINED]);
-                     },   
-                     'JoinedSpayc.users' => function($q) {
-                         return $q->select(['Users.email']);
-                     }   
-                     ]);
-                     $spaycs=$spaycs->first();
-//                  $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($spayc_id){
-//                          return $results->map(function ($row) use($spayc_id) {
-//                $row['joined_users'] = TableRegistry::get('JoinedSpayc')->getJoinedUserIds($spayc_id);
-//                $present = 0;$totalJoined=[];
-//                if(!empty($row['joined_users'])) {
-////                    $joinedStatus = \Cake\Utility\Hash::extract($row['joined_users'],'{n}[user_id='.$userId.']');
-//                    $totalJoined = \Cake\Utility\Hash::extract($row['joined_users'],'{n}[status=Joined].status');
-//                }
-//                return $row;
-//            });
-//                  });
-//                 pr($spaycs);die;
                 $displayName = !empty($spayc->name)? ucfirst($spayc->name) :SITE_TITLE;
                 if (ucfirst($spayc->status) == $statusArr['active']) {
                     $spayc->statusTxt = $txtMassage['unblock'];
@@ -262,18 +235,7 @@ class SpaycsController extends AdminController
                     $pushNotificationAdminSlug = $pushNotificationAdminSlug['blocked'];
                     $result_arr = ['result' => true, 'status'=>$statusArr['inactive'], 'message' => $displayName.' '.$this->errorSuccessMessage['BLOCKED-MSG']];   
                      $update=$this->inactiveSubSpaycStatus($spayc->id,$statusArr['inactive']);
-                }
-                if(!empty($spaycs['joined_spayc']))
-                    foreach($spaycs['joined_spayc'] as $val){
-                    $spayc['email']=$val['Users']['email'];
-//                    $this->getMailer('User')->send('spaycStatus', $spayc);   
-                // for push notification
-                $push['requested_by'] = $this->Auth->user('id');
-                $push['username'] = $this->Auth->user('display_name');
-                $push['requested_to'] = $val->user_id;
-                $push['slug'] = $pushNotificationAdminSlug;
-                $this->Push->sendPushNotification($push);
-                    }
+                }   
             } else {                
                 $result_arr = ['result' => false, 'status'=>'', 'message' => $this->errorSuccessMessage['SYSTEMERR']];   
             }
