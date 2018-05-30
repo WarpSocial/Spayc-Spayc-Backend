@@ -16,7 +16,7 @@ $breadcrumbTxt = !empty($listBy) ? SITE_TITLE.'s '.$listBy.' by '.ucwords($user-
 <!--=============breadcrumbs==============-->      
 <?php echo $this->element('admin/breadcrumbs', ['action'=> $breadcrumbTxt]);?>
 <section class="content-wrapper content-filter main-spayc-div">
- <span class="error-alert spaycs-msg header-alert" style="display: none;"></span>
+ <span class="error-alert alert-fixed-position spaycs-msg header-alert" style="display: none;"></span>
         <!--===========filter================-->        
         <?php if($spaycsCount || $filter){ 
                 echo $this->element('admin/user-filter', ['userFilter'=> false]);

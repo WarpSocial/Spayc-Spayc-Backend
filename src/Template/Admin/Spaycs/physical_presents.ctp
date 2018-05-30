@@ -40,7 +40,7 @@ if(isset($this->request->query['sort'])) {
 <!--=============breadcrumbs==============-->      
 <?php echo $this->element('admin/breadcrumbs', ['action'=> $breadcrumbsTxt]);?>
 <section class="content-wrapper content-filter">
- <span class="error-alert users-msg header-alert" style="display: none;"></span>
+ <span class="error-alert alert-fixed-position users-msg header-alert" style="display: none;"></span>
         <!--===========filter================-->
         <?php if($userCount || $filter){ 
                 echo $this->element('admin/user-filter', ['userFilter'=> true]);

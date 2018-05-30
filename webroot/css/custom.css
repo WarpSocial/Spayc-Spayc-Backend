@@ -114,3 +114,14 @@
     width: 100%;
     object-fit: cover;
 }
+.alert-fixed-position{
+    z-index: 9;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    position: fixed !important;
+    top: 110px !important;
+}
+.subspayc-box.disabled {
+    opacity: .5;
+}

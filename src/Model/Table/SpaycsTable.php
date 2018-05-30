@@ -407,12 +407,12 @@ class SpaycsTable extends Table
 
     public function getSubwarpsListBySpaycId($spaycId = null) {
         $spayc = $this->find();
-        $spayc->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.parent_id','Spaycs.created','Spaycs.modified'])
+        $spayc->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.parent_id','Spaycs.created','Spaycs.modified','Spaycs.status'])
             ->where(['id'=>$spaycId, 'Spaycs.group_type !=' =>'trusted_private'])
             ->contain([
                 'SubSpaycs' => function($q) {
                 $exp = $q->newExpr()->addCase($q->newExpr()->add(['location IS NULL']),"");
-                    return  $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'location'=>$exp, 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id']);
+                    return  $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'location'=>$exp, 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id','SubSpaycs.status']);
                 }
             ])->order(['created'=>'DESC']);
         $spayc = $spayc->first();     

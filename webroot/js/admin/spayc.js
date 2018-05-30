@@ -17,11 +17,17 @@ jQuery(document).ready(function ($) {
               if($('.status_'+$('#spayc-id').val()).hasClass('block')){
                 $('.status_'+$('#spayc-id').val()).removeClass('block').addClass('unblock');                      
                 $('span.status_'+$('#spayc-id').val()).text('Unblock');
+                if($(".spayc-div-listing").hasClass('square-box'))
                 $('.status_'+$('#spayc-id').val()).closest('.square-box').addClass('disabled');  
+                else if($(".spayc-div-listing").hasClass('subspayc-box'))
+                $('.status_'+$('#spayc-id').val()).closest('.subspayc-box').addClass('disabled');  
               } else {
                 $('.status_'+$('#spayc-id').val()).removeClass('unblock').addClass('block');                      
                 $('span.status_'+$('#spayc-id').val()).text('Block');
+                if($(".spayc-div-listing").hasClass('square-box'))
                 $('.status_'+$('#spayc-id').val()).closest('.square-box').removeClass('disabled');
+                else if($(".spayc-div-listing").hasClass('subspayc-box'))
+                $('.status_'+$('#spayc-id').val()).closest('.subspayc-box').removeClass('disabled');
               }
               if (data.status == 'Active') {                      
                 $('.spaycs-msg').removeClass('error-alert').addClass('success-alert');  

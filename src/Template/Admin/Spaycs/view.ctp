@@ -10,7 +10,7 @@ $breadcrumbsTxt= ucfirst($spayc->name);
 <!--=============breadcrumbs==============-->            
   <?php echo $this->element('admin/breadcrumbs', ['action'=> $breadcrumbsTxt]);?>
    <section class="content-wrapper content-filter">
-   <span class="error-alert spaycs-msg header-alert" style="display: none;"></span>
+   <span class="error-alert alert-fixed-position spaycs-msg header-alert" style="display: none;"></span>
         <!--======= event view wrapper==========-->
         <div class="container">
           <div class="event-view-wrapper">
