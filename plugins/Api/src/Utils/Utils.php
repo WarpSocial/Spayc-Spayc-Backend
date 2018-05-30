@@ -404,8 +404,8 @@ class Utils {
     }
     
     public static function uniqueInteger(){
-        list($usec, $sec) = explode(" ", microtime());
-        return ((float)$usec + (float)$sec) + strtotime();
+        $uniqueid = abs(crc32(uniqid())).str_replace("0.","",abs( microtime()));
+        return $uniqueid;
     }
 
 }

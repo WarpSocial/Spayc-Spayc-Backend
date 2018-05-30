@@ -344,10 +344,12 @@ class SpaycsController extends AppController {
         }
         if(!empty($this->request->query('hot')) && (strtolower($this->request->query('hot')) == 'yes')) {
            $spaycs->select(['joined_user'=>$spaycs->func()->count('JoinedSpayc.spayc_id')]);
-           $spaycs->leftJoinWith('JoinedSpayc');
+           $spaycs->leftJoinWith('JoinedSpayc',function($q){
+               return $q->where(['JoinedSpayc.status'=>JOINED]);
+           });
            $spaycs->group(['Spaycs.id, Spaycs.name,Spaycs.user_id, Spaycs.location, Spaycs.image, Spaycs.group_type, Spaycs.type,Spaycs.start_date,
 Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,SpaycCategories.id,SpaycCategories.name,Spaycs.created']);
-           $spaycs->order(['joined_user'=>'DESC','Spaycs.created'=>'DESC'],Query::OVERWRITE);
+           $spaycs->order(['joined_user'=>'DESC','distance'=>'ASC','Spaycs.created'=>'DESC'],Query::OVERWRITE);
         }
         if($page < 0){
             $page = $page*-1;
@@ -560,11 +562,11 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         
         $bannedSpayc = $this->Spaycs->bannedSpayc($userId);
         $spayc = $this->Spaycs->find();
-        $spayc->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.parent_id','Spaycs.created','Spaycs.modified','Spaycs.spayc_category_id'])
+        $spayc->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.parent_id','Spaycs.created','Spaycs.modified','Spaycs.latitude','Spaycs.longitude','Spaycs.spayc_category_id'])
                 ->where(['Spaycs.status'=>'Active', 'OR'=>['matrix_room_id'=>$id,'Spaycs.id'=>$id]])
                 ->contain([
                     'SubSpaycs' => function($q)use($bannedSpayc) {
-                        $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'SubSpaycs.location', 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id']);
+                        $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'SubSpaycs.location', 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id','SubSpaycs.latitude','SubSpaycs.longitude']);
                         if(!empty($bannedSpayc)){
                             $q->where(function (QueryExpression $exp, Query $q)use($bannedSpayc) {
                                 return $exp->notIn('SubSpaycs.id', $bannedSpayc);
