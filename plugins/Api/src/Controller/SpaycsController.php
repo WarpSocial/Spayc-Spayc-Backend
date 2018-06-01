@@ -844,6 +844,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
             TableRegistry::get('Api.SubscribedUsers')->deleteAll(['spayc_id IN' => $child]);
             TableRegistry::get('Api.SpaycHashtags')->deleteAll(['spayc_id IN' => $child]);
             TableRegistry::get('Api.SpaycAdvertisement')->deleteAll(['spayc_id IN' => $child]);
+            TableRegistry::get('Api.Notifications')->deleteAll(['spayc_id IN' => $child]);
              $ids = TableRegistry::get('Api.Promotions')->find()
                      ->select(['id'])
                      ->where(['spayc_id IN' => $child]);

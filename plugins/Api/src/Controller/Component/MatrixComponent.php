@@ -542,7 +542,7 @@ class MatrixComponent extends Component {
     }
     /**
      * banMember method to ban the user from the room
-     * @param Array $data include the matrix_user_id,matrix_token,matrix_room_id
+     * @param Array $data include the matrix_user_id,matrix_token,matrix_room_id and status ban|unbanned
      * @param Bool true|false
      */
     public function banMember($data = []) {
@@ -555,7 +555,7 @@ class MatrixComponent extends Component {
         ];
         $roomId  = $this->validRoomId($data['matrix_room_id']);
         $http = new Client();
-        if($data['status'] == 'Unbanned'){
+        if(strtolower($data['status']) == 'unbanned'){
             $apiEndpoint = 'unban';            
         }else{
             $apiEndpoint = 'ban';
