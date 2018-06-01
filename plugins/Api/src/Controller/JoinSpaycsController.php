@@ -115,7 +115,7 @@ class JoinSpaycsController extends AppController {
                     if(!TableRegistry::get('Api.SubscribedUsers')->isSubscribed($user['id'],ACTIVE)){
                         $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);
                     }
-                     $this->Matrix->deleteTag($spayc->matrix_room_id,$user['UserLogs']['matrix_access_token'],$user['UserLogs']['matrix_user_id']);
+                    $this->Matrix->deleteTag($spayc->matrix_room_id,$user['UserLogs']['matrix_access_token'],$user['UserLogs']['matrix_user_id']);
                 }
                 $jsModel->getConnection()->commit();
                 $friends = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($user['id'], 'Accepted');

@@ -361,21 +361,29 @@ class Utils {
         }
     }
 
-    public static function toUtc($datetime) {
+    public static function toUtc($datetime,$dateTimeformat = 'm-d-Y H:i:s',$utcFormat='Y-m-d H:i:s') {
         $timezone = Configure::read('timezone');
         if (!empty($datetime)) {
-            $parseDate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s', $datetime, $timezone);
-            return $parseDate->setTimezone(new \DateTimeZone('UTC'))->format("Y-m-d H:i:s");
+            if(strtolower($datetime) == 'now'){
+                $datetime = (new Time('now',$timezone));
+            }else{
+                $datetime = Time::createFromFormat($dateTimeformat, $datetime, $timezone);
+            }
+            return $datetime->setTimezone(new \DateTimeZone('UTC'))->format($utcFormat);
         } else {
             return;
         }
     }
 
-    public static function toClient($datetime) {
+    public static function toClient($datetime,$dateTimeformat = 'm-d-Y H:i:s',$utcFormat='Y-m-d H:i:s') {
         $timezone = Configure::read('timezone');
         if (!empty($datetime)) {
-            $sd = new Time($datetime, 'UTC');
-            return $sd->setTimezone(new \DateTimeZone($timezone))->format('m-d-Y H:i:s');
+            if(strtolower($datetime) == 'now'){
+                $datetime = (new Time('now','UTC'));
+            }else{
+                $datetime = Time::createFromFormat($utcFormat, $datetime, 'UTC');
+            }
+            return $datetime->setTimezone(new \DateTimeZone($timezone))->format($dateTimeformat);
         } else {
             return;
         }
