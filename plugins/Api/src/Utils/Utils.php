@@ -367,6 +367,9 @@ class Utils {
             if(strtolower($datetime) == 'now'){
                 $datetime = (new Time('now',$timezone));
             }else{
+                if(is_object($datetime)){
+                    $datetime = $datetime->format($dateTimeformat);
+                }
                 $datetime = Time::createFromFormat($dateTimeformat, $datetime, $timezone);
             }
             return $datetime->setTimezone(new \DateTimeZone('UTC'))->format($utcFormat);
@@ -381,6 +384,9 @@ class Utils {
             if(strtolower($datetime) == 'now'){
                 $datetime = (new Time('now','UTC'));
             }else{
+                if(is_object($datetime)){
+                    $datetime = $datetime->format($utcFormat);
+                }
                 $datetime = Time::createFromFormat($utcFormat, $datetime, 'UTC');
             }
             return $datetime->setTimezone(new \DateTimeZone($timezone))->format($dateTimeformat);
