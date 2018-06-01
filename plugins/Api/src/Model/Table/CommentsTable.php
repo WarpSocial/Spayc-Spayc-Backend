@@ -64,19 +64,26 @@ class CommentsTable extends Table {
         return $rules;
     }
     
-    public function spaycActivities($spaycId,$data){
-        $comment = $this->findBySpaycId($spaycId)->first();
+    public function matrixComment($matrixRoomId){
+        $conn = \Cake\Datasource\ConnectionManager::get('matrix');
+        $sql = sprintf("SELECT count(room_id) AS all_comments FROM events WHERE type='m.room.message' AND room_id='%s' GROUP BY room_id",$matrixRoomId);
+        $results = $conn->execute($sql)->fetch('assoc');
+        return empty($results['all_comments'])?0:$results['all_comments'];
+    }
+    
+    public function spaycActivities($matrixRoomId,$data){        
+        $comment = $this->findBySpaycId($data['spayc_id'])->first();
         if(empty($comment)){
             $comment = $this->newEntity();
             $comment->status = ACTIVE;
-            $comment->spayc_id = $spaycId;
-            $comment->comment = 1;
+            $comment->spayc_id = $data['spayc_id'];
+            $comment->comment = $this->matrixComment($matrixRoomId);
             $comment->event_id = $data['event_id'];
         }else{
             if( ($comment->event_id == $data['event_id']) ){
                 return;
             }
-            $comment->comment = $comment->comment+1;
+            $comment->comment = $this->matrixComment($matrixRoomId);
             $comment->event_id = $data['event_id'];
         }
         if(!$this->save($comment)){

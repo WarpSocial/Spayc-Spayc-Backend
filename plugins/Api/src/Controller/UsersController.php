@@ -1383,7 +1383,7 @@ class UsersController extends AppController {
         }
         
         $data = $this->request->getData();
-        Log::info($data);
+        //Log::info($data);
         //$this->Users->pusherData($data);
         /* for direct notification */
         if(!empty($data['notification']['content']['actionBy']) && ($data['notification']['content']['actionBy'] == 'Self' )){
@@ -1419,7 +1419,7 @@ class UsersController extends AppController {
         $items['device_token'] = $deviceToken = $device['pushkey'];
         $items['date_time'] = date('m-d-Y H:i:s',$device['pushkey_ts']);
         if(!empty($senderId) && !empty($receiverId) && in_array($msgType,['m.replyText','m.likeMessage'])){
-            $items['id'] = Utils::uniqueInteger();
+            //$items['id'] = Utils::uniqueInteger();
             $items['requested_by'] = $senderId->id;
             $items['requested_to'] = $receiverId->id;
             $items['date_time'] = $items['date_time'];

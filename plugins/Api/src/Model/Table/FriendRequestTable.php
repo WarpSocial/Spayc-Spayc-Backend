@@ -355,12 +355,7 @@ class FriendRequestTable extends Table {
         if(empty($userId)){
             return false;
         }
-        return $this->exists(['OR' => [
-                    ['requested_by' => $userId],
-                    ['requested_to' => $userId]
-                    ],
-                    'requested_status'=>$status
-                ]);
+        return $this->exists(['requested_to' => $userId,'requested_status'=>$status]);
     }
 
 }

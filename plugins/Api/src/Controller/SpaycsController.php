@@ -497,7 +497,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
      * @param String|Number $spayc_id Either spayc id or matrix room id
      * @return Object Json object
      */
-    public function unSubscribeSpayc(){
+    public function unSubscribeSpayc(){        
         if (!$this->request->is('post')) {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
         }
