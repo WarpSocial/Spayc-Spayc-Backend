@@ -90,9 +90,7 @@ class CommentsTable extends Table {
             $comment->comment = $this->matrixComment($matrixRoomId);
             $comment->event_id = $data['event_id'];
         }
-        if(!$this->save($comment)){
-            \Cake\Log\Log::info(['message'=>'Record not saved','data'=>$data]);
-        }
+        $this->save($comment);
         return;
     }
 
