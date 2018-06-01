@@ -72,14 +72,18 @@ class CommentsTable extends Table {
     }
     
     public function spaycActivities($matrixRoomId,$data){        
-        $comment = $this->findBySpaycId($data['spayc_id'])->first();
-        if(empty($comment)){
+        if(empty($data['spayc_id']) || empty($matrixRoomId)){
+            return;
+        }
+        $comments = $this->findBySpaycId($data['spayc_id']);
+        if($comments->isEmpty()){
             $comment = $this->newEntity();
             $comment->status = ACTIVE;
             $comment->spayc_id = $data['spayc_id'];
             $comment->comment = $this->matrixComment($matrixRoomId);
             $comment->event_id = $data['event_id'];
         }else{
+            $comment = $comments->first();
             if( ($comment->event_id == $data['event_id']) ){
                 return;
             }
