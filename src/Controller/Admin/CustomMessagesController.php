@@ -20,13 +20,14 @@ use Api\Utils\Utils;
  *
  * @property \App\Model\Table\UsersTable $Users
  */
-class UsersController extends AdminController
+class CustomMessagesController extends AdminController
 {
     use MailerAwareTrait;
     public function initialize() {
         parent::initialize();        
         $this->loadComponent('Api.Push');
         $this->loadComponent('Scraper');
+        $this->Users = TableRegistry::get('Users');        
         $this->Spaycs = TableRegistry::get('Spaycs');
     }
 
@@ -400,19 +401,20 @@ class UsersController extends AdminController
     }
 
     /*** get list of Advertisement created by user***/
-    public function userAdvertisement($userId=null)
+    public function getCustomMessage()
     {
-        $this->set('title', $this->siteTitleMessage['MANAGE-ADVERTISEMENTS']);
-        $user = $this->Users->get($userId);
-        $this->Advertisement = TableRegistry::get('Advertisement');
-        $keyword=($this->request->query('keyword'))?trim(strtolower($this->request->query('keyword'))):'';
-        $query = $this->Advertisement->find('all')->where(["status !=" => ADVERTISEMENTSTATUS, 'user_id' => $userId]);
-        if(!empty($keyword)){
-            $query->where(['OR' => [['LOWER(Advertisement.name) LIKE' => "%".$keyword."%"]]]);
-        }
-        $advertisements = $this->paginate($query);
-        $this->set(compact('advertisements','user'));
-        $this->render('../Advertisement/index');
+        $this->viewBuilder()->layout('');
+//        $this->set('title', $this->siteTitleMessage['MANAGE-ADVERTISEMENTS']);
+//        $user = $this->Users->get($userId);
+//        $this->Advertisement = TableRegistry::get('Advertisement');
+//        $keyword=($this->request->query('keyword'))?trim(strtolower($this->request->query('keyword'))):'';
+//        $query = $this->Advertisement->find('all')->where(["status !=" => ADVERTISEMENTSTATUS, 'user_id' => $userId]);
+//        if(!empty($keyword)){
+//            $query->where(['OR' => [['LOWER(Advertisement.name) LIKE' => "%".$keyword."%"]]]);
+//        }
+//        $advertisements = $this->paginate($query);
+//        $this->set(compact('advertisements','user'));
+//        $this->render('../Advertisement/index');
     }
 
     /*** get list of warps, joined or created by user***/
@@ -436,33 +438,6 @@ class UsersController extends AdminController
         $spaycs = $this->paginate($spaycs); 
         $this->set(compact('spaycs','keyword','user', 'listBy'));        
         $this->set('_serialize', ['spaycs']);
-    }
-    
-    
-    
-    public function searchUser($keyword) {
-        $this->viewBuilder()->layout('');
-        $this->autoRender = false;
-        $obj = TableRegistry::get("Users")->find('all',
-                ['fields' =>['user_logs.plain_token',]])
-//                ->join([
-//                            'table' => 'user_logs',
-//                            'type' => 'INNER',
-//                            'conditions' => [
-//                                'Users.id = user_logs.user_id',
-//                                'Users.email' => trim(SCRAPER_EMAIL),
-//                            ]])
-                
-                ->limit(50)->toArray();
-          if(!empty($keyword)){            
-            $spaycs->where(['OR' => ['LOWER(Users.display_name) LIKE' => "%".$keyword."%"]]);
-        }
-        if(!empty($obj)){
-            return $plain_token=$obj->user_logs['plain_token'];
-        }else{
-            return false;
-        }
-        
     }
 
 }
