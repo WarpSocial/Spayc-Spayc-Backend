@@ -92,8 +92,10 @@ class QueueGenericTask extends QueueTask {
                 'spayc_id'=>$data['id'],
                 'date_time'=>$data['created_duration']
             ];
-            $notify = $notificationRepo->addNotification($notificationItems);
             
+            if($data['user_id'] != $user->user_id){
+                $notify = $notificationRepo->addNotification($notificationItems);
+            }
             $items = [
                 'requested_by'=>$data['user_id'],
                 'id'=>$notify->id,
@@ -104,7 +106,10 @@ class QueueGenericTask extends QueueTask {
                 'spayc_image'=>empty($data['image'])?null:$data['image'],
                 'time'=>$data['created_duration']
             ];
-            $push->sendOnIOS($items);
+            if($data['user_id'] != $user->user_id){
+                $push->sendOnIOS($items);
+            }
+            
             
         }
     }
