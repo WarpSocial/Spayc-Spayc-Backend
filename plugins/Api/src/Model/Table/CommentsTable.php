@@ -66,7 +66,7 @@ class CommentsTable extends Table {
     
     public function matrixComment($matrixRoomId){
         $conn = \Cake\Datasource\ConnectionManager::get('matrix');
-        $sql = sprintf("SELECT count(room_id) AS all_comments FROM events WHERE (content LIKE '%m.text%' OR content LIKE '%m.image%') AND type='m.room.message' AND room_id='%s' GROUP BY room_id",$matrixRoomId);
+        $sql = sprintf("SELECT count(room_id) AS all_comments FROM events WHERE (content LIKE '%%m.text%%' OR content LIKE '%%m.image%%') AND type='m.room.message' AND room_id='%s' GROUP BY room_id",$matrixRoomId);
         $results = $conn->execute($sql)->fetch('assoc');
         return empty($results['all_comments'])?0:$results['all_comments'];
     }

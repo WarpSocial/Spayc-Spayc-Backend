@@ -623,11 +623,11 @@ class SpaycsTable extends Table {
             $push['matrix_room_id'] = $items['matrix_room_id'];
             $push['distance'] = $distance;
             if(!$items['is_direct']){
-                if(($val->id != $adminUser)){
+                if($val->id != $adminUser){
+                    \Cake\Log\Log::info($val->id ."!=".$adminUser);
                     $pushNotification->sendPushNotification($push);
                 }
                 /*In direct chat no need to send the notification */
-
             }
         }      
         
