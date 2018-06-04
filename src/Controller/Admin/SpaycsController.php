@@ -251,13 +251,15 @@ class SpaycsController extends AdminController
         $this->viewBuilder()->layout('');
         if (empty($id)) {
             return $this->redirect(['action' => 'index']);  
-        }        
+        }  
+        $admin_slug_arr = unserialize(ADMIN_SLUG_ARR);   
         $spayc= $this->Spaycs->spaycObj($id); 
         if ($this->request->is(['post','put'])) {    
             if(!empty($spayc)){
                 $displayName = !empty($spayc->name)? ucfirst($spayc->name) : SITE_TITLE;
                 $user= $this->Users->get($spayc->user_id);
                 $spayc->set('matrix_access_token',$user->matrix_access_token);
+                $spayc->set($admin_slug_arr['spayc-deleted'],$admin_slug_arr['spayc-deleted']);
                 /* To queue the job to process from backend system */
                 TableRegistry::get('Queue.QueuedJobs')->createJob('Delete',$spayc->toArray());
                 $matrixRoomIds = \Cake\Utility\Hash::extract($spayc->sub_spaycs, '{n}.matrix_room_id');
