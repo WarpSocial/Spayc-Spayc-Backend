@@ -3334,7 +3334,7 @@
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>Status of user, value must be any one or comma separated from following(Pending|Joined|Banned) (Optional).</p> "
+            "description": "<p>Status of user, value must be any one or comma separated from following(Pending|Joined|Banned) (Optional).</p>"
           },
           {
             "group": "Parameter",
@@ -3528,29 +3528,28 @@
             "type": "Number",
             "optional": false,
             "field": "user_id",
-<<<<<<< HEAD
-            "description": "<p>User id  of any user and if id is not available it will get the logged user data(Required).</p> "
+            "description": "<p>User id  of any user and if id is not available it will get the logged user data(Required).</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "categories",
-            "description": "<p>List of comma separeted categoires (Optional).</p> "
+            "description": "<p>List of comma separeted categoires (Optional).</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "friends",
-            "description": "<p>Value must be either yes or no (Optional).</p> "
+            "description": "<p>Value must be either yes or no (Optional).</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "hot",
-            "description": "<p>Value must be either yes or no (Optional).</p> "
+            "description": "<p>Value must be either yes or no (Optional).</p>"
           }
         ]
       }
@@ -3797,7 +3796,7 @@
         "name": "private"
       }
     ],
-    "description": "<p>Get the list warp to whom user has been subscribed but not joined the warp.</p> ",
+    "description": "<p>Get the list warp to whom user has been subscribed but not joined the warp.</p>",
     "header": {
       "fields": {
         "Header": [
@@ -3806,7 +3805,7 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
           }
         ]
       }
@@ -3819,14 +3818,14 @@
             "type": "Number",
             "optional": false,
             "field": "page",
-            "description": "<p>Page number in query string (Optional).</p> "
+            "description": "<p>Page number in query string (Optional).</p>"
           },
           {
             "group": "Parameter",
             "type": "Number",
             "optional": false,
             "field": "limit",
-            "description": "<p>Limit in query string (Optional).</p> "
+            "description": "<p>Limit in query string (Optional).</p>"
           }
         ]
       }
@@ -3839,21 +3838,21 @@
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p> "
+            "description": "<p>success.</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>List of subscribed warp.</p> "
+            "description": "<p>List of subscribed warp.</p>"
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>List of subscribed warp.</p> "
+            "description": "<p>List of subscribed warp.</p>"
           }
         ]
       },
@@ -3880,7 +3879,7 @@
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p> "
+            "description": "<p>Returns a json Object.</p>"
           }
         ],
         "Error-Response Object": [
@@ -3889,14 +3888,14 @@
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p> "
+            "description": "<p>failed.</p>"
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p> "
+            "description": "<p>Message.</p>"
           }
         ]
       },
@@ -4226,7 +4225,7 @@
             "type": "String",
             "optional": false,
             "field": "time",
-            "description": "<p>Spayc Time must be comma separated if more than one and value must be present|past|future(Optional).</p> "
+            "description": "<p>Spayc Time must be comma separated if more than one and value must be present|past|future(Optional).</p>"
           },
           {
             "group": "Parameter",
@@ -7642,7 +7641,7 @@
         "name": "Private User"
       }
     ],
-    "description": "<p>Mark user as spam user from warp.</p> ",
+    "description": "<p>Mark user as spam user from warp.</p>",
     "header": {
       "fields": {
         "Header": [
@@ -7651,7 +7650,7 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>Token must be in header</li> </ul> "
+            "description": "<ul> <li>Token must be in header</li> </ul>"
           }
         ]
       }
@@ -7664,21 +7663,21 @@
             "type": "String",
             "optional": false,
             "field": "matrix_room_id",
-            "description": "<ul> <li>Matrix room id (required).</li> </ul> "
+            "description": "<ul> <li>Matrix room id (required).</li> </ul>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "reported_to",
-            "description": "<ul> <li>Matrix user id to whom make spam user(required).</li> </ul> "
+            "description": "<ul> <li>Matrix user id to whom make spam user(required).</li> </ul>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "event_id",
-            "description": "<ul> <li>Matrix event warp id(required).</li> </ul> "
+            "description": "<ul> <li>Matrix event warp id(required).</li> </ul>"
           }
         ]
       }
@@ -7698,21 +7697,21 @@
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p> "
+            "description": "<p>success.</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>You have reported successfully..</p> "
+            "description": "<p>You have reported successfully..</p>"
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>Null.</p> "
+            "description": "<p>Null.</p>"
           }
         ]
       },
@@ -7732,14 +7731,14 @@
             "type": "String",
             "optional": false,
             "field": "You",
-            "description": "<p>have already reported this user as spam user.Admin will take care about this reports.</p> "
+            "description": "<p>have already reported this user as spam user.Admin will take care about this reports.</p>"
           },
           {
             "group": "Error 4xx",
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p> "
+            "description": "<p>Returns a json Object.</p>"
           }
         ],
         "Error-Response Object": [
@@ -7748,14 +7747,14 @@
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p> "
+            "description": "<p>failed.</p>"
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p> "
+            "description": "<p>Message.</p>"
           }
         ]
       },
