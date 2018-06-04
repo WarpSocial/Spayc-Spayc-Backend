@@ -296,7 +296,8 @@ class SpaycsTable extends Table {
                 //->notEmpty('latitude',__('Please enter latitude.'))
                 ->allowEmpty('latitude')
                 ->latitude('latitude',__('Please enter valid latitude.'));  
-        $validator                
+        $validator
+                ->requirePresence('spayc_category_id', 'create',__('Please select warp category.'))
                 ->notEmpty('spayc_category_id',__('Please select category.'))
                 ->integer('spayc_category_id',__('Please enter valid category.'))
                 ->add('spayc_category_id','validcategoryid',[
@@ -622,11 +623,11 @@ class SpaycsTable extends Table {
             $push['matrix_room_id'] = $items['matrix_room_id'];
             $push['distance'] = $distance;
             if(!$items['is_direct']){
-                if(($val->id != $adminUser)){
+                if($val->id != $adminUser){
+                    \Cake\Log\Log::info($val->id ."!=".$adminUser);
                     $pushNotification->sendPushNotification($push);
                 }
                 /*In direct chat no need to send the notification */
-
             }
         }      
         
@@ -697,8 +698,8 @@ class SpaycsTable extends Table {
         if(!empty($request['time'])){
             $period = strtolower($request['time']);
         }
-        $startDate = "to_date(cast(Spaycs.start_date as TEXT),'YYYY-MM-DD HH24:MI')";
-        $endDate = "to_date(cast(Spaycs.end_date as TEXT),'YYYY-MM-DD HH24:MI')";  
+        $startDate = "TO_TIMESTAMP(cast(Spaycs.start_date as text),'YYYY-MM-DD HH24:MI')";
+        $endDate = "TO_TIMESTAMP(cast(Spaycs.end_date as text),'YYYY-MM-DD HH24:MI')";  
         if(preg_match('/present/i', $period) && preg_match('/past/i', $period) && preg_match('/future/i', $period)) {
             
         }else if(preg_match('/present/i', $period) && preg_match('/past/i', $period)) {

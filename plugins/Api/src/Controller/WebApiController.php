@@ -53,7 +53,7 @@ class WebApiController extends AppController {
         if(empty($reportedUserStatus)){
             $this->restException(['status'=>'failed', 'message'=>__('Reported user has not been joined with this warp.')], 400);
         }
-        if($srRegistory->exists(['reported_to'=>$reportedUser->id,'reported_by'=>$user['id'],'spayc_id'=>$spaycs->id])){
+        if($srRegistory->exists(['reported_to'=>$reportedUser->id,'reported_by'=>$user['id'],'event_id'=>$data['event_id']])){
             $this->restException(['status'=>'failed', 'message'=>__('You have already reported this user as spam user.Admin will take care about this reports.')], 400);
         }
         $srEntity = $srRegistory->newEntity();

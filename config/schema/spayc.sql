@@ -115,7 +115,7 @@ CREATE TABLE spaycs (
     "created" timestamp NOT NULL,
     "modified" timestamp,
     "parent_id" bigint,
-    "category_id" bigint NULL,
+    "spayc_category_id" bigint NULL,
     PRIMARY KEY (id,user_id,created)
 );
 SELECT create_hypertable('spaycs', 'created');
@@ -582,8 +582,6 @@ ALTER "name" DROP NOT NULL;
 COMMENT ON COLUMN "spaycs"."name" IS '';
 COMMENT ON TABLE "spaycs" IS '';
 
-INSERT INTO "notification_types" ("id", "type", "message", "slug", "created", "modified") VALUES
-('', 'Warp Deleted by admin',    'Your Warp has been deleted either by you or admin! Sorry!',    'spayc-deleted-by-admin', now(),    NULL);
 DROP TABLE IF EXISTS spam_reports;
 CREATE TABLE IF NOT EXISTS spam_reports(
 id BIGSERIAL NOT NULL,
@@ -596,3 +594,6 @@ modified timestamp NULL,
 PRIMARY KEY(id,spayc_id,created)
 );
 SELECT create_hypertable('spam_reports', 'created');
+
+INSERT INTO "notification_types" ("id", "type", "message", "slug", "created", "modified") VALUES
+('', 'Warp Deleted by admin',    'Your Warp has been deleted either by you or admin! Sorry!',    'spayc-deleted-by-admin', now(),    NULL);

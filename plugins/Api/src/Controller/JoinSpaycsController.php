@@ -115,6 +115,7 @@ class JoinSpaycsController extends AppController {
                     if(!TableRegistry::get('Api.SubscribedUsers')->isSubscribed($user['id'],ACTIVE)){
                         $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);
                     }
+                    $this->Matrix->deleteTag($spayc->matrix_room_id,$user['UserLogs']['matrix_access_token'],$user['UserLogs']['matrix_user_id']);
                 }
                 $jsModel->getConnection()->commit();
                 $friends = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($user['id'], 'Accepted');
@@ -252,8 +253,9 @@ class JoinSpaycsController extends AppController {
             if($this->Matrix->joinRoom($data)) {
                 if($spayc->group_type == "Public"){
                     if(!TableRegistry::get('Api.SubscribedUsers')->isSubscribed($user['id'],ACTIVE)){
-                        $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);
+                        $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);                        
                     }
+                    $this->Matrix->deleteTag($spayc->matrix_room_id,$data['matrix_token'],$user['UserLogs']['matrix_user_id']);
                 }
                 $jsModel->getConnection()->commit();
                 $friends = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($user['id'], 'Accepted');
@@ -572,6 +574,7 @@ class JoinSpaycsController extends AppController {
                 $matrixData = ['status'=>'Joined']+$data;
                 if ($this->Matrix->joinRoom($matrixData)) {
                     $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);
+                    $this->Matrix->deleteTag($spayc->matrix_room_id,$data['matrix_token'],$requestedMatrixUser->matrix_user_id);
                     $jsModel->getConnection()->commit();
                     $this->Push->sendPushNotification([
                         'slug' => 'accept-join-request',

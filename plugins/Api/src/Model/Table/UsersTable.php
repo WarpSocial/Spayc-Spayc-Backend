@@ -753,7 +753,7 @@ class UsersTable extends Table {
         $items['message']  = $notify->message;
         $items['notification_type'] = $notify->type; 
         $items['spayc_id'] = $spayc->id;
-        TableRegistry::get('Api.Comments')->spaycActivities($spayc->id,$items);
+        TableRegistry::get('Api.Comments')->spaycActivities($spayc->matrix_room_id,$items);
         return $items;
     }
     
