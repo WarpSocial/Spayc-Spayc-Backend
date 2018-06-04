@@ -521,6 +521,7 @@ COMMENT ON COLUMN "ticketmaster_events"."category" IS 'category is classificatio
 COMMENT ON COLUMN "ticketmaster_events"."website" IS '1 for eventbrite, 2 for ticketmaster, 3 for stubhub';
 
 ALTER TABLE "spaycs" ADD "is_admin_update" smallint NULL DEFAULT '0';
+ALTER TABLE "spaycs" ADD "last_status"  row_status DEFAULT NULL;
 ALTER TABLE "spaycs" ADD "website" integer DEFAULT NULL;
 
 DROP TABLE IF EXISTS scraper_categories;
@@ -581,6 +582,8 @@ ALTER "name" DROP NOT NULL;
 COMMENT ON COLUMN "spaycs"."name" IS '';
 COMMENT ON TABLE "spaycs" IS '';
 
+INSERT INTO "notification_types" ("id", "type", "message", "slug", "created", "modified") VALUES
+('', 'Warp Deleted by admin',    'Your Warp has been deleted either by you or admin! Sorry!',    'spayc-deleted-by-admin', now(),    NULL);
 DROP TABLE IF EXISTS spam_reports;
 CREATE TABLE IF NOT EXISTS spam_reports(
 id BIGSERIAL NOT NULL,

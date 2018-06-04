@@ -715,7 +715,7 @@ class SpaycsTable extends Table {
         }else if( $period == "future" ) {
             $spaycs->where(['OR'=>[[$startDate.' >'=>$today_date],['Spaycs.end_date IS'=>null]]]);
         }else{
-            $spaycs->where(['OR'=>[[$startDate.' >='=>$today_date],['Spaycs.end_date IS'=>null]]]);
+            $spaycs->where(['OR'=>[[$startDate.' >='=>$today_date],[$endDate.' <= '=>$today_date]]]);
             //$spaycs->where(['OR'=>[[$endDate.' >='=>$today_date],['Spaycs.end_date IS'=>null]]]);
         }
         

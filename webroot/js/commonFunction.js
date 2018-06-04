@@ -5,6 +5,7 @@ function openPopup(page,className){
     $("#cmnPoupUp").modal('hide');
   }
   setTimeout(function(){
+    $("#cmnPoupUp").removeClass("modal-dialog-lg modal-dialog-sm modal-dialog-xs");
     $("#cmnPoupUp").addClass(className);
     $("#cmnPoupUp .modal-content").html('');
     $("#cmnPoupUp .modal-content").load(page);

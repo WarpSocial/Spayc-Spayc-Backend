@@ -83,4 +83,17 @@ class SubscribedUsersTable extends Table
 
         return $rules;
     }
+
+    public function getSubscribedUsersIdBySpaycId($spaycId = null){
+        $subscribedUsers = $this->find('all', ['fields' => ['user_id'], 'conditions' => ['spayc_id'=> $spaycId, 'status' => ACTIVE]]);
+        if ($subscribedUsers->isEmpty()) {
+            return false;
+        }
+        $ids = [];
+        foreach ($subscribedUsers as $subscribedUser) {
+            array_push($ids, $subscribedUser->user_id);
+        }
+         return $ids;
+    }
+    
 }

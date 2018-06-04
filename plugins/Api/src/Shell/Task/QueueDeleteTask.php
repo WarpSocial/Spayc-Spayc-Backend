@@ -46,9 +46,12 @@ class QueueDeleteTask extends QueueTask {
                     'matrix_room_id' => $data['matrix_room_id'],
                     'display_name' => $joinedUser['user']['display_name']                
                 ];
+                if(isset($data['spayc-deleted-by-admin']))
+                    $rPush['slug'] = $data['spayc-deleted-by-admin'];
+
                 /* super admin will not recieve any notification */
                 if($data['user_id'] != $joinedUser['user_id']){
-                    \Cake\Log\Log::info(json_encode($rPush,JSON_PRETTY_PRINT));
+                    // \Cake\Log\Log::info(json_encode($rPush,JSON_PRETTY_PRINT));
                     $push->sendPushNotification($rPush);
                 }
             }
@@ -71,9 +74,11 @@ class QueueDeleteTask extends QueueTask {
                             'matrix_room_id' => $subspayc['matrix_room_id'],
                             'display_name' => $joinspayc['user']['display_name']                
                         ];
+                        if(isset($data['spayc-deleted-by-admin']))
+                            $rPush['slug'] = $data['spayc-deleted-by-admin'];
                         /* super admin will not recieve any notification */
                         if($data['user_id'] != $joinspayc['user_id']){
-                            \Cake\Log\Log::info(json_encode($sPush,JSON_PRETTY_PRINT));
+                            // \Cake\Log\Log::info(json_encode($sPush,JSON_PRETTY_PRINT));
                             $push->sendPushNotification($sPush);
                         }
                     }

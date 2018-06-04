@@ -9,8 +9,9 @@ if($this->request->query('debug')&&$this->request->query('debug')=='on')
   $showPassword=true;
 if($this->request->query())
   $filter=true;
- 
- $genderIconSorting=$usernameIconSorting=$createdIconSorting=$dobIconSorting='filter.png';
+
+$breadcrumbsTxt = (isset($currUser) && !empty($currUser)) ? 'friends of '.ucwords($currUser->display_name):''; 
+$genderIconSorting=$usernameIconSorting=$createdIconSorting=$dobIconSorting='filter.png';
 if(isset($this->request->query['sort'])) {
 
     if(($this->request->query['sort'] == 'display_name') && ($this->request->query['direction'] == 'asc')) 
@@ -35,16 +36,11 @@ if(isset($this->request->query['sort'])) {
     
 }
 ?>
-<!--=============breadcrumbs==============-->      
-      <div class="breadcrumbs">
-        <div class="container">
-          <h4>Manage Users</h4>
-          <p class="hide"><span>manage</span> <span>user</span></p>
-        </div>
-      </div>
 
+<!--=============breadcrumbs==============-->      
+<?php echo $this->element('admin/breadcrumbs', ['action'=> $breadcrumbsTxt]);?>
 <section class="content-wrapper content-filter">
- <span class="error-alert users-msg header-alert" style="display: none;"></span>
+ <span class="error-alert alert-fixed-position users-msg header-alert" style="display: none;"></span>
         <!--===========filter================-->
         <?php if($userCount || $filter){ 
                 echo $this->element('admin/user-filter', ['userFilter'=> true]);
@@ -100,21 +96,21 @@ if(isset($this->request->query['sort'])) {
                 </div>
                 <div class="table-data flex-basis9">
                   <span><?= !empty($user->joinedSpayc)?
-                            $this->Html->link($user->joinedSpayc,['controller' => 'Spaycs', 'action' => 'joined-warps',$user->id], ['class' => 'num-letter-spacing']):
+                            $this->Html->link($user->joinedSpayc,['controller' => 'Users', 'action' => 'warps', strtolower(JOINED), $user->id], ['class' => 'num-letter-spacing']):
                             BLANK_COUNT ?>
                   </span>
                 </div>
                 <div class="table-data flex-basis9">
                   <span><?= !empty($user->createdSpayc)?
-                          $this->Html->link($user->createdSpayc,['controller' => 'Spaycs', 'action' => 'createdWarps',$user->id], ['class' => 'num-letter-spacing']):
+                          $this->Html->link($user->createdSpayc,['controller' => 'Users', 'action' => 'warps', strtolower(CREATED), $user->id], ['class' => 'num-letter-spacing']):
                             BLANK_COUNT ?>
                   </span>
                 </div>
                 <div class="table-data flex-basis10">
-                  <span><?= !empty($user->friend)?h($user->friend):BLANK_COUNT ?></span>
+                  <span><?= !empty($user->friend)? $this->Html->link($user->friend,['controller' => 'Users', 'action' => 'index',$user->id], ['class' => 'num-letter-spacing']):BLANK_COUNT ?></span>
                 </div>
                 <div class="table-data flex-basis14">
-                  <span><?= BLANK_COUNT ?></span>
+                  <span><?= !empty($user->userAdvertisement)?$this->Html->link($user->userAdvertisement,['controller' => 'Users', 'action' => 'userAdvertisement',$user->id], ['class' => 'num-letter-spacing']):BLANK_COUNT ?></span>
                 </div>
                 <div class="table-data flex-basis10">
                   <span><?= !empty($this->dateFormat($user->created))?$this->dateFormat($user->created):BLANK ?></span>
@@ -127,10 +123,10 @@ if(isset($this->request->query['sort'])) {
                       <span></span>
                       <span></span>
                     </div>
-                    <div class="dropdown-menu" aria-labelledby="table-data-dropdown">
+                  <div class="dropdown-menu" aria-labelledby="table-data-dropdown">
                       <button class="dropdown-item block hide"> <i class="icon-block"></i>Block</button>
                       <?php  $blocktxt = (ucfirst($user->status) == $statusArr['active'])?"Block":"Unblock";?>
-                      <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item status_<?= $user->id?> <?= strtolower($blocktxt)?>" page="<?php echo Router::url(['Controller' => 'Users', 'action'=> 'setUserStatus',$user->id]);?>"><i class='icon-block'></i><span class="status_<?= $user->id?>"><?= $blocktxt?></span>
+                      <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item status_<?= $user->id?> <?= strtolower($blocktxt)?>" page="<?php echo $this->Url->build(["controller" => "Users","action" => "setUserStatus",$user->id]);?>"><i class='icon-block'></i><span class="status_<?= $user->id?>"><?= $blocktxt?></span>
                       </a>
                     </div>
                   </div>
