@@ -137,3 +137,16 @@
     width: 100%;
     height: auto;
 }
+.underline{
+    text-decoration: underline !important;
+}
+.error-page p {
+    width: auto !important;
+    margin-bottom: 0 !important;
+}
+.error-page h2 {
+    font-weight: 400 !important;
+}
+.error-page p a {
+    color: #1a4c59;
+}
