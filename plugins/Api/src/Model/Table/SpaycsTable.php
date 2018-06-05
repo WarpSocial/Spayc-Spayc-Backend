@@ -111,11 +111,11 @@ class SpaycsTable extends Table {
         /* Earth radius in miles 3959 */
         /* for postgresql cast is required else for mysql not*/
         $this->distanceInMiles = "(3958.756 * ACOS(
-            COS(RADIANS(:lat)) *
-            COS(RADIANS(Spaycs.latitude)) *
-            COS( RADIANS(Spaycs.longitude) - RADIANS(:long) ) +
-            SIN(RADIANS(:lat)) *
-            SIN(RADIANS(Spaycs.latitude))
+            COS((:lat/57.29577951)) *
+            COS((Spaycs.latitude/57.29577951)) *
+            COS((Spaycs.longitude/57.29577951) - (:long/57.29577951) ) +
+            SIN((:lat/57.29577951)) *
+            SIN((Spaycs.latitude/57.29577951))
         ) )";
     }
 
@@ -296,7 +296,8 @@ class SpaycsTable extends Table {
                 //->notEmpty('latitude',__('Please enter latitude.'))
                 ->allowEmpty('latitude')
                 ->latitude('latitude',__('Please enter valid latitude.'));  
-        $validator                
+        $validator
+                ->requirePresence('spayc_category_id', 'create',__('Please select warp category.'))
                 ->notEmpty('spayc_category_id',__('Please select category.'))
                 ->integer('spayc_category_id',__('Please enter valid category.'))
                 ->add('spayc_category_id','validcategoryid',[
@@ -486,6 +487,9 @@ class SpaycsTable extends Table {
         if(empty($room_id)){
             return false;
         }
+        if(!empty($status)){
+            $status = explode(',', strtolower($status));
+        }
         $loggedUser = Configure::read('auth');
         $query = $this->Users->find();
         $query->select(['Users.id', 'Users.username','Users.display_name', 'Users.email','Users.matrix_user_id','JoinedSpayc.status']);
@@ -506,7 +510,7 @@ class SpaycsTable extends Table {
         $query->innerJoinWith('JoinedSpayc',function($q)use($room_id ,$status,$loggedUser) {
                 $condition = ['JoinedSpayc.spayc_id'=>$room_id ,'JoinedSpayc.user_id !='=>$loggedUser['id']];
                 if($status != null){
-                    $condition['JoinedSpayc.status'] = $status;
+                    $condition['LOWER(JoinedSpayc.status) IN'] = $status;
                 }
                 return $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin','JoinedSpayc.distance','JoinedSpayc.updated_by'])->where($condition)->order(['JoinedSpayc.created'=>'DESC']);;
         });
@@ -619,11 +623,11 @@ class SpaycsTable extends Table {
             $push['matrix_room_id'] = $items['matrix_room_id'];
             $push['distance'] = $distance;
             if(!$items['is_direct']){
-                if(($val->id != $adminUser)){
+                if($val->id != $adminUser){
+                    \Cake\Log\Log::info($val->id ."!=".$adminUser);
                     $pushNotification->sendPushNotification($push);
                 }
                 /*In direct chat no need to send the notification */
-
             }
         }      
         
@@ -692,10 +696,10 @@ class SpaycsTable extends Table {
                 ->bind(':longitude', $request['center_longitude'], 'float');
         $period = null;
         if(!empty($request['time'])){
-            $period = $request['time'];
+            $period = strtolower($request['time']);
         }
-        $startDate = "to_date(cast(Spaycs.start_date as TEXT),'YYYY-MM-DD HH24:MI')";
-        $endDate = "to_date(cast(Spaycs.end_date as TEXT),'YYYY-MM-DD HH24:MI')";  
+        $startDate = "TO_TIMESTAMP(cast(Spaycs.start_date as text),'YYYY-MM-DD HH24:MI')";
+        $endDate = "TO_TIMESTAMP(cast(Spaycs.end_date as text),'YYYY-MM-DD HH24:MI')";  
         if(preg_match('/present/i', $period) && preg_match('/past/i', $period) && preg_match('/future/i', $period)) {
             
         }else if(preg_match('/present/i', $period) && preg_match('/past/i', $period)) {

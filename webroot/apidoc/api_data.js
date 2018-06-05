@@ -3334,7 +3334,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>Status of user, value must be any one from following(Pending|Joined) (Optional).</p>"
+            "description": "<p>Status of user, value must be any one or comma separated from following(Pending|Joined|Banned) (Optional).</p>"
           },
           {
             "group": "Parameter",
@@ -3528,29 +3528,28 @@ define({ "api": [
             "type": "Number",
             "optional": false,
             "field": "user_id",
-<<<<<<< HEAD
-            "description": "<p>User id  of any user and if id is not available it will get the logged user data(Required).</p> "
+            "description": "<p>User id  of any user and if id is not available it will get the logged user data(Required).</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "categories",
-            "description": "<p>List of comma separeted categoires (Optional).</p> "
+            "description": "<p>List of comma separeted categoires (Optional).</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "friends",
-            "description": "<p>Value must be either yes or no (Optional).</p> "
+            "description": "<p>Value must be either yes or no (Optional).</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "hot",
-            "description": "<p>User id  of any user and if id is not available it will get the logged user data(Required).</p>"
+            "description": "<p>Value must be either yes or no (Optional).</p>"
           }
         ]
       }
@@ -3797,7 +3796,7 @@ define({ "api": [
         "name": "private"
       }
     ],
-    "description": "<p>Get the list warp to whom user has been subscribed but not joined the warp.</p> ",
+    "description": "<p>Get the list warp to whom user has been subscribed but not joined the warp.</p>",
     "header": {
       "fields": {
         "Header": [
@@ -3806,7 +3805,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul>"
           }
         ]
       }
@@ -3819,14 +3818,14 @@ define({ "api": [
             "type": "Number",
             "optional": false,
             "field": "page",
-            "description": "<p>Page number in query string (Optional).</p> "
+            "description": "<p>Page number in query string (Optional).</p>"
           },
           {
             "group": "Parameter",
             "type": "Number",
             "optional": false,
             "field": "limit",
-            "description": "<p>Limit in query string (Optional).</p> "
+            "description": "<p>Limit in query string (Optional).</p>"
           }
         ]
       }
@@ -3839,21 +3838,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>success.</p> "
+            "description": "<p>success.</p>"
           },
           {
             "group": "Success 200",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>List of subscribed warp.</p> "
+            "description": "<p>List of subscribed warp.</p>"
           },
           {
             "group": "Success 200",
             "type": "Object",
             "optional": false,
             "field": "data",
-            "description": "<p>List of subscribed warp.</p> "
+            "description": "<p>List of subscribed warp.</p>"
           }
         ]
       },
@@ -3880,7 +3879,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "Error-Response",
-            "description": "<p>Returns a json Object.</p> "
+            "description": "<p>Returns a json Object.</p>"
           }
         ],
         "Error-Response Object": [
@@ -3889,14 +3888,14 @@ define({ "api": [
             "type": "Boolean",
             "optional": false,
             "field": "status",
-            "description": "<p>failed.</p> "
+            "description": "<p>failed.</p>"
           },
           {
             "group": "Error-Response Object",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>Message.</p> "
+            "description": "<p>Message.</p>"
           }
         ]
       },
@@ -4226,7 +4225,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "time",
-            "description": "<p>Spayc Time must be comma separated if more than one and value must be present|past|future(Optional).</p> "
+            "description": "<p>Spayc Time must be comma separated if more than one and value must be present|past|future(Optional).</p>"
           },
           {
             "group": "Parameter",
@@ -4302,7 +4301,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"List of Data.\",\n    \"data\": {\n        \"spaycs\": {\n            \"count\": 2,\n            \"records\": [\n                {\n                    \"id\": \"3\",\n                    \"name\": \"Sam Second Community Spyace\",\n                    \"matrix_room_id\": \"!MvOssNcvbePXoBUIjC:spayc-dev.kiwireader.com\",\n                    \"image\": \"https://spayc-dev.s3.amazonaws.com/room/image_20180317082917.png\",\n                    \"type\": \"Community\",\n                    \"modified\": \"2018-03-17T08:29:17+00:00\",\n                    \"category_id\": 5,\n                    \"latitude\": 28.7041,\n                    \"longitude\": 77.1025,\n                    \"is_joined\": true,\n                    \"joined_users\": 2,\n                    \"is_subscribed\": true\n                },\n                {\n                    \"id\": \"4\",\n                    \"name\": \"Community Type Sub Spyac\",\n                    \"matrix_room_id\": \"!nQPjgmlBePZsAyVvQH:spayc-dev.kiwireader.com\",\n                    \"image\": \"https://spayc-dev.s3.amazonaws.com/room/image_20180317083321.png\",\n                    \"type\": \"Community\",\n                    \"modified\": \"2018-03-17T08:33:21+00:00\",\n                    \"category_id\": 6,\n                    \"latitude\": 28.7041,\n                    \"longitude\": 77.1025,\n                    \"is_joined\": false,\n                    \"joined_users\": 0,\n                    \"is_subscribed\": false\n                }\n            ]\n        },\n        \"friends\": {\n            \"count\": 2,\n            \"records\": [\n                {\n                    \"id\": \"3\",\n                    \"display_name\": \"sam\",\n                    \"email\": \"test@kiwitech.com\",\n                    \"address\": null,\n                    \"latitude\": 28.7041,\n                    \"longitude\": 77.1025,\n                    \"modified\": \"2018-03-17T08:21:47+00:00\",\n                    \"image_url\": \"https:\\/\\/spayc-dev.s3.amazonaws.com\\/profile\\/26168111_1523380557779310_7695911840919952448_n_20180320030546.jpg%3Foh%3D046ac3312ac9b797e1f0b12c0505572c%26oe%3D5b2ed73a\",\n                    \"matrix_room_id\": \"!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com\"\n                }\n            ]\n        }\n    }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"List of Data.\",\n    \"data\": {\n        \"spaycs\": {\n            \"count\": 2,\n            \"records\": [\n                {\n                    \"distance\": 0,\n                    \"id\": \"2109\",\n                    \"name\": \"Perfect Crime New York\",\n                    \"matrix_room_id\": \"!eHnEYoZchHVKuuyRvT:spayc-dev.kiwireader.com\",\n                    \"image\": \"http://i.ebayimg.com/images/g/TTwAAOSwpDdVXg8t/s-l1600.jpg\",\n                    \"type\": \"Event\",\n                    \"modified\": \"2018-05-15T12:18:40+00:00\",\n                    \"spayc_category_id\": 180,\n                    \"latitude\": 40.76146,\n                    \"longitude\": -73.984547,\n                    \"spayc_category\": {\n                            \"id\": 180,\n                            \"name\": \"Arts and Theater\"\n                            },\n                    \"is_joined\": false,\n                    \"joined_users\": 1,\n                    \"is_subscribed\": false\n                 },\n                 {\n                    \"distance\": 0,\n                    \"id\": \"2135\",\n                    \"name\": \"Perfect Crime New York\",\n                    \"matrix_room_id\": \"!poSQfNdqYsHGrhqbUI:spayc-dev.kiwireader.com\",\n                    \"image\": \"http://i.ebayimg.com/images/g/TTwAAOSwpDdVXg8t/s-l1600.jpg\",\n                    \"type\": \"Event\",\n                    \"modified\": \"2018-05-15T12:21:39+00:00\",\n                    \"spayc_category_id\": 180,\n                    \"latitude\": 40.76146,\n                    \"longitude\": -73.984547,\n                    \"spayc_category\": {\n                            \"id\": 180,\n                            \"name\": \"Arts and Theater\"\n                            },\n                    \"is_joined\": false,\n                    \"joined_users\": 1,\n                    \"is_subscribed\": false\n                }\n            ]\n        },\n        \"friends\": {\n            \"count\": 2,\n            \"records\": [\n                {\n                    \"id\": \"3\",\n                    \"display_name\": \"sam\",\n                    \"email\": \"test@kiwitech.com\",\n                    \"address\": null,\n                    \"latitude\": 28.7041,\n                    \"longitude\": 77.1025,\n                    \"modified\": \"2018-03-17T08:21:47+00:00\",\n                    \"image_url\": \"https:\\/\\/spayc-dev.s3.amazonaws.com\\/profile\\/26168111_1523380557779310_7695911840919952448_n_20180320030546.jpg%3Foh%3D046ac3312ac9b797e1f0b12c0505572c%26oe%3D5b2ed73a\",\n                    \"matrix_room_id\": \"!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com\"\n                }\n            ]\n        }\n    }\n}",
           "type": "json"
         }
       ]
@@ -7504,7 +7503,7 @@ define({ "api": [
     "url": "/read-notifications.json",
     "title": "Read notification",
     "version": "0.1.0",
-    "name": "readNotification",
+    "name": "postReadNotifications",
     "group": "User",
     "permission": [
       {
@@ -7627,6 +7626,151 @@ define({ "api": [
     "sampleRequest": [
       {
         "url": "http://spayc.com/api/read-notifications.json"
+      }
+    ]
+  },
+  {
+    "type": "post",
+    "url": "/spam-reports.json",
+    "title": "Spam Reports",
+    "version": "0.1.0",
+    "name": "postSpamReports",
+    "group": "User",
+    "permission": [
+      {
+        "name": "Private User"
+      }
+    ],
+    "description": "<p>Mark user as spam user from warp.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>Token must be in header</li> </ul>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "matrix_room_id",
+            "description": "<ul> <li>Matrix room id (required).</li> </ul>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "reported_to",
+            "description": "<ul> <li>Matrix user id to whom make spam user(required).</li> </ul>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "event_id",
+            "description": "<ul> <li>Matrix event warp id(required).</li> </ul>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": " \n    {\n\t\"matrix_room_id\":\"!bveMFWvYgJpOzAoZGC:127.0.0.1\",\n\t\"reported_to\":\"@pluck_1525939089:127.0.0.1\",\n\t\"event_id\":\"sdfdsf\"\n    }",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>You have reported successfully..</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>Null.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "HTTP/1.1 200 OK\n {\n     \"status\": \"success\",\n     \"message\": \"You have reported successfully.\"\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "String",
+            "optional": false,
+            "field": "You",
+            "description": "<p>have already reported this user as spam user.Admin will take care about this reports.</p>"
+          },
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p>"
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p>"
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/user.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/spam-reports.json"
       }
     ]
   },

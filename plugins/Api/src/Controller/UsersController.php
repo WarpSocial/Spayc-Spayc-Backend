@@ -27,6 +27,7 @@ class UsersController extends AppController {
     public function initialize() {
         parent::initialize();
         $this->loadComponent('Api.Push');
+        $this->loadComponent('Api.Matrix');
     }
     
     /**
@@ -86,7 +87,6 @@ class UsersController extends AppController {
         $conn = $this->Users->getConnection();
         $conn->execute('UPDATE '.$this->UserImages->getTable().' SET is_profile = CASE WHEN order_index='.$orderId.' THEN \'Yes\' else \'No\' END WHERE user_id='.$this->Auth->user('id'));
         $entity = $entity->first();
-        $this->loadComponent('Api.Matrix');
         $this->Matrix->uploadMediaImage([
                 'image_url'=>$entity->image_url,
                 'matrix_token'=>$this->Auth->user('UserLogs.matrix_access_token'),
@@ -121,7 +121,6 @@ class UsersController extends AppController {
         $image = $profileImg->first();
         if(TableRegistry::get('UserImages')->delete($image)) {
             if(($image->is_profile == 'Yes')){
-                $this->loadComponent('Api.Matrix');
                 $this->Matrix->setAvatarUrl(null,[
                     'matrix_token'=>$user['UserLogs']['matrix_access_token'],
                     'matrix_user_id'=>$user['UserLogs']['matrix_user_id']
@@ -160,7 +159,6 @@ class UsersController extends AppController {
         if(empty($user)){
             $this->restException(['status' => "failed", 'message' => __('Sign in credentials ain\'t right, try again buddy.')], 401);
         }
-        $this->loadComponent('Api.Matrix');
         $matrix = $this->Matrix->login($data_item+['username'=>$user['username']]); 
         if(empty($matrix)){
             $this->restException(['status'=>'failed','message'=>__('Matrix login failed.')], 401);
@@ -285,7 +283,6 @@ class UsersController extends AppController {
         if (!$this->request->is('post')) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
-        $this->loadComponent('Api.Matrix');
         $data = $this->request->getData();
         $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';
         $data['timezone'] = !empty($data['timezone'])?$data['timezone']:date_default_timezone_get();
@@ -377,7 +374,6 @@ class UsersController extends AppController {
         if(!$this->request->is('post')) {
             $this->restException(['status'=>'failed','message'=>__('Method not allowed.')],405);
         }
-        $this->loadComponent('Api.Matrix');
         $data = $this->request->getData();
         $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';
         $data['timezone'] = !empty($data['timezone'])?$data['timezone']:date_default_timezone_get();
@@ -539,8 +535,6 @@ class UsersController extends AppController {
                         'matrix_user_id' => $user->matrix_user_id,
                         'matrix_access_token' => $user->matrix_access_token,
                     ];
-                    //pr($matrixData);die;
-                    $this->loadComponent('Api.Matrix');
                     $this->Matrix->changePassword($matrixData);
                     $status = 'done';
                     //$this->Flash->success(__('Your new password has been reset successfully.'),['status'=>'done']);
@@ -578,7 +572,6 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($errors)], 400);
         }
         if(!empty($this->Auth->user('UserLogs.matrix_user_id')) && !empty($this->Auth->user('UserLogs.matrix_access_token'))) {
-            $this->loadComponent('Api.Matrix');
             $data_item['matrix_user_id'] = $this->Auth->user('UserLogs.matrix_user_id');
             $data_item['matrix_access_token'] = $this->Auth->user('UserLogs.matrix_access_token');
             $matrix = $this->Matrix->changePassword($data_item);
@@ -660,6 +653,7 @@ class UsersController extends AppController {
                         //->set(['loginstatus' => 0])
                         ->where(['plain_token' =>  $token])
                         ->execute();
+        $this->Matrix->logout($this->Auth->user('UserLogs.matrix_access_token'));
         $response = ['status'=>'success','message'=>__('Logout successfully.')];
         $this->set($response);
     }
@@ -1291,15 +1285,19 @@ class UsersController extends AppController {
             }
         ]);
         //pj($user);die;
+        
         $user->formatResults(function (\Cake\Collection\CollectionInterface $results)use($loggedUser,$id) {
             return $results->map(function ($row)use($loggedUser,$id) {
                 $uId = ApiHasher::decrypt($row['id']);
                 $row['joined_spaycs'] = count($this->Users->findJoinedSpayc($id));
                 $row['created_spaycs'] = !empty($row['spaycs'][0]['created_spaycs'])? $row['spaycs'][0]['created_spaycs'] : 0;
                 $row['unread_notifications'] = !empty($row['notification_to'][0]['unread_notification'])? $row['notification_to'][0]['unread_notification'] : 0;
+                
                 $row['friend'] = TableRegistry::get('Api.FriendRequest')->myFriend($uId,$loggedUser['id']);
                 $row['matrix_room_id'] = !empty($row['friend']['matrix_room_id'])?$row['friend']['matrix_room_id']:null;
+                
                 unset($row['friend']['matrix_room_id']);
+                $row['friend']['pending_request'] = TableRegistry::get('Api.FriendRequest')->friendStatus($loggedUser['id'],PENDING);
                 $row['friend']['total_friends'] = TableRegistry::get('Api.FriendRequest')->getFriendCountByUserId($uId);
                 unset($row['joined_spayc'],$row['requestedto'],$row['requestedby'],$row['spaycs']);
                 unset($row['notification_to']);
@@ -1385,7 +1383,7 @@ class UsersController extends AppController {
         }
         
         $data = $this->request->getData();
-        Log::info($data);
+        //Log::info($data);
         //$this->Users->pusherData($data);
         /* for direct notification */
         if(!empty($data['notification']['content']['actionBy']) && ($data['notification']['content']['actionBy'] == 'Self' )){
@@ -1421,13 +1419,19 @@ class UsersController extends AppController {
         $items['device_token'] = $deviceToken = $device['pushkey'];
         $items['date_time'] = date('m-d-Y H:i:s',$device['pushkey_ts']);
         if(!empty($senderId) && !empty($receiverId) && in_array($msgType,['m.replyText','m.likeMessage'])){
-            $saveNotification = TableRegistry::get("Api.Notifications")->addNotification(array_merge($items,['requested_by'=>$senderId->id,'requested_to'=>$receiverId->id,'date_time'=>$items['date_time']]));            
-            $items['id'] = $saveNotification->id;
+            //$items['id'] = Utils::uniqueInteger();
             $items['requested_by'] = $senderId->id;
+            $items['requested_to'] = $receiverId->id;
+            $items['date_time'] = $items['date_time'];
+            $data['job_type'] = 'communication_center';
+            $data['items'] = $items;
+            //TableRegistry::get('Queue.QueuedJobs')->createJob('Generic',$data);
+            $saveNotification = TableRegistry::get("Api.Notifications")->addNotification($items);
         }
         $this->loadComponent('Api.Notification');
         //$this->Push->sendOnIOS($items);
-        Log::info($items);
+        //Log::info($items);
+        
         $this->Notification->iosPush($items,$deviceToken);        
         /* Rest job will be done by workers */
         //$data['items'] = $items;
@@ -1550,7 +1554,6 @@ class UsersController extends AppController {
         }
         $data = $this->request->getData();
         $user = $this->Auth->user();
-        pr($user);die;
         if(empty($data['is_notify'])) {
             $this->restException(['status'=>'failed','message'=>'is_notify is required field.'], 400);
         }

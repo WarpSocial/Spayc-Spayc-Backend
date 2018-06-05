@@ -27,6 +27,7 @@ $push_notification_admin_slug= array('blocked'=>'blocked-by-admin','unblocked'=>
 $txt_massage= array('block'=>'Blocked','unblock'=>'Unblocked');
 $scraperStates = array('New York','NY','NEW YORK','new york','ny','New York City','new york city'); 
 $scraperCountries = array('US','us','United States','united states','United States of America','USA'); 
+$admin_slug_arr=array('spayc-deleted'=>'spayc-deleted-by-admin');
 define('USER_GENDER', serialize($user_gender));
 define('USER_AGE', serialize($user_age));
 define('STATUS_ARR', serialize($status_arr));
@@ -51,6 +52,7 @@ define('PHYSICAL_PRESENT_USERS', 'PhysicalpresentUsers');
 define('USER_FRIENDS', 'Userfriends');
 define('CREATED','Created');
 define('SPAYC_TABLE', 'spaycs');
+define('ADMIN_SLUG_ARR', serialize($admin_slug_arr));
 
 $scraperRootUrl=array('eventbriteurl'=> 'https://www.eventbriteapi.com/v3/',
     'ticketmasterurl'=> 'https://app.ticketmaster.com/discovery/v2/',

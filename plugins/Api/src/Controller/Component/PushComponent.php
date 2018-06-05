@@ -37,7 +37,7 @@ class PushComponent extends Component {
     }
     
     public function sendOnIOS($data){        
-        \Cake\Log\Log::info(json_encode($data,JSON_PRETTY_PRINT));
+        #\Cake\Log\Log::info(json_encode($data,JSON_PRETTY_PRINT));
         $message = $data['message'];
         try {
             $config = $this->snsConfig;
@@ -104,11 +104,9 @@ class PushComponent extends Component {
                 )
             );
            
-           // pj($resp);exit;
             return true;
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
              \Cake\Log\Log::info($e->getMessage());
-            //print($e->getMessage());exit;
             return false;
         }
     }

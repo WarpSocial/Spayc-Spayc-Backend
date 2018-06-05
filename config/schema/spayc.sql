@@ -115,7 +115,7 @@ CREATE TABLE spaycs (
     "created" timestamp NOT NULL,
     "modified" timestamp,
     "parent_id" bigint,
-    "category_id" bigint NULL,
+    "spayc_category_id" bigint NULL,
     PRIMARY KEY (id,user_id,created)
 );
 SELECT create_hypertable('spaycs', 'created');
@@ -423,14 +423,10 @@ CREATE TABLE "plans" (
 );
 SELECT create_hypertable('plans', 'created');
 INSERT INTO "plans" ("app_plan_id","type", "name","slug", "amount", "currency", "views", "status", "created", "modified") VALUES
-('com.warp.warpapp.adviews500', 'advertisement',	'Plan I',	'plan-1',	'0.99',	'USD',	500,	'Active',	'2018-04-20 15:07:23.713696',	'2018-04-20 15:07:23.713696'),
-('com.warp.warpapp.adviews1000', 'advertisement',	'Plan II',	'plan-2',	'1.99',	'USD',	1000,	'Active',	'2018-04-20 15:08:21.355268',	'2018-04-20 15:08:21.355268'),
-('com.warp.warpapp.adviews2500', 'advertisement',	'Plan III',	'plan-3',	'4.99',	'USD',	2500,	'Active',	'2018-04-20 15:10:22.46612',	'2018-04-20 15:10:22.46612'),
-('com.warp.warpapp.adviews6000', 'advertisement',	'Plan IV',	'plan-4',	'9.99',	'USD',	6000,	'Active',	'2018-04-20 15:10:22.46612',	'2018-04-20 15:10:22.46612'),
-(NULL, 'promotional',	'Plan I',	'plan-1',	'0.99',	'USD',	500,	'Active',	'2018-04-20 15:07:23.713696',	'2018-04-20 15:07:23.713696'),
-(NULL, 'promotional',	'Plan II',	'plan-2',	'1.99',	'USD',	1000,	'Active',	'2018-04-20 15:08:21.355268',	'2018-04-20 15:08:21.355268'),
-(NULL, 'promotional',	'Plan III',	'plan-3',	'4.99',	'USD',	2500,	'Active',	'2018-04-20 15:10:22.46612',	'2018-04-20 15:10:22.46612'),
-(NULL, 'promotional',	'Plan IV',	'plan-4',	'9.99',	'USD',	6000,	'Active',	'2018-04-20 15:10:22.46612',	'2018-04-20 15:10:22.46612');
+('com.warp.warpapp.adviews1000','advertisement','Plan I','plan-1','0.99','USD',	1000,'Active','2018-04-20 15:07:23.713696','2018-04-20 15:07:23.713696'),
+('com.warp.warpapp.adviews2000','advertisement','Plan II','plan-2','1.99','USD',2000,'Active','2018-04-20 15:08:21.355268','2018-04-20 15:08:21.355268'),
+('com.warp.warpapp.adviews6000','advertisement','Plan III','plan-3','4.99','USD',6000,'Active','2018-04-20 15:10:22.46612','2018-04-20 15:10:22.46612'),
+('com.warp.warpapp.adviews25000','advertisement','Plan IV','plan-4','9.99','USD',25000,'Active','2018-04-20 15:10:22.46612','2018-04-20 15:10:22.46612');
 
 /*** For Scrapper Tables ***/
 DROP TABLE IF EXISTS eventbrite_events;
@@ -585,6 +581,19 @@ ALTER "name" DROP DEFAULT,
 ALTER "name" DROP NOT NULL;
 COMMENT ON COLUMN "spaycs"."name" IS '';
 COMMENT ON TABLE "spaycs" IS '';
+
+DROP TABLE IF EXISTS spam_reports;
+CREATE TABLE IF NOT EXISTS spam_reports(
+id BIGSERIAL NOT NULL,
+spayc_id BIGINT NOT NULL,
+reported_by BIGINT NOT NULL,
+reported_to BIGINT NOT NULL,
+event_id VARCHAR(60) NOT NULL,
+created timestamp NOT NULL,
+modified timestamp NULL,
+PRIMARY KEY(id,spayc_id,created)
+);
+SELECT create_hypertable('spam_reports', 'created');
 
 INSERT INTO "notification_types" ("id", "type", "message", "slug", "created", "modified") VALUES
 ('', 'Warp Deleted by admin',    'Your Warp has been deleted either by you or admin! Sorry!',    'spayc-deleted-by-admin', now(),    NULL);
