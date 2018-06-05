@@ -3,6 +3,22 @@
 select {
         width: 300px;
     }
+.user-list .user-image {
+    width: 50px;
+    height: 50%;
+    border-radius: 50%;
+    overflow: hidden;
+}
+.user-list .user-image span {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+.user-list .user-image img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
 
 </style>
 
