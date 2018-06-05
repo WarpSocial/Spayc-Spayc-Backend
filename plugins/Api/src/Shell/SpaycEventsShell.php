@@ -121,7 +121,6 @@ class SpaycEventsShell extends Shell {
                     $push['matrix_room_id'] = $v['matrix_room_id'];
                     $push['slug'] = $notification_type;
                     $success[]=$this->Push->sendPushNotification($push);
-                    var_dump($success);die;
                 }
             }
         }
