@@ -125,3 +125,15 @@
 .subspayc-box.disabled {
     opacity: .5;
 }
+.min-height-set {
+    min-height: 100vh;
+    padding-bottom: 62px;
+    position: relative;
+}
+.min-height-set footer{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+}
