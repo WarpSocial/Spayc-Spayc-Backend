@@ -40,11 +40,11 @@ if(isset($this->request->query['sort'])) {
       <div class="container">        
         <div class="table-wrapper">      
           <div class="table-head">
-            <div class="head-text flex-basis12 text-left p-info">
+            <div class="head-text flex-basis14 text-left">
             <span class="table-filter"><?php echo $this->Paginator->sort('name','Warps').'&nbsp;<i>'.$this->Paginator->sort('name',$this->Html->image($nameIconSorting, ['alt' => 'icon']),['escape' => false]).'</i>';?>     
             </span>
             </div>
-            <div class="head-text flex-basis12 text-left">
+            <div class="head-text flex-basis10 text-left">
               <span class="table-filter"><?php echo $this->Paginator->sort('Users.display_name','Admin').'&nbsp;<i>'.$this->Paginator->sort('Users.display_name',$this->Html->image($disNameSorting, ['alt' => 'icon']),['escape' => false]).'</i>';?></span>
             </div>
             <div class="head-text flex-basis10 text-left"><span class="table-filter"><?php echo $this->Paginator->sort('start_date','Date & Time').'&nbsp;<i>'.$this->Paginator->sort('start_date',$this->Html->image($dateIconSorting, ['alt' => 'icon']),['escape' => false]).'</i>';?></span>
@@ -66,10 +66,10 @@ if(isset($this->request->query['sort'])) {
               ?>
             <!--==============table data====================-->
               <div class="table-row spayc-div-listing <?php echo $blocktxt =='Block'?'':'disabled';?>">
-                <div class="table-data flex-basis12 text-left">
-                  <span class="data-name"><?= !empty($spayc->name)?h(ucwords($spayc->name)):BLANK ?></span>
+                <div class="table-data flex-basis14 text-left">
+                  <span><?= !empty($spayc->name)?h(ucwords($spayc->name)):BLANK ?></span>
                 </div>
-                <div class="table-data flex-basis12 text-left">
+                <div class="table-data flex-basis10 text-left">
                   <span><?= !empty($spayc->spayc_admin)?h(ucwords($spayc->spayc_admin)):BLANK ?></span>
                   <?php if($totalAdmin > 1) { ?>
                   <div id="admin_<?=$spayc->id?>" class="hide"><?= $this->element('admin/adminpopuptxt',['total_spayc_admin'=>$spayc['total_spayc_admin']])?></div>

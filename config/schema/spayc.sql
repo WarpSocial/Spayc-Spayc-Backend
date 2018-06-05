@@ -284,8 +284,8 @@ INSERT INTO "users" ("username", "email", "password", "gender", "dob", "phone", 
 
 -- Adminer 4.3.1 PostgreSQL dump
 INSERT INTO "notification_types" ("id", "type", "message", "slug", "created", "modified")
-VALUES ('19', 'Blocked by admin', 'You''ve been blocked. What did you do now?', 'blocked-by-admin', now(), NULL),
-VALUES ('20', 'UNblocked by admin', 'You''ve been unblocked.', 'unblocked-by-admin', now(), NULL);
+VALUES ('19', 'Blocked by admin', 'You''ve been blocked. What did you do now?', 'user-blocked-by-admin', now(), NULL),
+VALUES ('20', 'UNblocked by admin', 'You''ve been unblocked.', 'user-unblocked-by-admin', now(), NULL);
 
 
 DROP TABLE IF EXISTS "queue_phinxlog";
