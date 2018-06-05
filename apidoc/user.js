@@ -32,14 +32,16 @@
  * 
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  *
- * @apiParam {String} username     Username (Required).
- * @apiParam {Date}   dob          Date of birth must in this format MM-DD-YYYY (Optional).
- * @apiParam {String} gender       Gender of user like any one (Male, Femal, Other) (Required).
- * @apiParam {String} country_code Country code of user phone number(Optional).
- * @apiParam {Number} phone        Phone no of user and accept upto 16 digits (Optional).
- * @apiParam {String} address      User address (Optional).
- * @apiParam {String} website_url  Website url (Optional).
- * @apiParam {String} bio_data     Bio data of user (Optional).
+ * @apiParam {String}  username     Username (Required).
+ * @apiParam {Date}    dob          Date of birth must in this format MM-DD-YYYY (Optional).
+ * @apiParam {String}  gender       Gender of user like any one (Male, Femal, Other) (Required).
+ * @apiParam {String}  country_code Country code of user phone number(Optional).
+ * @apiParam {Number}  phone        Phone no of user and accept upto 16 digits (Optional).
+ * @apiParam {String}  address      User address (Optional).
+ * @apiParam {String}  website_url  Website url (Optional).
+ * @apiParam {String}  bio_data     Bio data of user (Optional).
+ * @apiParam {String}  latitude   * Latitude of user address (Optional).
+ * @apiParam {String}  longitude  * Longitude of user address (Optional).
  *
  * @apiExample Example usage:
  *
@@ -52,6 +54,8 @@
  *          "address": "spayc address",
  *          "website_url":"www.spayc.com",
  *          "bio_data":"your bio data",
+ *          "latitude":"XX.00",
+ *          "longitude":"XX.00",
  *       }
  *
  *
@@ -74,6 +78,8 @@
  *          "address": "spayc address",
  *          "website_url":"www.spayc.com",
  *          "bio_data":"your bio data",
+ *          "longitude": "XX.00",
+ *          "latitude": "XX.00"
  *       }
  *   ]
  * }
@@ -99,8 +105,8 @@ function putUser() { return; }
  * @apiParam {String} gender Gender of user like any one (Male, Femal, Other) (Required).
  * @apiParam {String} country_code Country code of user phone number(Optional).
  * @apiParam {Number} phone Phone no of user and accept only 10 digits only (Optional).
- * @apiParam {Number} latitude of user address (Required).
- * @apiParam {Number} longitude of user address (Required).
+ * @apiParam {String} latitude  * latitude of user address (Optional).
+ * @apiParam {String} longitude * longitude of user address (Optional).
  *
  * @apiExample Example usage:
  *
@@ -128,6 +134,7 @@ function putUser() { return; }
  *   "message": "Saved successfully.",
  *   "data": [
  *       {
+ *          "id": "35",
  *          "username": "spaycdev",
  *          "email": "spaycdev@spayc.com",
  *          "gender": "male|female|other",
@@ -150,16 +157,16 @@ function postUser() { return; }
  * @apiGroup User
  * @apiPermission Private User
  *
- * @apiDescription Search users|spaycs|hashtags details by requesting parameters.
+ * @apiDescription Search users|spaycs|hashtags details by requesting parameters Note: distance key not came in spayc list in case of no latitude and longitude.
  *
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
- * @apiParam {Number}      page     Page number in query string (Optional).
- * @apiParam {Number}      limit    Records limit in query string (Optional).
- * @apiParam {String}      type     Type should be in (users|spaycs|hashtags|all) (Optional).
- * @apiParam {String}      keyword  Username|Spayc name|Hashtag name in query string to be search (Optional).
- * @apiParam {Number}      latitude of spayc to be search (Required in case of spayc search).
- * @apiParam {Number}      longitude of spayc to be search (Required in case of spayc search).
+ * @apiParam {Number}      page       * Page number in query string (Optional).
+ * @apiParam {Number}      limit      * Records limit in query string (Optional).
+ * @apiParam {String}      type       * Type should be in (users|spaycs|hashtags|all) (Optional).
+ * @apiParam {String}      keyword    * Username|Spayc name|Hashtag name in query string to be search (Optional).
+ * @apiParam {String}      latitude   * Latitude of user address (Optional).
+ * @apiParam {String}      longitude  * Longitude of user address (Optional).
  * 
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Search Lists.
@@ -208,7 +215,7 @@ function postUser() { return; }
                     "distance": "15.5999136892407",
                     "id": "33",
                     "name": "spaycdev13",
-                    "address": "Your address",
+                    "location": "Your address",
                     "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
                     "start_date": "01-11-2019 01:02:00",
                     "end_date": "01-12-2019 01:02:00",
@@ -220,13 +227,17 @@ function postUser() { return; }
                     "joined_spayc_status": null,
                     "is_joined": false,
                     "joined_users": 0,
-                    "is_subscribed": false
+                    "is_subscribed": false,
+                    "spayc_category": {
+                        "id": 560,
+                        "name": "Softball"
+                    },
                 },
                 {
                     "distance": "15.5999136892407",
                     "id": "32",
                     "name": "spaycdev13",
-                    "address": "Your address",
+                    "location": "Your address",
                     "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
                     "start_date": "01-11-2019 01:02:00",
                     "end_date": "01-12-2019 01:02:00",
@@ -238,7 +249,11 @@ function postUser() { return; }
                     "joined_spayc_status": null,
                     "is_joined": false,
                     "joined_users": 1,
-                    "is_subscribed": false
+                    "is_subscribed": false,
+                    "spayc_category": {
+                        "id": 560,
+                        "name": "Softball"
+                    },
                 }
             ]
         },
@@ -246,16 +261,14 @@ function postUser() { return; }
             "count": 33,
             "records": [
                 {
-                    "id": "41",
+                    "id": "59",
                     "name": "color",
-                    "created": "2018-02-01T08:18:00+00:00",
-                    "modified": "2018-02-01T08:18:00+00:00"
+                    "total_space": 1
                 },
                 {
-                    "id": "39",
-                    "name": "festive",
-                    "created": "2018-01-31T13:54:20+00:00",
-                    "modified": "2018-01-31T13:54:20+00:00"
+                    "id": "65",
+                    "name": "drink",
+                    "total_space": 1
                 }
             ]
         }
@@ -334,158 +347,6 @@ function getView() { return; }
   @apiUse UserErrorResponse
 */
 function postLogin() { return; }
-
-/**
- @api {post} /friend-request.json Add Friend
-  @apiVersion 0.1.0
-  @apiName FriendRequest
-  @apiGroup User
-  @apiPermission Private User
- 
-  @apiDescription Add Friend.
-  
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
- 
-  @apiParam {String} friend_id Friend id required (friend_id must be an user id)(Required).
-  @apiParam {String} friend_status Friend status and status must be either one from following 'Pending', 'Accepted', 'Blocked','Direct','Decline','Unfriend' (Required).
- 
-  @apiExample Example usage:
- 
-    {
-        "friend_id":"NDIwMjYwMjAwLjU2",
-        "friend_status":"Pending"
-    }
- 
- 
-  @apiSuccess {String} status success.
-  @apiSuccess {String} message Friend request send successfully.
-  @apiSuccess {Object} data Null.
-  @apiSuccessExample {json} Success-Response: 
-        HTTP/1.1 201 OK
-        {
-            "status": "success",
-            "message": "Friend request send successfully.",
-            "data": {
-                "id": "9",
-                "requested_by": 2,
-                "requested_to": 3,
-                "requested_status": "Blocked",
-                "action_by": "2"
-            }
-        }
- 
-  @apiError {String} Friend request already sent.
-  @apiUse UserErrorResponse
-*/
-function postFriendRequest() { return; }
-
-/**
- @api {get} /get-friends.json?page=:page&limit=:page&friend_status=:status Get Friends
-  @apiVersion 0.1.0
-  @apiName GetFriends
-  @apiGroup User
-  @apiPermission Private User
- 
-  @apiDescription Get Friends.
-  
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
- 
-* @apiParam  {Number}   page            Page number in query string (Optional).
-* @apiParam  {Number}   limit           Records limit in query string (Optional).
-* @apiParam  {String}   friend_status   Status in query string must be any one from the following(Pending, Accepted, 'Declined',Blocked, Unfriend).
- 
- 
-  @apiSuccess {String} status success.
-  @apiSuccess {String} message Friend request send successfully.
-  @apiSuccess {Object} data Null.
-  @apiSuccessExample {json} Success-Response: 
-       HTTP/1.1 200 OK
-{
-    "status": "success",
-    "message": "Friend lists.",
-    "data": {
-        "count": 4,
-        "records": [
-            {
-                "id": "VkR0a3p4anQ2SUxScm85RGhTZTFpZz09",
-                "username": "test",
-                "matrix_user_id": null,
-                "matrix_access_token": null,
-                "friend": {
-                    "id": "bmRkeTJVYjhwTlQzKzdpeWJwWEMvZz09",
-                    "requested_by": 10,
-                    "requested_to": 7,
-                    "requested_status": "Pending",
-                    "friend_status": null,
-                    "matrix_room_id": "room:@848843444"
-                },
-                "image_url": ""
-            },
-            {
-                "id": "OWxtVWpXalVkaVdWRHVTWUR5amxuZz09",
-                "name": "test2",
-                "matrix_user_id": null,
-                "matrix_access_token": null,
-                "friend": {
-                    "id": "NlJpUEx0M016dXBGTjhZdWpWeThBUT09",
-                    "requested_by": 10,
-                    "requested_to": 8,
-                    "requested_status": "Pending",
-                    "friend_status": null,
-                    "matrix_room_id": "room:@84854843"
-                },
-                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2017_08_14_18_14_10_20180206133936.png"
-            }
-        ]
-    }
-}
- 
-
-  @apiUse UserErrorResponse
-*/
-function getFriends() { return; }
-
-/**
- @api {put} /friend-response.json Set Friend Status
-  @apiVersion 0.1.0
-  @apiName setFriendStatus
-  @apiGroup User
-  @apiPermission Private User
- 
-  @apiDescription Set Friend Status.
-  
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
- 
-* @apiParam  {String}   friend_id       Requested friend id (Required).
-* @apiParam  {String}   friend_status   Friend status must any one from following list 'Pending', 'Accepted', 'Blocked','Direct','Decline','Unfriend' (Required).
-   @apiExample Example usage:
- 
-    {
-        "friend_id":"NDIwMjYwMjAwLjU2",
-        "friend_status":"Accepted"
-    }
- 
-  @apiSuccess {String} status success.
-  @apiSuccess {String} message Friend status updated successfully.
-  @apiSuccess {Object} data Null.
-  @apiSuccessExample {json} Success-Response: 
-       HTTP/1.1 200 OK
-        {
-            "status": "success",
-            "message": "Friend status updated successfully.",
-            "data": {
-                "id": "9",
-                "requested_by": 2,
-                "requested_to": 3,
-                "requested_status": "Accepted",
-                "action_by": "3"
-            }
-        }
- 
-  @apiError {String} Status is required fields and status must be in(Accepted,Declined,Blocked,Unfriend)..
-  @apiUse UserErrorResponse
-*/
-function setFriendStatus() { return; }
 
 /**
  @api {post} /logout.json Logout
@@ -586,7 +447,7 @@ function postForgotPassword() { return; }
   
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
-  * @apiParam {String} userId User id required field in query string.
+  * @apiParam {String} userId use any one either userid or matrix user id as query string in url(required).
  
   @apiSuccess {String} status success.
   @apiSuccess {String} message User profile.
@@ -597,37 +458,60 @@ function postForgotPassword() { return; }
     "status": "success",
     "message": "User profile.",
     "data": {
-        "id": "anM1a0FkWGlWUXBwR1ZDUU9iR09XQT09",
-        "username": "test2",
-        "email": "test2@gmail.com",
-        "gender": "Male",
-        "dob": "01-25-1996",
-        "country_code":"+91",
-        "phone": "(789)877878",
+        "id": "11",
+        "username": "user",
+        "email": "test@domain.com",
+        "gender": "Female",
+        "dob": null,
+        "country_code": null,
+        "phone": "",
         "website_url": null,
         "address": null,
         "bio_data": null,
         "longitude": 77.391026,
         "latitude": 28.535516,
-        "matrix_user_id": "@test2:35.168.119.247",
+        "matrix_user_id": null,
         "user_images": [
             {
-                "user_id": 19,
-                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2017_12_26_15_18_47_20180206133935.png",
+                "id": "55",
+                "user_id": 11,
+                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180223144430.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632",
                 "is_profile": "No",
-                "order_index": 1
+                "order_index": null
+            },
+            {
+                "id": "56",
+                "user_id": 11,
+                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073256.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632",
+                "is_profile": "No",
+                "order_index": null
+            },
+            {
+                "id": "57",
+                "user_id": 11,
+                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073525.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632",
+                "is_profile": "No",
+                "order_index": null
+            },
+            {
+                "id": "58",
+                "user_id": 11,
+                "image_url": "https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073548.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632",
+                "is_profile": "No",
+                "order_index": null
             }
         ],
         "friend": {
-            "id": "MzNNbkN6V05zQ2c1N0ViMVJJeEVqZz09",
-            "requested_by": 10,
-            "requested_to": 19,
-            "requested_status": "Pending",
-            "friend_status": null,
-            "total_friends": 2
+            "id": "41",
+            "requested_by": "10",
+            "requested_to": "11",
+            "requested_status": "Requested",
+            "total_friends": 0
         },
-        "created_spaycs": 3,
-        "joined_spaycs": 1
+        "matrix_room_id": null,
+        "created_spaycs": 0,
+        "unread_notifications": 46,
+        "joined_spaycs": 0
     }
 }
 
@@ -651,8 +535,8 @@ function getUserProfile() { return; }
  * @apiExample Example usage:
  *
  *       {
- *          "old_password": "password@123"
- *          "new_password": "newPassword@123"
+ *          "old_password": "password@123",
+ *          "new_password": "newPassword@123",
  *          "confirm_password": "newPassword@123"
  *       }
  *
@@ -669,39 +553,6 @@ function getUserProfile() { return; }
  * @apiUse UserErrorResponse
  */
 function postChangePassword() { return; }
-
-/**
- * @api {post} /chat-request.json Chat request
- * @apiVersion 0.1.0
- * @apiName chatRequest
- * @apiGroup User
- * @apiPermission none
- *
- * @apiDescription One ot One chat request.
- *
- * @apiParam {String} friend_id         User id to whom you send request(Required).
- * @apiParam {String} matrix_room_id    Matrix room id from matrix (Required).
- *
- * @apiExample Example usage:
- *
- *       {
- *          "friend_id": "anM1a0FkWGlWUXBwR1ZDUU9iR09XQT09"
- *          "matrix_room_id": "room:@000123"
- *       }
- *
- *
- * @apiSuccess {String} status success.
- * @apiSuccess {String} message Friend request sent successfully.
- * @apiSuccessExample {json} Success-Response:
- *      HTTP/1.1 201 OK
-{
-    "status": "success",
-    "message": "Friend request sent successfully."
-}
- *
- * @apiUse UserErrorResponse
- */
-function postChatRequest() { return; }
 
 /**
  * @api {post} /avatars.json Upload Profile Images
@@ -900,3 +751,252 @@ function getRemoveAvatar() { return; }
  * @apiUse UserErrorResponse
  */
 function postUpdateUserStatus() { return; }
+
+/**
+ * @api {get} /get-notifications.json?page=:page&limit=:limit Get Notifications
+ * @apiVersion 0.1.0
+ * @apiName getNotifications
+ * @apiGroup User
+ * @apiPermission none
+ *
+ * @apiDescription get all notifications received by loggin user.
+ *
+ * @apiParam {Number} page      Page number is optional in query string default value 1.
+ * @apiParam {Number} limit     Limit is optional in query string default value 5.
+ *
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Notification Lists..
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Notification Lists.",
+    "data": {
+        "count": 3,
+        "notification": [
+            {
+                "id": "3",
+                "date_time": "03-01-2018 18:44:52",
+                "message": "Friend Request Sent",
+                "notification_type": "Friend Request Sent",
+                "space_name": null,
+                "room_id": null,
+                "spayc_image": null,
+                "username": "dhir",
+                "user_id": "10",
+                "user_image": "https://spayc-qa.s3.amazonaws.com/profile/screenshot_from_2018_02_02_12_10_56_20180207100523_20180301064300.png",
+                "is_unread": true
+            },
+            {
+                "id": "1",
+                "date_time": "02-28-2018 20:51:41",
+                "message": "you are added a friend",
+                "notification_type": "request accepted",
+                "space_name": "spaycdev9",
+                "room_id": "@matrixdeeee",
+                "spayc_image": "abc.png",
+                "username": "sbsharma11243",
+                "user_id": "9",
+                "user_image": "https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226075827.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632",
+                "is_unread": true
+            }
+        ]
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+ function getNotification() { return; }
+ 
+ /**
+ * @api {post} /update-device-token.json Update device token
+ * @apiVersion 0.1.0
+ * @apiName updateDeviceToken
+ * @apiGroup User
+ * @apiPermission required
+ *
+ * @apiDescription Update user device token if push notification turn on and off.
+ * 
+ * @apiHeader {String} token Token must be set in header.
+ *
+ * @apiParam {String} device_token  Device token required field if is_notify is On
+ * @apiParam {String} is_notify     Is notify is required field possible values(On, Off)
+ *
+ * @apiExample Example usage:
+    {
+        "device_token":"666dc243b1ee08bb68cebe64d0875d9f54bab2be090d456a90e0dac608c12ecf",
+        "is_notify":"On"
+    }
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Request has been updated successfully.
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+    {
+        "status": "success",
+        "message": "Device token updated successfully."
+    }
+ *
+ * @apiUse UserErrorResponse
+ */
+function postUpdateUserStatus() { return; }
+
+
+/**
+ @api {post} /friend-request.json Add Friend
+  @apiVersion 0.1.0
+  @apiName FriendRequest
+  @apiGroup User
+  @apiPermission Private User
+ 
+  @apiDescription Add Friend.
+  
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+  @apiParam {String} friend_id Friend id required (friend_id must be an user id)(Required).
+  @apiParam {String} friend_status Friend status and status must be either one from following 'Pending', 'Accepted', 'Blocked','is_direct','Decline','Unfriend' (Required).
+ 
+  @apiExample Example usage:
+ 
+    {
+        "friend_id":"5",
+        "friend_status":"Pending"
+    }
+ 
+ 
+  @apiSuccess {String} status success.
+  @apiSuccess {String} message Friend request send successfully.
+  @apiSuccess {Object} data Null.
+  @apiSuccessExample {json} Success-Response: 
+        HTTP/1.1 201 OK
+        {
+            "status": "success",
+            "message": "Friend request send successfully.",
+            "data": {
+                "id": "9",
+                "requested_by": 2,
+                "requested_to": 3,
+                "requested_status": "Blocked",
+                "action_by": "2"
+            }
+        }
+ 
+  @apiError {String} Friend request already sent.
+  @apiUse UserErrorResponse
+*/
+function postFriendRequest() { return; }
+
+/**
+ @api {put} /friend-response.json Set Friend Status
+  @apiVersion 0.1.0
+  @apiName setFriendStatus
+  @apiGroup User
+  @apiPermission Private User
+ 
+  @apiDescription Set Friend Status.
+  
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+* @apiParam  {String}   friend_id       Requested friend id (Required).
+* @apiParam  {String}   friend_status   Friend status must any one from following list 'Pending', 'Accepted', 'Blocked','is_direct','Decline','Unfriend' (Required).
+   @apiExample Example usage:
+ 
+    {
+        "friend_id":"5",
+        "friend_status":"Accepted"
+    }
+ 
+  @apiSuccess {String} status success.
+  @apiSuccess {String} message Friend status updated successfully.
+  @apiSuccess {Object} data Null.
+  @apiSuccessExample {json} Success-Response: 
+       HTTP/1.1 200 OK
+        {
+            "status": "success",
+            "message": "Friend status updated successfully.",
+            "data": {
+                "id": "9",
+                "requested_by": 2,
+                "requested_to": 3,
+                "requested_status": "Accepted",
+                "action_by": "3"
+            }
+        }
+ 
+  @apiError {String} Status is required fields and status must be in(Accepted,Declined,Blocked,Unfriend)..
+  @apiUse UserErrorResponse
+*/
+function setFriendStatus() { return; }
+/**
+ @api {post} /read-notifications.json Read notification
+  @apiVersion 0.1.0
+  @apiName postReadNotifications
+  @apiGroup User
+  @apiPermission Private User
+ 
+  @apiDescription Mark as read notification.
+  
+* @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+* @apiParam  {String}   notification_ids     Notification ids comma separated string(Required).
+
+   @apiExample Example usage:
+ 
+    {
+        "notification_ids":"9,10"
+    }
+ 
+  @apiSuccess {String} status success.
+  @apiSuccess {String} message Notification read successfully.
+  @apiSuccess {Object} data Null.
+  @apiSuccessExample {json} Success-Response: 
+       HTTP/1.1 200 OK
+        {
+            "status": "success",
+            "message": "Notification read successfully."
+        }
+ 
+  @apiError {String}  Invalid Notification id is not valid.
+  @apiUse UserErrorResponse
+*/
+function postReadNotifications() { return; }
+/**
+ @api {post} /spam-reports.json Spam Reports
+ @apiVersion 0.1.0
+ @apiName postSpamReports
+ @apiGroup User
+ @apiPermission Private User
+ 
+ @apiDescription Mark user as spam user from warp.
+  
+ @apiHeader {String} TOKEN  * Token must be in header
+ 
+ @apiParam  {String} matrix_room_id  * Matrix room id (required).
+ @apiParam  {String} reported_to  * Matrix user id to whom make spam user(required).
+ @apiParam  {String} event_id  * Matrix event warp id(required).
+
+ @apiExample Example usage:
+ 
+    {
+	"matrix_room_id":"!bveMFWvYgJpOzAoZGC:127.0.0.1",
+	"reported_to":"@pluck_1525939089:127.0.0.1",
+	"event_id":"sdfdsf"
+    }
+ 
+ @apiSuccess {String} status success.
+ @apiSuccess {String} message You have reported successfully..
+ @apiSuccess {Object} data Null.
+ @apiSuccessExample {json} Success-Response: 
+       HTTP/1.1 200 OK
+        {
+            "status": "success",
+            "message": "You have reported successfully."
+        }
+ 
+ @apiError {String}  You have already reported this user as spam user.Admin will take care about this reports.
+  @apiUse UserErrorResponse
+*/
+function postSpamReports() { return; }

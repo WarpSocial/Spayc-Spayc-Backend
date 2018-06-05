@@ -36,5 +36,26 @@ class AppView extends View
      */
     public function initialize()
     {
+        $errorTemplates = [
+         'error' => '<small class="input-alert">{{content}}</small>',
+        ];
+        $this->Form->setTemplates($errorTemplates);
     }
+
+    
+    public function dateFormat($dateTime,$format=DATEFORMAT_DISPLAY) {
+        if(empty($dateTime)){
+            return;
+        }
+        if($dateTime instanceof \Cake\I18n\Time){
+            $date = $dateTime->format($format);
+        } elseif($dateTime instanceof \DateTime) {
+            $date = $dateTime->format($format);
+        } else {
+            $date = (new \Cake\I18n\Time($dateTime))->format($format);
+        }
+        return $date;
+    }
+
+
 }

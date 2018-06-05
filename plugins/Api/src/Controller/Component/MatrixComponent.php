@@ -23,7 +23,8 @@ class MatrixComponent extends Component {
      */
     protected $_defaultConfig = [
         'client'=> 'client/r0',
-        'media'=> 'media/v1'
+        'media'=> 'media/v1',
+        'clientv1'=> 'client/api/v1'
     ];
     
      /**
@@ -63,7 +64,7 @@ class MatrixComponent extends Component {
         }
         $validInput = [
             'type'=>'m.login.password',
-            'user'=>preg_replace('/[\s\.\-\@\#]/','_',$items['username']),
+            'user'=>$items['username'],
             'password'=>$items['password'],
             'device_id'=>$items['device_id']
         ]; 
@@ -72,13 +73,34 @@ class MatrixComponent extends Component {
         $httpResponse = $http->post(
                 $url, 
                 json_encode($validInput), 
-                [
-                    'type'=>'json',
-                    'ssl_verify_host' => $this->config('sslverify'), 
-                    'ssl_verify_peer' => $this->config('sslverify'),
-                    'ssl_verify_host' => $this->config('sslverify'),
-                    'ssl_verify_peer_name' => $this->config('sslverify')
-                ]
+                $this->bodyType()
+            );
+        $response = json_decode($httpResponse->body,true);
+        if($httpResponse->isOk()){
+            return $response;
+        }else{
+            return false;
+        }
+    }
+    /**
+     * logogut to get user logout from the matrix
+     * 
+     * @param string $accessToken
+     * 
+     * @return Bool true|error
+     */
+    
+    public function logout($accessToken){
+        if(empty($accessToken)){
+            return false;
+        }
+        
+        $url = $this->config('url') .DS.$this->config('client'). DS.'logout?access_token='.$accessToken;
+        $http = new Client();
+        $httpResponse = $http->post(
+                $url, 
+                json_encode([]), 
+                $this->bodyType()
             );
         $response = json_decode($httpResponse->body,true);
         if($httpResponse->isOk()){
@@ -98,30 +120,48 @@ class MatrixComponent extends Component {
         $validInput = [
             'auth'=>['type'=>'m.login.dummy'],
             'bind_email'=>false,
-            'initial_device_display_name'=>$items['username'],
-            'username'=>preg_replace('/[\s\.\-\@\#]/','_',$items['username']),
-            'password'=>$items['password']
+            'initial_device_display_name'=>$items['display_name'],
+            'username'=>$items['username'],
+            'password'=>$items['password'],
         ]; 
         $url = $this->config('url') .DS.$this->config('client'). DS.'register';
         $http = new Client();
         $httpResponse = $http->post(
                 $url, 
                 json_encode($validInput), 
-                [
-                    'type'=>'json',
-                    'ssl_verify_host' => $this->config('sslverify'), 
-                    'ssl_verify_peer' => $this->config('sslverify'),
-                    'ssl_verify_host' => $this->config('sslverify'),
-                    'ssl_verify_peer_name' => $this->config('sslverify')
-                ]
+                $this->bodyType()
             );
         $response = json_decode($httpResponse->body,true);
-        #pr($response);die;
-        if($httpResponse->isOk()){
+        if($httpResponse->isOk()){            
+            $response['status'] = 'success';
+            $this->displayName($items['display_name'],$response['user_id'],$response['access_token']);
+        }else{
+            $response['status'] = 'failed';
+            $response['message'] = $this->errorMsg($response['errcode']);
+        }
+        return $response;
+    }
+    
+    /*update display name*/
+    public function displayName($name=null,$matrixUserId=null,$matrixToken=null){
+        if(empty($matrixUserId) || empty($matrixToken) || empty($name)){
+            return false;
+        }
+        $http = new Client();
+        $profileId = urlencode($matrixUserId);
+        $url = $this->config('url') .DS.$this->config('client').DS.'profile'. DS.$profileId.DS.'displayname?access_token='.$matrixToken;
+        $httpResponse = $http->put(
+            $url, 
+            json_encode(['displayname'=>$name]), 
+            $this->bodyType()
+        ); 
+        
+        $response = json_decode($httpResponse->body,true);
+        if(!empty($response['errcode'])){
             return $response;
         }else{
-            return false;
-        }        
+            return true;
+        }
     }
     /**
      * createRoom method to create room on matrix server
@@ -129,9 +169,16 @@ class MatrixComponent extends Component {
      * @param Array $items array contain required field of matrix fields
      * @return false|$data return data if created or false
      */
-    public function createRoom($items=[]) {
+    public function createRoom($items=[]) {        
         if(empty($items)) {
             return false;
+        }
+        if(empty($items['visibility'])){
+            $items['visibility'] = strtolower($items['group_type']);
+        }
+        if(empty($items['is_direct'])){
+            $items['visibility'] = 'public';
+            $items['group_type'] = 'public';
         }
         $validInput = [
             'creation_content'=>[
@@ -145,28 +192,119 @@ class MatrixComponent extends Component {
                 'latitude'=> Utils::getVar('latitude', $items),
                 'longitude'=> Utils::getVar('longitude', $items)
                 ],
-            'name'=>Utils::getVar('name', $items),
+            'name'=>Utils::getVar('name', $items),            
             'preset'=> strtolower($items['group_type']).'_chat',
-            'room_alias_name'=> \Cake\Utility\Inflector::slug($items['name'].'_'.\Cake\Utility\Text::uuid()),
+            'room_alias_name'=> \Cake\Utility\Inflector::slug($items['name'].'_'.microtime(true)),
+            'visibility'=> strtolower(Utils::getVar('visibility',$items)),            
             'topic'=> Utils::getVar('description', $items),
+            //'join_rule'=>'public',
             'invite' => !empty($items['invite'])?explode(',',$items['invite']):""
         ];
-        #pr($validInput);die;
+        if(!empty($items['spayc_category_id'])){
+            $category = \Cake\ORM\TableRegistry::get('Api.SpaycCategories')->get($items['spayc_category_id']);
+        }
+        if(!empty($items['is_direct'])){
+            $validInput['is_direct'] = $items['is_direct'];
+            $validInput['room_alias_name'] = 'direct_'.$validInput['room_alias_name'];
+        }elseif(!empty($items['parent_matrix_room_id'])){
+            $validInput['room_alias_name'] = 'subspayc_'.$validInput['room_alias_name'];
+            if(!empty($category->id)){
+                $validInput['room_alias_name'] = $category->id.'_'.$validInput['room_alias_name'];
+            }            
+        }else{
+            $validInput['room_alias_name'] = 'parentspayc_'.$validInput['room_alias_name'];
+            if(!empty($category->id)){
+                $validInput['room_alias_name'] = $category->id.'_'.$validInput['room_alias_name'];
+            }
+        }
         $url = $this->config('url') .DS.$this->config('client'). DS.'createRoom';
         $http = new Client(['headers' => ['Authorization' => 'Bearer ' . $items['matrix_token']]]);
         $httpResponse = $http->post(
                 $url, 
                 json_encode($validInput), 
-                [
-                    'type'=>'json',
-                    'ssl_verify_host' => $this->config('sslverify'), 
-                    'ssl_verify_peer' => $this->config('sslverify'),
-                    'ssl_verify_host' => $this->config('sslverify'),
-                    'ssl_verify_peer_name' => $this->config('sslverify')
-                ]
+                $this->bodyType()
             );
         $response = json_decode($httpResponse->body,true);
         #pr($response);die;
+        if(empty($items['is_direct']) && !empty($response['room_id']) && !empty($items['invite'])){
+            $joinees = explode(',',$items['invite']);
+            foreach($joinees as $ke => $mid){
+                $joinData = [
+                    'status'=>'Joined',
+                    'matrix_room_id'=>$response['room_id'],
+                    'matrix_token'=>$items['matrix_token']
+                ];
+                $this->joinRoom($joinData);
+            }
+        }
+//        if(empty($items['is_direct']) && ($items['visibility'] == 'private') && empty($response['error'])){
+//            /** Join Rules in case of private room */
+//            $joinRulesInput = ['matrix_token'=>$items['matrix_token'],'join_rule'=>'public'];
+//            $this->updateRoom($response['room_id'],$joinRulesInput);
+//        }
+        return $response;
+    }
+    
+    /**
+     * 
+     */
+    /**
+     * updateRoom method to update room on matrix server
+     * 
+     * @param Array $items array contain required field of matrix fields
+     * @return false|$data return data if created or false
+     */
+    public function updateRoom($matrix_room_id = null,$items=[]) {
+        if(empty($items) || $matrix_room_id == null) {
+            return false;
+        }
+        
+        $http = new Client();
+        $url = $this->config('url') .DS.$this->config('client').'/rooms'. DS.$matrix_room_id.DS.'state';
+        if(!empty($items['name'])){ 
+            $httpResponse['name'] =   $http->put(
+                $url.'/m.room.name?access_token='.$items['matrix_token'], 
+                json_encode(['name'=>$items['name']]), 
+                $this->bodyType()
+            );
+            //pr($httpResponse['name']->body());die;
+        }
+        if(!empty($items['description'])){
+            $httpResponse['topic'] =  $http->put(
+                $url.'/m.room.topic?access_token='.$items['matrix_token'], 
+                json_encode(['topic'=>$items['description']]), 
+                $this->bodyType()
+            );
+        }
+        if(!empty($items['group_type'])){
+            $preset = strtolower($items['group_type']).'_chat';
+            $httpResponse['preset'] = $http->put(
+                $url.'/m.room.preset?access_token='.$items['matrix_token'], 
+                    json_encode(['preset'=>$preset]), 
+                    $this->bodyType()
+                );
+            
+            $httpResponse['visibility'] = $http->put(
+                    $url.'/m.room.visibility?access_token='.$items['matrix_token'], 
+                    json_encode(['visibility'=> strtolower($items['group_type'])]), 
+                    $this->bodyType()
+                ); 
+        }
+        if(!empty($items['join_rule'])){
+            $httpResponse['join_rule'] = $http->put(
+                $url.'/m.room.join_rules?access_token='.$items['matrix_token'], 
+                json_encode(['join_rule'=>'public']), 
+                $this->bodyType()
+            ); 
+            
+        }
+        $response = [];
+        foreach ($httpResponse as $opt=>$res){
+            $response[$opt] = json_decode($res->body,true);
+            if(!empty($response[$opt]['errcode'])){
+                return false;
+            }            
+        }
         return $response;
     }
     
@@ -192,7 +330,7 @@ class MatrixComponent extends Component {
             $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
             //pr($data['token']);die;
         }
-        
+        //echo $rawfile.'<br>'.$filename.'<br>'.$contentType;pr($data);die;
         //$body = fopen($data['image_url']['tmp_name'], 'r');        
         $url = $this->config('url') .DS.$this->config('media'). DS.'upload?access_token='.$data['matrix_token'].'&filename='.urldecode($filename);
         $http = new Client(['headers' => ['Content-Type' =>$contentType]]);
@@ -213,6 +351,13 @@ class MatrixComponent extends Component {
         return $response;
     }
     
+    /**
+     * setAvatarUrl to set the profile image url on matrix server
+     * 
+     * @param String $matrixuri matrix generated url for image
+     * @param Array $options containing matrix user id, access token and room id
+     * @return Bool true or false
+     */
     public function setAvatarUrl($matrixuri = null,$options){        
         if(empty($options['matrix_token'])){
             return;
@@ -231,13 +376,7 @@ class MatrixComponent extends Component {
         $httpResponse = $http->put(
                 $options['url'], 
                 json_encode($options['body']),
-                [
-                    'type' => 'json',
-                    'ssl_verify_host' => $this->config('sslverify'), 
-                    'ssl_verify_peer' => $this->config('sslverify'),
-                    'ssl_verify_host' => $this->config('sslverify'),
-                    'ssl_verify_peer_name' => $this->config('sslverify')
-                ]
+                $this->bodyType()
             );
         $response = json_decode($httpResponse->body,true);
         return;
@@ -251,29 +390,346 @@ class MatrixComponent extends Component {
             return false;
         }
         $validInput = [
-            'auth'=>['type'=>'m.login.password', 'user'=>$items['matrix_user_id'], 'password'=>$items['old_password']],
+            'auth'=>[
+                'type'=>'m.login.password', 
+                'user'=>$items['matrix_user_id'], 
+                'password'=>$items['old_password']
+            ],
             'new_password'=>$items['new_password']
         ]; 
-        $url = $this->config('url') . DS.'account'.DS.'password?access_token='.$items['matrix_access_token'];
+        $url = $this->config('url').DS.$this->config('client') . DS.'account'.DS.'password?access_token='.$items['matrix_access_token'];
         $http = new Client();
         $httpResponse = $http->post(
                 $url, 
                 json_encode($validInput), 
-                [
-                    'type'=>'json',
-                    'ssl_verify_host' => $this->config('sslverify'), 
-                    'ssl_verify_peer' => $this->config('sslverify'),
-                    'ssl_verify_host' => $this->config('sslverify'),
-                    'ssl_verify_peer_name' => $this->config('sslverify')
-                ]
+                $this->bodyType()
             );
         $response = json_decode($httpResponse->body,true);
-        #pr($response);die;
         if($httpResponse->isOk()){
             return $response;
         }else{
             return false;
         }        
+    }
+    
+    /**
+     * leaveRoom to leave from joined room
+     * 
+     * @param String $matrix_room_id matrix room id
+     * @param String $matrix_token user matrix access token
+     * @return Bool true or false
+     */
+    public function leaveRoom($matrix_room_id = null,$matrix_token = null){
+        if(empty($matrix_room_id) || empty($matrix_token)){
+            return false;
+        }
+        $roomId  = $this->validRoomId($matrix_room_id);
+        $http = new Client();
+        $url = $this->config('url') .DS.$this->config('client').DS.'rooms'. DS.$roomId.DS.'leave?access_token='.$matrix_token;
+       
+        $httpResponse = $http->post(
+            $url, 
+            json_encode([]), 
+            $this->bodyType()
+        ); 
+        
+        $response = json_decode($httpResponse->body,true);
+        if(!empty($response['errcode'])){
+            return $response;
+        }else{
+            return true;
+        }
+    }
+    /**
+     * tagRoom to tag to the room
+     * 
+     * @param String $matrixRoomId matrix room id
+     * @param String $matrixToken user matrix access token
+     * @param String $matrixUserId matrix user id
+     * @return Bool true or false
+     */
+    public function tagRoom($matrixRoomId = null,$matrixToken = null,$matrixUserId=null,$tag='favourite'){
+        if(empty($matrixRoomId) || empty($matrixToken) || empty($matrixUserId)){
+            return false;
+        }
+        $roomId  = $this->validRoomId($matrixRoomId);
+        $http = new Client();
+        $url = $this->config('url') .DS.$this->config('client').DS.'user'.DS.$matrixUserId.DS.'rooms'. DS.$roomId.'/tags/'.$tag.'?access_token='.$matrixToken;
+       
+        $httpResponse = $http->put(
+            $url, 
+            json_encode(['order'=>1]), 
+            $this->bodyType()
+        ); 
+        
+        $response = json_decode($httpResponse->body,true);
+        if(!empty($response['errcode'])){
+            return $response;
+        }else{
+            return true;
+        }
+    }
+    /**
+     * deleteTag to delete the tag from room
+     * 
+     * @param String $matrixRoomId matrix room id
+     * @param String $matrixToken user matrix access token
+     * @param String $matrixUserId matrix user id
+     * @return Bool true or false
+     */
+    public function deleteTag($matrixRoomId = null,$matrixToken = null,$matrixUserId=null,$tag='favourite'){
+        if(empty($matrixRoomId) || empty($matrixToken) || empty($matrixUserId)){
+            return false;
+        }
+        $roomId  = $this->validRoomId($matrixRoomId);
+        $http = new Client();
+        $url = $this->config('url') .DS.$this->config('client').DS.'user'.DS.$matrixUserId.DS.'rooms'. DS.$roomId.'/tags/'.$tag.'?access_token='.$matrixToken;
+       
+        $httpResponse = $http->delete(
+            $url, 
+            json_encode(['order'=>1]), 
+            $this->bodyType()
+        ); 
+        
+        $response = json_decode($httpResponse->body,true);
+        if(!empty($response['errcode'])){
+            return $response;
+        }else{
+            return true;
+        }
+    }
+    
+    /**
+     * TO JOINE THE MATRIXROOM
+     * @param sTRING $status like joined,pending
+     * @param String $matrix_room_id matrix room id
+     * @return BOOl true or false
+     */
+    public function joinRoom($data = []){
+        if(empty($data['status']) || empty($data['matrix_token']) || empty($data['matrix_room_id'])){
+            return false;
+        }
+        if($data['status'] == 'Pending'){
+            return true;
+        }
+        $postData = [];
+        $roomId  = $this->validRoomId($data['matrix_room_id']);
+        $http = new Client();
+        if($data['status'] == 'Joined'){ 
+            $url = $this->config('url') .DS.$this->config('client').DS.'join'. DS.$roomId.'?access_token='.$data['matrix_token'];
+        }elseif($data['status'] == 'Invite'){
+            return true;
+            $url = $this->config('url') .DS.$this->config('client').DS.'rooms'. DS.$roomId.DS.'invite?access_token='.$data['matrix_token'];
+            $postData = ['user_id'=>$data['matrix_user_id']];
+        }else{
+            return true;
+            $url = $this->config('url') .DS.$this->config('client').DS.'rooms'. DS.$roomId.DS.'leave?access_token='.$data['matrix_token'];
+        }
+        $httpResponse = $http->post(
+            $url, 
+            json_encode($postData), 
+            $this->bodyType()
+        ); 
+        
+        $response = json_decode($httpResponse->body,true);
+        if(!empty($response['errcode'])){
+            return $this->errorMsg($response['errcode']);
+        }elseif(!empty($response['room_id'])){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    /**
+     * banMember method to ban the user from the room
+     * @param Array $data include the matrix_user_id,matrix_token,matrix_room_id
+     * @param Bool true|false
+     */
+    public function banMember($data = []) {
+        if(empty($data['matrix_user_id']) || empty($data['matrix_token']) || empty($data['matrix_room_id'])){
+            return false;
+        }
+        $postData = [
+            'reason'=>'User not interested',
+            'user_id'=>$data['matrix_user_id']
+        ];
+        $roomId  = $this->validRoomId($data['matrix_room_id']);
+        $http = new Client();
+        if($data['status'] == 'Unbanned'){
+            $apiEndpoint = 'unban';            
+        }else{
+            $apiEndpoint = 'ban';
+        }
+        $url = $this->config('url') .DS.$this->config('client').DS.'rooms'. DS.$roomId.DS.$apiEndpoint.'?access_token='.$data['matrix_token'];
+        $httpResponse = $http->post(
+            $url, 
+            json_encode($postData), 
+            $this->bodyType()
+        ); 
+        
+        $response = json_decode($httpResponse->body,true);
+        if(!empty($response['errcode'])){            
+            //return $this->errorMsg($response['errcode']);
+            return $response['error'];
+        }else{            
+            return true;
+        }
+    }
+    
+    /**
+     * removeMember remove/Kick user from room
+     * @param Int $matrix_user_id matrix user id
+     * @param Int $matrix_room_id matrix room id
+     * @param Int $matrix_token matrix matrix token 
+     * @return Bool if false return error string
+     */
+    public function removeMember($data = []) {
+        if(empty($data['matrix_user_id']) || empty($data['matrix_token']) || empty($data['matrix_room_id'])){
+            return false;
+        }
+        $postData = [
+            'reason'=>'User not interested',
+            'user_id'=>$data['matrix_user_id']
+        ];
+        $roomId  = $this->validRoomId($data['matrix_room_id']);
+        $http = new Client();        
+        $url = $this->config('url') .DS.$this->config('client').DS.'rooms'. DS.$roomId.DS.'kick'.'?access_token='.$data['matrix_token'];
+        $httpResponse = $http->post(
+            $url, 
+            json_encode($postData), 
+            $this->bodyType()
+        ); 
+        
+        $response = json_decode($httpResponse->body,true);
+        if(!empty($response['errcode'])){            
+            //return $this->errorMsg($response['errcode']);
+            return $response['error'];
+        }else{
+            return true;
+        }
+    }
+    
+    public function validRoomId($roomid=null){
+        if($roomid == null){
+            return false;
+        }
+        return '!'.urlencode(substr($roomid,1));
+    }
+    
+    /**
+     * muteUnmute function to mute and unmute the user
+     */
+    public function muteUnmute($rule='mute',$matrixToken = null,$matrixRoomId=null){
+        if(is_null($matrixToken) || is_null($matrixRoomId)){
+            return false;
+        }
+        if($rule == 'mute'){
+            $rule = 'dont_notify';
+        }else{
+            $rule = 'notify';
+        }
+        $roomId  = $this->validRoomId($matrixRoomId);
+        $postData = [
+            'actions'=>[$rule],
+            'conditions'=>[['key'=>'room_id','kind'=>'event_match','pattern'=>$matrixRoomId]]
+        ];
+        
+        $http = new Client();        
+        $url = $this->config('url') .DS.$this->config('client').DS.'pushrules'. DS.'global'.DS.'override'.DS.$roomId.'?access_token='.$matrixToken;
+        $httpResponse = $http->put(
+            $url, 
+            json_encode($postData), 
+            $this->bodyType()
+        ); 
+        
+        $response = json_decode($httpResponse->body,true);
+        if(!empty($response['errcode'])){            
+            //return $this->errorMsg($response['errcode']);
+            return $response['error'];
+        }else{
+            return true;
+        }
+    }
+    
+    /**
+     * errorMsg to display the common message for common matrix error
+     * 
+     * @param String $errorCode matrix error code
+     * @return String error string.
+     */
+    public function errorMsg($errorCode){
+        $messages = [
+            'M_FORBIDDEN'=>__('You are not invited to this room'),
+            'M_UNRECOGNIZED'=>__('Invalid request'),
+            'M_BAD_STATE'=>__('Cannot ban user who was banned')
+        ];
+        if(array_key_exists($errorCode, $messages)){
+            return $messages[$errorCode];
+        }else{
+            return __('Invalid request.');
+        }        
+    }
+    
+    /**
+     * bodyType method to set client body
+     * @return Array body content type
+     */
+    public function bodyType($type='json'){
+        $body = [
+                'type'=>$type,
+                'ssl_verify_host' => $this->config('sslverify'), 
+                'ssl_verify_peer' => $this->config('sslverify'),
+                'ssl_verify_host' => $this->config('sslverify'),
+                'ssl_verify_peer_name' => $this->config('sslverify')
+            ];
+        return $body;
+    }
+    /**
+     * deleteRoom to delete the all record which is associated with matrix room id
+     * 
+     * @param String $roomId matrix room id
+     * @return Bool true or false
+     */
+    public function deleteRoom($roomId){
+        $conn = \Cake\Datasource\ConnectionManager::get('matrix');
+        $conn->transactional(function ($conn)use($roomId) {
+            $conn->delete('event_forward_extremities',['room_id IN'=>$roomId]);
+            $conn->delete('event_backward_extremities',['room_id IN'=>$roomId]);
+            $conn->delete('event_edges',['room_id IN'=>$roomId]);
+            $conn->delete('room_depth',['room_id IN'=>$roomId]);
+            $conn->delete('state_forward_extremities',['room_id IN'=>$roomId]);
+            $conn->delete('events',['room_id IN'=>$roomId]);
+            $conn->delete('event_json',['room_id IN'=>$roomId]);
+            $conn->delete('state_events',['room_id IN'=>$roomId]);
+            $conn->delete('current_state_events',['room_id IN'=>$roomId]);
+            $conn->delete('room_memberships',['room_id IN'=>$roomId]);
+            $conn->delete('feedback',['room_id IN'=>$roomId]);
+            $conn->delete('topics',['room_id IN'=>$roomId]);
+            $conn->delete('room_names',['room_id IN'=>$roomId]);
+            $conn->delete('rooms',['room_id IN'=>$roomId]);
+            $conn->delete('room_hosts',['room_id IN'=>$roomId]);
+            $conn->delete('room_aliases',['room_id IN'=>$roomId]);
+            $conn->delete('state_groups',['room_id IN'=>$roomId]);
+            $conn->delete('state_groups_state',['room_id IN'=>$roomId]);
+            $conn->delete('receipts_graph',['room_id IN'=>$roomId]);
+            $conn->delete('receipts_linearized',['room_id IN'=>$roomId]);
+            $conn->delete('guest_access',['room_id IN'=>$roomId]);
+            $conn->delete('history_visibility',['room_id IN'=>$roomId]);
+            $conn->delete('room_tags',['room_id IN'=>$roomId]);
+            $conn->delete('room_tags_revisions',['room_id IN'=>$roomId]);
+            $conn->delete('room_account_data',['room_id IN'=>$roomId]);
+            $conn->delete('event_push_actions',['room_id IN'=>$roomId]);
+            $conn->delete('local_invites',['room_id IN'=>$roomId]);
+            $conn->delete('pusher_throttle',['room_id IN'=>$roomId]);
+            $conn->delete('event_reports',['room_id IN'=>$roomId]);
+            $conn->delete('public_room_list_stream',['room_id IN'=>$roomId]);
+            $conn->delete('stream_ordering_to_exterm',['room_id IN'=>$roomId]);
+            $conn->delete('event_auth',['room_id IN'=>$roomId]);
+            $conn->delete('appservice_room_list',['room_id IN'=>$roomId]);
+            $conn->delete('current_state_delta_stream',['room_id IN'=>$roomId]);
+            $conn->delete('event_search',['room_id IN'=>$roomId]);
+        });
+        
     }
 
 }

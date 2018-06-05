@@ -12,12 +12,14 @@ use Cake\Error\BaseErrorHandler;
 class ApiExceptionRenderer extends ExceptionRenderer {
 
     protected function _outputMessage($template) {
-        $this->controller->set('data', [
-            'error' => $this->controller->viewVars['message'],
-            'code' => $this->controller->viewVars['code']
-        ]);
-        $this->controller->set('_serialize', ['data']);
-
+        $this->controller->response->statusCode($this->controller->viewVars['code']);
+        $response = [
+            'status'=> 'failed',
+            'message' => $this->controller->viewVars['message']
+        ];
+        $this->controller->set($response);
+        $this->controller->set('_serialize',['status','message','url']);
+        //$this->controller->set('_serialize',true);
         return parent::_outputMessage($template);
     }
 

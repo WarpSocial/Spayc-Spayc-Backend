@@ -57,6 +57,10 @@ class UsersTable extends Table {
             'foreignKey' => 'user_id',
             'className' => 'Api.JoinedSpayc'
         ]);
+        $this->hasOne('PhysicalLocation', [
+            'foreignKey' => 'user_id',
+            'className' => 'Api.PhysicalLocation'
+        ]);
         $this->hasMany('SubscribedUsers', [
             'foreignKey' => 'user_id',
             'className' => 'Api.SubscribedUsers'
@@ -88,6 +92,10 @@ class UsersTable extends Table {
             'foreignKey' => 'user_id',
             'className' => 'Api.Spaycs'
         ]);
+        $this->hasMany('NotificationTo', [
+            'foreignKey' => 'requested_to',
+            'className' => 'Api.Notifications'
+        ]);
     }
 
     /**
@@ -104,7 +112,7 @@ class UsersTable extends Table {
                 ->add('username', 'unique', ['rule' => 'validateUnique','message'=>__('Username already exist.'), 'provider' => 'table'])
                  ->add("username",'custom',[
                     'rule'=>function($value,$context){
-                        return (bool)(preg_match('/^[\w\s\.-@#]+$/', $value));
+                        return (bool)(preg_match('/^[\w\s\.\_\-\@\#]+$/', $value));
                     },
                     'message'=>__('Username is not valid.'),
                 ]);
@@ -132,7 +140,15 @@ class UsersTable extends Table {
                 ->requirePresence('email', 'create',__('Email is required field.'))
                 ->notEmpty('email',__('Email is required field.'))
                 ->email('email', false, __('Invalid email address.'))                
-                ->add('email', 'unique', ['rule' => 'validateUnique','message'=>__('Email already exist.'), 'provider' => 'table']) ;
+                ->add('email', 'unique', [
+                    'rule' => function($value,$context){
+                        if(!empty($value)){                            
+                             return !$this->exists(['LOWER(email)'=> strtolower($value)]);
+                        }else{
+                            return false;
+                        }
+                    },
+                    'message'=>__('Email already exist.')]) ;
         
         $validator
                 ->notEmpty('country_code',__('Country code is required field.'),function($context){
@@ -166,24 +182,26 @@ class UsersTable extends Table {
                     ])
                 ->add('dob','custom',[
                     'rule'=>function($value,$context){
-                            $now = new Time('now');
-                            $dob = Time::createFromFormat('m-d-Y',$value);
-                            $age = $now->diff($dob)->format("%Y");
-                            return ($age > 13);
+                            $timezone = Configure::read('timezone');
+                            $now = new Time('now',$timezone);
+                            $dob = Time::createFromFormat('m-d-Y',$value,$timezone);
+                            $age = $now->diff($dob)->format("%Y");                            
+                            return ($age >= 13);
                         },
-                    'message'=>__('Age must be 13 or greater than 13 year\'s old.'),
+                    'message'=>__('ssAge must be 13 or greater than 13 year\'s old.'),
                 ]); 
         $validator
-            ->requirePresence('gender', 'create',__('Gender is required field.'))    
-            ->notEmpty('gender',__('Gender is required field.'))
+            //->requirePresence('gender', 'create',__('Gender is required field.'))                
+            //->notEmpty('gender',__('Gender is required field.'))
+            ->allowEmpty('gender')        
             ->inList('gender', Configure::read('gender'),__('Gender must be any one '.implode(',',Configure::read('gender')).'.'));      
         $validator
-                ->requirePresence('longitude', 'create',__('Longitude key is missing.'))
-                ->notEmpty('longitude',__('Please enter longitude.'))
+                //->requirePresence('longitude', 'create',__('Longitude key is missing.'))
+                ->allowEmpty('longitude')
                 ->longitude('longitude',__('Please enter valid longitude.'));        
         $validator
-                ->requirePresence('latitude', 'create',__('Latitude key is missing.'))
-                ->notEmpty('latitude',__('Please enter latitude.'))
+                //->requirePresence('latitude', 'create',__('Latitude key is missing.'))
+                ->allowEmpty('latitude')
                 ->latitude('latitude',__('Please enter valid latitude.'));
         return $validator;
     }
@@ -210,17 +228,17 @@ class UsersTable extends Table {
                 ->add('username', 'unique', ['rule' => 'validateUnique','message'=>__('Username already exist.'), 'provider' => 'table'])
                  ->add("username",'custom',[
                     'rule'=>function($value,$context){
-                        return (bool)(preg_match('/^[\w\s\.-@#]+$/', $value));
+                        return (bool)(preg_match('/^[\w\s\.\_\-\@\#]+$/', $value));
                     },
                     'message'=>__('Username is not valid.'),
                 ]);
         
         $validator
                 ->email('email',false,__('Email is required field.'))
-                ->requirePresence('email', true, __('Email is required field.'))
+                //->requirePresence('email', true, __('Email is required field.'))
                 ->email('email', false, __('Invalid email address.'))
                 //->add('email', 'unique', ['rule' => 'validateUnique','message'=>'Email has been used.', 'provider' => 'table']) 
-                ->notEmpty('email',__('Email is required field.'));
+                ->allowEmpty('email');
         
         $validator
             ->allowEmpty('dob')
@@ -233,17 +251,19 @@ class UsersTable extends Table {
                 ])
             ->add('dob','custom',[
                 'rule'=>function($value,$context){
-                        $now = new Time('now');
-                        $dob = Time::createFromFormat('m-d-Y',$value);
+                        $timezone = Configure::read('timezone');
+                        $now = new Time('now',$timezone);
+                        $dob = Time::createFromFormat('m-d-Y',$value,$timezone);
                         $age = $now->diff($dob)->format("%Y");
-                        return ($age > 13);
+                        return ($age >= 13);                        
                     },
                 'message'=>__('Age must be 13 or greater than 13 year\'s old.'),
             ]);
                 
         $validator
-            ->requirePresence('gender', true, __('Gender is required field.'))    
-            ->notEmpty('gender',__('Gender is required field.'))
+            //->requirePresence('gender', true, __('Gender is required field.'))    
+            //->notEmpty('gender',__('Gender is required field.'))
+            ->allowEmpty('gender')    
             ->inList('gender', Configure::read('gender'),__('Gender must be any one '.implode(',',Configure::read('gender')).'.')           );
         
         $validator
@@ -259,12 +279,12 @@ class UsersTable extends Table {
                 ->notEmpty('device_id', __('Please enter a device id.'))
                 ->maxLength('device_id', 100,__('Device id cannot exceed to 100 characters.'));
         $validator
-                ->requirePresence('longitude', true, __('Longitude key is missing.'))
-                ->notEmpty('longitude',__('Please enter longitude.'))
+                //->requirePresence('longitude', 'create',__('Longitude key is missing.'))
+                ->allowEmpty('longitude')
                 ->longitude('longitude',__('Please enter valid longitude.'));        
         $validator
-                ->requirePresence('latitude', true, __('Latitude key is missing.'))
-                ->notEmpty('latitude',__('Please enter latitude.'))
+                //->requirePresence('latitude', 'create',__('Latitude key is missing.'))
+                ->allowEmpty('latitude')
                 ->latitude('latitude',__('Please enter valid latitude.'));
         return $validator;
     }
@@ -309,24 +329,26 @@ class UsersTable extends Table {
                 ])
             ->add('dob','custom',[
                 'rule'=>function($value,$context){
-                        $now = new Time('now');
-                        $dob = Time::createFromFormat('m-d-Y',$value);
+                        $timezone = Configure::read('timezone');
+                        $now = new Time('now',$timezone);
+                        $dob = Time::createFromFormat('m-d-Y',$value,$timezone);
                         $age = $now->diff($dob)->format("%Y");
-                        return ($age > 13);
+                        return ($age >= 13);                        
                     },
                 'message'=>__('Age must be 13 or greater than 13 year\'s old.'),
             ]);
 
         $validator
-            ->requirePresence('gender', 'create',__('Gender is required field.'))    
-            ->notEmpty('gender',__('Gender is required field.'))
+            //->requirePresence('gender', 'create',__('Gender is required field.'))    
+            //->notEmpty('gender',__('Gender is required field.'))
+            ->allowEmpty('gender')      
             ->inList('gender', Configure::read('gender'),__('Gender must be any one '.implode(',',Configure::read('gender')).'.'));
         $validator
-                ->requirePresence('longitude', 'create',__('Longitude key is missing.'))
+                //->requirePresence('longitude', 'create',__('Longitude key is missing.'))
                 ->allowEmpty('longitude')
                 ->longitude('longitude',__('Please enter valid longitude.'));        
         $validator
-                ->requirePresence('latitude', 'create',__('Latitude key is missing.'))
+                //->requirePresence('latitude', 'create',__('Latitude key is missing.'))
                 ->allowEmpty('latitude')
                 ->latitude('latitude',__('Please enter valid latitude.'));
         
@@ -350,6 +372,102 @@ class UsersTable extends Table {
             ->inList('friend_status', Configure::read('friend_requested_status'),__('Friend status must be any one '.implode(',',Configure::read('friend_requested_status')).'.'));
         return $validator->errors($data);
     }
+    
+    /**
+     * addFriendValidate rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function addFriendValidate($data) {
+        $validator = new Validator();        
+        $validator
+            ->requirePresence('friend_id', 'create',__('Friend request is required field.'))
+            ->notEmpty('friend_id',__('Friend request is required field.'));
+        
+        $validator
+            ->requirePresence('friend_status', 'create',__('Status is required field.'))    
+            ->notEmpty('friend_status',__('Status is required field.'))
+            ->inList('friend_status', Configure::read('add_friend'),__('Friend status must be '.implode(',',Configure::read('add_friend')).'.'));
+        return $validator->errors($data);
+    }
+    
+    /**
+     * requestAcceptDeclinedValidate rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function requestAcceptDeclinedValidate($data) {
+        $validator = new Validator();        
+        $validator
+            ->requirePresence('friend_id', 'create',__('Friend id is required field.'))
+            ->notEmpty('friend_id',__('Friend request is required field.'));
+        
+        $validator
+            ->requirePresence('friend_status', 'create',__('Status is required field.'))    
+            ->notEmpty('friend_status',__('Status is required field.'))
+            ->inList('friend_status', Configure::read('accept_decline_status'),__('Friend status must be any one '.implode(',',Configure::read('accept_decline_status')).'.'));
+        return $validator->errors($data);
+    }
+    
+    /**
+     * requestBlockedValidate rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function requestBlockedValidate($data) {
+        $validator = new Validator();        
+        $validator
+            ->requirePresence('friend_id', 'create',__('Friend id is required field.'))
+            ->notEmpty('friend_id',__('Friend request is required field.'));
+        
+        $validator
+            ->requirePresence('friend_status', 'create',__('Status is required field.'))    
+            ->notEmpty('friend_status',__('Status is required field.'))
+            ->inList('friend_status', Configure::read('block_status'),__('Friend status must be '.implode(',',Configure::read('block_status')).'.'));
+        return $validator->errors($data);
+    }
+    
+    /**
+     * requestUnblockedValidate rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function requestUnblockedValidate($data) {
+        $validator = new Validator();        
+        $validator
+            ->requirePresence('friend_id', 'create',__('Friend id is required field.'))
+            ->notEmpty('friend_id',__('Friend request is required field.'));
+        
+        $validator
+            ->requirePresence('friend_status', 'create',__('Status is required field.'))    
+            ->notEmpty('friend_status',__('Status is required field.'))
+            ->inList('friend_status', Configure::read('unblock_status'),__('Friend status must be '.implode(',',Configure::read('unblock_status')).'.'));
+        return $validator->errors($data);
+    }
+    
+    /**
+     * requestUnfriendValidate rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function requestUnfriendValidate($data) {
+        $validator = new Validator();        
+        $validator
+            ->requirePresence('friend_id', 'create',__('Friend id is required field.'))
+            ->notEmpty('friend_id',__('Friend request is required field.'));
+        
+        $validator
+            ->requirePresence('friend_status', 'create',__('Status is required field.'))    
+            ->notEmpty('friend_status',__('Status is required field.'))
+            ->inList('friend_status', Configure::read('unfriend_status'),__('Friend status must be '.implode(',',Configure::read('unfriend_status')).'.'));
+        return $validator->errors($data);
+    }
+    
     /**
      * friendRequestResponseValidate rules.
      *
@@ -375,11 +493,11 @@ class UsersTable extends Table {
      * @param \Cake\Validation\Validator $validator Validator instance.
      * @return \Cake\Validation\Validator
      */
-    public function validationChangePassword(Validator $validator, $userId = null) {
-        
+    public function validationChangePassword($data,$userId = null) {
+        $validator = new Validator();
         $validator
-                ->requirePresence('old_password', 'create',__('Old password is required field.'))
-                ->notEmpty('old_password',__('Old password is required field.'))
+                ->requirePresence('old_password', 'create',__('Previous password is required field.'))
+                ->notEmpty('old_password',__('Previous password is required field.'))
                 ->add('old_password','custom', [
                     'rule'=>function($value, $context) use($userId) {
                         $password = $this->get($userId, ['fields'=>'password']);
@@ -388,13 +506,13 @@ class UsersTable extends Table {
                         }
                         return true;
                     },
-                    'message'=>__('Old passwords don\'t match, try again please!'),
+                    'message'=>__('Previous password is not correct.'),
                 ]);
         
         $validator
                 ->requirePresence('new_password', 'create',__('New password is required field.'))
                 ->notEmpty('new_password',__('New password is required field.'))
-                ->add("new_password",'custom',[
+                ->add("new_password",'passwordrule',[
                     'rule'=>function($value,$context) {
                         if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,30}$/', $value)){
                             return false;
@@ -402,7 +520,7 @@ class UsersTable extends Table {
                             return true;
                         }
                     },
-                    'message'=>__('New password must contain 8-30 character length, at least one letter and one number.'),
+                    'message'=>__('New password must contain 8-30 character length and at least one letter and one number.'),
                 ])
                 ->add('new_password', 'custom', [
                     'rule' => function($value, $context) {
@@ -411,13 +529,40 @@ class UsersTable extends Table {
                         }
                         return true;
                     },
-                    'message' => 'New password and old password should not be same, try again please!']);
+                    'message' => 'New password and previous password couldn\'t be same.']);
         $validator
                 ->requirePresence('confirm_password', 'create', __('Confirm password is required field.'))
                 ->notEmpty('confirm_password', __('Confirm password is required field.'))
-                ->sameAs('confirm_password', 'new_password',__('New password and confirm password should be matched, try again please!'));
-        
-        return $validator;
+                ->sameAs('confirm_password', 'new_password',__('New password and confirm password must be matched.'));
+        return $validator->errors($data);
+    }
+    /**
+     * validationResetPassword validation rules.
+     *
+     * @param Array $data input data
+     * @return \Cake\Validation\Validator
+     */
+    public function validationResetPassword($data) {
+        $validator = new Validator();
+        $validator
+                ->requirePresence('new_password', 'create',__('New password is required field.'))
+                ->notEmpty('new_password',__('New password is required field.'))
+                ->add("new_password",'passwordrule',[
+                    'rule'=>function($value,$context) {
+                        if(!preg_match('/^(?=.*\d)(?=.*[A-Za-z])[0-9A-Za-z!@#$%]{8,30}$/', $value)){
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    },
+                    'message'=>__('New password must contain 8-30 character length and at least one letter and one number.'),
+                ]);
+                
+        $validator
+                ->requirePresence('confirm_password', 'create', __('Confirm password is required field.'))
+                ->notEmpty('confirm_password', __('Confirm password is required field.'))
+                ->sameAs('confirm_password', 'new_password',__('New password and confirm password must be matched.'));
+        return $validator->errors($data);
     }
 
     /**
@@ -446,8 +591,8 @@ class UsersTable extends Table {
         }
         $plain_token = \Api\Utils\Utils::getToken();
         $hasher = new DefaultPasswordHasher();
-        $userLogs = TableRegistry::get('UserLogs');
-        
+        $userLogs = TableRegistry::get('Api.UserLogs');
+        $userLogs->deleteAll(['user_id'=>$user['id']]);
         $logItems = $userLogs->newEntity();        
         $logItems->user_id = $user['id'];
         $logItems->last_login = Time::now();
@@ -459,7 +604,7 @@ class UsersTable extends Table {
         $logItems->login_status = 1;
         $logItems->created = Time::now();
         $logItems->modified = Time::now();
-        if ($userLogs->save($logItems)) {
+        if ($userLogs->save($logItems,['checkRules'=>false,'atomic'=>false])) {
             return $user+['token'=>$plain_token];
         }else{
             return false;
@@ -474,7 +619,7 @@ class UsersTable extends Table {
         } else {
             $cond['Users.id !='] = $userId;
         }
-        $users = $this->find('all', ['fields'=>['Users.id', 'Users.username', 'Users.email', 'Users.matrix_user_id']])->where($cond);
+        $users = $this->find('all', ['fields'=>['Users.id', 'Users.username','Users.display_name', 'Users.email', 'Users.matrix_user_id']])->where($cond);
         $users->contain([
             /*
             'JoinedSpayc'=>function($q) {
@@ -512,7 +657,7 @@ class UsersTable extends Table {
         $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
         $users->order(['Users.username'=>'ASC'])->limit($limit);
         if(!empty($request['keyword'])) {
-            $users->where(['Users.username LIKE'=>"%".$request['keyword']."%"]);
+            $users->where(['LOWER(Users.username) LIKE'=>"%".strtolower($request['keyword'])."%"]);
         }
         $page = (!empty($request['page']) && is_numeric($request['page']))?$request['page']:1;
         if($page < 0) {
@@ -538,4 +683,101 @@ class UsersTable extends Table {
                 ->longitude('longitude', __('Longitude is not valid.'));
         return $validator->errors($data);
     }
+    public function ValidatechangeRole($data){
+        $validator = new Validator();
+        $validator->requirePresence('spayc_id', true,__('Warp id key is missing.'))
+                ->notEmpty('spayc_id', __('Please enter warp id.'));
+        $validator->requirePresence('user_id', true,__('User id key is missing.'))
+                ->notEmpty('user_id', __('Please enter User id.'));
+        $validator->requirePresence('user_id', true,__('User id key is missing.'))
+                ->notEmpty('user_id', __('Please enter User id.'));
+        $validator->requirePresence('role', true,__('Role key is missing.'))
+                ->notEmpty('role', __('Please enter role.'))
+                ->inList('role', [0,1],__('Role must be either o or 1.'));
+        return $validator->errors($data);
+    }
+    
+    public function findJoinedSpayc($userid){
+        $joinedSpayc = TableRegistry::get('Api.JoinedSpayc')->find()
+                ->contain('Spaycs')
+                ->where(['JoinedSpayc.status'=>'Joined','JoinedSpayc.user_id'=>$userid,'Spaycs.parent_id IS'=>null]);
+        if($joinedSpayc->isEmpty()){
+            return [];
+        }else{
+            return $joinedSpayc->toArray();
+        }
+    }
+    
+    /**
+     * pusherNotification method to manage the chat data
+     * 
+     * @param Array $data array of object containing pusher data
+     * @return Array|false either array containig push data or false
+     */
+    public function pusherNotification($data = [],$comment=false){
+        if(empty($data['notification']['devices'])) { 
+            \Cake\Log\Log::info(__('Device token is not available.'));
+            return false;
+        }
+        
+        $items = ['message'=>'','event_id'=>''];
+        if(!empty($data['notification']['content']['eventId'])){
+            $items['event_id'] = $data['notification']['content']['eventId'];
+        }elseif(!empty($data['notification']['event_id'])){
+            $items['event_id'] = $data['notification']['event_id'];
+        }
+        $spayc  = TableRegistry::get('Api.Spaycs')->findByMatrixRoomId($data['notification']['room_id'])->first();
+        
+        //\Cake\Log\Log::info($data);
+        $msgType = $data['notification']['content']['msgtype'];
+        $items['spayc_image'] = null;
+        if(!empty($spayc)){
+            $items['spayc_image'] = $spayc->image;
+        }
+        $items['matrix_room_id'] = $data['notification']['room_id'];
+        
+        if($msgType == 'm.likeMessage'){
+            $notify = $this->storeMsg('a-user-liked-your-comment', $data['notification']['sender_display_name'], $data['notification']['content']['body']);          
+             $notify->message = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);
+        }elseif($msgType == 'm.replyText'){
+            $notify = $this->storeMsg('someone-replyed-to-your-comment', $data['notification']['sender_display_name'], $data['notification']['content']['body']);
+            $notify->message = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);
+        }else{
+            $notify = $this->storeMsg('someone-commented', $data['notification']['sender_display_name'], $data['notification']['content']['body']);
+            if(strstr($data['notification']['room_name'],'#direct')){
+                $notify->message = str_replace(["<USERNAME>","<COMMENT>","in your warp, <SpaycName>"],[ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body'],""], $notify->message);
+            }else{
+                $notify->message = str_replace(["<USERNAME>","<COMMENT>","<SpaycName>"],[ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body'],ucwords($data['notification']['room_name'])], $notify->message);
+            }            
+        }
+        $items['message']  = $notify->message;
+        $items['notification_type'] = $notify->type; 
+        $items['spayc_id'] = $spayc->id;
+        TableRegistry::get('Api.Comments')->spaycActivities($spayc->id,$items);
+        return $items;
+    }
+    
+    public function storeMsg($slug,$username,$body){
+        if (($notify = \Cake\Cache\Cache::read($slug,'long')) === false) {
+            $notify = TableRegistry::get('Api.Notifications')->message($slug);
+            \Cake\Cache\Cache::write($slug, $notify,'long');
+        }
+       
+        return $notify;
+    }
+    
+    
+    /**
+     * pusherData to store the post data comes from matrix pusher
+     */
+    public function pusherData($data){
+        $pushData['post_value'] = json_encode($data);
+        $pushData['created'] = date("Y-m-d H:i:s");
+        $pusher = TableRegistry::get("Api.PusherData");
+        $push = $pusher->newEntity();
+        $item = $pusher->patchEntity($push, $pushData);
+        return $pusher->save($item);
+    }
+    
+    
 }

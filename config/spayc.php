@@ -1,10 +1,18 @@
 <?php
 return [
-    'title' =>'SPAYC',
+    'title' =>'Warp',
     'gender'=>['Male', 'Female', 'Other'],
     'spayctype'=>['Event', 'Community'],
     'grouptype'=>['Public', 'Private'],
-    'friend_requested_status'=>['Pending', 'Accepted', 'Blocked','Unblock','Direct','Decline','Unfriend'],
+    'pagelimit'=>5,
+    'miles'=>1,
+    'newSpaycDistance'=>25,/* Miles*/
+    'friend_requested_status'=>['Pending', 'Accepted', 'Blocked','Unblock','is_direct','Decline','Unfriend'],
+    'add_friend'=>['Pending'],
+    'accept_decline_status'=>['Accepted', 'Decline'],
+    'block_status'=>['Blocked'],
+    'unblock_status'=>['Unblock'],
+    'unfriend_status'=>['Unfriend'],
     'requestMsg'=>[
         'Pending'=>'Friend Request sent Successfully.',
         'Accepted'=>'Friend added successfully.',
@@ -13,9 +21,27 @@ return [
         'Unfriend'=>'Friend status updated successfully.',
         'Decline'=>'Friend status updated successfully.',
     ],
+    'is_notify'=>['On', 'Off'],
     //'friend_status'=>['Blocked', 'Unfriend', 'Unblock'],
-    'maxupload'=>'2MB',
+    'maxupload'=>'5MB',
     'adminEmail' =>'kiwitech@gmail.com',
     'reverification_subject'=>'Re-Verifiaction',
-    'forgotpassword_subject'=>'Forgot Password'
+    'forgotpassword_subject'=>'Forgot Password',
+    'startevent_subject'=>'Start Event',
+    'endevent_subject'=>'End Event',
+    'mimetype' => [
+        'image/png' => 'png',
+        'image/jpe' => 'jpeg',
+        'image/jpg' => 'jpg',
+        'image/jpeg' => 'jpeg',
+        'image/jpg' => 'jpeg',
+        'image/gif' => 'gif',
+        'image/bmp' => 'bmp',
+        'image/vnd.microsoft.icon' => 'ico',
+        'image/tiff' => 'tiff',
+        'image/tiff' => 'tif',
+        'image/svg+xml' => 'svg',
+        'image/svg+xml' => 'svgz',
+    ],
+    'userstatus_subject'=>'User Status'
 ];

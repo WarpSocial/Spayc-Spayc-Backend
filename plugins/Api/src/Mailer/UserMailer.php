@@ -52,5 +52,24 @@ class UserMailer extends Mailer {
             ->emailFormat('html')
             ->template('contactus'); // By default template with same name as method name is used. 
     }
+    
+    
+    
+    public function eventStartCron($user) {
+        $this->viewVars(['user' => $user])
+            ->to($user->email)
+            ->subject(Configure::read('startevent_subject'))
+            ->emailFormat('html')
+            ->template('Api.starteventcron');
+    }
+    public function eventEndCron($user) {
+        $this->viewVars(['user' => $user])
+            ->to($user->email)
+            ->subject(Configure::read('endevent_subject'))
+            ->emailFormat('html')
+            ->template('Api.endeventcron');
+    }
+
+
 
 }

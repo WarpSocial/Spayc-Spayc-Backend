@@ -7,24 +7,22 @@ use Cake\Routing\Router;
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Spayc forgot password</title>
+    <title>Warp forgot password</title>
     <style>
         body{
           font-family: arial;
         }
     </style>
   </head>
-
-
   <body bgcolor="#f2f5f6" style="font-family: arial; font-size: 13px; color:#000;">
     <div style="width: 100%">
       <table width="100%" cellspacing="0" cellpadding="0" border="0" align="center" style="background-color:#fff; max-width:600px;">
         <tbody>
           <tr style="border:0;border-collapse:collapse;background-color:#1a4c59;">
               <td style="width:100%;margin:0;padding:7px 15px;font-size:25px;color: #fff;">
-                <?php echo $this->Html->image('logo.png', ['alt' => 'Spayc', 'style'=>'text-align: center;display: block;margin: 0 auto;']);?>
+                <?php echo $this->Html->image('logo.png', ['fullBase' => true,'alt' => 'Warp', 'style'=>'text-align: center;display: block;margin: 0 auto;']);?>
               </td>
-          </tr>
+         </tr>
           <tr>
             <td class="outer-padding" style="background:#fff; border:1px solid #e3e3e3; padding:15px;">
               <table width="100%;" style="font-size:14px; padding-top:10px; padding-bottom:0px;">
@@ -32,7 +30,7 @@ use Cake\Routing\Router;
                   <tr>
                     <td style="line-height:23px;">
                       <div style="display: block; font-size: 16px;">Reset your password</div>
-                      <div style="margin-top: 25px; color:#272727; font-size: 14px;">Hi <?php echo ucwords($user->username);?>,</div>
+                      <div style="margin-top: 25px; color:#272727; font-size: 14px;">Hi <?php echo ucwords($user->display_name);?>,</div>
                       <div style="color:#333333; margin-top:10px; font-size: 13px;">A request to reset your password has been made. If you did not make this request, simply ignore this email. If you did make this request, please reset your password:</div>
                     </td>
                   </tr>
@@ -43,12 +41,12 @@ use Cake\Routing\Router;
                   </tr>
                   <tr>
                     <td>
-                      <p style="font-weight: 500;">- Thanks (Spayc Team)</p>
+                      <p style="font-weight: 500;">- Thanks (Warp Team)</p>
                     </td>
                   </tr>
                   <tr>
                     <td style="width:100%; border-top: 1px solid #eaeaea;">
-                      <p style="color:#6c6c6c; font-size: 13px;padding-top: 5px;">For general inquiries or to request support with your account, please email support@spayc.com</p>
+                      <p style="color:#6c6c6c; font-size: 13px;padding-top: 5px;">For general inquiries or to request support with your account, please email support@warp.com</p>
                     </td>
                   </tr>
                 </tbody>

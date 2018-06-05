@@ -26,6 +26,15 @@ class UserLogsTableTest extends TestCase
     public $fixtures = [
         'app.user_logs',
         'app.users',
+        'app.user_images',
+        'app.joined_spayc',
+        'app.spaycs',
+        'app.matrix_rooms',
+        'app.subscribed_users',
+        'app.requestedby',
+        'app.requestedto',
+        'app.friend_request',
+        'app.roles',
         'app.devices',
         'app.matrix_users'
     ];

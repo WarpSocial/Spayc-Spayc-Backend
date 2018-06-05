@@ -67,12 +67,26 @@ class HashtagsTable extends Table
     }
     
     public function searchHashtags($request = []) {
-        $hashTag = $this->find('all', ['fields'=>['Hashtags.id', 'Hashtags.name', 'Hashtags.created', 'Hashtags.modified']]);
+        $hashTag = $this->find('all', ['fields'=>['Hashtags.id', 'Hashtags.name']]);
         $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
         $hashTag->order(['Hashtags.name'=>'ASC'])->limit($limit);
         if(!empty($request['keyword'])) {
-            $hashTag->where(['Hashtags.name LIKE'=>"%".$request['keyword']."%"]);
+            $hashTag->where(['LOWER(Hashtags.name) LIKE'=>"%".strtolower($request['keyword'])."%"]);
         }
+        $hashTag->contain([
+            'SpaycHashtags'=>function($q) {
+                return $q->select(['SpaycHashtags.hashtag_id', 'total_space'=>$q->func()->count('SpaycHashtags.id')])->group(['SpaycHashtags.hashtag_id']);
+            }
+        ]);
+        $hashTag->formatResults(function (\Cake\Collection\CollectionInterface $results) {
+            return $results->map(function ($row) {
+                $hashId = ApiHasher::decrypt($row->id);
+                $row['total_space'] = !empty($row['spayc_hashtags'][0]['total_space'])?$row['spayc_hashtags'][0]['total_space']:0;
+                unset($row['spayc_hashtags']);
+                return $row;
+            });
+        });
+        
         $page = (!empty($request['page']) && is_numeric($request['page']))?$request['page']:1;
         if($page < 0) {
             $page = $page*-1;
@@ -80,6 +94,37 @@ class HashtagsTable extends Table
         } else {
             $hashTag->page($page);
         }
+        $hashTag->distinct(['Hashtags.name']);
+        $data['count'] = $hashTag->count();
+        $data['records'] = [];
+        if($hashTag->count()) { 
+            $data['records'] = $hashTag->toArray();
+        }
+        return $data;
+    }
+    
+    
+     public function spaceHashtags($request = []) {
+        $hashTag = $this->find('all', ['fields'=>['Hashtags.id', 'Hashtags.name']]);
+        $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
+        $hashTag->order(['Hashtags.name'=>'ASC'])->limit($limit);
+        if(!empty($request['keyword'])) {
+            $hashTag->where(['LOWER(Hashtags.name) LIKE'=>"%".strtolower($request['keyword'])."%"]);
+        }
+        
+        $hashTag->contain([
+            'SpaycHashtags'=>function($q) {
+                return $q->select(['SpaycHashtags.hashtag_id','SpaycHashtags.spayc_id']);
+            }
+        ]);
+        $page = (!empty($request['page']) && is_numeric($request['page']))?$request['page']:1;
+        if($page < 0) {
+            $page = $page*-1;
+            $hashTag->page($page);
+        } else {
+            $hashTag->page($page);
+        }
+        $hashTag->distinct(['Hashtags.name']);
         $data['count'] = $hashTag->count();
         $data['records'] = [];
         if($hashTag->count()) { 
@@ -89,27 +134,35 @@ class HashtagsTable extends Table
     }
     
     public function saveHashTags($hashTags = null, $spaycId = null) {
-        if(!empty($hashTags) and !empty($spaycId)) {
-            preg_match_all('/#([^\s,#]+)/', $hashTags, $matches);
-            if(!empty($matches[1])) {
-                foreach($matches[1] as $key=>$hash) {
-                    $hastag[$key]['name'] = $hash;
-                }
+        if(empty($hashTags) || empty($spaycId)) {
+            return false;
+        }
+        $spHashtags = TableRegistry::get('Api.SpaycHashtags');
+        $spHashtags->deleteAll(['spayc_id'=>$spaycId]);
+        preg_match_all('/#([^\s,#]+)/', $hashTags, $matches);        
+        if(empty($matches[1])) {
+            return false;
+        }
+        
+        $spHashtags->deleteAll(['spayc_id'=>$spaycId]);
+        foreach($matches[1] as $key=>$hash) {
+            $entity = $this->find("all")->select(["id", "name"])->where(['LOWER(name)'=>  strtolower($hash)]);
+            if(!$entity->isEmpty()) {
+                $items = $entity->first();
+            } else {
+                $entity = $this->newEntity();
+                $data = ['name'=>$hash, 'created'=>date('Y-m-d H:i:s')];
+                $items = $this->patchEntity($entity, $data, ['validate'=>false]);
+                $this->save($items);
             }
-            if(empty($hastag)){
-                return;
-            }
-            $entities = $this->newEntities($hastag);
-            $this->saveMany($entities);
-            if(!empty($entities)) {
-                $spaycId = ApiHasher::decrypt($spaycId);
-                foreach($entities as $key=>$entity) {
-                    $spaycHastag[$key]['spayc_id'] = $spaycId;
-                    $spaycHastag[$key]['hashtag_id'] = ApiHasher::decrypt($entity['id']);
-                }
-                $spHashtags = TableRegistry::get('Api.SpaycHashtags');
-                $shEntities = $spHashtags->newEntities($spaycHastag);
-                $spHashtags->saveMany($shEntities);
+            $spaceHash = $spHashtags->findBySpaycIdAndHashtagId($spaycId, $items->id);
+            if($spaceHash->isEmpty()) {
+                $spaycHastag['spayc_id'] = $spaycId;
+                $spaycHastag['hashtag_id'] = $items->id;
+                $spaycHastag['created'] = date('Y-m-d H:i:s');
+                $entity = $spHashtags->newEntity();
+                $hasItems = $spHashtags->patchEntity($entity, $spaycHastag);
+                $spHashtags->save($hasItems);
             }
         }
     }

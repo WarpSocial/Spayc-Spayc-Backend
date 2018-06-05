@@ -1,0 +1,48 @@
+<?php
+namespace App\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
+
+/**
+ * SpaycHashtagsFixture
+ *
+ */
+class SpaycHashtagsFixture extends TestFixture
+{
+
+    /**
+     * Fields
+     *
+     * @var array
+     */
+    // @codingStandardsIgnoreStart
+    public $fields = [
+        'id' => ['type' => 'biginteger', 'length' => 20, 'default' => null, 'null' => false, 'comment' => null, 'precision' => null, 'unsigned' => null, 'autoIncrement' => null],
+        'spayc_id' => ['type' => 'biginteger', 'length' => 20, 'default' => null, 'null' => false, 'comment' => null, 'precision' => null, 'unsigned' => null, 'autoIncrement' => null],
+        'hashtag_id' => ['type' => 'biginteger', 'length' => 20, 'default' => null, 'null' => false, 'comment' => null, 'precision' => null, 'unsigned' => null, 'autoIncrement' => null],
+        'created' => ['type' => 'timestamp', 'length' => null, 'default' => null, 'null' => false, 'comment' => null, 'precision' => null],
+        'modified' => ['type' => 'timestamp', 'length' => null, 'default' => null, 'null' => true, 'comment' => null, 'precision' => null],
+        '_indexes' => [
+            'spayc_hashtags_created_idx' => ['type' => 'index', 'columns' => ['created'], 'length' => []],
+        ],
+        '_constraints' => [
+            'primary' => ['type' => 'primary', 'columns' => ['id', 'created'], 'length' => []],
+        ],
+    ];
+    // @codingStandardsIgnoreEnd
+
+    /**
+     * Records
+     *
+     * @var array
+     */
+    public $records = [
+        [
+            'id' => 1,
+            'spayc_id' => 1,
+            'hashtag_id' => 1,
+            'created' => 1521818247,
+            'modified' => 1521818247
+        ],
+    ];
+}

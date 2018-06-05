@@ -41,7 +41,7 @@ class AppController extends BaseController {
         Configure::write('timezone', 'UTC');
         if($this->request->header('timezone')) {
             Configure::write('timezone', $this->request->header('timezone'));
-        }
+        }        
     }
     public function beforeRender(Event $event) {
         parent::beforeRender($event);
@@ -63,7 +63,7 @@ class AppController extends BaseController {
      * $data
      */
     public function restException($data=[], $code=200){        
-        Log::info($data);
+        Log::info($data);        
         $this->response->type('json');
         $this->response->statusCode($code);
         $this->response->body(json_encode($data)); 
@@ -71,8 +71,5 @@ class AppController extends BaseController {
         $this->response->stop();
     }
     
-    
-    protected function _outputMessage($template){
-        
-    }
+
 }

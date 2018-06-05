@@ -11,13 +11,14 @@ namespace Api\Utils;
 use Cake\Utility\Text;
 use Cake\I18n\Time;
 use Cake\Core\Configure;
+
 /**
  * Description of Sanatize
  *
  * @author kiwitech
  */
 class Utils {
-    
+
     /**
      * getVar method to return the value from array
      * 
@@ -26,11 +27,11 @@ class Utils {
      * 
      * @return string value of key
      */
-    public static function getVar($var,$array){
-        if(is_array($array)){
-            if(isset($array[$var])){
+    public static function getVar($var, $array) {
+        if (is_array($array)) {
+            if (isset($array[$var])) {
                 return $array[$var];
-            }else{
+            } else {
                 return "";
             }
         }
@@ -152,9 +153,9 @@ class Utils {
      * @return string sanitized string
      */
     public static function stripAll($str) {
-        return Sanitize::stripScripts(
-                        Sanitize::stripImages(
-                                Sanitize::stripWhitespace($str)
+        return self::stripScripts(
+                        self::stripImages(
+                                self::stripWhitespace($str)
                         )
         );
     }
@@ -221,7 +222,7 @@ class Utils {
 
         if (is_array($data)) {
             foreach ($data as $key => $val) {
-                $data[$key] = Sanitize::clean($val, $options);
+                $data[$key] = self::clean($val, $options);
             }
             return $data;
         }
@@ -230,7 +231,7 @@ class Utils {
             $data = str_replace(chr(0xCA), '', $data);
         }
         if ($options['encode']) {
-            $data = Sanitize::html($data, array('remove' => $options['remove_html']));
+            $data = self::html($data, array('remove' => $options['remove_html']));
         }
         if ($options['dollar']) {
             $data = str_replace("\\\$", "$", $data);
@@ -242,7 +243,7 @@ class Utils {
             $data = preg_replace("/&amp;#([0-9]+);/s", "&#\\1;", $data);
         }
         if ($options['escape']) {
-            $data = Sanitize::escape($data, $options['connection']);
+            $data = self::escape($data, $options['connection']);
         }
         if ($options['backslash']) {
             $data = preg_replace("/\\\(?!&amp;#|\?#)/", "\\", $data);
@@ -275,21 +276,21 @@ class Utils {
         }
         return $output;
     }
-    
-    public static function getToken(){
+
+    public static function getToken() {
         $token = \Cake\Utility\Security::randomBytes(32);
-        $hash = \Cake\Utility\Security::hash($token,'sha256',false);
+        $hash = \Cake\Utility\Security::hash($token, 'sha256', false);
         return $hash;
     }
-    
-    public static function logWrite($message,$lavel='info'){
-        \Cake\Log\Log::write($lavel,$message);
+
+    public static function logWrite($message, $lavel = 'info') {
+        \Cake\Log\Log::write($lavel, $message);
     }
-        
+
     public static function setUtc($dateTime, $timezone = 'UTC') {
-        if($dateTime instanceof \Cake\I18n\Time){
+        if ($dateTime instanceof \Cake\I18n\Time) {
             $date = $dateTime->format('Y-m-d H:i:s');
-        } elseif($dateTime instanceof \DateTime) {
+        } elseif ($dateTime instanceof \DateTime) {
             $date = $dateTime->format('Y-m-d H:i:s');
         } else {
             $date = $dateTime;
@@ -298,11 +299,11 @@ class Utils {
         $dateObj->setTimezone('UTC');
         return $dateObj->format('Y-m-d H:i:s');
     }
-    
+
     public static function getFromUtc($dateTime, $timezone = 'UTC') {
-        if($dateTime instanceof \Cake\I18n\Time){
+        if ($dateTime instanceof \Cake\I18n\Time) {
             $date = $dateTime->format('Y-m-d H:i:s');
-        } elseif($dateTime instanceof \DateTime) {
+        } elseif ($dateTime instanceof \DateTime) {
             $date = $dateTime->format('Y-m-d H:i:s');
         } else {
             $date = $dateTime;
@@ -311,18 +312,17 @@ class Utils {
         $dateObj->setTimezone($timezone);
         return $dateObj->format('Y-m-d H:i:s');
     }
-    
-     /**
+
+    /**
      * getDistanceByLatLong method
      * function use to get distance spayc to user
      * @param string|null $data.
      * @return \Cake\Network\Response|null return json
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
-    */
-    
+     */
     public static function distanceBetweenTwoPoints($lat1, $lon1, $lat2, $lon2, $unit) {
         $theta = $lon1 - $lon2;
-        $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+        $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
         $dist = acos($dist);
         $dist = rad2deg($dist);
         $miles = $dist * 60 * 1.1515;
@@ -335,15 +335,15 @@ class Utils {
             return $miles;
         }
     }
-    
+
     public static function isValidLongitude($longitude = null) {
-        if(preg_match("/^-?([1]?[1-7][1-9]|[1]?[1-8][0]|[1-9]?[0-9])\.{1}\d{1,20}$/", $longitude)) {
+        if (preg_match("/^-?([1]?[1-7][1-9]|[1]?[1-8][0]|[1-9]?[0-9])\.{1}\d{1,20}$/", $longitude)) {
             return true;
         } else {
             return false;
         }
     }
-    
+
     public static function isValidLatitude($latitude) {
         if (preg_match("/^-?([1-8]?[1-9]|[1-9]0)\.{1}\d{1,20}$/", $latitude)) {
             return true;
@@ -351,13 +351,61 @@ class Utils {
             return false;
         }
     }
-    
-    public static function extractKeys($data=[],$key=[]){
-        if(empty($data)){
+
+    public static function extractKeys($data = [], $key = []) {
+        if (empty($data)) {
             return;
         }
-        for($i=0;$i< count($data);$i++){
+        for ($i = 0; $i < count($data); $i++) {
             
         }
     }
+
+    public static function toUtc($datetime) {
+        $timezone = Configure::read('timezone');
+        if (!empty($datetime)) {
+            $parseDate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s', $datetime, $timezone);
+            return $parseDate->setTimezone(new \DateTimeZone('UTC'))->format("Y-m-d H:i:s");
+        } else {
+            return;
+        }
+    }
+
+    public static function toClient($datetime) {
+        $timezone = Configure::read('timezone');
+        if (!empty($datetime)) {
+            $sd = new Time($datetime, 'UTC');
+            return $sd->setTimezone(new \DateTimeZone($timezone))->format('m-d-Y H:i:s');
+        } else {
+            return;
+        }
+    }
+
+    public static function distance($lat1=null, $lon1=null, $lat2=null, $lon2=null, $unit='M') {
+        //echo $lat1.'<br>'.$lon1.'<br>'.$lat2.'<br>'.$lon2;die;
+        if(empty($lat1) || empty($lon1) || empty($lat2) || empty($lon2)){
+            return null;
+        }
+        $theta = $lon1 - $lon2;
+        $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+        $dist = acos($dist);
+        $dist = rad2deg($dist);
+        $miles = $dist * 60 * 1.1515;
+        $unit = strtoupper($unit);
+
+        if ($unit == "K") {
+            return ($miles * 1.609344);
+        } else if ($unit == "N") {
+            return ($miles * 0.8684);
+        } else {
+            //echo number_format($miles,5);
+            return number_format($miles,5);
+        }
+    }
+    
+    public static function uniqueInteger(){
+        $uniqueid = abs(crc32(uniqid())).str_replace("0.","",abs( microtime()));
+        return $uniqueid;
+    }
+
 }

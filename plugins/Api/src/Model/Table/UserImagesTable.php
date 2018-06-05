@@ -6,6 +6,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Core\Configure;
 
 /**
  * UserImages Model
@@ -63,11 +64,17 @@ class UserImagesTable extends Table {
                     'rule' => ['extension', ['jpeg', 'png', 'jpg']],
                     'message' => __('Please select only jpg,jpeg,png.')
                 ])
-                ->add('image_url["size"]', 'size', [
-                    'rule' => ['fileSize', '<=', \Cake\Core\Configure::read('maxupload')],
-                    'message' => __('Image size must be less than ' . \Cake\Core\Configure::read('maxupload') . '.')
+                ->add('image_url', 'size', [
+                    'rule' => function($value,$context){                    
+                        if($value['error'] == 0){
+                            $sizeLimit =\Cake\Utility\Text::parseFileSize(Configure::read('maxupload'));
+                            //$sizeLimit = 2536;//4793432
+                            return (bool)($value['size'] <= $sizeLimit );
+                        }
+                       //$file = new \Cake\Filesystem\File($value['tmp_name'])
+                    },
+                    'message' => __('Image size must be less than ' . Configure::read('maxupload'). '.')
         ]);
-
         return $validator;
     }
 
@@ -84,13 +91,54 @@ class UserImagesTable extends Table {
         return $rules;
     }
     
-    public function uploadFacebookImage($fileName, $userId) {
+    public function uploadFacebookImage($imgUrl, $userId) {
+        $entity = $this->findByUserIdAndIsProfile($userId, 'Yes');
+        if(!$entity->isEmpty()) {
+            return false;
+        }
+        $fileName = $this->facebookImg($imgUrl);
         $data['user_id'] = $userId;
         $data['is_profile'] = 'Yes';
         $data['order_index'] = 1;
         $data['image_url']['tmp_name'] = $fileName;
         $entity = $this->newEntity();
         $items = $this->patchEntity($entity, $data, ['validate'=>false]);
-        $this->save($items);
+        if($this->save($items)){
+            unlink($fileName);
+        }
+        return $items;
+    }
+    public function facebookImg($imgUrl){
+       $http = new \Cake\Http\Client();
+       $response = $http->get($imgUrl);
+       $mimeType = $response->getHeaderLine('content-type');
+       if(empty($mimeType)){
+           return false;
+       }
+       $allMimeType = Configure::read('mimetype');
+       if(empty($allMimeType[$mimeType])){
+           return false;
+       }
+       $ext = $allMimeType[$mimeType];
+       $newImg = TMP.'/facebook_'.time().'.'.$ext;
+        
+        file_put_contents($newImg,$response->getBody());
+         //echo mime_content_type($newImg);die;
+        switch ($ext) {
+            case 'gif' :
+                $srcImg = imagecreatefromgif($newImg);
+                break;
+            case 'png' :
+                $srcImg = imagecreatefrompng($newImg);
+                break;
+            case 'jpg' :
+            case 'jpeg' :
+                $srcImg = imagecreatefromjpeg($newImg);
+                break;
+            default :
+                $srcImg = $imgUrl;
+                break;
+        }
+        return $newImg;
     }
 }

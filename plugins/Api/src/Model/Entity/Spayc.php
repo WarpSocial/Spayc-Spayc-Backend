@@ -5,6 +5,7 @@ use Cake\ORM\Entity;
 use Api\Auth\ApiHasher;
 use Cake\I18n\Time;
 use Cake\Core\Configure;
+use Cake\Event\Event;
 /**
  * Spayc Entity
  *
@@ -20,6 +21,7 @@ use Cake\Core\Configure;
  * @property string $description
  * @property string $status
  * @property string $image
+ * @property int $website
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
  *
@@ -47,9 +49,11 @@ class Spayc extends Entity
     }
     
     protected function _setStartDate($stardDate) {
+        
         $timezone = Configure::read('timezone');
         if (!empty($stardDate)) {
             $startdate = \Cake\I18n\Time::createFromFormat('m-d-Y H:i:s',$stardDate,$timezone);
+            #pr($startdate->setTimezone('UTC')->format("Y-m-d H:i:s"));die;
             return $startdate->setTimezone('UTC')->format("Y-m-d H:i:s");
         } else {
             return;
@@ -65,18 +69,26 @@ class Spayc extends Entity
         }
     }
     protected function _getStartDate($stardDate) {
+        $request = new \Cake\Http\ServerRequest();
+         if($this->isNew() || strstr($request->getRequestTarget(),'edit')) {
+             return $stardDate;
+         }
         $timezone = Configure::read('timezone');
         if (!empty($stardDate)) {
-            $sd = new Time($stardDate);
+            $sd = new Time($stardDate,'UTC');
             return $sd->setTimezone($timezone)->format('m-d-Y H:i:s');
         } else {
             return;
         }
     }
     protected function _getEndDate($endDate) {
+        $request = new \Cake\Http\ServerRequest();
+         if($this->isNew() || strstr($request->getRequestTarget(),'edit')) {
+             return $endDate;
+         }
         $timezone = Configure::read('timezone');
         if (!empty($endDate)) {
-            $ed = new Time($endDate);
+            $ed = new Time($endDate,'UTC');
             return $ed->setTimezone($timezone)->format('m-d-Y H:i:s');
         } else {
             return;

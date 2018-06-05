@@ -32,7 +32,7 @@ class JoinedSpayc extends Entity
         'id' => false
     ];
     
-    protected function _getId($id) {      
-        return ApiHasher::encrypt($id);
-    }
+//    protected function _getId($id) {      
+//        return ApiHasher::encrypt($id);
+//    }
 }

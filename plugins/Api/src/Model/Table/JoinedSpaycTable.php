@@ -1,4 +1,5 @@
 <?php
+
 namespace Api\Model\Table;
 
 use Cake\ORM\Query;
@@ -21,8 +22,7 @@ use Cake\Validation\Validator;
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class JoinedSpaycTable extends Table
-{
+class JoinedSpaycTable extends Table {
 
     /**
      * Initialize method
@@ -30,8 +30,7 @@ class JoinedSpaycTable extends Table
      * @param array $config The configuration for the Table.
      * @return void
      */
-    public function initialize(array $config)
-    {
+    public function initialize(array $config) {
         parent::initialize($config);
 
         $this->setTable('joined_spayc');
@@ -58,23 +57,22 @@ class JoinedSpaycTable extends Table
      * @param \Cake\Validation\Validator $validator Validator instance.
      * @return \Cake\Validation\Validator
      */
-    public function validationDefault(Validator $validator)
-    {
-        $validator
-            ->integer('id')
-            ->allowEmpty('id', 'create');
-
-        $validator
-            ->integer('requested_by')
-            ->requirePresence('requested_by', 'create')
-            ->notEmpty('requested_by');
-
-        $validator
-            ->scalar('status')
-            ->allowEmpty('status');
-
-        return $validator;
-    }
+//    public function validationDefault(Validator $validator) {
+//        $validator
+//                ->integer('id')
+//                ->allowEmpty('id', 'create');
+//
+//        $validator
+//                ->integer('requested_by')
+//                ->requirePresence('requested_by', 'create')
+//                ->notEmpty('requested_by');
+//
+//        $validator
+//                ->scalar('status')
+//                ->allowEmpty('status');
+//
+//        return $validator;
+//    }
 
     /**
      * Returns a rules checker object that will be used for validating
@@ -83,24 +81,78 @@ class JoinedSpaycTable extends Table
      * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
      * @return \Cake\ORM\RulesChecker
      */
-    public function buildRules(RulesChecker $rules)
-    {
+    public function buildRules(RulesChecker $rules) {
         $rules->add($rules->existsIn(['spayc_id'], 'Spaycs'));
 
         return $rules;
     }
-    
+
     public function getTotalJoinedFriends($spaycId = null, $userIds = []) {
-        return $this->find("all", ['fields'=>['id'], 'conditions'=>['spayc_id'=>$spaycId, 'user_id IN'=>$userIds]])->count();
+        return $this->find("all", ['fields' => ['id'], 'conditions' => ['spayc_id' => $spaycId, 'user_id IN' => $userIds,'status'=>'Joined']])->count();
     }
-    
+
     public function getJoinedSpaycIds($userId = null) {
-        $spaycId = $this->find("all", ['fields'=>['id', 'spayc_id'], 'conditions'=>['user_id'=>$userId]]);
+        $spaycId = $this->find("all", ['fields' => ['id', 'spayc_id'], 'conditions' => ['user_id' => $userId,'status'=>'Joined']]);
         $ids = [0];
-        if($spaycId->count()) {
+        if ($spaycId->count()) {
             $spaycIds = $spaycId->toArray();
-            $ids = array_column($spaycIds, 'spayc_id');
+            $ids = \Cake\Utility\Hash::extract($spaycIds, '{n}.spayc_id');
         }
         return $ids;
+    }
+    /**
+     * getJoinedUserIds method to list the joined user ids 
+     * 
+     * @param Int $spayc_id Description
+     * @return Array array of user ids
+     */
+    public function getJoinedUserIds($spaycId = null) {
+        $userId = $this->find("all", ['fields' => ['id', 'user_id'], 'conditions' => ['spayc_id' => $spaycId,'status'=>'Joined']]);
+        $ids = [0];
+        if ($userId->count()) {
+            $userIds = $userId->toArray();
+            $ids = \Cake\Utility\Hash::extract($userIds, '{n}.user_id');
+        }
+        return $ids;
+    }
+    
+    /**
+     * joinedSpaycsQuery method to return the query of user joined spaycs
+     * 
+     * @param Int $userId user primary key
+     * @return String sql query
+     */
+    public function joinedSpaycQuery($userId = null) {
+        if($userId == null){
+            return false;
+        }
+        $query = $this->find()
+                ->select(['spayc_id'])
+                ->distinct()
+                ->where(['user_id' => $userId,'status'=>'Joined']);
+        return $query;
+    }
+    
+    public function bannedSpaycQuery($userId = null) {
+        if($userId == null){
+            return false;
+        }
+        $query = $this->find()
+                ->select(['spayc_id'])
+                ->distinct()
+                ->where(['user_id' => $userId,'status'=>'Banned']);
+        return $query;
+    }
+    
+    public function ValidateStatus($data,$status){
+        $validator = new Validator();
+        $validator->requirePresence('spayc_id', true,__('Warp id key is missing.'))
+                ->notEmpty('spayc_id', __('Please enter warp id.'));
+        $validator->requirePresence('user_id', true,__('User id key is missing.'))
+                ->notEmpty('user_id', __('Please enter User id.'));       
+        $validator->requirePresence('status', true,__('status key is missing.'))
+                ->notEmpty('status', __('Please enter status.'))
+                ->inList('status', $status,__('Status should be '. implode(' or ',$status)));
+        return $validator->errors($data);
     }
 }

@@ -42,6 +42,7 @@
 @apiParam {String} image            Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
 @apiParam {String} longitude        Langitude from google map (Required).
 @apiParam {String} latitude         Latitude from google map (Required).
+@apiParam {Integer} spayc_category_id  existing Category id(Required).
 @apiParam {String} invite           Matrix user id is optional in query string(Optional).
 
 @apiExample Example usage:
@@ -50,8 +51,8 @@
         "location": "Community addrss",
         "type": "Event|Community",
         "group_type": "Public|Private",
-        "start_date": "2019-01-11 01:02:20",
-        "end_date": "2019-01-12 01:02:20",
+        "start_date": "01-11-2019 01:02:20",
+        "end_date": "01-12-2019 01:02:20",
         "passcode": "s5d4f87sdf4545",
         "description":"spayc creating",
         "image":"file.png",
@@ -95,6 +96,108 @@
  */
 function postSpaycs() { return; }
 /**
+@api {post} /spayc-edit.json Edit Spayc|Subspayc
+@apiVersion 0.1.0
+@apiName PostEditSpayc
+@apiGroup Spayc
+@apiPermission private
+
+@apiDescription Update spayc or subspayc.
+
+@apiHeader {String} TOKEN           A token send by header as TOKEN
+@apiHeader {String} timezone        client timezone
+
+@apiParam {String} spayc_id         id either spayc id or matrix room id (Required).
+@apiParam {String} name             Name title of the spayc (Required).
+@apiParam {String} location         Location must be alphanumeric with space (Required).
+@apiParam {String} type             SPAYC type must be any one from the following Event|Community (Required).
+@apiParam {String} group_type       Group type must be any one from the following Public|Private (Required).
+@apiParam {Datetime} start_date     Start date with time in format YYYY-MM-DD H:i:s (Required).
+@apiParam {Datetime} end_date       End date with time in format YYYY-MM-DD H:i:s (Required).
+@apiParam {String} passcode         Passcode is required in case of private group type.
+@apiParam {String} description      Description for SPAYC (Optional).
+@apiParam {String} image            Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
+@apiParam {Integer} spayc_category_id  existing Category id(Required).
+@apiParam {String} longitude        Langitude from google map (Required).
+@apiParam {String} latitude         Latitude from google map (Required).
+
+@apiExample Example usage:
+    {
+        "spayc_id": "XXXXXXX",
+        "name": "spaycdev",
+        "location": "Community addrss",
+        "type": "Event|Community",
+        "group_type": "Public|Private",
+        "start_date": "01-11-2019 01:02:20",
+        "end_date": "01-12-2019 01:02:20",
+        "passcode": "s5d4f87sdf4545",
+        "description":"spayc creating",
+        "image":"file.png",
+        "longitude":"XX.00.XX",
+        "latitude":"XX.00.XX"
+    }
+ 
+@apiSuccess {String} status success.
+@apiSuccess {String} message The spayc has been updated successfully.
+@apiSuccess {Object} data Spayc details.
+@apiSuccessExample {json} Success-Response: 
+    HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "The spayc has been updated successfully.",
+    "data": {
+        "name": "Festive",
+        "location": "Your address",
+        "type": "Event",
+        "group_type": "Public",
+        "start_date": "2019-01-11T01:02:20+00:00",
+        "end_date": "2019-01-11T01:08:20+00:00",
+        "passcode": "",
+        "description": "Holi is a festival of color #color #festival",
+        "image": "",
+        "longitude": 77.209021,
+        "latitude": 28.613939,
+        "status": "Active",
+        "matrix_room_id": "!JqhnnrWCtlFTnWlwWL:35.168.119.247",
+        "matrix_room_alias": "#Holi13:35.168.119.247",
+        "user_id": "10",
+        "created": "2018-02-16T11:02:47+00:00",
+        "modified": "2018-02-16T11:02:47+00:00",
+        "id": "95"
+    }
+}
+@apiError {String} Invalid spayc  id.
+@apiUse errorResponse
+ */
+function postEditSpaycs() { return; }
+/**
+@api {delete} /spaycs/delete.json?id=:room_id Delete Space/Subspace
+@apiVersion 0.1.0
+@apiName DeleteSpace
+@apiGroup Spayc
+@apiPermission private
+
+@apiDescription Delete space or subspace with room id.Matrix room also deleted.
+
+@apiHeader {String} TOKEN          A registered token must be in header.
+
+@apiParam {String} id        Either spayc id or matrix room id(Required).
+
+@apiSuccess {String} status success.
+@apiSuccess {String} message The spayc has been deleted.
+@apiSuccessExample {json} Success-Response: 
+    HTTP/1.1 201 OK
+{
+    "response": {
+        "status": "success",
+        "message": "The spayc has been deleted."
+    }
+}
+
+@apiUse errorResponse
+ */
+function deleteSpace() { return; }
+/**
 @api {post} /create-subspace.json Create SubSpayc
 @apiVersion 0.1.0
 @apiName PostSubspayc
@@ -105,7 +208,7 @@ function postSpaycs() { return; }
 
 @apiHeader {String} TOKEN          A registered token must be in header.
 
-@apiParam {String} parent_matrix_room_id    Matrix parent room id (Required).
+@apiParam {String} parent_matrix_room_id    Matrix parent room id or Spayc parent room id (Required).
 @apiParam {String} name             Title of subspace (Required).
 @apiParam {String} group_type       Group type must be any one from the following Public|Private (Required).
 @apiParam {String} passcode         Passcode is required in case of private group type.
@@ -161,98 +264,110 @@ function postSubspaycs() { return; }
  * @apiGroup Spayc
  * @apiPermission private
  *
- * @apiDescription Filter spayc all list, created by logged in user and joined by logged in user using list_by parameter.
+ * @apiDescription Filter spayc all list, created by logged in user and joined by logged in user using list_by parameter, distance param not comes in response if lat long not provided in request.
  * 
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
-    @apiParam {Number}      page            Page number in query string (Optional).
-    @apiParam {Number}      limit           Limit in query string (Optional).
-    @apiParam {Timestamp}   start_date      Spayc start date in query string(1515542400) (Optional).
-    @apiParam {Timestamp}   end_date        Spayc end date in query string(1515715200) (Optional).
-    @apiParam {String}      group_type      Group type must be any one from the following (Public|Private) (Optional).
-    @apiParam {String}      type            Spayc type must be any one from the following (Event|Community) (Optional).
-    @apiParam {String}      latitude        Latitude is required in query string(Optional).
-    @apiParam {String}      longitude       Longitude is required in query string(Optional).
-    @apiParam {String}      list_by         List by is optional in query string(created|joined|all).
+ *    @apiParam {Number}      page            Page number in query string (Optional).
+ *    @apiParam {Number}      limit           Limit in query string (Optional).
+ *    @apiParam {Timestamp}   start_date      Spayc start date in query string(1515542400) (Optional).
+ *    @apiParam {Timestamp}   end_date        Spayc end date in query string(1515715200) (Optional).
+ *    @apiParam {String}      group_type      Group type must be any one from the following (Public|Private) (Optional).
+ *    @apiParam {String}      type            Spayc type must be any one from the following (Event|Community) (Optional).
+ *    @apiParam {String}      latitude        Latitude is required in query string(Optional in case of created, joined).
+ *    @apiParam {String}      longitude       Longitude is required in query string(Optional in case of created, joined).
+ *    @apiParam {String}      list_by         List by is optional in query string(created|joined|all).
+ *    @apiParam {Number}      user_id         User id  of any user and if id is not available it will get the logged user data(Required).
+ *    @apiParam {String}  categories  List of comma separeted categoires (Optional).
+ *    @apiParam {String}   friends   Value must be either yes or no (Optional).
+ *    @apiParam {String}   hot   Value must be either yes or no (Optional).
+ *    
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Spayc lists.
  * @apiSuccess {Object} data List of spayc details.
  * @apiSuccessExample {json} Success-Response: 
  *      HTTP/1.1 200 OK
-{
-    "status": "success",
-    "message": "Spayc lists.",
-    "data": {
-        "count": 22,
-        "spaycs": [
-            {
-                "distance": "0",
-                "id": "33",
-                "name": "spaycdev13",
-                "address": "Your address",
-                "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
-                "start_date": "01-11-2019 01:02:00",
-                "end_date": "01-12-2019 01:02:00",
-                "image": "",
-                "type": "Community",
-                "group_type": "Public",
-                "passcode": "",
-                "subscribed_users": 0,
-                "friends": 0,
-                "joined_spayc_status": null,
-                "is_joined": false,
-                "joined_users": 0,
-                "is_subscribed": false,
-                "total_comments": 0,
-                "total_presents": 0
-            },
-            {
-                "distance": "0",
-                "id": "5",
-                "name": "spaycdev13",
-                "address": "Your address",
-                "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
-                "start_date": "01-11-2019 01:02:00",
-                "end_date": "01-12-2019 01:02:00",
-                "image": "",
-                "type": "Event",
-                "group_type": "Public",
-                "passcode": "s5d4f87sdf4545",
-                "subscribed_users": 1,
-                "friends": 0,
-                "joined_spayc_status": "Pending",
-                "is_joined": false,
-                "joined_users": 3,
-                "is_subscribed": true,
-                "total_comments": 1,
-                "total_presents": 0
-            }
-        ]
-    }
-}
+ *{
+ *    "status": "success",
+ *    "message": "Spayc lists.",
+ *    "data": {
+ *        "count": 22,
+ *        "spaycs": [
+ *            {
+ *                "distance": "0",
+ *                "id": "33",
+ *                "name": "spaycdev13",
+ *                "location": "Your address",
+ *                "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
+ *                "start_date": "01-11-2019 01:02:00",
+ *                "end_date": "01-12-2019 01:02:00",
+ *                "image": "",
+ *                "type": "Community",
+ *                "group_type": "Public",
+ *                "passcode": "",
+ *                "subscribed_users": 0,
+ *                "spayc_category": {
+ *                    "id": 560,
+ *                    "name": "Softball"
+ *                },
+ *                "friends": 0,
+ *                "joined_spayc_status": '',
+ *                "is_joined": false,
+ *                "joined_users": 0,
+ *                "is_subscribed": false,
+ *                "total_comments": 0,
+ *                "total_presents": 0
+ *            },
+ *            {
+ *                "distance": "0",
+ *                "id": "5",
+ *                "name": "spaycdev13",
+ *                "location": "Your address",
+ *                "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
+ *                "start_date": "01-11-2019 01:02:00",
+ *                "end_date": "01-12-2019 01:02:00",
+ *                "image": "",
+ *                "spayc_category": {
+ *                    "id": 560,
+ *                    "name": "Softball"
+ *                },
+ *                "type": "Event",
+ *                "group_type": "Public",
+ *                "passcode": "s5d4f87sdf4545",
+ *                "subscribed_users": 1,
+ *                "friends": 0,
+ *                "joined_spayc_status": "Pending",
+ *                "is_joined": false,
+ *                "joined_users": 3,
+ *                "is_subscribed": true,
+ *                "total_comments": 1,
+ *                "total_presents": 0
+ *            }
+ *        ]
+ *    }
+ *}
  *
  * @apiUse UserErrorResponse
  */
 function getSpaycs() { return; }
-
 /**
- @api {post} /subscribe-spayc.json Subscribe Spayc
+ @api {post} /subscribe-spayc.json Subscribe a Spayc
   @apiVersion 0.1.0
   @apiName subscribeSpayc
   @apiGroup Spayc
-  @apiPermission Subscribe Spayc
+  @apiPermission Private
  
-  @apiDescription Subscribe Spayc.
+  @apiDescription User has been subscribed a spayc by providing the existing spayc id.
   
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN            * A token must be in header
  
-  @apiParam {String} spayc_id Spayc id is required (Required).
+  @apiParam {String} spayc_id Id either spayc id or matrix room id (Required).
  
   @apiExample Example usage:
  
     {
-        "spayc_id":"NDIwMjYwMjAwLjU2"
+        "spayc_id":"XXXXX"
     }
  
  
@@ -270,19 +385,54 @@ function getSpaycs() { return; }
   @apiUse UserErrorResponse
 */
 function postSubscribeSpayc() { return; }
-
 /**
- * @api {get} /spayc-details/:spaceId.json Spayc Details
+ @api {post} /unsubscribe-spayc.json UnSubscribe a Spayc
+  @apiVersion 0.1.0
+  @apiName postUnSubscribeSpayc
+  @apiGroup Spayc
+  @apiPermission Private
+ 
+  @apiDescription User has been un-subscribed a spayc by providing the existing spayc id.
+  
+ * @apiHeader {String} TOKEN            * A token must be in header
+ 
+  @apiParam {String} spayc_id Id either spayc id or matrix room id (Required).
+ 
+  @apiExample Example usage:
+ 
+    {
+        "spayc_id":"XXXXX"
+    }
+ 
+ 
+  @apiSuccess {String} status success.
+  @apiSuccess {String} message User has been unsubcribed successfully.
+  @apiSuccess {Object} data Null.
+  @apiSuccessExample {json} Success-Response:
+       HTTP/1.1 201 OK
+{
+    "status": "success",
+    "message": "User has been unsubcribed successfully."
+}
+ 
+  @apiError {String} User has not yet subscribed.
+  @apiUse UserErrorResponse
+*/
+function postUnSubscribeSpayc() { return; }
+/**
+ * @api {get} /spayc-details.json?id=:id&latitude=:lat&longitude=:long About Spayc
  * @apiVersion 0.1.0
  * @apiName spaycDetails
  * @apiGroup Spayc
  * @apiPermission private
  *
- * @apiDescription Spayc details by id.
+ * @apiDescription Spayc details by id and latitude, longitude (distance param not comes in response if lat long not provided in request).
  * 
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
-    @apiParam {String}      spaceId     spayc id in query string (Required).
+    @apiParam {Number}      id              Spayc matrix id in query string (Required).
+    @apiParam {String}      latitude        Latitude is optional in query string(Optional).
+    @apiParam {String}      longitude       Longitude is optional in query string(Optional).
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Spayc Details.
@@ -293,18 +443,49 @@ function postSubscribeSpayc() { return; }
     "status": "success",
     "message": "Spayc Details.",
     "data": {
-        "id": "U3kvaWlJcFREL3R2ZUh0c3RSVkZRdz09",
-        "name": "spaycdev13",
-        "address": "Your address",
-        "start_date": "2019-01-11T01:02:20+00:00",
-        "end_date": "2019-01-12T01:02:20+00:00",
-        "image": "",
+        "id": "3",
+        "name": "devsubspacePMB",
+        "location": "dfasdf sdf sdfsdfsd",
+        "image": "https://spayc-qa.s3.amazonaws.com/room/screenshot_from_2017_12_12_19_55_12_20180223141832.png",
+        "description": "devspace",
         "group_type": "Public",
         "type": "Community",
-        "total_comments": 1,
-        "total_subscribed_users": 2,
-        "total_joined_users": 1,
-        "total_joined_friends": 1
+        "start_date": "03-11-2018 09:16:00",
+        "end_date": "03-12-2018 09:23:00",
+        "passcode": "",
+        "matrix_room_id": "!AHKKnrKlWnBiewiMiB:127.0.0.1",
+        "subscribed_users": 0,
+        "sub_spaycs": [
+            {
+                "id": 45,
+                "parent_id": 3,
+                "name": "devsubspacePMB",
+                "location": null,
+                "image": null,
+                "description": "devspace",
+                "group_type": "Public",
+                "type": "Community",
+                "start_date": "2018-03-11T09:16:00+00:00",
+                "end_date": "2018-03-12T09:23:00+00:00",
+                "passcode": "",
+                "matrix_room_id": "!gERdbhptfHdVQrcnse:127.0.0.1",
+                 "spayc_category": {
+                    "id": 560,
+                    "name": "Softball"
+                }
+            }
+        ],
+        "friends": 0,
+        "joined_spayc_status": "Joined",
+        "joined_users": 1,
+        "is_admin": 1,
+        "spayc_category": {
+            "id": 560,
+            "name": "Softball"
+        },
+        "is_subscribed": false,
+        "total_comments": 0,
+        "total_presents": 0
     }
 }
  *
@@ -355,3 +536,1266 @@ function getView() { return; }
 @apiUse errorResponse
  */
 function postChatRoom() { return; }
+/**
+ * @api {get} /spayc-members.json List of Spayc Member
+ * @apiVersion 0.1.0
+ * @apiName getSpaycMember
+ * @apiGroup Spayc
+ * @apiPermission private
+ *
+ * @apiDescription Spayc member to find the list of users associated with the room.Method must be get.In case of invalid spayc id return ivalid request
+ * 
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * 
+
+    @apiParam {String}     room_id      Spayc matrix room id or spayc id in query string (Required).
+    @apiParam {String}      status     Status of user, value must be any one or comma separated from following(Pending|Joined|Banned) (Optional).
+    @apiParam {Digit}      page        Page no(Optional).
+    @apiParam {Digit}      limit       No of record to retrieve(Optional).
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spayc member.
+ * @apiSuccess {Object} data Object of User details.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "List of spayc member.",
+    "data": [
+         {
+            "id": "2",
+            "username": "devuserA_1521280139",
+            "display_name": "devuserA",
+            "email": "devuserA@yopmail.com",
+            "matrix_user_id": "@devusera_1521280139:127.0.0.1",
+            "is_admin": 2,
+            "matrix_room_id": "",
+            "requested_status": "",
+            "joined_status": "Joined",
+            "physically_present": false,
+            "is_subscribed": true,
+            "image_url": ""
+        },
+        {
+            "id": "5",
+            "username": "devuserD_1521280167",
+            "display_name": "devuserD",
+            "email": "devuserD@yopmail.com",
+            "matrix_user_id": "@devuserd_1521280167:127.0.0.1",
+            "is_admin": 0,
+            "matrix_room_id": "",
+            "requested_status": "Accepted",
+            "joined_status": "Joined",
+            "physically_present": true,
+            "is_subscribed": false,
+            "image_url": ""
+        },
+    ]    
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function getSpaycMember() { return; }
+/**
+@api {post} /change-role.json Make Member As Admin
+@apiVersion 0.1.0
+@apiName postChangeRole
+@apiGroup Spayc
+@apiPermission private
+
+@apiDescription Make existing spayc (Room) member as admin for that spayc.
+
+* @apiHeader {String} TOKEN            * A token send by header as TOKEN
+* @apiHeader {String} timezone            * Current timezone
+
+@apiParam {Intger} spayc_id Existing Spayc id(Required).
+@apiParam {Intger} user_id Existing User id(Required).
+@apiParam {Intger} role Status must be 1 for admin or 0 for remove member from admin role(Required).
+
+@apiExample Example usage:
+{
+    "spayc_id":"xx",
+    "user_id":"xx",
+    "role":"1"
+}
+ 
+@apiSuccess {String} status success.
+@apiSuccess {String} message Role has been changed successfully.
+@apiSuccessExample {json} Success-Response: 
+    HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Role has been changed successfully."
+}
+
+@apiUse errorResponse
+ */
+function postChangeRole() { return; }
+/**
+@api {post} /join-spayc.json Join spayc
+@apiVersion 0.1.0
+@apiName postJoinSpayc
+@apiGroup Spayc
+@apiPermission private
+
+@apiDescription Join public and private spayc.For private spayc required passcode to join the spayc directly.In case of private room if passcode is available status must be Joined else status will be Pending.
+
+* @apiHeader {String} TOKEN            * A token send by header as TOKEN
+* @apiHeader {String} timezone         * Current timezone
+
+@apiParam {Intger} spayc_id Existing Spayc id(Required).
+@apiParam {String} status Status must be any one Joined,Pending (Required).
+@apiParam {String} passcode passcode is required in case of private spayc (Optional).
+
+@apiExample Example usage:
+{
+	"spayc_id":"66",
+	"status":"Joined"
+}
+ 
+@apiSuccess {String} status success.
+@apiSuccess {String} message User has been {status} successfully.
+@apiSuccessExample {json} Success-Response: 
+    HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "User has been {status} successfully."
+}
+
+@apiUse errorResponse
+ */
+function postJoinSpayc() { return; }
+
+/**
+@api {post} /join-sub-spayc.json Join sub spayc
+@apiVersion 0.1.0
+@apiName postJoinSubSpayc
+@apiGroup Spayc
+@apiPermission private
+
+@apiDescription Join public and private sub spayc.For private sub spayc required passcode to join the sub spayc directly.In case of private room if passcode is available status must be Joined else status will be Pending.
+
+* @apiHeader {String} TOKEN            * A token send by header as TOKEN
+* @apiHeader {String} timezone            * Current timezone
+
+@apiParam {Intger} spayc_id Existing Spayc id(Required).
+@apiParam {String} status Status must be any one Joined,Pending (Required).
+@apiParam {String} passcode Passcode is required in case of private sub spayc (Optional).
+
+@apiExample Example usage:
+{
+	"spayc_id":"66",
+	"status":"Joined",
+        "passcode":"code"
+}
+ 
+@apiSuccess {String} status success.
+@apiSuccess {String} message User has been {status} successfully.
+@apiSuccessExample {json} Success-Response: 
+    HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "User has been {status} successfully."
+}
+
+@apiUse errorResponse
+ */
+function postJoinSubSpayc() { return; }
+/**
+@api {post} /ban-spayc-member.json Ban/Unban Spayc Member
+@apiVersion 0.1.0
+@apiName postBanSpaycMember
+@apiGroup Spayc
+@apiPermission private
+
+@apiDescription super admin or admin can ban or unban spayc member who has not rights of admin and super admin could ban admin privileges member too.
+
+* @apiHeader {String} TOKEN            * Token required in header
+* @apiHeader {String} timezone            * Current timezone
+
+@apiParam {Intger} spayc_id Existing Spayc id(Required).
+@apiParam {Intger} user_id  Member id of joined spayc(Required).
+@apiParam {String} status Status must be any one Banned or Unbanned (Required).
+
+@apiExample Example usage:
+{
+    "spayc_id":"66",
+    "user_id":"9",
+    "status":"Banned"
+}
+ 
+@apiSuccess {String} status success.
+@apiSuccess {String} message User has been {status} successfully.
+@apiSuccessExample {json} Success-Response: 
+    HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "User has been {status} successfully."
+}
+
+@apiUse errorResponse
+ */
+function postBanSpaycMember() { return; }
+
+/**
+* @api {get} /subspaycs.json?spayc_id=:id&page=:page&limit=:limit&latitude=:latitude&longitude=:longitude Sub-Spayc Lists
+ * @apiVersion 0.1.0
+ * @apiName getSubSpaycs
+ * @apiGroup Spayc
+ * @apiPermission private
+ *
+ * @apiDescription Get all sub spaycs for spayc.If user_id key is not available then proccess will be mapped with logged user id.Argument will be as query string.
+ * 
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * 
+    @apiParam {String}      spayc_id        Parent spayc id either spayc id or matrix room id (Required).
+    @apiParam {Number}      page            Page number in query string (Optional).
+    @apiParam {Number}      limit           Limit in query string (Optional).
+    @apiParam {String}      latitude        Latitude of current user (Optional).
+    @apiParam {String}      longitude       Longitude of current user (Optional).
+    @apiParam {Number}      user_id         If user id is not available, logged user id will used to proccess the request(Optional).
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of subspayc.
+ * @apiSuccess {Object} data List of subspayc.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "List of subspayc.",
+    "data": [
+        {
+            "id": "95",
+            "name": "My Sub 8 March",
+            "location": null,
+            "matrix_room_id": "!xLfsiKaFDCBlLNyuAi:spayc-dev.kiwireader.com",
+            "start_date": "03-07-2018 18:32:16",
+            "end_date": "04-07-2018 18:32:34",
+            "image": null,
+            "type": "Event",
+            "group_type": "Public",
+            "passcode": "",
+            "user_id": 6,
+            "distance": "8266.679",
+            "subscribed_users": 0,
+            "friends": 0,
+            "joined_spayc_status": '',
+            "is_joined": false,
+            "joined_users": 0,
+            "is_subscribed": false,
+            "spayc_category": {
+                "id": 560,
+                "name": "Softball"
+            },
+            "total_comments": 0
+        }
+    ]
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function getSubSpaycs() { return; }
+/**
+ @api {get} /physical-present-spaycs.json?latitude=:latitude&longitude=:longitude Communication Center Spayces
+ @apiVersion 0.1.0
+ @apiName getnearAboutSpayces
+ @apiGroup Spayc
+ @apiPermission private
+
+ @apiDescription Get list of spayces which user has been joined and spayces must be within 1 miles.Spaycs must not be expired.Listing will be ordered on distance and if distance will be same then on created.In absence of latitude and longitude distance will be calculated on stored latitude and longitude.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+ @apiParam {String}      latitude        Latitude of current user (Optional).
+ @apiParam {String}      longitude       Longitude of current user (Optional).
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of Spaycs.
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "List of spaycs.",
+    "data": [
+        {
+            "id": "xxx",
+            "name": "kiwiJoshTA",
+            "image": "https://spayc-qa.s3.amazonaws.com/room/5_20180330084419.png",
+            "group_type": "Public",
+            "type": "Event",
+            "start_date": "04-15-2018 14:32:20",
+            "end_date": "05-30-2018 14:32:20",
+            "matrix_room_id": "!LEHgeQLltxEMrDOZgh:127.0.0.1",
+            "distance": 0.32,
+            "spayc_category": {
+                "id": 560,
+                "name": "Softball"
+            },
+            "is_subscribed": true,
+            "joined_status": "Joined"
+        },
+        {
+            "id": "xxx",
+            "name": "kiwiJoshLE",
+            "image": null,
+            "group_type": "Public",
+            "type": "Community",
+            "start_date": "05-28-2018 20:19:20",
+            "end_date": "06-28-2018 20:26:20",
+            "matrix_room_id": "!IBoaOQvLREneRQCFYy:127.0.0.1",
+            "distance": 1,
+            "spayc_category": {
+                "id": 560,
+                "name": "Softball"
+            },
+            "is_subscribed": false,
+            "joined_status": "Joined"
+        }
+    ]
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function getnearAboutSpayces() { return; }
+/**
+ @api {get} /public-spaycs.json?page=:page&limit=:limit Advertisement Spayces
+ @apiVersion 0.1.0
+ @apiName getPublicSpaycs
+ @apiGroup Spayc
+ @apiPermission private
+
+ @apiDescription Get list of public and joined spayces.Spaycs must not be expired according to the spayc end date.Listing will be ordered on miles and then on created.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ @apiHeader {String} timezone         * User time zone
+ 
+ @apiParam {String}      keyword     keyword which filter on spayc name only(Optional).
+ @apiParam {Number}      page            Page number in query string (Optional).
+ @apiParam {Number}      limit           Limit in query string (Optional).
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "List of spaycs.",
+    "data": [
+        {
+            "id": "120",
+            "name": "kiwiJoshTA",
+            "image": "https://spayc-qa.s3.amazonaws.com/room/5_20180330063531.png",
+            "group_type": "Public",
+            "type": "Community",
+            "start_date": null,
+            "end_date": null,
+            "matrix_room_id": "!SaAsSnzeUOFGqlsKgr:127.0.0.1",
+            "spayc_category": {
+                "id": 560,
+                "name": "Softball"
+            },
+            "joined_status": "Joined"
+        },
+        {
+            "id": "119",
+            "name": "kiwiJoshTA",
+            "image": "https://spayc-qa.s3.amazonaws.com/room/5_20180330061805.png",
+            "group_type": "Public",
+            "type": "Community",
+            "start_date": null,
+            "end_date": null,
+            "matrix_room_id": "!cQgXksBtaXDSkAoRpk:127.0.0.1",
+            "spayc_category": {
+                "id": 560,
+                "name": "Softball"
+            },
+            "joined_status": "Joined"
+        }
+    ]
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function getPublicSpaycs() { return; }
+
+/**
+ @api {get} /hash-tag-spaycs.json?page=:page&limit=:limit&keyword=:keyword Hashtag Spayces
+ @apiVersion 0.1.0
+ @apiName hashTagSpaycs
+ @apiGroup Spayc
+ @apiPermission private
+
+ @apiDescription Get list of public and joined spayces.Spaycs must not be expired according to the spayc end date.Listing will be ordered on created.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ @apiHeader {String} timezone         * User time zone
+ 
+ @apiParam {Number}      page            Page number in query string (Optional).
+ @apiParam {Number}      limit           Limit in query string (Optional).
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "List of spaycs.",
+    "data": [
+        {
+            "id": "3",
+            "name": "Sam Second Community Spyace",
+            "user_id": 2,
+            "location": "Delhi",
+            "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180317082917.png",
+            "group_type": "Public",
+            "type": "Community",
+            "start_date": null,
+            "end_date": null,
+            "passcode": "",
+            "matrix_room_id": "!MvOssNcvbePXoBUIjC:spayc-dev.kiwireader.com",
+            "distance": 15.794925409093,
+            "subscribed_users": 1,
+            "friends": 0,
+            "is_joined": false,
+            "joined_spayc_status": "",
+            "is_admin": "",
+            "joined_users": 0,
+            "is_subscribed": false,
+            "total_comments": 0
+        },
+        {
+            "id": "4",
+            "name": "Community Type Sub Spyac",
+            "user_id": 3,
+            "location": null,
+            "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180317083321.png",
+            "group_type": "Public",
+            "type": "Community",
+            "start_date": null,
+            "end_date": null,
+            "passcode": "",
+            "matrix_room_id": "!nQPjgmlBePZsAyVvQH:spayc-dev.kiwireader.com",
+            "distance": 5450.5523363982,
+            "subscribed_users": 1,
+            "friends": 1,
+            "is_joined": false,
+            "joined_spayc_status": "",
+            "is_admin": "",
+            "joined_users": 1,
+            "is_subscribed": false,
+            "total_comments": 0
+        }
+    ],
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function hashTagSpaycs() { return; }
+/**
+ @api {post} /map-spaycs.json Map Spayces
+ @apiVersion 0.1.0
+ @apiName mapSpaycs
+ @apiGroup Spayc
+ @apiPermission private
+
+ @apiDescription Get list of Map spayces & Friends.Spaycs must not be expired according to the spayc end date.Listing will be ordered on created.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+    
+    
+    @apiParam {String}      center_latitude            Center Screen Latitude (Required).
+    @apiParam {String}      center_longitude           Center Screen Longitude (Required).
+    @apiParam {String}      endpoint_latitude          Corner Screen Latitude (Required).
+    @apiParam {String}      endpoint_longitude         Corner Screen Longitude (Required).
+
+    @apiParam {String}      time                     Spayc Time must be comma separated if more than one and value must be present|past|future(Optional).
+    @apiParam {String}      spayc_type               Spayc Type (Optional).
+    @apiParam {String}      group_type               Spayc Group Type (Optional).
+    @apiParam {String}      wrap_with_friends        Spayc having with friends (Optional).
+    @apiParam {Number}      hashtag_id               Hashtag Search Filter | MAx 3 hashtag (Optional).
+    @apiParam {Number}      category_id              Category Search Filter (Optional).
+    
+@apiExample Example usage:
+    {
+        "center_latitude": "28.6367",
+        "center_longitude": "77.2748",
+        "endpoint_latitude": "19.0760",
+        "endpoint_longitude": "72.8777",
+        
+        "time": "present,past,future",
+        "spayc_type": "Event|Community",
+        "group_type": "Public|Private",
+        "wrap_with_friends": "yes|no",
+        "hashtag_id": "1,2,3",
+        "category_id": "5,6"
+        
+    }
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "List of Data.",
+    "data": {
+        "spaycs": {
+            "count": 2,
+            "records": [
+                {
+                    "distance": 0,
+                    "id": "2109",
+                    "name": "Perfect Crime New York",
+                    "matrix_room_id": "!eHnEYoZchHVKuuyRvT:spayc-dev.kiwireader.com",
+                    "image": "http://i.ebayimg.com/images/g/TTwAAOSwpDdVXg8t/s-l1600.jpg",
+                    "type": "Event",
+                    "modified": "2018-05-15T12:18:40+00:00",
+                    "spayc_category_id": 180,
+                    "latitude": 40.76146,
+                    "longitude": -73.984547,
+                    "spayc_category": {
+                            "id": 180,
+                            "name": "Arts and Theater"
+                            },
+                    "is_joined": false,
+                    "joined_users": 1,
+                    "is_subscribed": false
+                 },
+                 {
+                    "distance": 0,
+                    "id": "2135",
+                    "name": "Perfect Crime New York",
+                    "matrix_room_id": "!poSQfNdqYsHGrhqbUI:spayc-dev.kiwireader.com",
+                    "image": "http://i.ebayimg.com/images/g/TTwAAOSwpDdVXg8t/s-l1600.jpg",
+                    "type": "Event",
+                    "modified": "2018-05-15T12:21:39+00:00",
+                    "spayc_category_id": 180,
+                    "latitude": 40.76146,
+                    "longitude": -73.984547,
+                    "spayc_category": {
+                            "id": 180,
+                            "name": "Arts and Theater"
+                            },
+                    "is_joined": false,
+                    "joined_users": 1,
+                    "is_subscribed": false
+                }
+            ]
+        },
+        "friends": {
+            "count": 2,
+            "records": [
+                {
+                    "id": "3",
+                    "display_name": "sam",
+                    "email": "test@kiwitech.com",
+                    "address": null,
+                    "latitude": 28.7041,
+                    "longitude": 77.1025,
+                    "modified": "2018-03-17T08:21:47+00:00",
+                    "image_url": "https:\/\/spayc-dev.s3.amazonaws.com\/profile\/26168111_1523380557779310_7695911840919952448_n_20180320030546.jpg%3Foh%3D046ac3312ac9b797e1f0b12c0505572c%26oe%3D5b2ed73a",
+                    "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com"
+                }
+            ]
+        }
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function mapSpaycs() { return; }
+/**
+ @api {post} /create-advertisement.json Create Advertisement
+ @apiVersion 0.1.0
+ @apiName createAdvertisement
+ @apiGroup Advertisement
+ @apiPermission private
+
+ @apiDescription Create Advertisement.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+    @apiParam {String}      name            Advertisement Name (Required).
+    @apiParam {Number}      price            Advertisement Price (Required).
+    @apiParam {String}      url            Advertisement URL (Required).
+    @apiParam {String}      description            Advertisement Description (Required).
+    @apiParam {String}      spayc_id            Spayc List (Required).
+    @apiParam {Number}      plan_id            Plan ID (Required).
+    @apiParam {Number}      receipt            Plan Receipt (Required).
+    @apiParam {String}      platform            Platform (Optional).
+    @apiParam {String}      purchase_date       Plan Purchase Date (Optional).
+    @apiParam {File}      image               Advertisement Image (Optional).
+
+    @apiExample Example usage:
+    {
+        "name": "Space Ad",
+        "price": "250",
+        "description": "Test Test Test ",
+        "url": "http://www.xyz.com",
+        "image":"file.png",
+        "spayc_id":"5,6"
+
+        "plan_id":"1",
+        "receipt":"test12345",
+        "platform":"IOS",
+        "purchase_date":"05-04-2018 04:02:20"
+    }
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+        "status": "success",
+        "message": "Advertisement Created Successfully",
+        "data": {
+            "name": "Space Ad",
+            "price": 20.81,
+            "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type ",
+            "url": "http://www.xyz.com",
+            "user_id": "1",
+            "modified": "2018-04-17 11:16:28",
+            "created": "2018-04-17 11:16:28",
+            "id": 101,
+            "created_spayc": "94,95"
+        }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function createAdvertisement() { return; }
+
+
+/**
+ @api {post} /advertisement-edit.json Edit Advertisement
+ @apiVersion 0.1.0
+ @apiName editAdvertisement
+ @apiGroup Advertisement
+ @apiPermission private
+
+ @apiDescription Edit Advertisement.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+
+    @apiExample Example usage:
+    {
+        "id": XX,
+        "name": "Space Ad",
+        "price": "250",
+        "description": "Test Test Test ",
+        "url": "http://www.xyz.com",
+        "spayc_id": "2,3,4,1",
+        "image":"file.png",
+    }
+
+    @apiParam {Number}      id            Advertisement ID - Update by(Required).
+    @apiParam {String}      name            Advertisement Name.(Required).
+    @apiParam {Number}      price            Advertisement Price.(Required).
+    @apiParam {String}      url            Advertisement URL.(Required).
+    @apiParam {String}      spayc_id            Spayc List (Required).
+    @apiParam {String}      description            Advertisement Description.(Required).
+    @apiParam {File}      image               Advertisement Image.(Optional).
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Advertisement Updated Successfully",
+    "data": {
+        "id": 127,
+        "user_id": 1,
+        "name": "Test",
+        "price": 250,
+        "description": "test test",
+        "url": "http:\/\/www.xyz.com",
+        "image": "https://spayc-qa.s3.amazonaws.com/room/handle_slider_20180405094347.png",
+        "status": "Active",
+        "created": "04-20-2018 10:36:52",
+        "modified": "2018-04-20 12:54:59",
+        "views": 500,
+        "balance": 500,
+        "created_spayc": "2,3,4,1"
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function editAdvertisement() { return; }
+
+
+
+/**
+ @api {get} /advertisement-details.json?id=:id View Advertisement
+ @apiVersion 0.1.0
+ @apiName viewAdvertisement
+ @apiGroup Advertisement
+ @apiPermission private
+
+ @apiDescription Edit Advertisement.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+
+
+    @apiParam {Number}      id            Advertisement ID in query string(Required).
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Advertisement Details",
+    "data": {
+        "advertisement": {
+            "id": 308,
+            "name": "Test",
+            "image": null,
+            "price": 250,
+            "description": "test test",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Active",
+            "views": 500,
+            "balance": 500
+        },
+        "spaycs": [
+            {
+                "name": "Sam First Spyac",
+                "id": "2",
+                "type": "Community",
+                "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180322083256.png",
+                "parent_id": null
+            },
+            {
+                "name": "Community Type Sub Spyac",
+                "id": "4",
+                "type": "Community",
+                "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180317083321.png",
+                "parent_id": 3
+            },
+            {
+                "name": "@bot_1521192995:spayc-dev.kiwireader.com-@top_1521192957:spayc-dev.kiwireader.com",
+                "id": "1",
+                "type": "Community",
+                "image": null,
+                "parent_id": 4
+            },
+            {
+                "name": "Sam Second Community Spyace",
+                "id": "3",
+                "type": "Community",
+                "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180317082917.png",
+                "parent_id": null
+            }
+        ]
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function viewAdvertisement() { return; }
+
+
+
+
+/**
+ @api {get} /user-advertisement.json?page=:page&limit=:limit User Advertisement
+ @apiVersion 0.1.0
+ @apiName userAdvertisement
+ @apiGroup Advertisement
+ @apiPermission private
+
+ @apiDescription User Advertisement.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+
+    @apiParam {Number}      page            Page number in query string (Optional).
+    @apiParam {Number}      limit           Limit in query string (Optional).
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "List of Advertisement.",
+   "data": [
+        {
+            "id": 311,
+            "name": "test",
+            "image": null,
+            "price": 250,
+            "description": "test test",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Active",
+            "views": 500,
+            "balance": 500
+        },
+        {
+            "id": 309,
+            "name": "test",
+            "image": null,
+            "price": 250,
+            "description": "test test",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Active",
+            "views": 500,
+            "balance": 500
+        },
+        {
+            "id": 310,
+            "name": "test",
+            "image": null,
+            "price": 250,
+            "description": "test test",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Active",
+            "views": 500,
+            "balance": 500
+        },
+        {
+            "id": 307,
+            "name": "test",
+            "image": null,
+            "price": 250,
+            "description": "test test",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Active",
+            "views": 500,
+            "balance": 0
+        },
+        {
+            "id": 308,
+            "name": "Test",
+            "image": null,
+            "price": 250,
+            "description": "test test",
+            "url": "http:\/\/www.xyz.com",
+            "status": "Active",
+            "views": 500,
+            "balance": 500
+        }
+    ]
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function userAdvertisement() { return; }
+
+
+
+
+
+/**
+ @api {get} /advertisement-delete.json?id=:id Delete Advertisement
+ @apiVersion 0.1.0
+ @apiName deleteAdvertisement
+ @apiGroup Advertisement
+ @apiPermission private
+
+ @apiDescription Edit Advertisement.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+    @apiParam {Number}      id            Advertisement ID in query string(Required).
+
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+        "response": {
+            "status": "success",
+            "message": "Advertisement has been deleted."
+        }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function deleteAdvertisement() { return; }
+
+/**
+ @api {post} /ad-logic-start.json Advertisement Logic Start
+ @apiVersion 0.1.0
+ @apiName adLogicStart
+ @apiGroup Advertisement
+ @apiPermission private
+
+ @apiDescription Advertisement Logic.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+    @apiParam {Number}      spayc_id            Spayc Id (Required).
+
+    @apiExample Example usage:
+    {
+        "spayc_id":"5"
+    }
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Advertisement Find Successfully",
+    "data": {
+        "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com",
+        "matrix_user_id": "@top_1521192957:spayc-dev.kiwireader.com",
+        "advertisement": {
+            "name": "Space Ad",
+            "price": "250.00",
+            "image": null,
+            "description": "Test Test Test ",
+            "url": "http://www.xyz.com"
+        },
+        "priority": {
+            "cycle": 6,
+            "comment_count": 11
+        },
+        "frequency": 11
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function adLogicStart() { return; }
+
+
+/**
+ @api {post} /ad-logic.json Advertisement Logic
+ @apiVersion 0.1.0
+ @apiName adLogic
+ @apiGroup Advertisement
+ @apiPermission private
+
+ @apiDescription Advertisement Logic.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+    @apiParam {Number}      spayc_id            Spayc Id (Required).
+    @apiParam {Number}      cycle               Current Cycle (Required).
+    @apiParam {Number}      comment_count       Comment Count (Required).
+
+    @apiExample Example usage:
+    {
+        "spayc_id":"5",
+        "cycle":"1",
+        "comment_count":"20"
+    }
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Advertisement Find Successfully",
+    "data": {
+        "matrix_room_id": "!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com",
+        "matrix_user_id": "@top_1521192957:spayc-dev.kiwireader.com",
+        "advertisement": {
+            "name": "Space Ad",
+            "price": "250.00",
+            "image": null,
+            "description": "Test Test Test ",
+            "url": "http://www.xyz.com"
+        },
+        "priority": {
+            "cycle": 6,
+            "comment_count": 11
+        },
+        "frequency": 11
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function adLogic() { return; }
+
+
+
+/**
+ @api {post} /promotion-logic-start.json Promotion Logic Start
+ @apiVersion 0.1.0
+ @apiName promotionLogicStart
+ @apiGroup Promotion
+ @apiPermission private
+
+ @apiDescription Promotion Logic.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+    @apiParam {Number}      spayc_id            Spayc Id (Required).
+
+    @apiExample Example usage:
+    {
+        "spayc_id":"5"
+    }
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Promotion Find Successfully",
+    "data": {
+        "distance": "15.795",
+        "joined_spayc_status": "Joined",
+        "promotions": {
+            "user_id": 1
+        },
+        "priority": {
+            "cycle": 3,
+            "comment_count": 2
+        },
+        "spayc": {
+            "id": 2,
+            "name": "Sam First Spyac",
+            "location": "India",
+            "description": "",
+            "matrix_room_id": "!IbdrZkFigJihWjiTWU:spayc-dev.kiwireader.com",
+            "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180322083256.png",
+            "type": "Community",
+            "group_type": "Public",
+            "start_date": "2018-05-01 16:46:55",
+            "end_date": "2018-05-03 10:46:00"
+        },
+        "frequency": 11
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function promotionLogicStart() { return; }
+
+
+/**
+ @api {post} /promotion-logic.json Promotion Logic
+ @apiVersion 0.1.0
+ @apiName promotionLogic
+ @apiGroup Promotion
+ @apiPermission private
+
+ @apiDescription Promotion Logic.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ 
+    @apiParam {Number}      spayc_id            Spayc Id (Required).
+    @apiParam {Number}      cycle               Current Cycle (Required).
+    @apiParam {Number}      comment_count       Comment Count (Required).
+
+    @apiExample Example usage:
+    {
+        "spayc_id":"5",
+        "cycle":"1",
+        "comment_count":"20"
+    }
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of spaycs..
+ * @apiSuccess {Object} data List of Spaycs.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Promotion Find Successfully",
+    "data": {
+        "distance": "15.795",
+        "joined_spayc_status": "Joined",
+        "promotions": {
+            "user_id": 1
+        },
+        "priority": {
+            "cycle": 3,
+            "comment_count": 2
+        },
+        "spayc": {
+            "id": 2,
+            "name": "Sam First Spyac",
+            "location": "India",
+            "description": "",
+            "matrix_room_id": "!IbdrZkFigJihWjiTWU:spayc-dev.kiwireader.com",
+            "image": "https:\/\/spayc-dev.s3.amazonaws.com\/room\/image_20180322083256.png",
+            "type": "Community",
+            "group_type": "Public",
+            "start_date": "2018-05-01 16:46:55",
+            "end_date": "2018-05-03 10:46:00"
+        },
+        "frequency": 11
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function promotionLogic() { return; }
+
+
+
+
+/**
+ @api {get} /unread-notification.json Unread Notification
+ @apiVersion 0.1.0
+ @apiName unreadNotification
+ @apiGroup Spayc
+ @apiPermission private
+
+ @apiDescription Edit Advertisement.
+ 
+ @apiHeader {String} TOKEN            * A token send by header as TOKEN
+
+
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message of Unread Notification..
+ * @apiSuccess {Object} data Count of Unread Notification.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Unread Notification Count.",
+    "data": {
+        "id": "1",
+        "unread_notifications": 5
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function unreadNotification() { return; }
+
+/**
+@api {post} /accept-join-request.json Accept/Decline Join Request
+@apiVersion 0.1.0
+@apiName postAcceptJoinedRequest
+@apiGroup Spayc
+@apiPermission private
+
+@apiDescription super admin or admin can accept or decline the join request of private spayc.
+
+* @apiHeader {String} TOKEN            * Token required in header
+* @apiHeader {String} timezone            * Current timezone
+
+@apiParam {Intger} spayc_id Existing Spayc id(Required).
+@apiParam {Intger} user_id  Member id of joined spayc(Required).
+@apiParam {String} status Status must be any one Accepted or Declined (Required).
+
+@apiExample Example usage:
+{
+    "spayc_id":"xxx",
+    "user_id":"xxx",
+    "status":"Accepted"
+}
+ 
+@apiSuccess {String} status success.
+@apiSuccess {String} message User has been {status} successfully.
+@apiSuccessExample {json} Success-Response: 
+    HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "User has been {status} successfully."
+}
+
+@apiUse errorResponse
+ */
+function postAcceptJoinedRequest() { return; }
+
+/**
+@api {post} /remove-spayc-member.json Remove/Kick user from spayc
+@apiVersion 0.1.0
+@apiName postRemoveFromSpayc
+@apiGroup Spayc
+@apiPermission private
+
+@apiDescription super admin or admin can remove the user from spayc. Only joined user will be removed.
+
+* @apiHeader {String} TOKEN            * Token required in header
+* @apiHeader {String} timezone            * Current timezone
+
+@apiParam {Intger} spayc_id Existing Spayc id(Required).
+@apiParam {Intger} user_id  Member id of joined spayc(Required).
+
+@apiExample Example usage:
+{
+    "spayc_id":"xxx",
+    "user_id":"xxx",
+}
+ 
+@apiSuccess {String} status success.
+@apiSuccess {String} message User has been removed successfully.
+@apiSuccessExample {json} Success-Response: 
+    HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "User has been removed successfully."
+}
+
+@apiUse errorResponse
+
+*/
+function postRemoveFromSpayc() { return; }
+/**
+ * @api {get} /subscribed-spaycs.json?page=:page&limit=:limit User Subscribed Warp
+ * @apiVersion 0.1.0
+ * @apiName getSubscribedSpaycs
+ * @apiGroup Spayc
+ * @apiPermission private
+ *
+ * @apiDescription Get the list warp to whom user has been subscribed but not joined the warp.
+ * 
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * 
+ *    @apiParam {Number}      page            Page number in query string (Optional).
+ *    @apiParam {Number}      limit           Limit in query string (Optional).
+ 
+ *    
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of subscribed warp.
+ * @apiSuccess {Object} data List of subscribed warp.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+ {
+    "status": "success",
+    "message": "List of subscribed warp.",
+    "data": [
+        {
+            "id": "734",
+            "matrix_room_id": "!VIaNrDKuzkBQEVgtNI:127.0.0.1"
+        },
+        {
+            "id": "732",
+            "matrix_room_id": "!fueGNjtYWCpzMcTbtI:127.0.0.1"
+        }
+    ]
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function getSubscribedSpaycs() { return; }
