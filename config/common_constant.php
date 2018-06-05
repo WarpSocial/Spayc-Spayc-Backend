@@ -24,9 +24,11 @@ $spayctype_arr= array('event'=>'Event','community'=>'Community');
 $grouptype_arr= array('Public'=>'Public','Private'=>'Private');
 $spaycuserstatus_arr= array('1'=>'Admin','2'=>'Super Admin');
 $push_notification_admin_slug= array('blocked'=>'blocked-by-admin','unblocked'=>'unblocked-by-admin');
+$push_notification_spayc_admin_slug= array('blocked'=>'blocked-spayc-by-admin','unblocked'=>'unblocked-spayc-by-admin');
 $txt_massage= array('block'=>'Blocked','unblock'=>'Unblocked');
 $scraperStates = array('New York','NY','NEW YORK','new york','ny','New York City','new york city'); 
 $scraperCountries = array('US','us','United States','united states','United States of America','USA'); 
+$admin_slug_arr=array('spayc-deleted'=>'spayc-deleted-by-admin');
 define('USER_GENDER', serialize($user_gender));
 define('USER_AGE', serialize($user_age));
 define('STATUS_ARR', serialize($status_arr));
@@ -35,6 +37,7 @@ define('GROUP_TYPE_ARR', serialize($grouptype_arr));
 define('SPAYC_USER_STATUS_ARR', serialize($spaycuserstatus_arr));
 define('FRIEND_REQUESTED_STATUS_ARR', serialize($friend_requested_status_arr));
 define('PUSH_NOTIFICATION_ADMIN_SLUG', serialize($push_notification_admin_slug));
+define('PUSH_NOTIFICATION_SPAYC_ADMIN_SLUG', serialize($push_notification_spayc_admin_slug));
 define('SCRAPERSTATES', serialize($scraperStates));
 define('SCRAPERCOUNTRIES', serialize($scraperCountries));
 define('TEXT_MASSAGE', serialize($txt_massage));
@@ -51,6 +54,7 @@ define('PHYSICAL_PRESENT_USERS', 'PhysicalpresentUsers');
 define('USER_FRIENDS', 'Userfriends');
 define('CREATED','Created');
 define('SPAYC_TABLE', 'spaycs');
+define('ADMIN_SLUG_ARR', serialize($admin_slug_arr));
 
 $scraperRootUrl=array('eventbriteurl'=> 'https://www.eventbriteapi.com/v3/',
     'ticketmasterurl'=> 'https://app.ticketmaster.com/discovery/v2/',
