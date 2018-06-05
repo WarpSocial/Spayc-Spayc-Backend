@@ -2,7 +2,7 @@
 echo $this->element('admin/head');
 echo $this->element('admin/paths');
     if($authUser){  
-        echo $this->element('admin/header');
+        echo $this->element('admin/header', ['authUser' => $authUser]);
     } 
     echo $this->fetch('content');
 ?>
