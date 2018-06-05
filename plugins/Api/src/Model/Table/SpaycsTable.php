@@ -698,6 +698,7 @@ class SpaycsTable extends Table {
         if(!empty($request['time'])){
             $period = strtolower($request['time']);
         }
+        
         $startDate = "TO_TIMESTAMP(cast(Spaycs.start_date as text),'YYYY-MM-DD HH24:MI')";
         $endDate = "TO_TIMESTAMP(cast(Spaycs.end_date as text),'YYYY-MM-DD HH24:MI')";  
         if(preg_match('/present/i', $period) && preg_match('/past/i', $period) && preg_match('/future/i', $period)) {
@@ -709,12 +710,13 @@ class SpaycsTable extends Table {
         }else if(preg_match('/past/i', $period) && preg_match('/future/i', $period)) {
             $spaycs->where(['OR'=>[[$startDate.' !='=>$today_date],['Spaycs.end_date IS'=>null]]]);
         }else if( $period == "present" ) {
-            $spaycs->where(['OR'=>[["$startDate = "=>$today_date],['Spaycs.end_date IS'=>null]]]);
-            //$spaycs->where(['OR'=>[[$endDate.' >='=>$today_date],['Spaycs.end_date IS'=>null]]]);
+            $eod = new \DateTime($today_date);
+            $eod->setTime(23, 59, 59);
+            $spaycs->where(["$startDate  >="=>$today_date,"$endDate  <="=>$eod->format('Y-m-d H:i')]);
         }elseif($period == "past") {
-            $spaycs->where(['OR'=>[[$endDate.' <'=>$today_date],['Spaycs.end_date IS'=>null]]]);
+            $spaycs->where([$endDate.' <'=>$today_date]);
         }else if( $period == "future" ) {
-            $spaycs->where(['OR'=>[[$startDate.' >'=>$today_date],['Spaycs.end_date IS'=>null]]]);
+            $spaycs->where([$startDate.' >'=>$today_date]);
         }else{
             $spaycs->where(['OR'=>[[$startDate.' >='=>$today_date],[$endDate.' >= '=>$today_date]]]);
             //$spaycs->where(['OR'=>[[$endDate.' >='=>$today_date],['Spaycs.end_date IS'=>null]]]);
@@ -813,7 +815,6 @@ class SpaycsTable extends Table {
         $spaycs->order(['score'=>'DESC','distance'=>'ASC','start_date'=>'ASC']);
         $spaycs->limit(MAP_LIMIT);
         $spaycs->groupBy('spaycs.id');
-        
         $newQuery = clone $spaycs;
         $data['count'] = $newQuery->count();
         $data['records'] = [];
