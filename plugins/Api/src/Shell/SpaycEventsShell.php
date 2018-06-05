@@ -120,8 +120,8 @@ class SpaycEventsShell extends Shell {
                     $push['spayc_image'] = $v['image'];
                     $push['matrix_room_id'] = $v['matrix_room_id'];
                     $push['slug'] = $notification_type;
-                    $success[]=$this->Push->sendPushNotificationSpaycEvent($push);
-//                    var_dump($success);die;
+                    $success[]=$this->Push->sendPushNotification($push);
+                    var_dump($success);die;
                 }
             }
         }

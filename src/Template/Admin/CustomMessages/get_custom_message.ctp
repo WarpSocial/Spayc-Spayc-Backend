@@ -3,30 +3,6 @@
 select {
         width: 300px;
     }
-    .to-bottom, .keywords {
-        width:320px;
-        height:200px;
-
-    }
-    .to-bottom .select2  {
-        height:150px;
-
-    }
-    .to-bottom .select2-container--default .select2-selection--multiple .select2-selection__rendered{
-        position:relative;
-        top:40px
-    }
-
-    .keywords .select2  {
-        position:relative;
-        top:50px;
-
-    }
-    .keywords .select2-container--default .select2-selection--multiple .select2-selection__rendered,
-    .keywords .select2-search__field{
-        position:relative;
-        top:-40px
-    }
 
 </style>
 
@@ -41,16 +17,6 @@ select {
               <div class="contact-list">
                 <div class="contact-list-dropdown">
                   <select id="options" multiple="multiple">
-                    <option value="jQuery"><span>dadasdads </span>jQuery Tutorials</span></option>
-                    <option value="Bootstrap">Bootstrap Framework</option>
-                    <option value="HTML">HTML</option>
-                    <option value="CSS" >CSS</option>
-                    <option value="Angular">Angular</option>
-                    <option value="Angular">javascript</option>
-                    <option value="Java">Java</option>
-                    <option value="Python">Python</option>
-                    <option value="MySQL">MySQL</option>
-                    <option value="Oracle">Oracle</option>
                   </select>
                 </div>
               </div>
@@ -75,15 +41,19 @@ $(function(){
     "multiple": true,
      ajax: {
                    type:'POST',
-                   url:UserUrls.ForgotPassword,
-                   data: {keyword: "sachin"},
-                   dataType:'JSON',          
-                   processResults:function(data){        
-                     return {
-                    results: data
-                  };
-                   }
-               }
+                   url:UserUrls.searchUser,
+                  dataType: 'json',
+                delay: 250,
+                data: function (term) {
+                return {
+                q: term
+                 };
+                }
+               },
+        templateResult: template,
+      escapeMarkup: function(m) {
+           return m;
+        }
   })
   .on("select2:select", function(e) {
             var array = $("#options").val();
@@ -107,6 +77,19 @@ alert($(this).val());
 
        
 });
+
+
+function template(data) {
+	return "<div class='user-list'>\
+                <div class='user-image'><span><img src ='"+data.image_url+"' class='image-responsive'></span></div>\
+		<div class='user-list-info'>\
+		<span class='user-name ell'>"+data.text+"</span><br>\
+		<span class='user-id ell'>"+data.email+"</span>\
+		</div></div>";
+
+	//return "<div style='color:red'>"+data.text+"</div><div><small>............</small></div>";
+}
+
 </script>
 <?php echo $this->Html->script(['admin/user','bootstrap-multiselect.min.js',]); ?>
 <?php echo $this->Html->script(['admin/user','theme.js']); ?>

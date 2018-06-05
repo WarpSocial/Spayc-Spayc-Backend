@@ -440,28 +440,28 @@ class UsersController extends AdminController
     
     
     
-    public function searchUser($keyword) {
+    public function searchUser() {
         $this->viewBuilder()->layout('');
         $this->autoRender = false;
+        $result_arr = array();
+          $data = $this->request->getData();
         $obj = TableRegistry::get("Users")->find('all',
-                ['fields' =>['user_logs.plain_token',]])
-//                ->join([
-//                            'table' => 'user_logs',
-//                            'type' => 'INNER',
-//                            'conditions' => [
-//                                'Users.id = user_logs.user_id',
-//                                'Users.email' => trim(SCRAPER_EMAIL),
-//                            ]])
-                
-                ->limit(50)->toArray();
-          if(!empty($keyword)){            
-            $spaycs->where(['OR' => ['LOWER(Users.display_name) LIKE' => "%".$keyword."%"]]);
+                ['fields' =>['id'=>'Users.id','text'=>'Users.display_name','image_url'=>'image_url','email']])
+                 ->join([
+                            'table' => 'user_images',
+                            'type' => 'LEFT',
+                            'conditions' => [
+                                'Users.id = user_images.user_id'
+                            ]]);
+          if(!empty($data['q']['term'])){            
+            $obj->where(['OR' => ['LOWER(Users.display_name) LIKE' => "%".$data['q']['term']."%"]]);
         }
+        $obj->limit(50)->toArray();
         if(!empty($obj)){
-            return $plain_token=$obj->user_logs['plain_token'];
-        }else{
-            return false;
+              $result_arr = ['results' => $obj];
         }
+           echo json_encode($result_arr);
+            die;
         
     }
 

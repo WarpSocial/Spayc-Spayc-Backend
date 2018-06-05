@@ -216,7 +216,7 @@ class SpaycsController extends AdminController
         }        
         $spayc = $this->Spaycs->get($id);  
         $statusArr = unserialize(STATUS_ARR);
-        $pushNotificationAdminSlug = unserialize(PUSH_NOTIFICATION_ADMIN_SLUG);
+        $pushNotificationAdminSlug = unserialize(PUSH_NOTIFICATION_SPAYC_ADMIN_SLUG);
         $txtMassage = unserialize(TEXT_MASSAGE);               
         if ($this->request->is(['post','put'])) {    
             if(!empty($spayc->status) && ucfirst($spayc->status) == $statusArr['active'] ){
@@ -227,7 +227,6 @@ class SpaycsController extends AdminController
 
             if ($this->Spaycs->save($spayc)) {
                 $spayc_id=$spayc->id;
-//                $spayc =$this->Spaycs->get($spayc->id);
                  $spaycs = $this->Spaycs->find();
                  $spaycs->select()            
                     ->where(['id'=>$spayc->id])
@@ -239,31 +238,20 @@ class SpaycsController extends AdminController
                          return $q->select(['Users.email','Users.matrix_user_id','Users.matrix_access_token']);
                      }   
                      ]);
-                     $spaycs=$spaycs->first();
-//                  $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($spayc_id){
-//                          return $results->map(function ($row) use($spayc_id) {
-//                $row['joined_users'] = TableRegistry::get('JoinedSpayc')->getJoinedUserIds($spayc_id);
-//                $present = 0;$totalJoined=[];
-//                if(!empty($row['joined_users'])) {
-////                    $joinedStatus = \Cake\Utility\Hash::extract($row['joined_users'],'{n}[user_id='.$userId.']');
-//                    $totalJoined = \Cake\Utility\Hash::extract($row['joined_users'],'{n}[status=Joined].status');
-//                }
-//                return $row;
-//            });
-//                  });
-//                 pr($spaycs);die;
-                $displayName = !empty($spayc->name)? ucfirst($spayc->name) :SITE_TITLE;
-                if (ucfirst($spayc->status) == $statusArr['active']) {
-                    $spayc->statusTxt = $txtMassage['unblock'];
+                     $spaycs=$spaycs->first()->toArray();
+                     $spayc= $spaycs;
+                    $displayName = !empty($spayc['name'])? ucfirst($spayc['name']) :SITE_TITLE;
+                if (ucfirst($spayc['status']) == $statusArr['active']) {
+                    $spayc['statusTxt'] = $txtMassage['unblock'];
                     $pushNotificationAdminSlug = $pushNotificationAdminSlug['unblocked'];
                     $result_arr = ['result' => true, 'status'=>$statusArr['active'], 'message' => $displayName.' '.$this->errorSuccessMessage['UNBLOCKED-MSG']]; 
-                     $this->activeSubSpaycStatus($spayc->id,$statusArr['active']);
+                     $this->activeSubSpaycStatus($spayc['id'],$statusArr['active']);
                      $status="Unbanned";
                 } else {                       
-                    $spayc->statusTxt = $txtMassage['block'];
+                    $spayc['statusTxt'] = $txtMassage['block'];
                     $pushNotificationAdminSlug = $pushNotificationAdminSlug['blocked'];
                     $result_arr = ['result' => true, 'status'=>$statusArr['inactive'], 'message' => $displayName.' '.$this->errorSuccessMessage['BLOCKED-MSG']];   
-                     $update=$this->inactiveSubSpaycStatus($spayc->id,$statusArr['inactive']);
+                     $update=$this->inactiveSubSpaycStatus($spayc['id'],$statusArr['inactive']);
                      $status="banned";
                 }
                 
@@ -271,18 +259,21 @@ class SpaycsController extends AdminController
                      //Ban,Mail & Push
                     if (!empty($spaycs['joined_spayc'])) {
                         foreach ($spaycs['joined_spayc'] as $val) {
-                            $spayc['email'] = $val['Users']['email'];
-//                    $this->getMailer('User')->send('spaycStatus', $spayc);   
-                            
+                            $email['email'] = $val['Users']['email'];
+                            $email['status'] = $status;
+                            $email['name'] = $displayName;
+                            $email['statusTxt'] = $spayc['statusTxt'];
+//                            pr($email);die;
+                        $this->getMailer('User')->send('spaycStatus', [$email]);   
                             // for push notification
                             $push['requested_by'] = $this->Auth->user('id');
                             $push['username'] = $this->Auth->user('display_name');
-                            $push['requested_to'] = $val->user_id;
+                            $push['requested_to'] = $val['user_id'];
                             $push['slug'] = $pushNotificationAdminSlug;
                             $this->Push->sendPushNotification($push);
 
                             //Ban from Matrix
-                            if($val['Users']['status']!="Banned" && $status=="Unbanned"){
+                            if($val['status']!="Banned" && $status=="Unbanned"){
                                 $data['matrix_user_id']=$val['Users']['matrix_user_id'];
                                 $data['matrix_token']=$val['Users']['matrix_access_token'];
                                 $data['matrix_room_id']=$spaycs['matrix_room_id'];

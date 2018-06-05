@@ -232,7 +232,7 @@ class AdvertisementController extends AppController {
                 $array['spaycs'] = $spayc;
             $response = ['status' => 'success', 'message' => 'Advertisement Details', 'data' => $array];
         }else {
-            $response = ['status' => 'failed', 'message' => __('No Advertisement found')];
+             $this->restException(['status' => 'failed', 'message' => 'Record not found.'], 404);
         }
         $this->set($response);
     }
