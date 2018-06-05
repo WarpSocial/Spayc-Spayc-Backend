@@ -20,13 +20,14 @@ use Api\Utils\Utils;
  *
  * @property \App\Model\Table\UsersTable $Users
  */
-class UsersController extends AdminController
+class CustomMessagesController extends AdminController
 {
     use MailerAwareTrait;
     public function initialize() {
         parent::initialize();        
         $this->loadComponent('Api.Push');
         $this->loadComponent('Scraper');
+        $this->Users = TableRegistry::get('Users');        
         $this->Spaycs = TableRegistry::get('Spaycs');
     }
 
@@ -377,11 +378,7 @@ class UsersController extends AdminController
                     $user->statusTxt = $txtMassage['unblock'];
                     $pushNotificationAdminSlug = $pushNotificationAdminSlug['unblocked'];
                     $result_arr = ['result' => true, 'status'=>$statusArr['active'], 'message' => $displayName.' '.$this->errorSuccessMessage['UNBLOCKED-MSG']]; 
-                } else { 
-                    $this->loadModel('UserLogs');
-                    $userLogsExist = $this->UserLogs->exists(['user_id'=>$user->id]);
-                    if($userLogsExist)                    
-                    $this->UserLogs->query()->delete()->where(['user_id' =>$user->id])->execute();
+                } else {                       
                     $user->statusTxt = $txtMassage['block'];
                     $pushNotificationAdminSlug = $pushNotificationAdminSlug['blocked'];
                     $result_arr = ['result' => true, 'status'=>$statusArr['inactive'], 'message' => $displayName.' '.$this->errorSuccessMessage['BLOCKED-MSG']];   
@@ -404,19 +401,20 @@ class UsersController extends AdminController
     }
 
     /*** get list of Advertisement created by user***/
-    public function userAdvertisement($userId=null)
+    public function getCustomMessage()
     {
-        $this->set('title', $this->siteTitleMessage['MANAGE-ADVERTISEMENTS']);
-        $user = $this->Users->get($userId);
-        $this->Advertisement = TableRegistry::get('Advertisement');
-        $keyword=($this->request->query('keyword'))?trim(strtolower($this->request->query('keyword'))):'';
-        $query = $this->Advertisement->find('all')->where(["status !=" => ADVERTISEMENTSTATUS, 'user_id' => $userId]);
-        if(!empty($keyword)){
-            $query->where(['OR' => [['LOWER(Advertisement.name) LIKE' => "%".$keyword."%"]]]);
-        }
-        $advertisements = $this->paginate($query);
-        $this->set(compact('advertisements','user'));
-        $this->render('../Advertisement/index');
+        $this->viewBuilder()->layout('');
+//        $this->set('title', $this->siteTitleMessage['MANAGE-ADVERTISEMENTS']);
+//        $user = $this->Users->get($userId);
+//        $this->Advertisement = TableRegistry::get('Advertisement');
+//        $keyword=($this->request->query('keyword'))?trim(strtolower($this->request->query('keyword'))):'';
+//        $query = $this->Advertisement->find('all')->where(["status !=" => ADVERTISEMENTSTATUS, 'user_id' => $userId]);
+//        if(!empty($keyword)){
+//            $query->where(['OR' => [['LOWER(Advertisement.name) LIKE' => "%".$keyword."%"]]]);
+//        }
+//        $advertisements = $this->paginate($query);
+//        $this->set(compact('advertisements','user'));
+//        $this->render('../Advertisement/index');
     }
 
     /*** get list of warps, joined or created by user***/
@@ -440,33 +438,6 @@ class UsersController extends AdminController
         $spaycs = $this->paginate($spaycs); 
         $this->set(compact('spaycs','keyword','user', 'listBy'));        
         $this->set('_serialize', ['spaycs']);
-    }
-    
-    
-    
-    public function searchUser() {
-        $this->viewBuilder()->layout('');
-        $this->autoRender = false;
-        $result_arr = array();
-          $data = $this->request->getData();
-        $obj = TableRegistry::get("Users")->find('all',
-                ['fields' =>['id'=>'Users.id','text'=>'Users.display_name','image_url'=>'image_url','email']])
-                 ->join([
-                            'table' => 'user_images',
-                            'type' => 'LEFT',
-                            'conditions' => [
-                                'Users.id = user_images.user_id'
-                            ]]);
-          if(!empty($data['q']['term'])){            
-            $obj->where(['OR' => ['LOWER(Users.display_name) LIKE' => "%".$data['q']['term']."%"]]);
-        }
-        $obj->limit(50)->toArray();
-        if(!empty($obj)){
-              $result_arr = ['results' => $obj];
-        }
-           echo json_encode($result_arr);
-            die;
-        
     }
 
 }

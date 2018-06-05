@@ -121,6 +121,9 @@ class PushComponent extends Component {
            
             $notificationType = $notificationType->first();
             $deviceId = TableRegistry::get("Api.UserLogs")->findByUserId($data['requested_to'])->select(['id', 'user_id', 'device_id','device_token']);
+                      
+            $user=TableRegistry::get("Api.Users")->find('all')->where(['id'=>$data['requested_to']])->first();
+                            
             if($deviceId->isEmpty()) {
                 //return false;
                 $deviceToken = '';
@@ -146,6 +149,20 @@ class PushComponent extends Component {
                 case "user-subscribed-to-your-spayc":
                 case "friend-subscribed-to-your-spayc":
                      $notificationType->message = str_replace(["<USERNAME>","<SpaycName>"], [ucwords($data['display_name']),$data['spayc_name']], $notificationType->message);
+                case "spayc-start-event":
+                        $mail = (object)[];
+                        $mail->email=$user['email'];
+                        $mail->display_name=$user['display_name'];
+                        $mail->spayc_name=$data['spayc_name'];
+                     $notificationType->message = str_replace("<WarpName>", ucwords($data['spayc_name']), $notificationType->message);
+                     $success =    $this->getMailer('Api.User')->send('eventStartCron', [$mail]);
+                case "spayc-end-event":
+                        $mail = (object)[];
+                        $mail->email=$user['email'];
+                        $mail->display_name=$user['display_name'];
+                        $mail->spayc_name=$data['spayc_name'];
+                     $notificationType->message = str_replace("<WarpName>", ucwords($data['spayc_name']), $notificationType->message);
+                     $success =    $this->getMailer('Api.User')->send('eventEndCron', [$mail]);
                     break;
                 
             }
