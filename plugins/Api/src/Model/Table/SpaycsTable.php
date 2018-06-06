@@ -709,10 +709,8 @@ class SpaycsTable extends Table {
             $spaycs->where(['OR'=>[[$startDate.' >='=>$today_date],[$endDate.' >='=>$today_date],['Spaycs.end_date IS'=>null]]]);
         }else if(preg_match('/past/i', $period) && preg_match('/future/i', $period)) {
             $spaycs->where(['OR'=>[[$startDate.' !='=>$today_date],['Spaycs.end_date IS'=>null]]]);
-        }else if( $period == "present" ) {
-            $eod = new \DateTime($today_date);
-            $eod->setTime(23, 59, 59);
-            $spaycs->where(["$startDate  >="=>$today_date,"$endDate  <="=>$eod->format('Y-m-d H:i')]);
+        }else if( $period == "present" ) {            
+            $spaycs->where(['OR'=>[["$startDate  >="=>$today_date,"$endDate  <="=>$today_date],["$startDate  <="=>$today_date,"$endDate  >="=>$today_date]]]);
         }elseif($period == "past") {
             $spaycs->where([$endDate.' <'=>$today_date]);
         }else if( $period == "future" ) {
