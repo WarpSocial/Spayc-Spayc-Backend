@@ -27,6 +27,9 @@ $controller_action = $this->request->param('action');
               <li class="nav-item">
                 <a class="nav-link" href="#">Custom Messages</a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Manage Spam Report</a>
+              </li>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle"  id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Admin <i class="icon-down-icon"></i>

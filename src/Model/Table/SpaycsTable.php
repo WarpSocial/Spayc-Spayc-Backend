@@ -233,7 +233,7 @@ class SpaycsTable extends Table
                     return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
                 },
                 'Comments' => function($q) {
-                    return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
+                    return $q->select(['Comments.spayc_id', 'Comments.comment']);
                 }
             ]);
         if($listBy == JOINED){
@@ -264,7 +264,7 @@ class SpaycsTable extends Table
                 }
                 $row['subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):BLANK_COUNT;
                 $row['is_subscribed'] = !empty($subUserId[0])?true:false;
-                $row['total_comments'] = !empty($row['comments'][0]['total_comment'])?$row['comments'][0]['total_comment']:BLANK_COUNT;
+                $row['total_comments'] = !empty($row['comments'][0]['comment'])?$row['comments'][0]['comment']:BLANK_COUNT;
                 unset($row['comments']);
                 $row['total_presents'] = $present;
                 return $row;
@@ -368,10 +368,10 @@ class SpaycsTable extends Table
                 },
                 'JoinedSpayc.Users.UserImages'=>function($q) {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
-                },
+                },                
                 'Comments' => function($q) {
-                        return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
-                    },
+                    return $q->select(['Comments.spayc_id', 'Comments.comment']);
+                },
                 'SubscribedUsers' => function($q) {
                     return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
                 }
@@ -393,8 +393,8 @@ class SpaycsTable extends Table
                 $row['total_spayc_admin'] = $totalAdmin;
                 $row['joined_users'] =!empty($row['joined_spayc'])?count($totalJoined):BLANK_COUNT;
                 $row['total_subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):BLANK_COUNT;   
-                $row['total_subspaycs'] = !empty($row['sub_spaycs'])?count($row['sub_spaycs']):BLANK_COUNT;                
-                $row['total_comments'] = !empty($row['comments'][0]['total_comment'])?$row['comments'][0]['total_comment']:BLANK_COUNT;
+                $row['total_subspaycs'] = !empty($row['sub_spaycs'])?count($row['sub_spaycs']):BLANK_COUNT;                               
+                $row['total_comments'] = !empty($row['comments'][0]['comment'])?$row['comments'][0]['comment']:BLANK_COUNT;
                 $row['total_presents'] = $present;
                 unset($row['comments']);
                 unset($row['subscribed_users']);
@@ -435,10 +435,10 @@ class SpaycsTable extends Table
                     },
                     'JoinedSpayc.Users.UserImages'=>function($q) {
                     return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
-                    },
+                    },                    
                     'Comments' => function($q) {
-                        return $q->select(['Comments.spayc_id', 'total_comment' => $q->func()->count('Comments.id')])->group(['Comments.spayc_id']);
-                    },
+                        return $q->select(['Comments.spayc_id', 'Comments.comment']);
+                    },                            
                     'SubscribedUsers' => function($q) {
                         return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
                     }
@@ -470,7 +470,7 @@ class SpaycsTable extends Table
                 }
                 $row['subscribed_users'] = !empty($row['subscribed_users'])?count($row['subscribed_users']):BLANK_COUNT;
                 $row['is_subscribed'] = !empty($subUserId[0])?true:false;
-                $row['total_comments'] = !empty($row['comments'][0]['total_comment'])?$row['comments'][0]['total_comment']:BLANK_COUNT;
+                $row['total_comments'] = !empty($row['comments'][0]['comment'])?$row['comments'][0]['comment']:BLANK_COUNT;
                 unset($row['joined_spayc']);
                 $row['total_presents'] = $present;
                 return $row;
@@ -515,5 +515,4 @@ class SpaycsTable extends Table
         TableRegistry::get('Api.Promotions')->deleteAll(['spayc_id IN' => $child]);
         }
     }
-
 }

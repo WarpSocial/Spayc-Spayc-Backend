@@ -27,6 +27,8 @@ $push_notification_admin_slug= array('blocked'=>'blocked-by-admin','unblocked'=>
 $txt_massage= array('block'=>'Blocked','unblock'=>'Unblocked');
 $scraperStates = array('New York','NY','NEW YORK','new york','ny','New York City','new york city'); 
 $scraperCountries = array('US','us','United States','united states','United States of America','USA'); 
+$chat_msg_type = array('text'=>'m.text', 'image'=>'m.image', 'replytext'=>'m.replyText', 'replyimage'=>'m.replyImage');
+define('CHAT_ROOM_TYPE', 'm.room.message');
 define('USER_GENDER', serialize($user_gender));
 define('USER_AGE', serialize($user_age));
 define('STATUS_ARR', serialize($status_arr));
@@ -38,6 +40,7 @@ define('PUSH_NOTIFICATION_ADMIN_SLUG', serialize($push_notification_admin_slug))
 define('SCRAPERSTATES', serialize($scraperStates));
 define('SCRAPERCOUNTRIES', serialize($scraperCountries));
 define('TEXT_MASSAGE', serialize($txt_massage));
+define('CHAT_MSG_TYPE', serialize($chat_msg_type));
 define('TODAY_DATE', date('Y-m-d'));
 define('SCRAPER_DAYS', ' +14 day');
 define('AFTER14DAYS_DATE', date('Y-m-d', strtotime(SCRAPER_DAYS)));
