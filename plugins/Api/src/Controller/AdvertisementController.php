@@ -52,7 +52,7 @@ class AdvertisementController extends AppController {
             $this->restException(['status' => 'failed', 'message' => 'Spayc id is required.'], 400);
         }
 
-        $entities = $this->Advertisement->find()->where(['id' => $data['id']]);
+        $entities = $this->Advertisement->find()->where(['id' => $data['id'], "status != 'Removed'"]);
 
         if ($entities->isEmpty()) {
             $this->restException(['status' => 'failed', 'message' => __('Invalid Advertisement id.')], 400);
