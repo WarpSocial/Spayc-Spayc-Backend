@@ -229,13 +229,16 @@ class SpaycsController extends AdminController
                 $spayc_id=$spayc->id;
                  $spaycs = $this->Spaycs->find();
                  $spaycs->select()            
-                    ->where(['id'=>$spayc->id])
+                    ->where(['Spaycs.id'=>$spayc->id])
                     ->contain([
+                      'Users' => function($q) {
+                            return $q->select(['matrix_access_token']);
+                        },
                      'JoinedSpayc' => function($q) {
                          return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.distance'])->where(['JoinedSpayc.status'=>JOINED]);
                      },   
                      'JoinedSpayc.users' => function($q) {
-                         return $q->select(['Users.email','Users.matrix_user_id','Users.matrix_access_token']);
+                         return $q->select(['email','matrix_user_id']);
                      }   
                      ]);
                      $spaycs=$spaycs->first()->toArray();
@@ -273,9 +276,9 @@ class SpaycsController extends AdminController
                             $this->Push->sendPushNotification($push);
 
                             //Ban from Matrix
-                            if($val['status']!="Banned" && $status=="Unbanned"){
+                            if($val['status']!="Banned" && $status=="Unbanned" && !empty($spaycs['user'])){
                                 $data['matrix_user_id']=$val['Users']['matrix_user_id'];
-                                $data['matrix_token']=$val['Users']['matrix_access_token'];
+                                $data['matrix_token']=$spaycs['user']['matrix_access_token'];
                                 $data['matrix_room_id']=$spaycs['matrix_room_id'];
                                 $data['status']=$status;
                                 $matrix = $this->Matrix->banMember($data);
