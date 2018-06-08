@@ -276,4 +276,14 @@ class UsersTable extends Table
         }
         
     }
+
+    public function getUserByMatrixUserId($matrixUserId=null) {
+        $userObj = '';
+        if(!empty($matrixUserId)){
+        $userObj = $this->Users->find()->select(['id', 'display_name'])->contain([ 'UserImages'=>function($q) {
+                return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
+            }])->where(['matrix_user_id'=>$matrixUserId])->first();
+        }
+        return $userObj;
+    }
 }

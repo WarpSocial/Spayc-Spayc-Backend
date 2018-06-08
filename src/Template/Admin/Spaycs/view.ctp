@@ -75,14 +75,14 @@ $breadcrumbsTxt= ucfirst($spayc->name);
             </div>
             <!--========event count======-->
           <div class="count-box <?php echo (!empty($subspayc))?'count-box-three':''?> ">
-              <div class="user-box"><span><?= !empty($spayc->joined_users)?$spayc->joined_users:BLANK_COUNT ?></span> Users</div>
+              <div class="user-box"><span><?= !empty($spayc->joined_users)?$this->Html->link($spayc->joined_users,['controller' => 'Spaycs', 'action' => 'spayc-members',$spayc->id], ['class' => 'num-letter-spacing']):BLANK_COUNT ?></span> Users</div>
                <?php if(empty($subspayc)) {?>
-              <div class="subscriber"><span><?= !empty($spayc->subscribed_users)?$spayc->subscribed_users:BLANK_COUNT ?></span> Subscribers</div>
-              <div class="present-people"><span><?= !empty($spayc->total_presents)?$spayc->total_presents:BLANK_COUNT ?></span> Present People</div>
+              <div class="subscriber"><span><?= !empty($spayc->subscribed_users)?$this->Html->link($spayc->subscribed_users,['controller' => 'Spaycs', 'action' => 'subscribedMembers',$spayc->id], ['class' => 'num-letter-spacing']):BLANK_COUNT ?></span> Subscribers</div>
+              <div class="present-people"><span><?= !empty($spayc->total_presents)?$this->Html->link($spayc->total_presents,['controller' => 'Spaycs', 'action' => 'physicalPresents',$spayc->id], ['class' => 'num-letter-spacing']):BLANK_COUNT ?></span> Present People</div>
               <?php } else {?>
               <div class="subscriber"><span><?= !empty($spayc->friends)?$spayc->friends:BLANK_COUNT ?></span> Friends</div>
               <?php } ?>
-              <div class="comment"><span><?= !empty($spayc->total_comments)?$spayc->total_comments:BLANK_COUNT ?></span> Comments</div>
+              <div class="comment"><span><?= !empty($spayc->total_comments)? $this->Html->link($spayc->total_comments,['controller' => 'Spaycs', 'action' => 'comments',$spayc->matrix_room_id], ['class' => 'num-letter-spacing']):BLANK_COUNT ?></span> Comments</div>
             </div>
 
             <!--======subspayc=====-->

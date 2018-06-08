@@ -27,6 +27,9 @@ $controller_action = $this->request->param('action');
               <li class="nav-item <?php echo (($controller_name=='CustomMessages') && ($controller_action=='index')) ? 'active' : '';?>">
                 <a class="nav-link" href="<?php echo Router::url(['action' => 'index','controller' =>'CustomMessages']);?>">Custom Messages</a>
               </li>
+              <li class="nav-item <?php echo (($controller_name=='SpamReports') && ($controller_action=='index'))? 'active' : '';?>">
+                <a class="nav-link" href="<?php echo Router::url(['action' => 'index','controller' =>'SpamReports']);?>">Manage Spam Report</a>
+              </li>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle"  id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Admin <i class="icon-down-icon"></i>

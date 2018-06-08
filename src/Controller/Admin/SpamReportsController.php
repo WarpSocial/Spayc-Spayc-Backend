@@ -17,12 +17,14 @@ class SpamReportsController extends AdminController
 
     public function initialize() {
         parent::initialize();        
+        $this->loadComponent('Api.Matrix');
         $this->loadComponent('Api.Push');
         $this->Users = TableRegistry::get('Users');
     }
 
     public function beforeFilter(Event $event) {
         parent::beforeFilter($event);
+        $this->Auth->allow(['index','banSpaycMember']);
     }
     
     /**
@@ -33,9 +35,37 @@ class SpamReportsController extends AdminController
     public function index()
     {
         $this->set('title', $this->siteTitleMessage['MANAGE-SPAM-REPORT']);
-        $spamReports = $this->paginate($this->SpamReports);
-
+        $query = $this->SpamReports->find();
+        $keyword = ($this->request->query('keyword')) ? trim(strtolower($this->request->query('keyword'))) : '';
+        $query->select(['SpamReports.event_id','SpamReports.spayc_id','SpamReports.reported_to','Spaycs.id','Spaycs.matrix_room_id','Spaycs.name','total_user_reported_by' => $query->func()->count('event_id')])
+                ->contain(['Spaycs'])
+                ->group(['SpamReports.event_id,SpamReports.spayc_id,SpamReports.reported_to,Spaycs.id, Spaycs.name,Spaycs.user_id, Spaycs.location, Spaycs.image, Spaycs.group_type, Spaycs.type,Spaycs.start_date,
+Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,Spaycs.created']);
+        
+        $this->paginate = ['order' => ['SpamReports.reported_to' => 'DESC']];
+        $spamReports = $this->paginate($query);
         $this->set(compact('spamReports'));
+    }
+    
+    public function banSpaycMember($spaycId, $userId, $status=BANNED) {
+        
+        $this->viewBuilder()->layout('');
+        $spayc = TableRegistry::get('Spaycs')->get($spaycId);       
+        if ($this->request->is(['post','put'])) {
+           $spamUserObj = $this->Users->get($userId);
+           $data['matrix_room_id']=$spayc->matrix_room_id;
+           $data['matrix_user_id']=$this->Users->get($spayc->user_id)->matrix_user_id;
+           $data['matrix_token'] = $spamUserObj->matrix_access_token;
+           $data['status'] = $status;
+            if($status == UNBANNED){                
+                $this->Matrix->joinRoom($data);
+            } else if($status == BANNED) {
+                $matrix = $this->Matrix->banMember($data);
+                $this->Matrix->muteUnmute('mute',$BannedUserStatus->user->matrix_access_token, $spayc->matrix_room_id);
+                TableRegistry::get('Api.SubscribedUsers')->removeSubscription($userId,$spaycId);   
+            }
+        }
+        $this->set(compact('spayc'));
     }
 
     /**

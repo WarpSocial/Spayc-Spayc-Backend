@@ -70,7 +70,7 @@ if(isset($this->request->query['sort'])) {
         'exact' => false]):BLANK ?></span>
                 <?php if (!empty($advertisement->description) && (strlen($advertisement->description) > 25)) {?>
                   <span>
-                  <a href="javascript:void(0)" onclick="showModel('<?= h($advertisement->description)?>');" class="item-read-more">+ Read more</a>
+                  <a href="javascript:void(0)" onclick="showModel('<?= h($advertisement->description)?>','Description');" class="item-read-more">+ Read more</a>
                   </span>
                   <?php } ?>
                 </div>

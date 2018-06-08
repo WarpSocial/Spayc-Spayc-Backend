@@ -38,32 +38,28 @@ class SpamReportsTable extends Table
 
         $this->setTable('spam_reports');
         $this->setDisplayField('id');
-        $this->setPrimaryKey(['id', 'spayc_id', 'created']);
+        $this->setPrimaryKey(['id']);
 
         $this->addBehavior('Timestamp');
         
         $this->belongsTo('Spaycs', [
             'foreignKey' => 'spayc_id',
-            'joinType' => 'INNER',
-            'className' => 'Api.Spaycs'
+            'joinType' => 'INNER'
         ]);
         
         $this->belongsTo('Reportedby', [
             'foreignKey' => 'reported_by',
-            'joinType' => 'INNER',
-            'className' => 'Api.Users'
+            'joinType' => 'INNER'
         ]);
         $this->belongsTo('Reportedto', [
             'foreignKey' => 'reported_to',
-            'joinType' => 'INNER',
-            'className' => 'Api.Users'
+            'joinType' => 'INNER'
         ]);
 
         $this->belongsTo('Users', [
             'foreignKey' => 'reported_by',
             'targetForeignKey' => 'reported_to',
-            'joinType' => 'INNER',
-            'className' => 'Api.Users'
+            'joinType' => 'INNER'
         ]);
     }
 
