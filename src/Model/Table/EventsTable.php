@@ -38,5 +38,12 @@ class EventsTable extends Table {
         $this->setDisplayField('type');
         $this->setPrimaryKey('event_id');
     }
+    
+    public function getComments($spaycMatrixRoomId) {
+        $chat_msg_type = unserialize(CHAT_MSG_TYPE);
+        $query = $this->find()->where(['room_id'=>$spaycMatrixRoomId,'type'=>CHAT_ROOM_TYPE]);
+        $query->where(['OR' => [['content LIKE' => '%"msgtype":"'.$chat_msg_type['text'].'"%'], ['content LIKE' => '%"msgtype":"'.$chat_msg_type['image'].'"%']]]);  
+        return $query;
+    }        
 
 }

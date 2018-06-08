@@ -379,12 +379,10 @@ class SpaycsController extends AdminController {
         
         if (empty($spaycMatrixRoomId)) 
             return $this->redirect(['action' => 'index']);
-        
         $this->set('title', $this->siteTitleMessage['MANAGEWARPS']);
         $chat_msg_type = unserialize(CHAT_MSG_TYPE);
         $eventsRepo = TableRegistry::get('Events');
-        $query = $eventsRepo->find()->where(['room_id'=>$spaycMatrixRoomId,'type'=>CHAT_ROOM_TYPE]);
-        $query->where(['OR' => [['content LIKE' => '%"msgtype":"'.$chat_msg_type['text'].'"%'], ['content LIKE' => '%"msgtype":"'.$chat_msg_type['image'].'"%']]]);          
+        $query = $eventsRepo->getComments($spaycMatrixRoomId);               
         $this->paginate['order'] = ['stream_ordering' => 'Desc'];
         $comments = $this->paginate($query);   
         $this->set(compact('comments'));
