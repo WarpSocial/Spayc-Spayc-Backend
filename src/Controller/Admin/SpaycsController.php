@@ -264,7 +264,7 @@ class SpaycsController extends AdminController
                             $email['name'] = $displayName;
                             $email['statusTxt'] = $spayc['statusTxt'];
 //                            pr($email);die;
-                        $this->getMailer('User')->send('spaycStatus', [$email]);   
+                          
                             // for push notification
                             $push['requested_by'] = $this->Auth->user('id');
                             $push['username'] = $this->Auth->user('display_name');
@@ -280,6 +280,7 @@ class SpaycsController extends AdminController
                                 $data['status']=$status;
                                 $matrix = $this->Matrix->banMember($data);
                             }
+                            $this->getMailer('User')->send('spaycStatus', [$email]); 
                         }
                     }
                     //Ban,Mail & Push
