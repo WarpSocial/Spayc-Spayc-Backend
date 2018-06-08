@@ -1,31 +1,4 @@
-<style>
 
-    select {
-        width: 300px;
-    }
-    .user-list .user-image {
-        width: 50px;
-        height: 50%;
-        border-radius: 50%;
-        overflow: hidden;
-    }
-    .user-list .user-image span {
-        width: 100%;
-        height: 100%;
-        display: block;
-    }
-    .user-list .user-image img {
-        height: 100%;
-        width: 100%;
-        object-fit: cover;
-    }
-    .keywords{height: 210px;
-    overflow-y: scroll;}
-    .select2-selection__choice{display: none !important; }
-    .contact-list-dropdown {position: relative}
-    .select2{position: absolute; right: 0; display: none}
-
-</style>
 
 <div class="modal-content custom-message text-center">
     <div class="modal-body">
@@ -41,10 +14,13 @@
                 <div class="contact-list-dropdown">
                     
                         <?=$this->Html->image('address-book-contacts.png', ['alt' => 'img','class' => 'img-icon']);?>
-                    
-                    <button type="button" class="button  btn-sm ml-auto check-all">CheckAll</button>
-                    <select id="options" multiple="multiple" name="users[]" required="">
-                    </select>
+                    <div class="contact-list-box">
+                        <div class="contact-list-box-wrapper">
+                        <label class="check-all"><input type="checkbox"> Select All</label>
+                         <select id="options" multiple="multiple" name="users[]" required="">
+                         </select>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

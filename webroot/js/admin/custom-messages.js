@@ -33,7 +33,8 @@ jQuery(document).ready(function ($) {
 
 
     $(".img-icon").click(function () {
-        $(".select2").toggle();
+        $(".contact-list-box").toggle();
+        $(".select2-search__field").trigger('click');
 
     })
 
