@@ -11,8 +11,10 @@ jQuery(document).ready(function ($) {
        dataType:'JSON',
        async: false,             
        success:function(data){        
+           
+          alert();
           $(".loader").removeClass('show-loader'); 
-          $( ".skip-popup").trigger('click');                            
+          $( ".skip-popup").trigger('click');   
            if (data.result) {
               if($('.status_'+$('#spayc-id').val()).hasClass('block')){
                 $('.status_'+$('#spayc-id').val()).removeClass('block').addClass('unblock');                      
