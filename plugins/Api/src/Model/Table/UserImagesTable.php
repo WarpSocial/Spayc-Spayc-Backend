@@ -93,19 +93,20 @@ class UserImagesTable extends Table {
     
     public function uploadFacebookImage($imgUrl, $userId) {
         $entity = $this->findByUserIdAndIsProfile($userId, 'Yes');
-        if(!$entity->isEmpty()) {
-            return false;
+        if($entity->isEmpty()) {
+            $entity = $this->newEntity();
+        }else{
+            $entity = $entity->first();
         }
-        $fileName = $this->facebookImg($imgUrl);
+        //$fileName = $this->facebookImg($imgUrl);
         $data['user_id'] = $userId;
         $data['is_profile'] = 'Yes';
         $data['order_index'] = 1;
-        $data['image_url']['tmp_name'] = $fileName;
-        $entity = $this->newEntity();
+        //$data['image_url']['tmp_name'] = $fileName;
+        $data['image_url'] = $imgUrl;
+        
         $items = $this->patchEntity($entity, $data, ['validate'=>false]);
-        if($this->save($items)){
-            unlink($fileName);
-        }
+        $this->save($items);
         return $items;
     }
     public function facebookImg($imgUrl){
@@ -120,7 +121,7 @@ class UserImagesTable extends Table {
            return false;
        }
        $ext = $allMimeType[$mimeType];
-       $newImg = TMP.'/facebook_'.time().'.'.$ext;
+       $newImg = TMP.'facebook_'.time().'.'.$ext;
         
         file_put_contents($newImg,$response->getBody());
          //echo mime_content_type($newImg);die;
