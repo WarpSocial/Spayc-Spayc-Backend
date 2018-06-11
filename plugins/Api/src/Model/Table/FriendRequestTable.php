@@ -266,16 +266,17 @@ class FriendRequestTable extends Table {
         if (!empty($child)) {
             //Getting Distance
             $distanceField = '( 3959 * ACOS( COS( RADIANS(:latitude) ) *
-                COS( RADIANS(  latitude ) ) *
-                COS( RADIANS(  longitude ) - RADIANS(:longitude) ) +
+                COS( RADIANS(  PhysicalLocation.current_latitude ) ) *
+                COS( RADIANS(PhysicalLocation.current_longitude ) - RADIANS(:longitude) ) +
                 SIN( RADIANS(:latitude) ) *
-                SIN( RADIANS(  latitude ) ) ) )';
+                SIN( RADIANS(PhysicalLocation.current_latitude ) ) ) )';
             $distance = $this->distance($request['center_latitude'], $request['center_longitude'], $request['endpoint_latitude'], $request['endpoint_longitude']);
 
-            $friends = TableRegistry::get('Api.Users')->find('all', ['fields' => [
-                            'id', 'display_name', 'email', 'address', 'latitude', 'longitude', 'modified']])
+            $friends = TableRegistry::get('Api.Users')->find()
+                    ->select(['Users.id', 'Users.display_name', 'Users.email', 'Users.address', 'latitude'=>'PhysicalLocation.current_latitude', 'longitude'=>'PhysicalLocation.current_longitude', 'Users.modified'])
+                    ->contain('PhysicalLocation')
                     ->where(["$distanceField <=" => $distance, 'status' => 'Active'])
-                    ->where("id in (" . implode($child, ",") . ")")
+                    ->where("Users.id in (" . implode($child, ",") . ")")
                     ->bind(':latitude', $request['center_latitude'], 'float')
                     ->bind(':longitude', $request['center_longitude'], 'float');
 
