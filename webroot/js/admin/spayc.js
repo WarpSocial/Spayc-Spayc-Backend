@@ -10,9 +10,7 @@ jQuery(document).ready(function ($) {
        data: form.serialize(),
        dataType:'JSON',
        async: false,             
-       success:function(data){        
-           
-          alert();
+       success:function(data){   
           $(".loader").removeClass('show-loader'); 
           $( ".skip-popup").trigger('click');   
            if (data.result) {
