@@ -102,7 +102,7 @@ if(isset($this->request->query['sort'])) {
                     <span><?= !empty($spayc->total_subspaycs)?$this->Html->link($spayc->total_subspaycs,['controller' => 'Spaycs', 'action' => 'subwarps',$spayc->id], ['class' => 'num-letter-spacing']):BLANK_COUNT ?></span>
                 </div>
                 <div class="table-data flex-basis9">
-                  <span><?= !empty($spayc->total_comments)?trim($spayc->total_comments):BLANK_COUNT ?></span>
+                  <span><?= !empty($spayc->total_comments)?$this->Html->link($spayc->total_comments,['controller' => 'Spaycs', 'action' => 'comments',$spayc->matrix_room_id], ['class' => 'num-letter-spacing']):BLANK_COUNT ?></span>
                 </div>
                 <!--table dropdown-->
                 <div class="table-data flex-basis6">
