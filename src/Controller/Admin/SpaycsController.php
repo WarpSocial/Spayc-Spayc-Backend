@@ -300,7 +300,6 @@ class SpaycsController extends AdminController
                             }
                         }
                         $this->getMailer('User')->send('spaycStatus', [$email]);
-                        TableRegistry::get('Api.SubscribedUsers')->removeSubscription($val['user_id'],$spayc['id']);  
                     }
                 }
                 //Ban,Mail & Push
