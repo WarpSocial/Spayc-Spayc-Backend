@@ -266,7 +266,7 @@ class SpaycsController extends AdminController
                         $email['status'] = $status;
                         $email['name'] = $displayName;
                         $email['statusTxt'] = $spayc['statusTxt'];
-//                            pr($email);die;
+                        
                         // for push notification
                         $push['requested_by'] = $this->Auth->user('id');
                         $push['username'] = $this->Auth->user('display_name');
@@ -281,7 +281,7 @@ class SpaycsController extends AdminController
                             $data['matrix_user_id'] = $val['Users']['matrix_user_id'];
                             $data['matrix_token'] = $spaycs['user']['matrix_access_token'];
                             $data['matrix_room_id'] = $spaycs['matrix_room_id'];
-
+                            
                             $data['status'] = $status;
                             $matrix = $this->Matrix->banMember($data);
                             if (!is_string($matrix)) {
@@ -292,11 +292,15 @@ class SpaycsController extends AdminController
                                 $this->Matrix->muteUnmute('mute', $data['matrix_token'], $data['matrix_room_id']);
 
                                 $update['status'] = $status;
+                                $update['updated_by'] = $this->Auth->user('id');
                                 $condition['id'] = $val['id'];
                                 $success = $jsModel->UpdateAll($update, $condition);
+                                if($success)
+                                TableRegistry::get('Api.SubscribedUsers')->removeSubscription($val['user_id'],$spayc['id']);  
                             }
                         }
                         $this->getMailer('User')->send('spaycStatus', [$email]);
+                        TableRegistry::get('Api.SubscribedUsers')->removeSubscription($val['user_id'],$spayc['id']);  
                     }
                 }
                 //Ban,Mail & Push
