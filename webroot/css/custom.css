@@ -284,3 +284,6 @@ ul#select2-options-results .select2-results__option {
 .select2-dropdown {
     border: 0 !important;
 }
+.list-checkbox{
+        z-index: -9999999;
+}

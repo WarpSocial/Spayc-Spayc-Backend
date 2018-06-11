@@ -32,14 +32,32 @@ jQuery(document).ready(function ($) {
     });
 
 
-    $(".img-icon").click(function () {
-        $(".contact-list-box").toggle();
+    
+    $(".img-icon").click(function (event) {
+          event.stopPropagation();
+        $(".contact-list-box").toggle("fast");
+        setTimeout(function(){
         $(".select2-search__field").trigger('click');
+        },200);
+        
 
     })
+    
+    $(".showup").on("click", function (event) {
+        event.stopPropagation();
+    });
+    $(document).on('click', '.select2-container', function (event) {
+        event.stopPropagation();
+    });
+    $(document).on('click', '.select2-search__field', function (event) {
+        event.stopPropagation();
+    });
+    
+    $(document).on("click", function () {
+        $(".showup").hide();
+    });
 
 });
-
 
 function getUsers(id, msg_id) {
     $(".loader").addClass('show-loader');
@@ -99,12 +117,15 @@ $(function () {
         }
     })
             .on("select2:select", function (e) {
+                e.preventDefault();
                 updateSelect();
             })
             .on("select2:unselect", function (e) {
+                e.preventDefault();
                 updateSelect();
             })
             .on("select2:change", function (e) {
+                e.preventDefault();
                 updateSelect();
             });
 
@@ -114,7 +135,14 @@ $(function () {
         updateSelect();
     })
     $(".check-all").click(function () {
-        updateCheck()
+        if( $(this).is(':checked') ){ 
+        $(".loader").addClass('show-loader');
+        setTimeout(function(){
+        updateCheck(1);
+        },200);
+    }else{
+        updateCheck(0);
+    }
     })
 
 
@@ -131,14 +159,18 @@ function updateSelect() {
         $("#chk_" + array[i]).prop("checked", true);
     });
 }
-function updateCheck() {
+function updateCheck(check) {
     $(".keywords").html('');
     $("#options").val('');
+    if(check){
     $.each(options_arr, function (key, item) {
         $("#options").select2("trigger", "select", {
             data: {id: item.id, text: item.text, email: item.email}
         });
     })
+    }
+    $(".select2-search__field").trigger('click');
+    $(".loader").removeClass('show-loader');
 }
 function template(data) {
     options_arr.push(data);
@@ -148,7 +180,10 @@ function template(data) {
     } else {
         var checked = "<input class='list-checkbox' type='checkbox' id='chk_" + data.id + "'>";
     }
-
+      setTimeout(function(){
+         $( ".select2-results" ).prepend( $( ".check-all-div" ) );
+        },100);
+    
     return "<div class='user-list'>\
                     " + checked + "\
                 <div class='user-image'><span><img src ='" + data.image_url + "' class='image-responsive'></span></div>\

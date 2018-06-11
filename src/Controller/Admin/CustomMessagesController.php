@@ -69,21 +69,10 @@ class CustomMessagesController extends AdminController {
             $custom->user_id = implode(",", $data['users']);
             $custom->message = $data['message'];
             if ($this->CustomMessages->save($custom)) {
-
-                foreach ($data['users'] as $val) {
-                    $user = $this->Users->get($val);
-                    $email['email'] = $user['email'];
-                    $email['message'] = $data['message'];
-                    $email['name'] = $user['display_name'];
-                    $this->getMailer('User')->send('customMessages', [$email]);
-                    
-                            $push['requested_by'] = $this->Auth->user('id');
-                            $push['username'] = $this->Auth->user('display_name');
-                            $push['requested_to'] = $user['id'];
-                            $push['slug'] = CUSTOM_MESSAGES_SLUG;
-                            $this->Push->sendPushNotification($push);
-                }
-
+                $data['id']=$this->Auth->user('id');
+                $data['display_name']=$this->Auth->user('display_name');
+                TableRegistry::get('Queue.QueuedJobs')->createJob('CustomMessageNotifications',$data);
+              
                 $result_arr = ['result' => true, 'message' => $this->errorSuccessMessage['SEND-CUTSOM-MSG']];
             } else {
                 $result_arr = ['result' => false, 'message' => $this->errorSuccessMessage['SYSTEMERR']];
