@@ -1096,7 +1096,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
             }
          }
         $user = $this->Auth->user();
-        $pquery = TableRegistry::get('Api.PhysicalLocation')->findByUserId($user['id']);
+        #$pquery = TableRegistry::get('Api.PhysicalLocation')->findByUserId($user['id']);
         
         $spayc=TableRegistry::get('Api.Spaycs')->getNearBySpaycsOnMap($this->request->getData(),$user['id']);
         $friends = TableRegistry::get('Api.FriendRequest')->getNearByFriendsOnMap($this->request->getData(), $user['id']);

@@ -170,9 +170,9 @@ class ImgUploadBehavior extends Behavior {
                 $entity->set($config['field'], $filePath);                
             }else if(isset($requestField) && filter_var($requestField, FILTER_VALIDATE_URL)) {
                 //For Upload on AWS Code
-//                   $fileName= pathinfo($requestField,PATHINFO_BASENAME);
-//                   $filePath = $this->__saveToAWS($requestField,$fileName);                
-                   $entity->set($config['field'], $requestField);    
+                //$fileName= pathinfo($requestField,PATHINFO_BASENAME);
+                //$filePath = $this->__saveToAWS($requestField,null);                
+                $entity->set($config['field'], $requestField);    
             }else{
                 $entity->unsetProperty($config['field']);
             }
@@ -194,15 +194,37 @@ class ImgUploadBehavior extends Behavior {
         
     }
     
-    private function __saveToAWS($requestField,$fileName){        
+    private function __saveToAWS($requestField,$fileName=null){
+        if(is_null($fileName)){
+            if(!empty($requestField['name'])){
+                $fileName  = $requestField['name'];
+            }else{
+                $fileName  = basename($requestField);
+            }
+        }
+        if(!empty($requestField['type'])){
+            $contentType = $requestField['type'];
+        }elseif(!empty($requestField['tmp_name'])){            
+            $contentType = get_headers($requestField['tmp_name'], 1)["Content-Type"];
+        }else{
+            $contentType = get_headers($requestField, 1)["Content-Type"];
+        }
         try {
              if (!empty($requestField['tmp_name'])) {
                 $resource = fopen($requestField['tmp_name'], 'r');
              }else if(isset($requestField) && filter_var($requestField, FILTER_VALIDATE_URL)) {
                 $requestField=$this->cropImage($requestField);
-                  $resource = fopen($requestField, 'r');
+                $resource = fopen($requestField, 'r');
              }
-             $AWS3File = $this->aws3Obj->upload($this->_aws3['bucket'], $fileName, $resource, 'public-read');
+             
+             //$AWS3File = $this->aws3Obj->upload($this->_aws3['bucket'], $fileName, $resource, 'public-read');
+             $AWS3File = $this->aws3Obj->putObject([
+                'Bucket' => $this->_aws3['bucket'], 
+                'Key' => $fileName, 
+                'ContentType'=>$contentType,
+                'Body'=>$resource, 
+                'ACL' =>'public-read'
+                ]);
         } catch (S3Exception $e) {
             echo "There was an error uploading the file. s3 error ".$e->getMessage();
         }

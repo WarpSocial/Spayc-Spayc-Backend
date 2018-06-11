@@ -337,6 +337,19 @@ class UsersTable extends Table {
                     },
                 'message'=>__('Age must be 13 or greater than 13 year\'s old.'),
             ]);
+         $validator
+                ->requirePresence('email', 'create',__('Email is required field.'))
+                ->notEmpty('email',__('Email is required field.'))
+                ->email('email', false, __('Invalid email address.'))                
+                ->add('email', 'unique', [
+                    'rule' => function($value,$context){
+                        if(!empty($value)){                            
+                             return !$this->exists(['LOWER(email)'=> strtolower($value)]);
+                        }else{
+                            return false;
+                        }
+                    },
+                    'message'=>__('Email already exist.')]) ;            
 
         $validator
             //->requirePresence('gender', 'create',__('Gender is required field.'))    
