@@ -42,7 +42,7 @@ $matrixImgUrlQueryString = '?width=0&height=0&method=scale';
                         <?php if(strtolower($content['msgtype']) == $chat_msg_type['text']) { ?>
                         <p><?= !empty($content['body'])? trim($content['body']): '' ?></p>
                         <p><?= $this->Custom->getChatMsgDate($comment['origin_server_ts']); ?></p>
-                        <?php } else if(strtolower($content['msgtype']) == $chat_msg_type['image']) { ?>
+                        <?php } else if(strtolower($content['msgtype']) == strtolower($chat_msg_type['image'])) { ?>
                         <div class="comment-reply-image">
                             <div class="image-reply d-flex flex-nowrap">
                                 <div class="user-reply-image-content">

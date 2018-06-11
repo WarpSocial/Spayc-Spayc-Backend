@@ -61,6 +61,12 @@ class CustomHelper extends Helper {
             return $userObj;
         }
         
+        public function getJoinedSpaycObj($spaycId = null, $userId = null) {
+           $jsModel = TableRegistry::get('JoinedSpayc');
+           $jsObj = $jsModel->getJoinedSpaycObj($spaycId, $userId);
+           return $jsObj->status;
+        }
+        
         public function getChatMsgDate($msgdate) {
            $ts = (int) trim($msgdate);
            $msgdate =  date(DATEFORMAT_DISPLAY, ($ts/1000));

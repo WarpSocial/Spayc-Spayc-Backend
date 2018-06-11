@@ -98,4 +98,19 @@ class SpamReportsTable extends Table
 //        $rules->add($rules->existsIn(['event_id'], 'Events'));
           return $rules;
     }
+    
+    public function getspamReportObj($keyword){
+        $query = $this->find();
+        $query->select(['SpamReports.event_id','SpamReports.spayc_id','SpamReports.reported_to','Spaycs.id','Spaycs.matrix_room_id','Spaycs.name','total_user_reported_by' => $query->func()->count('event_id')])
+                ->contain(['Spaycs' => function($q)use($keyword) {
+                        $qq= $q->select(['Spaycs.id','Spaycs.matrix_room_id','Spaycs.name']);
+                        if(!empty($keyword))
+                          $qq->where(['LOWER(Spaycs.name) LIKE' => "%" . $keyword . "%"]);
+
+                        return $qq;
+                         }
+                    ])
+                    ->group(['SpamReports.event_id,SpamReports.spayc_id,SpamReports.reported_to,Spaycs.id, Spaycs.name,Spaycs.matrix_room_id']);
+       return $query;
+    }
 }
