@@ -80,9 +80,9 @@
 	          if (data.result) {
                       $(".t_status_"+data.res).text(data.status);
                       $(".status_"+data.res).html($("#"+data.status+"_image").html());
-                      var value="Banned";
+                      var value="Ban";
                       if(data.status=="Banned")  {
-                        value='Unbanned';
+                        value='Unban';
                         $('.spaycs-msg').removeClass('success-alert').addClass('error-alert');
                       } else {
                         $('.spaycs-msg').removeClass('error-alert').addClass('success-alert'); 

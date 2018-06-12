@@ -50,8 +50,8 @@ class SpamReportsController extends AdminController
         if ($this->request->is(['post','put'])) {
            $spamUserObj = $this->Users->get($userId);
            $data['matrix_room_id']=$spayc->matrix_room_id;
-           $data['matrix_user_id']=$this->Users->get($spayc->user_id)->matrix_user_id;
-           $data['matrix_token'] = $spamUserObj->matrix_access_token;
+           $data['matrix_user_id']=$spamUserObj->matrix_user_id;
+           $data['matrix_token'] = $this->Users->get($spayc->user_id)->matrix_access_token;
            $data['status'] = $status;
            $matrix = $this->Matrix->banMember($data);
             if($status == UNBANNED){
