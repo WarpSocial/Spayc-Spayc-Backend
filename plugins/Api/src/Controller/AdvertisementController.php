@@ -52,7 +52,7 @@ class AdvertisementController extends AppController {
             $this->restException(['status' => 'failed', 'message' => 'Spayc id is required.'], 400);
         }
 
-        $entities = $this->Advertisement->find()->where(['id' => $data['id']]);
+        $entities = $this->Advertisement->find()->where(['id' => $data['id'], "status != 'Removed'"]);
 
         if ($entities->isEmpty()) {
             $this->restException(['status' => 'failed', 'message' => __('Invalid Advertisement id.')], 400);
@@ -237,7 +237,7 @@ class AdvertisementController extends AppController {
                 $array['spaycs'] = $spayc;
             $response = ['status' => 'success', 'message' => 'Advertisement Details', 'data' => $array];
         }else {
-            $response = ['status' => 'failed', 'message' => __('No Advertisement found')];
+             $this->restException(['status' => 'failed', 'message' => 'Record not found.'], 404);
         }
         $this->set($response);
     }

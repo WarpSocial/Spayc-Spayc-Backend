@@ -377,7 +377,11 @@ class UsersController extends AdminController
                     $user->statusTxt = $txtMassage['unblock'];
                     $pushNotificationAdminSlug = $pushNotificationAdminSlug['unblocked'];
                     $result_arr = ['result' => true, 'status'=>$statusArr['active'], 'message' => $displayName.' '.$this->errorSuccessMessage['UNBLOCKED-MSG']]; 
-                } else {                       
+                } else { 
+                    $this->loadModel('UserLogs');
+                    $userLogsExist = $this->UserLogs->exists(['user_id'=>$user->id]);
+                    if($userLogsExist)                    
+                    $this->UserLogs->query()->delete()->where(['user_id' =>$user->id])->execute();
                     $user->statusTxt = $txtMassage['block'];
                     $pushNotificationAdminSlug = $pushNotificationAdminSlug['blocked'];
                     $result_arr = ['result' => true, 'status'=>$statusArr['inactive'], 'message' => $displayName.' '.$this->errorSuccessMessage['BLOCKED-MSG']];   
@@ -437,7 +441,51 @@ class UsersController extends AdminController
         $this->set(compact('spaycs','keyword','user', 'listBy'));        
         $this->set('_serialize', ['spaycs']);
     }
-
+    
+    
+    
+    public function searchUser() {
+        $this->viewBuilder()->layout('');
+        $this->autoRender = false;
+        $result_arr = array();
+          $data = $this->request->getData();
+        $obj = TableRegistry::get("Users")->find('all',
+                ['fields' =>['id'=>'Users.id','text'=>'Users.display_name','image_url'=>'image_url','email']])
+                 ->join([
+                            'table' => 'user_images',
+                            'type' => 'LEFT',
+                            'conditions' => [
+                                'Users.id = user_images.user_id'
+                            ]]);
+          if(!empty($data['q']['term'])){            
+            $obj->where(['OR' => ['LOWER(Users.display_name) LIKE' => "%".$data['q']['term']."%"]]);
+        }
+        $obj->order(['Users.display_name'=>'ASC'])->toArray();
+        if(!empty($obj)){
+              $result_arr = ['results' => $obj];
+        }
+           echo json_encode($result_arr);
+            die;
+        
+    }
+   
+    public function resendMessageUsers() {
+        $this->viewBuilder()->layout('');
+        $this->autoRender = false;
+        $result_arr = array();
+          $data = $this->request->getData();
+          $id= explode(",", $data['id']);
+        $obj = TableRegistry::get("Users")->find('all',
+                ['fields' =>['id'=>'Users.id','text'=>'Users.display_name','email']])
+                ->where(['id IN ' => $id])->toArray();
+        if(!empty($obj)){
+              $result_arr = ['results' => $obj];
+        }
+           echo json_encode($result_arr);
+            die;
+        
+    }
+    
 }
 
 

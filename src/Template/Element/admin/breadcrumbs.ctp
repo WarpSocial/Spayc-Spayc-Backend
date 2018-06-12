@@ -1,7 +1,7 @@
 <?php
 use Cake\Routing\Router;
 $controller_name = $this->request->param('controller');
-$name = (strtolower($controller_name) == 'spaycs')?SITE_TITLE.'s': ucfirst($controller_name);
+$name = (strtolower($controller_name) == 'spaycs')?"Manage ".SITE_TITLE.'s': "Manage ".ucfirst($controller_name);
 ?>
  <div class="breadcrumbs">
 	<div class="container">
@@ -13,6 +13,12 @@ $name = (strtolower($controller_name) == 'spaycs')?SITE_TITLE.'s': ucfirst($cont
   		$html .="<span>".$action."</span>";
   		$html .="</p>";
   		echo $html;
-	  ?>
+	  if($controller_name=='CustomMessages'){
+//              echo '<button class="button message-creation btn-lg-lg" data-toggle="modal" data-target="#customMessage">Custom Messages</button>';
+                ?>
+          <button type="button" rel="modal-dialog-lg confirm-message" class="pop button message-creation btn-lg-lg" page="<?php echo $this->Url->build(["controller" => "CustomMessages","action" => "getCustomMessage"]);?>">
+                      Custom Messages</button> 
+          <?php } ?>
+          
 	</div>
 </div>

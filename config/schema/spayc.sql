@@ -284,8 +284,8 @@ INSERT INTO "users" ("username", "email", "password", "gender", "dob", "phone", 
 
 -- Adminer 4.3.1 PostgreSQL dump
 INSERT INTO "notification_types" ("id", "type", "message", "slug", "created", "modified")
-VALUES ('19', 'Blocked by admin', 'You''ve been blocked. What did you do now?', 'blocked-by-admin', now(), NULL),
-VALUES ('20', 'UNblocked by admin', 'You''ve been unblocked.', 'unblocked-by-admin', now(), NULL);
+VALUES ('19', 'Blocked by admin', 'You''ve been blocked. What did you do now?', 'user-blocked-by-admin', now(), NULL),
+VALUES ('20', 'UNblocked by admin', 'You''ve been unblocked.', 'user-unblocked-by-admin', now(), NULL);
 
 
 DROP TABLE IF EXISTS "queue_phinxlog";
@@ -597,3 +597,16 @@ SELECT create_hypertable('spam_reports', 'created');
 
 INSERT INTO "notification_types" ("id", "type", "message", "slug", "created", "modified") VALUES
 ('', 'Warp Deleted by admin',    'Your Warp has been deleted either by you or admin! Sorry!',    'spayc-deleted-by-admin', now(),    NULL);
+
+DROP TABLE IF EXISTS "custom_messages";
+DROP SEQUENCE custom_messages_id_seq;
+CREATE SEQUENCE custom_messages_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
+
+CREATE TABLE "public"."custom_messages" (
+    "id" bigint DEFAULT nextval('custom_messages_id_seq') NOT NULL,
+    "user_id" character varying(500) NOT NULL,
+    "message" text NOT NULL,
+    "created" timestamp NOT NULL,
+    "modified" timestamp,
+    CONSTRAINT "custom_messages_pkey" PRIMARY KEY ("id")
+) WITH (oids = false);

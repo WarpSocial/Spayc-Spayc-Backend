@@ -4,7 +4,7 @@
       <?php echo $this->Form->input('spayc-id', ['type' => 'hidden', 'value' => $spayc->id]); ?>
       <h2>
           Are you sure you want to <?= (strtolower($spayc->status) == 'active')?"Block":"Unblock";?><br />
-          <?= !empty($spayc->name)?'"'.h(ucwords($spayc->name)).'"':'this' ?> spayc? 
+          <?= !empty($spayc->name)?'"'.h(ucwords($spayc->name)).'"':'this' ?> warp? 
       </h2>
       <div class="d-flex justify-content-center pt-20">
           <button class="button btn-sm skip-popup" data-dismiss="modal">No</button>

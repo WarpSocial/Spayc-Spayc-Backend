@@ -316,12 +316,18 @@ class MatrixComponent extends Component {
         if(empty($data['image_url'])){
             return;
         }        
-        if(strstr($data['image_url'],'http') !== false){
-            $fileInfo = pathinfo($data['image_url']);
+        if(strstr($data['image_url'],'http') !== false){ 
+            $cdnhttp = new Client();
+            $cdnresponse = $cdnhttp->get($data['image_url']);
+            $filename = basename($data['image_url']);
+            $contentType = $cdnresponse->getHeaderLine('content-type');
+            //$ext = explode('/',$mimeType)[1];
+            /*$fileInfo = pathinfo($data['image_url']);
             $filename = $fileInfo['basename'];
             $contentType = 'image/'.$fileInfo['extension'];
-            $rawfile = $data['image_url'];
+            $rawfile = $data['image_url'];*/
         }else{
+            die("end");die;
             $filename = $data['image_url']['name'];
             $contentType = $data['image_url']['type'];
             $rawfile = $data['image_url']['tmp_name'];
@@ -336,7 +342,8 @@ class MatrixComponent extends Component {
         $http = new Client(['headers' => ['Content-Type' =>$contentType]]);
         $httpResponse = $http->post(
                 $url, 
-                file_get_contents($rawfile),
+                $cdnresponse->getBody(),
+                //file_get_contents($rawfile),
                 [
                     'ssl_verify_host' => $this->config('sslverify'), 
                     'ssl_verify_peer' => $this->config('sslverify'),
@@ -542,7 +549,7 @@ class MatrixComponent extends Component {
     }
     /**
      * banMember method to ban the user from the room
-     * @param Array $data include the matrix_user_id,matrix_token,matrix_room_id
+     * @param Array $data include the matrix_user_id,matrix_token,matrix_room_id and status ban|unbanned
      * @param Bool true|false
      */
     public function banMember($data = []) {
@@ -555,7 +562,7 @@ class MatrixComponent extends Component {
         ];
         $roomId  = $this->validRoomId($data['matrix_room_id']);
         $http = new Client();
-        if($data['status'] == 'Unbanned'){
+        if(strtolower($data['status']) == 'unbanned'){
             $apiEndpoint = 'unban';            
         }else{
             $apiEndpoint = 'ban';

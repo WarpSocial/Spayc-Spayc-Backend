@@ -47,11 +47,13 @@ class JoinSpaycsController extends AppController {
                                 ->where(['JoinedSpayc.user_id'=>$user['id']]);
                     },
                 ])
-                ->where(['id'=>$data['spayc_id']]);
+                ->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
         if($spaycs->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>__('Warp is no longer available..')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Warp is no longer available.')], 400);
         }
         $spayc = $spaycs->first();
+        /* if spayc id contain matrix room id*/
+        $data['spayc_id'] = $spayc->id;
         if(!empty($spayc->parent_id)){
             $this->restException(['status'=>'failed','message'=>__('Not allowed to join sub warp.')], 400);
         }
@@ -115,7 +117,7 @@ class JoinSpaycsController extends AppController {
                     if(!TableRegistry::get('Api.SubscribedUsers')->isSubscribed($user['id'],ACTIVE)){
                         $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);
                     }
-                     $this->Matrix->deleteTag($spayc->matrix_room_id,$user['UserLogs']['matrix_access_token'],$user['UserLogs']['matrix_user_id']);
+                    $this->Matrix->deleteTag($spayc->matrix_room_id,$user['UserLogs']['matrix_access_token'],$user['UserLogs']['matrix_user_id']);
                 }
                 $jsModel->getConnection()->commit();
                 $friends = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($user['id'], 'Accepted');

@@ -455,6 +455,7 @@ class UsersController extends AppController {
             'dob'=>(new \Cake\I18n\Time($user['dob']))->format("Y-m-d"),
             'country_code'=>$user['country_code'],
             'phone'=>$user['phone'],
+            'password'=>$mdata['password'],
             'website_url'=>$user['website_url'],
             'address'=>$user['address'],
             'bio_data'=>$user['bio_data'],
@@ -1213,7 +1214,7 @@ class UsersController extends AppController {
         if(!$friend){
             $this->restException(["status"=>"success",'message'=>__("Record not found")],204);
         }
-        $friends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username','Users.display_name', 'Users.matrix_user_id', 'Users.matrix_access_token'], 'conditions'=>['Users.id IN'=>$friend, 'Users.id !='=>$userId, 'Users.status'=>'Active']]);
+        $friends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username','Users.display_name', 'Users.matrix_user_id', 'Users.matrix_access_token'], 'conditions'=>['Users.id IN'=>$friend, 'Users.id !='=>$userId, 'Users.status IN'=>[ACTIVE,INACTIVE]]]);
         $friends->contain([          
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
@@ -1383,7 +1384,7 @@ class UsersController extends AppController {
         }
         
         $data = $this->request->getData();
-        Log::info($data);
+        //Log::info($data);
         //$this->Users->pusherData($data);
         /* for direct notification */
         if(!empty($data['notification']['content']['actionBy']) && ($data['notification']['content']['actionBy'] == 'Self' )){
@@ -1419,7 +1420,7 @@ class UsersController extends AppController {
         $items['device_token'] = $deviceToken = $device['pushkey'];
         $items['date_time'] = date('m-d-Y H:i:s',$device['pushkey_ts']);
         if(!empty($senderId) && !empty($receiverId) && in_array($msgType,['m.replyText','m.likeMessage'])){
-            $items['id'] = Utils::uniqueInteger();
+            //$items['id'] = Utils::uniqueInteger();
             $items['requested_by'] = $senderId->id;
             $items['requested_to'] = $receiverId->id;
             $items['date_time'] = $items['date_time'];

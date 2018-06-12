@@ -62,11 +62,18 @@ class UserMailer extends Mailer {
             ->template('userstatus');
     }
     public function spaycStatus($spayc) {        
-        $this->viewVars(['user' => $spayc])
+        $this->viewVars(['spayc' => $spayc])
             ->to($spayc['email'])
-            ->subject(Configure::read('userstatus_subject'))
+            ->subject(Configure::read('spaycstatus_subject'))
             ->emailFormat('html')
-            ->template('userstatus');
+            ->template('spaycstatus');
+    }
+    public function customMessages($user) {        
+        $this->viewVars(['user' => $user])
+            ->to($user['email'])
+            ->subject(Configure::read('custom_messages_subject'))
+            ->emailFormat('html')
+            ->template('custommessages');
     }
 
 }

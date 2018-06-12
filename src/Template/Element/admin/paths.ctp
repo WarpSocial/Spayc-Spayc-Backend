@@ -7,6 +7,8 @@ var base_url_admin = '<?php echo $base_url; ?>admin/';
 var errorSuccessMessage = '<?=$error_success_message?>';
 errorSuccessMessage = JSON.parse(errorSuccessMessage);
 var UserUrls = {
+            'searchUser':'<?php echo Router::url(['_name' => 'searchUser']); ?>',
+            'resendMessageUsers':'<?php echo Router::url(['_name' => 'resendMessageUsers']); ?>',
             'ForgotPassword':'<?php echo Router::url(['_name' => 'forgotPassword']); ?>',
             'Success': '<?php echo Router::url(['_name' => 'success']); ?>',
         };
