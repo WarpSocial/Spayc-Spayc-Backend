@@ -460,7 +460,7 @@ class UsersController extends AdminController
           if(!empty($data['q']['term'])){            
             $obj->where(['OR' => ['LOWER(Users.display_name) LIKE' => "%".$data['q']['term']."%"]]);
         }
-        $obj->limit(50)->toArray();
+        $obj->order(['Users.display_name'=>'ASC'])->toArray();
         if(!empty($obj)){
               $result_arr = ['results' => $obj];
         }
@@ -468,7 +468,24 @@ class UsersController extends AdminController
             die;
         
     }
-
+   
+    public function resendMessageUsers() {
+        $this->viewBuilder()->layout('');
+        $this->autoRender = false;
+        $result_arr = array();
+          $data = $this->request->getData();
+          $id= explode(",", $data['id']);
+        $obj = TableRegistry::get("Users")->find('all',
+                ['fields' =>['id'=>'Users.id','text'=>'Users.display_name','email']])
+                ->where(['id IN ' => $id])->toArray();
+        if(!empty($obj)){
+              $result_arr = ['results' => $obj];
+        }
+           echo json_encode($result_arr);
+            die;
+        
+    }
+    
 }
 
 

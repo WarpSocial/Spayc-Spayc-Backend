@@ -6,6 +6,18 @@ $groupTypeArr = unserialize(GROUP_TYPE_ARR);
 $statusArr = unserialize(STATUS_ARR);
 $txtMassage = unserialize(TEXT_MASSAGE); 
 $breadcrumbsTxt= ucfirst($spayc->name);
+
+    $spayEmoji=false;
+    $spaycImg='';
+    if(!empty($spayc->image)) {
+        $spaycImg = $spayc->image; 
+    } else if(!empty($spayc->spayc_category->code)){
+        $spayEmoji=true;
+        $dec = hexdec($spayc->spayc_category->code);
+        $spaycImg ="&#$dec;"; 
+    } else {
+      $spaycImg = 'no-image-big.png';
+    }
 ?>
 <!--=============breadcrumbs==============-->            
   <?php echo $this->element('admin/breadcrumbs', ['action'=> $breadcrumbsTxt]);?>
@@ -15,11 +27,15 @@ $breadcrumbsTxt= ucfirst($spayc->name);
         <div class="container">
           <div class="event-view-wrapper">
             <!--======event info=====-->
-            <div class="event-info clearfix">
-              <div class="image-wrap">
-              <?php
-                $spaycImg = !empty($spayc->image)?$spayc->image:'no-image-big.png';
-                echo $this->Html->image($spaycImg, ["alt" => "", 'class' =>'']); ?>
+            <div class="event-info d-flex clearfix">
+                <div class="image-wrap <?= !empty($spayEmoji)?'blank-emoji':''?>">
+              <?php 
+                if($spayEmoji){
+                    echo "<span class='emoji d-flex align-items-center justify-content-center w-100 h-100'>".$spaycImg."</span>";
+                } else {
+                    echo $this->Html->image($spaycImg, ["alt" => "", 'class' =>'']);
+                }
+              ?>
               </div>
               <div class="data-wrap">
                 <h1><?= !empty($spayc->name)?$spayc->name:BLANK ?></h1>
