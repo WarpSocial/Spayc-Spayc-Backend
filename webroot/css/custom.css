@@ -276,6 +276,9 @@
 .tooltip-top.disabled {
     cursor: default;
 }
+.tooltip-top.disabled a{
+    cursor: default;
+}
 .tooltip-top.disabled .tooltiptext {
     display: none !important;
 }
@@ -322,4 +325,17 @@
 }
 .error-page p a {
     color: #1a4c59;
+}
+.tooltip-top a:focus, .tooltip-top a:hover {
+ background: none;   
+}
+.spam-report-img {
+    height: 40px;
+    width: 40px;
+    
+}
+.spam-report-img img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
 }
