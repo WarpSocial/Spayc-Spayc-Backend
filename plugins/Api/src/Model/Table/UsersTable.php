@@ -342,13 +342,18 @@ class UsersTable extends Table {
                 ->notEmpty('email',__('Email is required field.'))
                 ->email('email', false, __('Invalid email address.'))                
                 ->add('email', 'unique', [
-                    'rule' => function($value,$context){
-                        if(!empty($value)){                            
-                             return !$this->exists(['LOWER(email)'=> strtolower($value)]);
+                    'rule' => function($value,$context){                   
+                        if(!empty($value)){
+                            $user = $this->get($context['data']['id']);
+                            if($user->getOriginal($context['field']) != $value){
+                                return !$this->exists(['LOWER(email)'=> strtolower($value)]);
+                            }else{
+                                return true;
+                            }
                         }else{
                             return false;
                         }
-                    },
+                    },                   
                     'message'=>__('Email already exist.')]) ;            
 
         $validator

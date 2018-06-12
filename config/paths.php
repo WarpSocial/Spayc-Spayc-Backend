@@ -91,6 +91,7 @@ define('ACCEPTED','Accepted');
 define('PENDING','Pending');
 define('BANNED','Banned');
 define('JOINED','Joined');
+define('UNBLOCK','Unblock');
 
 define('PRIVATETYPE','Private');
 define('PUBLICTYPE','Public');
