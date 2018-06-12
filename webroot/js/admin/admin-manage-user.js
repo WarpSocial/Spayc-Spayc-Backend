@@ -62,20 +62,61 @@
   	  });
    	  e.preventDefault();
   	});  
+        
+        
+    $(document).on('click', '#ban_spayc_member_btn', function (e) {                                     
+      form = $("form#ban_spayc_member_form");  
+      $(".loader").addClass('show-loader');          
+      setTimeout(function(){
+	    $.ajax({
+	       type:'POST',
+	       url:form.prop('action')+"/"+$("#set_status").val(),
+	       data: form.serialize(),
+	       dataType:'JSON',
+	       async: false,             
+	       success:function(data){  
+                  $(".loader").removeClass('show-loader'); 
+	          $( ".skip-popup").trigger('click'); 
+	          if (data.result) {
+                      $(".t_status_"+data.res).text(data.status);
+                      $(".status_"+data.res).html($("#"+data.status+"_image").html());
+                      var value="Banned";
+                      if(data.status=="Banned")  {
+                        value='Unbanned';
+                        $('.spaycs-msg').removeClass('success-alert').addClass('error-alert');
+                      } else {
+                        $('.spaycs-msg').removeClass('error-alert').addClass('success-alert'); 
+                      } 
+                      $(".status_div_"+data.res).attr("onclick","setStatus('"+value+"')");
+                      messageFadeOut('spaycs-msg',data.message);
+                  }
+	       },
+	       error: function (e,x,t) {
+	        $(".loader").removeClass('show-loader'); 
+	        ajax_error(e);
+               }
+            });
+  	  });
+   	  e.preventDefault();
+  	});
 
  }); 
 
-function showModel(description){
-	$("#cmnPoupUp").addClass('modal-dialog-lg');
-	$("#cmnPoupUp .modal-content").addClass('user-list-modal');
-	$("#cmnPoupUp .modal-content").html("<div class='modal-header'><h5 class='modal-title'>Description</h5><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true' class='modal-close'></span></button></div><div class='advertisement-desc'>"+description+"</div>");
-	$("#cmnPoupUp").modal('show');
+function showModel(description, heading){    
+    $("#cmnPoupUp").addClass('modal-dialog-lg');
+    $("#cmnPoupUp .modal-content").addClass('user-list-modal');
+    $("#cmnPoupUp .modal-content").html("<div class='modal-header'><h5 class='modal-title'>"+heading+"</h5><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true' class='modal-close'></span></button></div><div class='advertisement-desc'>"+description+"</div>");
+    $("#cmnPoupUp").modal('show');
 }
 
 
 function showAdmin(id, totalAdmin){
-	$("#cmnPoupUp").addClass('modal-dialog-lg');
-	$("#cmnPoupUp .modal-content").addClass('user-list-modal');
-	$("#cmnPoupUp .modal-content").html("<div class='modal-header'><h5 class='modal-title'>Admin ("+totalAdmin+")</h5><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true' class='modal-close'></span></button></div><div>"+$('#admin_'+id).html()+"</div>");
-	$("#cmnPoupUp").modal('show');
+    $("#cmnPoupUp").addClass('modal-dialog-lg');
+    $("#cmnPoupUp .modal-content").addClass('user-list-modal');
+    $("#cmnPoupUp .modal-content").html("<div class='modal-header'><h5 class='modal-title'>Admin ("+totalAdmin+")</h5><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true' class='modal-close'></span></button></div><div>"+$('#admin_'+id).html()+"</div>");
+    $("#cmnPoupUp").modal('show');
+}
+
+function setStatus(value) {
+   $("#set_status").val(value);
 }

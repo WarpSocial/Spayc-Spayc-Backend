@@ -26,19 +26,31 @@ $breadcrumbTxt = !empty($listBy) ? SITE_TITLE.'s '.$listBy.' by '.ucwords($user-
             <!--=======Square-box=======-->
               <?php if ($spaycsCount) {
                  $spaycImgShadow = 'gradient-layer.png';
-                foreach($spaycs as $spayc) {                
+                foreach($spaycs as $spayc) {    
+                  $spayEmoji=false;
                   $spaycImg ='no-image.png';                 
                   $spaycImgClass ='no-image-placeholder';                  
                   if(!empty($spayc->image)){
                     $spaycImg =$spayc->image;                                
                     $spaycImgClass='';
+                  } else if(!empty($spayc->spayc_category->code)){
+                    $spayEmoji=true;
+                    $dec = hexdec($spayc->spayc_category->code);
+                    $spaycImg ="&#$dec;"; 
                   }
+
+                  
+                  
+                  
               ?>  
               <?php                
               $blocktxt =(ucfirst($spayc->status) == $statusArr['active'])?"Block":"Unblock";?>
               <div class="square-box spayc-div-listing <?php echo $blocktxt =='Block'?'':'disabled';?>">
-                  <div class="image-wrap <?= $spaycImgClass?>">
-                    <?= $this->Html->image($spaycImg, ["alt" => "", 'class' =>'']); ?>
+                  <div class="image-wrap <?= !empty($spayEmoji)?'blank-emoji':''?> <?= $spaycImgClass?>">
+                    <?php if($spayEmoji){
+                      echo "<span class='emoji d-flex align-items-center justify-content-center w-100 h-100'>".$spaycImg."</span>";
+                    } else { ?>
+                    <?php echo $this->Html->image($spaycImg, ["alt" => "", 'class' =>'']); }?>
                     <?= $this->Html->image($spaycImgShadow, ["alt" => "", 'class' =>'img-shadow']); ?>
                       <div class="box-heading <?= strtolower($spayc->type)?>"><?= !empty($spayc->type)?$spayc->type:BLANK?></div>
                       <div class="tag-line ell">

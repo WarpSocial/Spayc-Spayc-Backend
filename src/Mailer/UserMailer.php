@@ -68,5 +68,12 @@ class UserMailer extends Mailer {
             ->emailFormat('html')
             ->template('spaycstatus');
     }
+    public function customMessages($user) {        
+        $this->viewVars(['user' => $user])
+            ->to($user['email'])
+            ->subject(Configure::read('custom_messages_subject'))
+            ->emailFormat('html')
+            ->template('custommessages');
+    }
 
 }
