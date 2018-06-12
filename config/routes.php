@@ -79,6 +79,7 @@ Router::prefix('admin', function ($routes) {
     $routes->connect('/', ['controller' => 'Users', 'action' => 'login'],['_name' => 'login']);    
     $routes->connect('/forgotPassword/*', ['controller' => 'Users','action' => 'forgotPassword'],['_name' => 'forgotPassword']);
     $routes->connect('/searchUser', ['controller' => 'Users','action' => 'searchUser'],['_name' => 'searchUser']);
+    $routes->connect('/resendMessageUsers', ['controller' => 'Users','action' => 'resendMessageUsers'],['_name' => 'resendMessageUsers']);
     $routes->connect('/success/*', ['controller' => 'Users','action' => 'success'],['_name' => 'success']);
     $routes->fallbacks(DashedRoute::class);
 });
