@@ -2,9 +2,9 @@
 use Cake\Routing\Router;
 use Api\Auth\ApiHasher;
 $statusArr = unserialize(STATUS_ARR);
-$userCount=$showPassword=$filter=false;
-if(count($users) > 0) 
-  $userCount=true; 
+$messagesCount=$showPassword=$filter=false;
+if(count($messages) > 0) 
+  $messagesCount=true; 
 if($this->request->query('debug')&&$this->request->query('debug')=='on')
   $showPassword=true;
 if($this->request->query())
@@ -40,9 +40,9 @@ if(isset($this->request->query['sort'])) {
 <!--=============breadcrumbs==============-->      
 <?php echo $this->element('admin/breadcrumbs', ['action'=> $breadcrumbsTxt]);?>
 <section class="content-wrapper content-filter">
- <span class="error-alert alert-fixed-position users-msg header-alert" style="display: none;"></span>
+ <span class="success-alert alert-fixed-position users-msg header-alert" style="display: none;"></span>
         <!--===========filter================-->
-        <?php if($userCount || $filter){ 
+        <?php if($messagesCount || $filter){ 
              //   echo $this->element('admin/user-filter', ['userFilter'=> true]);
         ?>
       <!--============= table head ===================-->
@@ -54,86 +54,28 @@ if(isset($this->request->query['sort'])) {
             <div class="head-text flex-basis10"><span>No Of User</span></div>
             <div class="head-text flex-basis13 ml-auto text-left"><span>Action</span></div>
           </div>
-          <?php   if ($userCount) {?>  
-            <?php foreach($users as $user) { ?>
+          <?php   if ($messagesCount) {?>  
+            <?php foreach($messages as $message) { ?>
             <!--==============table data====================-->
-<!--              <div class="table-row">
-                <div class="table-data flex-basis15 text-left p-info">
-                  <span class="user-name"><?= !empty($user->display_name)?h(ucwords($user->display_name)):'' ?></span>
-                  <span class="ell"  class="d-inline-block" tabindex="0" data-toggle="tooltip" data-animation="false" title="<?php echo $user->email;?>"><?= !empty($user->email)?h($user->email):'' ?></span>
-                  <span class="user-contact"><?= !empty($user->phone)?h($user->country_code).'&nbsp;'.h($user->phone):''; ?>
-                  </span>
-                  <?php if($showPassword){ 
-                    if(empty($user->fb_id)){ 
-                  ?>
-                  <span class="ell user-password d-inline-block" tabindex="0" data-toggle="tooltip" data-animation="false" title="<?php echo ApiHasher::dehash($user->password);?>"><?= !empty($user->password)?'Pass->'.h(ApiHasher::dehash($user->password)):'' ?></span>
-                  <?php } ?>
-                  <span class="ell">
-                    <a href="javascript:void(0)" rel="modal-dialog-sm forgot-password-modal" class="pop change-password-text" page="<?php echo Router::url(['Controller' => 'Users', 'action'=> 'adminResetPassword',$user->id]);?>">Change Password</a>
-                  </span>
-                  <?php } ?>
-                </div>
-                <div class="table-data flex-basis11">
-                  <span><?= !empty($user->gender)?h($user->gender):BLANK ?></span>
-                </div>
-                <div class="table-data flex-basis11">
-                  <span><?= !empty($this->dateFormat($user->dob))?$this->dateFormat($user->dob):BLANK ?></span>
-                </div>
-                <div class="table-data flex-basis15 text-left">
-                  <span><?= !empty($user->address)?h($user->address):BLANK ?></span>
-                </div>
-                <div class="table-data flex-basis9">
-                  <span><?= !empty($user->joinedSpayc)?
-                            $this->Html->link($user->joinedSpayc,['controller' => 'Users', 'action' => 'warps', strtolower(JOINED), $user->id], ['class' => 'num-letter-spacing']):
-                            BLANK_COUNT ?>
-                  </span>
-                </div>
-                <div class="table-data flex-basis9">
-                  <span><?= !empty($user->createdSpayc)?
-                          $this->Html->link($user->createdSpayc,['controller' => 'Users', 'action' => 'warps', strtolower(CREATED), $user->id], ['class' => 'num-letter-spacing']):
-                            BLANK_COUNT ?>
-                  </span>
-                </div>
-                <div class="table-data flex-basis10">
-                  <span><?= !empty($user->friend)? $this->Html->link($user->friend,['controller' => 'Users', 'action' => 'index',$user->id], ['class' => 'num-letter-spacing']):BLANK_COUNT ?></span>
-                </div>
-                <div class="table-data flex-basis14">
-                  <span><?= !empty($user->userAdvertisement)?$this->Html->link($user->userAdvertisement,['controller' => 'Users', 'action' => 'userAdvertisement',$user->id], ['class' => 'num-letter-spacing']):BLANK_COUNT ?></span>
-                </div>
-                <div class="table-data flex-basis10">
-                  <span><?= !empty($this->dateFormat($user->created))?$this->dateFormat($user->created):BLANK ?></span>
-                </div>
-                table dropdown
-                <div class="table-data flex-basis6">
-                  <div class="dropdown table-view-dropdown">
-                    <div class="table-dropdown"  id="table-data-dropdown" data-toggle="dropdown">
-                      <span></span>
-                      <span></span>
-                      <span></span>
-                    </div>
-                  <div class="dropdown-menu" aria-labelledby="table-data-dropdown">
-                      <button class="dropdown-item block hide"> <i class="icon-block"></i>Block</button>
-                      <?php  $blocktxt = (ucfirst($user->status) == $statusArr['active'])?"Block":"Unblock";?>
-                      <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item status_<?= $user->id?> <?= strtolower($blocktxt)?>" page="<?php echo $this->Url->build(["controller" => "Users","action" => "setUserStatus",$user->id]);?>"><i class='icon-block'></i><span class="status_<?= $user->id?>"><?= $blocktxt?></span>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>-->
+
 <div class="table-row">
             <div class="table-data d-flex-a-center flex-basis40 text-left">
-              <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras iaculis enim eget convallis facilisis. Cras ut elit quis arcu convall…</span>
+              <span id="msg_<?=$message['id'];?>"><?=$message['message'];?></span>
             </div>
             <div class="table-data flex-basis20 text-left">
-              <span>Nov 09, 2017</span>
-              <span>3:24 AM</span>
+<!--              <span>Nov 09, 2017</span>
+              <span>3:24 AM</span>-->
+                   <span><?= !empty($this->dateFormat($message['created']))?$this->dateFormat($message['created']):BLANK ?></span>
+                  <span><?= !empty($this->dateFormat($message['created']))?$this->dateFormat($message['created'], TIMEFORMAT_SPAYC):BLANK ?></span>
+                
             </div>
             <div class="table-data flex-basis10 ">
-              <span>10</span>
+                <?php $count=count(explode(",",$message['user_id']));?>
+              <span><?=$count;?></span>
             </div>
             <div class="table-data flex-basis13 ml-auto text-left">
               <span>
-                  <button class="button btn-sm">Resend</button>
+                  <button type="button" onclick="getUsers('<?=$message['user_id'];?>','<?=$message['id'];?>')" rel="modal-dialog-lg" class="pop button message-creation btn-sm" page="<?php echo $this->Url->build(["controller" => "CustomMessages","action" => "getCustomMessage"]);?>">Resend</button>
               </span>
             </div>
           </div>
@@ -171,3 +113,5 @@ if(isset($this->request->query['sort'])) {
 </section>
 <?php echo $this->Html->script(['admin/user','admin/admin-manage-user']); ?>
 <?php echo $this->Html->script(['admin/user','select2.min']); ?>
+
+<?php echo $this->Html->script(['admin/spayc','admin/custom-messages']); ?>

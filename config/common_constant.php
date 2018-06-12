@@ -40,6 +40,7 @@ define('SPAYC_USER_STATUS_ARR', serialize($spaycuserstatus_arr));
 define('FRIEND_REQUESTED_STATUS_ARR', serialize($friend_requested_status_arr));
 define('PUSH_NOTIFICATION_ADMIN_SLUG', serialize($push_notification_admin_slug));
 define('PUSH_NOTIFICATION_SPAYC_ADMIN_SLUG', serialize($push_notification_spayc_admin_slug));
+define('CUSTOM_MESSAGES_SLUG', "custom-messages");
 define('SCRAPERSTATES', serialize($scraperStates));
 define('SCRAPERCOUNTRIES', serialize($scraperCountries));
 define('TEXT_MASSAGE', serialize($txt_massage));
@@ -114,6 +115,7 @@ $config['ERRORANDSUCCESSMSG'] = [
     'LINKAlRUSED'=>'Invalid Link, This link has been already used.',
     'PASSERRMSG'=>'Password must contain 8-30 character length, at least one letter and one number.',
     'SYSTEMERR'=>'Oops! Something went wrong. Please try again', 
+    'SEND-CUTSOM-MSG'=>'Message sent successfully', 
     'RESETLINKMSG'=>'A link to reset your password has been sent to your work email.',
     'BLOCKED-MSG'=>'has been Blocked.',
     'UNBLOCKED-MSG'=>'has been Unblocked.',

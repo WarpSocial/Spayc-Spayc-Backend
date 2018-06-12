@@ -44,5 +44,6 @@ return [
         'image/svg+xml' => 'svgz',
     ],
     'userstatus_subject'=>'User Status',
-    'spaycstatus_subject'=>'Warp Status'
+    'spaycstatus_subject'=>'Warp Status',
+    'custom_messages_subject'=>'Message from Admin'
 ];
