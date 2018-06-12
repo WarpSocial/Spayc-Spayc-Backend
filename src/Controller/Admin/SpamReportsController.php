@@ -54,7 +54,8 @@ class SpamReportsController extends AdminController
            $data['matrix_token'] = $spamUserObj->matrix_access_token;
            $data['status'] = $status;
            $matrix = $this->Matrix->banMember($data);
-            if($status == UNBANNED){               
+            if($status == UNBANNED){
+                $data['status'] = JOINED;
                 $BannedUserStatus->status = JOINED;
                 $this->Matrix->joinRoom($data);
             } else {                
@@ -62,7 +63,7 @@ class SpamReportsController extends AdminController
             }
             $this->Matrix->muteUnmute('mute',$spamUserObj->matrix_access_token, $spayc->matrix_room_id);
             if($jsModel->save($BannedUserStatus)){                        
-                if($data['status'] == BANNED){
+                if($status == BANNED){
                     TableRegistry::get('Api.SubscribedUsers')->removeSubscription($userId,$spayc->id);                
                 }
                 $response = ['result' => true, 'status'=>$status,'res'=>$spaycId.'-'.$userId, 'message'=> 'User has been '.strtolower($status).' successfully.'];

@@ -87,11 +87,11 @@ $matrixImgUrlQueryString = '?width=0&height=0&method=scale';
                             </div>
 
                             <?php
-                            $txt = UNBANNED;
+                            $txt = "Ban";
                             $imgTxt = 'user_unbanned.svg';
                             $banStatus = BANNED;
                             if ($getJsStatus == BANNED) {
-                                $txt = BANNED;
+                                $txt = "Unban";
                                 $imgTxt = 'user_banned.svg';
                                 $banStatus = UNBANNED;
                             }

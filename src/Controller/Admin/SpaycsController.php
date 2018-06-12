@@ -400,17 +400,17 @@ class SpaycsController extends AdminController {
     }
     
     /*** get list of comments from matrix for a warp ***/
-    public function comments($spaycMatrixRoomId = null) {
-        
+    public function comments($spaycMatrixRoomId = null) {        
         if (empty($spaycMatrixRoomId)) 
             return $this->redirect(['action' => 'index']);
         $this->set('title', $this->siteTitleMessage['MANAGEWARPS']);
         $chat_msg_type = unserialize(CHAT_MSG_TYPE);
         $eventsRepo = TableRegistry::get('Events');
-        $query = $eventsRepo->getComments($spaycMatrixRoomId);               
+        $query = $eventsRepo->getComments($spaycMatrixRoomId);  
+        $totalComments = $query->count();
         $this->paginate['order'] = ['stream_ordering' => 'Desc'];
         $comments = $this->paginate($query);   
-        $this->set(compact('comments'));
+        $this->set(compact('comments','totalComments'));
         $this->set('_serialize', ['comments']);
     }
     
