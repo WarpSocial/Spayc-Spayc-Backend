@@ -83,6 +83,11 @@ class SpaycsTable extends Table
             'foreignKey' => 'spayc_id',
             'className' => 'SubscribedUsers'
         ]);
+        $this->belongsTo('SpaycCategories', [
+            'foreignKey' => 'spayc_category_id',
+            'joinType' => 'LEFT',
+            'className' => 'Api.SpaycCategories'            
+        ]);
         $this->hasMany('Comments', [
             'dependent' => true,
             'foreignKey' => 'spayc_id',
@@ -222,7 +227,7 @@ class SpaycsTable extends Table
     public function getWarpsCreatedNJoinedByUser($userId, $listBy){
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, $this->FRIEND_REQUESTED_STATUS_ARR['accepted']);
         $spaycs = $this->find();
-        $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date', 'Spaycs.status'])
+        $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date', 'Spaycs.status','Spaycs.spayc_category_id'])
             ->where(['Spaycs.group_type !='=>'trusted_private','Spaycs.parent_id IS'=>null]);
             if($listBy == JOINED){
                 $spaycs->where(['Spaycs.id IN'=>$this->joinedSpayc($userId)]);
@@ -238,6 +243,9 @@ class SpaycsTable extends Table
                 },
                 'Comments' => function($q) {
                     return $q->select(['Comments.spayc_id', 'Comments.comment']);
+                },
+                'SpaycCategories' => function($q) {
+                    return $q->select(['SpaycCategories.id', 'SpaycCategories.name','SpaycCategories.code']);
                 }
             ]);
         if($listBy == JOINED){
@@ -424,8 +432,8 @@ class SpaycsTable extends Table
     }
     public function getWarpsViewBySpaycId($spaycId, $userId, $friend) {
         $spayc = $this->find();
-        $spayc->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.parent_id','Spaycs.created','Spaycs.modified','Spaycs.status'])
-                ->where(['id'=>$spaycId, 'Spaycs.group_type !=' =>'trusted_private'])
+        $spayc->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.parent_id','Spaycs.created','Spaycs.modified','Spaycs.status', 'Spaycs.spayc_category_id'])
+                ->where(['Spaycs.id'=>$spaycId, 'Spaycs.group_type !=' =>'trusted_private'])
                 ->contain([
                     'SubSpaycs' => function($q) {
                     $exp = $q->newExpr()->addCase($q->newExpr()->add(['location IS NULL']),"");
@@ -445,9 +453,12 @@ class SpaycsTable extends Table
                     },                            
                     'SubscribedUsers' => function($q) {
                         return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
+                    },
+                    'SpaycCategories' => function($q) {
+                        return $q->select(['SpaycCategories.id', 'SpaycCategories.name','SpaycCategories.code']);
                     }
                 ]);
-        $spayc->order(['created'=>'DESC']); 
+        $spayc->order(['Spaycs.created'=>'DESC']); 
         $spayc->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend, $userId) {
             return $results->map(function ($row) use($friend, $userId) {                
                 $row['friends'] = TableRegistry::get('JoinedSpayc')->getTotalJoinedFriends($row->id, $friend);

@@ -67,9 +67,9 @@ class CustomHelper extends Helper {
            return $jsObj->status;
         }
         
-        public function getChatMsgDate($msgdate) {
+        public function getChatMsgDate($msgdate) {           
            $ts = (int) trim($msgdate);
-           $msgdate =  date(DATEFORMAT_DISPLAY, ($ts/1000));
+           $msgdate =  date(DATEFORMAT_DISPLAY, ($ts/1000)).'&nbsp;at&nbsp;'.date(TIMEFORMAT_SPAYC, ($ts/1000));
            return $msgdate;
         }
         

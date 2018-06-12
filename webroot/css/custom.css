@@ -1,3 +1,4 @@
+
 .breadcrumbs {
     top: 65px;
     position: fixed;
@@ -338,4 +339,8 @@
     height: 100%;
     width: 100%;
     object-fit: cover;
+}
+.blank-emoji {
+    background: #eaeef0 !important;
+    cursor: default !important;
 }
