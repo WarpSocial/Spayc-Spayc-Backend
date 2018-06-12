@@ -10,7 +10,7 @@ $name = (strtolower($controller_name) == 'spaycs')?"Manage ".SITE_TITLE.'s': "Ma
   		$html = '';
   		$html ="<p><span>".$this->Html->link($name,['controller' => $controller_name, 'action' => 'index'])."</span>";
   		if(!empty($action))
-  		$html .="<span>".$action."</span>";
+  		$html .="<span>".ucfirst ($action)."</span>";
   		$html .="</p>";
   		echo $html;
 	  if($controller_name=='CustomMessages'){
