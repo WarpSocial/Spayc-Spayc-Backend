@@ -1,7 +1,7 @@
 <?php
 use Cake\Routing\Router;
 $controller_name = $this->request->param('controller');
-$name = (strtolower($controller_name) == 'spaycs')?SITE_TITLE.'s': ucfirst($controller_name);
+$name = (strtolower($controller_name) == 'spaycs')?"Manage ".SITE_TITLE.'s': "Manage ".ucfirst($controller_name);
 ?>
  <div class="breadcrumbs">
 	<div class="container">

@@ -82,6 +82,33 @@ class MatrixComponent extends Component {
             return false;
         }
     }
+    /**
+     * logogut to get user logout from the matrix
+     * 
+     * @param string $accessToken
+     * 
+     * @return Bool true|error
+     */
+    
+    public function logout($accessToken){
+        if(empty($accessToken)){
+            return false;
+        }
+        
+        $url = $this->config('url') .DS.$this->config('client'). DS.'logout?access_token='.$accessToken;
+        $http = new Client();
+        $httpResponse = $http->post(
+                $url, 
+                json_encode([]), 
+                $this->bodyType()
+            );
+        $response = json_decode($httpResponse->body,true);
+        if($httpResponse->isOk()){
+            return $response;
+        }else{
+            return false;
+        }
+    }
     
     /**
      * register to register new account to matrix chatserver
@@ -180,17 +207,16 @@ class MatrixComponent extends Component {
             $validInput['is_direct'] = $items['is_direct'];
             $validInput['room_alias_name'] = 'direct_'.$validInput['room_alias_name'];
         }elseif(!empty($items['parent_matrix_room_id'])){
-            if(!empty($category->name)){
-               // $validInput['room_alias_name'] = $category->name.'_'.$validInput['room_alias_name'];
-            }
             $validInput['room_alias_name'] = 'subspayc_'.$validInput['room_alias_name'];
+            if(!empty($category->id)){
+                $validInput['room_alias_name'] = $category->id.'_'.$validInput['room_alias_name'];
+            }            
         }else{
-            if(!empty($category->name)){
-                //$validInput['room_alias_name'] = $category->name.'_'.$validInput['room_alias_name'];
-            }
             $validInput['room_alias_name'] = 'parentspayc_'.$validInput['room_alias_name'];
+            if(!empty($category->id)){
+                $validInput['room_alias_name'] = $category->id.'_'.$validInput['room_alias_name'];
+            }
         }
-       #pr($validInput);die;
         $url = $this->config('url') .DS.$this->config('client'). DS.'createRoom';
         $http = new Client(['headers' => ['Authorization' => 'Bearer ' . $items['matrix_token']]]);
         $httpResponse = $http->post(
@@ -414,6 +440,64 @@ class MatrixComponent extends Component {
             return true;
         }
     }
+    /**
+     * tagRoom to tag to the room
+     * 
+     * @param String $matrixRoomId matrix room id
+     * @param String $matrixToken user matrix access token
+     * @param String $matrixUserId matrix user id
+     * @return Bool true or false
+     */
+    public function tagRoom($matrixRoomId = null,$matrixToken = null,$matrixUserId=null,$tag='favourite'){
+        if(empty($matrixRoomId) || empty($matrixToken) || empty($matrixUserId)){
+            return false;
+        }
+        $roomId  = $this->validRoomId($matrixRoomId);
+        $http = new Client();
+        $url = $this->config('url') .DS.$this->config('client').DS.'user'.DS.$matrixUserId.DS.'rooms'. DS.$roomId.'/tags/'.$tag.'?access_token='.$matrixToken;
+       
+        $httpResponse = $http->put(
+            $url, 
+            json_encode(['order'=>1]), 
+            $this->bodyType()
+        ); 
+        
+        $response = json_decode($httpResponse->body,true);
+        if(!empty($response['errcode'])){
+            return $response;
+        }else{
+            return true;
+        }
+    }
+    /**
+     * deleteTag to delete the tag from room
+     * 
+     * @param String $matrixRoomId matrix room id
+     * @param String $matrixToken user matrix access token
+     * @param String $matrixUserId matrix user id
+     * @return Bool true or false
+     */
+    public function deleteTag($matrixRoomId = null,$matrixToken = null,$matrixUserId=null,$tag='favourite'){
+        if(empty($matrixRoomId) || empty($matrixToken) || empty($matrixUserId)){
+            return false;
+        }
+        $roomId  = $this->validRoomId($matrixRoomId);
+        $http = new Client();
+        $url = $this->config('url') .DS.$this->config('client').DS.'user'.DS.$matrixUserId.DS.'rooms'. DS.$roomId.'/tags/'.$tag.'?access_token='.$matrixToken;
+       
+        $httpResponse = $http->delete(
+            $url, 
+            json_encode(['order'=>1]), 
+            $this->bodyType()
+        ); 
+        
+        $response = json_decode($httpResponse->body,true);
+        if(!empty($response['errcode'])){
+            return $response;
+        }else{
+            return true;
+        }
+    }
     
     /**
      * TO JOINE THE MATRIXROOM
@@ -458,7 +542,7 @@ class MatrixComponent extends Component {
     }
     /**
      * banMember method to ban the user from the room
-     * @param Array $data include the matrix_user_id,matrix_token,matrix_room_id
+     * @param Array $data include the matrix_user_id,matrix_token,matrix_room_id and status ban|unbanned
      * @param Bool true|false
      */
     public function banMember($data = []) {
@@ -471,7 +555,7 @@ class MatrixComponent extends Component {
         ];
         $roomId  = $this->validRoomId($data['matrix_room_id']);
         $http = new Client();
-        if($data['status'] == 'Unbanned'){
+        if(strtolower($data['status']) == 'unbanned'){
             $apiEndpoint = 'unban';            
         }else{
             $apiEndpoint = 'ban';

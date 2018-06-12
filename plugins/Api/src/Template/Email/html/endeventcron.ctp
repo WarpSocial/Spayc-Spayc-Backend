@@ -7,7 +7,7 @@ use Cake\Routing\Router;
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Spayc Event Notification</title>
+    <title>Warp Event Notification</title>
     <style>
         body{
           font-family: arial;
@@ -20,7 +20,7 @@ use Cake\Routing\Router;
         <tbody>
           <tr style="border:0;border-collapse:collapse;background-color:#1a4c59;">
               <td style="width:100%;margin:0;padding:7px 15px;font-size:25px;color: #fff;">
-                <?php echo $this->Html->image('logo.png', ['fullBase' => true,'alt' => 'Spayc', 'style'=>'text-align: center;display: block;margin: 0 auto;']);?>
+                <?php echo $this->Html->image('logo.png', ['fullBase' => true,'alt' => 'Warp', 'style'=>'text-align: center;display: block;margin: 0 auto;']);?>
               </td>
          </tr>
           <tr>
@@ -41,12 +41,12 @@ use Cake\Routing\Router;
                   
                   <tr>
                     <td>
-                      <p style="font-weight: 500;">- Thanks (Spayc Team)</p>
+                      <p style="font-weight: 500;">- Thanks (Warp Team)</p>
                     </td>
                   </tr>
                   <tr>
                     <td style="width:100%; border-top: 1px solid #eaeaea;">
-                      <p style="color:#6c6c6c; font-size: 13px;padding-top: 5px;">For general inquiries or to request support with your account, please email support@spayc.com</p>
+                      <p style="color:#6c6c6c; font-size: 13px;padding-top: 5px;">For general inquiries or to request support with your account, please email support@warp.com</p>
                     </td>
                   </tr>
                 </tbody>

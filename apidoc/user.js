@@ -930,11 +930,10 @@ function postFriendRequest() { return; }
   @apiUse UserErrorResponse
 */
 function setFriendStatus() { return; }
-
 /**
  @api {post} /read-notifications.json Read notification
   @apiVersion 0.1.0
-  @apiName readNotification
+  @apiName postReadNotifications
   @apiGroup User
   @apiPermission Private User
  
@@ -964,3 +963,40 @@ function setFriendStatus() { return; }
   @apiUse UserErrorResponse
 */
 function postReadNotifications() { return; }
+/**
+ @api {post} /spam-reports.json Spam Reports
+ @apiVersion 0.1.0
+ @apiName postSpamReports
+ @apiGroup User
+ @apiPermission Private User
+ 
+ @apiDescription Mark user as spam user from warp.
+  
+ @apiHeader {String} TOKEN  * Token must be in header
+ 
+ @apiParam  {String} matrix_room_id  * Matrix room id (required).
+ @apiParam  {String} reported_to  * Matrix user id to whom make spam user(required).
+ @apiParam  {String} event_id  * Matrix event warp id(required).
+
+ @apiExample Example usage:
+ 
+    {
+	"matrix_room_id":"!bveMFWvYgJpOzAoZGC:127.0.0.1",
+	"reported_to":"@pluck_1525939089:127.0.0.1",
+	"event_id":"sdfdsf"
+    }
+ 
+ @apiSuccess {String} status success.
+ @apiSuccess {String} message You have reported successfully..
+ @apiSuccess {Object} data Null.
+ @apiSuccessExample {json} Success-Response: 
+       HTTP/1.1 200 OK
+        {
+            "status": "success",
+            "message": "You have reported successfully."
+        }
+ 
+ @apiError {String}  You have already reported this user as spam user.Admin will take care about this reports.
+  @apiUse UserErrorResponse
+*/
+function postSpamReports() { return; }

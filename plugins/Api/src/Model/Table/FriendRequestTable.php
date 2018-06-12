@@ -242,7 +242,21 @@ class FriendRequestTable extends Table {
             return $friend->first();
         }
     }
-
+    
+    public function userFriend($selfId,$frndId){
+        $friend = $this->find()
+                ->select(['id','requested_by', 'requested_status', 'requested_to','matrix_room_id','action_by'])
+                ->Where(['OR'=>[
+                    ['requested_by' => $selfId,'requested_to'=>$frndId],
+                    ['requested_by' => $frndId,'requested_to'=>$selfId]
+                ],'requested_status'=>'Accepted']);
+        if($friend->isEmpty()){
+            return [];
+        }else{
+            return $friend->first();
+        }
+    }
+    
     public function getNearByFriendsOnMap($request = [], $userId = null) {
         //Friend ID List     
         $all_id = $this->getFriendIdsRoomIdByUserId($userId);
@@ -314,6 +328,34 @@ class FriendRequestTable extends Table {
 
         //echo '<br/>'.$km;
         return $km;
+    }
+    
+    /**
+     * friendSubquery method to return the query of friend
+     * 
+     * @param Integer $userId
+     * @return sql query
+     */
+    public function friendSubquery($userId){
+        if(empty($userId)){
+            return false;
+        }
+        $requestedTo = $this->find()->select('requested_to')->where(['requested_by'=>$userId,'requested_status'=>ACCEPTED]);
+        $requestedBy = $this->find()->select('requested_by')->where(['requested_to'=>$userId,'requested_status'=>ACCEPTED]);
+        $query = $requestedBy->union($requestedTo);
+        return $query;
+    }
+    /**
+     * friendStatus method to return the query of friend
+     * 
+     * @param Integer $userId
+     * @return sql query
+     */
+    public function friendStatus($userId,$status = 'Accepted'){
+        if(empty($userId)){
+            return false;
+        }
+        return $this->exists(['requested_to' => $userId,'requested_status'=>$status]);
     }
 
 }

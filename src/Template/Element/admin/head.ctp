@@ -8,4 +8,4 @@
     <?=$this->Html->css(['bootstrap.min.css','datepicker.css','bootstrap-multiselect.min.css','icon.css','style.css','custom.css','select2.min.css']); ?>
     <?=$this->Html->script(['jquery.min.js','commonFunction.js','datepicker.js','bootstrap.min.js','bootstrap-multiselect.min.js','theme.js']); ?>
   </head>
-  <body>
+  <body class="<?= !empty($authUser)?'min-height-set':''?>">

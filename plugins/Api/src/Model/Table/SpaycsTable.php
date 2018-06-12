@@ -111,11 +111,11 @@ class SpaycsTable extends Table {
         /* Earth radius in miles 3959 */
         /* for postgresql cast is required else for mysql not*/
         $this->distanceInMiles = "(3958.756 * ACOS(
-            COS(RADIANS(:lat)) *
-            COS(RADIANS(Spaycs.latitude)) *
-            COS( RADIANS(Spaycs.longitude) - RADIANS(:long) ) +
-            SIN(RADIANS(:lat)) *
-            SIN(RADIANS(Spaycs.latitude))
+            COS((:lat/57.29577951)) *
+            COS((Spaycs.latitude/57.29577951)) *
+            COS((Spaycs.longitude/57.29577951) - (:long/57.29577951) ) +
+            SIN((:lat/57.29577951)) *
+            SIN((Spaycs.latitude/57.29577951))
         ) )";
     }
 
@@ -144,8 +144,8 @@ class SpaycsTable extends Table {
         $validator
                 ->maxLength('location', 255,__('Location test is too long.'))
                 ->requirePresence('location', 'create',__('Location key is missing.'))
-                ->notEmpty('location',__('Location is required field.'))
-                ->regex('location','/[\w\s]+$/',__('Location must be alpha numeric only.'));
+                ->notEmpty('location',__('Location is required field.'));
+                // ->regex('location','/[\w\s]+$/',__('Location must be alpha numeric only.'));
 
         $validator
                 ->requirePresence('type', 'create',__('Type key is missing.'))
@@ -186,7 +186,7 @@ class SpaycsTable extends Table {
                                 $startDate = strtotime($startDate->format('Y-m-d H:i'));
                                 $now = strtotime($now->format('Y-m-d H:i'));
                                 $currentDate = strtotime($currentDate->format('Y-m-d H:i'));
-                                return (bool) ($startDate >= $now && $startDate <= $currentDate);
+                                return (bool) ($startDate <= $currentDate);
                             }
                         },
                         'message'=>__('Start date can\'t be more than 1 year ahead or any past date.')
@@ -296,8 +296,9 @@ class SpaycsTable extends Table {
                 //->notEmpty('latitude',__('Please enter latitude.'))
                 ->allowEmpty('latitude')
                 ->latitude('latitude',__('Please enter valid latitude.'));  
-        $validator                
-                ->allowEmpty('spayc_category_id')
+        $validator
+                ->requirePresence('spayc_category_id', 'create',__('Please select warp category.'))
+                ->notEmpty('spayc_category_id',__('Please select category.'))
                 ->integer('spayc_category_id',__('Please enter valid category.'))
                 ->add('spayc_category_id','validcategoryid',[
                     'rule'=>function($value,$context){
@@ -486,6 +487,9 @@ class SpaycsTable extends Table {
         if(empty($room_id)){
             return false;
         }
+        if(!empty($status)){
+            $status = explode(',', strtolower($status));
+        }
         $loggedUser = Configure::read('auth');
         $query = $this->Users->find();
         $query->select(['Users.id', 'Users.username','Users.display_name', 'Users.email','Users.matrix_user_id','JoinedSpayc.status']);
@@ -506,7 +510,7 @@ class SpaycsTable extends Table {
         $query->innerJoinWith('JoinedSpayc',function($q)use($room_id ,$status,$loggedUser) {
                 $condition = ['JoinedSpayc.spayc_id'=>$room_id ,'JoinedSpayc.user_id !='=>$loggedUser['id']];
                 if($status != null){
-                    $condition['JoinedSpayc.status'] = $status;
+                    $condition['LOWER(JoinedSpayc.status) IN'] = $status;
                 }
                 return $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin','JoinedSpayc.distance','JoinedSpayc.updated_by'])->where($condition)->order(['JoinedSpayc.created'=>'DESC']);;
         });
@@ -597,19 +601,18 @@ class SpaycsTable extends Table {
                 'is_admin'=>($val->id != $adminUser)?0:2
             ];
 
-            $joinData = [
-                'status'=>'Joined',
-                'matrix_room_id'=>$items['matrix_room_id'],
-                'matrix_token'=>$val->matrix_access_token
-            ];
-            //if($val->id != $adminUser){
-            TableRegistry::get('Queue.QueuedJobs')->createJob('MuteUnmute',[
+            $Queue = [
                 'join'=>true,
                 'rule'=>'mute',
                 'status'=>'Joined',
                 'matrix_token'=>$val->matrix_access_token,
                 'matrix_room_id'=>$items['matrix_room_id']
-                ]);                
+            ];
+            if($items['is_direct']){
+                $Queue['rule'] = 'unmute';
+            }
+            //if($val->id != $adminUser){
+            TableRegistry::get('Queue.QueuedJobs')->createJob('MuteUnmute',$Queue);                
             //}
             $push['requested_by'] = $adminUser;
             $push['requested_to'] = $val->id;
@@ -620,11 +623,11 @@ class SpaycsTable extends Table {
             $push['matrix_room_id'] = $items['matrix_room_id'];
             $push['distance'] = $distance;
             if(!$items['is_direct']){
-                if(($val->id != $adminUser)){
+                if($val->id != $adminUser){
+                    \Cake\Log\Log::info($val->id ."!=".$adminUser);
                     $pushNotification->sendPushNotification($push);
                 }
                 /*In direct chat no need to send the notification */
-
             }
         }      
         
@@ -662,7 +665,8 @@ class SpaycsTable extends Table {
     
     
     public function getNearBySpaycsOnMap($request = [], $userId=null) {
-   $today_date = (new Time('now', Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i:s");
+   $today_date = (new Time('now', Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i");
+   
             //To search by kilometers instead of miles, replace 3959 with 6371.
               $distanceField = '( 3959 * ACOS( COS( RADIANS(:latitude) ) *
                 COS( RADIANS(  latitude ) ) *
@@ -673,6 +677,7 @@ class SpaycsTable extends Table {
     
             $spaycs = $this->find()
                 ->select([
+                    'distance' => $distanceField,
                     'id', 
                     'name', 
                     'matrix_room_id', 
@@ -681,24 +686,38 @@ class SpaycsTable extends Table {
                     'modified', 
                     'spayc_category_id',
 //                    'parent_id',
-                    'latitude','longitude'])
+                    'latitude','longitude',
+                    "score"=>"(case when website = 0 then 1 else 0 end)"])
                 ->where(["$distanceField <=" => $distance, 'Spaycs.status'=>'Active',
                     'Spaycs.group_type !='=>'trusted_private', 
                     'Spaycs.parent_id IS'=>null
                     ])
                 ->bind(':latitude', $request['center_latitude'], 'float')
                 ->bind(':longitude', $request['center_longitude'], 'float');
-          
-        if(isset($request['time']) && $request['time']=="past") {
-            $spaycs->where(['OR'=>[['Spaycs.end_date <'=>$today_date],['Spaycs.end_date IS'=>null]]]);
-        }else if(isset($request['time']) && $request['time']=="present") {
-            $spaycs->where(['OR'=>[['Spaycs.start_date <='=>$today_date],['Spaycs.end_date IS'=>null]]]);
-            $spaycs->where(['OR'=>[['Spaycs.end_date >='=>$today_date],['Spaycs.end_date IS'=>null]]]);
-        }else if(isset($request['time']) && $request['time']=="future") {
-            $spaycs->where(['OR'=>[['Spaycs.start_date >'=>$today_date],['Spaycs.end_date IS'=>null]]]);
+        $period = null;
+        if(!empty($request['time'])){
+            $period = strtolower($request['time']);
+        }
+        $startDate = "TO_TIMESTAMP(cast(Spaycs.start_date as text),'YYYY-MM-DD HH24:MI')";
+        $endDate = "TO_TIMESTAMP(cast(Spaycs.end_date as text),'YYYY-MM-DD HH24:MI')";  
+        if(preg_match('/present/i', $period) && preg_match('/past/i', $period) && preg_match('/future/i', $period)) {
+            
+        }else if(preg_match('/present/i', $period) && preg_match('/past/i', $period)) {
+            $spaycs->where(['OR'=>[[$startDate.' <='=>$today_date],['Spaycs.end_date IS'=>null]]]);
+        }else if(preg_match('/present/i', $period) && preg_match('/future/i', $period)) {
+            $spaycs->where(['OR'=>[[$startDate.' >='=>$today_date],[$endDate.' >='=>$today_date],['Spaycs.end_date IS'=>null]]]);
+        }else if(preg_match('/past/i', $period) && preg_match('/future/i', $period)) {
+            $spaycs->where(['OR'=>[[$startDate.' !='=>$today_date],['Spaycs.end_date IS'=>null]]]);
+        }else if( $period == "present" ) {
+            $spaycs->where(['OR'=>[["$startDate = "=>$today_date],['Spaycs.end_date IS'=>null]]]);
+            //$spaycs->where(['OR'=>[[$endDate.' >='=>$today_date],['Spaycs.end_date IS'=>null]]]);
+        }elseif($period == "past") {
+            $spaycs->where(['OR'=>[[$endDate.' <'=>$today_date],['Spaycs.end_date IS'=>null]]]);
+        }else if( $period == "future" ) {
+            $spaycs->where(['OR'=>[[$startDate.' >'=>$today_date],['Spaycs.end_date IS'=>null]]]);
         }else{
-            $spaycs->where(['OR'=>[['Spaycs.start_date <='=>$today_date],['Spaycs.end_date IS'=>null]]]);
-            $spaycs->where(['OR'=>[['Spaycs.end_date >='=>$today_date],['Spaycs.end_date IS'=>null]]]);
+            $spaycs->where(['OR'=>[[$startDate.' >='=>$today_date],[$endDate.' <= '=>$today_date]]]);
+            //$spaycs->where(['OR'=>[[$endDate.' >='=>$today_date],['Spaycs.end_date IS'=>null]]]);
         }
         
 //        if(isset($request['spayc_type']) && in_array(ucfirst($request['spayc_type']), ['Event', 'Community'])) {
@@ -725,7 +744,12 @@ class SpaycsTable extends Table {
         
         if(isset($request['wrap_with_friends']) && $request['wrap_with_friends']=="yes") {
         $child= TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId);
-          $spaycs->join(
+        
+        if(empty($child)){
+         $child = array(0);
+        }
+       
+         $spaycs->join(
                 [
                     'table' => 'joined_spayc',
                     'type' => 'INNER',
@@ -759,7 +783,10 @@ class SpaycsTable extends Table {
             'SubscribedUsers' => function($q) {
                 return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])
                         ->where(['SubscribedUsers.status' => "Active"]);;
-            }
+            },
+            'SpaycCategories' => function($q) {
+                return $q->select(['SpaycCategories.id', 'SpaycCategories.name']);
+            }        
         ]);
         $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($userId) {
             return $results->map(function ($row) use($userId) {
@@ -781,8 +808,11 @@ class SpaycsTable extends Table {
                 return $row;
             });
         });
-        
-        $spaycs->distinct('spaycs.id');
+        #$spaycs->order(['Spaycs.id'=>'DESC']);
+//        $spaycs->group('distance HAVING distance > 0');
+        $spaycs->order(['score'=>'DESC','distance'=>'ASC','start_date'=>'ASC']);
+        $spaycs->limit(MAP_LIMIT);
+        $spaycs->groupBy('spaycs.id');
         
         $newQuery = clone $spaycs;
         $data['count'] = $newQuery->count();
@@ -839,6 +869,18 @@ class SpaycsTable extends Table {
             return false;
         }
         return $banned->toArray();
+    }
+    public function spaycWithFriends($userId){
+        if($userId == null){
+            return false;
+        }
+        $subQuery = TableRegistry::get('Api.FriendRequest')->friendSubquery($userId);        
+        $query = TableRegistry::get('Api.JoinedSpayc')->find()
+                ->select(['spayc_id'])
+                ->distinct()
+                ->where(['user_id IN' => $subQuery,'status'=>'Joined']);
+        //pr($query->toArray());die;
+        return $query;
     }
 
 }
