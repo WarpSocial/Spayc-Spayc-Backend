@@ -40,11 +40,10 @@
 	       type:'POST',
 	       url:form.prop('action'),
 	       data: form.serialize(),
-	       dataType:'JSON',
-	       async: false,             
+	       dataType:'JSON',	                 
 	       success:function(data){               	
-	          $(".loader").removeClass('show-loader'); 
-	          $( ".skip-popup").trigger('click');                            
+                  $( ".skip-popup").trigger('click'); 
+	          $(".loader").removeClass('show-loader'); 	                                     
 	            if (data.result) {
 	              $( "div #"+data.id).remove();
 	              $('.users-msg').text(data.message);
@@ -72,11 +71,10 @@
 	       type:'POST',
 	       url:form.prop('action')+"/"+$("#set_status").val(),
 	       data: form.serialize(),
-	       dataType:'JSON',
-	       async: false,             
+	       dataType:'JSON',	               
 	       success:function(data){  
+                  $( ".skip-popup").trigger('click'); 
                   $(".loader").removeClass('show-loader'); 
-	          $( ".skip-popup").trigger('click'); 
 	          if (data.result) {
                       $(".t_status_"+data.res).text(data.status);
                       $(".status_"+data.res).html($("#"+data.status+"_image").html());
