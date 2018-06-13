@@ -373,10 +373,10 @@ class SpaycsController extends AdminController {
             $conditions_array['Users.gender'] = $this->request->query('gender');
         }
         if ($this->request->query('from_date')) {
-            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') >="] = date(DATEFORMAT, strtotime($this->request->query('from_date')));
+            $conditions_array["to_date(cast(Users.created as TEXT),'YYYY-MM-DD') >="] = date(DATEFORMAT, strtotime($this->request->query('from_date')));
         }
         if ($this->request->query('to_date')) {
-            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') <="] = date(DATEFORMAT, strtotime($this->request->query('to_date')));
+            $conditions_array["to_date(cast(Users.created as TEXT),'YYYY-MM-DD') <="] = date(DATEFORMAT, strtotime($this->request->query('to_date')));
         }
         if ($this->request->query('age_filter')) {
             $getage = $ageArr[$this->request->query('age_filter')];
