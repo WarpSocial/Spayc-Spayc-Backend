@@ -145,8 +145,8 @@ $breadcrumbsTxt= ucfirst($spayc->name);
                         </div>
                         <div class="dropdown-menu" aria-labelledby="table-data-dropdown_<?= $sub_spaycs->id?>">                             
                           <?= $this->Html->link("<i class='icon-view'></i>View",['controller' => 'Spaycs', 'action' => 'view',$sub_spaycs->id,$spayc->user_id,'subspayc'], ['class' => 'dropdown-item view','escape' => false]);?>    
-                          <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item status_<?= $sub_spaycs->id?> <?= strtolower($blocktxt)?>" page="<?php echo $this->Url->build(["controller" => "Spaycs","action" => "setSpaycStatus",$sub_spaycs->id]);?>"><i class='icon-block'></i><span class="status_<?= $sub_spaycs->id?>"><?= $blocktxt?></span>
-                          </a>                      
+<!--                          <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item status_<?php //echo $sub_spaycs->id?> <?php //echo strtolower($blocktxt)?>" page="<?php //echo $this->Url->build(["controller" => "Spaycs","action" => "setSpaycStatus",$sub_spaycs->id]);?>"><i class='icon-block'></i><span class="status_<?php //echo $sub_spaycs->id?>"><?php //echo $blocktxt?></span></a>                      -->
+                          <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
                           <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item delete" page="<?php echo $this->Url->build(["controller" => "Spaycs","action" => "deleteSpayc",$sub_spaycs->id]);?>"><i class='icon-Delete'></i>
                           <span>Delete</span></a>
                         </div>
