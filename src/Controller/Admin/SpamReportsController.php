@@ -55,7 +55,8 @@ class SpamReportsController extends AdminController
            $data['status'] = $status;
            $matrix = $this->Matrix->banMember($data);
             if($status == UNBANNED){
-                $data['status'] = JOINED;
+                $data['status'] = JOINED;               
+                $data['matrix_token'] = $spamUserObj->matrix_access_token;
                 $BannedUserStatus->status = JOINED;
                 $this->Matrix->joinRoom($data);
             } else {                
