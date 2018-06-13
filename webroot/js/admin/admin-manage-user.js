@@ -72,15 +72,18 @@
 	       url:form.prop('action')+"/"+$("#set_status").val(),
 	       data: form.serialize(),
 	       dataType:'JSON',	               
-	       success:function(data){  
+	       success:function(data){ 
                   $( ".skip-popup").trigger('click'); 
                   $(".loader").removeClass('show-loader'); 
 	          if (data.result) {
-                      $(".t_status_"+data.res).text(data.status);
+                       var text= 'Ban';
+                       if(data.status=="Banned")
+                           text= 'Unban';
+                      $(".t_status_"+data.res).text(text);
                       $(".status_"+data.res).html($("#"+data.status+"_image").html());
-                      var value="Ban";
+                      var value="Banned";
                       if(data.status=="Banned")  {
-                        value='Unban';
+                        value='Unbanned';
                         $('.spaycs-msg').removeClass('success-alert').addClass('error-alert');
                       } else {
                         $('.spaycs-msg').removeClass('error-alert').addClass('success-alert'); 
