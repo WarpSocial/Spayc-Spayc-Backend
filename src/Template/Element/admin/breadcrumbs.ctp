@@ -5,7 +5,7 @@ $name = (strtolower($controller_name) == 'spaycs')?"Manage ".SITE_TITLE.'s': "Ma
 ?>
  <div class="breadcrumbs">
 	<div class="container">
-	  <h4>Manage <?= $name?></h4>
+	  <!--<h4>Manage <?php //echo $name?></h4>-->
 	  <?php 
   		$html = '';
   		$html ="<p><span>".$this->Html->link($name,['controller' => $controller_name, 'action' => 'index'])."</span>";

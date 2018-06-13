@@ -27,12 +27,12 @@ $matrixImgUrlQueryString = '?width=0&height=0&method=scale';
         <div class="container">        
             <div class="table-wrapper">      
                 <div class="table-head">
+                    <div class="head-text flex-basis30 text-left">
+                        <span>Comment</span>
+                    </div> 
                     <div class="head-text flex-basis30 text-left">                        
                         <span>Warps</span>
                     </div>
-                    <div class="head-text flex-basis30 text-left">
-                        <span>Comment</span>
-                    </div>                
                     <div class="head-text flex-basis15 text-left"><span>Reported Spam User</span></div>
                     <div class="head-text flex-basis15"><span>No. of Users Reported Spam</span></div>
                     <div class="head-text flex-basis10"><span>Action</span></div>
@@ -50,9 +50,7 @@ $matrixImgUrlQueryString = '?width=0&height=0&method=scale';
                         ?>
                         <!--==============table data====================-->
                         <div class="table-row">
-                            <div class="table-data flex-basis30 text-left">
-                                <span><?= !empty($spamReport['spayc']['name']) ? ucwords($spamReport['spayc']['name']) : '' ?></span>
-                            </div>
+                           
                             <div class="table-data flex-basis30 text-left">        
                                 <?php
                                 if ((strtolower($content['msgtype']) == strtolower($chat_msg_type['text'])) || (strtolower($content['msgtype']) == strtolower($chat_msg_type['replytext'])) || (strtolower($content['msgtype']) == strtolower($chat_msg_type['replyimage']))) {
@@ -78,6 +76,9 @@ $matrixImgUrlQueryString = '?width=0&height=0&method=scale';
 
             <?php } ?>
 
+                            </div>
+                             <div class="table-data flex-basis30 text-left">
+                                <span><?= !empty($spamReport['spayc']['name']) ? ucwords($spamReport['spayc']['name']) : '' ?></span>
                             </div>
                             <div class="table-data flex-basis15">
                                 <span><?= !empty($getUserObj['display_name']) ? ucwords($getUserObj['display_name']) : '' ?></span>
