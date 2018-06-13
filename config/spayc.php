@@ -45,5 +45,8 @@ return [
     ],
     'userstatus_subject'=>'User Status',
     'spaycstatus_subject'=>'Warp Status',
-    'custom_messages_subject'=>'Message from Admin'
+    'custom_messages_subject'=>'Message from Admin',
+    'advertisement_deleted_by_admin'=>'Advertisement Deleted',
+    'spayc_deleted_by_admin'=>'Warp Deleted',
+    'support_email' =>'support@warp.com',
 ];

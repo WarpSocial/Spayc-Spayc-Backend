@@ -10,6 +10,8 @@ use Cake\Event\Event;
 use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Api\Utils\Utils;
+use Cake\Mailer\Email;
+use Cake\Mailer\MailerAwareTrait;
 
 /**
  * Advertisement Controller
@@ -19,7 +21,19 @@ use Api\Utils\Utils;
 class AdvertisementController extends AdminController
 {
 
-    /**
+   
+    use MailerAwareTrait;
+    public function initialize() {
+        parent::initialize();        
+        $this->loadComponent('Api.Push');
+    }
+    
+    public function beforeFilter(Event $event)
+    {
+        parent::beforeFilter($event);
+    }
+    
+     /**
      * Index method
      *
      * @return \Cake\Http\Response|void
@@ -111,11 +125,20 @@ class AdvertisementController extends AdminController
         if (empty($id)) 
             return $this->redirect(['action' => 'index']);          
         $advertisement = $this->Advertisement->find('all')->where(['id'=>$id])->first();
+        $pushNotificationAdminSlug = unserialize(PUSH_NOTIFICATION_ADMIN_SLUG);
         if ($this->request->is(['post','put'])) { 
             $update['status'] = ADVERTISEMENTSTATUS;
             $condition['id'] = $id;
             $this->Advertisement->UpdateAll($update, $condition);
             $advertisement =$this->Advertisement->get($advertisement->id);
+            $user = TableRegistry::get('Users')->get($advertisement->user_id);
+            $this->getMailer('User')->send('advertisementDelete', [$user]);   
+            // for push notification
+            $push['requested_by'] = $this->Auth->user('id');
+            $push['username'] = $this->Auth->user('display_name');
+            $push['requested_to'] = $user->id;
+            $push['slug'] = $pushNotificationAdminSlug['advertisement-deleted'];            
+            $this->Push->sendPushNotification($push);
             $result_arr = ['result' => true, 'status'=>$advertisement->status, 'id'=>$advertisement->id, 'message' => ucwords($advertisement->name).' '.$this->errorSuccessMessage['DELETED-MSG']];  
             echo json_encode($result_arr);
             die;
