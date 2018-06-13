@@ -676,18 +676,7 @@ class SpaycsTable extends Table {
             $distance=  $this->distance($request['center_latitude'], $request['center_longitude'], $request['endpoint_latitude'], $request['endpoint_longitude']); 
     
             $spaycs = $this->find()
-                ->select([
-                    'distance' => $distanceField,
-                    'id', 
-                    'name', 
-                    'matrix_room_id', 
-                    'image', 
-                    'type', 
-                    'modified', 
-                    'spayc_category_id',
-//                    'parent_id',
-                    'latitude','longitude',
-                    "score"=>"(case when website = 0 then 1 else 0 end)"])
+                ->select(['distance' => $distanceField,'id', 'name', 'matrix_room_id', 'image', 'type', 'modified', 'spayc_category_id','latitude','longitude',"score"=>"(case when website = 0 then 1 else 0 end)"])
                 ->where(["$distanceField <=" => $distance, 'Spaycs.status'=>'Active',
                     'Spaycs.group_type !='=>'trusted_private', 
                     'Spaycs.parent_id IS'=>null
@@ -811,14 +800,14 @@ class SpaycsTable extends Table {
         #$spaycs->order(['Spaycs.id'=>'DESC']);
 //        $spaycs->group('distance HAVING distance > 0');
         $spaycs->order(['score'=>'DESC','distance'=>'ASC','start_date'=>'ASC']);
+        
         $spaycs->limit(MAP_LIMIT);
         $spaycs->groupBy('spaycs.id');
-        $newQuery = clone $spaycs;
-        $data['count'] = $newQuery->count();
+        
+        $data['count'] = $spaycs->count();
         $data['records'] = [];
-        if($spaycs->count()) {
-            $data['records'] = $spaycs->toArray();
-        }
+        $spaycs->cache('map_warp', 'redis');
+        $data['records'] = $spaycs;
         return $data;
     }
     
