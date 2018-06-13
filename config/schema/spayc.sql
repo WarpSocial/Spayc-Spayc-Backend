@@ -283,10 +283,6 @@ INSERT INTO "users" ("username", "email", "password", "gender", "dob", "phone", 
 
 
 -- Adminer 4.3.1 PostgreSQL dump
-INSERT INTO "notification_types" ("id", "type", "message", "slug", "created", "modified")
-VALUES ('19', 'Blocked by admin', 'You''ve been blocked. What did you do now?', 'user-blocked-by-admin', now(), NULL),
-VALUES ('20', 'UNblocked by admin', 'You''ve been unblocked.', 'user-unblocked-by-admin', now(), NULL);
-
 
 DROP TABLE IF EXISTS "queue_phinxlog";
 CREATE TABLE "public"."queue_phinxlog" (
@@ -610,3 +606,11 @@ CREATE TABLE "public"."custom_messages" (
     "modified" timestamp,
     CONSTRAINT "custom_messages_pkey" PRIMARY KEY ("id")
 ) WITH (oids = false);
+
+
+INSERT INTO "notification_types" ("type", "message", "slug", "created", "modified")
+VALUES ('User blocked by admin', 'You have been blocked as an Admin by the Admin', 'user-blocked-by-admin', now(), NULL),
+VALUES ('User unblocked by admin', 'You have been unblocked as an Admin by the Admin', 'user-unblocked-by-admin', now(), NULL);
+VALUES ('Warp blocked by admin', 'You have been blocked from a warp by the Admin', 'blocked-spayc-by-admin', now(), NULL),
+VALUES ('Warp unblocked by admin', 'You have been unblocked from a warp by the Admin', 'unblocked-spayc-by-admin', now(), NULL);
+
