@@ -508,13 +508,13 @@ class SpaycsTable extends Table
                     'SubSpaycs.JoinedSpayc'=>function($q){
                         return $q->select(['id','spayc_id','user_id']);
                     },'SubSpaycs.JoinedSpayc.Users'=>function($q){
-                        return $q->select(['id','display_name','matrix_access_token','matrix_user_id']);
+                        return $q->select(['id','display_name','email','matrix_access_token','matrix_user_id']);
                     },   
                     'JoinedSpayc'=>function($q){
                         return $q->select(['id','spayc_id','user_id']);
                     },
                     'JoinedSpayc.Users'=>function($q){
-                        return $q->select(['id','display_name','matrix_access_token','matrix_user_id']);
+                        return $q->select(['id','display_name','email','matrix_access_token','matrix_user_id']);
                     },   
                 ]);
         $spayc = $entity->first();

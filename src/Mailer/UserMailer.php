@@ -75,5 +75,20 @@ class UserMailer extends Mailer {
             ->emailFormat('html')
             ->template('custommessages');
     }
+    public function advertisementDelete($user) {        
+        $this->viewVars(['user' => $user])
+            ->to($user->email)
+            ->subject(Configure::read('advertisement_deleted_by_admin'))
+            ->emailFormat('html')
+            ->template('advertisementdelete');
+    }
+    
+    public function warpDeleted($user) {        
+        $this->viewVars(['user' => $user])
+            ->to($user['email'])
+            ->subject(Configure::read('spayc_deleted_by_admin'))
+            ->emailFormat('html')
+            ->template('warpdelete');
+    }
 
 }

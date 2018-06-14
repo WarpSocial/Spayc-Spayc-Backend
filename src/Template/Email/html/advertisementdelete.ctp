@@ -7,7 +7,7 @@ use Cake\Routing\Router;
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title><?= Configure::read('forgotpassword_subject')?></title>
+    <title><?= Configure::read('spayc_deleted_by_admin')?></title>
     <style>
         body{
           font-family: arial;
@@ -30,17 +30,11 @@ use Cake\Routing\Router;
               <table width="100%;" style="font-size:14px; padding-top:10px; padding-bottom:0px;">
                 <tbody>
                   <tr>
-                    <td style="line-height:23px;">
-                      <div style="display: block; font-size: 16px;">Reset your password</div>
-                      <div style="margin-top: 25px; color:#272727; font-size: 14px;">Hi <?php echo ucwords($user->username);?>,</div>
-                      <div style="color:#333333; margin-top:10px; font-size: 13px;">You have requested to reset your Admin Password.</div>
+                    <td style="line-height:23px;">                      
+                      <div style="margin-top: 25px; color:#272727; font-size: 14px;">Hi <?php echo ucwords($user->display_name);?>,</div>
+                      <div style="color:#333333; margin-top:10px; font-size: 13px;">An <?= Configure::read('title')?> has been deleted.</div>
                     </td>
-                  </tr>
-                  <tr>
-                    <td style="width: 100%; float: left; text-align: center;margin-top: 40px;margin-bottom: 40px;">
-                      <a href="<?php echo $this->Url->build('/admin/users/reset-password/'.$user->forgot_password_token.'/'. urlencode($user->email),true); ?>" style="font-weight: normal; background: #1a4c59; color:#fff; border-radius: 24px; padding: 15px 30px; text-decoration: none;margin: 0 auto; text-align: center;font-family: arial;">Reset Password</a>
-                    </td>
-                  </tr>
+                  </tr>                  
                   <tr>
                     <td>
                       <p style="font-weight: 500;">- Thanks (<?= Configure::read('title')?> Team)</p>
