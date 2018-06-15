@@ -321,7 +321,7 @@ class SpaycsController extends AdminController {
                 $displayName = !empty($spayc->name)? ucfirst($spayc->name) : SITE_TITLE;
                 $user= $this->Users->get($spayc->user_id);
                 $spayc->set('matrix_access_token',$user->matrix_access_token);
-                $spayc->set($admin_slug_arr['spayc-deleted'],$admin_slug_arr['spayc-deleted']);
+                $spayc->set('spayc-deleted-by-admin',$admin_slug_arr['spayc-deleted']);
                 /* To queue the job to process from backend system */
                 TableRegistry::get('Queue.QueuedJobs')->createJob('Delete', $spayc->toArray());
                 $matrixRoomIds = \Cake\Utility\Hash::extract($spayc->sub_spaycs, '{n}.matrix_room_id');
@@ -373,10 +373,10 @@ class SpaycsController extends AdminController {
             $conditions_array['Users.gender'] = $this->request->query('gender');
         }
         if ($this->request->query('from_date')) {
-            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') >="] = date(DATEFORMAT, strtotime($this->request->query('from_date')));
+            $conditions_array["to_date(cast(Users.created as TEXT),'YYYY-MM-DD') >="] = date(DATEFORMAT, strtotime($this->request->query('from_date')));
         }
         if ($this->request->query('to_date')) {
-            $conditions_array["to_date(cast(created as TEXT),'YYYY-MM-DD') <="] = date(DATEFORMAT, strtotime($this->request->query('to_date')));
+            $conditions_array["to_date(cast(Users.created as TEXT),'YYYY-MM-DD') <="] = date(DATEFORMAT, strtotime($this->request->query('to_date')));
         }
         if ($this->request->query('age_filter')) {
             $getage = $ageArr[$this->request->query('age_filter')];
@@ -400,17 +400,17 @@ class SpaycsController extends AdminController {
     }
     
     /*** get list of comments from matrix for a warp ***/
-    public function comments($spaycMatrixRoomId = null) {
-        
+    public function comments($spaycMatrixRoomId = null) {        
         if (empty($spaycMatrixRoomId)) 
             return $this->redirect(['action' => 'index']);
         $this->set('title', $this->siteTitleMessage['MANAGEWARPS']);
         $chat_msg_type = unserialize(CHAT_MSG_TYPE);
         $eventsRepo = TableRegistry::get('Events');
-        $query = $eventsRepo->getComments($spaycMatrixRoomId);               
+        $query = $eventsRepo->getComments($spaycMatrixRoomId);  
+        $totalComments = $query->count();
         $this->paginate['order'] = ['stream_ordering' => 'Desc'];
         $comments = $this->paginate($query);   
-        $this->set(compact('comments'));
+        $this->set(compact('comments','totalComments'));
         $this->set('_serialize', ['comments']);
     }
     

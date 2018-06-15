@@ -81,15 +81,8 @@ if(isset($this->request->query['sort'])) {
           </div>
             <?php
              }
-          } else { ?>
-            <div class="no-data-wrapper">
-              <div class="no-data no-user" >
-                  <?php echo $this->Html->image('no-result.png', ["alt" => "", 'class' =>'mb-30' ]);?>
-                  <h2>No Result Found!</h2>
-                  <p>Try with different keywords to find what you're looking for.</p>
-              </div>
-            </div>
-          <?php } ?>
+            }
+          ?>
           <?php if($this->Paginator->params()['pageCount'] > 1) { ?>
               <ul class="pagination table-pagination">
                 <?= $this->Paginator->prev('',['escape' => false]) ?>
@@ -103,10 +96,9 @@ if(isset($this->request->query['sort'])) {
     <?php }  else { ?>
       <div class="no-data-wrapper">
         <div class="no-data no-user" >
-            <?php echo $this->Html->image('no-user.png', ["alt" => "", 'class' =>'mb-30' ]);?>
-            <h2>No Users Found!</h2>
-            <p>Seems like no user has created the account yet!</p>
-            <p class="hide">Try with different keywords to find what you're looking for.</p>
+            <?php echo $this->Html->image('no-message.png', ["alt" => "", 'class' =>'mb-30' ]);?>
+            <h2>No Messages Sent!</h2>
+            <p>Seems like you haven't initiated a conversation with any group yet!</p>            
         </div>
       </div>
     <?php } ?>

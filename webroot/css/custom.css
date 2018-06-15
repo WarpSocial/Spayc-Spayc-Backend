@@ -341,6 +341,13 @@ ul#select2-options-results .select2-results__option {
     line-height: 22px;
     padding-left: 11px;
 }
+
+.comment-reply .comment-reply-user-image h4 span{
+    font-size: 12px;
+    font-weight: 300;
+    padding-left: 5px;
+}
+
 .comment-reply-image {
   width: 100%;
   height: auto;

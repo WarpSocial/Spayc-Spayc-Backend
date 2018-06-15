@@ -375,7 +375,7 @@ class UsersController extends AdminController
                 $displayName = !empty($user->display_name)? $user->display_name :'User';
                 if (ucfirst($user->status) == $statusArr['active']) { 
                     $user->statusTxt = $txtMassage['unblock'];
-                    $pushNotificationAdminSlug = $pushNotificationAdminSlug['unblocked'];
+                    $pushNotificationAdminSlug = $pushNotificationAdminSlug['user-unblocked'];
                     $result_arr = ['result' => true, 'status'=>$statusArr['active'], 'message' => $displayName.' '.$this->errorSuccessMessage['UNBLOCKED-MSG']]; 
                 } else { 
                     $this->loadModel('UserLogs');
@@ -383,7 +383,7 @@ class UsersController extends AdminController
                     if($userLogsExist)                    
                     $this->UserLogs->query()->delete()->where(['user_id' =>$user->id])->execute();
                     $user->statusTxt = $txtMassage['block'];
-                    $pushNotificationAdminSlug = $pushNotificationAdminSlug['blocked'];
+                    $pushNotificationAdminSlug = $pushNotificationAdminSlug['user-blocked'];
                     $result_arr = ['result' => true, 'status'=>$statusArr['inactive'], 'message' => $displayName.' '.$this->errorSuccessMessage['BLOCKED-MSG']];   
                 }                
                 if(!empty($user->email))

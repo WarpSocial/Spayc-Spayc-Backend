@@ -8,6 +8,8 @@ use Cake\ORM\TableRegistry;
 use Cake\Controller\ComponentRegistry;
 use Api\Controller\Component\MatrixComponent;
 use Api\Controller\Component\PushComponent;
+use Cake\Mailer\Email;
+use Cake\Mailer\MailerAwareTrait;
 /**
  * Delete shell task.
  */
@@ -28,7 +30,8 @@ class QueueDeleteTask extends QueueTask {
      * @param int $jobId The id of the QueuedJob entity
      * @return bool Success
      */
-    public function run(array $data, $jobId) {
+    use MailerAwareTrait;
+    public function run(array $data, $jobId) {        
         $matrix = new MatrixComponent(new ComponentRegistry());
         $push = new PushComponent(new ComponentRegistry());
         if(!empty($data['joined_spayc'])){
@@ -46,14 +49,16 @@ class QueueDeleteTask extends QueueTask {
                     'matrix_room_id' => $data['matrix_room_id'],
                     'display_name' => $joinedUser['user']['display_name']                
                 ];
-                if(isset($data['spayc-deleted-by-admin']))
+                if(isset($data['spayc-deleted-by-admin'])){                   
                     $rPush['slug'] = $data['spayc-deleted-by-admin'];
-
+                    $this->getMailer('User')->send('warpDeleted', [$joinedUser['user']]);
+                }                
                 /* super admin will not recieve any notification */
-                if($data['user_id'] != $joinedUser['user_id']){
+                if(($data['user_id'] != $joinedUser['user_id']) || isset($data['spayc-deleted-by-admin'])){
                     // \Cake\Log\Log::info(json_encode($rPush,JSON_PRETTY_PRINT));
                     $push->sendPushNotification($rPush);
                 }
+                
             }
         }
         if(!empty($data['sub_spaycs'])){
@@ -74,10 +79,12 @@ class QueueDeleteTask extends QueueTask {
                             'matrix_room_id' => $subspayc['matrix_room_id'],
                             'display_name' => $joinspayc['user']['display_name']                
                         ];
-                        if(isset($data['spayc-deleted-by-admin']))
+                        if(isset($data['spayc-deleted-by-admin'])){
                             $rPush['slug'] = $data['spayc-deleted-by-admin'];
+                            $this->getMailer('User')->send('warpDeleted', [$joinspayc['user']]);
+                        }
                         /* super admin will not recieve any notification */
-                        if($data['user_id'] != $joinspayc['user_id']){
+                        if(($data['user_id'] != $joinspayc['user_id']) || isset($data['spayc-deleted-by-admin'])){
                             // \Cake\Log\Log::info(json_encode($sPush,JSON_PRETTY_PRINT));
                             $push->sendPushNotification($sPush);
                         }

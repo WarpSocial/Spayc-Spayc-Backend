@@ -3,9 +3,7 @@
 use Cake\Routing\Router;
 use Cake\Core\Configure;
 $commentsCount=false;
-$totalComments='';
 if(count($comments) > 0){ 
-    $totalComments = count($comments);
     $commentsCount=true; 
 }
 $breadcrumbsTxt='Comments';

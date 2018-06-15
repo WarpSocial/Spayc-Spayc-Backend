@@ -437,7 +437,7 @@ class SpaycsTable extends Table
                 ->contain([
                     'SubSpaycs' => function($q) {
                     $exp = $q->newExpr()->addCase($q->newExpr()->add(['location IS NULL']),"");
-                        return  $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'location'=>$exp, 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id', 'SubSpaycs.status']);
+                        return  $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'location'=>$exp, 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id', 'SubSpaycs.status','SubSpaycs.spayc_category_id']);
                     },
                     'JoinedSpayc' => function($q) {
                         return  $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin','JoinedSpayc.distance']);//joinded
@@ -455,6 +455,9 @@ class SpaycsTable extends Table
                         return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
                     },
                     'SpaycCategories' => function($q) {
+                        return $q->select(['SpaycCategories.id', 'SpaycCategories.name','SpaycCategories.code']);
+                    },
+                    'SubSpaycs.SpaycCategories' => function($q) {
                         return $q->select(['SpaycCategories.id', 'SpaycCategories.name','SpaycCategories.code']);
                     }
                 ]);
@@ -505,13 +508,13 @@ class SpaycsTable extends Table
                     'SubSpaycs.JoinedSpayc'=>function($q){
                         return $q->select(['id','spayc_id','user_id']);
                     },'SubSpaycs.JoinedSpayc.Users'=>function($q){
-                        return $q->select(['id','display_name','matrix_access_token','matrix_user_id']);
+                        return $q->select(['id','display_name','email','matrix_access_token','matrix_user_id']);
                     },   
                     'JoinedSpayc'=>function($q){
                         return $q->select(['id','spayc_id','user_id']);
                     },
                     'JoinedSpayc.Users'=>function($q){
-                        return $q->select(['id','display_name','matrix_access_token','matrix_user_id']);
+                        return $q->select(['id','display_name','email','matrix_access_token','matrix_user_id']);
                     },   
                 ]);
         $spayc = $entity->first();

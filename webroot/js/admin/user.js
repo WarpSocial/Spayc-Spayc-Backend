@@ -59,8 +59,7 @@ jQuery(document).ready(function ($) {
                    type:'POST',
                    url:UserUrls.ForgotPassword,
                    data: {email: email.val()},
-                   dataType:'JSON',
-                   async: false,             
+                   dataType:'JSON',                             
                    success:function(data){        
                       $(".loader").removeClass('show-loader');        
                        if (data.result) {     
@@ -198,8 +197,7 @@ jQuery(document).ready(function ($) {
                type:'POST',
                url:form.prop('action'),
                data: form.serialize(),
-               dataType:'JSON',
-               async: false,             
+               dataType:'JSON',                     
                success:function(data){        
                   $(".loader").removeClass('show-loader');        
                    if (data.result) { 
@@ -226,17 +224,16 @@ jQuery(document).ready(function ($) {
     });         
     $(document).on('click', '#set_user_status_btn', function (e) {                         
       form = $("form#set_user_status_form");  
-      $(".loader").addClass('show-loader');          
+      $(".loader").addClass('show-loader');           
       setTimeout(function(){
       $.ajax({
        type:'POST',
        url:form.prop('action'),
        data: form.serialize(),
-       dataType:'JSON',
-       async: false,             
-       success:function(data){        
-          $(".loader").removeClass('show-loader'); 
-          $( ".skip-popup").trigger('click');                            
+       dataType:'JSON',                 
+       success:function(data){          
+          $( ".skip-popup").trigger('click');        
+          $(".loader").removeClass('show-loader');                               
            if (data.result) {
               if($('.status_'+$('#user-id').val()).hasClass('block')){
                 $('.status_'+$('#user-id').val()).removeClass('block').addClass('unblock');                      

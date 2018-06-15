@@ -23,7 +23,7 @@ $status_arr=array('active'=>'Active','inactive'=>'Inactive');
 $spayctype_arr= array('event'=>'Event','community'=>'Community');
 $grouptype_arr= array('Public'=>'Public','Private'=>'Private');
 $spaycuserstatus_arr= array('1'=>'Admin','2'=>'Super Admin');
-$push_notification_admin_slug= array('blocked'=>'blocked-by-admin','unblocked'=>'unblocked-by-admin');
+$push_notification_admin_slug= array('user-blocked'=>'user-blocked-by-admin','user-unblocked'=>'user-unblocked-by-admin','advertisement-deleted'=> 'advertisement-deleted-by-admin');
 $push_notification_spayc_admin_slug= array('blocked'=>'blocked-spayc-by-admin','unblocked'=>'unblocked-spayc-by-admin');
 $txt_massage= array('block'=>'Blocked','unblock'=>'Unblocked');
 $scraperStates = array('New York','NY','NEW YORK','new york','ny','New York City','new york city'); 

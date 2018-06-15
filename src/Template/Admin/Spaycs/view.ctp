@@ -55,7 +55,7 @@ $breadcrumbsTxt= ucfirst($spayc->name);
                   </span>
                   <?php } ?>
                 </h3>
-                  
+                <p><?php echo !empty($spayEmoji)?$spaycImg.'&nbsp;':''; echo !empty($spayc->spayc_category->name)?$spayc->spayc_category->name:'' ?></p>
                 <p><?= !empty($spayc->description)?$spayc->description:'' ?></p>
                 <div class="event-status">
                   <i class="icon-<?= strtolower($spayc->group_type) ?>-icon"></i>
@@ -107,20 +107,34 @@ $breadcrumbsTxt= ucfirst($spayc->name);
               <h2>Subwarps <span class="sub_spaycs_count">(<?= count($spayc->sub_spaycs)?>)</span></h2>
               <div class="subspayc-box-wrapper clearfix main-spayc-div">
                 <?php 
-                  if (count($spayc->sub_spaycs)) {
+                  if (count($spayc->sub_spaycs)) {                      
                     $spaycImgShadow = 'gradient-layer.png';
                     foreach($spayc->sub_spaycs as $sub_spaycs ) { 
-                      $subSpaycImg ='no-image.png';
-                      $blocktxt =(ucfirst($sub_spaycs->status) == $statusArr['active'])?"Block":"Unblock";
-                      $spaycImgClass ='no-image-placeholder';
-                      if(!empty($sub_spaycs->image)){
-                        $subSpaycImg =$sub_spaycs->image;
-                        $spaycImgClass='';
-                      }
+                      
+                        $blocktxt =(ucfirst($sub_spaycs->status) == $statusArr['active'])?"Block":"Unblock";
+                        $subSpayEmoji=false;
+                        $subSpaycImg='';
+                        $spaycImgClass ='no-image-placeholder';
+                        if(!empty($sub_spaycs->image)) {
+                            $subSpaycImg = $sub_spaycs->image; 
+                            $spaycImgClass='';
+                        } else if(!empty($sub_spaycs->spayc_category->code)){
+                            $subSpayEmoji=true;
+                            $dec = hexdec($sub_spaycs->spayc_category->code);
+                            $subSpaycImg ="&#$dec;"; 
+                        } else {
+                          $subSpaycImg ='no-image.png';
+                        }
                 ?>  
                 <div class="subspayc-box spayc-div-listing <?php echo $blocktxt =='Block'?'':'disabled';?>">
-                  <div class="subspayc-image-wrap <?= $spaycImgClass?>">
-                    <?= $this->Html->image($subSpaycImg, ["alt" => "", 'class' =>'']); ?>
+                  <div class="subspayc-image-wrap <?= !empty($subSpayEmoji)?'blank-emoji':''?> <?= $spaycImgClass?>">
+                      <?php 
+                        if($subSpayEmoji){
+                            echo "<span class='emoji d-flex align-items-center justify-content-center w-100 h-100'>".$subSpaycImg."</span>";
+                        } else {
+                            echo $this->Html->image($subSpaycImg, ["alt" => "", 'class' =>'']);
+                        }
+                      ?>
                     <?= $this->Html->image($spaycImgShadow, ["alt" => "", 'class' =>'img-shadow']); ?>
                      <!--======dropdown===-->
                       <div class="dropdown table-view-dropdown square-box-dropdown">
@@ -131,8 +145,8 @@ $breadcrumbsTxt= ucfirst($spayc->name);
                         </div>
                         <div class="dropdown-menu" aria-labelledby="table-data-dropdown_<?= $sub_spaycs->id?>">                             
                           <?= $this->Html->link("<i class='icon-view'></i>View",['controller' => 'Spaycs', 'action' => 'view',$sub_spaycs->id,$spayc->user_id,'subspayc'], ['class' => 'dropdown-item view','escape' => false]);?>    
-                          <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item status_<?= $sub_spaycs->id?> <?= strtolower($blocktxt)?>" page="<?php echo $this->Url->build(["controller" => "Spaycs","action" => "setSpaycStatus",$sub_spaycs->id]);?>"><i class='icon-block'></i><span class="status_<?= $sub_spaycs->id?>"><?= $blocktxt?></span>
-                          </a>                      
+<!--                          <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item status_<?php //echo $sub_spaycs->id?> <?php //echo strtolower($blocktxt)?>" page="<?php //echo $this->Url->build(["controller" => "Spaycs","action" => "setSpaycStatus",$sub_spaycs->id]);?>"><i class='icon-block'></i><span class="status_<?php //echo $sub_spaycs->id?>"><?php //echo $blocktxt?></span></a>                      -->
+                          <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
                           <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item delete" page="<?php echo $this->Url->build(["controller" => "Spaycs","action" => "deleteSpayc",$sub_spaycs->id]);?>"><i class='icon-Delete'></i>
                           <span>Delete</span></a>
                         </div>
