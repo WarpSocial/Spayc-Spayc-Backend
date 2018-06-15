@@ -282,8 +282,24 @@ ul#select2-options-results .select2-results__option {
     background:  none !important;
 }
 .select2-dropdown {
-    border: 0 !important;
+    width: 220px !important;
+      border: 1px solid #ccc !important;
+    border-top: 0px !important;
 }
 .list-checkbox{
         z-index: -9999999;
+}
+.custom-message .modal-body .to-message .keywords {
+    max-height: 100px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.confirm-message .modal-content.custom-message h2 {
+    text-align: left !important;
+    font-weight: 500 !important;
+    font-size: 16px !important;
+}
+.select2-results .check-all-div .check-all {
+    top: 2px;
+    position: relative;
 }

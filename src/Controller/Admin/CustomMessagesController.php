@@ -85,7 +85,7 @@ class CustomMessagesController extends AdminController {
         }
     }
 
-    public function sendCustomMessages($id, $status = 'Blocked') {
+    public function sendCustomMessages($id) {
         $this->viewBuilder()->layout('');
         $this->autoRender = false;
         if (empty($id)) {
