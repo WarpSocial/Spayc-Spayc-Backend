@@ -23,12 +23,14 @@ $status_arr=array('active'=>'Active','inactive'=>'Inactive');
 $spayctype_arr= array('event'=>'Event','community'=>'Community');
 $grouptype_arr= array('Public'=>'Public','Private'=>'Private');
 $spaycuserstatus_arr= array('1'=>'Admin','2'=>'Super Admin');
-$push_notification_admin_slug= array('blocked'=>'blocked-by-admin','unblocked'=>'unblocked-by-admin');
+$push_notification_admin_slug= array('user-blocked'=>'user-blocked-by-admin','user-unblocked'=>'user-unblocked-by-admin','advertisement-deleted'=> 'advertisement-deleted-by-admin');
 $push_notification_spayc_admin_slug= array('blocked'=>'blocked-spayc-by-admin','unblocked'=>'unblocked-spayc-by-admin');
 $txt_massage= array('block'=>'Blocked','unblock'=>'Unblocked');
 $scraperStates = array('New York','NY','NEW YORK','new york','ny','New York City','new york city'); 
 $scraperCountries = array('US','us','United States','united states','United States of America','USA'); 
 $admin_slug_arr=array('spayc-deleted'=>'spayc-deleted-by-admin');
+$chat_msg_type = array('text'=>'m.text', 'image'=>'m.image', 'replytext'=>'m.replyText', 'replyimage'=>'m.replyImage');
+define('CHAT_ROOM_TYPE', 'm.room.message');
 define('USER_GENDER', serialize($user_gender));
 define('USER_AGE', serialize($user_age));
 define('STATUS_ARR', serialize($status_arr));
@@ -42,6 +44,7 @@ define('CUSTOM_MESSAGES_SLUG', "custom-messages");
 define('SCRAPERSTATES', serialize($scraperStates));
 define('SCRAPERCOUNTRIES', serialize($scraperCountries));
 define('TEXT_MASSAGE', serialize($txt_massage));
+define('CHAT_MSG_TYPE', serialize($chat_msg_type));
 define('TODAY_DATE', date('Y-m-d'));
 define('SCRAPER_DAYS', ' +14 day');
 define('AFTER14DAYS_DATE', date('Y-m-d', strtotime(SCRAPER_DAYS)));
@@ -89,7 +92,8 @@ $config['SITETITLEMESSAGE'] = [
     'RESETPASSWORD'=>'Reset Password',
     'MANAGEWARPS'=>'Manage Warps',
     'MANAGE-WARP-MEMBERS'=>'Warps Members',
-    'MANAGE-ADVERTISEMENTS'=>'Manage Advertisements',    
+    'MANAGE-ADVERTISEMENTS'=>'Manage Advertisements',
+    'MANAGE-SPAM-REPORT'=>'Manage Spam Report',    
     'WARPCREATED'=>'Warps Created',
     'WARPJOINED'=>SITE_TITLE.'s Joined',
     'WARPDETAIL'=>SITE_TITLE.' Detail',

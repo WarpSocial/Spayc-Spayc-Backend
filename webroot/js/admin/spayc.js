@@ -8,11 +8,10 @@ jQuery(document).ready(function ($) {
        type:'POST',
        url:form.prop('action'),
        data: form.serialize(),
-       dataType:'JSON',
-       async: false,             
+       dataType:'JSON',                
        success:function(data){   
-          $(".loader").removeClass('show-loader'); 
           $( ".skip-popup").trigger('click');   
+          $(".loader").removeClass('show-loader');           
            if (data.result) {
               if($('.status_'+$('#spayc-id').val()).hasClass('block')){
                 $('.status_'+$('#spayc-id').val()).removeClass('block').addClass('unblock');                      
@@ -61,11 +60,10 @@ jQuery(document).ready(function ($) {
        type:'POST',
        url:form.prop('action'),
        data: form.serialize(),
-       dataType:'JSON',
-       async: false,             
+       dataType:'JSON',            
        success:function(data){        
-          $(".loader").removeClass('show-loader'); 
-          $( ".skip-popup").trigger('click');                            
+          $( ".skip-popup").trigger('click'); 
+          $(".loader").removeClass('show-loader');                                      
            if (data.result) {             
               if (data.status == 'Deleted') {                      
                 $('.spaycs-msg').removeClass('error-alert').addClass('success-alert');    

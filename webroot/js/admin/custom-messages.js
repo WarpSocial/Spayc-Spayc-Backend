@@ -12,8 +12,8 @@ jQuery(document).ready(function ($) {
             data: form.serialize(),
             dataType: 'JSON',
             success: function (data) {
-                $(".loader").removeClass('show-loader');
                 $(".skip-popup").trigger('click');
+                $(".loader").removeClass('show-loader');                
                 if (data.result) {
                     messageFadeOut('users-msg', data.message);
                     setTimeout(function () {
@@ -72,8 +72,7 @@ function getUsers(id, msg_id) {
         type: 'POST',
         url: UserUrls.resendMessageUsers,
         data: {id: id},
-        dataType: 'JSON',
-        async: true,
+        dataType: 'JSON',        
         success: function (data) {
             if (data.results) {
                 setTimeout(function () {
@@ -102,7 +101,7 @@ function getUsers(id, msg_id) {
 var options_arr = [];
 $(function () {
     $('#options').select2({
-        "placeholder": "Pick options",
+        "placeholder": "Search",
         "multiple": true,
         closeOnSelect: false,
         ajax: {
@@ -191,7 +190,7 @@ function template(data) {
       setTimeout(function(){
          $( ".select2-results" ).prepend( $( ".check-all-div" ) );
         },100);
-    
+    data.image_url='http://dozebuzz.com/wp-content/uploads/2017/11/A1-88.jpg';
     return "<div class='user-list'>\
                     " + checked + "\
                 <div class='user-image'><span><img src ='" + data.image_url + "' class='image-responsive'></span></div>\
