@@ -733,7 +733,7 @@ class UsersController extends AppController {
             }
             if(strtolower($data['friend_status']) == strtolower(UNBLOCK)){
                 $frObj->delete($frndRequest);
-                $this->restException(['status'=>'failed', 'message'=>__('User has been unblocked successfully.')], 400);
+                $this->restException(['status'=>'success', 'message'=>__('User has been unblocked successfully.')], 400);
             }
             
             if($frndRequest->requested_status=='Unfriend' || $frndRequest->requested_status=='Decline') {
