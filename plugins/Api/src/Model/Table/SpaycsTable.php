@@ -708,20 +708,12 @@ class SpaycsTable extends Table {
             $spaycs->where(['OR'=>[[$startDate.' >='=>$today_date],[$endDate.' >= '=>$today_date]]]);
             //$spaycs->where(['OR'=>[[$endDate.' >='=>$today_date],['Spaycs.end_date IS'=>null]]]);
         }
-        
-//        if(isset($request['spayc_type']) && in_array(ucfirst($request['spayc_type']), ['Event', 'Community'])) {
-//            $spaycs->where(["Spaycs.type"=>ucfirst($request['spayc_type'])]);
-//        }
-        
+         
         if(isset($request['spayc_type']) && $request['spayc_type']) {
             $spayc_type = explode("|",ucfirst($request['spayc_type']));
             $spaycs->where(["Spaycs.type IN "=>$spayc_type]);
         }
-        
-//        if(isset($request['group_type']) && in_array(ucfirst($request['group_type']), ['Public', 'Private'])) {
-//            $spaycs->where(["Spaycs.group_type"=>ucfirst($request['group_type'])]);
-//        }
-        
+       
         if(isset($request['group_type']) && $request['group_type']) {
             $group_type = explode("|",ucfirst($request['group_type']));
             $spaycs->where(["Spaycs.group_type IN "=>$group_type]);
@@ -806,7 +798,7 @@ class SpaycsTable extends Table {
         
         $data['count'] = $spaycs->count();
         $data['records'] = [];
-        $spaycs->cache('map_warp', 'redis');
+        //$spaycs->cache('map_warp', 'redis');
         $data['records'] = $spaycs;
         return $data;
     }
