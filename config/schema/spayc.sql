@@ -225,6 +225,16 @@ INSERT INTO "notification_types" ("id", "type", "message", "slug", "created", "m
 (14,	'Someone commented',	'<USERNAME> has commented, <COMMENT> in your warp, <SpaycName>',	'someone-commented',	'2018-02-28 17:27:10.578674',	NULL),
 (17,	'New Warp',	'<SpaycName> warp has been created within <X> miles of you',	'new-spayc',	'2018-02-28 17:27:10.578674',	NULL);
 
+
+INSERT INTO "notification_types" ("type", "message", "slug", "created", "modified")
+VALUES ('User blocked by admin', 'You have been blocked as an Admin by the Admin', 'user-blocked-by-admin', now(), NULL),
+ ('User unblocked by admin', 'You have been unblocked as an Admin by the Admin', 'user-unblocked-by-admin', now(), NULL),
+ ('Warp blocked by admin', 'You have been blocked from a warp by the Admin', 'blocked-spayc-by-admin', now(), NULL),
+ ('Warp unblocked by admin', 'You have been unblocked from a warp by the Admin', 'unblocked-spayc-by-admin', now(), NULL),
+ ('Warp deleted by admin', 'A Warp has been deleted', 'spayc-deleted-by-admin', now(), NULL),
+ ('Advertisement delete by admin', 'An Advertisement has been deleted', 'advertisement-deleted-by-admin', now(), NULL);
+
+
 DROP TABLE IF EXISTS advertisement;
 CREATE TABLE "advertisement" (
     "id" BIGSERIAL NOT NULL,
@@ -283,10 +293,6 @@ INSERT INTO "users" ("username", "email", "password", "gender", "dob", "phone", 
 
 
 -- Adminer 4.3.1 PostgreSQL dump
-INSERT INTO "notification_types" ("id", "type", "message", "slug", "created", "modified")
-VALUES ('19', 'Blocked by admin', 'You''ve been blocked. What did you do now?', 'user-blocked-by-admin', now(), NULL),
-VALUES ('20', 'UNblocked by admin', 'You''ve been unblocked.', 'user-unblocked-by-admin', now(), NULL);
-
 
 DROP TABLE IF EXISTS "queue_phinxlog";
 CREATE TABLE "public"."queue_phinxlog" (
@@ -597,3 +603,18 @@ SELECT create_hypertable('spam_reports', 'created');
 
 INSERT INTO "notification_types" ("id", "type", "message", "slug", "created", "modified") VALUES
 ('', 'Warp Deleted by admin',    'Your Warp has been deleted either by you or admin! Sorry!',    'spayc-deleted-by-admin', now(),    NULL);
+
+DROP TABLE IF EXISTS "custom_messages";
+DROP SEQUENCE custom_messages_id_seq;
+CREATE SEQUENCE custom_messages_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
+
+CREATE TABLE "public"."custom_messages" (
+    "id" bigint DEFAULT nextval('custom_messages_id_seq') NOT NULL,
+    "user_id" character varying(500) NOT NULL,
+    "message" text NOT NULL,
+    "created" timestamp NOT NULL,
+    "modified" timestamp,
+    CONSTRAINT "custom_messages_pkey" PRIMARY KEY ("id")
+) WITH (oids = false);
+
+

@@ -26,19 +26,31 @@ $breadcrumbTxt = !empty($listBy) ? SITE_TITLE.'s '.$listBy.' by '.ucwords($user-
             <!--=======Square-box=======-->
               <?php if ($spaycsCount) {
                  $spaycImgShadow = 'gradient-layer.png';
-                foreach($spaycs as $spayc) {                
+                foreach($spaycs as $spayc) {    
+                  $spayEmoji=false;
                   $spaycImg ='no-image.png';                 
                   $spaycImgClass ='no-image-placeholder';                  
                   if(!empty($spayc->image)){
                     $spaycImg =$spayc->image;                                
                     $spaycImgClass='';
+                  } else if(!empty($spayc->spayc_category->code)){
+                    $spayEmoji=true;
+                    $dec = hexdec($spayc->spayc_category->code);
+                    $spaycImg ="&#$dec;"; 
                   }
+
+                  
+                  
+                  
               ?>  
               <?php                
               $blocktxt =(ucfirst($spayc->status) == $statusArr['active'])?"Block":"Unblock";?>
               <div class="square-box spayc-div-listing <?php echo $blocktxt =='Block'?'':'disabled';?>">
-                  <div class="image-wrap <?= $spaycImgClass?>">
-                    <?= $this->Html->image($spaycImg, ["alt" => "", 'class' =>'']); ?>
+                  <div class="image-wrap <?= !empty($spayEmoji)?'blank-emoji':''?> <?= $spaycImgClass?>">
+                    <?php if($spayEmoji){
+                      echo "<span class='emoji d-flex align-items-center justify-content-center w-100 h-100'>".$spaycImg."</span>";
+                    } else { ?>
+                    <?php echo $this->Html->image($spaycImg, ["alt" => "", 'class' =>'']); }?>
                     <?= $this->Html->image($spaycImgShadow, ["alt" => "", 'class' =>'img-shadow']); ?>
                       <div class="box-heading <?= strtolower($spayc->type)?>"><?= !empty($spayc->type)?$spayc->type:BLANK?></div>
                       <div class="tag-line ell">
@@ -54,8 +66,9 @@ $breadcrumbTxt = !empty($listBy) ? SITE_TITLE.'s '.$listBy.' by '.ucwords($user-
                         </div>
                       <div class="dropdown-menu" aria-labelledby="table-data-dropdown_<?= $spayc->id?>">                         
                       <?= $this->Html->link("<i class='icon-view'></i>View",['controller' => 'Spaycs', 'action' => 'view',$spayc->id,$spayc->user_id], ['class' => 'dropdown-item view','escape' => false]);?>  
-                      <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item status_<?= $spayc->id?> <?= strtolower($blocktxt)?>" page="<?php echo $this->Url->build(["controller" => "Spaycs","action" => "setSpaycStatus",$spayc->id]);?>"><i class='icon-block'></i><span class="status_<?= $spayc->id?>"><?= $blocktxt?></span>
-                      </a>                      
+<!--                      <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item status_<?php //echo $spayc->id?> <?php //echo strtolower($blocktxt)?>" page="<?php //echo $this->Url->build(["controller" => "Spaycs","action" => "setSpaycStatus",$spayc->id]);?>"><i class='icon-block'></i><span class="status_<?php //echo $spayc->id?>"><?php //echo $blocktxt?></span>
+                      </a>-->
+                        <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
                         <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item delete" page="<?php echo $this->Url->build(["controller" => "Spaycs","action" => "deleteSpayc",$spayc->id]);?>"><i class='icon-Delete'></i>
                             <span>Delete</span></a>
                         </div>

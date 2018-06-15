@@ -375,7 +375,7 @@ class UsersController extends AdminController
                 $displayName = !empty($user->display_name)? $user->display_name :'User';
                 if (ucfirst($user->status) == $statusArr['active']) { 
                     $user->statusTxt = $txtMassage['unblock'];
-                    $pushNotificationAdminSlug = $pushNotificationAdminSlug['unblocked'];
+                    $pushNotificationAdminSlug = $pushNotificationAdminSlug['user-unblocked'];
                     $result_arr = ['result' => true, 'status'=>$statusArr['active'], 'message' => $displayName.' '.$this->errorSuccessMessage['UNBLOCKED-MSG']]; 
                 } else { 
                     $this->loadModel('UserLogs');
@@ -383,7 +383,7 @@ class UsersController extends AdminController
                     if($userLogsExist)                    
                     $this->UserLogs->query()->delete()->where(['user_id' =>$user->id])->execute();
                     $user->statusTxt = $txtMassage['block'];
-                    $pushNotificationAdminSlug = $pushNotificationAdminSlug['blocked'];
+                    $pushNotificationAdminSlug = $pushNotificationAdminSlug['user-blocked'];
                     $result_arr = ['result' => true, 'status'=>$statusArr['inactive'], 'message' => $displayName.' '.$this->errorSuccessMessage['BLOCKED-MSG']];   
                 }                
                 if(!empty($user->email))
@@ -460,7 +460,7 @@ class UsersController extends AdminController
           if(!empty($data['q']['term'])){            
             $obj->where(['OR' => ['LOWER(Users.display_name) LIKE' => "%".$data['q']['term']."%"]]);
         }
-        $obj->limit(50)->toArray();
+        $obj->order(['Users.display_name'=>'ASC'])->toArray();
         if(!empty($obj)){
               $result_arr = ['results' => $obj];
         }
@@ -468,7 +468,24 @@ class UsersController extends AdminController
             die;
         
     }
-
+   
+    public function resendMessageUsers() {
+        $this->viewBuilder()->layout('');
+        $this->autoRender = false;
+        $result_arr = array();
+          $data = $this->request->getData();
+          $id= explode(",", $data['id']);
+        $obj = TableRegistry::get("Users")->find('all',
+                ['fields' =>['id'=>'Users.id','text'=>'Users.display_name','email']])
+                ->where(['id IN ' => $id])->toArray();
+        if(!empty($obj)){
+              $result_arr = ['results' => $obj];
+        }
+           echo json_encode($result_arr);
+            die;
+        
+    }
+    
 }
 
 

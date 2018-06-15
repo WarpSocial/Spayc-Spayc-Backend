@@ -727,10 +727,22 @@ class UsersController extends AppController {
                 $this->restException(['status'=>'failed', 'message'=>__('Failed to update friend status.')],400);
             }
         }else{
-            $frndRequest = $requestedFrnd->first();            
+            $frndRequest = $requestedFrnd->first();   
             if($data['friend_status'] == $frndRequest->requested_status){
                 $this->restException(['status'=>'failed', 'message'=>__('Friend request already sent with same status.')], 400);
-            }  
+            }
+            if(strtolower($data['friend_status']) == strtolower(UNBLOCK)){
+                $dataObj = [                    
+                    'id'=>$frndRequest->id,
+                    'requested_by'=>$frndRequest->requested_by,
+                    'requested_to'=>$frndRequest->requested_to,
+                    'requested_status'=>$frndRequest->requested_status,
+                    'action_by'=>$frndRequest->action_by
+                ];
+                $frObj->delete($frndRequest);
+                $this->restException(['status'=>'success', 'message'=>__('User has been unblocked successfully.'),'data'=>$dataObj]);
+            }
+            
             if($frndRequest->requested_status=='Unfriend' || $frndRequest->requested_status=='Decline') {
                 $frndRequest->set('requested_by', $loggedUser['id']);
                 $frndRequest->set('requested_to', $data['friend_id']);

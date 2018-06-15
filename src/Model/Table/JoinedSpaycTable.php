@@ -126,4 +126,8 @@ class JoinedSpaycTable extends Table
         }
         return $ids;
     }
+    public function getJoinedSpaycObj($spaycId = null, $userId = null) {
+     $jsObj =$this->find()->where(['spayc_id'=>$spaycId, 'user_id'=>$userId])->first();
+     return $jsObj;
+    }
 }
