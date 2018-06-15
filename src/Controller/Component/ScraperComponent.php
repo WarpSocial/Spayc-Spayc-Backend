@@ -34,7 +34,7 @@ class ScraperComponent extends Component {
         $this->SCRAPER_WEBSITE_FLIP = array_flip(unserialize(SCRAPER_WEBSITE));
     }
 
-    public function curlRequest($url, $token=false) {
+    public function curlRequest($url, $time ,$token=false) {
 
         $headers = array('Content-Type: application/json');
         if($token)
@@ -47,16 +47,20 @@ class ScraperComponent extends Component {
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);   
         curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);        
         $resp=curl_exec($curl); 
+        $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         $resp=json_decode($resp, true);    
         curl_close($curl);
+        if($httpcode!="200")
+            $this->updateScraperLog($time,json_encode($resp));
         return $resp;
     }
 
     /*************  get Events from Eventbrite API and Save it *********************/
-     public function getEventbriteData($pageNumber=1) { 
+     public function getEventbriteData($pageNumber=1,$time) { 
 
-        $url= $this->SCRAPER_ROOT_URL['eventbriteurl'].'events/search/?expand=venue&token='.$this->SCRAPER_ROOT_URL_TOKEN['eventbritetoken'].'&sort_by=date&start_date.range_start='.TODAY_DATE.'T00%3A00%3A00&start_date.range_end='.AFTER14DAYS_DATE.'T23%3A59%3A00&location.address=New+York%2C+NY&page='.$pageNumber;
-        $resp=$this->curlRequest($url);      
+        $url= $this->SCRAPER_ROOT_URL['eventbriteurl'].'events/search/?expand=venue&token='.$this->SCRAPER_ROOT_URL_TOKEN['eventbritetoken'].'&sort_by=date&start_date.range_start='.TODAY_DATE.'T00%3A00%3A00&start_date.range_end='.AFTER14DAYS_DATE.'T23%3A59%3A00&location.address=New+York%2C+NY&page='.$pageNumber;       
+
+        $resp=$this->curlRequest($url,$time);      
         if((isset($resp['events']) && !empty($resp['events'])) && count($resp['events'])) {        
         $events=$eventIds= array();
         foreach ($resp['events'] as $value) {                      
@@ -65,6 +69,8 @@ class ScraperComponent extends Component {
             $events[$eventId]['eventbrite_event_id'] = trim($value['id']);
             $events[$eventId]['name'] = (isset($value['name']['text']) && !empty($value['name']))?html_entity_decode(trim($value['name']['text'])):null;
             $events[$eventId]['start_date'] = (isset($value['start']['utc']) && !empty($value['start']['utc']))?new time($value['start']['utc']):null;
+            if($events[$eventId]['start_date'] > Time::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s', strtotime(SCRAPER_DAYS)))->setTime(23,59))
+                $stateExist = $eventId;
             $events[$eventId]['end_date'] =(isset($value['end']['utc']) && !empty($value['end']['utc']))?new time($value['end']['utc']):null;
             $events[$eventId]['description'] = (isset($value['description']['text']) && !empty($value['description']['text']))?html_entity_decode(strip_tags(trim($value['description']['text']))):null;
             $events[$eventId]['image'] = (isset($value['logo']['original']['url']) && !empty($value['logo']['original']['url']))?$value['logo']['original']['url']:null;            
@@ -100,7 +106,7 @@ class ScraperComponent extends Component {
             $this->EventbriteEvents->saveNupdateData($events, $eventIds);
             if($resp['pagination']['has_more_items']){
                 $pageNumber=$pageNumber+1;
-                $this->getEventbriteData($pageNumber);
+                $this->getEventbriteData($pageNumber,$time);
             }          
         }   
         }     
@@ -108,10 +114,11 @@ class ScraperComponent extends Component {
 
    
     /*************  get Events from Stubhub API and save it *********************/
-    public function getStubhubData($start=0) {  
+    public function getStubhubData($start=0,$time) {  
 
-        $url =$this->SCRAPER_ROOT_URL['stubhuburl'].'?city=%22New%20York%22&state=%22NY%22%20|%22New%20York%22&country=US&date='.TODAY_DATE.'T00:00%20TO%20'.AFTER14DAYS_DATE.'T23:59&sort=eventDateUTC%20asc&rows=500&start='.$start;
-        $resp=$this->curlRequest($url,$this->SCRAPER_ROOT_URL_TOKEN['stubhubtoken']);
+        $url =$this->SCRAPER_ROOT_URL['stubhuburl'].'?city=%22New%20York%22&state=%22NY%22%20|%22New%20York%22&country=US&date='.TODAY_DATE.'T00:00%20TO%20'.AFTER14DAYS_DATE.'T23:59&sort=eventDateUTC%20asc&rows=500&start='.$start;       
+
+        $resp=$this->curlRequest($url,$time,$this->SCRAPER_ROOT_URL_TOKEN['stubhubtoken']);
         $eventsCount = count($resp['events']);       
         if((isset($resp['events']) && !empty($resp['events'])) && $eventsCount){
         $events=$eventIds=$eventsCategory=$eventsCatIds= array();
@@ -167,17 +174,17 @@ class ScraperComponent extends Component {
                 if($countNoOfHits > 10){ 
                     sleep(6); //Stubhub allows 10 calls per minute
                 }
-                $this->getStubhubData($start);
+                $this->getStubhubData($start,$time);
             } 
         }
         }
     }
 
     /*************  get Events from Ticketmaster URL pass Startdate and endDate as argument data should be Y-m-d format *********************/
-    public function getTicketmasterData($startDate, $endDate=null) {  
+    public function getTicketmasterData($startDate, $endDate=null,$time) {  
 
         $url=$this->SCRAPER_ROOT_URL['ticketmasterurl'].'events.json?apikey='.$this->SCRAPER_ROOT_URL_TOKEN['ticketmastertoken'].'&city=%22New%20York%22&stateCode=NY&countryCode=US&page=0&size=200&sort=date,asc&startDateTime='.$startDate.'T00:00:00Z&endDateTime='.$startDate.'T23:59:00Z';        
-        $resp=$this->curlRequest($url);       
+        $resp=$this->curlRequest($url,$time);       
         if(isset($resp['_embedded']['events']) && count($resp['_embedded']['events'])){
         $events = $eventIds = array();
         foreach ($resp['_embedded']['events'] as $value) {            
@@ -186,6 +193,7 @@ class ScraperComponent extends Component {
             else
                 $startDateTime = new time($value['dates']['start']['localDate']);
 
+            if($startDateTime < Time::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s', strtotime(SCRAPER_DAYS)))->setTime(23,59)){
             if(($startDateTime < new time(date('Y-m-d', strtotime($startDate . ' +1 day')))) && ($startDateTime >= new time(date('Y-m-d', strtotime($startDate . ' -1 day'))))){
             $eventIds[]= $eventId =trim($value['id']);
             $events[$eventId]['ticketmaster_event_id'] = trim($value['id']);
@@ -214,13 +222,14 @@ class ScraperComponent extends Component {
 
             $events[$eventId]['category'] = $this->createEventCategoryData($value['classifications']['0'], $this->SCRAPER_WEBSITE['ticketmaster']);
             $events[$eventId]['website'] = $this->SCRAPER_WEBSITE['ticketmaster'];
+            }
             } 
         }        
             if(!empty($eventIds)) {
                 $this->TicketmasterEvents->saveNupdateData($events, $eventIds);
                 if($startDate <= $endDate){
                     $nextDate = date('Y-m-d', strtotime($startDate . ' +1 day'));
-                    $this->getTicketmasterData($nextDate, $endDate);
+                    $this->getTicketmasterData($nextDate, $endDate,$time);
                 } 
             }
         }
@@ -318,14 +327,14 @@ class ScraperComponent extends Component {
     }
 
     /** get categories & subcategories form EventBrite API and Save it *****/
-    public function getEventBriteCategories($pageNumber=1, $continuation=NULL, $type=NULL)
+    public function getEventBriteCategories($pageNumber=1, $continuation=NULL, $type=NULL,$time)
     {
         if(!empty($type)){
             $url =$this->SCRAPER_ROOT_URL['eventbriteurl'].$type.'/?token='.$this->SCRAPER_ROOT_URL_TOKEN['eventbritetoken'].'&page='.$pageNumber;
             if($pageNumber >1)
                 $url .='&continuation='.$continuation;
 
-            $getData=$this->curlRequest($url); 
+            $getData=$this->curlRequest($url,$time); 
             $getSubcategory=$eventIds=[];
             if(!empty($getData[$type]) && count($getData[$type])){
                 foreach ($getData[$type] as $key => $value){
@@ -337,7 +346,7 @@ class ScraperComponent extends Component {
                 $this->ScraperCategories->updateScraperCategories($getSubcategory, $eventIds, $this->SCRAPER_WEBSITE['eventbrite']);
                 if(!empty($getData['pagination']['has_more_items'])){
                   $pageNumber=$pageNumber+1;        
-                  $this->getEventBriteCategories($pageNumber,$getData['pagination']['continuation'],$type);  
+                  $this->getEventBriteCategories($pageNumber,$getData['pagination']['continuation'],$type,$time);  
                 }
                 return true;
             }
@@ -443,8 +452,8 @@ class ScraperComponent extends Component {
         $base_url = Configure::read('App.BASE_URL');
         $url = $base_url . 'api/spaycs.json';
         $update_url = $base_url . 'api/spayc-edit.json';
-        $getIds = $createSpaceData = [];
         foreach ($record as $value) {
+            $getIds = $createSpaceData = [];
             $starttime = microtime(true);       //Checking time
             $spayc_id=0;    //Default Spayc Define
             $response=[];
@@ -455,7 +464,7 @@ class ScraperComponent extends Component {
             $createSpaceData['type'] = 'Event';
             $createSpaceData['group_type'] = 'Public';
             $createSpaceData['start_date'] = date('m-d-Y H:i:s', strtotime($value['start_date']));
-            $createSpaceData['end_date'] = date('m-d-Y H:i:s', strtotime($value['start_date']));
+            $createSpaceData['end_date'] = !empty($value['end_date']) ? date('m-d-Y H:i:s', strtotime($value['end_date'])) : date('m-d-Y H:i:s', strtotime('+1 day', strtotime($value['start_date'])));
             $description = $value['description'];
             if ($description) {
                 $createSpaceData['description'] = $description;
@@ -533,7 +542,7 @@ class ScraperComponent extends Component {
                 }
                 $endtime = microtime(true);       //Checking time
                 $response['Time Taken']=$endtime - $starttime;
-            pr(json_encode($response,JSON_PRETTY_PRINT));
+            // pr(json_encode($response,JSON_PRETTY_PRINT));
         }
     }
     
@@ -551,9 +560,9 @@ class ScraperComponent extends Component {
     //Create & Update Spayc Logic
     
     /** get primary,secondary and Tertiary categories level form Ticketmaster API and Save it *****/
-    public function getTicketmasterCategories() {
+    public function getTicketmasterCategories($time) {
         $url=$this->SCRAPER_ROOT_URL['ticketmasterurl'].'classifications.json?apikey='.$this->SCRAPER_ROOT_URL_TOKEN['ticketmastertoken'].'&size=200';
-        $resp=$this->curlRequest($url); 
+        $resp=$this->curlRequest($url,$time); 
         if((isset($resp['_embedded']['classifications']) && !empty($resp['_embedded']['classifications'])) && count($resp['_embedded']['classifications'])){
             $geCategory=$eventIds=[];
             foreach ($resp['_embedded']['classifications'] as $key => $value){
@@ -777,13 +786,39 @@ class ScraperComponent extends Component {
     }
 
     /*** set log for scraper to identify all process running smoothly ***/
-    public function setScraperLog($status){
-        if(!empty($status)){ 
+    public function setScraperLog($status,$time,$shell){
+        if(!empty($status)){
             $data['status'] = trim($status);
+            $data['shell'] = $shell;
+            $data['unique_time'] = $time;
+            $data['start_time'] = (new Time('now', Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i:s");
+            $data['end_time'] = NULL;
             $scraperlogs = $this->ScraperLogs->newEntity();
             $scraperlog = $this->ScraperLogs->patchEntity($scraperlogs,$data);
             $this->ScraperLogs->save($scraperlog); 
         }
+    }
+    
+     /*** update log for scraper to identify all process running smoothly ***/
+    public function updateScraperLog($time,$response=""){
+        if(!empty($time)){
+            $data['end_time'] = (new Time('now', Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i:s");
+            if($response)
+                $data['response'] = $response;
+              $query = $this->ScraperLogs->query();
+              $res = $query->update()
+                        ->set($data)
+                        ->where(['unique_time' => $time])
+                        ->execute();
+        }
+    }
+    
+     /*** fetch Failure Process ***/
+    public function failureRecords(){
+            
+        $where=['end_time IS' => NULL,'response IS NOT' => NULL,'DATE(start_time)' => date('Y-m-d')];
+        return $data = $this->ScraperLogs->find('all',['fields' => ['shell','unique_time']])->where($where)->toArray();
+        
     }
 
     /*** Get all events name which belong to same date and lat-long ***/

@@ -268,81 +268,85 @@ function postSubspaycs() { return; }
  * 
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
-    @apiParam {Number}      page            Page number in query string (Optional).
-    @apiParam {Number}      limit           Limit in query string (Optional).
-    @apiParam {Timestamp}   start_date      Spayc start date in query string(1515542400) (Optional).
-    @apiParam {Timestamp}   end_date        Spayc end date in query string(1515715200) (Optional).
-    @apiParam {String}      group_type      Group type must be any one from the following (Public|Private) (Optional).
-    @apiParam {String}      type            Spayc type must be any one from the following (Event|Community) (Optional).
-    @apiParam {String}      latitude        Latitude is required in query string(Optional in case of created, joined).
-    @apiParam {String}      longitude       Longitude is required in query string(Optional in case of created, joined).
-    @apiParam {String}      list_by         List by is optional in query string(created|joined|all).
-    @apiParam {Number}      user_id         User id  of any user and if id is not available it will get the logged user data(Required).
+ *    @apiParam {Number}      page            Page number in query string (Optional).
+ *    @apiParam {Number}      limit           Limit in query string (Optional).
+ *    @apiParam {Timestamp}   start_date      Spayc start date in query string(1515542400) (Optional).
+ *    @apiParam {Timestamp}   end_date        Spayc end date in query string(1515715200) (Optional).
+ *    @apiParam {String}      group_type      Group type must be any one from the following (Public|Private) (Optional).
+ *    @apiParam {String}      type            Spayc type must be any one from the following (Event|Community) (Optional).
+ *    @apiParam {String}      latitude        Latitude is required in query string(Optional in case of created, joined).
+ *    @apiParam {String}      longitude       Longitude is required in query string(Optional in case of created, joined).
+ *    @apiParam {String}      list_by         List by is optional in query string(created|joined|all).
+ *    @apiParam {Number}      user_id         User id  of any user and if id is not available it will get the logged user data(Required).
+ *    @apiParam {String}  categories  List of comma separeted categoires (Optional).
+ *    @apiParam {String}   friends   Value must be either yes or no (Optional).
+ *    @apiParam {String}   hot   Value must be either yes or no (Optional).
+ *    
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Spayc lists.
  * @apiSuccess {Object} data List of spayc details.
  * @apiSuccessExample {json} Success-Response: 
  *      HTTP/1.1 200 OK
-{
-    "status": "success",
-    "message": "Spayc lists.",
-    "data": {
-        "count": 22,
-        "spaycs": [
-            {
-                "distance": "0",
-                "id": "33",
-                "name": "spaycdev13",
-                "location": "Your address",
-                "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
-                "start_date": "01-11-2019 01:02:00",
-                "end_date": "01-12-2019 01:02:00",
-                "image": "",
-                "type": "Community",
-                "group_type": "Public",
-                "passcode": "",
-                "subscribed_users": 0,
-                "spayc_category": {
-                    "id": 560,
-                    "name": "Softball"
-                },
-                "friends": 0,
-                "joined_spayc_status": '',
-                "is_joined": false,
-                "joined_users": 0,
-                "is_subscribed": false,
-                "total_comments": 0,
-                "total_presents": 0
-            },
-            {
-                "distance": "0",
-                "id": "5",
-                "name": "spaycdev13",
-                "location": "Your address",
-                "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
-                "start_date": "01-11-2019 01:02:00",
-                "end_date": "01-12-2019 01:02:00",
-                "image": "",
-                "spayc_category": {
-                    "id": 560,
-                    "name": "Softball"
-                },
-                "type": "Event",
-                "group_type": "Public",
-                "passcode": "s5d4f87sdf4545",
-                "subscribed_users": 1,
-                "friends": 0,
-                "joined_spayc_status": "Pending",
-                "is_joined": false,
-                "joined_users": 3,
-                "is_subscribed": true,
-                "total_comments": 1,
-                "total_presents": 0
-            }
-        ]
-    }
-}
+ *{
+ *    "status": "success",
+ *    "message": "Spayc lists.",
+ *    "data": {
+ *        "count": 22,
+ *        "spaycs": [
+ *            {
+ *                "distance": "0",
+ *                "id": "33",
+ *                "name": "spaycdev13",
+ *                "location": "Your address",
+ *                "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
+ *                "start_date": "01-11-2019 01:02:00",
+ *                "end_date": "01-12-2019 01:02:00",
+ *                "image": "",
+ *                "type": "Community",
+ *                "group_type": "Public",
+ *                "passcode": "",
+ *                "subscribed_users": 0,
+ *                "spayc_category": {
+ *                    "id": 560,
+ *                    "name": "Softball"
+ *                },
+ *                "friends": 0,
+ *                "joined_spayc_status": '',
+ *                "is_joined": false,
+ *                "joined_users": 0,
+ *                "is_subscribed": false,
+ *                "total_comments": 0,
+ *                "total_presents": 0
+ *            },
+ *            {
+ *                "distance": "0",
+ *                "id": "5",
+ *                "name": "spaycdev13",
+ *                "location": "Your address",
+ *                "matrix_room_id": "!asfLdzLnOdGRkdPZWu:localhost",
+ *                "start_date": "01-11-2019 01:02:00",
+ *                "end_date": "01-12-2019 01:02:00",
+ *                "image": "",
+ *                "spayc_category": {
+ *                    "id": 560,
+ *                    "name": "Softball"
+ *                },
+ *                "type": "Event",
+ *                "group_type": "Public",
+ *                "passcode": "s5d4f87sdf4545",
+ *                "subscribed_users": 1,
+ *                "friends": 0,
+ *                "joined_spayc_status": "Pending",
+ *                "is_joined": false,
+ *                "joined_users": 3,
+ *                "is_subscribed": true,
+ *                "total_comments": 1,
+ *                "total_presents": 0
+ *            }
+ *        ]
+ *    }
+ *}
  *
  * @apiUse UserErrorResponse
  */
@@ -545,7 +549,7 @@ function postChatRoom() { return; }
  * 
 
     @apiParam {String}     room_id      Spayc matrix room id or spayc id in query string (Required).
-    @apiParam {String}      status     Status of user, value must be any one from following(Pending|Joined) (Optional).
+    @apiParam {String}      status     Status of user, value must be any one or comma separated from following(Pending|Joined|Banned) (Optional).
     @apiParam {Digit}      page        Page no(Optional).
     @apiParam {Digit}      limit       No of record to retrieve(Optional).
  *
@@ -1010,7 +1014,7 @@ function hashTagSpaycs() { return; }
     @apiParam {String}      endpoint_latitude          Corner Screen Latitude (Required).
     @apiParam {String}      endpoint_longitude         Corner Screen Longitude (Required).
 
-    @apiParam {String}      time                     Spayc Time (Optional).
+    @apiParam {String}      time                     Spayc Time must be comma separated if more than one and value must be present|past|future(Optional).
     @apiParam {String}      spayc_type               Spayc Type (Optional).
     @apiParam {String}      group_type               Spayc Group Type (Optional).
     @apiParam {String}      wrap_with_friends        Spayc having with friends (Optional).
@@ -1024,7 +1028,7 @@ function hashTagSpaycs() { return; }
         "endpoint_latitude": "19.0760",
         "endpoint_longitude": "72.8777",
         
-        "time": "present|past|future",
+        "time": "present,past,future",
         "spayc_type": "Event|Community",
         "group_type": "Public|Private",
         "wrap_with_friends": "yes|no",
@@ -1046,31 +1050,41 @@ function hashTagSpaycs() { return; }
             "count": 2,
             "records": [
                 {
-                    "id": "3",
-                    "name": "Sam Second Community Spyace",
-                    "matrix_room_id": "!MvOssNcvbePXoBUIjC:spayc-dev.kiwireader.com",
-                    "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180317082917.png",
-                    "type": "Community",
-                    "modified": "2018-03-17T08:29:17+00:00",
-                    "category_id": 5,
-                    "latitude": 28.7041,
-                    "longitude": 77.1025,
-                    "is_joined": true,
-                    "joined_users": 2,
-                    "is_subscribed": true
-                },
-                {
-                    "id": "4",
-                    "name": "Community Type Sub Spyac",
-                    "matrix_room_id": "!nQPjgmlBePZsAyVvQH:spayc-dev.kiwireader.com",
-                    "image": "https://spayc-dev.s3.amazonaws.com/room/image_20180317083321.png",
-                    "type": "Community",
-                    "modified": "2018-03-17T08:33:21+00:00",
-                    "category_id": 6,
-                    "latitude": 28.7041,
-                    "longitude": 77.1025,
+                    "distance": 0,
+                    "id": "2109",
+                    "name": "Perfect Crime New York",
+                    "matrix_room_id": "!eHnEYoZchHVKuuyRvT:spayc-dev.kiwireader.com",
+                    "image": "http://i.ebayimg.com/images/g/TTwAAOSwpDdVXg8t/s-l1600.jpg",
+                    "type": "Event",
+                    "modified": "2018-05-15T12:18:40+00:00",
+                    "spayc_category_id": 180,
+                    "latitude": 40.76146,
+                    "longitude": -73.984547,
+                    "spayc_category": {
+                            "id": 180,
+                            "name": "Arts and Theater"
+                            },
                     "is_joined": false,
-                    "joined_users": 0,
+                    "joined_users": 1,
+                    "is_subscribed": false
+                 },
+                 {
+                    "distance": 0,
+                    "id": "2135",
+                    "name": "Perfect Crime New York",
+                    "matrix_room_id": "!poSQfNdqYsHGrhqbUI:spayc-dev.kiwireader.com",
+                    "image": "http://i.ebayimg.com/images/g/TTwAAOSwpDdVXg8t/s-l1600.jpg",
+                    "type": "Event",
+                    "modified": "2018-05-15T12:21:39+00:00",
+                    "spayc_category_id": 180,
+                    "latitude": 40.76146,
+                    "longitude": -73.984547,
+                    "spayc_category": {
+                            "id": 180,
+                            "name": "Arts and Theater"
+                            },
+                    "is_joined": false,
+                    "joined_users": 1,
                     "is_subscribed": false
                 }
             ]
@@ -1743,5 +1757,45 @@ function postAcceptJoinedRequest() { return; }
 }
 
 @apiUse errorResponse
- */
+
+*/
 function postRemoveFromSpayc() { return; }
+/**
+ * @api {get} /subscribed-spaycs.json?page=:page&limit=:limit User Subscribed Warp
+ * @apiVersion 0.1.0
+ * @apiName getSubscribedSpaycs
+ * @apiGroup Spayc
+ * @apiPermission private
+ *
+ * @apiDescription Get the list warp to whom user has been subscribed but not joined the warp.
+ * 
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * 
+ *    @apiParam {Number}      page            Page number in query string (Optional).
+ *    @apiParam {Number}      limit           Limit in query string (Optional).
+ 
+ *    
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of subscribed warp.
+ * @apiSuccess {Object} data List of subscribed warp.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+ {
+    "status": "success",
+    "message": "List of subscribed warp.",
+    "data": [
+        {
+            "id": "734",
+            "matrix_room_id": "!VIaNrDKuzkBQEVgtNI:127.0.0.1"
+        },
+        {
+            "id": "732",
+            "matrix_room_id": "!fueGNjtYWCpzMcTbtI:127.0.0.1"
+        }
+    ]
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function getSubscribedSpaycs() { return; }

@@ -28,6 +28,7 @@ $push_notification_spayc_admin_slug= array('blocked'=>'blocked-spayc-by-admin','
 $txt_massage= array('block'=>'Blocked','unblock'=>'Unblocked');
 $scraperStates = array('New York','NY','NEW YORK','new york','ny','New York City','new york city'); 
 $scraperCountries = array('US','us','United States','united states','United States of America','USA'); 
+$admin_slug_arr=array('spayc-deleted'=>'spayc-deleted-by-admin');
 define('USER_GENDER', serialize($user_gender));
 define('USER_AGE', serialize($user_age));
 define('STATUS_ARR', serialize($status_arr));
@@ -42,8 +43,11 @@ define('SCRAPERSTATES', serialize($scraperStates));
 define('SCRAPERCOUNTRIES', serialize($scraperCountries));
 define('TEXT_MASSAGE', serialize($txt_massage));
 define('TODAY_DATE', date('Y-m-d'));
-define('AFTER14DAYS_DATE', date('Y-m-d', strtotime(' +14 day')));
+define('SCRAPER_DAYS', ' +14 day');
+define('AFTER14DAYS_DATE', date('Y-m-d', strtotime(SCRAPER_DAYS)));
 define('FUZZYPERCENT', 90);
+define('MAP_LIMIT', 50);
+define('UNIQUE_TOKEN', md5(uniqid(mt_rand(), true)));
 
 define('ADVERTISEMENTSTATUS', 'Removed');
 define('SUBSCRIBED_USERS', 'SubscribedUsers');
@@ -51,6 +55,7 @@ define('PHYSICAL_PRESENT_USERS', 'PhysicalpresentUsers');
 define('USER_FRIENDS', 'Userfriends');
 define('CREATED','Created');
 define('SPAYC_TABLE', 'spaycs');
+define('ADMIN_SLUG_ARR', serialize($admin_slug_arr));
 
 $scraperRootUrl=array('eventbriteurl'=> 'https://www.eventbriteapi.com/v3/',
     'ticketmasterurl'=> 'https://app.ticketmaster.com/discovery/v2/',

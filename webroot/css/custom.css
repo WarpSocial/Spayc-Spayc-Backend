@@ -303,3 +303,28 @@ ul#select2-options-results .select2-results__option {
     top: 2px;
     position: relative;
 }
+.min-height-set {
+    min-height: 100vh;
+    padding-bottom: 62px;
+    position: relative;
+}
+.min-height-set footer{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+}
+.underline{
+    text-decoration: underline !important;
+}
+.error-page p {
+    width: auto !important;
+    margin-bottom: 0 !important;
+}
+.error-page h2 {
+    font-weight: 400 !important;
+}
+.error-page p a {
+    color: #1a4c59;
+}

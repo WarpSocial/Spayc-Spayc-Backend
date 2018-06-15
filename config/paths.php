@@ -87,6 +87,8 @@ define('ACTIVE','Active');
 define('INACTIVE','Inactive');
 define('UNBANNED','Unbanned');
 define('UNFRIEND','Unfriend');
+define('ACCEPTED','Accepted');
+define('PENDING','Pending');
 define('BANNED','Banned');
 define('JOINED','Joined');
 

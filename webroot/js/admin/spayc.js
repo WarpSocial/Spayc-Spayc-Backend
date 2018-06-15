@@ -10,9 +10,9 @@ jQuery(document).ready(function ($) {
        data: form.serialize(),
        dataType:'JSON',
        async: false,             
-       success:function(data){        
+       success:function(data){   
           $(".loader").removeClass('show-loader'); 
-          $( ".skip-popup").trigger('click');                            
+          $( ".skip-popup").trigger('click');   
            if (data.result) {
               if($('.status_'+$('#spayc-id').val()).hasClass('block')){
                 $('.status_'+$('#spayc-id').val()).removeClass('block').addClass('unblock');                      

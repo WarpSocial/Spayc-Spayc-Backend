@@ -14,6 +14,7 @@
  */
 namespace App\Controller;
 
+use App\Controller\AdminController;
 use Cake\Event\Event;
 
 /**
@@ -21,7 +22,7 @@ use Cake\Event\Event;
  *
  * Controller used by ExceptionRenderer to render error responses.
  */
-class ErrorController extends AppController
+class ErrorController extends AdminController
 {
     /**
      * Initialization hook method.
@@ -30,8 +31,11 @@ class ErrorController extends AppController
      */
     public function initialize()
     {
-        $this->loadComponent('RequestHandler');
+        parent::initialize();    
+        $this->set('title', SITE_TITLE);
+        $this->loadComponent('RequestHandler');        
     }
+
 
     /**
      * beforeFilter callback.
@@ -41,6 +45,7 @@ class ErrorController extends AppController
      */
     public function beforeFilter(Event $event)
     {
+        parent::beforeFilter($event);
     }
 
     /**
@@ -52,7 +57,7 @@ class ErrorController extends AppController
     public function beforeRender(Event $event)
     {
         parent::beforeRender($event);
-
+       
         $this->viewBuilder()->setTemplatePath('Error');
     }
 

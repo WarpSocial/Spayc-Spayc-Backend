@@ -52,7 +52,7 @@ class AdvertisementController extends AppController {
             $this->restException(['status' => 'failed', 'message' => 'Spayc id is required.'], 400);
         }
 
-        $entities = $this->Advertisement->find()->where(['id' => $data['id']]);
+        $entities = $this->Advertisement->find()->where(['id' => $data['id'], "status != 'Removed'"]);
 
         if ($entities->isEmpty()) {
             $this->restException(['status' => 'failed', 'message' => __('Invalid Advertisement id.')], 400);
@@ -215,7 +215,7 @@ class AdvertisementController extends AppController {
             unset($data[0]->user_id);
 
             $entity = TableRegistry::get('Api.Spaycs')->find('all', ['fields' => [
-                            'Spaycs.name', 'Spaycs.id', 'Spaycs.type', 'Spaycs.image','Spaycs.parent_id']])->join(
+                            'Spaycs.name', 'Spaycs.id', 'Spaycs.type', 'Spaycs.image','Spaycs.spayc_category_id','Spaycs.parent_id']])->join(
                             [
                                 'table' => 'spayc_advertisement',
                                 'type' => 'INNER',
@@ -225,7 +225,12 @@ class AdvertisementController extends AppController {
                                 ]
                             ]
                     )
-                    ->where(["status != 'Removed'"]);
+                    ->contain([
+                        'SpaycCategories' => function($q) {
+                            return $q->select(['SpaycCategories.id', 'SpaycCategories.name']);
+                        }
+                    ])
+                    ->where(["Spaycs.status != 'Removed'"]);
             $spayc = $entity->toArray();
             $array['advertisement'] = $data[0];
             if ($spayc)

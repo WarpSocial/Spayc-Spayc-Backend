@@ -337,6 +337,19 @@ class UsersTable extends Table {
                     },
                 'message'=>__('Age must be 13 or greater than 13 year\'s old.'),
             ]);
+         $validator
+                ->requirePresence('email', 'create',__('Email is required field.'))
+                ->notEmpty('email',__('Email is required field.'))
+                ->email('email', false, __('Invalid email address.'))                
+                ->add('email', 'unique', [
+                    'rule' => function($value,$context){
+                        if(!empty($value)){                            
+                             return !$this->exists(['LOWER(email)'=> strtolower($value)]);
+                        }else{
+                            return false;
+                        }
+                    },
+                    'message'=>__('Email already exist.')]) ;            
 
         $validator
             //->requirePresence('gender', 'create',__('Gender is required field.'))    
@@ -738,36 +751,38 @@ class UsersTable extends Table {
         
         if($msgType == 'm.likeMessage'){
             $notify = $this->storeMsg('a-user-liked-your-comment', $data['notification']['sender_display_name'], $data['notification']['content']['body']);          
-             $notify->message = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);;
+             $notify->message = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);
         }elseif($msgType == 'm.replyText'){
             $notify = $this->storeMsg('someone-replyed-to-your-comment', $data['notification']['sender_display_name'], $data['notification']['content']['body']);
-            $notify->message = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);;
+            $notify->message = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body']], $notify->message);
         }else{
             $notify = $this->storeMsg('someone-commented', $data['notification']['sender_display_name'], $data['notification']['content']['body']);
-            $notify->message = str_replace(["<USERNAME>","<COMMENT>","<SpaycName>"],[ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body'],ucwords($data['notification']['room_name'])], $notify->message);
+            if(strstr($data['notification']['room_name'],'#direct')){
+                $notify->message = str_replace(["<USERNAME>","<COMMENT>","in your warp, <SpaycName>"],[ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body'],""], $notify->message);
+            }else{
+                $notify->message = str_replace(["<USERNAME>","<COMMENT>","<SpaycName>"],[ucwords($data['notification']['sender_display_name']),$data['notification']['content']['body'],ucwords($data['notification']['room_name'])], $notify->message);
+            }            
         }
-        
         $items['message']  = $notify->message;
         $items['notification_type'] = $notify->type; 
         $items['spayc_id'] = $spayc->id;
-        TableRegistry::get('Api.Comments')->spaycActivities($spayc->id,$items);
+        TableRegistry::get('Api.Comments')->spaycActivities($spayc->matrix_room_id,$items);
         return $items;
     }
     
     public function storeMsg($slug,$username,$body){
         if (($notify = \Cake\Cache\Cache::read($slug,'long')) === false) {
             $notify = TableRegistry::get('Api.Notifications')->message($slug);
-            if(!empty($notify)){
-                $notify->message = str_replace(["<USERNAME>","<COMMENT>"], [ucwords($username),$body], $notify->message);
-                $notify->notification_type = $notify->type;
-            }
             \Cake\Cache\Cache::write($slug, $notify,'long');
-            
         }
        
         return $notify;
     }
     
+    
+    /**
+     * pusherData to store the post data comes from matrix pusher
+     */
     public function pusherData($data){
         $pushData['post_value'] = json_encode($data);
         $pushData['created'] = date("Y-m-d H:i:s");
@@ -776,5 +791,6 @@ class UsersTable extends Table {
         $item = $pusher->patchEntity($push, $pushData);
         return $pusher->save($item);
     }
+    
     
 }
