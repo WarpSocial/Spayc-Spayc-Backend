@@ -34,19 +34,23 @@ class QueueCustomMessageNotificationsTask extends QueueTask {
     public function run(array $data, $jobId) {
         $pushNotification = new PushComponent(new ComponentRegistry());
         
+        if(!empty($data['users'])){
+        $obj = TableRegistry::get("Api.Users")->find('all',
+                ['fields' =>['email','display_name','id']])
+                ->where(['id IN ' => $data['users']])->toArray();
         
-          foreach ($data['users'] as $val) {
-                    $user = TableRegistry::get("Api.Users")->get($val);
-                    $email['email'] = $user['email'];
+          foreach ($obj as $val) {
+                    $email['email'] = $val['email'];
                     $email['message'] = $data['message'];
-                    $email['name'] = $user['display_name'];
+                    $email['name'] = $val['display_name'];
                     $this->getMailer('User')->send('customMessages', [$email]);
                             $push['requested_by'] = $data['id'];
                             $push['username'] = $data['display_name'];
-                            $push['requested_to'] = $user['id'];
+                            $push['requested_to'] = $val['id'];
                             $push['slug'] = CUSTOM_MESSAGES_SLUG;
                             $pushNotification->sendPushNotification($push);
                 }
+        }
         $this->hr();
         $this->out('Proccessing to send the notification');
         $this->hr();
