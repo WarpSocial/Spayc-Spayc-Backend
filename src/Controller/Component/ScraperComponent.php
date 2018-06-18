@@ -18,21 +18,19 @@ use Api\Auth\ApiHasher;
 class ScraperComponent extends Component {
 
     public function initialize(array $config) {
-
-	    $this->Spaycs = TableRegistry::get('Spaycs');
-	    $this->StubhubEvents = TableRegistry::get('StubhubEvents');
-	    $this->TicketmasterEvents = TableRegistry::get('TicketmasterEvents');
-	    $this->EventbriteEvents = TableRegistry::get('EventbriteEvents');
-	    $this->Users = TableRegistry::get('Users');
-	    $this->SCRAPER_ROOT_URL = unserialize(SCRAPER_ROOT_URL);
-	    $this->SCRAPER_ROOT_URL_TOKEN = unserialize(SCRAPER_ROOT_URL_TOKEN);
-	    $this->STATES = unserialize(SCRAPERSTATES);
-	    $this->COUNTRIES = unserialize(SCRAPERCOUNTRIES); 
+        
+        $this->StubhubEvents = TableRegistry::get('StubhubEvents');
+        $this->TicketmasterEvents = TableRegistry::get('TicketmasterEvents');
+        $this->EventbriteEvents = TableRegistry::get('EventbriteEvents');	    
+        $this->SCRAPER_ROOT_URL = unserialize(SCRAPER_ROOT_URL);
+        $this->SCRAPER_ROOT_URL_TOKEN = unserialize(SCRAPER_ROOT_URL_TOKEN);
+        $this->STATES = unserialize(SCRAPERSTATES);
+        $this->COUNTRIES = unserialize(SCRAPERCOUNTRIES); 
         $this->SCRAPER_WEBSITE = unserialize(SCRAPER_WEBSITE);   
         $this->ScraperCategories = TableRegistry::get('ScraperCategories');
         $this->ScraperLogs = TableRegistry::get('ScraperLogs');
         $this->SCRAPER_WEBSITE_FLIP = array_flip(unserialize(SCRAPER_WEBSITE));
-    }
+    }    
 
     public function curlRequest($url, $time ,$token=false) {
 
@@ -400,7 +398,7 @@ class ScraperComponent extends Component {
     public function saveDataSpaceTable()
     {       
         //Getting Token User
-        $plain_token= $this->Users->getUserTokenScraper();
+        $plain_token= TableRegistry::get('Users')->getUserTokenScraper();
         
         //Moving Events from 3 Tables into Spayc
          if(isset($plain_token) && !empty($plain_token)) {
@@ -603,6 +601,11 @@ class ScraperComponent extends Component {
     public function get_quotesstring($string) {
         return (!empty($string))?"'".$string."'":'';
     }
+    
+    /*** get db connection obj ***/
+    public function getConnectionObj($obj){
+        return ConnectionManager::get($obj);
+    }
 
     /*** Take website name and return table Obj ***/
     public function gettableObj($data) {
@@ -616,34 +619,23 @@ class ScraperComponent extends Component {
                 $obj=$this->StubhubEvents;
         }
         return $obj;
-    }
-
-     /*** common query for union all scraper table ***/
-    public function unionCommonQuery(){
-        return "select eventbrite_event_id  as event_id,'eventbrite' as type,name,start_date,latitude,longitude,group_id,location,category from eventbrite_events where latitude IS NOT NULL and longitude IS NOT NULL and spayc_id IS NULL 
-        UNION 
-        select stubhub_event_id as event_id,'stubhub' as type,name,start_date,latitude,longitude,group_id,location,category from stubhub_events where latitude IS NOT NULL and longitude IS NOT NULL and spayc_id IS NULL 
-        UNION 
-        select ticketmaster_event_id as event_id,'ticketmaster' as type,name,start_date,latitude,longitude,group_id,location,category from ticketmaster_events where latitude IS NOT NULL and longitude IS NOT NULL and spayc_id IS NULL "; 
-    }
+    }    
 
     /*** Get all union data from eventbrite,ticketmaster and stubhub table ***/
-    public function getUnionData($condition) {  
-        $conn = ConnectionManager::get('default');
+    public function getUnionData($condition) {          
         $sql="select event_id,type,name,start_date,latitude,longitude,group_id,location,category from 
         (
-        ".$this->unionCommonQuery()."
+        ".$this->EventbriteEvents->unionCommonQuery()."
         ) as A ".$condition;
-        $stmt = $conn->execute($sql);
+        $stmt = $this->getConnectionObj('default')->execute($sql);
         $rows = $stmt->fetchAll('assoc');
         return $rows;
     }
     
      /*** Get all union data from  eventbrite,ticketmaster and stubhub table ***/
-    public function getDuplicateData($table) {  
-        $conn = ConnectionManager::get('default');
+    public function getDuplicateData($table) {          
         $sql="select * from $table where latitude IS NOT NULL and longitude IS NOT NULL and spayc_id IS NULL AND group_id IS NOT NULL ORDER BY group_id,start_date desc";
-        $stmt = $conn->execute($sql);
+        $stmt = $this->getConnectionObj('default')->execute($sql);
         $rows = $stmt->fetchAll('assoc');
         $duplicate=[];
         $duplicate_date=[];
@@ -658,21 +650,19 @@ class ScraperComponent extends Component {
     }
     
     /***  Get all Common Date data from eventbrite,ticketmaster and stubhub table ***/
-    public function getUnionDataWithCommonDate($having) {  
-        $conn = ConnectionManager::get('default');
+    public function getUnionDataWithCommonDate($having) {          
         $sql="select count(group_id),group_id,array_agg(start_date) from 
-        (".$this->unionCommonQuery()."
+        (".$this->EventbriteEvents->unionCommonQuery()."
         ) as A group by A.group_id ".$having;
 
-        $stmt = $conn->execute($sql);
+        $stmt = $this->getConnectionObj('default')->execute($sql);
         $rows = $stmt->fetchAll('assoc');
         return $rows;
     }
 
     /*** uddate record based on several condition in eventbrite,ticketmaster and stubhub table ***/
     public function updateScraper($table, $tableObj, $value, $type, $group_id) {  
-        if(!empty($type)) {
-            $conn = ConnectionManager::get('default');        
+        if(!empty($type)) {                
             if($type == SCRAPERGROUPFILTER){
                 $sql=" select ".$table."_event_id from ".$table."_events where gc_dist(latitude,longitude,".$value['latitude'].",".$value['longitude'].") <= ".DISTANCEINMETER." and group_id IS NULL";
             } else if ($type == SCRAPERCOMMONDATEFILTER){
@@ -680,7 +670,7 @@ class ScraperComponent extends Component {
             } else if ($type == SCRAPERUNIQUEFILTER){
                 $sql=" select ".$table."_event_id from ".$table."_events where group_id=".$value['group_id']." and start_date IN (".$value['start_date'].")";
             }    
-            $stmt = $conn->execute($sql);
+            $stmt = $this->getConnectionObj('default')->execute($sql);
             $rows = $stmt->fetchAll('assoc');
             if(!empty($rows)){
               $masterIds = array_column($rows, $table.'_event_id');
