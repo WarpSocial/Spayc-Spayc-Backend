@@ -94,6 +94,15 @@ class EventbriteEventsTable extends Table
 
         return $validator;
     }
+    
+     /*** common query for union all scraper table ***/
+    public function unionCommonQuery(){
+        return "select eventbrite_event_id  as event_id,'eventbrite' as type,name,start_date,latitude,longitude,group_id,location,category from eventbrite_events where latitude IS NOT NULL and longitude IS NOT NULL and spayc_id IS NULL 
+        UNION 
+        select stubhub_event_id as event_id,'stubhub' as type,name,start_date,latitude,longitude,group_id,location,category from stubhub_events where latitude IS NOT NULL and longitude IS NOT NULL and spayc_id IS NULL 
+        UNION 
+        select ticketmaster_event_id as event_id,'ticketmaster' as type,name,start_date,latitude,longitude,group_id,location,category from ticketmaster_events where latitude IS NOT NULL and longitude IS NOT NULL and spayc_id IS NULL "; 
+    }
 
     /**
      * Returns a rules checker object that will be used for validating
