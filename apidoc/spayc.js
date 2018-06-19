@@ -1799,3 +1799,25 @@ function postRemoveFromSpayc() { return; }
  * @apiUse UserErrorResponse
  */
 function getSubscribedSpaycs() { return; }
+/**
+ * @api {put} /update-comment/:matrix_room_id.json Update Comment
+ * @apiVersion 0.1.0
+ * @apiName putUpdateComment
+ * @apiGroup Spayc
+ * @apiPermission private
+ *
+ * @apiDescription Update comment placed inside room.Append matrix room id in url
+ *    
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Request proccess successfully.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+ {
+    "status": "success",
+    "message": "Request proccess successfully."
+ }
+ *
+ * @apiUse UserErrorResponse
+ */
+function putUpdateComment() { return; }

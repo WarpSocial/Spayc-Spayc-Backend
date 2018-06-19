@@ -82,7 +82,7 @@ Router::plugin(
         $routes->connect('/promotion-logic', ['controller' => 'Plans', 'action' => 'promotionLogic']);
         $routes->connect('/subscribed-spaycs',['controller'=>'Spaycs', 'action'=>'userSubscribedSpaycs']);
         $routes->connect('/spam-reports',['controller'=>'WebApi', 'action'=>'spamReport']);
-        
+        $routes->connect('/update-comment/:id',['controller'=>'WebApi', 'action'=>'updateComment'],['pass'=>['id']]);
         $routes->fallbacks(DashedRoute::class);
     }
 );

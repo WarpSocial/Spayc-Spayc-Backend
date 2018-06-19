@@ -81,14 +81,11 @@ class CommentsTable extends Table {
             $comment->status = ACTIVE;
             $comment->spayc_id = $data['spayc_id'];
             $comment->comment = $this->matrixComment($matrixRoomId);
-            $comment->event_id = $data['event_id'];
+            $comment->event_id = \Api\Utils\Utils::getVar('event_id', $data);
         }else{
             $comment = $comments->first();
-            if( ($comment->event_id == $data['event_id']) ){
-                return;
-            }
             $comment->comment = $this->matrixComment($matrixRoomId);
-            $comment->event_id = $data['event_id'];
+            $comment->event_id = \Api\Utils\Utils::getVar('event_id', $data);
         }
         $this->save($comment);
         return;
