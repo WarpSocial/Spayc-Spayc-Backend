@@ -88,7 +88,12 @@ class WebApiController extends AppController {
         //$this->Push->sendOnIOS($items);
         $this->Notification->iosPush($items, $deviceToken);
     }
-    
+    /**
+     * updateComment method to update the comment
+     * 
+     * @param String $matrixRoomId existing matrix room id
+     * @return Object json object containing status and message.
+     */
     public function updateComment($matrixRoomId = null){
         if (!$this->request->is(['put'])) {
             $this->restException(['status' => 'failed', 'message' => __('Method not allowed.')], 405);
