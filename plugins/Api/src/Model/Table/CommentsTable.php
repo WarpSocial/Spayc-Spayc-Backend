@@ -75,20 +75,21 @@ class CommentsTable extends Table {
         if(empty($data['spayc_id']) || empty($matrixRoomId)){
             return;
         }
+        $eventId = \Api\Utils\Utils::getVar('event_id', $data);
         $comments = $this->findBySpaycId($data['spayc_id']);
         if($comments->isEmpty()){
             $comment = $this->newEntity();
             $comment->status = ACTIVE;
             $comment->spayc_id = $data['spayc_id'];
             $comment->comment = $this->matrixComment($matrixRoomId);
-            $comment->event_id = $data['event_id'];
+            $comment->event_id = $eventId;
         }else{
             $comment = $comments->first();
-            if( ($comment->event_id == $data['event_id']) ){
+             if( ($comment->event_id == $eventId) ){
                 return;
             }
             $comment->comment = $this->matrixComment($matrixRoomId);
-            $comment->event_id = $data['event_id'];
+            $comment->event_id = $eventId;
         }
         $this->save($comment);
         return;

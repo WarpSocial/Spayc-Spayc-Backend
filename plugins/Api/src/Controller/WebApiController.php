@@ -24,7 +24,7 @@ class WebApiController extends AppController {
 
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
-        $this->Auth->allow(['addCategory', 'apilog', 'addComment', 'notify']);
+        $this->Auth->allow(['addCategory', 'apilog', 'addComment', 'notify','updateComment']);
     }
 
     public function spamReport() {
@@ -87,6 +87,27 @@ class WebApiController extends AppController {
         $deviceToken = $this->request->getData('device_token');
         //$this->Push->sendOnIOS($items);
         $this->Notification->iosPush($items, $deviceToken);
+    }
+    /**
+     * updateComment method to update the comment
+     * 
+     * @param String $matrixRoomId existing matrix room id
+     * @return Object json object containing status and message.
+     */
+    public function updateComment($matrixRoomId = null){
+        if (!$this->request->is(['put'])) {
+            $this->restException(['status' => 'failed', 'message' => __('Method not allowed.')], 405);
+        }
+        if(is_null($matrixRoomId)){
+            $this->restException(['status'=>'success', 'message'=>__('Matrix room id is required')], 200);
+        }
+        $spayc = TableRegistry::get('Api.Spaycs')->findByMatrixRoomId($matrixRoomId,['fields'=>['id']])->first();        
+        if(empty($spayc)){
+            $this->restException(['status'=>'success', 'message'=>__('Matrix room id is not valid.')], 200);
+        }
+        $data['spayc_id'] = $spayc['id'];
+        TableRegistry::get('Api.Comments')->spaycActivities($matrixRoomId,$data);
+        $this->restException(['status'=>'success', 'message'=>__('Request proccess successfully.')], 200);
     }
 
 }
