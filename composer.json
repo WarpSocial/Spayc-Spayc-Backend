@@ -32,7 +32,8 @@
     "autoload": {
         "psr-4": {
             "App\\": "src/",
-            "Api\\": "./plugins/Api/src"
+            "Api\\": "./plugins/Api/src",
+            "App\\Redis\\": "src/Redis"
         }
     },
     "autoload-dev": {
