@@ -7,7 +7,7 @@ use Cake\Routing\Router;
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Warp forgot password</title>
+    <title><?= Configure::read('forgotpassword_subject')?></title>
     <style>
         body{
           font-family: arial;
@@ -33,7 +33,7 @@ use Cake\Routing\Router;
                     <td style="line-height:23px;">
                       <div style="display: block; font-size: 16px;">Reset your password</div>
                       <div style="margin-top: 25px; color:#272727; font-size: 14px;">Hi <?php echo ucwords($user->username);?>,</div>
-                      <div style="color:#333333; margin-top:10px; font-size: 13px;">A request to reset your password has been made. If you did not make this request, simply ignore this email. If you did make this request, please reset your password:</div>
+                      <div style="color:#333333; margin-top:10px; font-size: 13px;">You have requested to reset your Admin Password.</div>
                     </td>
                   </tr>
                   <tr>
@@ -43,12 +43,12 @@ use Cake\Routing\Router;
                   </tr>
                   <tr>
                     <td>
-                      <p style="font-weight: 500;">- Thanks (Warp Team)</p>
+                      <p style="font-weight: 500;">- Thanks (<?= Configure::read('title')?> Team)</p>
                     </td>
                   </tr>
                   <tr>
                     <td style="width:100%; border-top: 1px solid #eaeaea;">
-                      <p style="color:#6c6c6c; font-size: 13px;padding-top: 5px;">For general inquiries or to request support with your account, please email support@warp.com</p>
+                      <p style="color:#6c6c6c; font-size: 13px;padding-top: 5px;">For general inquiries or to request support with your account, please email <?= Configure::read('support_email')?></p>
                     </td>
                   </tr>
                 </tbody>

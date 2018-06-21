@@ -5,19 +5,20 @@ $name = (strtolower($controller_name) == 'spaycs')?"Manage ".SITE_TITLE.'s': "Ma
 ?>
  <div class="breadcrumbs">
 	<div class="container">
-	  <h4>Manage <?= $name?></h4>
+	  <!--<h4>Manage <?php //echo $name?></h4>-->
 	  <?php 
   		$html = '';
   		$html ="<p><span>".$this->Html->link($name,['controller' => $controller_name, 'action' => 'index'])."</span>";
   		if(!empty($action))
-  		$html .="<span>".$action."</span>";
+  		$html .="<span>".ucfirst ($action)."</span>";
   		$html .="</p>";
   		echo $html;
 	  if($controller_name=='CustomMessages'){
 //              echo '<button class="button message-creation btn-lg-lg" data-toggle="modal" data-target="#customMessage">Custom Messages</button>';
                 ?>
-          <button type="button" rel="modal-dialog-lg confirm-message" class="pop button message-creation btn-lg-lg" page="<?php echo $this->Url->build(["controller" => "CustomMessages","action" => "getCustomMessage"]);?>">
-                      Custom Messages</button> 
+<!--          <button type="button" rel="modal-dialog-lg confirm-message" class="pop button message-creation btn-lg-lg" page="<?php //echo $this->Url->build(["controller" => "CustomMessages","action" => "getCustomMessage"]);?>">
+                      Custom Messages</button> -->
+                <button type="button" class="button message-creation btn-lg-lg disabled">Custom Messages</button>
           <?php } ?>
           
 	</div>

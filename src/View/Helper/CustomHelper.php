@@ -81,31 +81,35 @@ class CustomHelper extends Helper {
                 $query = $eventsRepo->find()->where(['room_id'=>$roomId,'type'=>CHAT_ROOM_TYPE]);
                 $query->where(['OR' => [['content LIKE' => '%"msgtype":"'.$chat_msg_type['replytext'].'"%'], ['content LIKE' => '%"msgtype":"'.$chat_msg_type['replyimage'].'"%']]]);
                 $query->where(['AND' => [['content LIKE' => '%"eventId":"'.$eventId.'"%']]]);
-                $res = $query->first();
+                $res = $query->toArray();
             }
             return $res;
 	}
     
-        public function getChatReplyText($getChatReply,$html='') {              
-            $content = json_decode($getChatReply['content'],true);
-            $userInfo = $this->getSenderInfo(trim($getChatReply->sender));
-            $likeDislike = $this->getmsgLikeDislike($getChatReply['room_id'], $getChatReply['event_id']);
-            $userImg = !empty($userInfo['user_images']) ? $userInfo['user_images']['0']['image_url']:'user.jpg';
-            $html .= "<div class='comment-reply d-flex flex-wrap'>"; 
-            $html .= "<div class='comment-reply-user-image d-flex w-100'><span>".$this->Html->image($userImg, ['alt' => ''])."</span><h4>".ucwords($userInfo['display_name'])."</h4>"; 
-            $html .= "<div class='comment-action ml-auto'><div class='like'>".$likeDislike['like']."</div><div class='dislike'>".$likeDislike['dislike']."</div></div>";
-            $html .= "</div>";
-            $html .= "<div class='comment-reply-image'>";
-            $html .= "<div class='image-reply d-flex flex-nowrap'><p>".trim($content['replyString'])."</p></div>"; 
-            $html .= "<div class='image-reply d-flex flex-nowrap'><p>".$this->getChatMsgDate($getChatReply['origin_server_ts'])."</p></div>"; 
-            $html .= "</div>";
-            $html .= "</div>";
-            $getChatReply = $this->getChatReply($getChatReply['room_id'], $getChatReply['event_id']);
-            if(!empty($getChatReply))
-                $html = $this->getChatReplyText($getChatReply,$html);
+        public function getChatReplyText($getChatReply, $html = '') {
             
-            return $html;
-        }
-	
+            foreach ($getChatReply as $getChatReply) {
+                $content = json_decode($getChatReply['content'], true);
+                $userInfo = $this->getSenderInfo(trim($getChatReply->sender));
+                $matrixObj = $this->getMatrixObj($content['eventId']);
+                $replied_to = $this->getSenderInfo(trim($matrixObj->sender));
+                $likeDislike = $this->getmsgLikeDislike($getChatReply['room_id'], $getChatReply['event_id']);
+                $userImg = !empty($userInfo['user_images']) ? $userInfo['user_images']['0']['image_url'] : 'user.jpg';
+                $html .= "<div class='comment-reply d-flex flex-wrap'>";
+                $html .= "<div class='comment-reply-user-image d-flex w-100'><span>" . $this->Html->image($userImg, ['alt' => '']) . "</span><h4>" . ucwords($userInfo['display_name']) . "<span> replied " . ucwords($replied_to['display_name']) . "</span></h4>";
+                $html .= "<div class='comment-action ml-auto'><div class='like'>" . $likeDislike['like'] . "</div><div class='dislike'>" . $likeDislike['dislike'] . "</div></div>";
+                $html .= "</div>";
+                $html .= "<div class='comment-reply-image'>";
+                $html .= "<div class='image-reply d-flex flex-nowrap'><p>" . trim($content['replyString']) . "</p></div>";
+                $html .= "<div class='image-reply d-flex flex-nowrap'><p>" . $this->getChatMsgDate($getChatReply['origin_server_ts']) . "</p></div>";
+                $html .= "</div>";
+                $html .= "</div>";
+                $againChatReply = $this->getChatReply($getChatReply['room_id'], $getChatReply['event_id']);
+                $html = $this->getChatReplyText($againChatReply, $html );
+            }
+
+        return $html;
+    }
+
 }
 ?>

@@ -57,14 +57,14 @@ class UserMailer extends Mailer {
     public function userStatus($user) {        
         $this->viewVars(['user' => $user])
             ->to($user->email)
-            ->subject(Configure::read('userstatus_subject'))
+            ->subject($user->statusTxt)
             ->emailFormat('html')
             ->template('userstatus');
     }
     public function spaycStatus($spayc) {        
         $this->viewVars(['spayc' => $spayc])
             ->to($spayc['email'])
-            ->subject(Configure::read('spaycstatus_subject'))
+            ->subject($spayc['statusTxt'])
             ->emailFormat('html')
             ->template('spaycstatus');
     }
@@ -74,6 +74,21 @@ class UserMailer extends Mailer {
             ->subject(Configure::read('custom_messages_subject'))
             ->emailFormat('html')
             ->template('custommessages');
+    }
+    public function advertisementDelete($user) {        
+        $this->viewVars(['user' => $user])
+            ->to($user->email)
+            ->subject(Configure::read('advertisement_deleted_by_admin'))
+            ->emailFormat('html')
+            ->template('advertisementdelete');
+    }
+    
+    public function warpDeleted($user) {        
+        $this->viewVars(['user' => $user])
+            ->to($user['email'])
+            ->subject(Configure::read('spayc_deleted_by_admin'))
+            ->emailFormat('html')
+            ->template('warpdelete');
     }
 
 }

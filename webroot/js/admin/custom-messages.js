@@ -12,8 +12,8 @@ jQuery(document).ready(function ($) {
             data: form.serialize(),
             dataType: 'JSON',
             success: function (data) {
-                $(".loader").removeClass('show-loader');
                 $(".skip-popup").trigger('click');
+                $(".loader").removeClass('show-loader');                
                 if (data.result) {
                     messageFadeOut('users-msg', data.message);
                     setTimeout(function () {
@@ -65,8 +65,7 @@ function getUsers(id, msg_id) {
         type: 'POST',
         url: UserUrls.resendMessageUsers,
         data: {id: id},
-        dataType: 'JSON',
-        async: true,
+        dataType: 'JSON',        
         success: function (data) {
             if (data.results) {
                 setTimeout(function () {

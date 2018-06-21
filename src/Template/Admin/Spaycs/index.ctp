@@ -114,8 +114,8 @@ if(isset($this->request->query['sort'])) {
                     </div>
                   <div class="dropdown-menu" aria-labelledby="table-data-dropdown_<?= $spayc->id?>">                    
                     <?= $this->Html->link("<i class='icon-view'></i>View",['controller' => 'Spaycs', 'action' => 'view',$spayc->id,$spayc->user_id], ['class' => 'dropdown-item view','escape' => false]);?>  
-                    <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item status_<?= $spayc->id?> <?= strtolower($blocktxt)?>" page="<?php echo $this->Url->build(["controller" => "Spaycs","action" => "setSpaycStatus",$spayc->id]);?>"><i class='icon-block'></i><span class="status_<?= $spayc->id?>"><?= $blocktxt?></span>
-                      </a> 
+<!--                    <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item status_<?php //echo $spayc->id?> <?php //echo strtolower($blocktxt)?>" page="<?php //echo $this->Url->build(["controller" => "Spaycs","action" => "setSpaycStatus",$spayc->id]);?>"><i class='icon-block'></i><span class="status_<?php //echo $spayc->id?>"><?php //echo $blocktxt?></span></a> -->
+                      <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
                       <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item delete" page="<?php echo $this->Url->build(["controller" => "Spaycs","action" => "deleteSpayc",$spayc->id]);?>"><i class='icon-Delete'></i>
                       <span>Delete</span></a> 
                   </div>
