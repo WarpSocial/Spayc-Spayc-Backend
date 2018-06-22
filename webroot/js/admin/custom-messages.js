@@ -34,10 +34,16 @@ jQuery(document).ready(function ($) {
 
     
     $(".img-icon").click(function (event) {
+        $(".loader").addClass('show-loader');
           event.stopPropagation();
-        $(".contact-list-box").toggle("fast");
+//        $(".contact-list-box").toggle("fast");
+        
+        $('.contact-list-box').show(); 
+        
+        
         setTimeout(function(){
         $(".select2-search__field").trigger('click');
+        $(".loader").removeClass('show-loader');
         },200);
         
 
@@ -47,6 +53,7 @@ jQuery(document).ready(function ($) {
         event.stopPropagation();
     });
     $(document).on('click', '.select2-container', function (event) {
+         $("body").css("overflow","hidden");
         event.stopPropagation();
     });
     $(document).on('click', '.select2-search__field', function (event) {
@@ -94,7 +101,7 @@ function getUsers(id, msg_id) {
 var options_arr = [];
 $(function () {
     $('#options').select2({
-        "placeholder": "Pick options",
+        "placeholder": "Search",
         "multiple": true,
         closeOnSelect: false,
         ajax: {
@@ -169,6 +176,7 @@ function updateCheck(check) {
     })
     }
     $(".select2-search__field").trigger('click');
+    $(".select2-search__field").trigger('click');
     $(".loader").removeClass('show-loader');
 }
 function template(data) {
@@ -182,7 +190,7 @@ function template(data) {
       setTimeout(function(){
          $( ".select2-results" ).prepend( $( ".check-all-div" ) );
         },100);
-    
+        
     return "<div class='user-list'>\
                     " + checked + "\
                 <div class='user-image'><span><img src ='" + data.image_url + "' class='image-responsive'></span></div>\

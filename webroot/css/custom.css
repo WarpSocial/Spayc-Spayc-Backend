@@ -329,7 +329,9 @@ ul#select2-options-results .select2-results__option {
     background:  none !important;
 }
 .select2-dropdown {
-    border: 0 !important;
+    width: 220px !important;
+      border: 1px solid #ccc !important;
+    border-top: 0px !important;
 }
 .list-checkbox{
         z-index: -9999999;
@@ -408,6 +410,28 @@ ul#select2-options-results .select2-results__option {
     padding-left: 30px;
     padding-right: 20px;
     display: inline-block;
+}
+.custom-message .modal-body .to-message .keywords {
+    height: 100px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.confirm-message .modal-content.custom-message h2 {
+    text-align: left !important;
+    font-weight: 500 !important;
+    font-size: 16px !important;
+}
+.select2-results .check-all-div  {
+     color:#333;
+     font-size: 11px;
+}
+.select2-results .check-all-div .check-all {
+    top: 2px;
+    position: relative;
+}
+.min-height-set {
+    min-height: 100vh;
+    padding-bottom: 62px;
     position: relative;
     width: auto;
     color: #9b9b9b;
@@ -512,4 +536,10 @@ ul#select2-options-results .select2-results__option {
 .blank-emoji {
     background: #eaeef0 !important;
     cursor: default !important;
+}
+.select2-results__option .user-list .user-list-info .user-name {
+    color :#1a4c59;
+}
+.select2-results__option .user-list .user-list-info .user-id {
+  color: #333; 
 }

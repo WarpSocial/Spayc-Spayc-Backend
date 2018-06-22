@@ -28,8 +28,8 @@
         <textarea class="message-text text-left" name="message"></textarea>
         <div class="d-flex pt-20">
             
-            <button class="button btn-danger btn-lg-lg ml-auto skip-popup" data-dismiss="modal">Cancel</button>
-            <button class="button message-creation send-custom-message btn-lg-lg ml-auto">Send Message</button>
+            <button class="button btn-danger btn-md skip-popup" data-dismiss="modal">Cancel</button>
+            <button class="button message-creation send-custom-message btn-md ml-auto">Send Message</button>
             
         </div>
         <?php echo $this->Form->end(); ?>
