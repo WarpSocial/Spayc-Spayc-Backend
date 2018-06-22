@@ -26,6 +26,7 @@ class SpaycsController extends AppController {
     public function initialize() {
         parent::initialize();
         $this->loadComponent('Api.Push');
+        $this->loadComponent('Api.Redis');
         $this->loadComponent('Api.Matrix');
     }
     
@@ -46,7 +47,7 @@ class SpaycsController extends AppController {
         $data = $this->request->getData();
         $data['type'] = !empty($data['type'])?ucfirst($data['type']):'';
         $data['group_type'] = !empty($data['group_type'])?ucfirst($data['group_type']):'';        
-        $data['status'] = 'Active';
+        $data['status'] = ACTIVE;
         
         $entity = $this->Spaycs->newEntity();
         $items = $this->Spaycs->patchEntity($entity, $data);
@@ -71,6 +72,7 @@ class SpaycsController extends AppController {
         $items->set('user_id', $this->Auth->user('id'));
         if (!$items->errors()) {
             if($this->Spaycs->save($items)) {
+                $this->Redis->addSpayc($items);
                 $items->job_type = 'new-spayc';
                 $items->created_duration = Utils::toClient($items->created);
                 TableRegistry::get('Queue.QueuedJobs')->createJob('Generic',$items->toArray());
@@ -161,9 +163,10 @@ class SpaycsController extends AppController {
         $items->set('user_id', $this->Auth->user('id'));
         if (!$items->errors()) {            
             if($this->Spaycs->save($items)){
-              $data['image'] = $items->get('image');
-              $data['matrix_room_id'] = $items->get('matrix_room_id');
-              //Joined the invite to the room//
+                $this->Redis->addSpayc($items);
+                $data['image'] = $items->get('image');
+                $data['matrix_room_id'] = $items->get('matrix_room_id');
+                //Joined the invite to the room//
                 $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
                  if(!empty($items['description'])) {
                     TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
@@ -761,9 +764,10 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
             if($prevDescription != $entity->get('description')) {
                 TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
             }
-            //if($prevLocation != $entity->get('location')){
-            $this->Spaycs->updateDistance($items);                
-            //}
+            if($prevLocation != $entity->get('location')){
+                $this->Spaycs->updateDistance($items);                
+                $this->Redis->addSpayc($items);
+            }
             if(!empty($entity['joined_spayc'])){
                 unset($items->joined_spayc);
             }

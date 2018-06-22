@@ -2,8 +2,8 @@
 
 namespace App\Redis;
 
-use Cake\Redis\Driver\PHPRedisDriver;
-use Cake\Redis\Driver\PredisDriver;
+use App\Redis\Driver\PHPRedisDriver;
+use App\Redis\Driver\PredisDriver;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Core\App;
 
