@@ -680,7 +680,7 @@ class SpaycsTable extends Table {
         $redis = new RedisComponent(new ComponentRegistry());
         $redisSpaycs = $redis->getGeoLocation('Spaycs',$request['center_latitude'], $request['center_longitude'], $radius);
         if(empty($redisSpaycs)){
-            return 'r0';
+            return ['count'=>0,'records'=>[]];
         }
         $requiredSpaycs = array_column($redisSpaycs,'id');
         $spaycs = $this->find()

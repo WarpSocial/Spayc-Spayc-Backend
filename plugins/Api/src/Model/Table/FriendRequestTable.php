@@ -276,7 +276,7 @@ class FriendRequestTable extends Table {
         $redis = new RedisComponent(new ComponentRegistry());
         $nearUsers = $redis->getGeoLocation('Users',$request['center_latitude'], $request['center_longitude'], $radius);
         if(empty($nearUsers)){
-            return 'r0';
+            return ['count'=>0,'records'=>[]];
         }
         $friendIds = array_intersect($friendIds,array_column($nearUsers,'id'));
          if(empty($friendIds)){
