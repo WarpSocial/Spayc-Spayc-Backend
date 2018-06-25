@@ -17,8 +17,8 @@ class RedisComponent extends Component {
      * @redis redis connection object
      */
     public $_Redis = null;
-    protected $userKey = 'user';
-    protected $spaycKey = 'spayc';
+    protected $userKey = 'Users';
+    protected $spaycKey = 'Spaycs';
 
     /**
      * The default config used unless overridden by runtime configuration
@@ -67,7 +67,7 @@ class RedisComponent extends Component {
     }
 
     /**
-     * geoAddSpayc to add user geo associated data
+     * addSpayc to add user geo associated data
      * 
      * @param array $data contain spayc related data
      * @return bool true if added successfully false on failure
@@ -78,33 +78,55 @@ class RedisComponent extends Component {
         }
         $key = $this->spaycKey.'_'.$data['id'];
         if ($this->_Redis->geoAdd($this->spaycKey, $data['latitude'], $data['longitude'], $data['id'])) {
-            $spaycData = [
-                'id' => $data['id'],
-                'name' => $data['id'],
-                'status' => $data['status'],
-                'matrix_room_id' => $data['matrix_room_id'],
-                'image' => $data['image'],
-                'type' => $data['type'],
-                'modified' => $data['modified'],
-                'spayc_category_id' => $data['spayc_category_id'],
-                'latitude' => $data['latitude'],
-                'longitude' => $data['longitude'],
-                'website' => $data['website'],
-            ];
-            $this->write($key,$spaycData);
+            /* save room meta data in serialize format */
+            $this->write($key,$data);
         }
     }
     
     /**
-     * getSpaycGeo method to get the list of spayc located near the reius
+     * addUser to add user geo associated data
+     * 
+     * @param array $data contain spayc related data
+     * @return bool true if added successfully false on failure
      */
-    public function getSpaycGeo($latitude,$longitude,$radius,$unit='mi'){
-        $spaycs = $this->_Redis->geoRadius($this->spaycKey,$latitude,$longitude,$radius,$unit,['WITHDIST']);
-        $items = [];
-        if(!empty($spaycs)){
-            for($i=0;$i<count($spaycs);$i++){
-                $items[] = ['id'=>$spaycs[$i][0],'distance'=>$spaycs[$i][1]];
+    public function addUser($data) {        
+       if (is_null($data['latitude']) || is_null($data['longitude']) || is_null($data['id'])) {
+            return false;
+        }
+        $key = $this->userKey.'_'.$data['id'];
+        if ($this->_Redis->geoAdd($this->userKey, $data['latitude'], $data['longitude'], $data['id'])) {
+            /* save user meta data in serialize format*/
+            if(!empty($data['email'])){
+                $this->write($key,$data);
             }
+        }
+    }
+    
+    /**
+     * getGeoLocation method to get the list of id within given miles
+     * @param String $key 
+     * @param Float $latitude center latitude
+     * @param Float $longitude center longitude
+     * @param Integer $raidus radius in miles
+     * @param String $unit default is miles
+     * @return Array List of id and distance of that key reference.
+     */
+    public function getGeoLocation($key=null,$latitude,$longitude,$radius,$unit='mi'){
+        if(empty($key)){
+            return false;
+        }
+        $data = $this->_Redis->geoRadius($key,$latitude,$longitude,$radius,$unit,['WITHCOORD','WITHDIST','ASC']);
+        if(empty($data)){
+            return [];
+        }
+        $items = [];
+        for($i=0;$i<count($data);$i++){
+            $items[$data[$i][0]] = [
+                'id'=>$data[$i][0],
+                'distance'=>$data[$i][1],
+                'latitude'=>$data[$i][2][0],
+                'longitude'=>$data[$i][2][1],
+                ];
         }
         return $items;
     }

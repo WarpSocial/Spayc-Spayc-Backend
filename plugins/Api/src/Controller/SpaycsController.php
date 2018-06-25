@@ -1026,6 +1026,12 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
             $long = $pquery->current_longitude;            
         }else{
             TableRegistry::get('Api.PhysicalLocation')->updateLocation($user,$lat,$long);
+             /* update user current status on redis too */
+            $this->Redis->addUser([
+                'id'=>$user['id'],
+                'latitude'=>$lat,
+                'longitude'=>$long,
+            ]);
         }
        
         $date = (new Time('now', Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i:s");
@@ -1100,9 +1106,11 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
             }
          }
         $user = $this->Auth->user();
-        #$pquery = TableRegistry::get('Api.PhysicalLocation')->findByUserId($user['id']);
-        
         $spayc=TableRegistry::get('Api.Spaycs')->getNearBySpaycsOnMap($this->request->getData(),$user['id']);
+        /* if data not store in local database redis */
+        if($spayc == 'r0'){
+            $this->restException(['status'=>'failed', 'message'=> __('Warp data has not been store in local database.')], 400);
+        }
         $friends = TableRegistry::get('Api.FriendRequest')->getNearByFriendsOnMap($this->request->getData(), $user['id']);
 //        print_R($friends);die;
         if(!$friends['count'] && !$spayc['count']){

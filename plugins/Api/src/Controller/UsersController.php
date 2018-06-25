@@ -28,6 +28,7 @@ class UsersController extends AppController {
         parent::initialize();
         $this->loadComponent('Api.Push');
         $this->loadComponent('Api.Matrix');
+        $this->loadComponent('Api.Redis');
     }
     
     /**
@@ -307,7 +308,11 @@ class UsersController extends AppController {
         $items->set('matrix_access_token', $matrix['access_token']);
         #echo $data['token_verification'];die;
         if ($this->Users->save($items)) {
-            $this->getMailer('Api.User')->send('signup', [$items]);
+            $items['action_type']='signup';
+            TableRegistry::get('Queue.QueuedJobs')->createJob('Mailer',$items->toArray());
+            /*store the user location to redis*/
+            $this->Redis->addUser($items->toArray());
+            //$this->getMailer('Api.User')->send('signup', [$items]);
             $response = ['status' => "success", 'message' => __('Registration done successfully.'), 'data' =>
                 [
                     'id'=>$items->id,
@@ -323,7 +328,7 @@ class UsersController extends AppController {
                 ]];
             $this->response->statusCode(201);
         } else {
-            Log::info(['status' => "failed", 'message' =>__('Failed to saved data.')]);
+            #Log::info(['status' => "failed", 'message' =>__('Failed to saved data.')]);
             $response = ['status' => "failed", 'message' => $this->mapErrors($items->errors())];
         }
         $this->set($response);
@@ -614,6 +619,7 @@ class UsersController extends AppController {
             $items->set('display_name',$data['username']);
         }
         if ($this->Users->save($items)) {
+            $this->Redis->addUser($items->toArray());
             $response = ['status' => "success", 'message' => __('Updated successfully.'), 'data' => $data];
         } else {
             $response = ['status' => "failed", 'message' => $this->mapErrors($items->errors())];
@@ -1486,6 +1492,12 @@ class UsersController extends AppController {
         $long = (float)$data['longitude'];
         $user = $this->Auth->user();
         if($this->Users->PhysicalLocation->updateLocation($user,$lat,$long)){
+            /* update user current status on redis too */
+            $this->Redis->addUser([
+                'id'=>$user['id'],
+                'latitude'=>$lat,
+                'longitude'=>$long,
+            ]);
             $response = ['status'=>'success', 'message'=>__('Request has been updated successfully.')];
         }else{
             $this->response->statusCode(400);

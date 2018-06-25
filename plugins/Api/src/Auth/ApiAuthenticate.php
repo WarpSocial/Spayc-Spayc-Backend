@@ -19,6 +19,7 @@ use Cake\Http\ServerRequest;
 Use Cake\Http\Response;
 use Cake\ORM\TableRegistry;
 use Api\Auth\ApiHasher;
+use Cake\Cache\Cache;
 
 class ApiAuthenticate extends BaseAuthenticate {
 
@@ -70,6 +71,7 @@ class ApiAuthenticate extends BaseAuthenticate {
                     ->where(['plain_token'=>$token]);
             
         })->where(['Users.status'=>'Active']);
+        
         if($user->isEmpty()){
             return false;
         }
@@ -91,14 +93,25 @@ class ApiAuthenticate extends BaseAuthenticate {
         if(!empty($username) && !empty($password)){
             $user = $this->_findByFields($username,$password);
         }elseif(!empty($token)){
-            $user = $this->getUser($request);
+            if (($user = Cache::read($token,'redis')) === false) {
+                $user = $this->getUser($request);
+                if(empty($user)){
+                    return false;
+                }
+                /* delete cache data if existing before creating new one */
+                $userLog = TableRegistry::get('Api.UserLogs')->findByUserId($user['id'])->first();
+                if(!empty($userLog)){
+                    Cache::delete($userLog->plain_token,'redis');
+                }
+                Cache::write($token, $user,'redis');
+            }
         }elseif(!empty($fbId)){
             $userModel = 'Api.'.$this->_config['userModel'];
             $query = TableRegistry::get($userModel)->findByFbIdAndStatus($fbId, 'Active');
             if($query->isEmpty()){
                 return false;
             }
-            $user = $query->first()->toArray();
+            $user = $query->first()->toArray();            
         }else{
             $user = false;
         }

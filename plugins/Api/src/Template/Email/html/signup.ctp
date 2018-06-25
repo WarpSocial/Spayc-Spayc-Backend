@@ -20,7 +20,7 @@ use Cake\Routing\Router;
         <tbody>
           <tr style="border:0;border-collapse:collapse;background-color:#1a4c59;">
               <td style="width:100%;margin:0;padding:7px 15px;font-size:25px;color: #fff;">
-                <?php echo $this->Html->image('logo.png', ['fullBase' => true,'alt' => 'Warp', 'style'=>'text-align: center;display: block;margin: 0 auto;']);?>
+                <?php echo $this->Html->image(Configure::read('App.BASE_URL').'images/logo.png', ['alt' => 'Warp', 'style'=>'text-align: center;display: block;margin: 0 auto;']); ?>
               </td>
          </tr>
           <tr>
@@ -30,7 +30,7 @@ use Cake\Routing\Router;
                   <tr>
                     <td style="line-height:23px;">
                       <div style="display: block; font-size: 16px;">Account Verification</div>
-                      <div style="margin-top: 25px; color:#272727; font-size: 14px;">Hi <?= $user->display_name ?>,</div>
+                      <div style="margin-top: 25px; color:#272727; font-size: 14px;">Hi <?= ucfirst($user['display_name']) ?>,</div>
                       <div style="color:#333333; margin-top:10px; font-size: 13px;">
                           <p>Welcome to <?= Configure::read('title') ?>:</p>
                           <p>The new frontier of social media! You're on your way to exploring and connecting with the local community! To get started try creating a warp, joining a warp, and inviting some of your friends!</p>
@@ -38,8 +38,8 @@ use Cake\Routing\Router;
                     </td>
                   </tr>
                   <tr>
-                    <td style="width: 100%; float: left; text-align: center;margin-top: 40px;margin-bottom: 40px;">
-                      <a href="<?php echo $this->Url->build('/api/verify/'.$user->token_verification.'/'. urlencode($user->email).'.html',true); ?>" style="font-weight: normal; background: #1a4c59; color:#fff; border-radius: 24px; padding: 15px 30px; text-decoration: none;margin: 0 auto; text-align: center;font-family: arial;">VERIFY YOUR EMAIL ADDRESS</a>
+                    <td style="width: 100%; float: left; text-align: center;margin-top: 40px;margin-bottom: 40px;">                        
+                      <a href="<?php echo Configure::read('App.BASE_URL').'api/verify/'.$user['token_verification'].'/'. urlencode($user['email']).'.html'; ?>" style="font-weight: normal; background: #1a4c59; color:#fff; border-radius: 24px; padding: 15px 30px; text-decoration: none;margin: 0 auto; text-align: center;font-family: arial;">VERIFY YOUR EMAIL ADDRESS</a>
                     </td>
                   </tr>
                   <tr>
