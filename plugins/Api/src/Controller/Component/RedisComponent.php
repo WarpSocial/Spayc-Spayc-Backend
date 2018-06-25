@@ -131,22 +131,7 @@ class RedisComponent extends Component {
         return $items;
     }
     
-    /**
-     * geoAddUser to add user geo associated data
-     * 
-     * @param array $data contain user related data
-     * @return bool true if added successfully false on failure
-     */
-    public function geoAddUser($data) {
-        if (is_null($data['latitude']) || is_null($data['longitude']) || is_null($data['id'])) {
-            return false;
-        }
-        $key = $this->userKey.$data['id'];
-        if ($this->_Redis->geoAdd('user', $data['latitude'], $data['longitude'], $key)) {
-            $this->write($key,$data);
-        }
-    }
-
+    
     /**
      * Write data for key to redis cache.
      *
@@ -187,6 +172,26 @@ class RedisComponent extends Component {
      */
     public function delete($key){
         return $this->_Redis->delete($key) > 0;
+    }
+    /**
+     * deleteUser to delete user from cache
+     *
+     * @param string $$keyId Identifier for the data
+     * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
+     */
+    public function deleteUser($keyId){
+        $this->_Redis->zRem($this->userKey,$keyId);
+        return $this->_Redis->delete($this->userKey.'_'.$keyId) > 0;
+    }
+    /**
+     * deleteSpayc to delete spayc from cache
+     *
+     * @param string $$keyId Identifier for the data
+     * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
+     */
+    public function deleteSpayc($keyId){
+        $this->_Redis->zRem($this->spaycKey,$keyId);
+        return $this->_Redis->delete($this->spaycKey.'_'.$keyId) > 0;
     }
 
     /**

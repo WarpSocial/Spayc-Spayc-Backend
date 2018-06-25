@@ -833,6 +833,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         }
 
         $spayc = $entity->first();
+        $spaycId = $spayc->id;
         $spayc->set('matrix_access_token',$user['matrix_access_token']);
         /* To queue the job to process from backend system */
         TableRegistry::get('Queue.QueuedJobs')->createJob('Delete',$spayc->toArray());
@@ -844,6 +845,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
        
 //        $this->Matrix->deleteRoom($matrixRoomIds);
         if ($this->Spaycs->delete($spayc)) {
+            $this->Redis->deleteSpayc($spaycId);
             TableRegistry::get('Api.JoinedSpayc')->deleteAll(['spayc_id IN' => $child]);
             TableRegistry::get('Api.SubscribedUsers')->deleteAll(['spayc_id IN' => $child]);
             TableRegistry::get('Api.SpaycHashtags')->deleteAll(['spayc_id IN' => $child]);
