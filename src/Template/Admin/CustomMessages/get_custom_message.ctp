@@ -5,6 +5,7 @@
         <?php echo $this->Form->create(NULL, ['id'=>'custom_messages_form','autocomplete' => 'off','novalidate'=>'novalidate']); ?>
         
         <h2>Custom Messages</h2>
+        <span style="display: none"><?=$this->Html->image('user.jpg', ['alt' => 'img','id' => 'default_img']);?></span>
         <div class="to-message">
             <b class="to-text">To</b>
             <div class="keywords">

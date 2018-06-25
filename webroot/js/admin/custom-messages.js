@@ -190,7 +190,9 @@ function template(data) {
       setTimeout(function(){
          $( ".select2-results" ).prepend( $( ".check-all-div" ) );
         },100);
-        
+        if(!data.image_url){
+            data.image_url=$("#default_img").attr('src');
+        }
     return "<div class='user-list'>\
                     " + checked + "\
                 <div class='user-image'><span><img src ='" + data.image_url + "' class='image-responsive'></span></div>\
