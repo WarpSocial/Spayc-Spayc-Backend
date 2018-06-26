@@ -92,6 +92,11 @@ class ApiAuthenticate extends BaseAuthenticate {
         $token = $request->env('HTTP_TOKEN');
         if(!empty($username) && !empty($password)){
             $user = $this->_findByFields($username,$password);
+            /* delete cache data if existing after re-login */
+            $userLog = TableRegistry::get('Api.UserLogs')->findByUserId($user['id'])->first();
+            if(!empty($userLog)){
+                Cache::delete($userLog->plain_token,'redis');
+            }
         }elseif(!empty($token)){
             if (($user = Cache::read($token,'redis')) === false) {
                 $user = $this->getUser($request);
@@ -111,7 +116,12 @@ class ApiAuthenticate extends BaseAuthenticate {
             if($query->isEmpty()){
                 return false;
             }
-            $user = $query->first()->toArray();            
+            $user = $query->first()->toArray();
+            /* delete cache data if existing after re-login by facebook */
+            $userLog = TableRegistry::get('Api.UserLogs')->findByUserId($user['id'])->first();
+            if(!empty($userLog)){
+                Cache::delete($userLog->plain_token,'redis');
+            }
         }else{
             $user = false;
         }

@@ -661,6 +661,9 @@ class UsersController extends AppController {
                         ->where(['plain_token' =>  $token])
                         ->execute();
         $this->Matrix->logout($this->Auth->user('UserLogs.matrix_access_token'));
+        /* delete cache data if existing before creating new one */
+        \Cake\Cache\Cache::delete($token,'redis');
+        $this->Auth->logout();
         $response = ['status'=>'success','message'=>__('Logout successfully.')];
         $this->set($response);
     }
