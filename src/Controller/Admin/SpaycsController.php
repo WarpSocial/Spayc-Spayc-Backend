@@ -230,7 +230,7 @@ class SpaycsController extends AdminController {
                                 return $q->select(['matrix_access_token']);
                             },
                             'JoinedSpayc' => function($q) {
-                                return $q->select(['JoinedSpayc.id', 'JoinedSpayc.spayc_id', 'JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.distance'])->where(['JoinedSpayc.status' => JOINED]);
+                                return $q->select(['JoinedSpayc.id', 'JoinedSpayc.spayc_id', 'JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.distance']);
                             },
                             'JoinedSpayc.users' => function($q) {
                                 return $q->select(['email', 'matrix_user_id']);
@@ -295,7 +295,6 @@ class SpaycsController extends AdminController {
                             }
                         }
                         $this->getMailer('User')->send('spaycStatus', [$email]);
-                        TableRegistry::get('Api.SubscribedUsers')->removeSubscription($val['user_id'],$spayc['id']);  
                     }
                 }
                 //Ban,Mail & Push
