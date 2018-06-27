@@ -96,11 +96,11 @@ class SubscribedUsersTable extends Table {
         return $this->deleteAll(['spayc_id' => $spaycId,'user_id'=>$userId]);
     }
     
-    public function isSubscribed($userId,$status='Active'){
-        if(empty($userId)){
+    public function isSubscribed($userId,$spaycId,$status='Active'){
+        if(empty($userId) || empty($spaycId)){
             return false;
         }
-        return $this->exists(['user_id'=>$userId,'status'=>$status]);
+        return $this->exists(['user_id'=>$userId,'spayc_id'=>$spaycId,'status'=>$status]);
     }
     
     /**

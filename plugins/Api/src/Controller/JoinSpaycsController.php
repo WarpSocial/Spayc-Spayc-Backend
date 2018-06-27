@@ -114,7 +114,7 @@ class JoinSpaycsController extends AppController {
             }
             if($this->Matrix->joinRoom($data)) {
                 if($spayc->group_type == "Public"){
-                    if(!TableRegistry::get('Api.SubscribedUsers')->isSubscribed($user['id'],ACTIVE)){
+                    if(!TableRegistry::get('Api.SubscribedUsers')->isSubscribed($user['id'],$spayc->id,ACTIVE)){
                         $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);
                     }
                     $this->Matrix->deleteTag($spayc->matrix_room_id,$user['UserLogs']['matrix_access_token'],$user['UserLogs']['matrix_user_id']);
@@ -254,7 +254,7 @@ class JoinSpaycsController extends AppController {
             }
             if($this->Matrix->joinRoom($data)) {
                 if($spayc->group_type == "Public"){
-                    if(!TableRegistry::get('Api.SubscribedUsers')->isSubscribed($user['id'],ACTIVE)){
+                    if(!TableRegistry::get('Api.SubscribedUsers')->isSubscribed($user['id'],$spayc->id,ACTIVE)){
                         $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);                        
                     }
                     $this->Matrix->deleteTag($spayc->matrix_room_id,$data['matrix_token'],$user['UserLogs']['matrix_user_id']);
