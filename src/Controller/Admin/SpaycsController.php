@@ -204,7 +204,6 @@ class SpaycsController extends AdminController {
     }
 
     public function setSpaycStatus($id, $status = 'Blocked') {
-
         $this->viewBuilder()->layout('');
         if (empty($id)) {
             return $this->redirect(['action' => 'index']);
@@ -228,13 +227,23 @@ class SpaycsController extends AdminController {
                         ->contain([
                             'Users' => function($q) {
                                 return $q->select(['matrix_access_token']);
-                            },
+                            },                                    
                             'JoinedSpayc' => function($q) {
-                                return $q->select(['JoinedSpayc.id', 'JoinedSpayc.spayc_id', 'JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.distance']);
+                                return $q->select(['JoinedSpayc.id', 'JoinedSpayc.spayc_id', 'JoinedSpayc.user_id', 'JoinedSpayc.is_admin', 'JoinedSpayc.status', 'JoinedSpayc.distance']);
                             },
-                            'JoinedSpayc.users' => function($q) {
-                                return $q->select(['email', 'matrix_user_id']);
-                            }
+                            'JoinedSpayc.Users' => function($q) {
+                                return $q->select(['email', 'matrix_user_id','matrix_access_token']);
+                            },
+                            'SubSpaycs' => function($q){                        
+                                $q->select(['SubSpaycs.id','SubSpaycs.name','SubSpaycs.image','SubSpaycs.parent_id','SubSpaycs.matrix_room_id']);
+                                return $q;
+                            }, 
+                            'SubSpaycs.Users' => function($q) {
+                                return $q->select(['matrix_access_token']);
+                            },        
+                            'SubSpaycs.JoinedSpayc.Users' => function($q) {
+                                return $q->select(['email', 'matrix_user_id','matrix_access_token']);
+                            }        
                 ]);
                 $spaycs = $spaycs->first()->toArray();
                 $spayc = $spaycs;
@@ -252,49 +261,12 @@ class SpaycsController extends AdminController {
                     $update = $this->inactiveSubSpaycStatus($spayc['id'], $statusArr['inactive']);
                     $status = BANNED;
                 }
-
-
-                //Ban,Mail & Push
-                if (!empty($spaycs['joined_spayc'])) {
-                    foreach ($spaycs['joined_spayc'] as $val) {
-                        $email['email'] = $val['Users']['email'];
-                        $email['status'] = $status;
-                        $email['name'] = $displayName;
-                        $email['statusTxt'] = $spayc['statusTxt'];
-                        
-                        // for push notification
-                        $push['requested_by'] = $this->Auth->user('id');
-                        $push['username'] = $this->Auth->user('display_name');
-                        $push['requested_to'] = $val['user_id'];
-                        $push['slug'] = $pushNotificationAdminSlug;
-                        $this->Push->sendPushNotification($push);
-
-                        //Ban from Matrix
-                        $jsModel = TableRegistry::get('Api.JoinedSpayc');
-
-                        if (!empty($spaycs['user'])) {
-                            $data['matrix_user_id'] = $val['Users']['matrix_user_id'];
-                            $data['matrix_token'] = $spaycs['user']['matrix_access_token'];
-                            $data['matrix_room_id'] = $spaycs['matrix_room_id'];
-                            
-                            $data['status'] = $status;
-                            $matrix = $this->Matrix->banMember($data);
-                            if (!is_string($matrix)) {
-                                if ($status == UNBANNED) {
-                                    $data['status'] = $status = JOINED;
-                                    $this->Matrix->joinRoom($data);
-                                }
-                                $this->Matrix->muteUnmute('mute', $data['matrix_token'], $data['matrix_room_id']);
-
-                                $update['status'] = $status;
-                                $update['updated_by'] = $this->Auth->user('id');
-                                $condition['id'] = $val['id'];
-                                $success = $jsModel->UpdateAll($update, $condition);
-                                if($success)
-                                TableRegistry::get('Api.SubscribedUsers')->removeSubscription($val['user_id'],$spayc['id']);  
-                            }
-                        }
-                        $this->getMailer('User')->send('spaycStatus', [$email]);
+                
+                $this->spaycBannedStatus($spayc, $status, $pushNotificationAdminSlug);
+                if(!empty($spayc['sub_spaycs'])){
+                    foreach($spayc['sub_spaycs'] as $subSpayc){                        
+                        $subSpayc['statusTxt'] = $spayc['statusTxt'];
+                        $this->spaycBannedStatus($subSpayc, $status, $pushNotificationAdminSlug);
                     }
                 }
                 //Ban,Mail & Push
@@ -305,6 +277,60 @@ class SpaycsController extends AdminController {
             die;
         }
         $this->set(compact('spayc'));
+    }
+    
+    public function spaycBannedStatus($spaycs,$status,$notificationSlug) {
+        $displayName = !empty($spaycs['name']) ? ucfirst($spaycs['name']) : SITE_TITLE;
+        if (!empty($spaycs['joined_spayc'])) {
+            foreach ($spaycs['joined_spayc'] as $val) {
+                if($val['is_admin'] == 2){
+                    continue;
+                }
+                $email['email'] = $val['user']['email'];
+                $email['status'] = $status;
+                $email['name'] = $displayName;
+                $email['statusTxt'] = $spaycs['statusTxt'];
+
+                // for push notification
+                $push['requested_by'] = $this->Auth->user('id');
+                $push['username'] = $this->Auth->user('display_name');
+                $push['requested_to'] = $val['user_id'];
+                $push['slug'] = $notificationSlug;
+                $this->Push->sendPushNotification($push);
+
+                //Ban from Matrix
+                $jsModel = TableRegistry::get('Api.JoinedSpayc');
+                
+                if (!empty($spaycs['user'])) {
+                    $data['matrix_user_id'] = $val['user']['matrix_user_id'];
+                    $data['matrix_token'] = $spaycs['user']['matrix_access_token'];
+                    $data['matrix_room_id'] = $spaycs['matrix_room_id'];
+
+                    $data['status'] = $status;
+                    $matrix = $this->Matrix->banMember($data);
+                    //if (!is_string($matrix)) {
+                        if ($status == UNBANNED) {
+                            $status = JOINED;
+                            $this->Matrix->joinRoom([
+                                'status'=>JOINED,
+                                'matrix_user_id' => $val['user']['matrix_user_id'],
+                                'matrix_token' => $val['user']['matrix_access_token'],
+                                'matrix_room_id' => $spaycs['matrix_room_id'],
+                            ]);
+                        }
+                        $this->Matrix->muteUnmute('mute', $val['user']['matrix_access_token'], $spaycs['matrix_room_id']);
+
+                        $update['status'] = $status;
+                        $update['updated_by'] = $this->Auth->user('id');
+                        $condition['id'] = $val['id'];
+                        $success = $jsModel->UpdateAll($update, $condition);
+                        if ($success)
+                            TableRegistry::get('Api.SubscribedUsers')->removeSubscription($val['user_id'], $val['spayc_id']);
+                    //}
+                }
+                $this->getMailer('User')->send('spaycStatus', [$email]);
+            }
+        }
     }
 
     public function deleteSpayc($id) {

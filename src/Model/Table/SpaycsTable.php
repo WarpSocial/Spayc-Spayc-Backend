@@ -399,7 +399,7 @@ class SpaycsTable extends Table
                     $totalJoined = \Cake\Utility\Hash::extract($row['joined_spayc'],'   {n}[status=Joined].status');
                     $totalAdmin = \Cake\Utility\Hash::extract($row['joined_spayc'],'{*}[status=Joined],[is_admin > 0]');
                     $miles = Configure::read('miles');
-                    $physicalPresent = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[distance <='.$miles.']');
+                    $physicalPresent = \Cake\Utility\Hash::extract($row['joined_spayc'],'{*}[status=Joined],[distance <='.$miles.']');
                     $present = count($physicalPresent);
                 }                 
                 $row['total_spayc_admin'] = $totalAdmin;
