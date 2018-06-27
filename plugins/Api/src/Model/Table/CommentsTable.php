@@ -71,9 +71,9 @@ class CommentsTable extends Table {
         return empty($results['all_comments'])?0:$results['all_comments'];
     }
     
-    public function spaycActivities($matrixRoomId,$data){        
+    public function spaycActivities($matrixRoomId,$data){ 
         if(empty($data['spayc_id']) || empty($matrixRoomId)){
-            return;
+            return false;
         }
         $eventId = \Api\Utils\Utils::getVar('event_id', $data);
         $comments = $this->findBySpaycId($data['spayc_id']);
@@ -85,7 +85,7 @@ class CommentsTable extends Table {
             $comment->event_id = $eventId;
         }else{
             $comment = $comments->first();
-             if( ($comment->event_id == $eventId) ){
+            if( !empty($eventId) && ($comment->event_id == $eventId) ){
                 return;
             }
             $comment->comment = $this->matrixComment($matrixRoomId);
