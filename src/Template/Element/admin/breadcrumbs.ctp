@@ -1,7 +1,12 @@
 <?php
 use Cake\Routing\Router;
 $controller_name = $this->request->param('controller');
-$name = (strtolower($controller_name) == 'spaycs')?"Manage ".SITE_TITLE.'s': "Manage ".ucfirst($controller_name);
+$name= "Manage ".ucfirst($controller_name);
+if(strtolower($controller_name) == 'spaycs'){
+   $name = "Manage ".SITE_TITLE.'s';
+} else if (strtolower($controller_name) == 'custommessages'){
+   $name = "Manage Custom Messages"; 
+}
 ?>
  <div class="breadcrumbs">
 	<div class="container">
