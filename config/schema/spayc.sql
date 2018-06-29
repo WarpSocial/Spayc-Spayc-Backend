@@ -802,7 +802,7 @@ SELECT create_hypertable('custom_messages', 'created');
 
 
 INSERT INTO "users" ("username", "email", "password", "gender", "dob", "phone", "status", "website_url", "address", "bio_data", "fb_id", "fb_access_key", "longitude", "latitude", "timezone", "matrix_user_id", "matrix_access_token", "created", "modified", "token_verification", "forgot_password_token", "forgot_password_timestamp", "country_code", "is_notify", "current_latitude", "current_longitude", "role_id") VALUES
-('admin','admin@warp.com', 'ODIyZDBkN2MxYWVlOTcxZTZhNmMxNjhjZTNjMGQ3ZGMyYzk2ODY4MzM3MDQ3MDZmOTZhMTM0YjU1MzA1YmYzYnwyLmLenyaqlsnztYhQTM8dc+OpkWpoF/jvMx9EELyk', 'Male', NULL, NULL, 'Active',   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   '2018-03-15 15:40:41',  '2018-03-15 15:40:41',  NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,'1');
+('admin','kiwiwarp@gmail.com', 'NzcyNmRmZDg4ZTRjOTg4OWI2NDg4ZWY1N2VkNzNhOWQ1NDcwOTk5ZDExN2NmNmFhMjI1ZmU3ODYxNjZkMmNjMEGrBiCupha2QHSHFUvMuDXwNeXkxmTGyh9Nf7kodS7u', 'Male', NULL, NULL, 'Active',   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   '2018-03-15 15:40:41',  '2018-03-15 15:40:41',  NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,'1');
 -- gc_dist custom function
 CREATE OR REPLACE FUNCTION public.gc_dist(alat double precision, alng double precision, blat double precision, blng double precision)
 RETURNS double precision AS

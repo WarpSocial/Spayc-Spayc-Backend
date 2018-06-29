@@ -31,6 +31,7 @@ TRUNCATE TABLE scraper_logs RESTART IDENTITY;
 TRUNCATE TABLE spam_reports RESTART IDENTITY;
 TRUNCATE TABLE stubhub_events RESTART IDENTITY;
 TRUNCATE TABLE eventbrite_events RESTART IDENTITY;
+TRUNCATE TABLE custom_messages RESTART IDENTITY;
 
 
 
@@ -165,4 +166,4 @@ TRUNCATE TABLE users_who_share_rooms RESTART IDENTITY;
 
 --- Add defautl user for admin 
 INSERT INTO "users" ("username", "email", "password", "gender", "dob", "phone", "status", "website_url", "address", "bio_data", "fb_id", "fb_access_key", "longitude", "latitude", "timezone", "matrix_user_id", "matrix_access_token", "created", "modified", "token_verification", "forgot_password_token", "forgot_password_timestamp", "country_code", "is_notify", "current_latitude", "current_longitude", "role_id") VALUES
-('admin',    'ankur.gupta@kiwitech.com', 'NTk2MjY3M2Q3YThjMTE1MWYwZjhmN2Q3MWI3OWI1ZjZiODNiMmI4ZmQwMTRkYmFkNDFhOTBjMmNkNWY1OGQ2MiuxhQSA8apAODx3bheMKLZZ96M8Rqkl8UoZp6QeHF0n', 'Male', NULL, NULL, 'Active',   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   '2018-03-15 15:40:41',  '2018-03-15 15:40:41',  NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,'1');
+('admin','kiwiwarp@gmail.com', 'NzcyNmRmZDg4ZTRjOTg4OWI2NDg4ZWY1N2VkNzNhOWQ1NDcwOTk5ZDExN2NmNmFhMjI1ZmU3ODYxNjZkMmNjMEGrBiCupha2QHSHFUvMuDXwNeXkxmTGyh9Nf7kodS7u', 'Male', NULL, NULL, 'Active',   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   '2018-03-15 15:40:41',  '2018-03-15 15:40:41',  NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,'1');
