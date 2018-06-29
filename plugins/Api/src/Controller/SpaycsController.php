@@ -26,6 +26,7 @@ class SpaycsController extends AppController {
     public function initialize() {
         parent::initialize();
         $this->loadComponent('Api.Push');
+        $this->loadComponent('Api.Redis');
         $this->loadComponent('Api.Matrix');
     }
     
@@ -46,7 +47,7 @@ class SpaycsController extends AppController {
         $data = $this->request->getData();
         $data['type'] = !empty($data['type'])?ucfirst($data['type']):'';
         $data['group_type'] = !empty($data['group_type'])?ucfirst($data['group_type']):'';        
-        $data['status'] = 'Active';
+        $data['status'] = ACTIVE;
         
         $entity = $this->Spaycs->newEntity();
         $items = $this->Spaycs->patchEntity($entity, $data);
@@ -71,6 +72,7 @@ class SpaycsController extends AppController {
         $items->set('user_id', $this->Auth->user('id'));
         if (!$items->errors()) {
             if($this->Spaycs->save($items)) {
+                $this->Redis->addSpayc($items);
                 $items->job_type = 'new-spayc';
                 $items->created_duration = Utils::toClient($items->created);
                 TableRegistry::get('Queue.QueuedJobs')->createJob('Generic',$items->toArray());
@@ -161,9 +163,10 @@ class SpaycsController extends AppController {
         $items->set('user_id', $this->Auth->user('id'));
         if (!$items->errors()) {            
             if($this->Spaycs->save($items)){
-              $data['image'] = $items->get('image');
-              $data['matrix_room_id'] = $items->get('matrix_room_id');
-              //Joined the invite to the room//
+                $this->Redis->addSpayc($items);
+                $data['image'] = $items->get('image');
+                $data['matrix_room_id'] = $items->get('matrix_room_id');
+                //Joined the invite to the room//
                 $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
                  if(!empty($items['description'])) {
                     TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
@@ -761,9 +764,10 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
             if($prevDescription != $entity->get('description')) {
                 TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
             }
-            //if($prevLocation != $entity->get('location')){
-            $this->Spaycs->updateDistance($items);                
-            //}
+            if($prevLocation != $entity->get('location')){
+                $this->Spaycs->updateDistance($items);                
+                $this->Redis->addSpayc($items);
+            }
             if(!empty($entity['joined_spayc'])){
                 unset($items->joined_spayc);
             }
@@ -829,6 +833,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         }
 
         $spayc = $entity->first();
+        $spaycId = $spayc->id;
         $spayc->set('matrix_access_token',$user['matrix_access_token']);
         /* To queue the job to process from backend system */
         TableRegistry::get('Queue.QueuedJobs')->createJob('Delete',$spayc->toArray());
@@ -840,6 +845,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
        
 //        $this->Matrix->deleteRoom($matrixRoomIds);
         if ($this->Spaycs->delete($spayc)) {
+            $this->Redis->deleteSpayc($spaycId);
             TableRegistry::get('Api.JoinedSpayc')->deleteAll(['spayc_id IN' => $child]);
             TableRegistry::get('Api.SubscribedUsers')->deleteAll(['spayc_id IN' => $child]);
             TableRegistry::get('Api.SpaycHashtags')->deleteAll(['spayc_id IN' => $child]);
@@ -1022,6 +1028,12 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
             $long = $pquery->current_longitude;            
         }else{
             TableRegistry::get('Api.PhysicalLocation')->updateLocation($user,$lat,$long);
+             /* update user current status on redis too */
+            $this->Redis->addUser([
+                'id'=>$user['id'],
+                'latitude'=>$lat,
+                'longitude'=>$long,
+            ]);
         }
        
         $date = (new Time('now', Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i:s");
@@ -1096,9 +1108,8 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
             }
          }
         $user = $this->Auth->user();
-        #$pquery = TableRegistry::get('Api.PhysicalLocation')->findByUserId($user['id']);
-        
         $spayc=TableRegistry::get('Api.Spaycs')->getNearBySpaycsOnMap($this->request->getData(),$user['id']);
+        
         $friends = TableRegistry::get('Api.FriendRequest')->getNearByFriendsOnMap($this->request->getData(), $user['id']);
 //        print_R($friends);die;
         if(!$friends['count'] && !$spayc['count']){
