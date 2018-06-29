@@ -306,11 +306,11 @@ class SpaycsController extends AdminController {
                     $data['matrix_token'] = $spaycs['user']['matrix_access_token'];
                     $data['matrix_room_id'] = $spaycs['matrix_room_id'];
 
-                    $data['status'] = $status;
+                    $data['status'] = $jStatus = $status;
                     $matrix = $this->Matrix->banMember($data);
                     //if (!is_string($matrix)) {
                         if ($status == UNBANNED) {
-                            $status = JOINED;
+                            $jStatus = JOINED;
                             $this->Matrix->joinRoom([
                                 'status'=>JOINED,
                                 'matrix_user_id' => $val['user']['matrix_user_id'],
@@ -320,7 +320,7 @@ class SpaycsController extends AdminController {
                         }
                         $this->Matrix->muteUnmute('mute', $val['user']['matrix_access_token'], $spaycs['matrix_room_id']);
 
-                        $update['status'] = $status;
+                        $update['status'] = $jStatus;
                         $update['updated_by'] = $this->Auth->user('id');
                         $condition['id'] = $val['id'];
                         $success = $jsModel->UpdateAll($update, $condition);

@@ -539,8 +539,6 @@ class MatrixComponent extends Component {
         ); 
         
         $response = json_decode($httpResponse->body,true);
-        \Cake\Log\Log::info(json_encode($postData));
-        \Cake\Log\Log::info(json_encode($response));
         if(!empty($response['errcode'])){
             return $this->errorMsg($response['errcode']);
         }elseif(!empty($response['room_id'])){
@@ -577,8 +575,6 @@ class MatrixComponent extends Component {
         ); 
         
         $response = json_decode($httpResponse->body,true);
-        \Cake\Log\Log::info(json_encode($postData));
-        \Cake\Log\Log::info(json_encode($response));
         if(!empty($response['errcode'])){            
             //return $this->errorMsg($response['errcode']);
             return $response['error'];
