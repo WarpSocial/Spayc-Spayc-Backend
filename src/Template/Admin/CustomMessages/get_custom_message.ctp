@@ -26,7 +26,7 @@
                 </div>
             </div>
         </div>
-        <textarea class="message-text text-left" name="message"></textarea>
+        <textarea class="message-text text-left" name="message" required="required"></textarea>
         <div class="d-flex pt-20">
             
             <button class="button btn-danger btn-md skip-popup" data-dismiss="modal">Cancel</button>
