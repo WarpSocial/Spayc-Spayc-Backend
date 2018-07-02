@@ -333,7 +333,11 @@ class SpaycsController extends AppController {
         if(in_array(ucfirst($this->request->query('spayc_type')), ['Event', 'Community'])) {
             $spaycs->where(["Spaycs.type"=>ucfirst($this->request->query('spayc_type'))]);
         }
-        
+        if(!empty($this->request->query('payment_type'))) {
+           if(strtolower($this->request->query('payment_type')) == strtolower(FREE)){
+                $spaycs->where(["LOWER(Spaycs.payment_type)"=> strtolower($this->request->query('payment_type'))]);
+            }
+        }
         if(in_array(ucfirst($this->request->query('group_type')), ['Public', 'Private'])) {
             $spaycs->where(["Spaycs.group_type"=>ucfirst($this->request->query('group_type'))]);
         }
@@ -585,7 +589,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         
         $bannedSpayc = $this->Spaycs->bannedSpayc($userId);
         $spayc = $this->Spaycs->find();
-        $spayc->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.parent_id','Spaycs.created','Spaycs.modified','Spaycs.latitude','Spaycs.longitude','Spaycs.spayc_category_id'])
+        $spayc->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.parent_id','Spaycs.created','Spaycs.modified','Spaycs.latitude','Spaycs.longitude','Spaycs.spayc_category_id','Spaycs.payment_type','Spaycs.ticket_url'])
                 ->where(['Spaycs.status'=>'Active', 'OR'=>['matrix_room_id'=>$id,'Spaycs.id'=>$id]])
                 ->contain([
                     'SubSpaycs' => function($q)use($bannedSpayc) {
@@ -628,6 +632,9 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
             return $results->map(function ($row) use($friend, $userId) {  
                 $row->created = Utils::toClient($row->created);
                 $row->modified = Utils::toClient($row->modified);
+                if(!empty($row->ticket_url)){
+                    $row->ticket_url = explode(',',$row->ticket_url);
+                }
                 $spaycId = ApiHasher::decrypt($row->id);
                 $row['friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
                 $present = 0;$totalJoined=[];
@@ -939,7 +946,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Accepted');
         $query = $this->Spaycs->find()
-                ->select(['Spaycs.id', 'Spaycs.name', 'Spaycs.location','Spaycs.description', 'Spaycs.matrix_room_id', 'Spaycs.start_date', 'Spaycs.end_date', 'Spaycs.image', 'Spaycs.type', 'Spaycs.group_type', 'Spaycs.passcode','Spaycs.user_id','Spaycs.parent_id','Spaycs.spayc_category_id'])
+                ->select(['Spaycs.id', 'Spaycs.name', 'Spaycs.location','Spaycs.description', 'Spaycs.matrix_room_id', 'Spaycs.start_date', 'Spaycs.end_date', 'Spaycs.image', 'Spaycs.type', 'Spaycs.group_type', 'Spaycs.passcode','Spaycs.user_id','Spaycs.parent_id','Spaycs.spayc_category_id','Spaycs.payment_type','Spaycs.ticket_url'])
                 ->where(['Spaycs.status'=>ACTIVE,'Spaycs.parent_id'=>$subspayc])                
                 ->contain([
                     'JoinedSpayc' => function($q) {
@@ -1100,6 +1107,10 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
                  || empty($this->request->getData('endpoint_longitude'))
                  ) {
             $this->restException(['status'=>'failed', 'message'=> __('Parameter Invalid.')], 400);
+         }
+         $currentDate = $this->request->getData('current_date');
+         if(!empty($currentDate) && !$this->Spaycs->validateDate($currentDate,null,'m-d-Y H:i:s')){
+              $this->restException(['status'=>'failed', 'message'=> __('Invalid format of current date.')], 400);
          }
          if($this->request->getData('hashtag_id') && $this->request->getData('hashtag_id')) {
             $hashtag=explode(",", $this->request->getData('hashtag_id'));

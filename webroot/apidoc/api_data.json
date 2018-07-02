@@ -2667,6 +2667,20 @@
           },
           {
             "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "payment_type",
+            "description": "<p>payment option and value must be free,paid or NA(Required).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "ticket_url",
+            "description": "<p>Payment ticket url must be comma separated (Optional).</p> "
+          },
+          {
+            "group": "Parameter",
             "type": "Integer",
             "optional": false,
             "field": "spayc_category_id",
@@ -2893,6 +2907,20 @@
             "optional": false,
             "field": "spayc_category_id",
             "description": "<p>existing Category id(Required).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "payment_type",
+            "description": "<p>payment option and value must be free,paid or NA(Required).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "ticket_url",
+            "description": "<p>Payment ticket url must be comma separated (Optional).</p> "
           },
           {
             "group": "Parameter",
@@ -4224,8 +4252,22 @@
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "time",
-            "description": "<p>Spayc Time must be comma separated if more than one and value must be present|past|future(Optional).</p> "
+            "field": "radius",
+            "description": "<p>Redius between required two points.</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "payment_type",
+            "description": "<p>value must be toggling between free and paid(Optional).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "Datetime",
+            "optional": false,
+            "field": "current_date",
+            "description": "<p>Client current date and date format must be MM-DD-YYYY HH:MM:SS (Required).</p> "
           },
           {
             "group": "Parameter",
@@ -4268,7 +4310,7 @@
     "examples": [
       {
         "title": "Example usage:",
-        "content": "{\n    \"center_latitude\": \"28.6367\",\n    \"center_longitude\": \"77.2748\",\n    \"endpoint_latitude\": \"19.0760\",\n    \"endpoint_longitude\": \"72.8777\",\n    \n    \"time\": \"present,past,future\",\n    \"spayc_type\": \"Event|Community\",\n    \"group_type\": \"Public|Private\",\n    \"wrap_with_friends\": \"yes|no\",\n    \"hashtag_id\": \"1,2,3\",\n    \"category_id\": \"5,6\"\n    \n}",
+        "content": "    {\n        \"center_latitude\": \"28.6367\",\n        \"center_longitude\": \"77.2748\",\n        \"endpoint_latitude\": \"19.0760\",\n        \"endpoint_longitude\": \"72.8777\",\n        \n        \"time\": \"present,past,future\",\n        \"spayc_type\": \"Event|Community\",\n        \"group_type\": \"Public|Private\",\n        \"wrap_with_friends\": \"yes|no\",\n        \"current_date\":\"07-02-2018 12:18:02\",\n\t\"payment_type\":\"Paid\"\n        \"hashtag_id\": \"1,2,3\",\n        \"category_id\": \"5,6\"\n        \n    }",
         "type": "json"
       }
     ],
@@ -5468,7 +5510,7 @@
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Spayc Details.\",\n    \"data\": {\n        \"id\": \"3\",\n        \"name\": \"devsubspacePMB\",\n        \"location\": \"dfasdf sdf sdfsdfsd\",\n        \"image\": \"https://spayc-qa.s3.amazonaws.com/room/screenshot_from_2017_12_12_19_55_12_20180223141832.png\",\n        \"description\": \"devspace\",\n        \"group_type\": \"Public\",\n        \"type\": \"Community\",\n        \"start_date\": \"03-11-2018 09:16:00\",\n        \"end_date\": \"03-12-2018 09:23:00\",\n        \"passcode\": \"\",\n        \"matrix_room_id\": \"!AHKKnrKlWnBiewiMiB:127.0.0.1\",\n        \"subscribed_users\": 0,\n        \"sub_spaycs\": [\n            {\n                \"id\": 45,\n                \"parent_id\": 3,\n                \"name\": \"devsubspacePMB\",\n                \"location\": null,\n                \"image\": null,\n                \"description\": \"devspace\",\n                \"group_type\": \"Public\",\n                \"type\": \"Community\",\n                \"start_date\": \"2018-03-11T09:16:00+00:00\",\n                \"end_date\": \"2018-03-12T09:23:00+00:00\",\n                \"passcode\": \"\",\n                \"matrix_room_id\": \"!gERdbhptfHdVQrcnse:127.0.0.1\",\n                 \"spayc_category\": {\n                    \"id\": 560,\n                    \"name\": \"Softball\"\n                }\n            }\n        ],\n        \"friends\": 0,\n        \"joined_spayc_status\": \"Joined\",\n        \"joined_users\": 1,\n        \"is_admin\": 1,\n        \"spayc_category\": {\n            \"id\": 560,\n            \"name\": \"Softball\"\n        },\n        \"is_subscribed\": false,\n        \"total_comments\": 0,\n        \"total_presents\": 0\n    }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Spayc Details.\",\n    \"data\": {\n        \"id\": \"3\",\n        \"name\": \"devsubspacePMB\",\n        \"location\": \"dfasdf sdf sdfsdfsd\",\n        \"image\": \"https://spayc-qa.s3.amazonaws.com/room/screenshot_from_2017_12_12_19_55_12_20180223141832.png\",\n        \"description\": \"devspace\",\n        \"group_type\": \"Public\",\n        \"type\": \"Community\",\n        \"payment_type\": \"Free\",\n        \"ticket_url\":[\n            \"http://google.com?pgsql=&username=xx\",\n            \"http://github.com/\"\n        ],\n        \"start_date\": \"03-11-2018 09:16:00\",\n        \"end_date\": \"03-12-2018 09:23:00\",\n        \"passcode\": \"\",\n        \"matrix_room_id\": \"!AHKKnrKlWnBiewiMiB:127.0.0.1\",\n        \"subscribed_users\": 0,\n        \"sub_spaycs\": [\n            {\n                \"id\": 45,\n                \"parent_id\": 3,\n                \"name\": \"devsubspacePMB\",\n                \"location\": null,\n                \"image\": null,\n                \"description\": \"devspace\",\n                \"group_type\": \"Public\",\n                \"type\": \"Community\",\n                \"start_date\": \"2018-03-11T09:16:00+00:00\",\n                \"end_date\": \"2018-03-12T09:23:00+00:00\",\n                \"passcode\": \"\",\n                \"matrix_room_id\": \"!gERdbhptfHdVQrcnse:127.0.0.1\",\n                 \"spayc_category\": {\n                    \"id\": 560,\n                    \"name\": \"Softball\"\n                }\n            }\n        ],\n        \"friends\": 0,\n        \"joined_spayc_status\": \"Joined\",\n        \"joined_users\": 1,\n        \"is_admin\": 1,\n        \"spayc_category\": {\n            \"id\": 560,\n            \"name\": \"Softball\"\n        },\n        \"is_subscribed\": false,\n        \"total_comments\": 0,\n        \"total_presents\": 0\n    }\n}",
           "type": "json"
         }
       ]

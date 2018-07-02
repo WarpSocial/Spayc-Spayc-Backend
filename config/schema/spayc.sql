@@ -817,3 +817,7 @@ SELECT asin(
 ) * 7926.3352 * 1609.34 AS distance;
 $BODY$
 LANGUAGE sql IMMUTABLE;
+
+ALTER TABLE "spaycs"
+ADD "payment_type" character(10) NULL,
+ADD "ticket_url" character varying(500) NULL;

@@ -105,4 +105,6 @@ define('EXPIRED_AD_STATUS','2');
 define('ACTIVE_AD_STATUS','1');
 
 define('AD_BUCKET','10');
+define('FREE','Free');
+define('PAID','Paid');
 

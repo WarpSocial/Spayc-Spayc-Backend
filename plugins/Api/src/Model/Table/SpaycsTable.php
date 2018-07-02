@@ -158,7 +158,32 @@ class SpaycsTable extends Table {
                         return false;
                     }
                 })
-                ->inList('type', Configure::read('spayctype'),__('Type value must be any one '.implode(',',Configure::read('spayctype')).'.')); 
+                ->inList('type', Configure::read('spayctype'),__('Type value must be any one '.implode(',',Configure::read('spayctype')).'.')) ; 
+                
+        $validator
+                ->requirePresence('payment_type', 'create',__('Payment type key is missing.'))
+                ->notEmpty('payment_type',__('Payment type is required field.'))
+                ->inList('payment_type', Configure::read('payment_type'),__('Type value must be any one '.implode(',',Configure::read('payment_type')).'.'));
+        
+        $validator
+                //->requirePresence('ticket_url', 'create',__('Payment type key is missing.'))
+                ->allowEmpty('ticket_url',__('Payment type is required field.'))
+                ->add('ticket_url','validurl',[
+                    'rule'=>function($value,$context){
+                        if(empty($value)){
+                            return true;
+                        }
+                        $urls = explode(',',$value);
+                        foreach($urls as $key => $val){
+                            if(filter_var($val, FILTER_VALIDATE_URL) === FALSE){
+                                return false;
+                            }
+                        }
+                        return true;
+                    },
+                    'last' => true,
+                    'message'=>__('Ticket url is not valid.')
+                ]);
 
         $validator
                 ->requirePresence('group_type', 'create',__('Group key is missing.'))
@@ -687,7 +712,7 @@ class SpaycsTable extends Table {
                 ->select(['id', 'name', 'matrix_room_id', 'image', 'type', 'modified', 'spayc_category_id','latitude','longitude','score'=>'website'])
                 ->where(['Spaycs.status'=>'Active','Spaycs.group_type !='=>'trusted_private', 'Spaycs.parent_id IS'=>null,'Spaycs.id IN'=>$requiredSpaycs]);
         $period = null;
-        if(!empty($request['time'])){
+        if(!empty($request['datetime'])){
             $period = strtolower($request['time']);
         }
         
@@ -709,6 +734,16 @@ class SpaycsTable extends Table {
             }else if( $period == "future" ) {
                 $spaycs->where([$startDate.' >'=>$today_date]);
             }
+        }elseif(!empty($request['current_date'])){
+            $user_date = Time::createFromFormat('m-d-Y H:i:s', $request['current_date'], Configure::read('timezone'));
+            $endObj = clone $user_date;
+            $endObj->modify('+2 Week');
+            $today_date = $user_date->setTimezone('UTC')->format("Y-m-d H:i");
+            $twoWeek = $endObj->setTimezone('UTC')->format("Y-m-d H:i");
+            $spaycs->where([
+                'OR'=>[[$startDate.' >='=>$today_date],[$endDate.' >= '=>$today_date]],
+                "$endDate <="=>$twoWeek
+                ]);
         }else{
             $spaycs->where([
                 'OR'=>[[$startDate.' >='=>$today_date],[$endDate.' >= '=>$today_date]],
@@ -718,6 +753,11 @@ class SpaycsTable extends Table {
         if(isset($request['spayc_type']) && $request['spayc_type']) {
             $spayc_type = explode("|",ucfirst($request['spayc_type']));
             $spaycs->where(["Spaycs.type IN "=>$spayc_type]);
+        }
+        if(!empty($request['payment_type'])) {
+            if(strtolower($request['payment_type']) == strtolower(FREE)){
+                $spaycs->where(["LOWER(Spaycs.payment_type)"=> strtolower($request['payment_type'])]);
+            }
         }
        
         if(isset($request['group_type']) && $request['group_type']) {

@@ -43,6 +43,8 @@
 @apiParam {String} longitude        Langitude from google map (Required).
 @apiParam {String} latitude         Latitude from google map (Required).
 @apiParam {Integer} spayc_category_id  existing Category id(Required).
+@apiParam {String}  payment_type    payment option and value must be free,paid or NA(Required).
+@apiParam {String}  ticket_url      Payment ticket url must be comma separated (Optional).
 @apiParam {String} invite           Matrix user id is optional in query string(Optional).
 
 @apiExample Example usage:
@@ -117,6 +119,8 @@ function postSpaycs() { return; }
 @apiParam {String} passcode         Passcode is required in case of private group type.
 @apiParam {String} description      Description for SPAYC (Optional).
 @apiParam {String} image            Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
+@apiParam {String}  payment_type    payment option and value must be free,paid or NA(Required).
+@apiParam {String}  ticket_url      Payment ticket url must be comma separated (Optional).
 @apiParam {Integer} spayc_category_id  existing Category id(Required).
 @apiParam {String} longitude        Langitude from google map (Required).
 @apiParam {String} latitude         Latitude from google map (Required).
@@ -450,6 +454,11 @@ function postUnSubscribeSpayc() { return; }
         "description": "devspace",
         "group_type": "Public",
         "type": "Community",
+        "payment_type": "Free",
+        "ticket_url":[
+            "http://google.com?pgsql=&username=xx",
+            "http://github.com/"
+        ],
         "start_date": "03-11-2018 09:16:00",
         "end_date": "03-12-2018 09:23:00",
         "passcode": "",
@@ -1013,8 +1022,9 @@ function hashTagSpaycs() { return; }
     @apiParam {String}      center_longitude           Center Screen Longitude (Required).
     @apiParam {String}      endpoint_latitude          Corner Screen Latitude (Required).
     @apiParam {String}      endpoint_longitude         Corner Screen Longitude (Required).
-
-    @apiParam {String}      time                     Spayc Time must be comma separated if more than one and value must be present|past|future(Optional).
+    @apiParam {String}      radius         Redius between required two points.
+    @apiParam {String}      payment_type             value must be toggling between free and paid(Optional).
+    @apiParam {Datetime}    current_date    Client current date and date format must be MM-DD-YYYY HH:MM:SS (Required).
     @apiParam {String}      spayc_type               Spayc Type (Optional).
     @apiParam {String}      group_type               Spayc Group Type (Optional).
     @apiParam {String}      wrap_with_friends        Spayc having with friends (Optional).
@@ -1032,6 +1042,8 @@ function hashTagSpaycs() { return; }
         "spayc_type": "Event|Community",
         "group_type": "Public|Private",
         "wrap_with_friends": "yes|no",
+        "current_date":"07-02-2018 12:18:02",
+	"payment_type":"Paid"
         "hashtag_id": "1,2,3",
         "category_id": "5,6"
         

@@ -4,6 +4,7 @@ return [
     'gender'=>['Male', 'Female', 'Other'],
     'spayctype'=>['Event', 'Community'],
     'grouptype'=>['Public', 'Private'],
+    'payment_type'=>['Paid', 'Free','NA'],    
     'pagelimit'=>5,
     'miles'=>1,
     'newSpaycDistance'=>25,/* Miles*/
