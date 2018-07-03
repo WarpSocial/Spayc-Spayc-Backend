@@ -111,11 +111,22 @@ class RedisComponent extends Component {
      * @param String $unit default is miles
      * @return Array List of id and distance of that key reference.
      */
-    public function getGeoLocation($key=null,$latitude,$longitude,$radius,$unit='mi'){
+    public function getGeoLocation($key=null,$latitude,$longitude,$radius=null,$unit='mi',$limit=null){        
         if(empty($key)){
             return false;
         }
-        $data = $this->_Redis->geoRadius($key,$latitude,$longitude,$radius,$unit,['WITHCOORD','WITHDIST','ASC']);
+        if(empty($radius)){
+            if(strtolower($unit) == 'mi'){
+                $radius = 3959;
+            }elseif(strtolower($unit) == 'km'){
+                $radius = 6371;
+            }
+        }
+        $options = ['WITHCOORD','WITHDIST','ASC'];
+        if(!is_null($limit)){
+            $options['COUNT'] = $limit;
+        }
+        $data = $this->_Redis->geoRadius($key,$latitude,$longitude,$radius,$unit,$options);
         if(empty($data)){
             return [];
         }

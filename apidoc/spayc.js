@@ -43,7 +43,7 @@
 @apiParam {String} longitude        Langitude from google map (Required).
 @apiParam {String} latitude         Latitude from google map (Required).
 @apiParam {Integer} spayc_category_id  existing Category id(Required).
-@apiParam {String}  payment_type    payment option and value must be free,paid or NA(Required).
+@apiParam {String}  payment_type    payment option and value must be Free,Paid or NA(Required).
 @apiParam {String}  ticket_url      Payment ticket url must be comma separated (Optional).
 @apiParam {String} invite           Matrix user id is optional in query string(Optional).
 
@@ -119,7 +119,7 @@ function postSpaycs() { return; }
 @apiParam {String} passcode         Passcode is required in case of private group type.
 @apiParam {String} description      Description for SPAYC (Optional).
 @apiParam {String} image            Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
-@apiParam {String}  payment_type    payment option and value must be free,paid or NA(Required).
+@apiParam {String}  payment_type    payment option and value must be Free,Paid or NA(Required).
 @apiParam {String}  ticket_url      Payment ticket url must be comma separated (Optional).
 @apiParam {Integer} spayc_category_id  existing Category id(Required).
 @apiParam {String} longitude        Langitude from google map (Required).
@@ -272,11 +272,12 @@ function postSubspaycs() { return; }
  * 
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
- *    @apiParam {Number}      page            Page number in query string (Optional).
- *    @apiParam {Number}      limit           Limit in query string (Optional).
- *    @apiParam {Timestamp}   start_date      Spayc start date in query string(1515542400) (Optional).
- *    @apiParam {Timestamp}   end_date        Spayc end date in query string(1515715200) (Optional).
- *    @apiParam {String}      group_type      Group type must be any one from the following (Public|Private) (Optional).
+ *    @apiParam {Number}    page    Page number in query string (Optional).
+ *    @apiParam {Number}    limit   Limit in query string (Optional).
+ *    @apiParam {Datetime}  date    date must be in format MM-DD-YYYY HH:MM:SS (optional).
+ *    @apiParam {Integer}   radius   distance in Miles(optional).
+ *    @apiParam {String}    payment_type    value must be toggling between free and paid(Optional).
+ *    @apiParam {String}    group_type      Group type must be any one from the following (Public|Private) (Optional).
  *    @apiParam {String}      type            Spayc type must be any one from the following (Event|Community) (Optional).
  *    @apiParam {String}      latitude        Latitude is required in query string(Optional in case of created, joined).
  *    @apiParam {String}      longitude       Longitude is required in query string(Optional in case of created, joined).

@@ -275,7 +275,7 @@ class SpaycsController extends AppController {
         $long = $this->request->getQuery('longitude',null);
         
         $spaycs = $this->Spaycs->find();
-        $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.spayc_category_id','distance'=>0])
+        $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.spayc_category_id','position'=>0])
             ->where(['Spaycs.status'=>'Active','Spaycs.parent_id IS'=>null,'Spaycs.group_type !='=>'trusted_private'])
             ->contain([                    
                 'JoinedSpayc' => function($q) {
@@ -298,12 +298,13 @@ class SpaycsController extends AppController {
                 return $exp->notIn('Spaycs.id', $bannedSpayc);
              });
         }
-         if($lat != null && $long != null){
-            $distance = "ROUND( CAST(".str_replace(':long',$long,str_replace(':lat',$lat,$this->Spaycs->distanceInMiles))." AS numeric), 3)";
-            $spaycs->select(['distance'=>$distance])
-                    //->bind(':lat', $lat, 'float')
-                    //->bind(':long', $long, 'float')
-                    ->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
+        $redisSpaycs = [];
+         if(!is_null($lat) && !is_null($long)){            
+            $redisSpaycs = $this->Redis->getGeoLocation('Spaycs',$lat, $long, $this->request->getQuery('radius',null),'mi');
+            $requiredSpaycs = array_column($redisSpaycs,'id');
+            $spaycs->select(['position'=>'array_position(ARRAY['.implode(',',$requiredSpaycs).']::bigint[],Spaycs.id)']);
+            $spaycs->where(['Spaycs.id IN'=>$requiredSpaycs]);
+            
         }else if(!empty($this->request->query('hot'))) {
             
         }else{
@@ -316,20 +317,17 @@ class SpaycsController extends AppController {
         } else if($this->request->query('list_by')=='joined') {
             $ids = TableRegistry::get("Api.JoinedSpayc")->getJoinedSpaycIds($userId);
             $spaycs->where(['Spaycs.id IN'=>$ids]);
+        } 
+        $startDate = "TO_TIMESTAMP(cast(Spaycs.start_date as text),'YYYY-MM-DD HH24:MI')";
+        $endDate = "TO_TIMESTAMP(cast(Spaycs.end_date as text),'YYYY-MM-DD HH24:MI')"; 
+        if(!empty($this->request->query('date'))) {
+            if(!$this->Spaycs->validateDate($this->request->query('date'), null, 'm-d-Y H:i:s')){
+                 $this->restException(['status'=>'failed','message'=>__('Date format is not valid.')], 400);
+            }
+            $userDateObj = Time::createFromFormat('m-d-Y H:i:s', $this->request->query('date'), Configure::read('timezone'));
+            $userDate = $userDateObj->setTimezone('UTC')->format("Y-m-d H:i");
+            $spaycs->where(['OR'=>[["$startDate  >="=>$userDate,"$endDate  <="=>$userDate],["$startDate  <="=>$userDate,"$endDate  >="=>$userDate]]]);
         }
-        
-        if($this->request->query('start_date')) {
-            $startDate = (new \Cake\I18n\Time($this->request->query('start_date'), Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i");
-            $startDateColoumn = "TO_TIMESTAMP(cast(Spaycs.start_date as text),'YYYY-MM-DD HH24:MI')";        
-            $spaycs->where([$startDateColoumn." >="=>$startDate]);
-        }
-        
-        if($this->request->query('end_date')) {
-            $endDate = (new \Cake\I18n\Time($this->request->query('end_date'), Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i");
-            $endDateColoumn = "TO_TIMESTAMP(cast(Spaycs.end_date as text),'YYYY-MM-DD HH24:MI')"; 
-            $spaycs->where([$endDateColoumn." <="=>$endDate]);
-        }
-        
         if(in_array(ucfirst($this->request->query('spayc_type')), ['Event', 'Community'])) {
             $spaycs->where(["Spaycs.type"=>ucfirst($this->request->query('spayc_type'))]);
         }
@@ -364,10 +362,16 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         } else {
             $spaycs->page($page);
         }
-        //pj($spaycs->toArray());die;
-        $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend,$userId,$loggedUser){
-            return $results->map(function ($row) use($friend,$userId,$loggedUser) {
+        
+        $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend,$userId,$loggedUser,$redisSpaycs){
+            return $results->map(function ($row) use($friend,$userId,$loggedUser,$redisSpaycs) {
                 $spaycId = ApiHasher::decrypt($row->id);
+                if(!empty($redisSpaycs[$row->id])){
+                    $row->distance = (float) $redisSpaycs[$row->id]['distance'];
+                }else{
+                    $row->distance = 0;
+                }
+                
                 $row['friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
                  $present= 0;$totalJoined=[];
                 if(!empty($row['joined_spayc'])) {
@@ -396,13 +400,12 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
                 return $row;
             });
         });
-        
-        #pr($spaycs->toArray());die;
-        //$newQuery = clone $spaycs;
+        //$spaycs->sortBy('distance',SORT_ASC,SORT_STRING);
+        $spaycs->order(['position'=>'ASC','Spaycs.created'=>'DESC']);
         $data['count'] = $spaycs->count();
         $data['spaycs'] = [];
         if(!$spaycs->isEmpty()) {
-            $data['spaycs'] = $spaycs->toArray();
+            $data['spaycs'] = $spaycs;
             $response = ['status'=>'success','message'=>__('Warp lists.'), 'data'=>$data];
         } else {
             $this->response->statusCode(404);

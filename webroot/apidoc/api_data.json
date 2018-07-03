@@ -2670,7 +2670,7 @@
             "type": "String",
             "optional": false,
             "field": "payment_type",
-            "description": "<p>payment option and value must be free,paid or NA(Required).</p> "
+            "description": "<p>payment option and value must be Free,Paid or NA(Required).</p> "
           },
           {
             "group": "Parameter",
@@ -2913,7 +2913,7 @@
             "type": "String",
             "optional": false,
             "field": "payment_type",
-            "description": "<p>payment option and value must be free,paid or NA(Required).</p> "
+            "description": "<p>payment option and value must be Free,Paid or NA(Required).</p> "
           },
           {
             "group": "Parameter",
@@ -3504,17 +3504,24 @@
           },
           {
             "group": "Parameter",
-            "type": "Timestamp",
+            "type": "Datetime",
             "optional": false,
-            "field": "start_date",
-            "description": "<p>Spayc start date in query string(1515542400) (Optional).</p> "
+            "field": "date",
+            "description": "<p>date must be in format MM-DD-YYYY HH:MM:SS (optional).</p> "
           },
           {
             "group": "Parameter",
-            "type": "Timestamp",
+            "type": "Integer",
             "optional": false,
-            "field": "end_date",
-            "description": "<p>Spayc end date in query string(1515715200) (Optional).</p> "
+            "field": "radius",
+            "description": "<p>distance in Miles(optional).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "payment_type",
+            "description": "<p>value must be toggling between free and paid(Optional).</p> "
           },
           {
             "group": "Parameter",
