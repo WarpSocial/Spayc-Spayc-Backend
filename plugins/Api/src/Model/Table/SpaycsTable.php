@@ -741,13 +741,17 @@ class SpaycsTable extends Table {
             $today_date = $user_date->setTimezone('UTC')->format("Y-m-d H:i");
             $twoWeek = $endObj->setTimezone('UTC')->format("Y-m-d H:i");
             $spaycs->where([
-                'OR'=>[[$startDate.' >='=>$today_date],[$endDate.' >= '=>$today_date]],
-                "$endDate <="=>$twoWeek
+                'OR'=>[[$startDate.' >='=>$today_date],[$endDate.' >= '=>$today_date]]
+                ]);
+            $spaycs->where([
+                'OR'=>[[$startDate.' <='=>$twoWeek],[$endDate.' <= '=>$twoWeek]]
                 ]);
         }else{
+             $spaycs->where([
+                'OR'=>[[$startDate.' >='=>$today_date],[$endDate.' >= '=>$today_date]]
+                ]);
             $spaycs->where([
-                'OR'=>[[$startDate.' >='=>$today_date],[$endDate.' >= '=>$today_date]],
-                "$endDate <="=>$twoWeek
+                'OR'=>[[$startDate.' <='=>$twoWeek],[$endDate.' <= '=>$twoWeek]]
                 ]);
         }
         if(isset($request['spayc_type']) && $request['spayc_type']) {
