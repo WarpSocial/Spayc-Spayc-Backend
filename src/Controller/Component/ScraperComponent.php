@@ -56,8 +56,7 @@ class ScraperComponent extends Component {
     /*************  get Events from Eventbrite API and Save it *********************/
      public function getEventbriteData($pageNumber=1,$time) { 
 
-        $url= $this->SCRAPER_ROOT_URL['eventbriteurl'].'events/search/?expand=venue&token='.$this->SCRAPER_ROOT_URL_TOKEN['eventbritetoken'].'&sort_by=date&start_date.range_start='.TODAY_DATE.'T00%3A00%3A00&start_date.range_end='.AFTER14DAYS_DATE.'T23%3A59%3A00&location.address=New+York%2C+NY&page='.$pageNumber;       
-
+        $url= $this->SCRAPER_ROOT_URL['eventbriteurl'].'events/search/?expand=venue&token='.$this->SCRAPER_ROOT_URL_TOKEN['eventbritetoken'].'&sort_by=date&start_date.range_start='.TODAY_DATE.'T00%3A00%3A00&start_date.range_end='.AFTER14DAYS_DATE.'T23%3A59%3A00&location.address=New+York%2C+NY&page='.$pageNumber; 
         $resp=$this->curlRequest($url,$time);      
         if((isset($resp['events']) && !empty($resp['events'])) && count($resp['events'])) {        
         $events=$eventIds= array();
@@ -66,6 +65,8 @@ class ScraperComponent extends Component {
             $eventIds[]=$eventId=trim($value['id']);  
             $events[$eventId]['eventbrite_event_id'] = trim($value['id']);
             $events[$eventId]['name'] = (isset($value['name']['text']) && !empty($value['name']))?html_entity_decode(trim($value['name']['text'])):null;
+            $events[$eventId]['ticket_url'] = (isset($value['url']) && !empty($value['url']))?trim($value['url']):null;
+            $events[$eventId]['payment_type'] = (isset($value['is_free']) && ($value['is_free']))?FREE:PAID;
             $events[$eventId]['start_date'] = (isset($value['start']['utc']) && !empty($value['start']['utc']))?new time($value['start']['utc']):null;
             if($events[$eventId]['start_date'] > Time::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s', strtotime(SCRAPER_DAYS)))->setTime(23,59))
                 $stateExist = $eventId;
@@ -124,6 +125,8 @@ class ScraperComponent extends Component {
             $eventIds[]= $eventId = trim($value['id']);
             $events[$eventId]['stubhub_event_id'] = trim($value['id']);
             $events[$eventId]['name'] = (isset($value['name']) && !empty($value['name']))?html_entity_decode(trim($value['name'])):null;
+            $events[$eventId]['ticket_url'] = (isset($value['webURI']) && !empty($value['webURI']))?STUBHUB_EVENT_URL.trim($value['webURI']):STUBHUB_EVENT_URL;
+            $events[$eventId]['payment_type'] = PAID;
             $events[$eventId]['start_date'] = (isset($value['eventDateUTC']) && !empty($value['eventDateUTC']))?new time($value['eventDateUTC']):null;
             $events[$eventId]['end_date'] = null;
             $events[$eventId]['description'] = (isset($value['description']) && !empty($value['description']))? html_entity_decode(trim($value['description'])):null;
@@ -196,6 +199,8 @@ class ScraperComponent extends Component {
             $eventIds[]= $eventId =trim($value['id']);
             $events[$eventId]['ticketmaster_event_id'] = trim($value['id']);
             $events[$eventId]['name'] = (isset($value['name']) && !empty($value['name']))?html_entity_decode(trim($value['name'])):null;
+             $events[$eventId]['ticket_url'] = (isset($value['url']) && !empty($value['url']))?trim($value['url']):null;
+            $events[$eventId]['payment_type'] = !empty($value['priceRanges'])?PAID:FREE;
             $events[$eventId]['start_date'] = $startDateTime;                    
             $events[$eventId]['description'] = (isset($value['info']) && !empty($value['info']))?html_entity_decode(trim($value['info'])):null;
             $events[$eventId]['latitude'] = (isset($value['_embedded']['venues']['0']['location']['latitude']) && !empty($value['_embedded']['venues']['0']['location']['latitude']))?trim($value['_embedded']['venues']['0']['location']['latitude']):null;
@@ -457,6 +462,8 @@ class ScraperComponent extends Component {
             $response=[];
             $getIds[] = $value['id'];
             $createSpaceData['name'] = $value['name'];
+            $createSpaceData['ticket_url'] = $value['ticket_url'];
+            $createSpaceData['payment_type'] = $value['payment_type'];
             if($value['location']){ $createSpaceData['location'] = $value['location'];}
             else{$createSpaceData['location'] = "NA";}
             $createSpaceData['type'] = 'Event';

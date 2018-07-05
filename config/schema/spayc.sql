@@ -820,4 +820,16 @@ LANGUAGE sql IMMUTABLE;
 
 ALTER TABLE "spaycs"
 ADD "payment_type" character(10) NULL,
-ADD "ticket_url" character varying(500) NULL;
+ADD "ticket_url" character varying(1000) NULL;
+
+ALTER TABLE "eventbrite_events"
+ADD "payment_type" character(10) NULL,
+ADD "ticket_url" character varying(1000) NULL;
+
+ALTER TABLE "ticketmaster_events"
+ADD "payment_type" character(10) NULL,
+ADD "ticket_url" character varying(1000) NULL;
+
+ALTER TABLE "stubhub_events"
+ADD "payment_type" character(10) NULL,
+ADD "ticket_url" character varying(1000) NULL;

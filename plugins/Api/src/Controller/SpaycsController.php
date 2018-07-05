@@ -782,6 +782,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
                 unset($items->joined_spayc);
             }
             $items = $items->toArray();
+            $items['ticket_url']= !empty($items['ticket_url'])?explode(',', $items['ticket_url']):null;
             $items['created']=  Utils::toClient($items['created']);
             $items['modified'] = Utils::toClient($items['modified']);
             $items['start_date']=  Utils::toClient($items['start_date']);

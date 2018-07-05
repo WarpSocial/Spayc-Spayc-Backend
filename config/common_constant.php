@@ -59,6 +59,7 @@ define('USER_FRIENDS', 'Userfriends');
 define('CREATED','Created');
 define('SPAYC_TABLE', 'spaycs');
 define('ADMIN_SLUG_ARR', serialize($admin_slug_arr));
+define('STUBHUB_EVENT_URL', 'https://stubhub.com/');
 
 $scraperRootUrl=array('eventbriteurl'=> 'https://www.eventbriteapi.com/v3/',
     'ticketmasterurl'=> 'https://app.ticketmaster.com/discovery/v2/',
