@@ -55,8 +55,21 @@ class ScraperComponent extends Component {
 
     /*************  get Events from Eventbrite API and Save it *********************/
      public function getEventbriteData($pageNumber=1,$time) { 
-
-        $url= $this->SCRAPER_ROOT_URL['eventbriteurl'].'events/search/?expand=venue&token='.$this->SCRAPER_ROOT_URL_TOKEN['eventbritetoken'].'&sort_by=date&start_date.range_start='.TODAY_DATE.'T00%3A00%3A00&start_date.range_end='.AFTER14DAYS_DATE.'T23%3A59%3A00&location.address=New+York%2C+NY&page='.$pageNumber; 
+        $dtNow = new \DateTime(TODAY_DATE);
+        $beginOfDay = clone $dtNow;
+        $beginOfDay->modify('today'); 
+        $endOfDay = clone $beginOfDay;
+        $endOfDay->modify('+15 days');
+        $endOfDay->modify('1 second ago'); 
+        $url=$this->SCRAPER_ROOT_URL['eventbriteurl'].'events/search/?'. http_build_query([
+           'expand'=> 'venue',
+           'token' => $this->SCRAPER_ROOT_URL_TOKEN['eventbritetoken'],
+           'sort_by'=>'date',
+           'start_date.range_start'=> $beginOfDay->format('Y-m-d\TH:i:s'),
+           'start_date.range_end' => $endOfDay->format('Y-m-d\TH:i:s'),
+           'location.address'=> 'New York,NY',
+            'page' => $pageNumber
+        ]);         
         $resp=$this->curlRequest($url,$time);      
         if((isset($resp['events']) && !empty($resp['events'])) && count($resp['events'])) {        
         $events=$eventIds= array();
@@ -113,10 +126,20 @@ class ScraperComponent extends Component {
 
    
     /*************  get Events from Stubhub API and save it *********************/
-    public function getStubhubData($start=0,$time) {  
-
-        $url =$this->SCRAPER_ROOT_URL['stubhuburl'].'?city=%22New%20York%22&state=%22NY%22%20|%22New%20York%22&country=US&date='.TODAY_DATE.'T00:00%20TO%20'.AFTER14DAYS_DATE.'T23:59&sort=eventDateUTC%20asc&rows=500&start='.$start;       
-
+    public function getStubhubData($start=0,$time) {
+        $dtNow = new \DateTime(TODAY_DATE);
+        $beginOfDay = clone $dtNow;
+        $beginOfDay->modify('today'); 
+        $endOfDay = clone $beginOfDay;
+        $endOfDay->modify('+15 days');
+        $endOfDay->modify('1 second ago');
+        $url=$this->SCRAPER_ROOT_URL['stubhuburl'].'?'.'state='.rawurlencode('"NY" ').'|'.rawurlencode('"New York"').'&'. http_build_query([
+            'country'=>'US',
+            'date'=> $beginOfDay->format('Y-m-d\TH:i').'TO'.$endOfDay->format('Y-m-d\TH:i'),
+            'sort'=>'eventDateUTC',
+            'rows' => 500,
+            'start'=>$start            
+        ]);          
         $resp=$this->curlRequest($url,$time,$this->SCRAPER_ROOT_URL_TOKEN['stubhubtoken']);
         $eventsCount = count($resp['events']);       
         if((isset($resp['events']) && !empty($resp['events'])) && $eventsCount){
@@ -183,7 +206,25 @@ class ScraperComponent extends Component {
 
     /*************  get Events from Ticketmaster URL pass Startdate and endDate as argument data should be Y-m-d format *********************/
     public function getTicketmasterData($startDate, $endDate=null,$time) {  
-
+        $dtNow = new \DateTime($startDate);
+        $beginOfDay = clone $dtNow;
+        $beginOfDay->modify('today'); 
+        $endOfDay = clone $beginOfDay;
+        $endOfDay->modify('tomorrow');
+        // adjust from the next day to the end of the day, per original question
+        $endOfDay->modify('1 second ago');
+        $url=$this->SCRAPER_ROOT_URL['ticketmasterurl'].'events.json?'. http_build_query([
+            'apikey'=>$this->SCRAPER_ROOT_URL_TOKEN['ticketmastertoken'],
+            'stateCode'=>'NY',
+            'countryCode'=>'US',
+            'page'=>0,
+            'size'=>200,
+            'sort'=>'date,asc',
+            'startDateTime'=> $beginOfDay->format('Y-m-d\TH:i:s\Z'),
+            'endDateTime'=> $endOfDay->format('Y-m-d\TH:i:s\Z'),
+        ]);
+        //https://app.ticketmaster.com/discovery/v2/events.json?apikey=FGCdJbUpn9mAmyE9Rlqdi8CYfdhNQMsa&stateCode=NY&countryCode=US&page=0&size=200&sort=date%2Casc&startDateTime=2018-07-06T00%3A00%3A00Z&endDateTime=2018-07-06T23%3A59%3A59Z
+        //https://app.ticketmaster.com/discovery/v2/events.json?apikey=FGCdJbUpn9mAmyE9Rlqdi8CYfdhNQMsa&stateCode=NY&countryCode=US&page=0&size=200&sort=date,asc&startDateTime=2018-07-06T00:00:00Z&endDateTime=2018-07-06T23:59:00Z
         $url=$this->SCRAPER_ROOT_URL['ticketmasterurl'].'events.json?apikey='.$this->SCRAPER_ROOT_URL_TOKEN['ticketmastertoken'].'&city=%22New%20York%22&stateCode=NY&countryCode=US&page=0&size=200&sort=date,asc&startDateTime='.$startDate.'T00:00:00Z&endDateTime='.$startDate.'T23:59:00Z';        
         $resp=$this->curlRequest($url,$time);       
         if(isset($resp['_embedded']['events']) && count($resp['_embedded']['events'])){
