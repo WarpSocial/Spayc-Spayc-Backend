@@ -37,6 +37,7 @@ class QueueGenericTask extends QueueTask {
         switch ($data['job_type']){
             case "new-spayc":
                 $this->newSpayc($data);
+                $this->titleHashTag($data);
                 break;
             case "communication_center":
                 $this->communicationCenter($data);
@@ -111,6 +112,24 @@ class QueueGenericTask extends QueueTask {
             }
             
             
+        }
+    }
+    
+    public function titleHashTag($spaycs){
+        $hashTags = [];
+        if(!empty($spaycs['website'])){
+            $tags = str_word_count($spaycs['title'], 1);
+            if(!empty($tags)){
+                for($i = 0 ; $i < count($tags); $i++ ){
+                    if(strlen($tags[$i]) > 3){
+                        array_push($hashTags,$tags[$i]);
+                    }
+                }
+            }            
+        }
+        $spHashtags = TableRegistry::get('Api.SpaycHashtags');
+        if(!empty($hashTags)){
+            $spHashtags->saveTags($spaycs['id'],$hashTags);
         }
     }
 }

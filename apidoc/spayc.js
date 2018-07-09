@@ -274,7 +274,7 @@ function postSubspaycs() { return; }
  * 
  *    @apiParam {Number}    page    Page number in query string (Optional).
  *    @apiParam {Number}    limit   Limit in query string (Optional).
- *    @apiParam {Datetime}  date    date must be in format MM-DD-YYYY HH:MM:SS (optional).
+ *    @apiParam {Datetime}  date    date format must in timestamp (optional).
  *    @apiParam {Integer}   radius   distance in Miles(optional).
  *    @apiParam {String}    payment_type    value must be toggling between free and paid(Optional).
  *    @apiParam {String}    group_type      Group type must be any one from the following (Public|Private) (Optional).
@@ -1025,7 +1025,7 @@ function hashTagSpaycs() { return; }
     @apiParam {String}      endpoint_longitude         Corner Screen Longitude (Required).
     @apiParam {String}      radius         Redius between required two points.
     @apiParam {String}      payment_type             value must be toggling between free and paid(Optional).
-    @apiParam {Datetime}    current_date    Client current date and date format must be MM-DD-YYYY HH:MM:SS (Required).
+    @apiParam {Datetime}    current_date    Client current date and date format must be timestamp (Optional).
     @apiParam {String}      spayc_type               Spayc Type (Optional).
     @apiParam {String}      group_type               Spayc Group Type (Optional).
     @apiParam {String}      wrap_with_friends        Spayc having with friends (Optional).
@@ -1043,7 +1043,7 @@ function hashTagSpaycs() { return; }
         "spayc_type": "Event|Community",
         "group_type": "Public|Private",
         "wrap_with_friends": "yes|no",
-        "current_date":"07-02-2018 12:18:02",
+        "current_date":"1531094400",
 	"payment_type":"Paid"
         "hashtag_id": "1,2,3",
         "category_id": "5,6"

@@ -3507,7 +3507,7 @@
             "type": "Datetime",
             "optional": false,
             "field": "date",
-            "description": "<p>date must be in format MM-DD-YYYY HH:MM:SS (optional).</p> "
+            "description": "<p>date format must in timestamp (optional).</p> "
           },
           {
             "group": "Parameter",
@@ -4274,7 +4274,7 @@
             "type": "Datetime",
             "optional": false,
             "field": "current_date",
-            "description": "<p>Client current date and date format must be MM-DD-YYYY HH:MM:SS (Required).</p> "
+            "description": "<p>Client current date and date format must be timestamp (Optional).</p> "
           },
           {
             "group": "Parameter",
@@ -4317,7 +4317,7 @@
     "examples": [
       {
         "title": "Example usage:",
-        "content": "    {\n        \"center_latitude\": \"28.6367\",\n        \"center_longitude\": \"77.2748\",\n        \"endpoint_latitude\": \"19.0760\",\n        \"endpoint_longitude\": \"72.8777\",\n        \n        \"time\": \"present,past,future\",\n        \"spayc_type\": \"Event|Community\",\n        \"group_type\": \"Public|Private\",\n        \"wrap_with_friends\": \"yes|no\",\n        \"current_date\":\"07-02-2018 12:18:02\",\n\t\"payment_type\":\"Paid\"\n        \"hashtag_id\": \"1,2,3\",\n        \"category_id\": \"5,6\"\n        \n    }",
+        "content": "    {\n        \"center_latitude\": \"28.6367\",\n        \"center_longitude\": \"77.2748\",\n        \"endpoint_latitude\": \"19.0760\",\n        \"endpoint_longitude\": \"72.8777\",\n        \n        \"time\": \"present,past,future\",\n        \"spayc_type\": \"Event|Community\",\n        \"group_type\": \"Public|Private\",\n        \"wrap_with_friends\": \"yes|no\",\n        \"current_date\":\"1531094400\",\n\t\"payment_type\":\"Paid\"\n        \"hashtag_id\": \"1,2,3\",\n        \"category_id\": \"5,6\"\n        \n    }",
         "type": "json"
       }
     ],

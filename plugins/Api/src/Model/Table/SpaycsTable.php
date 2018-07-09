@@ -735,11 +735,13 @@ class SpaycsTable extends Table {
                 $spaycs->where([$startDate.' >'=>$today_date]);
             }
         }elseif(!empty($request['current_date'])){
-            $user_date = Time::createFromFormat('m-d-Y H:i:s', $request['current_date'], Configure::read('timezone'));
+            $user_date = Time::createFromTimestamp($request['current_date'], Configure::read('timezone'));
             $endObj = clone $user_date;
-            $endObj->modify('+2 Week');
+            $user_date->modify('today');
+            $endObj->modify('+15 days');
+            $endObj->modify('1 second ago'); 
             $today_date = $user_date->setTimezone('UTC')->format("Y-m-d H:i");
-            $twoWeek = $endObj->setTimezone('UTC')->format("Y-m-d H:i");
+            $twoWeek = $endObj->setTimezone('UTC')->format("Y-m-d H:i");            
             $spaycs->where([
                 'OR'=>[[$startDate.' >='=>$today_date],[$endDate.' >= '=>$today_date]]
                 ]);

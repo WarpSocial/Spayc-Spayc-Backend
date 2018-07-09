@@ -321,10 +321,10 @@ class SpaycsController extends AppController {
         $startDate = "TO_TIMESTAMP(cast(Spaycs.start_date as text),'YYYY-MM-DD HH24:MI')";
         $endDate = "TO_TIMESTAMP(cast(Spaycs.end_date as text),'YYYY-MM-DD HH24:MI')"; 
         if(!empty($this->request->query('date'))) {
-            if(!$this->Spaycs->validateDate($this->request->query('date'), null, 'm-d-Y H:i:s')){
+            if(!Utils::validTimestamp($this->request->query('date'))){
                  $this->restException(['status'=>'failed','message'=>__('Date format is not valid.')], 400);
             }
-            $userDateObj = Time::createFromFormat('m-d-Y H:i:s', $this->request->query('date'), Configure::read('timezone'));
+            $userDateObj = Time::createFromTimestamp($this->request->query('date'), Configure::read('timezone'));
             $userDate = $userDateObj->setTimezone('UTC')->format("Y-m-d H:i");
             $spaycs->where(['OR'=>[["$startDate  >="=>$userDate,"$endDate  <="=>$userDate],["$startDate  <="=>$userDate,"$endDate  >="=>$userDate]]]);
         }
@@ -1113,8 +1113,8 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
             $this->restException(['status'=>'failed', 'message'=> __('Parameter Invalid.')], 400);
          }
          $currentDate = $this->request->getData('current_date');
-         if(!empty($currentDate) && !$this->Spaycs->validateDate($currentDate,null,'m-d-Y H:i:s')){
-              $this->restException(['status'=>'failed', 'message'=> __('Invalid format of current date.')], 400);
+         if(!empty($currentDate) && !Utils::validTimestamp($currentDate)){
+              $this->restException(['status'=>'failed', 'message'=> __('Current date must be valid timestamp.')], 400);
          }
          if($this->request->getData('hashtag_id') && $this->request->getData('hashtag_id')) {
             $hashtag=explode(",", $this->request->getData('hashtag_id'));

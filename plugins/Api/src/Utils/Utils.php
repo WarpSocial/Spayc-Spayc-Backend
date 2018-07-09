@@ -145,6 +145,16 @@ class Utils {
                 '<!--.*?-->/is';
         return preg_replace($regex, '', $str);
     }
+    
+    /**
+     * validTimestamp to validate the unix timestamp
+     * 
+     * @param string $timeStamp unix Timestamp value
+     * @return Bool return either true or false
+     */
+    public static function validTimestamp($strTimestamp) {
+        return ((string) (int) $strTimestamp === $strTimestamp) && ($strTimestamp <= PHP_INT_MAX) && ($strTimestamp >= ~PHP_INT_MAX);
+    }
 
     /**
      * Strips extra whitespace, images, scripts and stylesheets from output
