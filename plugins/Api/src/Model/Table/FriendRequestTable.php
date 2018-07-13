@@ -358,5 +358,31 @@ class FriendRequestTable extends Table {
         }
         return $this->exists(['requested_to' => $userId,'requested_status'=>$status]);
     }
+    
+    public function checkFriendRequestExist($loggedInUserId, $friendId) {
+        $res = false;
+        if(!empty($loggedInUserId) && $friendId) {
+            $requestedFrnd = $this->find()->Where(['OR'=>[
+                ['requested_by' => $loggedInUserId,'requested_to'=>$friendId],
+                ['requested_by' => $friendId,'requested_to'=>$loggedInUserId]
+                ]]);            
+            if($requestedFrnd->count())
+                $res = false;
+            else 
+                $res = true;
+        }
+        return $res;
+    }
+    
+    public function addFbFirends($data) {
+        if(!empty($data)){
+            $friendRequest = $this->newEntity();
+            $friendRequest->requested_by = $data['id'];
+            $friendRequest->requested_to = $data['friendId'];
+            $friendRequest->requested_status = SUGGESTED;
+            $friendRequest->action_by = $data['id'];
+            $this->save($friendRequest);
+        }
+    }
 
 }

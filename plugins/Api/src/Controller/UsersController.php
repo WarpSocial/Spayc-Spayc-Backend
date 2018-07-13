@@ -1229,6 +1229,24 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Status is required fields and status must be in('.  implode(',', $status).').')], 400);
         }
         $loggedUser = $this->Auth->user();
+        // for get and save facebook friends
+        $frTableObj = TableRegistry::get('Api.FriendRequest');
+        if(!empty($loggedUser['fb_id'])){
+            $this->loadComponent('Api.Facebook');
+            $friends = $this->Facebook->getFriends($loggedUser['fb_id'], $loggedUser['fb_access_key']);           
+            if(!empty($friends)) {
+                foreach($friends as $friend) {
+                    if(!empty($friend['id'])) {                        
+                        $spaycFriend = $this->Users->find("all", ['fields'=>['Users.id'], 'conditions'=>['Users.fb_id'=>trim($friend['id'])]])->first();
+                        $checkFrndReq = $frTableObj->checkFriendRequestExist($loggedUser['id'], $spaycFriend->id);
+                        if($checkFrndReq){
+                            $setdata = ['id'=>$loggedUser['id'], 'friendId'=>$spaycFriend->id];
+                            $frTableObj->addFbFirends($setdata);
+                        }   
+                    }
+                }
+            }
+        }
         $userId = !empty($this->request->query('user_id'))?$this->request->query('user_id'):$loggedUser['id'];
         
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, $friendStatus);
