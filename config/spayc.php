@@ -8,7 +8,7 @@ return [
     'pagelimit'=>5,
     'miles'=>1,
     'newSpaycDistance'=>5,/* Miles*/
-    'friend_requested_status'=>['Pending', 'Accepted', 'Blocked','Unblock','is_direct','Decline','Unfriend'],
+    'friend_requested_status'=>['Pending', 'Accepted', 'Blocked','Unblock','is_direct','Decline','Unfriend', 'Suggested'],
     'add_friend'=>['Pending'],
     'accept_decline_status'=>['Accepted', 'Decline'],
     'block_status'=>['Blocked'],
