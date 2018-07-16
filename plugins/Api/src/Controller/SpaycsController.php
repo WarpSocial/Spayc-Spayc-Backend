@@ -324,9 +324,17 @@ class SpaycsController extends AppController {
             if(!Utils::validTimestamp($this->request->query('date'))){
                  $this->restException(['status'=>'failed','message'=>__('Date format is not valid.')], 400);
             }
-            $userDateObj = Time::createFromTimestamp($this->request->query('date'), Configure::read('timezone'));
-            $userDate = $userDateObj->setTimezone('UTC')->format("Y-m-d H:i");
-            $spaycs->where(['OR'=>[["$startDate  >="=>$userDate,"$endDate  <="=>$userDate],["$startDate  <="=>$userDate,"$endDate  >="=>$userDate]]]);
+            $user_date = Time::createFromTimestamp($this->request->query('date'), Configure::read('timezone'));
+            $endObj = clone $user_date;            
+            $endObj->modify('+1 days');
+            $dayStart = $user_date->setTimezone('UTC')->modify('today')->format("Y-m-d H:i");
+            $endDay = $endObj->setTimezone('UTC')->modify('1 second ago')->format("Y-m-d H:i");  
+            $spaycs->where([
+                'OR'=>[[$startDate.' >='=>$dayStart],[$endDate.' >= '=>$dayStart]]
+                ]);
+            $spaycs->where([
+                'OR'=>[[$startDate.' <='=>$endDay],[$endDate.' <= '=>$endDay]]
+                ]);
         }
         if(in_array(ucfirst($this->request->query('spayc_type')), ['Event', 'Community'])) {
             $spaycs->where(["Spaycs.type"=>ucfirst($this->request->query('spayc_type'))]);

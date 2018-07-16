@@ -223,8 +223,6 @@ class ScraperComponent extends Component {
             'startDateTime'=> $beginOfDay->format('Y-m-d\TH:i:s\Z'),
             'endDateTime'=> $endOfDay->format('Y-m-d\TH:i:s\Z'),
         ]);
-        //https://app.ticketmaster.com/discovery/v2/events.json?apikey=FGCdJbUpn9mAmyE9Rlqdi8CYfdhNQMsa&stateCode=NY&countryCode=US&page=0&size=200&sort=date%2Casc&startDateTime=2018-07-06T00%3A00%3A00Z&endDateTime=2018-07-06T23%3A59%3A59Z
-        //https://app.ticketmaster.com/discovery/v2/events.json?apikey=FGCdJbUpn9mAmyE9Rlqdi8CYfdhNQMsa&stateCode=NY&countryCode=US&page=0&size=200&sort=date,asc&startDateTime=2018-07-06T00:00:00Z&endDateTime=2018-07-06T23:59:00Z
         $url=$this->SCRAPER_ROOT_URL['ticketmasterurl'].'events.json?apikey='.$this->SCRAPER_ROOT_URL_TOKEN['ticketmastertoken'].'&city=%22New%20York%22&stateCode=NY&countryCode=US&page=0&size=200&sort=date,asc&startDateTime='.$startDate.'T00:00:00Z&endDateTime='.$startDate.'T23:59:00Z';        
         $resp=$this->curlRequest($url,$time);       
         if(isset($resp['_embedded']['events']) && count($resp['_embedded']['events'])){
@@ -503,10 +501,13 @@ class ScraperComponent extends Component {
             $response=[];
             $getIds[] = $value['id'];
             $createSpaceData['name'] = $value['name'];
-            $createSpaceData['ticket_url'] = $value['ticket_url'];
-            $createSpaceData['payment_type'] = $value['payment_type'];
-            if($value['location']){ $createSpaceData['location'] = $value['location'];}
-            else{$createSpaceData['location'] = "NA";}
+            $createSpaceData['ticket_url'] = trim($value['ticket_url']);
+            $createSpaceData['payment_type'] = trim($value['payment_type']);
+            if($value['location']){ 
+                $createSpaceData['location'] = $value['location'];            
+            }else{
+                $createSpaceData['location'] = "NA";                
+            }
             $createSpaceData['type'] = 'Event';
             $createSpaceData['group_type'] = 'Public';
             $createSpaceData['start_date'] = date('m-d-Y H:i:s', strtotime($value['start_date']));
@@ -541,7 +542,7 @@ class ScraperComponent extends Component {
                         if($category[2]){
                             $createSpaceData['description'].= " #".str_replace(" ", "", $category[2]);
                         }
-                       $httpResponse = $http->post($url, $createSpaceData);
+                        $httpResponse = $http->post($url, $createSpaceData);
                         $response['Create New Spayc'][] =$created= json_decode($httpResponse->body, true);
                         //Updating Spayc ID in Related tables
                         if ($created['status'] == 'success') {
@@ -566,7 +567,7 @@ class ScraperComponent extends Component {
                             //Saving logs
                             $pushData['post_value'] = json_encode($created);
                             $pushData['created'] = date("Y-m-d H:i:s");
-                            Log::info(json_encode($pushData,JSON_PRETTY_PRINT));
+                            //Log::info(json_encode($pushData,JSON_PRETTY_PRINT));
                             $pusher = TableRegistry::get("Api.PusherData");
                             $push = $pusher->newEntity();
                             $entity = $pusher->patchEntity($push, $pushData,['validate'=>false]);
@@ -824,7 +825,7 @@ class ScraperComponent extends Component {
     }
 
     /*** set log for scraper to identify all process running smoothly ***/
-    public function setScraperLog($status,$time,$shell){
+    public function setScraperLog($status,$time,$shell=null){
         if(!empty($status)){
             $data['status'] = trim($status);
             $data['shell'] = $shell;
