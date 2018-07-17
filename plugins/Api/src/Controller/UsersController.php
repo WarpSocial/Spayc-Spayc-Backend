@@ -923,12 +923,11 @@ class UsersController extends AppController {
             }
         }
         $frndRequest = $requestedFrnd->first();
-        if($frndRequest->firend_status == SUGGESTED){
+        if(($frndRequest->firend_status == SUGGESTED) && ($data['friend_status'] != ACCEPTED)){
             $frndRequest->set('requested_status', SUGGESTED);
         }else{
             $frndRequest->set('requested_status', $data['friend_status']);
         }
-        pj($frndRequest);die;
         $frndRequest->set('action_by', $loggedUser['id']);
         if($frObj->save($frndRequest)) {
             //data prepaire for push notification//
