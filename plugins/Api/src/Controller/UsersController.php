@@ -1130,7 +1130,12 @@ class UsersController extends AppController {
             }
         }
         $frndRequest = $requestedFrnd->first();
-        $frndRequest->set('requested_status', $data['friend_status']);
+        if($frndRequest->firend_status == SUGGESTED){
+            $frndRequest->set('requested_status', SUGGESTED);
+        }else{
+            $frndRequest->set('requested_status', $data['friend_status']);
+        }
+        
         $frndRequest->set('action_by', $loggedUser['id']);
         if($frObj->save($frndRequest)) {
             $this->restException(['status'=>'success', 'message'=> Configure::read('requestMsg.'.$data['friend_status']),'data'=>[                    

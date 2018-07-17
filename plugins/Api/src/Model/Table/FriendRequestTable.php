@@ -380,6 +380,7 @@ class FriendRequestTable extends Table {
             $friendRequest->requested_by = $data['id'];
             $friendRequest->requested_to = $data['friendId'];
             $friendRequest->requested_status = SUGGESTED;
+            $friendRequest->friend_status = SUGGESTED;
             $friendRequest->action_by = $data['id'];
             $this->save($friendRequest);
         }
