@@ -47,9 +47,9 @@ class CreateUpdateSpaycShell extends Shell
         $time=UNIQUE_TOKEN;
         $this->Scraper->setScraperLog('Create and Update Spayc',$time,'CreateUpdateSpayc');
         $this->out('Process start at '.$this->Scraper->currentDateTime());
-         $response = $this->Scraper->saveDataSpaceTable();
+        $response = $this->Scraper->saveDataSpaceTable();
         $this->out('Response - '.$response);
-         $this->Scraper->updateScraperLog($time);
+        $this->Scraper->updateScraperLog($time,$response);
         $this->out('Completed at '.$this->Scraper->currentDateTime());
     }
 }

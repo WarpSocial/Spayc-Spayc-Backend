@@ -327,8 +327,9 @@ class SpaycsController extends AppController {
             $user_date = Time::createFromTimestamp($this->request->query('date'), Configure::read('timezone'));
             $endObj = clone $user_date;            
             $endObj->modify('+1 days');
-            $dayStart = $user_date->setTimezone('UTC')->modify('today')->format("Y-m-d H:i");
-            $endDay = $endObj->setTimezone('UTC')->modify('1 second ago')->format("Y-m-d H:i");  
+            $endObj->modify('1 second ago'); 
+            $dayStart = $user_date->setTimezone('UTC')->format("Y-m-d H:i");
+            $endDay = $endObj->setTimezone('UTC')->format("Y-m-d H:i");  
             $spaycs->where([
                 'OR'=>[[$startDate.' >='=>$dayStart],[$endDate.' >= '=>$dayStart]]
                 ]);
