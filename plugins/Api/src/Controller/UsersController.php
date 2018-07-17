@@ -923,7 +923,7 @@ class UsersController extends AppController {
             }
         }
         $frndRequest = $requestedFrnd->first();
-        if(($frndRequest->firend_status == SUGGESTED) && ($data['friend_status'] != ACCEPTED)){
+        if(($frndRequest->friend_status == SUGGESTED) && ($data['friend_status'] != ACCEPTED)){
             $frndRequest->set('requested_status', SUGGESTED);
         }else{
             $frndRequest->set('requested_status', $data['friend_status']);
@@ -944,7 +944,7 @@ class UsersController extends AppController {
                 'id'=>$frndRequest->id,
                 'requested_by'=>$frndRequest->requested_by,
                 'requested_to'=>$frndRequest->requested_to,
-                'requested_status'=>$frndRequest->requested_status,
+                'requested_status'=>$data['friend_status'],
                 'action_by'=>$frndRequest->action_by
             ]]);
         } else {
@@ -1133,7 +1133,7 @@ class UsersController extends AppController {
             }
         }
         $frndRequest = $requestedFrnd->first();
-        if($frndRequest->firend_status == SUGGESTED){
+        if($frndRequest->friend_status == SUGGESTED){
             $frndRequest->set('requested_status', SUGGESTED);
         }else{
             $frndRequest->set('requested_status', $data['friend_status']);
