@@ -928,6 +928,7 @@ class UsersController extends AppController {
         }else{
             $frndRequest->set('requested_status', $data['friend_status']);
         }
+        pj($frndRequest);die;
         $frndRequest->set('action_by', $loggedUser['id']);
         if($frObj->save($frndRequest)) {
             //data prepaire for push notification//
