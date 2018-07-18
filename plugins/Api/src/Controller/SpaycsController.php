@@ -273,7 +273,6 @@ class SpaycsController extends AppController {
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Accepted');
         $lat = $this->request->getQuery('latitude',null);
         $long = $this->request->getQuery('longitude',null);
-        
         $spaycs = $this->Spaycs->find();
         $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.spayc_category_id','distance'=>0])
             ->where(['Spaycs.status'=>'Active','Spaycs.parent_id IS'=>null,'Spaycs.group_type !='=>'trusted_private'])
@@ -300,10 +299,14 @@ class SpaycsController extends AppController {
         }
          if($lat != null && $long != null){
             $distance = "ROUND( CAST(".str_replace(':long',$long,str_replace(':lat',$lat,$this->Spaycs->distanceInMiles))." AS numeric), 3)";
-            $spaycs->select(['distance'=>$distance])
-                    //->bind(':lat', $lat, 'float')
-                    //->bind(':long', $long, 'float')
-                    ->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
+            $spaycs->select(['distance'=>$distance]);
+            if(!empty($this->request->getQuery('radius'))){
+                $radius = $this->request->getQuery('radius');
+                $spaycs->where(function (QueryExpression $exp) use ($distance,$radius) {
+                    return $exp->lte($distance,$radius);
+                });
+            }
+            $spaycs->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
         }else if(!empty($this->request->query('hot'))) {
             
         }else{
