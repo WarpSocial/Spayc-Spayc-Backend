@@ -45,6 +45,7 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
         }
         $data = $this->request->getData();
+        //$this->Matrix->uploadMediaImage($data);die(" #END#");
         $data['type'] = !empty($data['type'])?ucfirst($data['type']):'';
         $data['group_type'] = !empty($data['group_type'])?ucfirst($data['group_type']):'';        
         $data['status'] = ACTIVE;
