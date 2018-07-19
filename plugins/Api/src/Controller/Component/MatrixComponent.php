@@ -8,6 +8,7 @@ use Cake\Network\Http\Client;
 use Cake\Event\Event;
 use Cake\Core\Configure;
 use Api\Utils\Utils;
+use Intervention\Image\ImageManager;
 
 /**
  * Matrix component
@@ -315,22 +316,32 @@ class MatrixComponent extends Component {
     public function uploadMediaImage($data){
         if(empty($data['image_url'])){
             return;
-        }        
+        }
         if(strstr($data['image_url'],'http') !== false){ 
+            $manager = new ImageManager(array('driver' => 'gd'));
+            $img = $manager->make($data['image_url'])->resize(200, 150);
+            $filename = basename($data['image_url']);
+            $contentType = 'image/png';
+            $bodyContent = $img->response('png',80);
+            //$cdnhttp = new Client();
+            //$cdnresponse = $cdnhttp->get($data['image']);
+            //$filename = basename($data['image']);
+            //$contentType = $cdnresponse->getHeaderLine('content-type');
+        }elseif(strstr($data['image_url'],'http') !== false){ 
             $cdnhttp = new Client();
             $cdnresponse = $cdnhttp->get($data['image_url']);
             $filename = basename($data['image_url']);
             $contentType = $cdnresponse->getHeaderLine('content-type');
+            $bodyContent = $cdnresponse->getBody();
             //$ext = explode('/',$mimeType)[1];
             /*$fileInfo = pathinfo($data['image_url']);
             $filename = $fileInfo['basename'];
             $contentType = 'image/'.$fileInfo['extension'];
             $rawfile = $data['image_url'];*/
-        }else{
-            die("end");die;
+        }else{            
             $filename = $data['image_url']['name'];
             $contentType = $data['image_url']['type'];
-            $rawfile = $data['image_url']['tmp_name'];
+            $bodyContent = $data['image_url']['tmp_name'];
         }
         if(empty($data['matrix_token'])){
             $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
@@ -342,7 +353,7 @@ class MatrixComponent extends Component {
         $http = new Client(['headers' => ['Content-Type' =>$contentType]]);
         $httpResponse = $http->post(
                 $url, 
-                $cdnresponse->getBody(),
+                $bodyContent,
                 //file_get_contents($rawfile),
                 [
                     'ssl_verify_host' => $this->config('sslverify'), 

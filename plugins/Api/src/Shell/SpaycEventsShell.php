@@ -59,7 +59,7 @@ class SpaycEventsShell extends Shell {
 //        Log::write('info', "test", ['scope' => 'queue']);
         $pushData['post_value'] = json_encode($data);
         $pushData['created'] = date("Y-m-d H:i:s");
-        Log::info(json_encode($pushData,JSON_PRETTY_PRINT));
+        //Log::info(json_encode($pushData,JSON_PRETTY_PRINT));
         $pusher = TableRegistry::get("Api.PusherData");
         $push = $pusher->newEntity();
         $entity = $pusher->patchEntity($push, $pushData,['validate'=>false]);
@@ -112,7 +112,7 @@ class SpaycEventsShell extends Shell {
                     $push['requested_by'] = $v['user_id'];
                     $push['username'] = $v['user']['username'];
                     $push['display_name'] = $v['user']['display_name'];
-                     $push['start_date'] = $v['start_date'];
+                    $push['start_date'] = $v['start_date'];
                     $push['end_date'] = $v['end_date'];
                     $push['requested_to'] = $val;
                     $push['spayc_id'] = $v['id']; //provide spayc id if push related to spayc

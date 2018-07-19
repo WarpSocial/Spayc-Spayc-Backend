@@ -28,6 +28,7 @@ class UsersController extends AppController {
         parent::initialize();
         $this->loadComponent('Api.Push');
         $this->loadComponent('Api.Matrix');
+        $this->loadComponent('Api.Redis');
     }
     
     /**
@@ -307,7 +308,11 @@ class UsersController extends AppController {
         $items->set('matrix_access_token', $matrix['access_token']);
         #echo $data['token_verification'];die;
         if ($this->Users->save($items)) {
-            $this->getMailer('Api.User')->send('signup', [$items]);
+            $items['action_type']='signup';
+            TableRegistry::get('Queue.QueuedJobs')->createJob('Mailer',$items->toArray());
+            /*store the user location to redis*/
+            $this->Redis->addUser($items->toArray());
+            //$this->getMailer('Api.User')->send('signup', [$items]);
             $response = ['status' => "success", 'message' => __('Registration done successfully.'), 'data' =>
                 [
                     'id'=>$items->id,
@@ -323,7 +328,7 @@ class UsersController extends AppController {
                 ]];
             $this->response->statusCode(201);
         } else {
-            Log::info(['status' => "failed", 'message' =>__('Failed to saved data.')]);
+            #Log::info(['status' => "failed", 'message' =>__('Failed to saved data.')]);
             $response = ['status' => "failed", 'message' => $this->mapErrors($items->errors())];
         }
         $this->set($response);
@@ -614,6 +619,7 @@ class UsersController extends AppController {
             $items->set('display_name',$data['username']);
         }
         if ($this->Users->save($items)) {
+            $this->Redis->addUser($items->toArray());
             $response = ['status' => "success", 'message' => __('Updated successfully.'), 'data' => $data];
         } else {
             $response = ['status' => "failed", 'message' => $this->mapErrors($items->errors())];
@@ -655,6 +661,9 @@ class UsersController extends AppController {
                         ->where(['plain_token' =>  $token])
                         ->execute();
         $this->Matrix->logout($this->Auth->user('UserLogs.matrix_access_token'));
+        /* delete cache data if existing before creating new one */
+        \Cake\Cache\Cache::delete($token,'redis');
+        $this->Auth->logout();
         $response = ['status'=>'success','message'=>__('Logout successfully.')];
         $this->set($response);
     }
@@ -848,8 +857,7 @@ class UsersController extends AppController {
             if($data['friend_status'] == $frndRequest->requested_status){
                 $this->restException(['status'=>'failed', 'message'=>__('Friend request already sent with same status.')], 400);
             }  
-            //if($frndRequest->requested_status=='Unfriend' || $frndRequest->requested_status=='Decline') {
-            if(in_array($currentStatus, ['Unblock', 'is_direct', 'Decline', 'Unfriend'])) {
+            if((in_array($currentStatus, ['Unblock', 'is_direct', 'Decline', 'Unfriend'])) || ($frndRequest->friend_status == SUGGESTED)) {
                 $frndRequest->set('requested_by', $loggedUser['id']);
                 $frndRequest->set('requested_to', $data['friend_id']);
             }
@@ -915,7 +923,11 @@ class UsersController extends AppController {
             }
         }
         $frndRequest = $requestedFrnd->first();
-        $frndRequest->set('requested_status', $data['friend_status']);
+        if(($frndRequest->friend_status == SUGGESTED) && ($data['friend_status'] != ACCEPTED)){
+            $frndRequest->set('requested_status', SUGGESTED);
+        }else{
+            $frndRequest->set('requested_status', $data['friend_status']);
+        }
         $frndRequest->set('action_by', $loggedUser['id']);
         if($frObj->save($frndRequest)) {
             //data prepaire for push notification//
@@ -932,7 +944,7 @@ class UsersController extends AppController {
                 'id'=>$frndRequest->id,
                 'requested_by'=>$frndRequest->requested_by,
                 'requested_to'=>$frndRequest->requested_to,
-                'requested_status'=>$frndRequest->requested_status,
+                'requested_status'=>$data['friend_status'],
                 'action_by'=>$frndRequest->action_by
             ]]);
         } else {
@@ -1069,7 +1081,11 @@ class UsersController extends AppController {
             }
         }
         $frndRequest = $requestedFrnd->first();
-        $frndRequest->set('requested_status', $data['friend_status']);
+        if($frndRequest->friend_status == SUGGESTED){
+            $frndRequest->set('requested_status', SUGGESTED);
+        }else{
+            $frndRequest->set('requested_status', $data['friend_status']);
+        }
         $frndRequest->set('action_by', $loggedUser['id']);
         if($frObj->save($frndRequest)) {
             $this->restException(['status'=>'success', 'message'=> Configure::read('requestMsg.'.$data['friend_status']),'data'=>[                    
@@ -1121,7 +1137,12 @@ class UsersController extends AppController {
             }
         }
         $frndRequest = $requestedFrnd->first();
-        $frndRequest->set('requested_status', $data['friend_status']);
+        if($frndRequest->friend_status == SUGGESTED){
+            $frndRequest->set('requested_status', SUGGESTED);
+        }else{
+            $frndRequest->set('requested_status', $data['friend_status']);
+        }
+        
         $frndRequest->set('action_by', $loggedUser['id']);
         if($frObj->save($frndRequest)) {
             $this->restException(['status'=>'success', 'message'=> Configure::read('requestMsg.'.$data['friend_status']),'data'=>[                    
@@ -1220,6 +1241,24 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Status is required fields and status must be in('.  implode(',', $status).').')], 400);
         }
         $loggedUser = $this->Auth->user();
+        // for get and save facebook friends
+        $frTableObj = TableRegistry::get('Api.FriendRequest');
+        if(!empty($loggedUser['fb_id'])){
+            $this->loadComponent('Api.Facebook');
+            $friends = $this->Facebook->getFriends($loggedUser['fb_id'], $loggedUser['fb_access_key']);           
+            if(!empty($friends)) {
+                foreach($friends as $friend) {
+                    if(!empty($friend['id'])) {                        
+                        $spaycFriend = $this->Users->find("all", ['fields'=>['Users.id'], 'conditions'=>['Users.fb_id'=>trim($friend['id'])]])->first();
+                        $checkFrndReq = $frTableObj->checkFriendRequestExist($loggedUser['id'], $spaycFriend->id);
+                        if($checkFrndReq){
+                            $setdata = ['id'=>$loggedUser['id'], 'friendId'=>$spaycFriend->id];
+                            $frTableObj->addFbFirends($setdata);
+                        }   
+                    }
+                }
+            }
+        }
         $userId = !empty($this->request->query('user_id'))?$this->request->query('user_id'):$loggedUser['id'];
         
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, $friendStatus);
@@ -1486,6 +1525,12 @@ class UsersController extends AppController {
         $long = (float)$data['longitude'];
         $user = $this->Auth->user();
         if($this->Users->PhysicalLocation->updateLocation($user,$lat,$long)){
+            /* update user current status on redis too */
+            $this->Redis->addUser([
+                'id'=>$user['id'],
+                'latitude'=>$lat,
+                'longitude'=>$long,
+            ]);
             $response = ['status'=>'success', 'message'=>__('Request has been updated successfully.')];
         }else{
             $this->response->statusCode(400);

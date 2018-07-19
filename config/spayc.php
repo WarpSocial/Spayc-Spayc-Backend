@@ -4,10 +4,11 @@ return [
     'gender'=>['Male', 'Female', 'Other'],
     'spayctype'=>['Event', 'Community'],
     'grouptype'=>['Public', 'Private'],
+    'payment_type'=>['Paid', 'Free','NA'],    
     'pagelimit'=>5,
     'miles'=>1,
-    'newSpaycDistance'=>25,/* Miles*/
-    'friend_requested_status'=>['Pending', 'Accepted', 'Blocked','Unblock','is_direct','Decline','Unfriend'],
+    'newSpaycDistance'=>5,/* Miles*/
+    'friend_requested_status'=>['Pending', 'Accepted', 'Blocked','Unblock','is_direct','Decline','Unfriend', 'Suggested'],
     'add_friend'=>['Pending'],
     'accept_decline_status'=>['Accepted', 'Decline'],
     'block_status'=>['Blocked'],

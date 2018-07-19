@@ -46,7 +46,7 @@ use Cake\Routing\Router;
                   </tr>
                   <tr>
                     <td style="width:100%; border-top: 1px solid #eaeaea;">
-                      <p style="color:#6c6c6c; font-size: 13px;padding-top: 5px;">For general inquiries or to request support with your account, please email support@warp.com</p>
+                      <p style="color:#6c6c6c; font-size: 13px;padding-top: 5px;">For general inquiries or to request support with your account, please email admin@warp.com</p>
                     </td>
                   </tr>
                 </tbody>

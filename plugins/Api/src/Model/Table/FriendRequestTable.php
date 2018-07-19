@@ -8,6 +8,9 @@ use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
+use Cake\Controller\ComponentRegistry;
+use Api\Controller\Component\RedisComponent;
+use Cake\Collection\CollectionInterface;
 
 /**
  * FriendRequest Model
@@ -260,56 +263,53 @@ class FriendRequestTable extends Table {
     public function getNearByFriendsOnMap($request = [], $userId = null) {
         //Friend ID List     
         $all_id = $this->getFriendIdsRoomIdByUserId($userId);
-        $child = $all_id['ids'];
+        $friendIds = $all_id['ids'];
         $room_id = $all_id['room_ids'];
-
-        if (!empty($child)) {
-            //Getting Distance
-            $distanceField = '( 3959 * ACOS( COS( RADIANS(:latitude) ) *
-                COS( RADIANS(  PhysicalLocation.current_latitude ) ) *
-                COS( RADIANS(PhysicalLocation.current_longitude ) - RADIANS(:longitude) ) +
-                SIN( RADIANS(:latitude) ) *
-                SIN( RADIANS(PhysicalLocation.current_latitude ) ) ) )';
-            $distance = $this->distance($request['center_latitude'], $request['center_longitude'], $request['endpoint_latitude'], $request['endpoint_longitude']);
-
-            $friends = TableRegistry::get('Api.Users')->find()
-                    ->select(['Users.id', 'Users.display_name', 'Users.email', 'Users.address', 'latitude'=>'PhysicalLocation.current_latitude', 'longitude'=>'PhysicalLocation.current_longitude', 'Users.modified'])
-                    ->contain('PhysicalLocation')
-                    ->where(["$distanceField <=" => $distance, 'status' => 'Active'])
-                    ->where("Users.id in (" . implode($child, ",") . ")")
-                    ->bind(':latitude', $request['center_latitude'], 'float')
-                    ->bind(':longitude', $request['center_longitude'], 'float');
-
-            // Getting User image
-            $friends->contain([
-                'UserImages' => function($q) {
-                    return $q->select(['UserImages.user_id', 'UserImages.image_url'])->where(['UserImages.is_profile' => 'Yes']);
-                }
-            ]);
-
-            $friends->formatResults(function (\Cake\Collection\CollectionInterface $results) {
-                return $results->map(function ($row) {
-                            $row['image_url'] = !empty($row['user_images'][0]['image_url']) ? $row['user_images'][0]['image_url'] : '';
-                            unset($row['user_images']);
-                            return $row;
-                        });
-            });
-            $newQuery = clone $friends;
-            $data['count'] = $newQuery->count();
-            $data['records'] = [];
-            if ($friends->count()) {
-                $all_friends = [];
-                foreach ($friends->toArray() as $k => $friend) {
-                    $all_friends[$k] = $friend;
-                    $all_friends[$k]['matrix_room_id'] = $room_id[$friend['id']];
-                }
-                $data['records'] = $all_friends;
-            }
-        } else {
-            $data['count'] = 0;
-            $data['records'] = [];
+        if(empty($friendIds)){
+            return ['count'=>0,'records'=>[]];
         }
-        return $data;
+        if (empty($request['radius'])) {
+            $radius = $this->distance($request['center_latitude'], $request['center_longitude'], $request['endpoint_latitude'], $request['endpoint_longitude']);
+        } else {
+            $radius = $request['radius'];
+        }
+        $redis = new RedisComponent(new ComponentRegistry());
+        $nearUsers = $redis->getGeoLocation('Users',$request['center_latitude'], $request['center_longitude'], $radius);
+        if(empty($nearUsers)){
+            return ['count'=>0,'records'=>[]];
+        }
+        $friendIds = array_intersect($friendIds,array_column($nearUsers,'id'));
+         if(empty($friendIds)){
+            return ['count'=>0,'records'=>[]];
+        }
+        $friends = TableRegistry::get('Api.Users')->find()
+                ->select(['Users.id', 'Users.display_name', 'Users.email', 'Users.address', 'Users.modified'])
+                ->contain([
+                    'UserImages' => function($q) {
+                        return $q->select(['UserImages.user_id', 'UserImages.image_url'])->where(['UserImages.is_profile' => 'Yes']);
+                    }
+                ])
+                ->where(['Users.status'=>ACTIVE,'Users.id IN' =>$friendIds]);
+
+        // Getting User image
+        $friends->contain([
+            'UserImages' => function($q) {
+                return $q->select(['UserImages.user_id', 'UserImages.image_url'])->where(['UserImages.is_profile' => 'Yes']);
+            }
+        ]);
+        $count = $friends->count();
+        $friends->formatResults(function (CollectionInterface $results)use($nearUsers,$room_id) {
+            return $results->map(function ($row)use($nearUsers,$room_id) {
+                $row['image_url'] = !empty($row['user_images'][0]['image_url']) ? $row['user_images'][0]['image_url'] : '';
+                $row->distance = $nearUsers[$row->id]['distance'];
+                $row->latitude = $nearUsers[$row->id]['latitude'];
+                $row->longitude = $nearUsers[$row->id]['longitude'];
+                $row->matrix_room_id = $room_id[$row->id];
+                unset($row['user_images']);
+                return $row;
+            });
+        });
+        return ['count'=>$count,'records'=>$friends];
     }
 
     public function distance($lat1, $lon1, $lat2, $lon2) {
@@ -357,6 +357,33 @@ class FriendRequestTable extends Table {
             return false;
         }
         return $this->exists(['requested_to' => $userId,'requested_status'=>$status]);
+    }
+    
+    public function checkFriendRequestExist($loggedInUserId, $friendId) {
+        $res = false;
+        if(!empty($loggedInUserId) && $friendId) {
+            $requestedFrnd = $this->find()->Where(['OR'=>[
+                ['requested_by' => $loggedInUserId,'requested_to'=>$friendId],
+                ['requested_by' => $friendId,'requested_to'=>$loggedInUserId]
+                ]]);            
+            if($requestedFrnd->count())
+                $res = false;
+            else 
+                $res = true;
+        }
+        return $res;
+    }
+    
+    public function addFbFirends($data) {
+        if(!empty($data)){
+            $friendRequest = $this->newEntity();
+            $friendRequest->requested_by = $data['id'];
+            $friendRequest->requested_to = $data['friendId'];
+            $friendRequest->requested_status = SUGGESTED;
+            $friendRequest->friend_status = SUGGESTED;
+            $friendRequest->action_by = $data['id'];
+            $this->save($friendRequest);
+        }
     }
 
 }

@@ -55,9 +55,21 @@ class ScraperComponent extends Component {
 
     /*************  get Events from Eventbrite API and Save it *********************/
      public function getEventbriteData($pageNumber=1,$time) { 
-
-        $url= $this->SCRAPER_ROOT_URL['eventbriteurl'].'events/search/?expand=venue&token='.$this->SCRAPER_ROOT_URL_TOKEN['eventbritetoken'].'&sort_by=date&start_date.range_start='.TODAY_DATE.'T00%3A00%3A00&start_date.range_end='.AFTER14DAYS_DATE.'T23%3A59%3A00&location.address=New+York%2C+NY&page='.$pageNumber;       
-
+        $dtNow = new \DateTime(TODAY_DATE);
+        $beginOfDay = clone $dtNow;
+        $beginOfDay->modify('today'); 
+        $endOfDay = clone $beginOfDay;
+        $endOfDay->modify('+15 days');
+        $endOfDay->modify('1 second ago'); 
+        $url=$this->SCRAPER_ROOT_URL['eventbriteurl'].'events/search/?'. http_build_query([
+           'expand'=> 'venue',
+           'token' => $this->SCRAPER_ROOT_URL_TOKEN['eventbritetoken'],
+           'sort_by'=>'date',
+           'start_date.range_start'=> $beginOfDay->format('Y-m-d\TH:i:s'),
+           'start_date.range_end' => $endOfDay->format('Y-m-d\TH:i:s'),
+           'location.address'=> 'New York,NY',
+            'page' => $pageNumber
+        ]);         
         $resp=$this->curlRequest($url,$time);      
         if((isset($resp['events']) && !empty($resp['events'])) && count($resp['events'])) {        
         $events=$eventIds= array();
@@ -66,6 +78,8 @@ class ScraperComponent extends Component {
             $eventIds[]=$eventId=trim($value['id']);  
             $events[$eventId]['eventbrite_event_id'] = trim($value['id']);
             $events[$eventId]['name'] = (isset($value['name']['text']) && !empty($value['name']))?html_entity_decode(trim($value['name']['text'])):null;
+            $events[$eventId]['ticket_url'] = (isset($value['url']) && !empty($value['url']))?trim($value['url']):null;
+            $events[$eventId]['payment_type'] = (isset($value['is_free']) && ($value['is_free']))?FREE:PAID;
             $events[$eventId]['start_date'] = (isset($value['start']['utc']) && !empty($value['start']['utc']))?new time($value['start']['utc']):null;
             if($events[$eventId]['start_date'] > Time::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s', strtotime(SCRAPER_DAYS)))->setTime(23,59))
                 $stateExist = $eventId;
@@ -112,10 +126,20 @@ class ScraperComponent extends Component {
 
    
     /*************  get Events from Stubhub API and save it *********************/
-    public function getStubhubData($start=0,$time) {  
-
-        $url =$this->SCRAPER_ROOT_URL['stubhuburl'].'?city=%22New%20York%22&state=%22NY%22%20|%22New%20York%22&country=US&date='.TODAY_DATE.'T00:00%20TO%20'.AFTER14DAYS_DATE.'T23:59&sort=eventDateUTC%20asc&rows=500&start='.$start;       
-
+    public function getStubhubData($start=0,$time) {
+        $dtNow = new \DateTime(TODAY_DATE);
+        $beginOfDay = clone $dtNow;
+        $beginOfDay->modify('today'); 
+        $endOfDay = clone $beginOfDay;
+        $endOfDay->modify('+15 days');
+        $endOfDay->modify('1 second ago');
+        $url=$this->SCRAPER_ROOT_URL['stubhuburl'].'?'.'state='.rawurlencode('"NY" ').'|'.rawurlencode('"New York"').'&'. http_build_query([
+            'country'=>'US',
+            'date'=> $beginOfDay->format('Y-m-d\TH:i').'TO'.$endOfDay->format('Y-m-d\TH:i'),
+            'sort'=>'eventDateUTC',
+            'rows' => 500,
+            'start'=>$start            
+        ]);          
         $resp=$this->curlRequest($url,$time,$this->SCRAPER_ROOT_URL_TOKEN['stubhubtoken']);
         $eventsCount = count($resp['events']);       
         if((isset($resp['events']) && !empty($resp['events'])) && $eventsCount){
@@ -124,6 +148,8 @@ class ScraperComponent extends Component {
             $eventIds[]= $eventId = trim($value['id']);
             $events[$eventId]['stubhub_event_id'] = trim($value['id']);
             $events[$eventId]['name'] = (isset($value['name']) && !empty($value['name']))?html_entity_decode(trim($value['name'])):null;
+            $events[$eventId]['ticket_url'] = (isset($value['webURI']) && !empty($value['webURI']))?STUBHUB_EVENT_URL.trim($value['webURI']):STUBHUB_EVENT_URL;
+            $events[$eventId]['payment_type'] = PAID;
             $events[$eventId]['start_date'] = (isset($value['eventDateUTC']) && !empty($value['eventDateUTC']))?new time($value['eventDateUTC']):null;
             $events[$eventId]['end_date'] = null;
             $events[$eventId]['description'] = (isset($value['description']) && !empty($value['description']))? html_entity_decode(trim($value['description'])):null;
@@ -180,7 +206,23 @@ class ScraperComponent extends Component {
 
     /*************  get Events from Ticketmaster URL pass Startdate and endDate as argument data should be Y-m-d format *********************/
     public function getTicketmasterData($startDate, $endDate=null,$time) {  
-
+        $dtNow = new \DateTime($startDate);
+        $beginOfDay = clone $dtNow;
+        $beginOfDay->modify('today'); 
+        $endOfDay = clone $beginOfDay;
+        $endOfDay->modify('tomorrow');
+        // adjust from the next day to the end of the day, per original question
+        $endOfDay->modify('1 second ago');
+        $url=$this->SCRAPER_ROOT_URL['ticketmasterurl'].'events.json?'. http_build_query([
+            'apikey'=>$this->SCRAPER_ROOT_URL_TOKEN['ticketmastertoken'],
+            'stateCode'=>'NY',
+            'countryCode'=>'US',
+            'page'=>0,
+            'size'=>200,
+            'sort'=>'date,asc',
+            'startDateTime'=> $beginOfDay->format('Y-m-d\TH:i:s\Z'),
+            'endDateTime'=> $endOfDay->format('Y-m-d\TH:i:s\Z'),
+        ]);
         $url=$this->SCRAPER_ROOT_URL['ticketmasterurl'].'events.json?apikey='.$this->SCRAPER_ROOT_URL_TOKEN['ticketmastertoken'].'&city=%22New%20York%22&stateCode=NY&countryCode=US&page=0&size=200&sort=date,asc&startDateTime='.$startDate.'T00:00:00Z&endDateTime='.$startDate.'T23:59:00Z';        
         $resp=$this->curlRequest($url,$time);       
         if(isset($resp['_embedded']['events']) && count($resp['_embedded']['events'])){
@@ -196,6 +238,8 @@ class ScraperComponent extends Component {
             $eventIds[]= $eventId =trim($value['id']);
             $events[$eventId]['ticketmaster_event_id'] = trim($value['id']);
             $events[$eventId]['name'] = (isset($value['name']) && !empty($value['name']))?html_entity_decode(trim($value['name'])):null;
+             $events[$eventId]['ticket_url'] = (isset($value['url']) && !empty($value['url']))?trim($value['url']):null;
+            $events[$eventId]['payment_type'] = !empty($value['priceRanges'])?PAID:FREE;
             $events[$eventId]['start_date'] = $startDateTime;                    
             $events[$eventId]['description'] = (isset($value['info']) && !empty($value['info']))?html_entity_decode(trim($value['info'])):null;
             $events[$eventId]['latitude'] = (isset($value['_embedded']['venues']['0']['location']['latitude']) && !empty($value['_embedded']['venues']['0']['location']['latitude']))?trim($value['_embedded']['venues']['0']['location']['latitude']):null;
@@ -457,8 +501,13 @@ class ScraperComponent extends Component {
             $response=[];
             $getIds[] = $value['id'];
             $createSpaceData['name'] = $value['name'];
-            if($value['location']){ $createSpaceData['location'] = $value['location'];}
-            else{$createSpaceData['location'] = "NA";}
+            $createSpaceData['ticket_url'] = trim($value['ticket_url']);
+            $createSpaceData['payment_type'] = trim($value['payment_type']);
+            if($value['location']){ 
+                $createSpaceData['location'] = $value['location'];            
+            }else{
+                $createSpaceData['location'] = "NA";                
+            }
             $createSpaceData['type'] = 'Event';
             $createSpaceData['group_type'] = 'Public';
             $createSpaceData['start_date'] = date('m-d-Y H:i:s', strtotime($value['start_date']));
@@ -493,7 +542,7 @@ class ScraperComponent extends Component {
                         if($category[2]){
                             $createSpaceData['description'].= " #".str_replace(" ", "", $category[2]);
                         }
-                       $httpResponse = $http->post($url, $createSpaceData);
+                        $httpResponse = $http->post($url, $createSpaceData);
                         $response['Create New Spayc'][] =$created= json_decode($httpResponse->body, true);
                         //Updating Spayc ID in Related tables
                         if ($created['status'] == 'success') {
@@ -518,7 +567,7 @@ class ScraperComponent extends Component {
                             //Saving logs
                             $pushData['post_value'] = json_encode($created);
                             $pushData['created'] = date("Y-m-d H:i:s");
-                            Log::info(json_encode($pushData,JSON_PRETTY_PRINT));
+                            //Log::info(json_encode($pushData,JSON_PRETTY_PRINT));
                             $pusher = TableRegistry::get("Api.PusherData");
                             $push = $pusher->newEntity();
                             $entity = $pusher->patchEntity($push, $pushData,['validate'=>false]);
@@ -776,7 +825,7 @@ class ScraperComponent extends Component {
     }
 
     /*** set log for scraper to identify all process running smoothly ***/
-    public function setScraperLog($status,$time,$shell){
+    public function setScraperLog($status,$time,$shell=null){
         if(!empty($status)){
             $data['status'] = trim($status);
             $data['shell'] = $shell;

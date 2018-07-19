@@ -143,9 +143,15 @@ class HashtagsTable extends Table
         if(empty($matches[1])) {
             return false;
         }
-        
-        $spHashtags->deleteAll(['spayc_id'=>$spaycId]);
-        foreach($matches[1] as $key=>$hash) {
+        return $this->saveTags($spaycId, $matches[1]);
+    }
+    
+    public function saveTags($spaycId,$tags){
+        if(empty($tags) || empty($spaycId) || !is_array($tags)) {
+            return false;
+        }
+        $spHashtags = TableRegistry::get('Api.SpaycHashtags');
+        foreach($tags as $key=>$hash) {
             $entity = $this->find("all")->select(["id", "name"])->where(['LOWER(name)'=>  strtolower($hash)]);
             if(!$entity->isEmpty()) {
                 $items = $entity->first();
