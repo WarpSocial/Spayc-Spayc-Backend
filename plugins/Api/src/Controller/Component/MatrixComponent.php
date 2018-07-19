@@ -317,7 +317,7 @@ class MatrixComponent extends Component {
         if(empty($data['image_url'])){
             return;
         }
-        if(strstr($data['image_url'],'http') !== false){ 
+        if(!empty($data['image_ur1l']) && (strstr($data['image_ur1l'],'http') !== false)){ 
             $manager = new ImageManager(array('driver' => 'gd'));
             $img = $manager->make($data['image_url'])->resize(200, 150);
             $filename = basename($data['image_url']);
