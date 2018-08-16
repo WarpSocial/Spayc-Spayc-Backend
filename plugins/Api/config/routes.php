@@ -83,6 +83,7 @@ Router::plugin(
         $routes->connect('/subscribed-spaycs',['controller'=>'Spaycs', 'action'=>'userSubscribedSpaycs']);
         $routes->connect('/spam-reports',['controller'=>'WebApi', 'action'=>'spamReport']);
         $routes->connect('/update-comment/:id',['controller'=>'WebApi', 'action'=>'updateComment'],['pass'=>['id']]);
+        $routes->connect('/events-image',['controller'=>'WebApi', 'action'=>'eventsImage']);
         $routes->fallbacks(DashedRoute::class);
     }
 );

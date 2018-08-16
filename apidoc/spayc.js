@@ -1834,3 +1834,35 @@ function getSubscribedSpaycs() { return; }
  * @apiUse UserErrorResponse
  */
 function putUpdateComment() { return; }
+/**
+ * @api {get} /events-image.json?events=:matrix_room_id Events(Warp) image
+ * @apiVersion 0.1.0
+ * @apiName getEventsImage
+ * @apiGroup Spayc
+ * @apiPermission private
+ *
+ * @apiDescription Get the list of images of warps.
+ * 
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * 
+ * @apiParam {String}   events  *Matrix room id and in case of more than one id value must be comma separated(Required).
+ 
+ *    
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of subscribed warp.
+ * @apiSuccess {Object} data List of events image.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "List of events image.",
+    "data": {
+        "!reXtnytclkKOGDiMdr:127.0.0.1": "http://i.ebayimg.com/images/g/2SMAAOSwstxVQBE7/s-l1600.jpg",
+        "!zQpSDoOyaYMwRYerRS:127.0.0.1": "http://i.ebayimg.com/images/g/TTwAAOSwpDdVXg8t/s-l1600.jpg"
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function getEventsImage() { return; }

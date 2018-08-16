@@ -6,6 +6,7 @@ use Api\Controller\AppController;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 
+
 /**
  * WebApi Controller
  *
@@ -26,6 +27,26 @@ class WebApiController extends AppController {
         parent::beforeFilter($event);
         $this->Auth->allow(['addCategory', 'apilog', 'addComment', 'notify','updateComment']);
     }
+    
+    public function eventsImage(){
+        if (!$this->request->is(['get'])) {
+            $this->restException(['status' => 'failed', 'message' => __('Method not allowed.')], 405);
+        }
+        $matrixRoomId = $this->request->query('events');
+        if(empty($matrixRoomId)){
+            $this->restException(['status' => 'failed', 'message' => __('Events key is required.')], 405);
+        }
+        $images = TableRegistry::get("Api.Spaycs")->find('list', [
+            'keyField' => 'matrix_room_id',
+            'valueField' => 'image'])->where(['matrix_room_id IN'=>explode(',',$matrixRoomId)]);
+        
+        $this->restException([
+            'status'=>'success',
+            'message'=>__('List of events image.'),
+            'data'=>$images
+        ]);
+    }
+    
 
     public function spamReport() {
         if (!$this->request->is(['post'])) {
