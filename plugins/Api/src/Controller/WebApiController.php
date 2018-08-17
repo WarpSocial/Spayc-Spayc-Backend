@@ -38,7 +38,7 @@ class WebApiController extends AppController {
         }
         $images = TableRegistry::get("Api.Spaycs")->find('list', [
             'keyField' => 'matrix_room_id',
-            'valueField' => 'image'])->where(['matrix_room_id IN'=>explode(',',$matrixRoomId)]);
+            'valueField' => 'image'])->where(['matrix_room_id IN'=>explode(',',$matrixRoomId),'image !='=>'']);
         
         $this->restException([
             'status'=>'success',
