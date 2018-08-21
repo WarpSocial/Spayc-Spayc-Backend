@@ -848,7 +848,7 @@ class SpaycsTable extends Table {
         $spaycs->order(['score'=>'DESC','start_date'=>'ASC']);
         
         $spaycs->limit(MAP_LIMIT);
-        #$spaycs->groupBy('spaycs.id');
+        $spaycs->groupBy('spaycs.id');
         return ['count'=>$spaycs->count(),'records'=>$spaycs];
     }
     
