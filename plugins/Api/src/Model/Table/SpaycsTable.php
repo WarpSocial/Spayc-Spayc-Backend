@@ -697,11 +697,12 @@ class SpaycsTable extends Table {
         $endObj->modify('+2 Week');
         $today_date = $now->setTimezone('UTC')->format("Y-m-d H:i");
         $twoWeek = $endObj->setTimezone('UTC')->format("Y-m-d H:i");
-        if (empty($request['radius'])) {
-            $radius = $this->distance($request['center_latitude'], $request['center_longitude'], $request['endpoint_latitude'], $request['endpoint_longitude']);
-        } else {
-            $radius = $request['radius'];
-        }
+        $radius = $this->distance($request['center_latitude'], $request['center_longitude'], $request['endpoint_latitude'], $request['endpoint_longitude']);
+//        if (empty($request['radius'])) {
+//            $radius = $this->distance($request['center_latitude'], $request['center_longitude'], $request['endpoint_latitude'], $request['endpoint_longitude']);
+//        } else {
+//            $radius = $request['radius'];
+//        }
         $redis = new RedisComponent(new ComponentRegistry());
         $redisSpaycs = $redis->getGeoLocation('Spaycs',$request['center_latitude'], $request['center_longitude'], $radius);
         if(empty($redisSpaycs)){
