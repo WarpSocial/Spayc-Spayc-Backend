@@ -690,7 +690,7 @@ class SpaycsTable extends Table {
     }
     
     
-    public function getNearBySpaycsOnMap($request = [], $userId=null) {
+    public function getNearBySpaycsOnMap_back($request = [], $userId=null) {
         $now = new Time('now', Configure::read('timezone'));
         $endObj = clone $now;
         $now->modify('today');
@@ -823,7 +823,7 @@ class SpaycsTable extends Table {
         $data['records'] = $spaycs;
         return $data;
     }
-    public function getNearBySpaycsOnMap_redis($request = [], $userId=null) {
+    public function getNearBySpaycsOnMap($request = [], $userId=null) {
         $now = new Time('now', Configure::read('timezone'));
         $endObj = clone $now;
         $now->modify('today');
