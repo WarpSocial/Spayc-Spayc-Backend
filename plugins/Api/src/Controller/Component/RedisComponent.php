@@ -111,7 +111,7 @@ class RedisComponent extends Component {
      * @param String $unit default is miles
      * @return Array List of id and distance of that key reference.
      */
-    public function getGeoLocation($key=null,$latitude,$longitude,$radius=null,$unit='mi',$limit=null){        
+    public function getGeoLocation($key=null,$latitude,$longitude,$radius=null,$unit='m',$limit=null){        
         if(empty($key)){
             return false;
         }
