@@ -68,8 +68,7 @@ class PagesController extends AppController {
                 throw $exception;
             }
             throw new NotFoundException();
-        }
-        
+        }        
     }
 
 }
