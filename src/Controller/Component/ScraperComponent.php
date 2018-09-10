@@ -59,7 +59,7 @@ class ScraperComponent extends Component {
         $beginOfDay = clone $dtNow;
         $beginOfDay->modify('today'); 
         $endOfDay = clone $beginOfDay;
-        $endOfDay->modify('+15 days');
+        $endOfDay->modify('+1 days');
         $endOfDay->modify('1 second ago'); 
         $url=$this->SCRAPER_ROOT_URL['eventbriteurl'].'events/search/?'. http_build_query([
            'expand'=> 'venue',
@@ -131,7 +131,7 @@ class ScraperComponent extends Component {
         $beginOfDay = clone $dtNow;
         $beginOfDay->modify('today'); 
         $endOfDay = clone $beginOfDay;
-        $endOfDay->modify('+15 days');
+        $endOfDay->modify('+1 days');
         $endOfDay->modify('1 second ago');
         $url=$this->SCRAPER_ROOT_URL['stubhuburl'].'?'.'state='.rawurlencode('"NY" ').'|'.rawurlencode('"New York"').'&'. http_build_query([
             'country'=>'US',
@@ -404,15 +404,16 @@ class ScraperComponent extends Component {
         $scraperCategories = $this->getScraperCategories();
         $response=[];
         //Fuzzy Logic
-        $fuzz = new Fuzz();
-        $process = new Process($fuzz);
+//        $fuzz = new Fuzz();
+//        $process = new Process($fuzz);
         
         if($spaycCategories){
             foreach ($spaycCategories as $spayc){
                 foreach ($scraperCategories as $scrap){
                     if(!$scrap['spayc_category_id']){
-                    $percentage=$fuzz->tokenSetRatio($spayc['name'], $scrap['name']);
-                    if($percentage>MAX_CATEGORY_PERCENTAGE){
+//                    $percentage=$fuzz->tokenSetRatio($spayc['name'], $scrap['name']);
+//                    if($percentage>MAX_CATEGORY_PERCENTAGE){
+                      if(strtolower($spayc['name']) == strtolower($scrap['name'])){    
                             $update['spayc_category_id'] = $spayc['id'];
                             $condition['id'] = $scrap['id'];
                             $response[]= TableRegistry::get('scraper_categories')->UpdateAll($update, $condition);

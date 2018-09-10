@@ -103,7 +103,7 @@ class ScraperCategoriesTable extends Table
         if($category){
          $ids=explode(',',$category);
         $obj = $this->find('all',
-                ['fields' =>['spayc_category_id','name']])
+                ['fields' =>['spayc_category_id','spayc_categories.name']])
                ->join([
                             'table' => 'spayc_categories',
                             'type' => 'INNER',
