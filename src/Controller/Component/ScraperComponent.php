@@ -59,7 +59,7 @@ class ScraperComponent extends Component {
         $beginOfDay = clone $dtNow;
         $beginOfDay->modify('today'); 
         $endOfDay = clone $beginOfDay;
-        $endOfDay->modify('+1 days');
+        $endOfDay->modify('+15 days');
         $endOfDay->modify('1 second ago'); 
         $url=$this->SCRAPER_ROOT_URL['eventbriteurl'].'events/search/?'. http_build_query([
            'expand'=> 'venue',
@@ -131,7 +131,7 @@ class ScraperComponent extends Component {
         $beginOfDay = clone $dtNow;
         $beginOfDay->modify('today'); 
         $endOfDay = clone $beginOfDay;
-        $endOfDay->modify('+1 days');
+        $endOfDay->modify('+15 days');
         $endOfDay->modify('1 second ago');
         $url=$this->SCRAPER_ROOT_URL['stubhuburl'].'?'.'state='.rawurlencode('"NY" ').'|'.rawurlencode('"New York"').'&'. http_build_query([
             'country'=>'US',
@@ -426,7 +426,7 @@ class ScraperComponent extends Component {
     }
     
      public function getSpaycCategories() {
-       $categories = TableRegistry::get('Api.SpaycCategories')->find('all')->toArray();
+       $categories = TableRegistry::get('Api.SpaycCategories')->find('all',['conditions' => ['SpaycCategories.parent_id IS NOT NULL']])->toArray();       
        return $categories;
     }
     
