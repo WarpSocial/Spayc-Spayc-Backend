@@ -470,6 +470,8 @@ function postForgotPassword() { return; }
         "bio_data": null,
         "longitude": 77.391026,
         "latitude": 28.535516,
+        "ghost_mode_search": 0,
+        "ghost_mode_map": 1,
         "matrix_user_id": null,
         "user_images": [
             {
@@ -645,6 +647,33 @@ function postProfileImage() { return; }
  * @apiUse UserErrorResponse
  */
 function putSetProfileImage() { return; }
+/**
+ * @api {put} /ghost-mode.json Ghost Mode Settings
+ * @apiVersion 0.1.0
+ * @apiName putGhostMode
+ * @apiGroup User
+ * @apiPermission Private
+ *
+ * @apiDescription add setting for ghost mode.Any one key is required.
+ *
+ * @apiHeader {String} token Token must be set in header.
+ *
+ * @apiParam {Integer} ghost_mode_search  Ghost mode setting for search value must be either 0 or 1 (Optional|required).
+ * @apiParam {Integer} ghost_mode_map user Ghost mode setting for map value must be either 0 or 1 (Optional|required).
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Ghost mode setting change successfully.
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Ghost mode setting change successfully."
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function putGhostMode() { return; }
 
 /**
  * @api {get} /remove-avatar/:order.json Remove Profile Image

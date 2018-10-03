@@ -833,3 +833,6 @@ ADD "ticket_url" varchar(1000) NULL;
 ALTER TABLE "stubhub_events"
 ADD "payment_type" character(10) NULL,
 ADD "ticket_url" varchar(1000) NULL;
+
+ALTER TABLE public.users ADD ghost_mode_search int NULL DEFAULT 0;
+ALTER TABLE public.users ADD ghost_mode_map int NULL DEFAULT 0;

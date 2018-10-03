@@ -15,6 +15,7 @@ Router::plugin(
         $routes->connect('/logout',['controller'=>'Users','action'=>'Logout']);
         $routes->connect('/facebook-signup',['controller'=>'Users', 'action'=>'facebookSignup']);
         $routes->connect('/profile-edit',['controller'=>'Users', 'action'=>'edit']);
+        $routes->connect('/ghost-mode',['controller'=>'Users', 'action'=>'ghostMode']);
         $routes->connect('/doc',['controller'=>'ApiDoc','action'=>'apiList','ext'=>'html']);
         $routes->connect('/verify/:token/:email', ['controller' => 'Users', 'action' => 'verifyAccount','ext'=>'html'], ['pass' => ['token', 'email']]);
         $routes->connect('/get-friends', ['controller' => 'Users', 'action' => 'getFriends']);

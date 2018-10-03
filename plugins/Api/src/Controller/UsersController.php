@@ -626,6 +626,43 @@ class UsersController extends AppController {
         }
         $this->set($response);
     }
+    /**
+     * Edit method
+     *
+     * @param string|null $id User id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     */
+    public function ghostMode() {
+        if (!$this->request->is(['put'])) {
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
+        }
+        
+        $data = $this->request->getData();
+        if(empty($data)){
+            $this->restException(['status'=>'failed', 'message'=>__('Invalid Request.')], 400);
+        } 
+        $errors = $this->Users->ghostModeValidate($data, $this->Auth->user('id'));
+        if($errors) {
+            $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($errors)], 400);
+        }
+        $entity = $this->Users->get($this->Auth->user('id'));
+        if(!empty($data['ghost_mode_search'])){
+            $entity->set('ghost_mode_search',$data['ghost_mode_search']);
+        }
+        if(!empty($data['ghost_mode_map'])){
+            $entity->set('ghost_mode_map',$data['ghost_mode_map']);
+        }
+        /* At the time of update username will not update and maintain the prev username by swaping the value*/
+        try{
+            $this->Users->save($entity);
+            $response = ['status' => "success", 'message' => __('Ghost mode setting change successfully.'), 'data' => $data];
+        } catch (Exception $ex) {
+            $response = ['status' => "success", 'message' => $ex->getMessage(), 'data' => $data];
+        }
+
+        $this->set($response);
+    }
 
     /**
      * Delete method
@@ -1323,7 +1360,7 @@ class UsersController extends AppController {
         if(empty($id)) {
             $this->restException(['status'=>'failed', 'message'=>__('User id is required field.')], 400);
         }
-        $user = $this->Users->find('all', ['fields'=>['Users.id', 'Users.username','Users.display_name', 'Users.email', 'Users.gender', 'Users.dob','Users.country_code', 'Users.phone', 'Users.website_url', 'Users.address', 'Users.bio_data', 'Users.longitude', 'Users.latitude', 'Users.matrix_user_id']])->where(['OR'=>['Users.id'=>$id,'Users.matrix_user_id'=>$id]]);
+        $user = $this->Users->find('all', ['fields'=>['Users.id', 'Users.username','Users.display_name', 'Users.email', 'Users.gender', 'Users.dob','Users.country_code', 'Users.phone', 'Users.website_url', 'Users.address', 'Users.bio_data', 'Users.longitude', 'Users.latitude', 'Users.matrix_user_id','Users.ghost_mode_map','Users.ghost_mode_search']])->where(['OR'=>['Users.id'=>$id,'Users.matrix_user_id'=>$id]]);
 
         $userId = $this->Auth->user('id');
         $user->contain([

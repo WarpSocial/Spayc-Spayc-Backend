@@ -504,6 +504,23 @@ class UsersTable extends Table {
             ->inList('friend_status', Configure::read('friend_requested_status'),__('Friend status must be any one '.implode(',',Configure::read('friend_requested_status')).'.'));
         return $validator->errors($data);
     }
+    /**
+     * ghostModeValidate rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function ghostModeValidate($data) {
+        $validator = new Validator();        
+        $validator  
+                ->notEmpty('ghost_mode_map',__('Map is required field.'))
+                ->inList('ghost_mode_map', [0,1],__('Map value must be either 0 or 1.'));
+        
+        $validator
+                ->notEmpty('ghost_mode_search',__('Search is required field.'))
+                ->inList('ghost_mode_search', [0,1],__('Search value must be either 0 or 1.'));
+        return $validator->errors($data);
+    }
     
     /**
      * Default validation rules.

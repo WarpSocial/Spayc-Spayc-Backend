@@ -25,7 +25,7 @@ class WebApiController extends AppController {
 
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
-        $this->Auth->allow(['addCategory', 'apilog', 'addComment', 'notify','updateComment']);
+        $this->Auth->allow(['addCategory', 'apilog', 'addComment', 'notify','updateComment','scrapper']);
     }
     
     public function eventsImage(){
@@ -130,5 +130,90 @@ class WebApiController extends AppController {
         TableRegistry::get('Api.Comments')->spaycActivities($matrixRoomId,$data);
         $this->restException(['status'=>'success', 'message'=>__('Request proccess successfully.')], 200);
     }
+    
+    public function scrapper(){ 
+        //$items = $this->ticketmasterapi();
+        $catEntity = \Cake\ORM\TableRegistry::get('Api.SpaycCategories');
+        //$catEntity->connection()->query('TRUNCATE TABLE categories')->execute();
+        $list = $catEntity->find('treeList');
+pr($list->toArray());
+// Or you can output it in plain text, for example in a CLI script
+foreach ($list as $categoryName) {
+    echo $categoryName . "\n";
+}
+        die("END");
+        
+        $i = 0;
+        foreach($items as $cat=>$subcats){
+            $pslug = \Cake\Utility\Inflector::slug(strtolower($cat));
+            if($catEntity->exists(['slug'=>$pslug])){
+                $pcat = $catEntity->find()->where(['slug'=>$pslug,'parent_id IS NULL'])->first();
+            }else{
+                $pcat = $catEntity->newEntity([
+                'name'=>$cat,
+                'slug'=> \Cake\Utility\Inflector::slug(strtolower($cat)),
+                'description'=>$cat]
+                );
+                $catEntity->save($pcat);
+            }
+            
+            $i++;
+            if(!empty($subcats)){
+                foreach($subcats as $key=>$child){                    
+                    $cslug = \Cake\Utility\Inflector::slug(strtolower($child));
+                    if($catEntity->exists(['slug'=>$cslug])){
+                        continue;
+                    }
+                    $childCat = $catEntity->newEntity([
+                    'parent_id'=>$pcat->id,
+                    'name'=>$child,
+                    'slug'=> \Cake\Utility\Inflector::slug(strtolower($child)),
+                    'description'=>$child]
+                    );
+                    $catEntity->save($childCat);
+                    $i++;
+                }
+            }
+        }
+        echo 'TOTAL = '.$i;
+        pr($items);
+    }
+    
+    public function ticketmasterapi(){
+        $http = (new \Cake\Http\Client())->get('https://app.ticketmaster.com/discovery/v2/classifications.json?apikey=FGCdJbUpn9mAmyE9Rlqdi8CYfdhNQMsa&size=500');
+        $result = json_decode($http->body,true);
+        $items = [];$allItems = null;       
+        //pr($result['_embedded']['classifications']);die;
+        foreach ($result['_embedded']['classifications'] as $key => $value){
+            if(!isset($value['segment']) && !empty($value['segment'])){
+                continue;
+            }
+            //$items['name'] = trim($value['segment']['name']);
+            if(empty($value['segment']['_embedded']['genres'])){
+                continue;
+            }
+            foreach ($value['segment']['_embedded']['genres'] as $gkey => $gvalue) {
+                $items[trim($value['segment']['name'])][] = trim($gvalue['name']);
+                if(empty($gvalue['_embedded']['subgenres'])){
+                    continue;
+                }
+                foreach ($gvalue['_embedded']['subgenres'] as $skey => $svalue) {
+                    $items[trim($value['segment']['name'])][] = trim($svalue['name']);
+                }
+            }
+        }
+        return $items;
+    }
+    
+    public function eventbriteapi(){
+        $http = (new \Cake\Http\Client())->get('https://www.eventbriteapi.com/v3/subcategories/?token=JRTJ7FHW3TG7F5U535RN&page=5');
+        $result = json_decode($http->body,true);
+        $items = [];
+        foreach($result['subcategories'] as $key => $cat){
+            $items[$cat['parent_category']['name']][] = $cat['name'];
+        }
+        return $items;
+    }
+    
 
 }
