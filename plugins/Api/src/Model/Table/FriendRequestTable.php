@@ -289,7 +289,7 @@ class FriendRequestTable extends Table {
                         return $q->select(['UserImages.user_id', 'UserImages.image_url'])->where(['UserImages.is_profile' => 'Yes']);
                     }
                 ])
-                ->where(['Users.status'=>ACTIVE,'Users.ghost_mode_map'=>ACTIVE_AD_STATUS,'Users.id IN' =>$friendIds]);
+                ->where(['Users.status'=>ACTIVE,'Users.ghost_mode_map'=>GHOST_MODE_OFF,'Users.id IN' =>$friendIds]);
 
         // Getting User image
         $friends->contain([

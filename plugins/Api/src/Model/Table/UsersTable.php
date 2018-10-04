@@ -648,7 +648,7 @@ class UsersTable extends Table {
     
     public function searchUsers($userId = null, $request = []) {
         $blockedFriendIds = TableRegistry::get('Api.FriendRequest')->getFriendIdsByStatus($userId, 'Blocked');
-        $cond = ['Users.status' => 'Active','ghost_mode_search'=>ACTIVE_AD_STATUS];
+        $cond = ['Users.status' => 'Active','ghost_mode_search'=>GHOST_MODE_OFF];
         if(!empty($blockedFriendIds)) {
             $cond['Users.id NOT IN'] = $blockedFriendIds;
         } else {
