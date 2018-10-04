@@ -647,10 +647,10 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($errors)], 400);
         }
         $entity = $this->Users->get($this->Auth->user('id'));
-        if(!empty($data['ghost_mode_search'])){
+        if(isset($data['ghost_mode_search'])){
             $entity->set('ghost_mode_search',$data['ghost_mode_search']);
         }
-        if(!empty($data['ghost_mode_map'])){
+        if(isset($data['ghost_mode_map'])){
             $entity->set('ghost_mode_map',$data['ghost_mode_map']);
         }
         /* At the time of update username will not update and maintain the prev username by swaping the value*/
