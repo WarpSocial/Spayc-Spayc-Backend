@@ -137,4 +137,26 @@ class ScraperCategoriesTable extends Table
         }
         
     }
+    
+    public function createOtherCategory($name){
+        $otherObj = TableRegistry::get('Api.SpaycCategories')->find()->where([
+                     "LOWER(name) LIKE" => "%".strtolower(OTHER_CAT_NAME)."%",
+                     'parent_id IS NULL'])
+                ->first();
+        if(empty($otherObj)){
+            return false;
+        }
+        $existing = TableRegistry::get('Api.SpaycCategories')->find()->where(['slug'=>\Cake\Utility\Inflector::slug($name)])->first();
+        if(!empty($existing)){
+            return $existing;
+        }
+        $otherEntity = TableRegistry::get('Api.SpaycCategories')->newEntity([
+            'parent_id'=> $otherObj->id,
+            'name'=> $name,
+            'slug'=> \Cake\Utility\Inflector::slug($name),
+            'description'=>$name,
+            'code' => $otherObj->code
+        ]);
+        return TableRegistry::get('Api.SpaycCategories')->save($otherEntity);
+    }
 }

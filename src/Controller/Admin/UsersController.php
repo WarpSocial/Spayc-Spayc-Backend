@@ -378,10 +378,15 @@ class UsersController extends AdminController
                     $pushNotificationAdminSlug = $pushNotificationAdminSlug['user-unblocked'];
                     $result_arr = ['result' => true, 'status'=>$statusArr['active'], 'message' => $displayName.' '.$this->errorSuccessMessage['UNBLOCKED-MSG']]; 
                 } else { 
-                    $this->loadModel('UserLogs');
-                    $userLogsExist = $this->UserLogs->exists(['user_id'=>$user->id]);
-                    if($userLogsExist)                    
-                    $this->UserLogs->query()->delete()->where(['user_id' =>$user->id])->execute();
+                    //$this->loadModel('UserLogs');
+                    $userLogsExist = TableRegistry::get('UserLogs')->find()->where(['user_id'=>$user->id])->first();
+                    if(!empty($userLogsExist)){
+                        $this->loadComponent('Api.Utility');
+                        $this->Utility->logout($userLogsExist->plain_token,$userLogsExist->matrix_access_token);
+                    }
+                    //if($userLogsExist)                    
+                    //$this->UserLogs->query()->delete()->where(['user_id' =>$user->id])->execute();
+                    
                     $user->statusTxt = $txtMassage['block'];
                     $pushNotificationAdminSlug = $pushNotificationAdminSlug['user-blocked'];
                     $result_arr = ['result' => true, 'status'=>$statusArr['inactive'], 'message' => $displayName.' '.$this->errorSuccessMessage['BLOCKED-MSG']];   

@@ -20,6 +20,8 @@ use Cake\Core\Configure;
 use Cake\Network\Exception\ForbiddenException;
 use Cake\Network\Exception\NotFoundException;
 use Cake\View\Exception\MissingTemplateException;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 
 /**
  * Static content controller
@@ -29,9 +31,64 @@ use Cake\View\Exception\MissingTemplateException;
  * @link https://book.cakephp.org/3.0/en/controllers/pages-controller.html
  */
 class PagesController extends AppController {
-    
-    public function apiList(){
-       $this->render('api_list',false);
+
+    public function importCategory() {
+        $file = WWW_ROOT . 'catlist.xlsx';
+        $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader('Xlsx');
+        $reader->setReadDataOnly(TRUE);
+        $spreadsheet = $reader->load($file);
+
+        $worksheet = $spreadsheet->getActiveSheet();
+// Get the highest row and column numbers referenced in the worksheet
+        $highestRow = $worksheet->getHighestRow(); // e.g. 10
+        $highestColumn = $worksheet->getHighestColumn(); // e.g 'F'
+        $highestColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestColumn); // e.g. 5
+        $catArray = [];
+        
+        echo '<table>' . "\n";
+        for ($row = 2; $row <= $highestRow; ++$row) {
+            echo '<tr>' . PHP_EOL;
+            $parentCat = $worksheet->getCellByColumnAndRow(4, $row)->getValue();
+            $catArray[$parentCat][] = [
+                'name'=>$worksheet->getCellByColumnAndRow(1, $row)->getValue(),
+                'description'=>$worksheet->getCellByColumnAndRow(1, $row)->getValue(),
+                'slug'=>\Cake\Utility\Inflector::slug($worksheet->getCellByColumnAndRow(1, $row)->getValue()),
+                'code'=>$worksheet->getCellByColumnAndRow(5, $row)->getValue()
+            ];
+            echo '<td>' . ($row-1) . '</td>' . PHP_EOL;
+            for ($col = 1; $col <= $highestColumnIndex; ++$col) {
+                
+                $value = $worksheet->getCellByColumnAndRow($col, $row)->getValue();
+                
+                echo '<td>' . $value . '</td>' . PHP_EOL;
+            }
+            echo '</tr>' . PHP_EOL;
+        }
+        echo '</table>' . PHP_EOL;
+         $catEntity = \Cake\ORM\TableRegistry::get('Api.SpaycCategories');
+         $catEntity->connection()->query('TRUNCATE TABLE spayc_categories RESTART IDENTITY;')->execute();
+        foreach($catArray as $cat=>$subcats){
+            $pcat = $catEntity->newEntity([
+                'name'=>$cat,
+                'slug'=> \Cake\Utility\Inflector::slug(strtolower($cat)),
+                'description'=>$cat,
+                'code'=>$subcats[0]['code']
+            ]);
+            $pEntity = $catEntity->save($pcat);
+            if($pEntity){
+                foreach($subcats as $key=>$child){
+                    $child['parent_id'] = $pcat->id;
+                    $childCat = $catEntity->newEntity($child);
+                    $catEntity->save($childCat);
+                }
+            }
+        }
+        pr($catArray);
+        die("END");
+    }
+
+    public function apiList() {
+        $this->render('api_list', false);
     }
 
     /**
@@ -68,7 +125,7 @@ class PagesController extends AppController {
                 throw $exception;
             }
             throw new NotFoundException();
-        }        
+        }
     }
 
 }

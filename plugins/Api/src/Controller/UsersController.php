@@ -692,14 +692,7 @@ class UsersController extends AppController {
         $this->loadModel('UserLogs');
         //$user = $this->Auth->user();
         $token = $this->request->env('HTTP_TOKEN');
-        $this->UserLogs->query()
-                        ->delete()
-                        //->set(['loginstatus' => 0])
-                        ->where(['plain_token' =>  $token])
-                        ->execute();
-        $this->Matrix->logout($this->Auth->user('UserLogs.matrix_access_token'));
-        /* delete cache data if existing before creating new one */
-        \Cake\Cache\Cache::delete($token,'redis');
+        $this->Utility->logout($token,$this->Auth->user('UserLogs.matrix_access_token'));
         $this->Auth->logout();
         $response = ['status'=>'success','message'=>__('Logout successfully.')];
         $this->set($response);

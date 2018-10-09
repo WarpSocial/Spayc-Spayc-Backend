@@ -15,6 +15,7 @@
         "intervention/image": "^2.4",
         "josegonzalez/dotenv": "2.*",
         "mobiledetect/mobiledetectlib": "2.*",
+        "phpoffice/phpspreadsheet": "^1.4",
         "wyndow/fuzzywuzzy": "@stable"
     },
     "require-dev": {

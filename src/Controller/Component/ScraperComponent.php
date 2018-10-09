@@ -398,34 +398,41 @@ class ScraperComponent extends Component {
     
     // Update Category in Scraping table
     
-    public function updateScraperCategory()
-    {       
+    public function updateScraperCategory() {        
         $spaycCategories = $this->getSpaycCategories();
         $scraperCategories = $this->getScraperCategories();
-        $response=[];
+        $response = [];
         //Fuzzy Logic
 //        $fuzz = new Fuzz();
 //        $process = new Process($fuzz);
-        
-        if($spaycCategories){
-            foreach ($spaycCategories as $spayc){
-                foreach ($scraperCategories as $scrap){
-                    if(!$scrap['spayc_category_id']){
+
+        if ($spaycCategories) {
+            foreach ($spaycCategories as $spayc) {
+                foreach ($scraperCategories as $scrap) {
+                    if (!$scrap['spayc_category_id']) {
 //                    $percentage=$fuzz->tokenSetRatio($spayc['name'], $scrap['name']);
 //                    if($percentage>MAX_CATEGORY_PERCENTAGE){
-                      if(strtolower($spayc['name']) == strtolower($scrap['name'])){    
+                        if (strtolower($spayc['name']) == strtolower($scrap['name'])) {
                             $update['spayc_category_id'] = $spayc['id'];
                             $condition['id'] = $scrap['id'];
-                            $response[]= TableRegistry::get('scraper_categories')->UpdateAll($update, $condition);
+                            $response[] = TableRegistry::get('scraper_categories')->UpdateAll($update, $condition);
+                        }else{
+                            $otherCat = TableRegistry::get('scraper_categories')->createOtherCategory($scrap['name']);
+                            if($otherCat){
+                                $update['spayc_category_id'] = $otherCat['id'];
+                                $condition['id'] = $scrap['id'];
+                                $response[] = TableRegistry::get('scraper_categories')->UpdateAll($update, $condition);
+                            }
+                            
+                        }
                     }
-                    }
-            }   
+                }
             }
         }
         return $response;
     }
-    
-     public function getSpaycCategories() {
+
+    public function getSpaycCategories() {
        $categories = TableRegistry::get('Api.SpaycCategories')->find('all',['conditions' => ['SpaycCategories.parent_id IS NOT NULL']])->toArray();       
        return $categories;
     }
