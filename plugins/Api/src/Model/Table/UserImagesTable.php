@@ -95,13 +95,13 @@ class UserImagesTable extends Table {
         $entity = $this->findByUserIdAndIsProfile($userId, 'Yes');
         if($entity->isEmpty()) {
             $entity = $this->newEntity();
+            $data['is_profile'] = 'Yes';
+            $data['order_index'] = 1;
         }else{
             $entity = $entity->first();
         }
         //$fileName = $this->facebookImg($imgUrl);
-        $data['user_id'] = $userId;
-        $data['is_profile'] = 'Yes';
-        $data['order_index'] = 1;
+        $data['user_id'] = $userId;        
         //$data['image_url']['tmp_name'] = $fileName;
         $data['image_url'] = $imgUrl;
         

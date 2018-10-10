@@ -468,7 +468,7 @@ class UsersController extends AppController {
             'matrix_user_id'=>$user['matrix_user_id'],
             'token'=>$user['token'],
             'matrix_token'=>$user['matrix_access_token'],
-            'user_images' => TableRegistry::get("Api.UserImages")->findByUserId($user['id'])->select(['id', 'user_id', 'image_url', 'is_profile', 'order_index'])
+            'user_images' => TableRegistry::get("Api.UserImages")->findByUserId($user['id'])->select(['id', 'user_id', 'image_url', 'is_profile', 'order_index'])->order(['order_index'=>'ASC'])
             ];
         //$response = ['status' => "success", 'message' => 'Login successfully.', 'data'=>$data];
         /*---end login authentication---*/
