@@ -948,10 +948,10 @@ class SpaycsTable extends Table {
         });
         #$spaycs->order(['Spaycs.id'=>'DESC']);
 //        $spaycs->group('distance HAVING distance > 0');
-        $spaycs->order(['score'=>'DESC','start_date'=>'ASC']);
+        $spaycs->order(['score'=>'DESC']);
         
         $spaycs->limit(MAP_LIMIT);
-        $spaycs->groupBy('spaycs.id');
+        //$spaycs->groupBy('spaycs.id');
         return ['count'=>$spaycs->count(),'records'=>$spaycs];
     }
     
