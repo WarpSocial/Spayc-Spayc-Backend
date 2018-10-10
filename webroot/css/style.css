@@ -248,6 +248,7 @@ a:not([href]):not([tabindex]) {
   font-family: 'Poppins', sans-serif;
   font-size: 0.8125rem;
 }
+#email{text-transform: lowercase;}
 .form-group input.form-control:focus {
   border-color: #d7d7d7;
 }
