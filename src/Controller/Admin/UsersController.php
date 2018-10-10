@@ -158,7 +158,8 @@ class UsersController extends AdminController
         if ($this->request->is(['post','put'])) { 
             $data = $this->request->getData();
             $errors = $this->Users->validationLogin($data);
-            if (empty($errors)) {                                     
+            if (empty($errors)) {                       
+                $data['email'] = strtolower($data['email']);
                 $user = $this->getUserObj($data['email'])->first();
                 if ($user) {              
                     if (!ApiHasher::check(trim($data['password']), $user->password)) {                       
@@ -229,6 +230,7 @@ class UsersController extends AdminController
                 $error = $this->errorSuccessMessage['INVALIDEMAIL'];
             }
             if (empty($error)) {                  
+                $data_item['email'] = strtolower($data_item['email']);
                 $user = $this->getUserObj($data_item['email'])->first();
                 if ($user) {
                     $data['forgot_password_token'] = Security::hash($user->email.strtotime("now"), 'sha1', true);
