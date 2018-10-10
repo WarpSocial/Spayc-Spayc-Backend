@@ -417,12 +417,12 @@ class ScraperComponent extends Component {
                             $condition['id'] = $scrap['id'];
                             $response[] = TableRegistry::get('scraper_categories')->UpdateAll($update, $condition);
                         }else{
-                            $otherCat = TableRegistry::get('scraper_categories')->createOtherCategory($scrap['name']);
-                            if($otherCat){
-                                $update['spayc_category_id'] = $otherCat['id'];
-                                $condition['id'] = $scrap['id'];
-                                $response[] = TableRegistry::get('scraper_categories')->UpdateAll($update, $condition);
-                            }
+//                            $otherCat = TableRegistry::get('scraper_categories')->createOtherCategory($scrap['name']);
+//                            if($otherCat){
+//                                $update['spayc_category_id'] = $otherCat['id'];
+//                                $condition['id'] = $scrap['id'];
+//                                $response[] = TableRegistry::get('scraper_categories')->UpdateAll($update, $condition);
+//                            }
                             
                         }
                     }
