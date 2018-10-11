@@ -138,9 +138,7 @@ class SpaycsController extends AppController {
         if(empty($parentObj->joined_spayc)){
             $this->restException(['status'=>'failed','message'=>__('You don\'t have sufficient right to create subwarp.')], 400);
         }
-        if(!empty($parentObj->parent_id)){
-            $this->restException(['status'=>'failed','message'=>__('Not allowd to create subwarp of subwarp.')], 400);
-        }
+       
         $data['parent_id'] = $parentObj->id;
         $data['start_date'] = $parentObj->start_date;
         $data['end_date'] = $parentObj->end_date;
