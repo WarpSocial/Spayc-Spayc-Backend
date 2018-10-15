@@ -86,12 +86,12 @@ class SpaycCategoriesTable extends Table {
                 ->where(['SpaycCategories.status'=>ACTIVE])
                 ->order(['SpaycCategories.name'=>'ASC'])        
                 ->map(function($row){
-                    //$row->created = $row->created);
-                    //$row->modified = Utils::toClient($row->modified);
+                    $row->created = Utils::toClient($row->created->format('Y-m-d H:i:s'));
+                    $row->modified = Utils::toClient($row->modified->format('Y-m-d H:i:s'));
                     if(!empty($row->children)){
                         foreach($row->children as $skey => $subrow){
-                            //$row->children[$skey]->created = Utils::toClient($subrow->created);
-                            //$row->children[$skey]->modified = Utils::toClient($subrow->modified);
+                            $row->children[$skey]->created = Utils::toClient($subrow->created->format('Y-m-d H:i:s'));
+                            $row->children[$skey]->modified = Utils::toClient($subrow->modified->format('Y-m-d H:i:s'));
                             unset($row->children[$skey]->children);
                         };
                     }
