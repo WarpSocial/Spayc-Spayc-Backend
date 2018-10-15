@@ -641,6 +641,12 @@ class SpaycsTable extends Table {
             if(!empty($items->parent_id)){
                 $parentSpayc = $this->get($items->parent_id);                
                 if(TableRegistry::get('Api.SubscribedUsers')->isSubscribed($val->id,$parentSpayc->id,ACTIVE)){
+                    TableRegistry::get('Api.SubscribedUsers')->subscribeSubSpayc([
+                        'user_id' => $val->id,
+                        'status' => ACTIVE,
+                        'spayc_id' => $parentSpayc->id,
+                        'datetime' => date('Y-m-d H:i:s')
+                    ]);  
                     $Queue['rule'] = 'unmute';
                 }else{
                     $Queue['rule'] = 'mute';

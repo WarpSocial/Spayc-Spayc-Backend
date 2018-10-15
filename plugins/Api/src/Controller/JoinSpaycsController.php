@@ -257,6 +257,12 @@ class JoinSpaycsController extends AppController {
                     /* if pareent spayc subscribed then subspayc will be automatically subscribed other wise muted by default*/
                     $parentSpayc = TableRegistry::get('Api.Spaycs')->get($spayc->parent_id);
                     if(TableRegistry::get('Api.SubscribedUsers')->isSubscribed($user['id'],$parentSpayc->id,ACTIVE)){
+                        TableRegistry::get('Api.SubscribedUsers')->subscribeSubSpayc([
+                            'user_id' => $user['id'],
+                            'status' => ACTIVE,
+                            'spayc_id' => $parentSpayc->id,
+                            'datetime' => date('Y-m-d H:i:s')
+                        ]);
                          $this->Matrix->muteUnmute('Unmute',$data['matrix_token'], $spayc->matrix_room_id); 
                     }else{
                         $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);    

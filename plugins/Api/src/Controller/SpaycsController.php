@@ -539,12 +539,12 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         $entities = $scModel->find('all',['field'=>['id','user_id','spayc_id','status']])->where(['spayc_id'=>$spayc->id,'user_id'=>$data['user_id']]);      
         if($entities->isEmpty()){
              $this->restException(['status'=>'failed','message'=>__('User has not yet subscribed.')], 400);
-        }else{
-            $entity = $entities->first();
-            if($entity->status == 'Inactive'){
-                $this->restException(['status'=>'failed','message'=>__('User has been already un-subscribed.')], 400);
-           }
         }
+        $entity = $entities->first();
+        if($entity->status == 'Inactive'){
+            $this->restException(['status'=>'failed','message'=>__('User has been already un-subscribed.')], 400);
+       }
+        
         if($scModel->delete($entity)){
             $this->Matrix->muteUnmute('mute',$user['UserLogs']['matrix_access_token'], $spayc->matrix_room_id);
             /*for subscribed user only who not joined the room but virtually joined the room*/
