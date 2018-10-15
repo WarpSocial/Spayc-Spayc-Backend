@@ -465,7 +465,6 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         $entity->user_id = $data['user_id'];
         $entity->status = 'Active';
         $entity->spayc_id = $spayc->id;
-        //$entity->status = 'Active';
         $entity->modified = $nowTime;
         $entity->created = $nowTime;
         if($scModel->save($entity,['checkRules' => false, 'atomic' => false])){
