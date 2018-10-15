@@ -254,13 +254,12 @@ class JoinSpaycsController extends AppController {
             }
             if($this->Matrix->joinRoom($data)) {
                 if($spayc->group_type == "Public"){
-                    if(TableRegistry::get('Api.SubscribedUsers')->isSubscribed($user['id'],$spayc->id,ACTIVE)){
-                        $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);                        
-                    }
-                    /* if pareent spayc subscribed then subspayc will be automatically subscribed */
+                    /* if pareent spayc subscribed then subspayc will be automatically subscribed other wise muted by default*/
                     $parentSpayc = TableRegistry::get('Api.Spaycs')->get($spayc->parent_id);
                     if(TableRegistry::get('Api.SubscribedUsers')->isSubscribed($user['id'],$parentSpayc->id,ACTIVE)){
-                         $this->Matrix->muteUnmute('Unmute',$data['matrix_token'], $parentSpayc->matrix_room_id); 
+                         $this->Matrix->muteUnmute('Unmute',$data['matrix_token'], $spayc->matrix_room_id); 
+                    }else{
+                        $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);    
                     }
                     $this->Matrix->deleteTag($spayc->matrix_room_id,$data['matrix_token'],$user['UserLogs']['matrix_user_id']);
                 }
