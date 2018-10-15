@@ -617,15 +617,7 @@ class SpaycsTable extends Table {
             }else{
                 $distance = null;
             }
-            /*for subspayc only if user subscribed parent spayc he will auto subscribed of sub spayc*/
-            if(!empty($items->parent_id)){
-                $parentSpayc = $this->get($items->parent_id);                
-                if(TableRegistry::get('Api.SubscribedUsers')->isSubscribed($val->id,$parentSpayc->id,ACTIVE)){
-                    $matrix->muteUnmute('Unmute',$val->matrix_access_token, $items->matrix_room_id); 
-                }else{
-                    $matrix->muteUnmute('mute',$val->matrix_access_token, $items->matrix_room_id);    
-                }
-            }
+            
             $member[] = [
                 'spayc_id'=>$spaycId,
                 'user_id'=>$val->id,
@@ -644,6 +636,16 @@ class SpaycsTable extends Table {
                 'matrix_token'=>$val->matrix_access_token,
                 'matrix_room_id'=>$items['matrix_room_id']
             ];
+            
+            /*queue the request only if user subscribed parent spayc he will auto subscribed of sub spayc*/
+            if(!empty($items->parent_id)){
+                $parentSpayc = $this->get($items->parent_id);                
+                if(TableRegistry::get('Api.SubscribedUsers')->isSubscribed($val->id,$parentSpayc->id,ACTIVE)){
+                    $Queue['rule'] = 'unmute';
+                }else{
+                    $Queue['rule'] = 'mute';
+                }
+            }
             if($items['is_direct']){
                 $Queue['rule'] = 'unmute';
             }

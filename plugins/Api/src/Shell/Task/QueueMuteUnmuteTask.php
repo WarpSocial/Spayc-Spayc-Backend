@@ -45,13 +45,6 @@ class QueueMuteUnmuteTask extends QueueTask {
         } else {
             $matrix->muteUnmute($data['rule'], $data['matrix_token'], $data['matrix_room_id']);
         }
-
-        $this->hr();
-        $this->out('Proccessing to Mute|Unmute the room');
-        $this->hr();
-        $this->out(' ->Success, Mute|Unmute proccess completed');
-        $this->out(' ');
-        $this->out(' ');
         return true;
     }
 
