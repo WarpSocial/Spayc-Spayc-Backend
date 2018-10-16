@@ -5,6 +5,7 @@ namespace Api\Controller;
 use Api\Controller\AppController;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
+use Cake\Core\Configure;
 
 /**
  * WebApi Controller
@@ -21,12 +22,19 @@ class WebApiController extends AppController {
         $this->loadComponent('Api.Matrix');
         $this->loadComponent('Api.Push');
     }
-
+    
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
-        $this->Auth->allow(['addCategory', 'apilog', 'addComment', 'notify', 'updateComment', 'scrapper']);
+        $this->Auth->allow(['addCategory', 'apilog', 'addComment', 'notify', 'updateComment', 'scrapper','appVersion']);
     }
-
+    
+    public function appVersion(){        
+        $response = [
+            'status'=>'success',
+            'Message'=>'App current version',
+            'data'=>['app_version'=>Configure::read('app_version')]];
+        $this->set($response);
+    }
     public function eventsImage() {
         if (!$this->request->is(['get'])) {
             $this->restException(['status' => 'failed', 'message' => __('Method not allowed.')], 405);

@@ -8,6 +8,7 @@ Router::plugin(
     ['path' => '/api'],
     function (RouteBuilder $routes) {
         $routes->setExtensions(['json','html']);
+        $routes->connect('/app-version', ['controller' => 'WebApi', 'action' => 'appVersion']);
         $routes->resources('Users');
         $routes->resources('Spaycs');
         $routes->connect('/avatars',['controller'=>'Users','action'=>'avatars']);
