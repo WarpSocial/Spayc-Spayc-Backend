@@ -1,7 +1,7 @@
 <?php
 return [
     'title' =>'Warp',
-    'app_version' => '0.0.1',
+    'app_version' => '0.0.2',
     'gender'=>['Male', 'Female', 'Other'],
     'spayctype'=>['Event', 'Community'],
     'grouptype'=>['Public', 'Private'],
