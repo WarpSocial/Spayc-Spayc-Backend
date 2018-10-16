@@ -263,7 +263,7 @@ class JoinSpaycsController extends AppController {
                             'spayc_id' => $parentSpayc->id,
                             'datetime' => date('Y-m-d H:i:s')
                         ]);
-                         $this->Matrix->muteUnmute('Unmute',$data['matrix_token'], $spayc->matrix_room_id); 
+                        $this->Matrix->muteUnmute('Unmute',$data['matrix_token'], $spayc->matrix_room_id); 
                     }else{
                         $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);    
                     }
