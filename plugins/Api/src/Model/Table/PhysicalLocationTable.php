@@ -88,6 +88,15 @@ class PhysicalLocationTable extends Table {
         }
     }
     
+    public function physicalLocation($userId=null){
+        $user = $this->findByUserId($userId);
+        if($user->isEmpty()){
+           return false; 
+        }else{
+            return $user->first();
+        }
+    }
+    
     public function userNearSpayc($latitude,$longitude){
         //$distance = "ROUND( CAST({$this->Users->Spaycs->distanceInMiles} AS numeric), 3)";    
         $equation = TableRegistry::get('Api.Spaycs')->distanceInMiles;

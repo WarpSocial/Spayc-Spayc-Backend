@@ -108,6 +108,7 @@ class ApiAuthenticate extends BaseAuthenticate {
                 if(!empty($userLog)){
                     Cache::delete($userLog->plain_token,'redis');
                 }
+                //$user['physical_location'] =  TableRegistry::get('Api.PhysicalLocation')->physicalLocation($user['id']);
                 Cache::write($token, $user,'redis');
             }
         }elseif(!empty($fbId)){

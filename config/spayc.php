@@ -23,6 +23,7 @@ return [
         'Unfriend'=>'Friend status updated successfully.',
         'Decline'=>'Friend status updated successfully.',
     ],
+    'default_timezone' =>'America/New_York',
     'is_notify'=>['On', 'Off'],
     //'friend_status'=>['Blocked', 'Unfriend', 'Unblock'],
     'maxupload'=>'5MB',

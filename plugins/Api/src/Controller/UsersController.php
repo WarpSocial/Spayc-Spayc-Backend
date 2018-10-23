@@ -381,7 +381,7 @@ class UsersController extends AppController {
         }
         $data = $this->request->getData();
         $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';
-        $data['timezone'] = !empty($data['timezone'])?$data['timezone']:date_default_timezone_get();
+        $data['timezone'] = Configure::read('timezone');
         $data['status'] = 'Active';
         if(empty($data['fb_id'])) {
             $this->restException(['status' => "failed", 'message' => __('fb_id is required field.')], 400);
@@ -1495,6 +1495,7 @@ class UsersController extends AppController {
             #pj($users);die;
             $senderId = $users->firstMatch(['matrix_user_id'=>$data['notification']['sender']]);
             $receiverId = $users->firstMatch(['device_token'=>$device['pushkey']]);
+            //$timezone = TableRegistry::get('Api.PhysicalLocation')->physicalLocation($receiverId->id);
         }
         
         $items = $this->Users->pusherNotification($data);
@@ -1502,6 +1503,8 @@ class UsersController extends AppController {
             $this->restException($blankObj);
         }
         $items['device_token'] = $deviceToken = $device['pushkey'];
+        $dto = new DateTime(date('m-d-Y H:i:s',$device['pushkey_ts']), new DateTimeZone($originalTimezone));
+        $dto->setTimezone(new DateTimeZone(Configure::read('default_timezone')))->format('Y-m-d H:i:s');
         $items['date_time'] = date('m-d-Y H:i:s',$device['pushkey_ts']);
         if(!empty($senderId) && !empty($receiverId) && in_array($msgType,['m.replyText','m.likeMessage'])){
             //$items['id'] = Utils::uniqueInteger();
