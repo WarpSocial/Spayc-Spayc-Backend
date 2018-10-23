@@ -15,6 +15,7 @@ define('DISTANCEINMETER','100');
 define('SCRAPERCOMMONDATEFILTER','date');
 define('SCRAPERGROUPFILTER','group');
 define('SCRAPERUNIQUEFILTER','unique');
+define('DOLLARSIGN','$');
 $friend_requested_status_arr=array('accepted'=>'Accepted','decline'=>'Decline','pending'=>'Pending','blocked'=>'Blocked');
 $user_gender=array('1'=>'All','2'=>'Male','3'=>'Female','4'=>'Other');
 $user_age=array('1'=>'13-20','2'=>'21-30','3'=>'31-40','4'=>'41-50','5'=>'51-above');
@@ -22,10 +23,14 @@ $status_arr=array('active'=>'Active','inactive'=>'Inactive');
 $spayctype_arr= array('event'=>'Event','community'=>'Community');
 $grouptype_arr= array('Public'=>'Public','Private'=>'Private');
 $spaycuserstatus_arr= array('1'=>'Admin','2'=>'Super Admin');
-$push_notification_admin_slug= array('blocked'=>'blocked-by-admin','unblocked'=>'unblocked-by-admin');
+$push_notification_admin_slug= array('user-blocked'=>'user-blocked-by-admin','user-unblocked'=>'user-unblocked-by-admin','advertisement-deleted'=> 'advertisement-deleted-by-admin');
+$push_notification_spayc_admin_slug= array('blocked'=>'blocked-spayc-by-admin','unblocked'=>'unblocked-spayc-by-admin');
 $txt_massage= array('block'=>'Blocked','unblock'=>'Unblocked');
 $scraperStates = array('New York','NY','NEW YORK','new york','ny','New York City','new york city'); 
 $scraperCountries = array('US','us','United States','united states','United States of America','USA'); 
+$admin_slug_arr=array('spayc-deleted'=>'spayc-deleted-by-admin');
+$chat_msg_type = array('text'=>'m.text', 'image'=>'m.image', 'replytext'=>'m.replyText', 'replyimage'=>'m.replyImage');
+define('CHAT_ROOM_TYPE', 'm.room.message');
 define('USER_GENDER', serialize($user_gender));
 define('USER_AGE', serialize($user_age));
 define('STATUS_ARR', serialize($status_arr));
@@ -34,22 +39,35 @@ define('GROUP_TYPE_ARR', serialize($grouptype_arr));
 define('SPAYC_USER_STATUS_ARR', serialize($spaycuserstatus_arr));
 define('FRIEND_REQUESTED_STATUS_ARR', serialize($friend_requested_status_arr));
 define('PUSH_NOTIFICATION_ADMIN_SLUG', serialize($push_notification_admin_slug));
+define('PUSH_NOTIFICATION_SPAYC_ADMIN_SLUG', serialize($push_notification_spayc_admin_slug));
+define('CUSTOM_MESSAGES_SLUG', "custom-messages");
 define('SCRAPERSTATES', serialize($scraperStates));
 define('SCRAPERCOUNTRIES', serialize($scraperCountries));
 define('TEXT_MASSAGE', serialize($txt_massage));
+define('CHAT_MSG_TYPE', serialize($chat_msg_type));
 define('TODAY_DATE', date('Y-m-d'));
 define('SCRAPER_DAYS', ' +14 day');
 define('AFTER14DAYS_DATE', date('Y-m-d', strtotime(SCRAPER_DAYS)));
 define('FUZZYPERCENT', 90);
-define('MAP_LIMIT', 50);
+define('MAP_LIMIT', 100);
 define('UNIQUE_TOKEN', md5(uniqid(mt_rand(), true)));
+
+define('ADVERTISEMENTSTATUS', 'Removed');
+define('SUBSCRIBED_USERS', 'SubscribedUsers');
+define('PHYSICAL_PRESENT_USERS', 'PhysicalpresentUsers');
+define('USER_FRIENDS', 'Userfriends');
+define('CREATED','Created');
+define('SPAYC_TABLE', 'spaycs');
+define('ADMIN_SLUG_ARR', serialize($admin_slug_arr));
+define('STUBHUB_EVENT_URL', 'https://stubhub.com/');
 
 $scraperRootUrl=array('eventbriteurl'=> 'https://www.eventbriteapi.com/v3/',
     'ticketmasterurl'=> 'https://app.ticketmaster.com/discovery/v2/',
     'stubhuburl'=> 'https://api.stubhub.com/search/catalog/events/v3/',
     );
 $scraperRootUrlToken = array('eventbritetoken'=> 'JRTJ7FHW3TG7F5U535RN',
-    'ticketmastertoken'=> 'FGCdJbUpn9mAmyE9Rlqdi8CYfdhNQMsa',
+//    'ticketmastertoken'=> 'FGCdJbUpn9mAmyE9Rlqdi8CYfdhNQMsa',
+      'ticketmastertoken'=> 'QFCY1Arrv3uOGxw7i2ZpMYnc1b76qsOs',
     'stubhubtoken'=> 'c4ef9246-56c6-3024-a5ba-32f737a1c2b4',
     );
 define('EVENTBRITESECONDTOKEN', 'GFPN63QGWCRIURIWT5DN');
@@ -74,8 +92,10 @@ $config['SITETITLEMESSAGE'] = [
     'MANAGEUSER'=>'Manage Users',
     'FORGOTPASSWORD'=>'Forgot Password',
     'RESETPASSWORD'=>'Reset Password',
-    'MANAGEUSER'=>'Manage Users',
-    'MANAGEUSER'=>'Manage Users',    
+    'MANAGEWARPS'=>'Manage Warps',
+    'MANAGE-WARP-MEMBERS'=>'Warps Members',
+    'MANAGE-ADVERTISEMENTS'=>'Manage Advertisements',
+    'MANAGE-SPAM-REPORT'=>'Manage Spam Report',    
     'WARPCREATED'=>'Warps Created',
     'WARPJOINED'=>SITE_TITLE.'s Joined',
     'WARPDETAIL'=>SITE_TITLE.' Detail',
@@ -97,7 +117,9 @@ $config['ERRORANDSUCCESSMSG'] = [
     'LINKAlRUSED'=>'Invalid Link, This link has been already used.',
     'PASSERRMSG'=>'Password must contain 8-30 character length, at least one letter and one number.',
     'SYSTEMERR'=>'Oops! Something went wrong. Please try again', 
+    'SEND-CUTSOM-MSG'=>'Message sent successfully', 
     'RESETLINKMSG'=>'A link to reset your password has been sent to your work email.',
     'BLOCKED-MSG'=>'has been Blocked.',
     'UNBLOCKED-MSG'=>'has been Unblocked.',
+    'DELETED-MSG'=>'has been deleted.',
 ];

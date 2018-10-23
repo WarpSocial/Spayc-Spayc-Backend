@@ -8,6 +8,7 @@ Router::plugin(
     ['path' => '/api'],
     function (RouteBuilder $routes) {
         $routes->setExtensions(['json','html']);
+        $routes->connect('/app-version', ['controller' => 'WebApi', 'action' => 'appVersion']);
         $routes->resources('Users');
         $routes->resources('Spaycs');
         $routes->connect('/avatars',['controller'=>'Users','action'=>'avatars']);
@@ -15,6 +16,7 @@ Router::plugin(
         $routes->connect('/logout',['controller'=>'Users','action'=>'Logout']);
         $routes->connect('/facebook-signup',['controller'=>'Users', 'action'=>'facebookSignup']);
         $routes->connect('/profile-edit',['controller'=>'Users', 'action'=>'edit']);
+        $routes->connect('/ghost-mode',['controller'=>'Users', 'action'=>'ghostMode']);
         $routes->connect('/doc',['controller'=>'ApiDoc','action'=>'apiList','ext'=>'html']);
         $routes->connect('/verify/:token/:email', ['controller' => 'Users', 'action' => 'verifyAccount','ext'=>'html'], ['pass' => ['token', 'email']]);
         $routes->connect('/get-friends', ['controller' => 'Users', 'action' => 'getFriends']);
@@ -82,7 +84,8 @@ Router::plugin(
         $routes->connect('/promotion-logic', ['controller' => 'Plans', 'action' => 'promotionLogic']);
         $routes->connect('/subscribed-spaycs',['controller'=>'Spaycs', 'action'=>'userSubscribedSpaycs']);
         $routes->connect('/spam-reports',['controller'=>'WebApi', 'action'=>'spamReport']);
-        
+        $routes->connect('/update-comment/:id',['controller'=>'WebApi', 'action'=>'updateComment'],['pass'=>['id']]);
+        $routes->connect('/events-image',['controller'=>'WebApi', 'action'=>'eventsImage']);
         $routes->fallbacks(DashedRoute::class);
     }
 );

@@ -2,16 +2,19 @@
 
 namespace Api\Controller;
 
+use Api\Controller\Component\UtilityComponent;
 use App\Controller\AppController as BaseController;
 use Cake\Event\Event;
 use Cake\Core\Configure;
 use Cake\Log\Log;
 use Api\Auth\ApiHasher;
 
+
 class AppController extends BaseController {
     
     public function beforeFilter(Event $event) {
         parent::beforeFilter($event);
+        $this->loadComponent('Api.Utility');
          $this->loadComponent('Auth', [
             'authenticate'=>[
                 'Api.Api'=>[

@@ -54,7 +54,7 @@ Router::scope('/', function (RouteBuilder $routes) {
     /**
      * ...and connect the rest of 'Pages' controller's URLs.
      */
-    $routes->connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
+    $routes->connect('/pages/display/*', ['controller' => 'Pages', 'action' => 'display']);
 
     /**
      * Connect catchall routes for all controllers.
@@ -78,6 +78,8 @@ Router::scope('/', function (RouteBuilder $routes) {
 Router::prefix('admin', function ($routes) {
     $routes->connect('/', ['controller' => 'Users', 'action' => 'login'],['_name' => 'login']);    
     $routes->connect('/forgotPassword/*', ['controller' => 'Users','action' => 'forgotPassword'],['_name' => 'forgotPassword']);
+    $routes->connect('/searchUser', ['controller' => 'Users','action' => 'searchUser'],['_name' => 'searchUser']);
+    $routes->connect('/resendMessageUsers', ['controller' => 'Users','action' => 'resendMessageUsers'],['_name' => 'resendMessageUsers']);
     $routes->connect('/success/*', ['controller' => 'Users','action' => 'success'],['_name' => 'success']);
     $routes->fallbacks(DashedRoute::class);
 });

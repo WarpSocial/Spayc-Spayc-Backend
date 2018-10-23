@@ -47,11 +47,13 @@ class JoinSpaycsController extends AppController {
                                 ->where(['JoinedSpayc.user_id'=>$user['id']]);
                     },
                 ])
-                ->where(['id'=>$data['spayc_id']]);
+                ->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
         if($spaycs->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>__('Warp is no longer available..')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Warp is no longer available.')], 400);
         }
         $spayc = $spaycs->first();
+        /* if spayc id contain matrix room id*/
+        $data['spayc_id'] = $spayc->id;
         if(!empty($spayc->parent_id)){
             $this->restException(['status'=>'failed','message'=>__('Not allowed to join sub warp.')], 400);
         }
@@ -112,9 +114,10 @@ class JoinSpaycsController extends AppController {
             }
             if($this->Matrix->joinRoom($data)) {
                 if($spayc->group_type == "Public"){
-                    if(!TableRegistry::get('Api.SubscribedUsers')->isSubscribed($user['id'],ACTIVE)){
+                    if(!TableRegistry::get('Api.SubscribedUsers')->isSubscribed($user['id'],$spayc->id,ACTIVE)){
                         $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);
                     }
+                    $this->Matrix->deleteTag($spayc->matrix_room_id,$user['UserLogs']['matrix_access_token'],$user['UserLogs']['matrix_user_id']);
                 }
                 $jsModel->getConnection()->commit();
                 $friends = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($user['id'], 'Accepted');
@@ -183,6 +186,7 @@ class JoinSpaycsController extends AppController {
                                 ->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status','JoinedSpayc.is_admin'])
                                 ->where(['JoinedSpayc.user_id'=>$user['id']]);
                     },
+                            
                 ])
                 ->where(['id'=>$data['spayc_id']]);
         if($spaycs->isEmpty()){
@@ -243,7 +247,6 @@ class JoinSpaycsController extends AppController {
          if(!empty($plQuery)){
             $entity->distance = Utils::distance($plQuery->current_latitude, $plQuery->current_longitude, $spayc->latitude,$spayc->longitude);
         }
-        
         $jsModel->getConnection()->begin();
         if($jsModel->save($entity,['checkRules' => false, 'atomic' => false])){
             if(!empty($data['passcode'])){                
@@ -251,9 +254,20 @@ class JoinSpaycsController extends AppController {
             }
             if($this->Matrix->joinRoom($data)) {
                 if($spayc->group_type == "Public"){
-                    if(!TableRegistry::get('Api.SubscribedUsers')->isSubscribed($user['id'],ACTIVE)){
-                        $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);
+                    /* if pareent spayc subscribed then subspayc will be automatically subscribed other wise muted by default*/
+                    $parentSpayc = TableRegistry::get('Api.Spaycs')->get($spayc->parent_id);
+                    if(TableRegistry::get('Api.SubscribedUsers')->isSubscribed($user['id'],$parentSpayc->id,ACTIVE)){
+                        TableRegistry::get('Api.SubscribedUsers')->subscribeSubSpayc([
+                            'user_id' => $user['id'],
+                            'status' => ACTIVE,
+                            'spayc_id' => $parentSpayc->id,
+                            'datetime' => date('Y-m-d H:i:s')
+                        ]);
+                        $this->Matrix->muteUnmute('Unmute',$data['matrix_token'], $spayc->matrix_room_id); 
+                    }else{
+                        $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);    
                     }
+                    $this->Matrix->deleteTag($spayc->matrix_room_id,$data['matrix_token'],$user['UserLogs']['matrix_user_id']);
                 }
                 $jsModel->getConnection()->commit();
                 $friends = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($user['id'], 'Accepted');
@@ -572,6 +586,7 @@ class JoinSpaycsController extends AppController {
                 $matrixData = ['status'=>'Joined']+$data;
                 if ($this->Matrix->joinRoom($matrixData)) {
                     $this->Matrix->muteUnmute('mute',$data['matrix_token'], $spayc->matrix_room_id);
+                    $this->Matrix->deleteTag($spayc->matrix_room_id,$data['matrix_token'],$requestedMatrixUser->matrix_user_id);
                     $jsModel->getConnection()->commit();
                     $this->Push->sendPushNotification([
                         'slug' => 'accept-join-request',

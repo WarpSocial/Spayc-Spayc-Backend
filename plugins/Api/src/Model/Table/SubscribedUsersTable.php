@@ -96,11 +96,11 @@ class SubscribedUsersTable extends Table {
         return $this->deleteAll(['spayc_id' => $spaycId,'user_id'=>$userId]);
     }
     
-    public function isSubscribed($userId,$status='Active'){
-        if(empty($userId)){
+    public function isSubscribed($userId,$spaycId,$status='Active'){
+        if(empty($userId) || empty($spaycId)){
             return false;
         }
-        return $this->exists(['user_id'=>$userId,'status'=>$status]);
+        return $this->exists(['user_id'=>$userId,'spayc_id'=>$spaycId,'status'=>$status]);
     }
     
     /**
@@ -139,6 +139,35 @@ class SubscribedUsersTable extends Table {
             $query->page($page);
         }
         return $query;
+    }
+    
+    public function subscribeSubSpayc($data=[]){
+        if(empty($data['user_id']) || empty($data['spayc_id'])){
+            return false;
+        }
+        $subspayc = TableRegistry::get('Api.Spaycs')->find()->where(['parent_id' => $data['spayc_id']])->toArray();
+        if(empty($subspayc)){
+            return false;
+        }
+        foreach ($subspayc as $subItems) {
+            $entities = $this->find('all', ['field' => ['id', 'user_id', 'spayc_id', 'status']])->where(['spayc_id' => $subItems->id, 'user_id' => $data['user_id']]);
+            if ($entities->isEmpty()) {
+                $entity = $this->newEntity();
+            } else {
+                $entity = $entities->first();
+                if ($entity->status == 'Active') {
+                    /* user has been already subscribed */
+                    continue;
+                }
+            }
+            $entity->user_id = $data['user_id'];
+            $entity->status = $data['status'];
+            $entity->spayc_id = $subItems->id;
+            $entity->modified = $data['datetime'];
+            $entity->created = $data['datetime'];
+            return $this->save($entity, ['checkRules' => false, 'atomic' => false]);
+            
+        }
     }
 
 }

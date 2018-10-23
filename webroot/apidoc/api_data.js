@@ -2667,6 +2667,20 @@ define({ "api": [
           },
           {
             "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "payment_type",
+            "description": "<p>payment option and value must be Free,Paid or NA(Required).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "ticket_url",
+            "description": "<p>Payment ticket url must be comma separated (Optional).</p> "
+          },
+          {
+            "group": "Parameter",
             "type": "Integer",
             "optional": false,
             "field": "spayc_category_id",
@@ -2893,6 +2907,20 @@ define({ "api": [
             "optional": false,
             "field": "spayc_category_id",
             "description": "<p>existing Category id(Required).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "payment_type",
+            "description": "<p>payment option and value must be Free,Paid or NA(Required).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "ticket_url",
+            "description": "<p>Payment ticket url must be comma separated (Optional).</p> "
           },
           {
             "group": "Parameter",
@@ -3157,6 +3185,123 @@ define({ "api": [
   },
   {
     "type": "get",
+    "url": "/events-image.json?events=:matrix_room_id",
+    "title": "Events(Warp) image",
+    "version": "0.1.0",
+    "name": "getEventsImage",
+    "group": "Spayc",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>Get the list of images of warps.</p> ",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "events",
+            "description": "<p>*Matrix room id and in case of more than one id value must be comma separated(Required).</p> "
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p> "
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>List of subscribed warp.</p> "
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>List of events image.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"List of events image.\",\n    \"data\": {\n        \"!reXtnytclkKOGDiMdr:127.0.0.1\": \"http://i.ebayimg.com/images/g/2SMAAOSwstxVQBE7/s-l1600.jpg\",\n        \"!zQpSDoOyaYMwRYerRS:127.0.0.1\": \"http://i.ebayimg.com/images/g/TTwAAOSwpDdVXg8t/s-l1600.jpg\"\n    }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/spayc.js",
+    "groupTitle": "Spayc",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/events-image.json?events=:matrix_room_id"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p> "
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p> "
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
     "url": "/public-spaycs.json?page=:page&limit=:limit",
     "title": "Advertisement Spayces",
     "version": "0.1.0",
@@ -3334,7 +3479,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "status",
-            "description": "<p>Status of user, value must be any one from following(Pending|Joined) (Optional).</p> "
+            "description": "<p>Status of user, value must be any one or comma separated from following(Pending|Joined|Banned) (Optional).</p> "
           },
           {
             "group": "Parameter",
@@ -3476,17 +3621,24 @@ define({ "api": [
           },
           {
             "group": "Parameter",
-            "type": "Timestamp",
+            "type": "Datetime",
             "optional": false,
-            "field": "start_date",
-            "description": "<p>Spayc start date in query string(1515542400) (Optional).</p> "
+            "field": "date",
+            "description": "<p>date format must in timestamp (optional).</p> "
           },
           {
             "group": "Parameter",
-            "type": "Timestamp",
+            "type": "Integer",
             "optional": false,
-            "field": "end_date",
-            "description": "<p>Spayc end date in query string(1515715200) (Optional).</p> "
+            "field": "radius",
+            "description": "<p>distance in Miles(optional).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "payment_type",
+            "description": "<p>value must be toggling between free and paid(Optional).</p> "
           },
           {
             "group": "Parameter",
@@ -4224,8 +4376,22 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "time",
-            "description": "<p>Spayc Time must be comma separated if more than one and value must be present|past|future(Optional).</p> "
+            "field": "radius",
+            "description": "<p>Redius between required two points.</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "payment_type",
+            "description": "<p>value must be toggling between free and paid(Optional).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "Datetime",
+            "optional": false,
+            "field": "current_date",
+            "description": "<p>Client current date and date format must be timestamp (Optional).</p> "
           },
           {
             "group": "Parameter",
@@ -4268,7 +4434,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "{\n    \"center_latitude\": \"28.6367\",\n    \"center_longitude\": \"77.2748\",\n    \"endpoint_latitude\": \"19.0760\",\n    \"endpoint_longitude\": \"72.8777\",\n    \n    \"time\": \"present,past,future\",\n    \"spayc_type\": \"Event|Community\",\n    \"group_type\": \"Public|Private\",\n    \"wrap_with_friends\": \"yes|no\",\n    \"hashtag_id\": \"1,2,3\",\n    \"category_id\": \"5,6\"\n    \n}",
+        "content": "    {\n        \"center_latitude\": \"28.6367\",\n        \"center_longitude\": \"77.2748\",\n        \"endpoint_latitude\": \"19.0760\",\n        \"endpoint_longitude\": \"72.8777\",\n        \n        \"time\": \"present,past,future\",\n        \"spayc_type\": \"Event|Community\",\n        \"group_type\": \"Public|Private\",\n        \"wrap_with_friends\": \"yes|no\",\n        \"current_date\":\"1531094400\",\n\t\"payment_type\":\"Paid\"\n        \"hashtag_id\": \"1,2,3\",\n        \"category_id\": \"5,6\"\n        \n    }",
         "type": "json"
       }
     ],
@@ -4301,7 +4467,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"List of Data.\",\n    \"data\": {\n        \"spaycs\": {\n            \"count\": 2,\n            \"records\": [\n                {\n                    \"id\": \"3\",\n                    \"name\": \"Sam Second Community Spyace\",\n                    \"matrix_room_id\": \"!MvOssNcvbePXoBUIjC:spayc-dev.kiwireader.com\",\n                    \"image\": \"https://spayc-dev.s3.amazonaws.com/room/image_20180317082917.png\",\n                    \"type\": \"Community\",\n                    \"modified\": \"2018-03-17T08:29:17+00:00\",\n                    \"category_id\": 5,\n                    \"latitude\": 28.7041,\n                    \"longitude\": 77.1025,\n                    \"is_joined\": true,\n                    \"joined_users\": 2,\n                    \"is_subscribed\": true\n                },\n                {\n                    \"id\": \"4\",\n                    \"name\": \"Community Type Sub Spyac\",\n                    \"matrix_room_id\": \"!nQPjgmlBePZsAyVvQH:spayc-dev.kiwireader.com\",\n                    \"image\": \"https://spayc-dev.s3.amazonaws.com/room/image_20180317083321.png\",\n                    \"type\": \"Community\",\n                    \"modified\": \"2018-03-17T08:33:21+00:00\",\n                    \"category_id\": 6,\n                    \"latitude\": 28.7041,\n                    \"longitude\": 77.1025,\n                    \"is_joined\": false,\n                    \"joined_users\": 0,\n                    \"is_subscribed\": false\n                }\n            ]\n        },\n        \"friends\": {\n            \"count\": 2,\n            \"records\": [\n                {\n                    \"id\": \"3\",\n                    \"display_name\": \"sam\",\n                    \"email\": \"test@kiwitech.com\",\n                    \"address\": null,\n                    \"latitude\": 28.7041,\n                    \"longitude\": 77.1025,\n                    \"modified\": \"2018-03-17T08:21:47+00:00\",\n                    \"image_url\": \"https:\\/\\/spayc-dev.s3.amazonaws.com\\/profile\\/26168111_1523380557779310_7695911840919952448_n_20180320030546.jpg%3Foh%3D046ac3312ac9b797e1f0b12c0505572c%26oe%3D5b2ed73a\",\n                    \"matrix_room_id\": \"!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com\"\n                }\n            ]\n        }\n    }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"List of Data.\",\n    \"data\": {\n        \"spaycs\": {\n            \"count\": 2,\n            \"records\": [\n                {\n                    \"distance\": 0,\n                    \"id\": \"2109\",\n                    \"name\": \"Perfect Crime New York\",\n                    \"matrix_room_id\": \"!eHnEYoZchHVKuuyRvT:spayc-dev.kiwireader.com\",\n                    \"image\": \"http://i.ebayimg.com/images/g/TTwAAOSwpDdVXg8t/s-l1600.jpg\",\n                    \"type\": \"Event\",\n                    \"modified\": \"2018-05-15T12:18:40+00:00\",\n                    \"spayc_category_id\": 180,\n                    \"latitude\": 40.76146,\n                    \"longitude\": -73.984547,\n                    \"spayc_category\": {\n                            \"id\": 180,\n                            \"name\": \"Arts and Theater\"\n                            },\n                    \"is_joined\": false,\n                    \"joined_users\": 1,\n                    \"is_subscribed\": false\n                 },\n                 {\n                    \"distance\": 0,\n                    \"id\": \"2135\",\n                    \"name\": \"Perfect Crime New York\",\n                    \"matrix_room_id\": \"!poSQfNdqYsHGrhqbUI:spayc-dev.kiwireader.com\",\n                    \"image\": \"http://i.ebayimg.com/images/g/TTwAAOSwpDdVXg8t/s-l1600.jpg\",\n                    \"type\": \"Event\",\n                    \"modified\": \"2018-05-15T12:21:39+00:00\",\n                    \"spayc_category_id\": 180,\n                    \"latitude\": 40.76146,\n                    \"longitude\": -73.984547,\n                    \"spayc_category\": {\n                            \"id\": 180,\n                            \"name\": \"Arts and Theater\"\n                            },\n                    \"is_joined\": false,\n                    \"joined_users\": 1,\n                    \"is_subscribed\": false\n                }\n            ]\n        },\n        \"friends\": {\n            \"count\": 2,\n            \"records\": [\n                {\n                    \"id\": \"3\",\n                    \"display_name\": \"sam\",\n                    \"email\": \"test@kiwitech.com\",\n                    \"address\": null,\n                    \"latitude\": 28.7041,\n                    \"longitude\": 77.1025,\n                    \"modified\": \"2018-03-17T08:21:47+00:00\",\n                    \"image_url\": \"https:\\/\\/spayc-dev.s3.amazonaws.com\\/profile\\/26168111_1523380557779310_7695911840919952448_n_20180320030546.jpg%3Foh%3D046ac3312ac9b797e1f0b12c0505572c%26oe%3D5b2ed73a\",\n                    \"matrix_room_id\": \"!RFyqaVVqazslSfMHzO:spayc-dev.kiwireader.com\"\n                }\n            ]\n        }\n    }\n}",
           "type": "json"
         }
       ]
@@ -5303,6 +5469,90 @@ define({ "api": [
     ]
   },
   {
+    "type": "put",
+    "url": "/update-comment/:matrix_room_id.json",
+    "title": "Update Comment",
+    "version": "0.1.0",
+    "name": "putUpdateComment",
+    "group": "Spayc",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>Update comment placed inside room.Append matrix room id in url</p> ",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p> "
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Request proccess successfully.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "    HTTP/1.1 200 OK\n{\n   \"status\": \"success\",\n   \"message\": \"Request proccess successfully.\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/spayc.js",
+    "groupTitle": "Spayc",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/update-comment/:matrix_room_id.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p> "
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p> "
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
     "type": "get",
     "url": "/spayc-details.json?id=:id&latitude=:lat&longitude=:long",
     "title": "About Spayc",
@@ -5384,7 +5634,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Spayc Details.\",\n    \"data\": {\n        \"id\": \"3\",\n        \"name\": \"devsubspacePMB\",\n        \"location\": \"dfasdf sdf sdfsdfsd\",\n        \"image\": \"https://spayc-qa.s3.amazonaws.com/room/screenshot_from_2017_12_12_19_55_12_20180223141832.png\",\n        \"description\": \"devspace\",\n        \"group_type\": \"Public\",\n        \"type\": \"Community\",\n        \"start_date\": \"03-11-2018 09:16:00\",\n        \"end_date\": \"03-12-2018 09:23:00\",\n        \"passcode\": \"\",\n        \"matrix_room_id\": \"!AHKKnrKlWnBiewiMiB:127.0.0.1\",\n        \"subscribed_users\": 0,\n        \"sub_spaycs\": [\n            {\n                \"id\": 45,\n                \"parent_id\": 3,\n                \"name\": \"devsubspacePMB\",\n                \"location\": null,\n                \"image\": null,\n                \"description\": \"devspace\",\n                \"group_type\": \"Public\",\n                \"type\": \"Community\",\n                \"start_date\": \"2018-03-11T09:16:00+00:00\",\n                \"end_date\": \"2018-03-12T09:23:00+00:00\",\n                \"passcode\": \"\",\n                \"matrix_room_id\": \"!gERdbhptfHdVQrcnse:127.0.0.1\",\n                 \"spayc_category\": {\n                    \"id\": 560,\n                    \"name\": \"Softball\"\n                }\n            }\n        ],\n        \"friends\": 0,\n        \"joined_spayc_status\": \"Joined\",\n        \"joined_users\": 1,\n        \"is_admin\": 1,\n        \"spayc_category\": {\n            \"id\": 560,\n            \"name\": \"Softball\"\n        },\n        \"is_subscribed\": false,\n        \"total_comments\": 0,\n        \"total_presents\": 0\n    }\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Spayc Details.\",\n    \"data\": {\n        \"id\": \"3\",\n        \"name\": \"devsubspacePMB\",\n        \"location\": \"dfasdf sdf sdfsdfsd\",\n        \"image\": \"https://spayc-qa.s3.amazonaws.com/room/screenshot_from_2017_12_12_19_55_12_20180223141832.png\",\n        \"description\": \"devspace\",\n        \"group_type\": \"Public\",\n        \"type\": \"Community\",\n        \"payment_type\": \"Free\",\n        \"ticket_url\":[\n            \"http://google.com?pgsql=&username=xx\",\n            \"http://github.com/\"\n        ],\n        \"start_date\": \"03-11-2018 09:16:00\",\n        \"end_date\": \"03-12-2018 09:23:00\",\n        \"passcode\": \"\",\n        \"matrix_room_id\": \"!AHKKnrKlWnBiewiMiB:127.0.0.1\",\n        \"subscribed_users\": 0,\n        \"sub_spaycs\": [\n            {\n                \"id\": 45,\n                \"parent_id\": 3,\n                \"name\": \"devsubspacePMB\",\n                \"location\": null,\n                \"image\": null,\n                \"description\": \"devspace\",\n                \"group_type\": \"Public\",\n                \"type\": \"Community\",\n                \"start_date\": \"2018-03-11T09:16:00+00:00\",\n                \"end_date\": \"2018-03-12T09:23:00+00:00\",\n                \"passcode\": \"\",\n                \"matrix_room_id\": \"!gERdbhptfHdVQrcnse:127.0.0.1\",\n                 \"spayc_category\": {\n                    \"id\": 560,\n                    \"name\": \"Softball\"\n                }\n            }\n        ],\n        \"friends\": 0,\n        \"joined_spayc_status\": \"Joined\",\n        \"joined_users\": 1,\n        \"is_admin\": 1,\n        \"spayc_category\": {\n            \"id\": 560,\n            \"name\": \"Softball\"\n        },\n        \"is_subscribed\": false,\n        \"total_comments\": 0,\n        \"total_presents\": 0\n    }\n}",
           "type": "json"
         }
       ]
@@ -7503,7 +7753,7 @@ define({ "api": [
     "url": "/read-notifications.json",
     "title": "Read notification",
     "version": "0.1.0",
-    "name": "readNotification",
+    "name": "postReadNotifications",
     "group": "User",
     "permission": [
       {
@@ -7628,6 +7878,268 @@ define({ "api": [
         "url": "http://spayc.com/api/read-notifications.json"
       }
     ]
+  },
+  {
+    "type": "post",
+    "url": "/spam-reports.json",
+    "title": "Spam Reports",
+    "version": "0.1.0",
+    "name": "postSpamReports",
+    "group": "User",
+    "permission": [
+      {
+        "name": "Private User"
+      }
+    ],
+    "description": "<p>Mark user as spam user from warp.</p> ",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>Token must be in header</li> </ul> "
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "matrix_room_id",
+            "description": "<ul> <li>Matrix room id (required).</li> </ul> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "reported_to",
+            "description": "<ul> <li>Matrix user id to whom make spam user(required).</li> </ul> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "event_id",
+            "description": "<ul> <li>Matrix event warp id(required).</li> </ul> "
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": " \n    {\n\t\"matrix_room_id\":\"!bveMFWvYgJpOzAoZGC:127.0.0.1\",\n\t\"reported_to\":\"@pluck_1525939089:127.0.0.1\",\n\t\"event_id\":\"sdfdsf\"\n    }",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p> "
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>You have reported successfully..</p> "
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>Null.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "HTTP/1.1 200 OK\n {\n     \"status\": \"success\",\n     \"message\": \"You have reported successfully.\"\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "String",
+            "optional": false,
+            "field": "You",
+            "description": "<p>have already reported this user as spam user.Admin will take care about this reports.</p> "
+          },
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p> "
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p> "
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/user.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/spam-reports.json"
+      }
+    ]
+  },
+  {
+    "type": "put",
+    "url": "/ghost-mode.json",
+    "title": "Ghost Mode Settings",
+    "version": "0.1.0",
+    "name": "putGhostMode",
+    "group": "User",
+    "permission": [
+      {
+        "name": "Private"
+      }
+    ],
+    "description": "<p>add setting for ghost mode.Any one key is required.</p> ",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "token",
+            "description": "<p>Token must be set in header.</p> "
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "ghost_mode_search",
+            "description": "<p>Ghost mode setting for search value must be either 0 or 1 (Optional|required).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "ghost_mode_map",
+            "description": "<p>user Ghost mode setting for map value must be either 0 or 1 (Optional|required).</p> "
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p> "
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Ghost mode setting change successfully.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"Ghost mode setting change successfully.\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/user.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/ghost-mode.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p> "
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p> "
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
   },
   {
     "type": "get",
@@ -8160,7 +8672,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"User profile.\",\n    \"data\": {\n        \"id\": \"11\",\n        \"username\": \"user\",\n        \"email\": \"test@domain.com\",\n        \"gender\": \"Female\",\n        \"dob\": null,\n        \"country_code\": null,\n        \"phone\": \"\",\n        \"website_url\": null,\n        \"address\": null,\n        \"bio_data\": null,\n        \"longitude\": 77.391026,\n        \"latitude\": 28.535516,\n        \"matrix_user_id\": null,\n        \"user_images\": [\n            {\n                \"id\": \"55\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180223144430.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            },\n            {\n                \"id\": \"56\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073256.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            },\n            {\n                \"id\": \"57\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073525.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            },\n            {\n                \"id\": \"58\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073548.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            }\n        ],\n        \"friend\": {\n            \"id\": \"41\",\n            \"requested_by\": \"10\",\n            \"requested_to\": \"11\",\n            \"requested_status\": \"Requested\",\n            \"total_friends\": 0\n        },\n        \"matrix_room_id\": null,\n        \"created_spaycs\": 0,\n        \"unread_notifications\": 46,\n        \"joined_spaycs\": 0\n    }\n}",
+          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"User profile.\",\n    \"data\": {\n        \"id\": \"11\",\n        \"username\": \"user\",\n        \"email\": \"test@domain.com\",\n        \"gender\": \"Female\",\n        \"dob\": null,\n        \"country_code\": null,\n        \"phone\": \"\",\n        \"website_url\": null,\n        \"address\": null,\n        \"bio_data\": null,\n        \"longitude\": 77.391026,\n        \"latitude\": 28.535516,\n        \"ghost_mode_search\": 0,\n        \"ghost_mode_map\": 1,\n        \"matrix_user_id\": null,\n        \"user_images\": [\n            {\n                \"id\": \"55\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180223144430.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            },\n            {\n                \"id\": \"56\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073256.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            },\n            {\n                \"id\": \"57\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073525.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            },\n            {\n                \"id\": \"58\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073548.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            }\n        ],\n        \"friend\": {\n            \"id\": \"41\",\n            \"requested_by\": \"10\",\n            \"requested_to\": \"11\",\n            \"requested_status\": \"Requested\",\n            \"total_friends\": 0\n        },\n        \"matrix_room_id\": null,\n        \"created_spaycs\": 0,\n        \"unread_notifications\": 46,\n        \"joined_spaycs\": 0\n    }\n}",
           "type": "json"
         }
       ]

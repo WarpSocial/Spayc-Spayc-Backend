@@ -337,6 +337,24 @@ class UsersTable extends Table {
                     },
                 'message'=>__('Age must be 13 or greater than 13 year\'s old.'),
             ]);
+         $validator
+                ->requirePresence('email', 'create',__('Email is required field.'))
+                ->notEmpty('email',__('Email is required field.'))
+                ->email('email', false, __('Invalid email address.'))                
+                ->add('email', 'unique', [
+                    'rule' => function($value,$context){                   
+                        if(!empty($value)){
+                            $user = $this->get($context['data']['id']);
+                            if($user->getOriginal($context['field']) != $value){
+                                return !$this->exists(['LOWER(email)'=> strtolower($value)]);
+                            }else{
+                                return true;
+                            }
+                        }else{
+                            return false;
+                        }
+                    },                   
+                    'message'=>__('Email already exist.')]) ;            
 
         $validator
             //->requirePresence('gender', 'create',__('Gender is required field.'))    
@@ -486,6 +504,23 @@ class UsersTable extends Table {
             ->inList('friend_status', Configure::read('friend_requested_status'),__('Friend status must be any one '.implode(',',Configure::read('friend_requested_status')).'.'));
         return $validator->errors($data);
     }
+    /**
+     * ghostModeValidate rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function ghostModeValidate($data) {
+        $validator = new Validator();        
+        $validator  
+                ->notEmpty('ghost_mode_map',__('Map is required field.'))
+                ->inList('ghost_mode_map', [0,1],__('Map value must be either 0 or 1.'));
+        
+        $validator
+                ->notEmpty('ghost_mode_search',__('Search is required field.'))
+                ->inList('ghost_mode_search', [0,1],__('Search value must be either 0 or 1.'));
+        return $validator->errors($data);
+    }
     
     /**
      * Default validation rules.
@@ -613,7 +648,7 @@ class UsersTable extends Table {
     
     public function searchUsers($userId = null, $request = []) {
         $blockedFriendIds = TableRegistry::get('Api.FriendRequest')->getFriendIdsByStatus($userId, 'Blocked');
-        $cond['Users.status'] = 'Active';
+        $cond = ['Users.status' => 'Active','ghost_mode_search'=>GHOST_MODE_OFF];
         if(!empty($blockedFriendIds)) {
             $cond['Users.id NOT IN'] = $blockedFriendIds;
         } else {
@@ -753,7 +788,7 @@ class UsersTable extends Table {
         $items['message']  = $notify->message;
         $items['notification_type'] = $notify->type; 
         $items['spayc_id'] = $spayc->id;
-        TableRegistry::get('Api.Comments')->spaycActivities($spayc->id,$items);
+        TableRegistry::get('Api.Comments')->spaycActivities($spayc->matrix_room_id,$items);
         return $items;
     }
     

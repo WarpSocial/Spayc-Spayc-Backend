@@ -91,6 +91,8 @@ define('ACCEPTED','Accepted');
 define('PENDING','Pending');
 define('BANNED','Banned');
 define('JOINED','Joined');
+define('UNBLOCK','Unblock');
+define('SUGGESTED','Suggested');
 
 define('PRIVATETYPE','Private');
 define('PUBLICTYPE','Public');
@@ -104,4 +106,8 @@ define('EXPIRED_AD_STATUS','2');
 define('ACTIVE_AD_STATUS','1');
 
 define('AD_BUCKET','10');
+define('FREE','Free');
+define('PAID','Paid');
+define('GHOST_MODE_OFF',0);
+define('GHOST_MODE_ON',1);
 

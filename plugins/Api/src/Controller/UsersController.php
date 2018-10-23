@@ -27,6 +27,8 @@ class UsersController extends AppController {
     public function initialize() {
         parent::initialize();
         $this->loadComponent('Api.Push');
+        $this->loadComponent('Api.Matrix');
+        $this->loadComponent('Api.Redis');
     }
     
     /**
@@ -86,7 +88,6 @@ class UsersController extends AppController {
         $conn = $this->Users->getConnection();
         $conn->execute('UPDATE '.$this->UserImages->getTable().' SET is_profile = CASE WHEN order_index='.$orderId.' THEN \'Yes\' else \'No\' END WHERE user_id='.$this->Auth->user('id'));
         $entity = $entity->first();
-        $this->loadComponent('Api.Matrix');
         $this->Matrix->uploadMediaImage([
                 'image_url'=>$entity->image_url,
                 'matrix_token'=>$this->Auth->user('UserLogs.matrix_access_token'),
@@ -121,7 +122,6 @@ class UsersController extends AppController {
         $image = $profileImg->first();
         if(TableRegistry::get('UserImages')->delete($image)) {
             if(($image->is_profile == 'Yes')){
-                $this->loadComponent('Api.Matrix');
                 $this->Matrix->setAvatarUrl(null,[
                     'matrix_token'=>$user['UserLogs']['matrix_access_token'],
                     'matrix_user_id'=>$user['UserLogs']['matrix_user_id']
@@ -160,7 +160,6 @@ class UsersController extends AppController {
         if(empty($user)){
             $this->restException(['status' => "failed", 'message' => __('Sign in credentials ain\'t right, try again buddy.')], 401);
         }
-        $this->loadComponent('Api.Matrix');
         $matrix = $this->Matrix->login($data_item+['username'=>$user['username']]); 
         if(empty($matrix)){
             $this->restException(['status'=>'failed','message'=>__('Matrix login failed.')], 401);
@@ -285,7 +284,6 @@ class UsersController extends AppController {
         if (!$this->request->is('post')) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
-        $this->loadComponent('Api.Matrix');
         $data = $this->request->getData();
         $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';
         $data['timezone'] = Configure::read('timezone');
@@ -310,7 +308,11 @@ class UsersController extends AppController {
         $items->set('matrix_access_token', $matrix['access_token']);
         #echo $data['token_verification'];die;
         if ($this->Users->save($items)) {
-            $this->getMailer('Api.User')->send('signup', [$items]);
+            $items['action_type']='signup';
+            TableRegistry::get('Queue.QueuedJobs')->createJob('Mailer',$items->toArray());
+            /*store the user location to redis*/
+            $this->Redis->addUser($items->toArray());
+            //$this->getMailer('Api.User')->send('signup', [$items]);
             $response = ['status' => "success", 'message' => __('Registration done successfully.'), 'data' =>
                 [
                     'id'=>$items->id,
@@ -326,7 +328,7 @@ class UsersController extends AppController {
                 ]];
             $this->response->statusCode(201);
         } else {
-            Log::info(['status' => "failed", 'message' =>__('Failed to saved data.')]);
+            #Log::info(['status' => "failed", 'message' =>__('Failed to saved data.')]);
             $response = ['status' => "failed", 'message' => $this->mapErrors($items->errors())];
         }
         $this->set($response);
@@ -377,7 +379,6 @@ class UsersController extends AppController {
         if(!$this->request->is('post')) {
             $this->restException(['status'=>'failed','message'=>__('Method not allowed.')],405);
         }
-        $this->loadComponent('Api.Matrix');
         $data = $this->request->getData();
         $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';
         $data['timezone'] = !empty($data['timezone'])?$data['timezone']:date_default_timezone_get();
@@ -459,6 +460,7 @@ class UsersController extends AppController {
             'dob'=>(new \Cake\I18n\Time($user['dob']))->format("Y-m-d"),
             'country_code'=>$user['country_code'],
             'phone'=>$user['phone'],
+            'password'=>$mdata['password'],
             'website_url'=>$user['website_url'],
             'address'=>$user['address'],
             'bio_data'=>$user['bio_data'],
@@ -466,6 +468,7 @@ class UsersController extends AppController {
             'matrix_user_id'=>$user['matrix_user_id'],
             'token'=>$user['token'],
             'matrix_token'=>$user['matrix_access_token'],
+            'user_images' => TableRegistry::get("Api.UserImages")->findByUserId($user['id'])->select(['id', 'user_id', 'image_url', 'is_profile', 'order_index'])->order(['order_index'=>'ASC'])
             ];
         //$response = ['status' => "success", 'message' => 'Login successfully.', 'data'=>$data];
         /*---end login authentication---*/
@@ -539,8 +542,6 @@ class UsersController extends AppController {
                         'matrix_user_id' => $user->matrix_user_id,
                         'matrix_access_token' => $user->matrix_access_token,
                     ];
-                    //pr($matrixData);die;
-                    $this->loadComponent('Api.Matrix');
                     $this->Matrix->changePassword($matrixData);
                     $status = 'done';
                     //$this->Flash->success(__('Your new password has been reset successfully.'),['status'=>'done']);
@@ -578,7 +579,6 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($errors)], 400);
         }
         if(!empty($this->Auth->user('UserLogs.matrix_user_id')) && !empty($this->Auth->user('UserLogs.matrix_access_token'))) {
-            $this->loadComponent('Api.Matrix');
             $data_item['matrix_user_id'] = $this->Auth->user('UserLogs.matrix_user_id');
             $data_item['matrix_access_token'] = $this->Auth->user('UserLogs.matrix_access_token');
             $matrix = $this->Matrix->changePassword($data_item);
@@ -620,10 +620,48 @@ class UsersController extends AppController {
             $items->set('display_name',$data['username']);
         }
         if ($this->Users->save($items)) {
+            $this->Redis->addUser($items->toArray());
             $response = ['status' => "success", 'message' => __('Updated successfully.'), 'data' => $data];
         } else {
             $response = ['status' => "failed", 'message' => $this->mapErrors($items->errors())];
         }
+        $this->set($response);
+    }
+    /**
+     * Edit method
+     *
+     * @param string|null $id User id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     */
+    public function ghostMode() {
+        if (!$this->request->is(['put'])) {
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
+        }
+        
+        $data = $this->request->getData();
+        if(empty($data)){
+            $this->restException(['status'=>'failed', 'message'=>__('Invalid Request.')], 400);
+        } 
+        $errors = $this->Users->ghostModeValidate($data, $this->Auth->user('id'));
+        if($errors) {
+            $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($errors)], 400);
+        }
+        $entity = $this->Users->get($this->Auth->user('id'));
+        if(isset($data['ghost_mode_search'])){
+            $entity->set('ghost_mode_search',$data['ghost_mode_search']);
+        }
+        if(isset($data['ghost_mode_map'])){
+            $entity->set('ghost_mode_map',$data['ghost_mode_map']);
+        }
+        /* At the time of update username will not update and maintain the prev username by swaping the value*/
+        try{
+            $this->Users->save($entity);
+            $response = ['status' => "success", 'message' => __('Ghost mode setting change successfully.'), 'data' => $data];
+        } catch (Exception $ex) {
+            $response = ['status' => "success", 'message' => $ex->getMessage(), 'data' => $data];
+        }
+
         $this->set($response);
     }
 
@@ -655,11 +693,8 @@ class UsersController extends AppController {
         $this->loadModel('UserLogs');
         //$user = $this->Auth->user();
         $token = $this->request->env('HTTP_TOKEN');
-        $this->UserLogs->query()
-                        ->delete()
-                        //->set(['loginstatus' => 0])
-                        ->where(['plain_token' =>  $token])
-                        ->execute();
+        $this->Utility->logout($token,$this->Auth->user('UserLogs.matrix_access_token'));
+        $this->Auth->logout();
         $response = ['status'=>'success','message'=>__('Logout successfully.')];
         $this->set($response);
     }
@@ -732,10 +767,22 @@ class UsersController extends AppController {
                 $this->restException(['status'=>'failed', 'message'=>__('Failed to update friend status.')],400);
             }
         }else{
-            $frndRequest = $requestedFrnd->first();            
+            $frndRequest = $requestedFrnd->first();   
             if($data['friend_status'] == $frndRequest->requested_status){
                 $this->restException(['status'=>'failed', 'message'=>__('Friend request already sent with same status.')], 400);
-            }  
+            }
+            if(strtolower($data['friend_status']) == strtolower(UNBLOCK)){
+                $dataObj = [                    
+                    'id'=>$frndRequest->id,
+                    'requested_by'=>$frndRequest->requested_by,
+                    'requested_to'=>$frndRequest->requested_to,
+                    'requested_status'=>$frndRequest->requested_status,
+                    'action_by'=>$frndRequest->action_by
+                ];
+                $frObj->delete($frndRequest);
+                $this->restException(['status'=>'success', 'message'=>__('User has been unblocked successfully.'),'data'=>$dataObj]);
+            }
+            
             if($frndRequest->requested_status=='Unfriend' || $frndRequest->requested_status=='Decline') {
                 $frndRequest->set('requested_by', $loggedUser['id']);
                 $frndRequest->set('requested_to', $data['friend_id']);
@@ -841,8 +888,7 @@ class UsersController extends AppController {
             if($data['friend_status'] == $frndRequest->requested_status){
                 $this->restException(['status'=>'failed', 'message'=>__('Friend request already sent with same status.')], 400);
             }  
-            //if($frndRequest->requested_status=='Unfriend' || $frndRequest->requested_status=='Decline') {
-            if(in_array($currentStatus, ['Unblock', 'is_direct', 'Decline', 'Unfriend'])) {
+            if((in_array($currentStatus, ['Unblock', 'is_direct', 'Decline', 'Unfriend'])) || ($frndRequest->friend_status == SUGGESTED)) {
                 $frndRequest->set('requested_by', $loggedUser['id']);
                 $frndRequest->set('requested_to', $data['friend_id']);
             }
@@ -908,7 +954,11 @@ class UsersController extends AppController {
             }
         }
         $frndRequest = $requestedFrnd->first();
-        $frndRequest->set('requested_status', $data['friend_status']);
+        if(($frndRequest->friend_status == SUGGESTED) && ($data['friend_status'] != ACCEPTED)){
+            $frndRequest->set('requested_status', SUGGESTED);
+        }else{
+            $frndRequest->set('requested_status', $data['friend_status']);
+        }
         $frndRequest->set('action_by', $loggedUser['id']);
         if($frObj->save($frndRequest)) {
             //data prepaire for push notification//
@@ -925,7 +975,7 @@ class UsersController extends AppController {
                 'id'=>$frndRequest->id,
                 'requested_by'=>$frndRequest->requested_by,
                 'requested_to'=>$frndRequest->requested_to,
-                'requested_status'=>$frndRequest->requested_status,
+                'requested_status'=>$data['friend_status'],
                 'action_by'=>$frndRequest->action_by
             ]]);
         } else {
@@ -1062,7 +1112,11 @@ class UsersController extends AppController {
             }
         }
         $frndRequest = $requestedFrnd->first();
-        $frndRequest->set('requested_status', $data['friend_status']);
+        if($frndRequest->friend_status == SUGGESTED){
+            $frndRequest->set('requested_status', SUGGESTED);
+        }else{
+            $frndRequest->set('requested_status', $data['friend_status']);
+        }
         $frndRequest->set('action_by', $loggedUser['id']);
         if($frObj->save($frndRequest)) {
             $this->restException(['status'=>'success', 'message'=> Configure::read('requestMsg.'.$data['friend_status']),'data'=>[                    
@@ -1114,7 +1168,12 @@ class UsersController extends AppController {
             }
         }
         $frndRequest = $requestedFrnd->first();
-        $frndRequest->set('requested_status', $data['friend_status']);
+        if($frndRequest->friend_status == SUGGESTED){
+            $frndRequest->set('requested_status', SUGGESTED);
+        }else{
+            $frndRequest->set('requested_status', $data['friend_status']);
+        }
+        
         $frndRequest->set('action_by', $loggedUser['id']);
         if($frObj->save($frndRequest)) {
             $this->restException(['status'=>'success', 'message'=> Configure::read('requestMsg.'.$data['friend_status']),'data'=>[                    
@@ -1213,13 +1272,33 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>__('Status is required fields and status must be in('.  implode(',', $status).').')], 400);
         }
         $loggedUser = $this->Auth->user();
+        // for get and save facebook friends
+        $frTableObj = TableRegistry::get('Api.FriendRequest');
+        if(!empty($loggedUser['fb_id'])){
+            $this->loadComponent('Api.Facebook');
+            $friends = $this->Facebook->getFriends($loggedUser['fb_id'], $loggedUser['fb_access_key']);     
+            if(!empty($friends)) {
+                foreach($friends as $friend) {
+                    if(!empty($friend['id'])) {                        
+                        $spaycFriend = $this->Users->find("all", ['fields'=>['Users.id'], 'conditions'=>['Users.fb_id'=>trim($friend['id'])]])->first();
+                        if(!empty($spaycFriend)){
+                            $checkFrndReq = $frTableObj->checkFriendRequestExist($loggedUser['id'], $spaycFriend->id);
+                            if($checkFrndReq){
+                                $setdata = ['id'=>$loggedUser['id'], 'friendId'=>$spaycFriend->id];
+                                $frTableObj->addFbFirends($setdata);
+                            } 
+                        }
+                    }
+                }
+            }
+        }
         $userId = !empty($this->request->query('user_id'))?$this->request->query('user_id'):$loggedUser['id'];
         
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, $friendStatus);
         if(!$friend){
             $this->restException(["status"=>"success",'message'=>__("Record not found")],204);
         }
-        $friends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username','Users.display_name', 'Users.matrix_user_id', 'Users.matrix_access_token'], 'conditions'=>['Users.id IN'=>$friend, 'Users.id !='=>$userId, 'Users.status'=>'Active']]);
+        $friends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username','Users.display_name', 'Users.matrix_user_id', 'Users.matrix_access_token'], 'conditions'=>['Users.id IN'=>$friend, 'Users.id !='=>$userId, 'Users.status IN'=>[ACTIVE,INACTIVE]]]);
         $friends->contain([          
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
@@ -1275,7 +1354,7 @@ class UsersController extends AppController {
         if(empty($id)) {
             $this->restException(['status'=>'failed', 'message'=>__('User id is required field.')], 400);
         }
-        $user = $this->Users->find('all', ['fields'=>['Users.id', 'Users.username','Users.display_name', 'Users.email', 'Users.gender', 'Users.dob','Users.country_code', 'Users.phone', 'Users.website_url', 'Users.address', 'Users.bio_data', 'Users.longitude', 'Users.latitude', 'Users.matrix_user_id']])->where(['OR'=>['Users.id'=>$id,'Users.matrix_user_id'=>$id]]);
+        $user = $this->Users->find('all', ['fields'=>['Users.id', 'Users.username','Users.display_name', 'Users.email', 'Users.gender', 'Users.dob','Users.country_code', 'Users.phone', 'Users.website_url', 'Users.address', 'Users.bio_data', 'Users.longitude', 'Users.latitude', 'Users.matrix_user_id','Users.ghost_mode_map','Users.ghost_mode_search']])->where(['OR'=>['Users.id'=>$id,'Users.matrix_user_id'=>$id]]);
 
         $userId = $this->Auth->user('id');
         $user->contain([
@@ -1425,9 +1504,14 @@ class UsersController extends AppController {
         $items['device_token'] = $deviceToken = $device['pushkey'];
         $items['date_time'] = date('m-d-Y H:i:s',$device['pushkey_ts']);
         if(!empty($senderId) && !empty($receiverId) && in_array($msgType,['m.replyText','m.likeMessage'])){
-            $saveNotification = TableRegistry::get("Api.Notifications")->addNotification(array_merge($items,['requested_by'=>$senderId->id,'requested_to'=>$receiverId->id,'date_time'=>$items['date_time']]));            
-            $items['id'] = $saveNotification->id;
+            //$items['id'] = Utils::uniqueInteger();
             $items['requested_by'] = $senderId->id;
+            $items['requested_to'] = $receiverId->id;
+            $items['date_time'] = $items['date_time'];
+            $data['job_type'] = 'communication_center';
+            $data['items'] = $items;
+            //TableRegistry::get('Queue.QueuedJobs')->createJob('Generic',$data);
+            $saveNotification = TableRegistry::get("Api.Notifications")->addNotification($items);
         }
         $this->loadComponent('Api.Notification');
         //$this->Push->sendOnIOS($items);
@@ -1473,6 +1557,12 @@ class UsersController extends AppController {
         $long = (float)$data['longitude'];
         $user = $this->Auth->user();
         if($this->Users->PhysicalLocation->updateLocation($user,$lat,$long)){
+            /* update user current status on redis too */
+            $this->Redis->addUser([
+                'id'=>$user['id'],
+                'latitude'=>$lat,
+                'longitude'=>$long,
+            ]);
             $response = ['status'=>'success', 'message'=>__('Request has been updated successfully.')];
         }else{
             $this->response->statusCode(400);
@@ -1554,7 +1644,6 @@ class UsersController extends AppController {
         }
         $data = $this->request->getData();
         $user = $this->Auth->user();
-        pr($user);die;
         if(empty($data['is_notify'])) {
             $this->restException(['status'=>'failed','message'=>'is_notify is required field.'], 400);
         }

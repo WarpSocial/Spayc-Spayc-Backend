@@ -23,7 +23,7 @@ class QueueGenericTask extends QueueTask {
     /**
      * @var int
      */
-    public $retries = 1;
+    public $retries = 0;
 
     /**
      * @param array $data The array passed to QueuedJobsTable::createJob()
@@ -37,6 +37,10 @@ class QueueGenericTask extends QueueTask {
         switch ($data['job_type']){
             case "new-spayc":
                 $this->newSpayc($data);
+                $this->titleHashTag($data);
+                break;
+            case "communication_center":
+                $this->communicationCenter($data);
                 break;
         }
         $this->out('Proccessing to send pusher notification');
@@ -45,6 +49,23 @@ class QueueGenericTask extends QueueTask {
         $this->out(' ');
         $this->out(' ');
         return true;
+    }
+    
+    /**
+     * communicationCenter to keep the like or reply comment notification
+     * 
+     * @param Array $data list of pushers data
+     */
+    public function communicationCenter($data){
+        $notify = $notificationRepo->addNotification([
+            'requested_by'=>$data['items']['requested_by'],
+            'requested_to'=>$data['items']['requested_to'],
+            'notification_type'=>$data['items']['type'],
+            'status'=>'Unread',
+            'message'=>$data['items']['message'],
+            'spayc_id'=>$data['items']['spayc_id'],
+            'date_time'=>$data['created_duration']
+        ]);
     }
     
     /**
@@ -72,8 +93,10 @@ class QueueGenericTask extends QueueTask {
                 'spayc_id'=>$data['id'],
                 'date_time'=>$data['created_duration']
             ];
-            $notify = $notificationRepo->addNotification($notificationItems);
             
+            if($data['user_id'] != $user->user_id){
+                $notify = $notificationRepo->addNotification($notificationItems);
+            }
             $items = [
                 'requested_by'=>$data['user_id'],
                 'id'=>$notify->id,
@@ -82,10 +105,31 @@ class QueueGenericTask extends QueueTask {
                 'matrix_room_id'=>$data['matrix_room_id'],
                 'notification_type'=>$notifyMessage->type,
                 'spayc_image'=>empty($data['image'])?null:$data['image'],
-                'date_time'=>$data['created_duration']
+                'time'=>$data['created_duration']
             ];
-            $push->sendOnIOS($items);
+            if($data['user_id'] != $user->user_id){
+                $push->sendOnIOS($items);
+            }
             
+            
+        }
+    }
+    
+    public function titleHashTag($spaycs){
+        $hashTags = [];
+        if(!empty($spaycs['website'])){
+            $tags = str_word_count($spaycs['title'], 1);
+            if(!empty($tags)){
+                for($i = 0 ; $i < count($tags); $i++ ){
+                    if(strlen($tags[$i]) > 3){
+                        array_push($hashTags,$tags[$i]);
+                    }
+                }
+            }            
+        }
+        $spHashtags = TableRegistry::get('Api.SpaycHashtags');
+        if(!empty($hashTags)){
+            $spHashtags->saveTags($spaycs['id'],$hashTags);
         }
     }
 }

@@ -84,6 +84,9 @@ class UsersTable extends Table
         $this->hasMany('Spaycs', [
             'foreignKey' => 'user_id'
         ]);
+        $this->hasMany('Advertisement', [
+            'foreignKey' => 'user_id'
+        ]);
         $this->belongsTo('Roles', [
             'foreignKey' => 'role_id'
         ]);
@@ -183,6 +186,62 @@ class UsersTable extends Table
            return true;
     }
 
+    public function getUsersList($userId, $title=null) {
+
+        $query=$this->find();
+        if(!empty($userId) && $title== USER_FRIENDS){
+            $friends = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, FRIEND_REQUESTED_STATUS);
+            $query->where(['Users.id IN'=> $friends]);
+        } else if(!empty($userId) && $title== PHYSICAL_PRESENT_USERS){            
+            $physicalPresentUserIds = TableRegistry::get("JoinedSpayc")->getPhysicalPresentUsersIdBySpaycId($userId);
+            $query->where(['Users.id IN'=> $physicalPresentUserIds]);
+        } else if(!empty($userId) && $title== SUBSCRIBED_USERS){            
+            $subscribedUserIds = TableRegistry::get('SubscribedUsers')->getSubscribedUsersIdBySpaycId($userId);
+            $query->where(['Users.id IN'=> $subscribedUserIds]);
+
+        }
+        $query->where(['Users.role_id IS'=> null])
+            ->contain([                                       
+                'JoinedSpayc'=>function($q) {
+                    $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin','JoinedSpayc.distance'])->where(['JoinedSpayc.status'=>JOINED]);                  
+                    $q->innerJoinWith('Spaycs',function($qq) {
+                        $qq->select(['Spaycs.user_id','Spaycs.id','Spaycs.parent_id'])->where(['Spaycs.group_type !=' =>'trusted_private','Spaycs.parent_id IS'=>null]); 
+                        return $qq;                        
+                    });
+                    return $q;
+                },
+                'Requestedby' => function($q) {
+                   return $q->select(['Requestedby.requested_by','count' => $q->func()->count('Requestedby.id')])->group(['Requestedby.requested_by'])->Where(['Requestedby.requested_status'=>FRIEND_REQUESTED_STATUS]);
+                },
+                'Requestedto' => function($q) {
+                   return $q->select(['Requestedto.requested_to','count' => $q->func()->count('Requestedto.id')])->group(['Requestedto.requested_to'])->Where(['Requestedto.requested_status'=>FRIEND_REQUESTED_STATUS]);
+                },
+                'Advertisement' => function($q) {
+                   return $q->select(['Advertisement.user_id','count' => $q->func()->count('Advertisement.id')])->group(['Advertisement.user_id'])->where(["Advertisement.status !=" => ADVERTISEMENTSTATUS]);
+                }
+        ]); 
+        $query->formatResults(function (\Cake\Collection\CollectionInterface $results) {
+            return $results->map(function ($row) {
+                $row->createdSpayc=$row->joinedSpayc=0;
+                if(isset($row['joined_spayc']) && !empty($row['joined_spayc'])) {
+                $joinedSpayc = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[status=Joined]');
+                $createdSpayc = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[is_admin=2,status=Joined]');
+                $row->joinedSpayc=count($joinedSpayc);
+                $row->createdSpayc=count($createdSpayc);
+                unset($row['joined_spayc']);
+                }               
+                $row->friend = !empty($row['requestedto'][0]['count'])? $row['requestedto'][0]['count'] : BLANK_COUNT;
+                $row->friend += !empty($row['requestedby'][0]['count'])? $row['requestedby'][0]['count'] : BLANK_COUNT;
+                $row->userAdvertisement = !empty($row['advertisement'][0]['count'])? $row['advertisement'][0]['count'] : BLANK_COUNT;
+                unset($row['requestedby']);
+                unset($row['requestedto']);
+                unset($row['advertisement']);
+                return $row;
+            });
+        });
+        return $query;
+    }
+
     /**
      * Returns a rules checker object that will be used for validating
      * application integrity.
@@ -216,5 +275,15 @@ class UsersTable extends Table
             return false;
         }
         
+    }
+
+    public function getUserByMatrixUserId($matrixUserId=null) {
+        $userObj = '';
+        if(!empty($matrixUserId)){
+        $userObj = $this->Users->find()->select(['id', 'display_name'])->contain([ 'UserImages'=>function($q) {
+                return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
+            }])->where(['matrix_user_id'=>$matrixUserId])->first();
+        }
+        return $userObj;
     }
 }

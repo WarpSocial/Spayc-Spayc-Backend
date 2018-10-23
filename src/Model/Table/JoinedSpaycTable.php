@@ -5,6 +5,8 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Core\Configure;
+use Cake\ORM\TableRegistry;
 
 /**
  * JoinedSpayc Model
@@ -88,12 +90,25 @@ class JoinedSpaycTable extends Table
         return $rules;
     }
 
+    public function getPhysicalPresentUsersIdBySpaycId($spaycId = null) {       
+
+        $physicalPresentUsersIds = $this->find("all", ['fields' => ['id', 'user_id','distance'], 'conditions' => ['spayc_id' => $spaycId,'status'=>JOINED, 'distance <=' => Configure::read('miles')]]);
+        if ($physicalPresentUsersIds->isEmpty()) {
+            return false;
+        }
+        $ids = [];
+        foreach ($physicalPresentUsersIds as $physicalPresentUsersId) {
+            array_push($ids, $physicalPresentUsersId->user_id);
+        }
+        return $ids;
+    }
+
     public function getTotalJoinedFriends($spaycId = null, $userIds = []) {
-        return $this->find("all", ['fields' => ['id'], 'conditions' => ['spayc_id' => $spaycId, 'user_id IN' => $userIds,'status'=>'Joined']])->count();
+        return $this->find("all", ['fields' => ['id'], 'conditions' => ['spayc_id' => $spaycId, 'user_id IN' => $userIds,'status'=>JOINED]])->count();
     }
 
     public function getJoinedSpaycIds($userId = null) {
-        $spaycId = $this->find("all", ['fields' => ['id', 'spayc_id'], 'conditions' => ['user_id' => $userId,'status'=>'Joined']]);
+        $spaycId = $this->find("all", ['fields' => ['id', 'spayc_id'], 'conditions' => ['user_id' => $userId,'status'=>JOINED]]);
         $ids = [0];
         if ($spaycId->count()) {
             $spaycIds = $spaycId->toArray();
@@ -110,5 +125,9 @@ class JoinedSpaycTable extends Table
             $ids = \Cake\Utility\Hash::extract($userIds, '{n}.user_id');
         }
         return $ids;
+    }
+    public function getJoinedSpaycObj($spaycId = null, $userId = null) {
+     $jsObj =$this->find()->where(['spayc_id'=>$spaycId, 'user_id'=>$userId])->first();
+     return $jsObj;
     }
 }

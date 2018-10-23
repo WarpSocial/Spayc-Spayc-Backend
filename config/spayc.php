@@ -1,13 +1,15 @@
 <?php
 return [
     'title' =>'Warp',
+    'app_version' => '0.0.2',
     'gender'=>['Male', 'Female', 'Other'],
     'spayctype'=>['Event', 'Community'],
     'grouptype'=>['Public', 'Private'],
+    'payment_type'=>['Paid', 'Free','NA'],    
     'pagelimit'=>5,
     'miles'=>1,
-    'newSpaycDistance'=>25,/* Miles*/
-    'friend_requested_status'=>['Pending', 'Accepted', 'Blocked','Unblock','is_direct','Decline','Unfriend'],
+    'newSpaycDistance'=>5,/* Miles*/
+    'friend_requested_status'=>['Pending', 'Accepted', 'Blocked','Unblock','is_direct','Decline','Unfriend', 'Suggested'],
     'add_friend'=>['Pending'],
     'accept_decline_status'=>['Accepted', 'Decline'],
     'block_status'=>['Blocked'],
@@ -43,5 +45,10 @@ return [
         'image/svg+xml' => 'svg',
         'image/svg+xml' => 'svgz',
     ],
-    'userstatus_subject'=>'User Status'
+    'userstatus_subject'=>'User Status',
+    'spaycstatus_subject'=>'Warp Status',
+    'custom_messages_subject'=>'Message from Admin',
+    'advertisement_deleted_by_admin'=>'Advertisement Deleted',
+    'spayc_deleted_by_admin'=>'Warp Deleted',
+    'support_email' =>'support@warp.com',
 ];

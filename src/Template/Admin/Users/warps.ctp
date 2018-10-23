@@ -1,23 +1,22 @@
 <?php 
 use Cake\Routing\Router;
+$statusArr = unserialize(STATUS_ARR);
 $spaycTypeArr = unserialize(SPAYC_TYPE_ARR);
 $groupTypeArr = unserialize(GROUP_TYPE_ARR);
+$txtMassage = unserialize(TEXT_MASSAGE);  
 $spaycsCount=$filter=false;
 if(count($spaycs) > 0) 
   $spaycsCount=true; 
 if($this->request->query())
   $filter=true;
-?>
-<!--=============breadcrumbs==============-->            
-      <div class="breadcrumbs">
-        <div class="container">
-          <h4>Manage Users</h4>
-          <p><span>Users</span> <span>Warps Created by <?= !empty($user->display_name)?ucwords($user->display_name):''?>  </span></p>
-        </div>
-      </div>
 
-<section class="content-wrapper content-filter">
-<span class="error-alert users-msg header-alert" style="display: none;"></span>
+$breadcrumbTxt = !empty($listBy) ? SITE_TITLE.'s '.$listBy.' by '.ucwords($user->display_name):''; 
+?>       
+
+<!--=============breadcrumbs==============-->      
+<?php echo $this->element('admin/breadcrumbs', ['action'=> $breadcrumbTxt]);?>
+<section class="content-wrapper content-filter main-spayc-div">
+ <span class="error-alert alert-fixed-position spaycs-msg header-alert" style="display: none;"></span>
         <!--===========filter================-->        
         <?php if($spaycsCount || $filter){ 
                 echo $this->element('admin/user-filter', ['userFilter'=> false]);
@@ -26,23 +25,37 @@ if($this->request->query())
           <div class="event-box-wrapper clearfix">
             <!--=======Square-box=======-->
               <?php if ($spaycsCount) {
-                $spaycImgShadow = 'gradient-layer.png';
-                foreach($spaycs as $spayc) {                
-                  $spaycImg ='no-image.png';
-                  $spaycImgClass ='no-image-placeholder';
+                 $spaycImgShadow = 'gradient-layer.png';
+                foreach($spaycs as $spayc) {    
+                  $spayEmoji=false;
+                  $spaycImg ='no-image.png';                 
+                  $spaycImgClass ='no-image-placeholder';                  
                   if(!empty($spayc->image)){
-                    $spaycImg =$spayc->image;
+                    $spaycImg =$spayc->image;                                
                     $spaycImgClass='';
+                  } else if(!empty($spayc->spayc_category->code)){
+                    $spayEmoji=true;
+                    $dec = hexdec($spayc->spayc_category->code);
+                    $spaycImg ="&#$dec;"; 
                   }
+
+                  
+                  
+                  
               ?>  
-              <div class="square-box">
-                  <div class="image-wrap <?= $spaycImgClass?>">
-                    <?= $this->Html->image($spaycImg, ["alt" => "", 'class' =>'']); ?>
+              <?php                
+              $blocktxt =(ucfirst($spayc->status) == $statusArr['active'])?"Block":"Unblock";?>
+              <div class="square-box spayc-div-listing <?php echo $blocktxt =='Block'?'':'disabled';?>">
+                  <div class="image-wrap <?= !empty($spayEmoji)?'blank-emoji':''?> <?= $spaycImgClass?>">
+                    <?php if($spayEmoji){
+                      echo "<span class='emoji d-flex align-items-center justify-content-center w-100 h-100'>".$spaycImg."</span>";
+                    } else { ?>
+                    <?php echo $this->Html->image($spaycImg, ["alt" => "", 'class' =>'']); }?>
                     <?= $this->Html->image($spaycImgShadow, ["alt" => "", 'class' =>'img-shadow']); ?>
                       <div class="box-heading <?= strtolower($spayc->type)?>"><?= !empty($spayc->type)?$spayc->type:BLANK?></div>
                       <div class="tag-line ell">
                           <span><?= !empty($spayc->name)?$spayc->name:BLANK?></span>
-                          <i class="icon-<?= strtolower($spayc->group_type) ?>-icon"></i>
+                        <i class="icon-<?= strtolower($spayc->group_type) ?>-icon"></i>
                       </div>
                       <!--======dropdown===-->
                       <div class="dropdown table-view-dropdown square-box-dropdown">
@@ -51,10 +64,12 @@ if($this->request->query())
                           <span></span>
                           <span></span>
                         </div>
-                        <div class="dropdown-menu" aria-labelledby="table-data-dropdown_<?= $spayc->id?>">                             
-                          <?= $this->Html->link("<i class='icon-view'></i>View",['controller' => 'Spaycs', 'action' => 'view',$spayc->id,$spayc->user_id], ['class' => 'dropdown-item view','escape' => false]);?>    
-                          <button class="dropdown-item block"> <i class="icon-block"></i>Block</button>
-                          <button class="dropdown-item delete"> <i class="icon-Delete"></i>Delete</button>
+                      <div class="dropdown-menu" aria-labelledby="table-data-dropdown_<?= $spayc->id?>">                         
+                      <?= $this->Html->link("<i class='icon-view'></i>View",['controller' => 'Spaycs', 'action' => 'view',$spayc->id,$spayc->user_id], ['class' => 'dropdown-item view','escape' => false]);?>  
+                      <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item status_<?php echo $spayc->id?> <?php echo strtolower($blocktxt)?>" page="<?php echo $this->Url->build(["controller" => "Spaycs","action" => "setSpaycStatus",$spayc->id]);?>"><i class='icon-block'></i><span class="status_<?php echo $spayc->id?>"><?php echo $blocktxt?></span>
+                      </a>
+                        <a href="javascript:void(0)" rel="modal-dialog-xs confirm-message" class="pop dropdown-item delete" page="<?php echo $this->Url->build(["controller" => "Spaycs","action" => "deleteSpayc",$spayc->id]);?>"><i class='icon-Delete'></i>
+                            <span>Delete</span></a>
                         </div>
                       </div>
                   </div>
@@ -116,6 +131,16 @@ if($this->request->query())
           <p>Seems like no user has created the spayc yet!</p>
         </div>
       </div>
-    <?php } ?>
+    <?php }  ?>
+    <div id="no-spayc" class="hide">       
+    <div class="no-data-wrapper" >
+        <div class="no-data no-spayc">          
+          <?php echo $this->Html->image('no-spayc.png', ["alt" => "", 'class' =>'mb-30' ]);?>
+          <h2> No Spayc Found!</h2>
+          <p>Seems like no user has created the spayc yet!</p>
+        </div>
+      </div>
+   </div>
+
 </section>
-<?php echo $this->Html->script(['admin/admin-manage-user']); ?>
+<?php echo $this->Html->script(['admin/spayc','admin/admin-manage-user']); ?>

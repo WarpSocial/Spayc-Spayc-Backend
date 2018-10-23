@@ -10,10 +10,12 @@
         "cakephp/cakephp": "3.5.*",
         "cakephp/migrations": "^1.0",
         "cakephp/plugin-installer": "^1.0",
-        "dereuromark/cakephp-queue": "3.7",
+        "dereuromark/cakephp-queue": "3.7.0",
         "facebook/graph-sdk": "^5.6",
+        "intervention/image": "^2.4",
         "josegonzalez/dotenv": "2.*",
         "mobiledetect/mobiledetectlib": "2.*",
+        "phpoffice/phpspreadsheet": "^1.4",
         "wyndow/fuzzywuzzy": "@stable"
     },
     "require-dev": {
@@ -32,7 +34,8 @@
     "autoload": {
         "psr-4": {
             "App\\": "src/",
-            "Api\\": "./plugins/Api/src"
+            "Api\\": "./plugins/Api/src",
+            "App\\Redis\\": "src/Redis"
         }
     },
     "autoload-dev": {

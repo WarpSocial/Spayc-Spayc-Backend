@@ -90,8 +90,8 @@ class SpaycCategoriesTable extends Table {
                     $row->modified = Utils::toClient($row->modified);
                     if(!empty($row->children)){
                         foreach($row->children as $skey => $subrow){
-                            $row->children[$skey]->created = Utils::toClient($subrow->created);
-                            $row->children[$skey]->modified = Utils::toClient($subrow->modified);
+                            //$row->children[$skey]->created = Utils::toClient($subrow->created);
+                            //$row->children[$skey]->modified = Utils::toClient($subrow->modified);
                             unset($row->children[$skey]->children);
                         };
                     }

@@ -43,6 +43,8 @@
 @apiParam {String} longitude        Langitude from google map (Required).
 @apiParam {String} latitude         Latitude from google map (Required).
 @apiParam {Integer} spayc_category_id  existing Category id(Required).
+@apiParam {String}  payment_type    payment option and value must be Free,Paid or NA(Required).
+@apiParam {String}  ticket_url      Payment ticket url must be comma separated (Optional).
 @apiParam {String} invite           Matrix user id is optional in query string(Optional).
 
 @apiExample Example usage:
@@ -117,6 +119,8 @@ function postSpaycs() { return; }
 @apiParam {String} passcode         Passcode is required in case of private group type.
 @apiParam {String} description      Description for SPAYC (Optional).
 @apiParam {String} image            Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
+@apiParam {String}  payment_type    payment option and value must be Free,Paid or NA(Required).
+@apiParam {String}  ticket_url      Payment ticket url must be comma separated (Optional).
 @apiParam {Integer} spayc_category_id  existing Category id(Required).
 @apiParam {String} longitude        Langitude from google map (Required).
 @apiParam {String} latitude         Latitude from google map (Required).
@@ -268,11 +272,12 @@ function postSubspaycs() { return; }
  * 
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  * 
- *    @apiParam {Number}      page            Page number in query string (Optional).
- *    @apiParam {Number}      limit           Limit in query string (Optional).
- *    @apiParam {Timestamp}   start_date      Spayc start date in query string(1515542400) (Optional).
- *    @apiParam {Timestamp}   end_date        Spayc end date in query string(1515715200) (Optional).
- *    @apiParam {String}      group_type      Group type must be any one from the following (Public|Private) (Optional).
+ *    @apiParam {Number}    page    Page number in query string (Optional).
+ *    @apiParam {Number}    limit   Limit in query string (Optional).
+ *    @apiParam {Datetime}  date    date format must in timestamp (optional).
+ *    @apiParam {Integer}   radius   distance in Miles(optional).
+ *    @apiParam {String}    payment_type    value must be toggling between free and paid(Optional).
+ *    @apiParam {String}    group_type      Group type must be any one from the following (Public|Private) (Optional).
  *    @apiParam {String}      type            Spayc type must be any one from the following (Event|Community) (Optional).
  *    @apiParam {String}      latitude        Latitude is required in query string(Optional in case of created, joined).
  *    @apiParam {String}      longitude       Longitude is required in query string(Optional in case of created, joined).
@@ -450,6 +455,11 @@ function postUnSubscribeSpayc() { return; }
         "description": "devspace",
         "group_type": "Public",
         "type": "Community",
+        "payment_type": "Free",
+        "ticket_url":[
+            "http://google.com?pgsql=&username=xx",
+            "http://github.com/"
+        ],
         "start_date": "03-11-2018 09:16:00",
         "end_date": "03-12-2018 09:23:00",
         "passcode": "",
@@ -549,7 +559,7 @@ function postChatRoom() { return; }
  * 
 
     @apiParam {String}     room_id      Spayc matrix room id or spayc id in query string (Required).
-    @apiParam {String}      status     Status of user, value must be any one from following(Pending|Joined) (Optional).
+    @apiParam {String}      status     Status of user, value must be any one or comma separated from following(Pending|Joined|Banned) (Optional).
     @apiParam {Digit}      page        Page no(Optional).
     @apiParam {Digit}      limit       No of record to retrieve(Optional).
  *
@@ -1013,8 +1023,9 @@ function hashTagSpaycs() { return; }
     @apiParam {String}      center_longitude           Center Screen Longitude (Required).
     @apiParam {String}      endpoint_latitude          Corner Screen Latitude (Required).
     @apiParam {String}      endpoint_longitude         Corner Screen Longitude (Required).
-
-    @apiParam {String}      time                     Spayc Time must be comma separated if more than one and value must be present|past|future(Optional).
+    @apiParam {String}      radius         Redius between required two points.
+    @apiParam {String}      payment_type             value must be toggling between free and paid(Optional).
+    @apiParam {Datetime}    current_date    Client current date and date format must be timestamp (Optional).
     @apiParam {String}      spayc_type               Spayc Type (Optional).
     @apiParam {String}      group_type               Spayc Group Type (Optional).
     @apiParam {String}      wrap_with_friends        Spayc having with friends (Optional).
@@ -1032,6 +1043,8 @@ function hashTagSpaycs() { return; }
         "spayc_type": "Event|Community",
         "group_type": "Public|Private",
         "wrap_with_friends": "yes|no",
+        "current_date":"1531094400",
+	"payment_type":"Paid"
         "hashtag_id": "1,2,3",
         "category_id": "5,6"
         
@@ -1799,3 +1812,57 @@ function postRemoveFromSpayc() { return; }
  * @apiUse UserErrorResponse
  */
 function getSubscribedSpaycs() { return; }
+/**
+ * @api {put} /update-comment/:matrix_room_id.json Update Comment
+ * @apiVersion 0.1.0
+ * @apiName putUpdateComment
+ * @apiGroup Spayc
+ * @apiPermission private
+ *
+ * @apiDescription Update comment placed inside room.Append matrix room id in url
+ *    
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Request proccess successfully.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+ {
+    "status": "success",
+    "message": "Request proccess successfully."
+ }
+ *
+ * @apiUse UserErrorResponse
+ */
+function putUpdateComment() { return; }
+/**
+ * @api {get} /events-image.json?events=:matrix_room_id Events(Warp) image
+ * @apiVersion 0.1.0
+ * @apiName getEventsImage
+ * @apiGroup Spayc
+ * @apiPermission private
+ *
+ * @apiDescription Get the list of images of warps.
+ * 
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * 
+ * @apiParam {String}   events  *Matrix room id and in case of more than one id value must be comma separated(Required).
+ 
+ *    
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of subscribed warp.
+ * @apiSuccess {Object} data List of events image.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "List of events image.",
+    "data": {
+        "!reXtnytclkKOGDiMdr:127.0.0.1": "http://i.ebayimg.com/images/g/2SMAAOSwstxVQBE7/s-l1600.jpg",
+        "!zQpSDoOyaYMwRYerRS:127.0.0.1": "http://i.ebayimg.com/images/g/TTwAAOSwpDdVXg8t/s-l1600.jpg"
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function getEventsImage() { return; }

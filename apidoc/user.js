@@ -470,6 +470,8 @@ function postForgotPassword() { return; }
         "bio_data": null,
         "longitude": 77.391026,
         "latitude": 28.535516,
+        "ghost_mode_search": 0,
+        "ghost_mode_map": 1,
         "matrix_user_id": null,
         "user_images": [
             {
@@ -645,6 +647,33 @@ function postProfileImage() { return; }
  * @apiUse UserErrorResponse
  */
 function putSetProfileImage() { return; }
+/**
+ * @api {put} /ghost-mode.json Ghost Mode Settings
+ * @apiVersion 0.1.0
+ * @apiName putGhostMode
+ * @apiGroup User
+ * @apiPermission Private
+ *
+ * @apiDescription add setting for ghost mode.Any one key is required.
+ *
+ * @apiHeader {String} token Token must be set in header.
+ *
+ * @apiParam {Integer} ghost_mode_search  Ghost mode setting for search value must be either 0 or 1 (Optional|required).
+ * @apiParam {Integer} ghost_mode_map user Ghost mode setting for map value must be either 0 or 1 (Optional|required).
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Ghost mode setting change successfully.
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "Ghost mode setting change successfully."
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function putGhostMode() { return; }
 
 /**
  * @api {get} /remove-avatar/:order.json Remove Profile Image
@@ -930,11 +959,10 @@ function postFriendRequest() { return; }
   @apiUse UserErrorResponse
 */
 function setFriendStatus() { return; }
-
 /**
  @api {post} /read-notifications.json Read notification
   @apiVersion 0.1.0
-  @apiName readNotification
+  @apiName postReadNotifications
   @apiGroup User
   @apiPermission Private User
  
@@ -964,3 +992,40 @@ function setFriendStatus() { return; }
   @apiUse UserErrorResponse
 */
 function postReadNotifications() { return; }
+/**
+ @api {post} /spam-reports.json Spam Reports
+ @apiVersion 0.1.0
+ @apiName postSpamReports
+ @apiGroup User
+ @apiPermission Private User
+ 
+ @apiDescription Mark user as spam user from warp.
+  
+ @apiHeader {String} TOKEN  * Token must be in header
+ 
+ @apiParam  {String} matrix_room_id  * Matrix room id (required).
+ @apiParam  {String} reported_to  * Matrix user id to whom make spam user(required).
+ @apiParam  {String} event_id  * Matrix event warp id(required).
+
+ @apiExample Example usage:
+ 
+    {
+	"matrix_room_id":"!bveMFWvYgJpOzAoZGC:127.0.0.1",
+	"reported_to":"@pluck_1525939089:127.0.0.1",
+	"event_id":"sdfdsf"
+    }
+ 
+ @apiSuccess {String} status success.
+ @apiSuccess {String} message You have reported successfully..
+ @apiSuccess {Object} data Null.
+ @apiSuccessExample {json} Success-Response: 
+       HTTP/1.1 200 OK
+        {
+            "status": "success",
+            "message": "You have reported successfully."
+        }
+ 
+ @apiError {String}  You have already reported this user as spam user.Admin will take care about this reports.
+  @apiUse UserErrorResponse
+*/
+function postSpamReports() { return; }

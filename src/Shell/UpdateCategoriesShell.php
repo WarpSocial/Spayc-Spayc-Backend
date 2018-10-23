@@ -42,11 +42,10 @@ class UpdateCategoriesShell extends Shell
      *
      * @return bool|int|null Success or error code.
      */
-    public function main()
-    {
+    public function main(){
        $this->out('Process start at '.$this->Scraper->currentDateTime());
        $time=UNIQUE_TOKEN;
-       $this->Scraper->setScraperLog('Update Scraper Category based on Spayc Category',$time);
+       $this->Scraper->setScraperLog('Update Scraper Category based on Spayc Category',$time,'UpdateCategoriesShell');
         $response = $this->Scraper->updateScraperCategory();        
        $this->Scraper->updateScraperLog($time);
        $this->out('Process end at '.$this->Scraper->currentDateTime());

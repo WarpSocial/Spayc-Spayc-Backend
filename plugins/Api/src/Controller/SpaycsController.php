@@ -26,6 +26,7 @@ class SpaycsController extends AppController {
     public function initialize() {
         parent::initialize();
         $this->loadComponent('Api.Push');
+        $this->loadComponent('Api.Redis');
         $this->loadComponent('Api.Matrix');
     }
     
@@ -44,9 +45,10 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
         }
         $data = $this->request->getData();
+        //$this->Matrix->uploadMediaImage($data);die(" #END#");
         $data['type'] = !empty($data['type'])?ucfirst($data['type']):'';
         $data['group_type'] = !empty($data['group_type'])?ucfirst($data['group_type']):'';        
-        $data['status'] = 'Active';
+        $data['status'] = ACTIVE;
         
         $entity = $this->Spaycs->newEntity();
         $items = $this->Spaycs->patchEntity($entity, $data);
@@ -71,6 +73,7 @@ class SpaycsController extends AppController {
         $items->set('user_id', $this->Auth->user('id'));
         if (!$items->errors()) {
             if($this->Spaycs->save($items)) {
+                $this->Redis->addSpayc($items);
                 $items->job_type = 'new-spayc';
                 $items->created_duration = Utils::toClient($items->created);
                 TableRegistry::get('Queue.QueuedJobs')->createJob('Generic',$items->toArray());
@@ -84,7 +87,7 @@ class SpaycsController extends AppController {
                 $this->response->statusCode(201);
                 $response = ['status'=>'success','message'=>__('Your warp '.ucfirst($data['name']).', has been created.'),'data'=>$items];
                 /*Event to bind to update the set upload room image */
-                $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
+                /*$event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
                     'options' => [
                         'matrix_token'=>$data['matrix_token'],
                         'image'=> $items->image,
@@ -92,6 +95,8 @@ class SpaycsController extends AppController {
                         ]
                 ]);
                 EventManager::instance()->dispatch($event);
+                 * 
+                 */
             }else{
                 $this->restException(['status'=>'failed', 'message'=>__('The warp could not be saved. Please, try again.')], 400);
             }
@@ -131,11 +136,9 @@ class SpaycsController extends AppController {
             $this->restException(['status'=>'failed','message'=>__('Warp inside subwarp is not allowed.')], 400);
         }
         if(empty($parentObj->joined_spayc)){
-            $this->restException(['status'=>'failed','message'=>__('You don\'t have sufficient right to create subspace.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('You don\'t have sufficient right to create subwarp.')], 400);
         }
-        if(!empty($parentObj->parent_id)){
-            $this->restException(['status'=>'failed','message'=>__('Not allowd to create subwarp of subwarp.')], 400);
-        }
+       
         $data['parent_id'] = $parentObj->id;
         $data['start_date'] = $parentObj->start_date;
         $data['end_date'] = $parentObj->end_date;
@@ -161,9 +164,10 @@ class SpaycsController extends AppController {
         $items->set('user_id', $this->Auth->user('id'));
         if (!$items->errors()) {            
             if($this->Spaycs->save($items)){
-              $data['image'] = $items->get('image');
-              $data['matrix_room_id'] = $items->get('matrix_room_id');
-              //Joined the invite to the room//
+                $this->Redis->addSpayc($items);
+                $data['image'] = $items->get('image');
+                $data['matrix_room_id'] = $items->get('matrix_room_id');
+                //Joined the invite to the room//
                 $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
                  if(!empty($items['description'])) {
                     TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
@@ -172,7 +176,7 @@ class SpaycsController extends AppController {
                 $data['id'] = $items->id;
                 $response = ['status'=>'success','message'=>__('Subwarp Created Successfully'),'data'=>$data];
                 /*Event to bind to update the set upload room image */
-                $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
+               /* $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
                     'options' => [
                         'matrix_token'=>$data['matrix_token'],
                         'image'=> $items->get('image'),
@@ -180,11 +184,13 @@ class SpaycsController extends AppController {
                         ]
                 ]);
                 EventManager::instance()->dispatch($event);
+                * 
+                */
             }else{
-                $this->restException(['status'=>'failed', 'message'=>__('Subspace could not be saved. Please, try again.')], 400);
+                $this->restException(['status'=>'failed', 'message'=>__('Subwarp could not be saved. Please, try again.')], 400);
             }
         } else {
-            $this->restException(['status'=>'failed', 'message'=>__('Subspace could not be saved. Please, try again.')], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('Subwarp could not be saved. Please, try again.')], 400);
         }
         $this->set($response);
     }
@@ -270,7 +276,6 @@ class SpaycsController extends AppController {
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Accepted');
         $lat = $this->request->getQuery('latitude',null);
         $long = $this->request->getQuery('longitude',null);
-        
         $spaycs = $this->Spaycs->find();
         $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.spayc_category_id','distance'=>0])
             ->where(['Spaycs.status'=>'Active','Spaycs.parent_id IS'=>null,'Spaycs.group_type !='=>'trusted_private'])
@@ -297,10 +302,14 @@ class SpaycsController extends AppController {
         }
          if($lat != null && $long != null){
             $distance = "ROUND( CAST(".str_replace(':long',$long,str_replace(':lat',$lat,$this->Spaycs->distanceInMiles))." AS numeric), 3)";
-            $spaycs->select(['distance'=>$distance])
-                    //->bind(':lat', $lat, 'float')
-                    //->bind(':long', $long, 'float')
-                    ->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
+            $spaycs->select(['distance'=>$distance]);
+            if(!empty($this->request->getQuery('radius'))){
+                $radius = $this->request->getQuery('radius');
+                $spaycs->where(function (QueryExpression $exp) use ($distance,$radius) {
+                    return $exp->lte($distance,$radius);
+                });
+            }
+            $spaycs->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
         }else if(!empty($this->request->query('hot'))) {
             
         }else{
@@ -314,21 +323,35 @@ class SpaycsController extends AppController {
             $ids = TableRegistry::get("Api.JoinedSpayc")->getJoinedSpaycIds($userId);
             $spaycs->where(['Spaycs.id IN'=>$ids]);
         }
-        
-        if($this->request->query('start_date')) {
-            $date = new \Cake\I18n\Time($this->request->query('start_date'));
-            $startDate = Utils::setUtc($date->format('Y-m-d H:i:s'), Configure::read("timezone"));
-            $spaycs->where(["Spaycs.start_date >="=>$startDate]);
-        }
-        
-        if($this->request->query('end_date')) {
-            $date = new \Cake\I18n\Time($this->request->query('start_date'));
-            $endDate = Utils::setUtc($date->format('Y-m-d H:i:s'), Configure::read("timezone"));
-            $spaycs->where(["Spaycs.end_date <="=>$endDate]);
+        $startDate = "TO_TIMESTAMP(cast(Spaycs.start_date as text),'YYYY-MM-DD HH24:MI')"; 
+        $endDate = "TO_TIMESTAMP(cast(Spaycs.end_date as text),'YYYY-MM-DD HH24:MI')"; 
+        if(!empty($this->request->query('date'))) {
+            if(!Utils::validTimestamp($this->request->query('date'))){
+                 $this->restException(['status'=>'failed','message'=>__('Date format is not valid.')], 400);
+            }
+ 
+            $user_date = Time::createFromTimestamp($this->request->query('date'), Configure::read('timezone'));
+            $endObj = clone $user_date;            
+            $endObj->modify('+1 days');
+            $endObj->modify('1 second ago'); 
+            $dayStart = $user_date->setTimezone('UTC')->format("Y-m-d H:i");
+            $endDay = $endObj->setTimezone('UTC')->format("Y-m-d H:i");  
+            $spaycs->where([
+                'OR'=>[[$startDate.' >='=>$dayStart],[$endDate.' >= '=>$dayStart]]
+                ]);
+            $spaycs->where([
+                'OR'=>[[$startDate.' <='=>$endDay],[$endDate.' <= '=>$endDay]]
+                ]);
         }
         
         if(in_array(ucfirst($this->request->query('spayc_type')), ['Event', 'Community'])) {
             $spaycs->where(["Spaycs.type"=>ucfirst($this->request->query('spayc_type'))]);
+        }
+        
+        if(!empty($this->request->query('payment_type'))) {
+           if(strtolower($this->request->query('payment_type')) == strtolower(FREE)){
+                $spaycs->where(["LOWER(Spaycs.payment_type)"=> strtolower($this->request->query('payment_type'))]);
+            }
         }
         
         if(in_array(ucfirst($this->request->query('group_type')), ['Public', 'Private'])) {
@@ -344,10 +367,12 @@ class SpaycsController extends AppController {
         }
         if(!empty($this->request->query('hot')) && (strtolower($this->request->query('hot')) == 'yes')) {
            $spaycs->select(['joined_user'=>$spaycs->func()->count('JoinedSpayc.spayc_id')]);
-           $spaycs->leftJoinWith('JoinedSpayc');
+           $spaycs->leftJoinWith('JoinedSpayc',function($q){
+               return $q->where(['JoinedSpayc.status'=>JOINED]);
+           });
            $spaycs->group(['Spaycs.id, Spaycs.name,Spaycs.user_id, Spaycs.location, Spaycs.image, Spaycs.group_type, Spaycs.type,Spaycs.start_date,
 Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,SpaycCategories.id,SpaycCategories.name,Spaycs.created']);
-           $spaycs->order(['joined_user'=>'DESC','Spaycs.created'=>'DESC'],Query::OVERWRITE);
+           $spaycs->order(['joined_user'=>'DESC','distance'=>'ASC','Spaycs.created'=>'DESC'],Query::OVERWRITE);
         }
         if($page < 0){
             $page = $page*-1;
@@ -388,7 +413,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
             });
         });
         
-        //pr($spaycs->toArray());die;
+        #pr($spaycs->toArray());die;
         //$newQuery = clone $spaycs;
         $data['count'] = $spaycs->count();
         $data['spaycs'] = [];
@@ -402,7 +427,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         
         $this->set($response);
     }
-
+    
     /**
      * subscribeSpayc method to subscribe the user from the spayc
      * 
@@ -421,7 +446,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
             $this->restException(['status'=>'failed','message'=>__('Warp id is required fields.')], 400);
         }
         $data['spayc_id'] = ApiHasher::decrypt($data['spayc_id']);
-        $spaycs = TableRegistry::get('Api.Spaycs')->find('all',['fields'=>['id','name','image','matrix_room_id','user_id']])->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
+        $spaycs = TableRegistry::get('Api.Spaycs')->find('all',['fields'=>['id','name','image','matrix_room_id','user_id','parent_id']])->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
         if($spaycs->isEmpty()){
             $this->restException(['status'=>'failed','message'=>__('This warp is no longer exist.')], 400);
         }
@@ -436,22 +461,33 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
                 $this->restException(['status'=>'failed','message'=>__('User has been already subscribed.')], 400);
            }
         }
-        
+        $nowTime = Utils::toUtc('05-31-2018 8:13:00');
         $entity->user_id = $data['user_id'];
         $entity->status = 'Active';
         $entity->spayc_id = $spayc->id;
-        //$entity->status = 'Active';
-        $entity->modified = new \Cake\I18n\Time();
-        $entity->created = new \Cake\I18n\Time();
+        $entity->modified = $nowTime;
+        $entity->created = $nowTime;
         if($scModel->save($entity,['checkRules' => false, 'atomic' => false])){
             $this->Matrix->muteUnmute('Unmute',$user['UserLogs']['matrix_access_token'], $spayc->matrix_room_id);
+            /* If user not joined and want to subscribed the spayc so only joined will be done on matrix*/
             if(!(TableRegistry::get('Api.JoinedSpayc')->exists(['user_id'=>$data['user_id'],'spayc_id'=>$spayc->id]))){
                 $this->Matrix->joinRoom([
                     'status'=>'Joined',
                     'matrix_token'=>$user['UserLogs']['matrix_access_token'],
                     'matrix_room_id' => $spayc->matrix_room_id
                 ]);
+                $this->Matrix->tagRoom($spayc->matrix_room_id,$user['UserLogs']['matrix_access_token'],$user['matrix_user_id']);
             }
+            /* for subspayc user will be subscribe automatically */
+            $data = $data+[
+                'matrix_token' => $user['UserLogs']['matrix_access_token'],
+                'matrix_user_id' => $user['matrix_user_id'],
+                'datetime' => $nowTime,
+                'action_type' => 'subspayc',
+                'rule' => 'Unmute'
+            ];
+            TableRegistry::get('Queue.QueuedJobs')->createJob('MuteUnmute',$data);
+            
             $push = [
                 'slug' => 'user-subscribed-to-your-spayc',
                 'requested_by' => $user['id'],
@@ -483,7 +519,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
      * @param String|Number $spayc_id Either spayc id or matrix room id
      * @return Object Json object
      */
-    public function unSubscribeSpayc(){
+    public function unSubscribeSpayc(){        
         if (!$this->request->is('post')) {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 405);
         }
@@ -503,14 +539,28 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         $entities = $scModel->find('all',['field'=>['id','user_id','spayc_id','status']])->where(['spayc_id'=>$spayc->id,'user_id'=>$data['user_id']]);      
         if($entities->isEmpty()){
              $this->restException(['status'=>'failed','message'=>__('User has not yet subscribed.')], 400);
-        }else{
-            $entity = $entities->first();
-            if($entity->status == 'Inactive'){
-                $this->restException(['status'=>'failed','message'=>__('User has been already un-subscribed.')], 400);
-           }
         }
+        $entity = $entities->first();
+        if($entity->status == 'Inactive'){
+            $this->restException(['status'=>'failed','message'=>__('User has been already un-subscribed.')], 400);
+       }
+        
         if($scModel->delete($entity)){
             $this->Matrix->muteUnmute('mute',$user['UserLogs']['matrix_access_token'], $spayc->matrix_room_id);
+            /*for subscribed user only who not joined the room but virtually joined the room*/
+            if(!(TableRegistry::get('Api.JoinedSpayc')->exists(['user_id'=>$data['user_id'],'spayc_id'=>$spayc->id]))){
+                $this->Matrix->leaveRoom($spayc->matrix_room_id,$user['UserLogs']['matrix_access_token']);
+                $this->Matrix->deleteTag($spayc->matrix_room_id,$user['UserLogs']['matrix_access_token'],$user['matrix_user_id']);
+            }
+            /* for subspayc user will be unsubscribe automatically */
+            $data = $data+[
+                'matrix_token' => $user['UserLogs']['matrix_access_token'],
+                'matrix_user_id' => $user['matrix_user_id'],
+                'datetime' => Utils::toUtc('05-31-2018 8:13:00'),
+                'action_type' => 'subspayc',
+                'rule' => 'mute'
+            ];
+            TableRegistry::get('Queue.QueuedJobs')->createJob('MuteUnmute',$data);
             $response = ['status'=>'success','message'=>__('User has been unsubcribed successfully.')];
         }else{
             $response = ['status'=>'failed','message'=>__('System failed to unsubscribe the user.')];
@@ -554,11 +604,11 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         
         $bannedSpayc = $this->Spaycs->bannedSpayc($userId);
         $spayc = $this->Spaycs->find();
-        $spayc->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.parent_id','Spaycs.created','Spaycs.modified','Spaycs.spayc_category_id'])
+        $spayc->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.parent_id','Spaycs.created','Spaycs.modified','Spaycs.latitude','Spaycs.longitude','Spaycs.spayc_category_id','Spaycs.payment_type','Spaycs.ticket_url'])
                 ->where(['Spaycs.status'=>'Active', 'OR'=>['matrix_room_id'=>$id,'Spaycs.id'=>$id]])
                 ->contain([
                     'SubSpaycs' => function($q)use($bannedSpayc) {
-                        $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'SubSpaycs.location', 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id']);
+                        $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'SubSpaycs.location', 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id','SubSpaycs.latitude','SubSpaycs.longitude']);
                         if(!empty($bannedSpayc)){
                             $q->where(function (QueryExpression $exp, Query $q)use($bannedSpayc) {
                                 return $exp->notIn('SubSpaycs.id', $bannedSpayc);
@@ -597,6 +647,9 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
             return $results->map(function ($row) use($friend, $userId) {  
                 $row->created = Utils::toClient($row->created);
                 $row->modified = Utils::toClient($row->modified);
+                if(!empty($row->ticket_url)){
+                    $row->ticket_url = explode(',',$row->ticket_url);
+                }
                 $spaycId = ApiHasher::decrypt($row->id);
                 $row['friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
                 $present = 0;$totalJoined=[];
@@ -733,20 +786,22 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
             if($prevDescription != $entity->get('description')) {
                 TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
             }
-            //if($prevLocation != $entity->get('location')){
-            $this->Spaycs->updateDistance($items);                
-            //}
+            if($prevLocation != $entity->get('location')){
+                $this->Spaycs->updateDistance($items);                
+                $this->Redis->addSpayc($items);
+            }
             if(!empty($entity['joined_spayc'])){
                 unset($items->joined_spayc);
             }
             $items = $items->toArray();
+            $items['ticket_url']= !empty($items['ticket_url'])?explode(',', $items['ticket_url']):null;
             $items['created']=  Utils::toClient($items['created']);
             $items['modified'] = Utils::toClient($items['modified']);
             $items['start_date']=  Utils::toClient($items['start_date']);
             $items['end_date'] = Utils::toClient($items['end_date']);
             $response = ['status'=>'success','message'=>__('The warp has been updated successfully.'),'data'=>$items];
             /*Event to bind to update the set upload room image */
-            $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
+            /*$event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
                 'options' => [
                     'matrix_token'=>$data['matrix_token'],
                     'image'=> $items['image'],
@@ -754,6 +809,8 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
                     ]
             ]);
             EventManager::instance()->dispatch($event);
+             * 
+             */
         }else{
             $this->restException(['status'=>'failed', 'message'=>__('The warp could not be updated. Please, try again.')], 400);
         }
@@ -801,6 +858,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         }
 
         $spayc = $entity->first();
+        $spaycId = $spayc->id;
         $spayc->set('matrix_access_token',$user['matrix_access_token']);
         /* To queue the job to process from backend system */
         TableRegistry::get('Queue.QueuedJobs')->createJob('Delete',$spayc->toArray());
@@ -812,10 +870,12 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
        
 //        $this->Matrix->deleteRoom($matrixRoomIds);
         if ($this->Spaycs->delete($spayc)) {
+            $this->Redis->deleteSpayc($spaycId);
             TableRegistry::get('Api.JoinedSpayc')->deleteAll(['spayc_id IN' => $child]);
             TableRegistry::get('Api.SubscribedUsers')->deleteAll(['spayc_id IN' => $child]);
             TableRegistry::get('Api.SpaycHashtags')->deleteAll(['spayc_id IN' => $child]);
             TableRegistry::get('Api.SpaycAdvertisement')->deleteAll(['spayc_id IN' => $child]);
+            TableRegistry::get('Api.Notifications')->deleteAll(['spayc_id IN' => $child]);
              $ids = TableRegistry::get('Api.Promotions')->find()
                      ->select(['id'])
                      ->where(['spayc_id IN' => $child]);
@@ -904,7 +964,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Accepted');
         $query = $this->Spaycs->find()
-                ->select(['Spaycs.id', 'Spaycs.name', 'Spaycs.location','Spaycs.description', 'Spaycs.matrix_room_id', 'Spaycs.start_date', 'Spaycs.end_date', 'Spaycs.image', 'Spaycs.type', 'Spaycs.group_type', 'Spaycs.passcode','Spaycs.user_id','Spaycs.parent_id','Spaycs.spayc_category_id'])
+                ->select(['Spaycs.id', 'Spaycs.name', 'Spaycs.location','Spaycs.description', 'Spaycs.matrix_room_id', 'Spaycs.start_date', 'Spaycs.end_date', 'Spaycs.image', 'Spaycs.type', 'Spaycs.group_type', 'Spaycs.passcode','Spaycs.user_id','Spaycs.parent_id','Spaycs.spayc_category_id','Spaycs.payment_type','Spaycs.ticket_url'])
                 ->where(['Spaycs.status'=>ACTIVE,'Spaycs.parent_id'=>$subspayc])                
                 ->contain([
                     'JoinedSpayc' => function($q) {
@@ -993,6 +1053,12 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
             $long = $pquery->current_longitude;            
         }else{
             TableRegistry::get('Api.PhysicalLocation')->updateLocation($user,$lat,$long);
+             /* update user current status on redis too */
+            $this->Redis->addUser([
+                'id'=>$user['id'],
+                'latitude'=>$lat,
+                'longitude'=>$long,
+            ]);
         }
        
         $date = (new Time('now', Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i:s");
@@ -1060,6 +1126,10 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
                  ) {
             $this->restException(['status'=>'failed', 'message'=> __('Parameter Invalid.')], 400);
          }
+         $currentDate = $this->request->getData('current_date');
+         if(!empty($currentDate) && !Utils::validTimestamp($currentDate)){
+              $this->restException(['status'=>'failed', 'message'=> __('Current date must be valid timestamp.')], 400);
+         }
          if($this->request->getData('hashtag_id') && $this->request->getData('hashtag_id')) {
             $hashtag=explode(",", $this->request->getData('hashtag_id'));
             if(count($hashtag)>MAX_HASHTAG){
@@ -1067,9 +1137,8 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
             }
          }
         $user = $this->Auth->user();
-        $pquery = TableRegistry::get('Api.PhysicalLocation')->findByUserId($user['id']);
-        
         $spayc=TableRegistry::get('Api.Spaycs')->getNearBySpaycsOnMap($this->request->getData(),$user['id']);
+        
         $friends = TableRegistry::get('Api.FriendRequest')->getNearByFriendsOnMap($this->request->getData(), $user['id']);
 //        print_R($friends);die;
         if(!$friends['count'] && !$spayc['count']){

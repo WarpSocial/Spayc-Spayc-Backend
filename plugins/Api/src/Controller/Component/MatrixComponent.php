@@ -8,6 +8,7 @@ use Cake\Network\Http\Client;
 use Cake\Event\Event;
 use Cake\Core\Configure;
 use Api\Utils\Utils;
+use Intervention\Image\ImageManager;
 
 /**
  * Matrix component
@@ -73,6 +74,33 @@ class MatrixComponent extends Component {
         $httpResponse = $http->post(
                 $url, 
                 json_encode($validInput), 
+                $this->bodyType()
+            );
+        $response = json_decode($httpResponse->body,true);
+        if($httpResponse->isOk()){
+            return $response;
+        }else{
+            return false;
+        }
+    }
+    /**
+     * logogut to get user logout from the matrix
+     * 
+     * @param string $accessToken
+     * 
+     * @return Bool true|error
+     */
+    
+    public function logout($accessToken){
+        if(empty($accessToken)){
+            return false;
+        }
+        
+        $url = $this->config('url') .DS.$this->config('client'). DS.'logout?access_token='.$accessToken;
+        $http = new Client();
+        $httpResponse = $http->post(
+                $url, 
+                json_encode([]), 
                 $this->bodyType()
             );
         $response = json_decode($httpResponse->body,true);
@@ -288,16 +316,32 @@ class MatrixComponent extends Component {
     public function uploadMediaImage($data){
         if(empty($data['image_url'])){
             return;
-        }        
-        if(strstr($data['image_url'],'http') !== false){
-            $fileInfo = pathinfo($data['image_url']);
+        }
+        if(!empty($data['image_url1']) && (strstr($data['image_url1'],'http') !== false)){ 
+            $manager = new ImageManager();
+            $img = $manager->make($data['image_url'])->resize(200, 150);
+            $filename = basename($data['image_url']);
+            $contentType = 'image/png';
+            $bodyContent = $img->response('png',80);
+            //$cdnhttp = new Client();
+            //$cdnresponse = $cdnhttp->get($data['image']);
+            //$filename = basename($data['image']);
+            //$contentType = $cdnresponse->getHeaderLine('content-type');
+        }elseif(strstr($data['image_url'],'http') !== false){ 
+            $cdnhttp = new Client();
+            $cdnresponse = $cdnhttp->get($data['image_url']);
+            $filename = basename($data['image_url']);
+            $contentType = $cdnresponse->getHeaderLine('content-type');
+            $bodyContent = $cdnresponse->getBody();
+            //$ext = explode('/',$mimeType)[1];
+            /*$fileInfo = pathinfo($data['image_url']);
             $filename = $fileInfo['basename'];
             $contentType = 'image/'.$fileInfo['extension'];
-            $rawfile = $data['image_url'];
-        }else{
+            $rawfile = $data['image_url'];*/
+        }else{            
             $filename = $data['image_url']['name'];
             $contentType = $data['image_url']['type'];
-            $rawfile = $data['image_url']['tmp_name'];
+            $bodyContent = $data['image_url']['tmp_name'];
         }
         if(empty($data['matrix_token'])){
             $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
@@ -309,7 +353,8 @@ class MatrixComponent extends Component {
         $http = new Client(['headers' => ['Content-Type' =>$contentType]]);
         $httpResponse = $http->post(
                 $url, 
-                file_get_contents($rawfile),
+                $bodyContent,
+                //file_get_contents($rawfile),
                 [
                     'ssl_verify_host' => $this->config('sslverify'), 
                     'ssl_verify_peer' => $this->config('sslverify'),
@@ -413,6 +458,64 @@ class MatrixComponent extends Component {
             return true;
         }
     }
+    /**
+     * tagRoom to tag to the room
+     * 
+     * @param String $matrixRoomId matrix room id
+     * @param String $matrixToken user matrix access token
+     * @param String $matrixUserId matrix user id
+     * @return Bool true or false
+     */
+    public function tagRoom($matrixRoomId = null,$matrixToken = null,$matrixUserId=null,$tag='favourite'){
+        if(empty($matrixRoomId) || empty($matrixToken) || empty($matrixUserId)){
+            return false;
+        }
+        $roomId  = $this->validRoomId($matrixRoomId);
+        $http = new Client();
+        $url = $this->config('url') .DS.$this->config('client').DS.'user'.DS.$matrixUserId.DS.'rooms'. DS.$roomId.'/tags/'.$tag.'?access_token='.$matrixToken;
+       
+        $httpResponse = $http->put(
+            $url, 
+            json_encode(['order'=>1]), 
+            $this->bodyType()
+        ); 
+        
+        $response = json_decode($httpResponse->body,true);
+        if(!empty($response['errcode'])){
+            return $response;
+        }else{
+            return true;
+        }
+    }
+    /**
+     * deleteTag to delete the tag from room
+     * 
+     * @param String $matrixRoomId matrix room id
+     * @param String $matrixToken user matrix access token
+     * @param String $matrixUserId matrix user id
+     * @return Bool true or false
+     */
+    public function deleteTag($matrixRoomId = null,$matrixToken = null,$matrixUserId=null,$tag='favourite'){
+        if(empty($matrixRoomId) || empty($matrixToken) || empty($matrixUserId)){
+            return false;
+        }
+        $roomId  = $this->validRoomId($matrixRoomId);
+        $http = new Client();
+        $url = $this->config('url') .DS.$this->config('client').DS.'user'.DS.$matrixUserId.DS.'rooms'. DS.$roomId.'/tags/'.$tag.'?access_token='.$matrixToken;
+       
+        $httpResponse = $http->delete(
+            $url, 
+            json_encode(['order'=>1]), 
+            $this->bodyType()
+        ); 
+        
+        $response = json_decode($httpResponse->body,true);
+        if(!empty($response['errcode'])){
+            return $response;
+        }else{
+            return true;
+        }
+    }
     
     /**
      * TO JOINE THE MATRIXROOM
@@ -457,7 +560,7 @@ class MatrixComponent extends Component {
     }
     /**
      * banMember method to ban the user from the room
-     * @param Array $data include the matrix_user_id,matrix_token,matrix_room_id
+     * @param Array $data include the matrix_user_id,matrix_token,matrix_room_id and status ban|unbanned
      * @param Bool true|false
      */
     public function banMember($data = []) {
@@ -470,7 +573,7 @@ class MatrixComponent extends Component {
         ];
         $roomId  = $this->validRoomId($data['matrix_room_id']);
         $http = new Client();
-        if($data['status'] == 'Unbanned'){
+        if(strtolower($data['status']) == 'unbanned'){
             $apiEndpoint = 'unban';            
         }else{
             $apiEndpoint = 'ban';
