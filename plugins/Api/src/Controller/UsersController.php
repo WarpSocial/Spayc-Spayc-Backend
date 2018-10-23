@@ -1469,7 +1469,7 @@ class UsersController extends AppController {
         
         $data = $this->request->getData();
         //Log::info($data);
-        //$this->Users->pusherData($data);
+        $this->Users->pusherData($data);
         /* for direct notification */
         if(!empty($data['notification']['content']['actionBy']) && ($data['notification']['content']['actionBy'] == 'Self' )){
             $this->restException($blankObj); 
