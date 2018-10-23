@@ -288,7 +288,7 @@ class UsersController extends AppController {
         $this->loadComponent('Api.Matrix');
         $data = $this->request->getData();
         $data['gender'] = !empty($data['gender'])?ucfirst($data['gender']):'';
-        $data['timezone'] = !empty($data['timezone'])?$data['timezone']:date_default_timezone_get();
+        $data['timezone'] = Configure::read('timezone');
         $data['physical_location']['current_latitude'] = Utils::getVar('latitude', $data);
         $data['physical_location']['current_longitude'] = Utils::getVar('longitude', $data);
         
@@ -1389,7 +1389,7 @@ class UsersController extends AppController {
         }
         
         $data = $this->request->getData();
-        Log::info($data);
+        //Log::info($data);
         //$this->Users->pusherData($data);
         /* for direct notification */
         if(!empty($data['notification']['content']['actionBy']) && ($data['notification']['content']['actionBy'] == 'Self' )){
@@ -1431,7 +1431,7 @@ class UsersController extends AppController {
         }
         $this->loadComponent('Api.Notification');
         //$this->Push->sendOnIOS($items);
-        Log::info($items);
+        //Log::info($items);
         $this->Notification->iosPush($items,$deviceToken);        
         /* Rest job will be done by workers */
         //$data['items'] = $items;

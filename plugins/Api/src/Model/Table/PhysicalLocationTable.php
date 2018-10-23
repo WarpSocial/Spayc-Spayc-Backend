@@ -80,6 +80,7 @@ class PhysicalLocationTable extends Table {
          }
          $pl->set('current_latitude',$lat);
          $pl->set('current_longitude',$long);
+         $pl->set('timezone',Configure::read('timezone'));
         if($this->save($pl,['validate'=>false,'checkRules'=>false,'atomic'=>false])){
             return true;
         }else{
