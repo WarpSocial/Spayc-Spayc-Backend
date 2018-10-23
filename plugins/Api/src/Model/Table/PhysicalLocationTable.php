@@ -93,7 +93,7 @@ class PhysicalLocationTable extends Table {
         if($user->isEmpty()){
            return false; 
         }else{
-            return $user->first();
+            return $user->first()->timezone;
         }
     }
     

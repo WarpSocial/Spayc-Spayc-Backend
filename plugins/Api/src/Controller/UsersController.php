@@ -1503,9 +1503,13 @@ class UsersController extends AppController {
             $this->restException($blankObj);
         }
         $items['device_token'] = $deviceToken = $device['pushkey'];
-        $dto = new DateTime(date('m-d-Y H:i:s',$device['pushkey_ts']), new DateTimeZone($originalTimezone));
-        $dto->setTimezone(new DateTimeZone(Configure::read('default_timezone')))->format('Y-m-d H:i:s');
-        $items['date_time'] = date('m-d-Y H:i:s',$device['pushkey_ts']);
+        $userTimeZone = TableRegistry::get('Api.PhysicalLocation')->physicalLocation($receiverId->id);
+        if(empty($userTimeZone)){
+           $userTimeZone =  Configure::read('default_timezone');
+        }
+        $pushedDate = new \DateTime(date('Y-m-d H:i:s',$device['pushkey_ts']), new \DateTimeZone("UTC"));
+        $items['date_time'] = $pushedDate->setTimezone(new \DateTimeZone($userTimeZone))->format('m-d-Y H:i:s');
+        //$items['date_time'] = date('m-d-Y H:i:s',$device['pushkey_ts']);
         if(!empty($senderId) && !empty($receiverId) && in_array($msgType,['m.replyText','m.likeMessage'])){
             //$items['id'] = Utils::uniqueInteger();
             $items['requested_by'] = $senderId->id;
