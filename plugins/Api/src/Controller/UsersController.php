@@ -1507,7 +1507,7 @@ class UsersController extends AppController {
         if(empty($userTimeZone)){
            $userTimeZone =  Configure::read('default_timezone');
         }
-        $pushedDate = new \DateTime(date('Y-m-d H:i:s',$device['pushkey_ts']), new \DateTimeZone("UTC"));
+        $pushedDate = new \DateTime('now', new \DateTimeZone("UTC"));
         $items['date_time'] = $pushedDate->setTimezone(new \DateTimeZone($userTimeZone))->format('m-d-Y H:i:s');
         //$items['date_time'] = date('m-d-Y H:i:s',$device['pushkey_ts']);
         if(!empty($senderId) && !empty($receiverId) && in_array($msgType,['m.replyText','m.likeMessage'])){
