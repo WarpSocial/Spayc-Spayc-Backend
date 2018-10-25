@@ -140,7 +140,7 @@ class ScraperCategoriesTable extends Table
     
     public function createOtherCategory($name){
         $otherObj = TableRegistry::get('Api.SpaycCategories')->find()->where([
-                     "LOWER(name) LIKE" => "%".strtolower(OTHER_CAT_NAME)."%",
+                     "LOWER(name) LIKE" => strtolower(OTHER_CAT_NAME),
                      'parent_id IS NULL'])
                 ->first();
         if(empty($otherObj)){

@@ -595,6 +595,14 @@ CREATE TABLE "custom_messages" (
 );
 SELECT create_hypertable('custom_messages', 'created');
 
+DROP TABLE IF EXISTS "pusher_data";
+CREATE TABLE public.pusher_data (
+    id BIGSERIAL NOT NULL,
+    post_value text NULL,
+    created timestamp NULL,
+    PRIMARY KEY ("id","created")
+);
+SELECT create_hypertable('pusher_data', 'created');
 
 INSERT INTO "users" ("username", "email", "password", "gender", "dob", "phone", "status", "website_url", "address", "bio_data", "fb_id", "fb_access_key", "longitude", "latitude", "timezone", "matrix_user_id", "matrix_access_token", "created", "modified", "token_verification", "forgot_password_token", "forgot_password_timestamp", "country_code", "is_notify", "current_latitude", "current_longitude", "role_id") VALUES
 ('admin','kiwiwarp@gmail.com', 'NzcyNmRmZDg4ZTRjOTg4OWI2NDg4ZWY1N2VkNzNhOWQ1NDcwOTk5ZDExN2NmNmFhMjI1ZmU3ODYxNjZkMmNjMEGrBiCupha2QHSHFUvMuDXwNeXkxmTGyh9Nf7kodS7u', 'Male', NULL, NULL, 'Active',   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   '2018-03-15 15:40:41',  '2018-03-15 15:40:41',  NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,'1');
@@ -631,3 +639,4 @@ ADD "ticket_url" varchar(1000) NULL;
 
 ALTER TABLE public.users ADD ghost_mode_search int NULL DEFAULT 0;
 ALTER TABLE public.users ADD ghost_mode_map int NULL DEFAULT 0;
+ALTER TABLE "physical_location" ADD "timezone" varchar(100) NULL;
