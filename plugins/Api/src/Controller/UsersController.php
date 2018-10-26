@@ -544,8 +544,10 @@ class UsersController extends AppController {
                     ];
                     $this->Matrix->changePassword($matrixData);
                     $status = 'done';
-                    //$this->Flash->success(__('Your new password has been reset successfully.'),['status'=>'done']);
-                    //return $this->redirect(['users/reset-password/'.$token.'/'.$email.'?status=done']);    
+                    
+                    $this->Flash->success(__('Your new password has been reset successfully.'),['status'=>'done']);
+//                    return $this->redirect(['users/reset-password/'.$token.'/'.$email.'?status=done']);    
+                    
                 } else {
                     $status = 'failed';
                     $this->Flash->error(__('Failed to reset the password.'));
@@ -1497,7 +1499,7 @@ class UsersController extends AppController {
             $receiverId = $users->firstMatch(['device_token'=>$device['pushkey']]);
             //$timezone = TableRegistry::get('Api.PhysicalLocation')->physicalLocation($receiverId->id);
         }
-        
+
         $items = $this->Users->pusherNotification($data);
         if(empty($items)){
             $this->restException($blankObj);
@@ -1617,6 +1619,8 @@ class UsersController extends AppController {
                 $row['user_id'] = !empty($row['notification_by']['id'])?$row['notification_by']['id']:null;
                 $row['user_image'] = !empty($row['notification_by']['user_images'][0]['image_url'])?$row['notification_by']['user_images'][0]['image_url']:null;
                 $row['is_unread'] = ($row['status']=='Unread')?true:false;
+//                $pushedDate = new \DateTime('now', new \DateTimeZone("UTC"));
+//                $row['date_time'] = !isset($row['date_time'])?$pushedDate->setTimezone(new \DateTimeZone($row['date_time']))->format('m-d-Y H:i:s'):null;
                 unset($row['spayc'],$row['status'],$row['notification_by']);
                 return $row;
             });

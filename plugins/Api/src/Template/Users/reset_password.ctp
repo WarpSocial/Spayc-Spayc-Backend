@@ -91,10 +91,10 @@ $input = $this->request->getData();
     <?=$this->Html->script('app');?>
     <script type="text/javascript">
         $('#resetpaswd-frm').submit(function(e){        
-           if($.trim($('#password').val())==''){
-               $('#new_password').addClass('reset-alert');
+           if($.trim($('#new-password').val())==''){
+               $('#new-password').addClass('reset-alert');
                $('.hint').text('Requires at least 1 number and 1 letter.');
-               $('#new_password').focus();
+               $('#new-password').focus();
                return false;
            }
            if($.trim($('#confirm-password').val())==''){
@@ -102,7 +102,7 @@ $input = $this->request->getData();
                $('#confirm-password').focus();
                return false;
            }
-           if(($('#new_password').val()) != ($('#confirm-password').val())){
+           if(($('#new-password').val()) != ($('#confirm-password').val())){
                $('#confirm-password').addClass('reset-alert');
                $('.chint').text('Password not matched.');
                $('#confirm-password').focus();

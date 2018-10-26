@@ -138,7 +138,7 @@ class MatrixComponent extends Component {
             $this->displayName($items['display_name'],$response['user_id'],$response['access_token']);
         }else{
             $response['status'] = 'failed';
-            $response['message'] = $this->errorMsg($response['errcode']);
+            $response['message'] = $response['status'];
         }
         return $response;
     }
