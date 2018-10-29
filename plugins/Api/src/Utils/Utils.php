@@ -391,7 +391,7 @@ class Utils {
     public static function toClient($datetime,$dateTimeformat = 'm-d-Y H:i:s',$utcFormat='Y-m-d H:i:s') {
         $timezone = Configure::read('timezone');
         if (!empty($datetime)) {
-            if(strtolower($datetime) == 'now'){
+            if(@strtolower($datetime) == 'now'){
                 $datetime = (new Time('now','UTC'));
             }else{
                 if(is_object($datetime)){

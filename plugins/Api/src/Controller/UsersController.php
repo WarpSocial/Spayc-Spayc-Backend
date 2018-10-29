@@ -15,6 +15,7 @@ use Cake\Event\EventManager;
 use Api\Model\Entity\UserImage;
 use Cake\Utility\Text;
 use Cake\Utility\Hash;
+use Cake\I18n\Time;
 /**
  * Users Controller
  *
@@ -1619,8 +1620,10 @@ class UsersController extends AppController {
                 $row['user_id'] = !empty($row['notification_by']['id'])?$row['notification_by']['id']:null;
                 $row['user_image'] = !empty($row['notification_by']['user_images'][0]['image_url'])?$row['notification_by']['user_images'][0]['image_url']:null;
                 $row['is_unread'] = ($row['status']=='Unread')?true:false;
-                $date = \DateTime::createFromFormat('m-d-Y H:i:s', $row['date_time']);
-                $row['date_time'] = $date;
+                $timezone = Configure::read('default_timezone');
+                $datetime = Time::createFromFormat('m-d-Y H:i:s', $row['date_time'], $timezone);
+                $datetime->setTimezone(new \DateTimeZone($timezone))->format('m-d-Y H:i:s');
+                $row['date_time'] =  $datetime;
                 unset($row['spayc'],$row['status'],$row['notification_by']);
                 return $row;
             });
