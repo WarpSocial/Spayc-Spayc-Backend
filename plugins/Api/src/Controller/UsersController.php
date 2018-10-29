@@ -1631,11 +1631,11 @@ class UsersController extends AppController {
             $userInputTime = Time::createFromFormat('m-d-Y H:i:s', $row['date_time'], $timezone);;
             //$userInputTime = new \DateTime("now", new \DateTimeZone('America/New_York') );
             //echo $userInputTime->format('Y-m-d H:i:s');
-            $data['date_time_push'] =  $userInputTime->format("m-d-Y H:i:s");
+            $row['date_time_push'] =  $userInputTime->format("m-d-Y H:i:s");
             
             //pr($data);die;
             /* Save the record in db*/
-             $data['date_time_add'] = (new Time($userInputTime, $timezone))->setTimezone('UTC')->format("Y-m-d H:i:s");
+             $row['date_time_add'] = (new Time($userInputTime, $timezone))->setTimezone('UTC')->format("Y-m-d H:i:s");
              
              
                 unset($row['spayc'],$row['status'],$row['notification_by']);
