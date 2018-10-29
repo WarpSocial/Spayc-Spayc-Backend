@@ -180,7 +180,7 @@ class PushComponent extends Component {
             //pr($data);die;
             /* Save the record in db*/
 //             $data['date_time'] = (new Time($userInputTime, $timezone))->setTimezone('UTC')->format("Y-m-d H:i:s");
-             $data['date_time'] = (new Time('now', Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i:s");
+             $data['date_time'] = $userInputTime->format("m-d-Y H:i:s");
             $data['message'] = $notificationType->message;
             $data['status'] = 'Unread';
             $data['created'] = date("Y-m-d H:i:s"); //pr($data);exit;
