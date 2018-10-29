@@ -1620,8 +1620,8 @@ class UsersController extends AppController {
                 $row['user_id'] = !empty($row['notification_by']['id'])?$row['notification_by']['id']:null;
                 $row['user_image'] = !empty($row['notification_by']['user_images'][0]['image_url'])?$row['notification_by']['user_images'][0]['image_url']:null;
                 $row['is_unread'] = ($row['status']=='Unread')?true:false;
-                $timezone = Configure::read('default_timezone');
-                /*
+                /* $timezone = Configure::read('default_timezone');
+               
                 $datetime = Time::createFromFormat('m-d-Y H:i:s', $row['date_time'], $timezone);
                 $datetime->setTimezone(new \DateTimeZone($timezone))->format('m-d-Y H:i:s');
 //                dd($datetime);die;
@@ -1635,10 +1635,9 @@ class UsersController extends AppController {
             $row['date_time_push'] =  $userInputTime->format("m-d-Y H:i:s");
             
             //pr($data);die;
-                 */
-            /* Save the record in db*/
+                 
              $row['date_time_add'] = (new Time($userInputTime, $timezone))->setTimezone('UTC')->format("Y-m-d H:i:s");
-             
+             */
              
                 unset($row['spayc'],$row['status'],$row['notification_by']);
                 return $row;
