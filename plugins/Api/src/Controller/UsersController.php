@@ -1619,8 +1619,8 @@ class UsersController extends AppController {
                 $row['user_id'] = !empty($row['notification_by']['id'])?$row['notification_by']['id']:null;
                 $row['user_image'] = !empty($row['notification_by']['user_images'][0]['image_url'])?$row['notification_by']['user_images'][0]['image_url']:null;
                 $row['is_unread'] = ($row['status']=='Unread')?true:false;
-                $pushedDate = new \DateTime('now', new \DateTimeZone("UTC"));
-                $row['date_time'] = !isset($row['date_time'])?$pushedDate->setTimezone(new \DateTimeZone($row['date_time']))->format('m-d-Y H:i:s'):null;
+                $date = \DateTime::createFromFormat('m-d-Y H:i:s', $row['date_time']);
+                $row['date_time'] = $date;
                 unset($row['spayc'],$row['status'],$row['notification_by']);
                 return $row;
             });
