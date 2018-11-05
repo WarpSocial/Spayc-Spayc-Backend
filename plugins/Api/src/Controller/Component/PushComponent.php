@@ -170,7 +170,10 @@ class PushComponent extends Component {
             if(!$userImages->isEmpty()) {
                 $data['user_image'] = $userImages->first()->image_url;
             }
-            $timezone = Configure::read('timezone');
+            $timezone = TableRegistry::get('Api.PhysicalLocation')->physicalLocation($user['id']);
+            if(empty($timezone)){
+                $timezone = Configure::read('timezone');
+            }
             $userInputTime = new Time('now',$timezone);
             //$userInputTime = new \DateTime("now", new \DateTimeZone('America/New_York') );
             //echo $userInputTime->format('Y-m-d H:i:s');
