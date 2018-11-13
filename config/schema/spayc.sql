@@ -35,6 +35,18 @@ CREATE TABLE users (
     unique (username,email,created)
 );
 SELECT create_hypertable('users', 'created');
+
+DROP TABLE IF EXISTS user_category;
+CREATE TABLE user_category (
+    "id" BIGSERIAL NOT NULL,    
+    "user_id" bigint NOT NULL,
+    "category_id" bigint NOT NULL,
+    "created" timestamp NOT NULL,
+    "modified" timestamp,
+    PRIMARY KEY (id,category_id,user_id,created)
+);
+SELECT create_hypertable('user_category', 'created');
+
 DROP TABLE IF EXISTS user_logs;
 CREATE TABLE user_logs (
     id BIGSERIAL NOT NULL,
