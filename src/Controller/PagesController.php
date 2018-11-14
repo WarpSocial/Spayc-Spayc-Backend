@@ -48,7 +48,7 @@ class PagesController extends AppController {
         echo '<table>' . "\n";
         for ($row = 2; $row <= $highestRow; ++$row) {
             echo '<tr>' . PHP_EOL;
-            $parentCat = $worksheet->getCellByColumnAndRow(4, $row)->getValue();
+            $parentCat = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
             $catArray[$parentCat][] = [
                 'name'=>$worksheet->getCellByColumnAndRow(1, $row)->getValue(),
                 'description'=>$worksheet->getCellByColumnAndRow(1, $row)->getValue(),
@@ -58,15 +58,16 @@ class PagesController extends AppController {
             echo '<td>' . ($row-1) . '</td>' . PHP_EOL;
             for ($col = 1; $col <= $highestColumnIndex; ++$col) {
                 
-                $value = $worksheet->getCellByColumnAndRow($col, $row)->getValue();
-                
+                $value = $worksheet->getCellByColumnAndRow($col, $row)->getValue();                
                 echo '<td>' . $value . '</td>' . PHP_EOL;
             }
             echo '</tr>' . PHP_EOL;
         }
         echo '</table>' . PHP_EOL;
+        pr($catArray);die;
          $catEntity = \Cake\ORM\TableRegistry::get('Api.SpaycCategories');
          $catEntity->connection()->query('TRUNCATE TABLE spayc_categories RESTART IDENTITY;')->execute();
+         
         foreach($catArray as $cat=>$subcats){
             $pcat = $catEntity->newEntity([
                 'name'=>$cat,

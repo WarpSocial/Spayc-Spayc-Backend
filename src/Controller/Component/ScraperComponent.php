@@ -33,24 +33,22 @@ class ScraperComponent extends Component {
     }    
 
     public function curlRequest($url, $time ,$token=false) {
-
-        $headers = array('Content-Type: application/json');
-        if($token)
-        $headers[] ='Authorization: Bearer '.$token;
-
-        $resp='';
-        $curl=curl_init();
-        curl_setopt($curl,CURLOPT_URL,$url);     
-        if($token)
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);   
-        curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);        
-        $resp=curl_exec($curl); 
-        $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        $resp=json_decode($resp, true);    
-        curl_close($curl);
-        if($httpcode!="200")
-            $this->updateScraperLog($time,json_encode($resp));
-        return $resp;
+        $headers = ['Content-Type' => 'application/json'];
+        if($token){
+            $headers['Authorization'] = 'Bearer ' . $token;
+        }
+        $http = new \Cake\Http\Client(['headers' => $headers]);
+        try{
+            $response = $http->get($url);
+            if(!$response->isOk()){
+                $this->updateScraperLog($time,json_encode($response->getBody()));
+                return '';
+            }
+            return json_decode($response->body, true); 
+        } catch (\Exception $ex) {
+            $this->updateScraperLog($time,json_encode($ex->getMessage()));
+            return '';
+        }
     }
 
     /*************  get Events from Eventbrite API and Save it *********************/
@@ -139,10 +137,12 @@ class ScraperComponent extends Component {
             'sort'=>'eventDateUTC',
             'rows' => 500,
             'start'=>$start            
-        ]);          
+        ]);  
+        //https://api.stubhub.com/search/catalog/events/v3/?state=%22NY%22%20|%22New%20York%22&country=US&date=2018-11-14T00%3A00TO2018-11-28T23%3A59&sort=eventDateUTC&rows=500&start=0
+       // https://api.stubhub.com/search/catalog/events/v3?date=2018-04-19T00:00 TO 2018-04-30T23:59&State="New York" |"Manhattan" |"Brooklyn" |"Queens" |"The Bronx" |"Staten Island" |"Long Island"&start=0&rows=500&country=US&date asc
         $resp=$this->curlRequest($url,$time,$this->SCRAPER_ROOT_URL_TOKEN['stubhubtoken']);
-        $eventsCount = count($resp['events']);       
-        if((isset($resp['events']) && !empty($resp['events'])) && $eventsCount){
+        //$eventsCount = count($resp['events']);       
+        if((isset($resp['events']) && !empty($resp['events']))){
         $events=$eventIds=$eventsCategory=$eventsCatIds= array();
         foreach ($resp['events'] as $value) {
             $eventIds[]= $eventId = trim($value['id']);
