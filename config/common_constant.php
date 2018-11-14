@@ -75,7 +75,7 @@ $scraperWebSite = array('eventbrite'=>'1','ticketmaster'=>'2','stubhub'=>'3');
 define('SCRAPER_WEBSITE', serialize($scraperWebSite));
 define('SCRAPER_ROOT_URL', serialize($scraperRootUrl));
 define('SCRAPER_ROOT_URL_TOKEN', serialize($scraperRootUrlToken));
-define('SCRAPER_EMAIL', 'scraping@warp-app.com');
+define('SCRAPER_EMAIL', 'scraping@spayc.com');
 define('MAX_CATEGORY_PERCENTAGE', '90');
 define('OTHER_CAT_NAME', 'Other');
 define('DUPLICATE', 'duplicate');
