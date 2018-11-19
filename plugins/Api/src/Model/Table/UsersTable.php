@@ -538,12 +538,17 @@ class UsersTable extends Table {
     public function validCategories($data) {
         $validator = new Validator();        
         $validator  
-                ->notEmpty('categories',__('Category id is required field.'))
+                ->allowEmpty('categories',__('Category id is required field.'))
                 //->isArray('categories',__('category id must be of an array type.'))
                 ->add('categories','validid',[
                     'rule'=>function($value,$context){
-                        if(!empty($value)){
-                            return TableRegistry::get('Api.SpaycCategories')->exists("id IN ($value)");
+                        if(!empty($value)){ 
+                            $ids  = TableRegistry::get('Api.SpaycCategories')->find()->where("id IN ($value)")->count();
+                            if($ids == count(explode(',',$value))){
+                                return true;
+                            }else{
+                                return false;
+                            }
                         }else{
                             return false;
                         }
