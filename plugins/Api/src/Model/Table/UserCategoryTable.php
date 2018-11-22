@@ -81,6 +81,16 @@ class UserCategoryTable extends Table {
         return $rules;
     }
 
-
+    /**
+     * userCategoreis
+     */
+    public function userCategories($users){
+        if(is_array($users)){
+            $condition = ['user_id IN'=>$users];
+        }else{
+            $condition = ['user_id'=>$users];
+        }
+        return $this->find()->where($condition);
+    }
    
 }

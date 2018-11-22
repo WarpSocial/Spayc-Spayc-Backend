@@ -77,6 +77,15 @@ class QueueGenericTask extends QueueTask {
         $push = new PushComponent(new ComponentRegistry());
         $phylRepo = TableRegistry::get('Api.PhysicalLocation');
         $users = $phylRepo->userNearSpayc($data['latitude'],$data['longitude']);
+        $userCategories = [] ;
+        if(!$users->isEmpty()){
+            $categories = TableRegistry::get('Api.UserCategory')->userCategories(\Cake\Utility\Hash::extract($users->toArray(), '{n}.id'));
+            if(!$categories->isEmpty()){
+                foreach($categories as $cat){
+                    $userCategories[$cat->user_id][] = $cat->category_id;
+                }
+            }
+        }
         $notificationRepo = TableRegistry::get("Api.Notifications");
         $notifyMessage = $notificationRepo->message('new-spayc');
         if(empty($notifyMessage)){
@@ -94,8 +103,14 @@ class QueueGenericTask extends QueueTask {
                 'date_time'=>$data['created_duration']
             ];
             
-            if($data['user_id'] != $user->user_id){
-                $notify = $notificationRepo->addNotification($notificationItems);
+            if($data['user_id'] != $user->user_id){ /* Event Owner will not get notification */
+                if(!isset($userCategories[$user->user_id])){
+                    /* user not specify any category */
+                    $notify = $notificationRepo->addNotification($notificationItems);
+                }elseif(in_array($data['spayc_category_id'],$userCategories[$user->user_id])){
+                    /* user specify the categories */
+                    $notify = $notificationRepo->addNotification($notificationItems);
+                }
             }
             $items = [
                 'requested_by'=>$data['user_id'],
