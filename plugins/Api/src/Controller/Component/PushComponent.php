@@ -182,7 +182,7 @@ class PushComponent extends Component {
             $data['notification_type'] = $notificationType->type;
             //pr($data);die;
             /* Save the record in db*/
-             $data['date_time'] = (new Time($userInputTime, $timezone))->setTimezone('UTC')->format("Y-m-d H:i:s");
+            $data['date_time'] = $userInputTime->format("Y-m-d H:i:s");
             $data['message'] = $notificationType->message;
             $data['status'] = 'Unread';
             $data['created'] = date("Y-m-d H:i:s"); //pr($data);exit;

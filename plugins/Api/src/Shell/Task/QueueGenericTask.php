@@ -79,7 +79,7 @@ class QueueGenericTask extends QueueTask {
         $users = $phylRepo->userNearSpayc($data['latitude'],$data['longitude']);
         $userCategories = [] ;
         if(!$users->isEmpty()){
-            $categories = TableRegistry::get('Api.UserCategory')->userCategories(\Cake\Utility\Hash::extract($users->toArray(), '{n}.id'));
+            $categories = TableRegistry::get('Api.UserCategory')->userCategories(\Cake\Utility\Hash::extract($users->toArray(), '{n}.user_id'));
             if(!$categories->isEmpty()){
                 foreach($categories as $cat){
                     $userCategories[$cat->user_id][] = $cat->category_id;
@@ -102,7 +102,7 @@ class QueueGenericTask extends QueueTask {
                 'spayc_id'=>$data['id'],
                 'date_time'=>$data['created_duration']
             ];
-            
+           
             if($data['user_id'] != $user->user_id){ /* Event Owner will not get notification */
                 if(!isset($userCategories[$user->user_id])){
                     /* user not specify any category */
