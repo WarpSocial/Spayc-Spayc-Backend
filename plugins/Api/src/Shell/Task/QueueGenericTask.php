@@ -123,9 +123,14 @@ class QueueGenericTask extends QueueTask {
                 'time'=>$data['created_duration']
             ];
             if($data['user_id'] != $user->user_id){
-                $push->sendOnIOS($items);
+                if(!isset($userCategories[$user->user_id])){
+                    /* user not specify any category */
+                    $push->sendOnIOS($items);
+                }elseif(in_array($data['spayc_category_id'],$userCategories[$user->user_id])){
+                    /* user specify the categories */
+                    $push->sendOnIOS($items);
+                }
             }
-            
             
         }
     }
