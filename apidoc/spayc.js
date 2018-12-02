@@ -1866,3 +1866,37 @@ function putUpdateComment() { return; }
  * @apiUse UserErrorResponse
  */
 function getEventsImage() { return; }
+/**
+ @api {post} /spam-reports.json Report About Warp
+ @apiVersion 0.1.0
+ @apiName postReportsWarp
+ @apiGroup Spayc
+ @apiPermission Private User
+ 
+ @apiDescription Report about a warp.
+  
+ @apiHeader {String} TOKEN  * Token must be in header
+ 
+ @apiParam  {String} matrix_room_id  * Matrix room id (required).
+
+ @apiExample Example usage:
+ 
+    {
+	"matrix_room_id":"!bveMFWvYgJpOzAoZGC:127.0.0.1",
+	"message":"some message"
+    }
+ 
+ @apiSuccess {String} status success.
+ @apiSuccess {String} message You have reported successfully..
+ @apiSuccess {Object} data Null.
+ @apiSuccessExample {json} Success-Response: 
+       HTTP/1.1 200 OK
+        {
+            "status": "success",
+            "message": "You have reported successfully."
+        }
+ 
+ @apiError {String}  You have already reported about this warp.Admin will take care about this reports.
+  @apiUse UserErrorResponse
+*/
+function postReportsWarp() { return; }

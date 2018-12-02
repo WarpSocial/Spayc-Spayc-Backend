@@ -85,6 +85,8 @@ Router::plugin(
         $routes->connect('/promotion-logic', ['controller' => 'Plans', 'action' => 'promotionLogic']);
         $routes->connect('/subscribed-spaycs',['controller'=>'Spaycs', 'action'=>'userSubscribedSpaycs']);
         $routes->connect('/spam-reports',['controller'=>'WebApi', 'action'=>'spamReport']);
+        $routes->connect('/reported-warp',['controller'=>'WebApi', 'action'=>'reportedWarp']);
+        $routes->connect('/feedback',['controller'=>'WebApi', 'action'=>'userFeedBack']);
         $routes->connect('/update-comment/:id',['controller'=>'WebApi', 'action'=>'updateComment'],['pass'=>['id']]);
         $routes->connect('/events-image',['controller'=>'WebApi', 'action'=>'eventsImage']);
         $routes->fallbacks(DashedRoute::class);
