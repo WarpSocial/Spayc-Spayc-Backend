@@ -602,7 +602,7 @@ CREATE TABLE IF NOT EXISTS user_feedbacks(
     "attachment" character varying(250) NULL,
     "created" timestamp NOT NULL,
     "modified" timestamp,
-    PRIMARY KEY(id)
+    PRIMARY KEY(id,created)
 );
 SELECT create_hypertable('user_feedbacks', 'created');
 

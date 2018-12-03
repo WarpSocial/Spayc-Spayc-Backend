@@ -59,6 +59,10 @@ class UserFeedbacksTable extends Table {
      */
     public function validationDefault(Validator $validator) {
        $validator
+                ->requirePresence('message','create', __('Message key is missing.'))
+                ->maxLength('message', 500,'Message must not be greater than 500 characters.')
+                ->notEmpty('name',__('Message is required.'));
+        $validator
                 ->allowEmpty('attachment')
                 ->add('attachment', 'extension', [
                     'rule' => ['extension', ['jpeg', 'png', 'jpg','doc','docx','pdf','txt']],

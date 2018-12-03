@@ -431,5 +431,10 @@ class Utils {
         $uniqueid = abs(crc32(uniqid())).str_replace("0.","",abs( microtime()));
         return $uniqueid;
     }
+    public static function getMimeType($file){
+        $finfo = new \finfo();
+        $fileinfo = $finfo->file($file, FILEINFO_MIME);
+        return $fileinfo;
+    }
 
 }

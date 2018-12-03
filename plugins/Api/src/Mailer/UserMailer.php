@@ -46,16 +46,7 @@ class UserMailer extends Mailer {
             ->template('Api.reverification');
     }
 
-    public function contactUs($user) {
-        $this->viewVars(['user' => $user])
-            ->to(Configure::read('Settings.adminEmail'))
-            ->subject(sprintf('A user try to contact you from Rehab network.'))
-            ->emailFormat('html')
-            ->template('contactus'); // By default template with same name as method name is used. 
-    }
-    
-    
-    
+   
     public function eventStartCron($user) {
         $this->viewVars(['user' => $user])
             ->to($user->email)
@@ -70,7 +61,29 @@ class UserMailer extends Mailer {
             ->emailFormat('html')
             ->template('Api.endeventcron');
     }
-
-
+    
+    public function userFeedBack($data) {
+        
+        
+        $this->viewVars(['data' => $data])
+            ->to(Configure::read('admin_email'))
+            ->subject('Warp Feedback')
+            ->emailFormat('html')
+            ->template('Api.feedback');
+        if(!empty($data['attachment'])){
+            $http = new \Cake\Http\Client();
+            $response = $http->get($data['attachment']);
+            
+            $fino = pathinfo($data['attachment']);
+            $this->setAttachments([
+                $fino['basename'] => [
+                    'file' => $data['attachment'],
+                    'mimetype' => $response->getHeaderLine('content-type'),
+                    'contentId'=>'ksdlf'
+                ]
+            ]);
+        }
+        
+    }
 
 }

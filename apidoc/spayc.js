@@ -1867,7 +1867,7 @@ function putUpdateComment() { return; }
  */
 function getEventsImage() { return; }
 /**
- @api {post} /spam-reports.json Report About Warp
+ @api {post} /reported-warp.json Report About Warp
  @apiVersion 0.1.0
  @apiName postReportsWarp
  @apiGroup Spayc

@@ -6,13 +6,14 @@ use Api\Controller\AppController;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Cake\Core\Configure;
-
+use Cake\Mailer\MailerAwareTrait;
 /**
  * WebApi Controller
  *
  * @property \Api\Model\Table\WebApiTable $WebApi
  */
 class WebApiController extends AppController {
+      use MailerAwareTrait;
 
     /**
      * initialize the controller config
@@ -70,11 +71,15 @@ class WebApiController extends AppController {
         }
         $items->user_id = $user['id'];
         if($srRegistory->save($items)) {
+             //pr(pathinfo($items->attachment));die;
+            $this->getMailer('Api.User')->send('userFeedBack', [$items->toArray()]);
+            die("END");
+            $items->job_type = 'userFeedBack';
+            TableRegistry::get('Queue.QueuedJobs')->createJob('Mailer',$items->toArray());
             $this->restException(['status' => 'success', 'message' => __('Your feed has been sent successfully.'), 'data' => []], 200);
         } else {
             $this->restException(['status' => 'failed', 'message' => __('Failed to send feedback message.')], 400);
         }
-
     }
     /**
      * spamReport method to report user as spam user

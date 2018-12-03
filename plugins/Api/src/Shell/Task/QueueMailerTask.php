@@ -34,9 +34,18 @@ class QueueMailerTask extends QueueTask {
      */
     use MailerAwareTrait;
     public function run(array $data, $jobId) {
-        if(strtolower($data['action_type']) == $this->signupType){
-            $this->getMailer('Api.User')->send($this->signupType, [$data]);
+        if(empty($data['action_type'])){
+            return true;
         }
+        switch (strtolower($data['action_type'])){
+            case 'signup':
+                $this->getMailer('Api.User')->send($data['action_type'], [$data]);
+                break;
+            case 'userfeedback':
+                $this->getMailer('Api.User')->send($data['action_type'], [$data]);
+                break;
+        }
+        
         $this->hr();
         $this->out('Proccessing to send mail.');
         return true;
