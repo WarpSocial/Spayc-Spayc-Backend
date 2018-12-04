@@ -1327,7 +1327,9 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         $response = ['status'=>'success','message'=>'List of spaycs.','data'=>$result];
         $this->set($response);
     }
-    
+    /**
+     * userSubscribedSpaycs to get the list spaycs to which user has been subscribed
+     */
     public function userSubscribedSpaycs(){
         if (!$this->request->is(['get'])) {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);

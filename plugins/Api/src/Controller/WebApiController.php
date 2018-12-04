@@ -71,10 +71,8 @@ class WebApiController extends AppController {
         }
         $items->user_id = $user['id'];
         if($srRegistory->save($items)) {
-             //pr(pathinfo($items->attachment));die;
-            $this->getMailer('Api.User')->send('userFeedBack', [$items->toArray()]);
-            die("END");
-            $items->job_type = 'userFeedBack';
+            $items->action_type = 'userFeedBack';
+            $items->User = $this->Auth->user(); /* user mailer of user data*/            
             TableRegistry::get('Queue.QueuedJobs')->createJob('Mailer',$items->toArray());
             $this->restException(['status' => 'success', 'message' => __('Your feed has been sent successfully.'), 'data' => []], 200);
         } else {

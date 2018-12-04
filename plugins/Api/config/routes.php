@@ -84,6 +84,7 @@ Router::plugin(
         $routes->connect('/promotion-logic-start', ['controller' => 'Plans', 'action' => 'promotionLogicStart']);
         $routes->connect('/promotion-logic', ['controller' => 'Plans', 'action' => 'promotionLogic']);
         $routes->connect('/subscribed-spaycs',['controller'=>'Spaycs', 'action'=>'userSubscribedSpaycs']);
+        $routes->connect('/joined-spayc',['controller'=>'JoinSpaycs', 'action'=>'joinedSpayc']);
         $routes->connect('/spam-reports',['controller'=>'WebApi', 'action'=>'spamReport']);
         $routes->connect('/reported-warp',['controller'=>'WebApi', 'action'=>'reportedWarp']);
         $routes->connect('/feedback',['controller'=>'WebApi', 'action'=>'userFeedBack']);

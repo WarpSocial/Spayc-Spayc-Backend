@@ -63,12 +63,11 @@ class UserMailer extends Mailer {
     }
     
     public function userFeedBack($data) {
-        
-        
         $this->viewVars(['data' => $data])
             ->to(Configure::read('admin_email'))
             ->subject('Warp Feedback')
-            ->emailFormat('html')
+            ->from($data['User']['email'])    
+            ->emailFormat('html')                
             ->template('Api.feedback');
         if(!empty($data['attachment'])){
             $http = new \Cake\Http\Client();
@@ -77,9 +76,8 @@ class UserMailer extends Mailer {
             $fino = pathinfo($data['attachment']);
             $this->setAttachments([
                 $fino['basename'] => [
-                    'file' => $data['attachment'],
-                    'mimetype' => $response->getHeaderLine('content-type'),
-                    'contentId'=>'ksdlf'
+                    'data' => $response->getBody(),
+                    'mimetype' => $response->getHeaderLine('content-type')
                 ]
             ]);
         }

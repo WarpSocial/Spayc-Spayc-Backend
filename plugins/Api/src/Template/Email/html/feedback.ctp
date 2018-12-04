@@ -28,21 +28,24 @@ use Cake\Core\Configure;
                 <tbody>
                   <tr>
                     <td style="line-height:23px;">
-                      <div style="display: block; font-size: 16px;">Account Verification</div>
-                      <div style="margin-top: 25px; color:#272727; font-size: 14px;">Hi <?= ucfirst(Configure::read('title')) ?>,</div>
-                      <div style="color:#333333; margin-top:10px; font-size: 13px;">
-                          <p><?php $data['message'] ?></p>
+                        <div style="display: block; font-size: 16px;">User feedback message from <strong><?php echo ucwords($data['User']['display_name']); ?></strong></div>
+                        <div style="color:#333333; margin-top:10px; font-size: 13px;">
+                          <p><?= $data['message'] ?></p>
                       </div>
                     </td>
                   </tr>
                   <tr>
                     <td>
-                      <p style="font-weight: 500;">- Thanks (Warp Team)</p>
+                        <p style="font-weight: 500;">
+                            Thanks <br />
+                            <?php ucwords($data['User']['display_name']); ?><br/>
+                             <?php echo $data['User']['email'] ?><br/>
+                        </p>
                     </td>
                   </tr>
                   <tr>
                     <td style="width:100%; border-top: 1px solid #eaeaea;">
-                      <p style="color:#6c6c6c; font-size: 13px;padding-top: 5px;">For general inquiries or to request support with your account, please email <?= config('support_email') ?></p>
+                        <p style="color:#6c6c6c; font-size: 13px;padding-top: 5px;">For general inquiries or to request support with your account, please email <?= Configure::read('support_email') ?></p>
                     </td>
                   </tr>
                 </tbody>
