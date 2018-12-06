@@ -164,7 +164,9 @@ class PushComponent extends Component {
                      $notificationType->message = str_replace("<WarpName>", ucwords($data['spayc_name']), $notificationType->message);
                      $success =    $this->getMailer('Api.User')->send('eventEndCron', [$mail]);
                     break;
-                
+                case "custom-messages":                        
+                    $notificationType->message = !empty($data['message'])?$data['message']:'';
+                    break;                
             }
             $userImages = TableRegistry::get("Api.UserImages")->findByUserIdAndIsProfile($data['requested_by'], 'Yes');
             if(!$userImages->isEmpty()) {

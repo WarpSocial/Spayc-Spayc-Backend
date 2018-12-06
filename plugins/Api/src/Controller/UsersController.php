@@ -1827,7 +1827,7 @@ class UsersController extends AppController {
         if($notify->count() != count($data['notification_ids'])) {
             $this->restException(['status'=>'failed','message'=>__('Notification id is not valid.')], 400);
         }
-        $notification->updateAll(['status'=>'Read'], ['id IN'=>$data['notification_ids']]);
+        $notification->updateAll(['status'=>'Read'], ['requested_to'=>$user['id']]);
         $response = ['status'=>'success','message'=>__('Notification read successfully.')];
         $this->set($response);
     }

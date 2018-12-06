@@ -88,6 +88,21 @@ class SpaycsController extends AdminController {
         $this->set(compact('users', 'keyword', 'spayc'));
         $this->set('_serialize', ['users']);
     }
+    public function reportedUsers($spaycId) {
+
+        if (empty($spaycId))
+            return $this->redirect(['action' => 'index']);
+        $this->set('title', $this->siteTitleMessage['MANAGE-WARP-MEMBERS']);
+        $keyword = ($this->request->query('keyword')) ? trim(strtolower($this->request->query('keyword'))) : '';
+        $spayc = $this->Spaycs->get($spaycId);
+        $query = $this->Spaycs->reportedWarpUsers($spaycId);
+        $conditions_array = $this->filterData();
+        $query = $this->filterNSearchData($query, $keyword, $conditions_array);
+        $this->paginate = ['order' => ['Users.display_name' => 'ASC']];
+        $users = $this->paginate($query);
+        $this->set(compact('users', 'keyword', 'spayc'));
+        $this->set('_serialize', ['users']);
+    }
 
     /**
      * View method
