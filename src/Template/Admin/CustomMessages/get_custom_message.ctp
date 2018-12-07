@@ -39,9 +39,6 @@
     </div>
 </div>
 
-<script>
-
-</script>
 <?php echo $this->Html->script(['admin/user','bootstrap-multiselect.min.js',]); ?>
 <?php echo $this->Html->script(['admin/user','theme.js']); ?>
 

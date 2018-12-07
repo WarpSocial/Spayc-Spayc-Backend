@@ -8,8 +8,7 @@ use Cake\Routing\Router;
 		</div>
 	</div>
 </div> -->
-
-<div class="modal modal-center fade" id="cmnPoupUp" tabindex="-1" role="dialog"  aria-hidden="true">
+<div class="modal modal-center hide fade" id="cmnPoupUp" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">        	
         </div>
