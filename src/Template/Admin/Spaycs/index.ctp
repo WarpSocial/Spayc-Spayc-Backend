@@ -53,9 +53,9 @@ if(isset($this->request->query['sort'])) {
             <div class="head-text flex-basis7"><span>Members</span></div>
             <div class="head-text flex-basis10"><span>Subscribed Members</span></div>
             <div class="head-text flex-basis10"><span>Physically Present</span></div>
-            <div class="head-text flex-basis7"><span># Subwarps</span></div>
-            <div class="head-text flex-basis7"><span># Comment </span></div>
-            <div class="head-text flex-basis7"><span># Reported Users </span></div>
+            <div class="head-text flex-basis7"><span>No of Subwarps</span></div>
+            <div class="head-text flex-basis7"><span>No of Comment </span></div>
+            <div class="head-text flex-basis7"><span>Reported By</span></div>
             <div class="head-text flex-basis5"><span class="blank"></span></div>
           </div>
           <?php   if ($spaycsCount) {?>  
