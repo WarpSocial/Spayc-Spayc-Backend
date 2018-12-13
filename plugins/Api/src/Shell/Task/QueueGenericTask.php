@@ -130,9 +130,12 @@ class QueueGenericTask extends QueueTask {
     }
     
     public function titleHashTag($spaycs){
-        $hashTags = [];
+        $hashTags = [];        
         if(!empty($spaycs['website'])){
-            $tags = str_word_count($spaycs['title'], 1);
+            $tags = null;
+            if(!empty($spaycs['title'])){
+                $tags = str_word_count($spaycs['title'], 1);
+            }
             if(!empty($tags)){
                 for($i = 0 ; $i < count($tags); $i++ ){
                     if(strlen($tags[$i]) > 3){
