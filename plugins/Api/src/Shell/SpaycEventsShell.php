@@ -55,29 +55,29 @@ class SpaycEventsShell extends Shell {
         }
         
         $data['active']=$this->sendNotification('active');
+        return true;
 //        \Cake\Log\Log::info(json_encode($data,JSON_PRETTY_PRINT));
 //        Log::write('info', "test", ['scope' => 'queue']);
-        $pushData['post_value'] = json_encode($data);
-        $pushData['created'] = date("Y-m-d H:i:s");
+        //$pushData['post_value'] = json_encode($data);
+        //$pushData['created'] = date("Y-m-d H:i:s");
         //Log::info(json_encode($pushData,JSON_PRETTY_PRINT));
-        $pusher = TableRegistry::get("Api.PusherData");
-        $push = $pusher->newEntity();
-        $entity = $pusher->patchEntity($push, $pushData,['validate'=>false]);
-        $pusher->save($entity);
+        //$pusher = TableRegistry::get("Api.PusherData");
+        //$push = $pusher->newEntity();
+        //$entity = $pusher->patchEntity($push, $pushData,['validate'=>false]);
+        //$pusher->save($entity);
 
     }
-    public function sendNotification($type) {
-        
-      
+    public function sendNotification($type) {      
           if($type=='active'){
-              $now = (new \Cake\I18n\Time('now','UTC'))->format('Y-m-d H:i');
-              $where = ["TO_CHAR(start_date, 'YYYY-MM-DD HH:MI') = '".$now."'"];
+              $now = (new \Cake\I18n\Time('now','UTC'))->format('Y-m-d H');
+              $where = ["TO_CHAR(start_date, 'YYYY-MM-DD HH') = '".$now."'"];
               $notification_type='spayc-start-event';
           }elseif ($type=='inactive') {
             $where = [" date(end_date) = date(current_date) - interval '2' day"];
             $notification_type='spayc-end-event';
         }else{
-            $this->restException(['status'=>'failed', 'message'=>__('Type not Match.')], 400);
+            return false;
+            //$this->restException(['status'=>'failed', 'message'=>__('Type not Match.')], 400);
         }      
         $events = TableRegistry::get('Api.Spaycs')->find()
                 ->where($where)
@@ -92,6 +92,7 @@ class SpaycEventsShell extends Shell {
                     return $q->select(['Users.username','Users.display_name']);
                 }
             ]);
+            #debug($events);die;
                 $success=[];
         if($events){
         foreach($events->toArray() as $k=>$v){
@@ -102,25 +103,30 @@ class SpaycEventsShell extends Shell {
             if(count($v['joined_spayc'])){
                 $joined_ids = \Cake\Utility\Hash::extract($v['joined_spayc'], '{n}.user_id');
             }
+           
             if(count($v['subscribed_users'])){
                 $subscribed_ids = \Cake\Utility\Hash::extract($v['subscribed_users'], '{n}.user_id');
             }
             
-            $ids=array_unique(array_merge($joined_ids,$subscribed_ids));
-            if(count($ids)){
+            $ids=array_unique(array_merge($joined_ids,$subscribed_ids));            
+            if(!empty($ids)){
+                $userCategories = TableRegistry::get('Api.UserCategory')->listCategories($ids);
                 foreach($ids as $val){
-                    $push['requested_by'] = $v['user_id'];
-                    $push['username'] = $v['user']['username'];
-                    $push['display_name'] = $v['user']['display_name'];
-                    $push['start_date'] = $v['start_date'];
-                    $push['end_date'] = $v['end_date'];
-                    $push['requested_to'] = $val;
-                    $push['spayc_id'] = $v['id']; //provide spayc id if push related to spayc
-                    $push['spayc_name'] = $v['name'];
-                    $push['spayc_image'] = $v['image'];
-                    $push['matrix_room_id'] = $v['matrix_room_id'];
-                    $push['slug'] = $notification_type;
-                    $success[]=$this->Push->sendPushNotification($push);
+                    if(!empty($userCategories[$val]) && in_array($v['id'],$userCategories[$val])){
+                        $push['requested_by'] = $v['user_id'];
+                        $push['username'] = $v['user']['username'];
+                        $push['display_name'] = $v['user']['display_name'];
+                        $push['start_date'] = $v['start_date'];
+                        $push['end_date'] = $v['end_date'];
+                        $push['requested_to'] = $val;
+                        $push['spayc_id'] = $v['id']; //provide spayc id if push related to spayc
+                        $push['spayc_name'] = $v['name'];
+                        $push['spayc_image'] = $v['image'];
+                        $push['matrix_room_id'] = $v['matrix_room_id'];
+                        $push['slug'] = $notification_type;
+
+                        $success[]=$this->Push->sendPushNotification($push);
+                    }
                 }
             }
         }

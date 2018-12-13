@@ -92,5 +92,19 @@ class UserCategoryTable extends Table {
         }
         return $this->find()->where($condition);
     }
+    
+    public function listCategories($users){ 
+        $userCategories = [];
+        if(empty($users)){
+            return false;
+        }
+        $categories = $this->userCategories($users);
+        if(!$categories->isEmpty()){
+            foreach($categories as $cat){
+                $userCategories[$cat->user_id][] = $cat->category_id;
+            }
+        }
+        return $userCategories;    
+    }
    
 }
