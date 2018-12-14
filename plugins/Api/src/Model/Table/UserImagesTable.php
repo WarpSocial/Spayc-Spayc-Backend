@@ -92,22 +92,32 @@ class UserImagesTable extends Table {
     }
     
     public function uploadFacebookImage($imgUrl, $userId) {
-        $entity = $this->findByUserIdAndIsProfile($userId, 'Yes');
-        if($entity->isEmpty()) {
-            $entity = $this->newEntity();
-            $data['is_profile'] = 'Yes';
-            $data['order_index'] = 1;
+        $awsUrl = str_replace('https://', '', Configure::read('AWS3.url'));
+        //$entity = $this->find()->where(['user_id'=>$userId,'image_url NOT LIKE'=> '%'. $awsUrl.'%']);
+        $allImage = $this->find()->where(['user_id'=>$userId]);
+        if($allImage->count() > 0){
+            $allImage->where(['image_url NOT LIKE'=> '%'. $awsUrl.'%']);
+            if(!$allImage->isEmpty()){
+                /* facebook image exist in record then update image*/
+                $entity = $allImage->first();
+                $entity->set('image_url',$imgUrl);
+                $this->save($entity);
+                return $entity;
+            }else{
+                $entity = $this->newEntity();
+            }
         }else{
-            $entity = $entity->first();
+            /* when user has not set any profile image*/
+            $entity = $this->newEntity();
+            $entity->set('user_id',$userId); 
+            $entity->set('image_url',$imgUrl);
+            $entity->set('is_profile','Yes');   
+            $entity->set('order_index',1);
+            $this->save($entity);
         }
         //$fileName = $this->facebookImg($imgUrl);
-        $data['user_id'] = $userId;        
         //$data['image_url']['tmp_name'] = $fileName;
-        $data['image_url'] = $imgUrl;
-        
-        $items = $this->patchEntity($entity, $data, ['validate'=>false]);
-        $this->save($items);
-        return $items;
+        return $entity->toArray();
     }
     public function facebookImg($imgUrl){
        $http = new \Cake\Http\Client();

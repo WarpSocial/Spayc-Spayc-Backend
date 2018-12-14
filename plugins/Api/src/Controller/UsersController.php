@@ -444,13 +444,14 @@ class UsersController extends AppController {
         $this->Auth->setUser($user);
         $user = $this->Users->usrLog($user);
         if(!empty($data['image_url'])) {
-            $items = TableRegistry::get('Api.UserImages')->uploadFacebookImage($data['image_url'], $this->Auth->user('id'));
-            $this->Matrix->uploadMediaImage([
-                'image_url'=>$items['image_url'],
-                //'image_url'=>$data['image_url'],
-                'matrix_token'=>$user['matrix_access_token'],
-                'matrix_user_id'=>$user['matrix_user_id']
+            $items = TableRegistry::get('Api.UserImages')->uploadFacebookImage($data['image_url'], $this->Auth->user('id'));            
+            if(!empty($items)){
+                $this->Matrix->uploadMediaImage([
+                    'image_url'=>$items['image_url'],
+                    'matrix_token'=>$user['matrix_access_token'],
+                    'matrix_user_id'=>$user['matrix_user_id']
                 ]);
+            }
         }
         $data = [
             'id'=>$user['id'],

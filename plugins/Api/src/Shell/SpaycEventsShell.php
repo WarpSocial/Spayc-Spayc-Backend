@@ -20,6 +20,8 @@ use Cake\Utility\Text;
 use Cake\Utility\Hash;
 use Cake\Controller\ComponentRegistry;
 use Api\Controller\Component\PushComponent;
+use Api\Controller\Component\RedisComponent;
+use Cake\I18n\Time;
 /**
  * SpaycEvents shell command.
  */
@@ -43,7 +45,7 @@ class SpaycEventsShell extends Shell {
      *
      * @return bool|int|null Success or error code.
      */
-    public function main() {
+    public function main() {        
         $this->out($this->OptionParser->help());
         $this->out("here i m ");
         
@@ -55,6 +57,9 @@ class SpaycEventsShell extends Shell {
         }
         
         $data['active']=$this->sendNotification('active');
+        
+        /* delete past events(spayc) from redis storage */
+        $this->cleanPastEvents();
         return true;
 //        \Cake\Log\Log::info(json_encode($data,JSON_PRETTY_PRINT));
 //        Log::write('info', "test", ['scope' => 'queue']);
@@ -132,7 +137,15 @@ class SpaycEventsShell extends Shell {
         }
         }
       return $success;
-    
-
+    }
+    public function cleanPastEvents(){
+        $twoDaysAgo = new Time('2 days ago','America/New_York');
+        $endDate = "TO_TIMESTAMP(cast(Spaycs.end_date as text),'YYYY-MM-DD')";  
+        $spaycs = TableRegistry::get('Api.Spaycs')->find()->select('id')->where([$endDate.' <= '=>$twoDaysAgo->setTimezone('UTC')->format("Y-m-d")])->extract('id')->toArray();
+        if(!empty($spaycs)){
+            $this->redis=new RedisComponent(new ComponentRegistry());
+            $this->redis->deleteSpayc($spaycs);
+        }
+        
     }
 }
