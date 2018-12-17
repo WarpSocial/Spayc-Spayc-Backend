@@ -851,7 +851,7 @@ class SpaycsTable extends Table {
         $today_date = $now->setTimezone('UTC')->format("Y-m-d H:i");
         $twoWeek = $endObj->setTimezone('UTC')->format("Y-m-d H:i"); 
         /* if user filter past date event in that case calculate distance manually because radis clean past event */
-        if(isset($request['is_filter']) && ($request['is_filter'] === true) && (($request['current_date']) && $request['current_date'] < $timeStmap)){
+        if(isset($request['is_filter']) && ($request['is_filter'] === true) && (isset($request['current_date']) && $request['current_date'] < $timeStmap)){
             $redisSpaycs = [];
             $distanceField = $this->geoDistance();
              $radius = $this->distance($request['center_latitude'], $request['center_longitude'], $request['endpoint_latitude'], $request['endpoint_longitude'],'meter');
