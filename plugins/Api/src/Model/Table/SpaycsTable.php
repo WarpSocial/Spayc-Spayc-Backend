@@ -881,7 +881,7 @@ class SpaycsTable extends Table {
         
         $startDate = "TO_TIMESTAMP(cast(Spaycs.start_date as text),'YYYY-MM-DD HH24:MI')";
         $endDate = "TO_TIMESTAMP(cast(Spaycs.end_date as text),'YYYY-MM-DD HH24:MI')";  
-        if(isset($request['is_filter']) && ($request['is_filter'] === true)){
+        if(isset($request['is_filter']) && ($request['is_filter'] === true) && isset($request['current_date'])){
             $filterDate = Time::createFromTimestamp($request['current_date'], 'UTC');
             $startDate = "TO_TIMESTAMP(cast(Spaycs.start_date as text),'YYYY-MM-DD')";
             $spaycs->where([$startDate.' =' =>$filterDate->format('Y-m-d')]);
