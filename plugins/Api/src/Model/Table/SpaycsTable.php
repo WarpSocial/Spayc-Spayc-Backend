@@ -856,13 +856,14 @@ class SpaycsTable extends Table {
             $distanceField = $this->geoDistance();
              $radius = $this->distance($request['center_latitude'], $request['center_longitude'], $request['endpoint_latitude'], $request['endpoint_longitude'],'meter');
              $spaycs = $this->find()
-                ->select(['distance' => $distanceField,'id', 'name', 'matrix_room_id', 'image', 'type', 'modified', 'spayc_category_id','latitude','longitude',"score"=>"(case when website = 0 then 1 else 0 end)"])
+                ->select(['distance' => $distanceField,'id', 'name','start_date', 'matrix_room_id', 'image', 'type', 'modified', 'spayc_category_id','latitude','longitude','score'=>'website'])
                 ->where(["$distanceField <=" => $radius, 'Spaycs.status'=>'Active',
                     'Spaycs.group_type !='=>'trusted_private', 
                     'Spaycs.parent_id IS'=>null
                     ])
                 ->bind(':latitude', $request['center_latitude'], 'float')
                 ->bind(':longitude', $request['center_longitude'], 'float');
+             
         }else {
             $radius = $request['radius'];
             if (empty($request['radius'])) {
@@ -875,7 +876,7 @@ class SpaycsTable extends Table {
             }
             $requiredSpaycs = array_column($redisSpaycs,'id');
             $spaycs = $this->find()
-                ->select(['id', 'name', 'matrix_room_id', 'image', 'type', 'modified', 'spayc_category_id','latitude','longitude','score'=>'website'])
+                ->select(['id', 'name','start_date', 'matrix_room_id', 'image', 'type', 'modified', 'spayc_category_id','latitude','longitude','score'=>'website'])
                 ->where(['Spaycs.status'=>'Active','Spaycs.group_type !='=>'trusted_private', 'Spaycs.parent_id IS'=>null,'Spaycs.id IN'=>$requiredSpaycs]);
         }
         
@@ -883,9 +884,18 @@ class SpaycsTable extends Table {
         $endDate = "TO_TIMESTAMP(cast(Spaycs.end_date as text),'YYYY-MM-DD HH24:MI')";  
         if(isset($request['is_filter']) && ($request['is_filter'] === true) && isset($request['current_date'])){
             //Time::createFromTimestamp($request['current_date'], Configure::read('timezone'));
-            $filterDate = Time::createFromTimestamp($request['current_date'],'UTC');            
-            $startDate = "TO_TIMESTAMP(cast(Spaycs.start_date as text),'YYYY-MM-DD')";
-            $spaycs->where([$startDate.' =' =>$filterDate->format('Y-m-d')]);
+            $filterDate = Time::createFromTimestamp($request['current_date'],'UTC');
+            
+            $beginOfDay = clone $filterDate;
+            $beginOfDay->modify('today');
+            $endOfDay = clone $beginOfDay;
+            $endOfDay->modify('tomorrow');
+            $endOfDay->modify('1 second ago');
+            $spaycs->where(function (QueryExpression $exp, Query $q)use($startDate,$beginOfDay,$endOfDay) {
+                return $exp->between($startDate, $beginOfDay->format('Y-m-d H:i'), $endOfDay->format('Y-m-d H:i'));
+            });
+            //$spaycs->where([$startDate.' =' =>$filterDate->setTimezone('UTC')->format("Y-m-d H:i")]);
+            
         }else{
             $spaycs->where([
                 'OR'=>[[$startDate.' >='=>$today_date],[$endDate.' >= '=>$today_date]]
@@ -989,7 +999,6 @@ class SpaycsTable extends Table {
         $spaycs->order(['score'=>'DESC']);
         
         $spaycs->limit(MAP_LIMIT);
-        
         //$spaycs->groupBy('spaycs.id');
         return ['count'=>$spaycs->count(),'records'=>$spaycs];
     }
