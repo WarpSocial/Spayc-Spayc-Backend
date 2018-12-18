@@ -883,19 +883,19 @@ class SpaycsTable extends Table {
         $startDate = "TO_TIMESTAMP(cast(Spaycs.start_date as text),'YYYY-MM-DD HH24:MI')";
         $endDate = "TO_TIMESTAMP(cast(Spaycs.end_date as text),'YYYY-MM-DD HH24:MI')";  
         if(isset($request['is_filter']) && ($request['is_filter'] === true) && isset($request['current_date'])){
-            //Time::createFromTimestamp($request['current_date'], Configure::read('timezone'));
-            $filterDate = Time::createFromTimestamp($request['current_date'],'UTC');
+            $filterDate = Time::createFromTimestamp($request['current_date'], Configure::read('timezone'));
+            /* reverse of timezone offset */
+            $zoneOffset = -1 * $filterDate->getOffset();
             
-            $beginOfDay = clone $filterDate;
-            $beginOfDay->modify('today');
-            $endOfDay = clone $beginOfDay;
-            $endOfDay->modify('tomorrow');
-            $endOfDay->modify('1 second ago');
+            $beginOfDay = Time::createFromTimestamp($request['current_date'],'UTC');            
+            $beginOfDay->modify($zoneOffset.' second');
+           
+            $endOfDay = Time::createFromTimestamp($request['current_date'],'UTC');
+            $endOfDay->modify('tomorrow');            
+            $endOfDay->modify($zoneOffset.' second');           
             $spaycs->where(function (QueryExpression $exp, Query $q)use($startDate,$beginOfDay,$endOfDay) {
                 return $exp->between($startDate, $beginOfDay->format('Y-m-d H:i'), $endOfDay->format('Y-m-d H:i'));
             });
-            //$spaycs->where([$startDate.' =' =>$filterDate->setTimezone('UTC')->format("Y-m-d H:i")]);
-            
         }else{
             $spaycs->where([
                 'OR'=>[[$startDate.' >='=>$today_date],[$endDate.' >= '=>$today_date]]
