@@ -37,7 +37,7 @@ class SpamReportsTable extends Table {
 
         $this->setTable('spam_reports');
         $this->setDisplayField('id');
-        $this->setPrimaryKey(['id', 'spayc_id', 'created']);
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
 

@@ -59,6 +59,9 @@ class UsersTable extends Table
         $this->hasMany('JoinedSpayc', [
             'foreignKey' => 'user_id'            
         ]);
+        $this->hasMany('ReportedWarps', [
+            'foreignKey' => 'reported_by'            
+        ]);
         $this->hasMany('SubscribedUsers', [
             'foreignKey' => 'user_id'
         ]);        

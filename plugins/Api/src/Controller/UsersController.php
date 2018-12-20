@@ -444,13 +444,14 @@ class UsersController extends AppController {
         $this->Auth->setUser($user);
         $user = $this->Users->usrLog($user);
         if(!empty($data['image_url'])) {
-            $items = TableRegistry::get('Api.UserImages')->uploadFacebookImage($data['image_url'], $this->Auth->user('id'));
-            $this->Matrix->uploadMediaImage([
-                'image_url'=>$items['image_url'],
-                //'image_url'=>$data['image_url'],
-                'matrix_token'=>$user['matrix_access_token'],
-                'matrix_user_id'=>$user['matrix_user_id']
+            $items = TableRegistry::get('Api.UserImages')->uploadFacebookImage($data['image_url'], $this->Auth->user('id'));            
+            if(!empty($items)){
+                $this->Matrix->uploadMediaImage([
+                    'image_url'=>$items['image_url'],
+                    'matrix_token'=>$user['matrix_access_token'],
+                    'matrix_user_id'=>$user['matrix_user_id']
                 ]);
+            }
         }
         $data = [
             'id'=>$user['id'],
@@ -631,9 +632,8 @@ class UsersController extends AppController {
         $this->set($response);
     }
     /**
-     * Edit method
+     * ghostMode method to update the ghost mode setting
      *
-     * @param string|null $id User id.
      * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
@@ -661,6 +661,38 @@ class UsersController extends AppController {
         try{
             $this->Users->save($entity);
             $response = ['status' => "success", 'message' => __('Ghost mode setting change successfully.'), 'data' => $data];
+        } catch (Exception $ex) {
+            $response = ['status' => "success", 'message' => $ex->getMessage(), 'data' => $data];
+        }
+
+        $this->set($response);
+    }
+    
+    /**
+     * updateUserCategories method to update the event categories for user
+     *
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     */
+    public function updateUserCategories() {
+        if (!$this->request->is(['put','post'])) {
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
+        }
+        
+        $data = $this->request->getData();        
+        if(empty($data)){
+            $this->restException(['status'=>'failed', 'message'=>__('Invalid Request.')], 400);
+        } 
+        $errors = $this->Users->validCategories($data);
+        if($errors) {
+            $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($errors)], 400);
+        }
+        $userEntity = $this->Users->get($this->Auth->user('id'),['contain' => ['SpaycCategories']]);
+        $data['spayc_categories'] = ['_ids'=>explode(',',$data['categories'])];
+        $entity = $this->Users->patchEntity($userEntity, $data);
+        try{
+            $this->Users->save($entity);
+            $response = ['status' => "success", 'message' => __('User category has been saved successfully.'), 'data' => $data];
         } catch (Exception $ex) {
             $response = ['status' => "success", 'message' => $ex->getMessage(), 'data' => $data];
         }
@@ -1370,9 +1402,9 @@ class UsersController extends AppController {
             },
             'Spaycs'=>function($q) {
                 return $q->select(['Spaycs.user_id', 'created_spaycs'=>$q->func()->count('Spaycs.id')])->group(['Spaycs.user_id'])->where(['Spaycs.group_type !='=>'trusted_private','Spaycs.parent_id IS'=>null ]);
-            }
+            },
+            'SpaycCategories',
         ]);
-        //pj($user);die;
         
         $user->formatResults(function (\Cake\Collection\CollectionInterface $results)use($loggedUser,$id) {
             return $results->map(function ($row)use($loggedUser,$id) {
@@ -1387,8 +1419,9 @@ class UsersController extends AppController {
                 unset($row['friend']['matrix_room_id']);
                 $row['friend']['pending_request'] = TableRegistry::get('Api.FriendRequest')->friendStatus($loggedUser['id'],PENDING);
                 $row['friend']['total_friends'] = TableRegistry::get('Api.FriendRequest')->getFriendCountByUserId($uId);
-                unset($row['joined_spayc'],$row['requestedto'],$row['requestedby'],$row['spaycs']);
-                unset($row['notification_to']);
+                $row['categories'] = Hash::extract($row->spayc_categories, '{n}.id');
+                unset($row['joined_spayc'],$row['requestedto'],$row['requestedby'],$row['spaycs'],$row['notification_to'],$row['spayc_categories']);
+                
                 return $row;
             });
         });
@@ -1795,7 +1828,7 @@ class UsersController extends AppController {
         if($notify->count() != count($data['notification_ids'])) {
             $this->restException(['status'=>'failed','message'=>__('Notification id is not valid.')], 400);
         }
-        $notification->updateAll(['status'=>'Read'], ['id IN'=>$data['notification_ids']]);
+        $notification->updateAll(['status'=>'Read'], ['requested_to'=>$user['id']]);
         $response = ['status'=>'success','message'=>__('Notification read successfully.')];
         $this->set($response);
     }

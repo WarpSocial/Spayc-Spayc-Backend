@@ -50,8 +50,9 @@ class Notification extends Entity {
          }
         $timezone = Configure::read('timezone');
         if (!empty($date)) {
-            $sd = new Time($date, 'UTC');
-            return $sd->setTimezone($timezone)->format('m-d-Y H:i:s');
+            //$sd = new Time($date, 'UTC');
+            //return $sd->setTimezone($timezone)->format('m-d-Y H:i:s');
+            return (new Time($date))->format('m-d-Y H:i:s');
         } else {
             return;
         }

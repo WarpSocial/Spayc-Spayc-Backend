@@ -632,5 +632,26 @@ class JoinSpaycsController extends AppController {
             }
         }
     }
+    
+    public function joinedSpayc(){
+        if (!$this->request->is(['get'])) {
+            $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);
+        }
+        
+        $user = $this->Auth->user();
+        $spaycs = TableRegistry::get('Api.JoinedSpayc')->getJoinedSpayc($user['id']); 
+        $page = $this->request->getQuery('page',1);
+        $spaycs->page($page);
+        $limit = $this->request->getQuery('limit');
+        if(!empty($limit)){
+            $spaycs->limit($limit);
+        }        
+        if(!$spaycs->isEmpty()){            
+            $response = ['status'=>'success', 'message'=>__('List of subscribed warp.'), 'data'=>$spaycs];
+        }else{
+            $response = ['status'=>'success', 'message'=>__('User has not been joined to any warp.'), 'data'=>[]];
+        }        
+        $this->set($response);
+    }
 
 }

@@ -155,4 +155,16 @@ class JoinedSpaycTable extends Table {
                 ->inList('status', $status,__('Status should be '. implode(' or ',$status)));
         return $validator->errors($data);
     }
+    
+    public function getJoinedSpayc($userId = null) {
+        if(is_null($userId)){
+            return false;
+        }
+        return \Cake\ORM\TableRegistry::get('Spaycs')->find()
+                ->select(['Spaycs.id','Spaycs.name','Spaycs.matrix_room_id','Spaycs.spayc_category_id'])
+                ->innerJoinWith('JoinedSpayc',function($q)use($userId){
+                    return $q->where(['JoinedSpayc.user_id'=>$userId]);
+                })
+                ->order(['Spaycs.created'=>'DESC']);
+    }
 }

@@ -26,7 +26,9 @@
                 </div>
             </div>
         </div>
-        <textarea class="message-text text-left" name="message" required="required"></textarea>
+        <textarea class="message-text text-left" id="cmessage" name="message" required="required"></textarea>
+        <span class="char-count">0 characters</span>
+        <span class="cmerror hide" style="color:#eb5656;margin:0px 10px">Max 200 characters allowed</span>
         <div class="d-flex pt-20">
             
             <button class="button btn-danger btn-md skip-popup" data-dismiss="modal">Cancel</button>
@@ -37,9 +39,6 @@
     </div>
 </div>
 
-<script>
-
-</script>
 <?php echo $this->Html->script(['admin/user','bootstrap-multiselect.min.js',]); ?>
 <?php echo $this->Html->script(['admin/user','theme.js']); ?>
 

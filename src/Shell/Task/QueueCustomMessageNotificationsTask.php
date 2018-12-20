@@ -39,18 +39,26 @@ class QueueCustomMessageNotificationsTask extends QueueTask {
                 ['fields' =>['email','display_name','id']])
                 ->where(['id IN ' => $data['users']])->toArray();
         
-          foreach ($obj as $val) {
-                    $email['email'] = $val['email'];
-                    $email['message'] = $data['message'];
-                    $email['name'] = $val['display_name'];
-                    $this->getMailer('User')->send('customMessages', [$email]);
-                            $push['requested_by'] = $data['id'];
-                            $push['username'] = $data['display_name'];
-                            $push['requested_to'] = $val['id'];
-                            $push['slug'] = CUSTOM_MESSAGES_SLUG;
-                            $pushNotification->sendPushNotification($push);
-                }
+            foreach ($obj as $val) {
+                $email['email'] = $val['email'];
+                $email['message'] = $data['message'];
+                $email['name'] = $val['display_name'];
+                $this->getMailer('User')->send('customMessages', [$email]);                
+               
+                $pushNotification->sendPushNotification([
+                    'slug' => CUSTOM_MESSAGES_SLUG,
+                    'message' => $data['message'],
+                    'requested_by' => $data['id'],
+                    'requested_to' =>$val['id'],
+                    'spayc_id' => '',
+                    'spayc_name' => '',
+                    'spayc_image' => '',
+                    'matrix_room_id' => '',
+                    'display_name' => ADMIN_DISPLAY_NAME  
+                ]);
+            }
         }
+        
         $this->hr();
         $this->out('Proccessing to send the notification');
         $this->hr();

@@ -105,7 +105,7 @@ class PhysicalLocationTable extends Table {
         $distance = "ROUND(CAST(".str_replace($dckey,$rckey,$equation)." AS numeric), 5)";
         $milesDistance = Configure::read('newSpaycDistance');
         $query = $this->find()
-                ->select(['PhysicalLocation.id','PhysicalLocation.user_id','Users.id','distance'=>$distance])
+                ->select(['PhysicalLocation.id','PhysicalLocation.user_id','Users.id','PhysicalLocation.timezone','distance'=>$distance])
                 ->innerJoinWith('Users.UserLogs',function($q){
                     return $q->select(['UserLogs.id','UserLogs.user_id','UserLogs.device_token']);
                 })

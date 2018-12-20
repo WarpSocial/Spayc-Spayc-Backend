@@ -27,7 +27,7 @@ return [
     'is_notify'=>['On', 'Off'],
     //'friend_status'=>['Blocked', 'Unfriend', 'Unblock'],
     'maxupload'=>'5MB',
-    'adminEmail' =>'kiwitech@gmail.com',
+    'admin_email' =>'kiwiwarp@gmail.com',
     'reverification_subject'=>'Re-Verifiaction',
     'forgotpassword_subject'=>'Forgot Password',
     'startevent_subject'=>'Start Event',

@@ -1813,6 +1813,49 @@ function postRemoveFromSpayc() { return; }
  */
 function getSubscribedSpaycs() { return; }
 /**
+ * @api {get} /joined-spayc.json? User Joined Warp
+ * @apiVersion 0.1.0
+ * @apiName getJoinedSpayc
+ * @apiGroup Spayc
+ * @apiPermission private
+ *
+ * @apiDescription Get the list warp to whom user has been joined the warp.
+ * 
+ * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * 
+ *    @apiParam {Number}      page            Page number in query string (Optional).
+ *    @apiParam {Number}      limit           Limit in query string (Optional).
+ 
+ *    
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of Joined warp.
+ * @apiSuccess {Object} data List of joined warp.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+ {
+    "status": "success",
+    "message": "List of subscribed warp.",
+    "data": [
+        {
+            "id": "734",
+            "name": "lane_3",  
+            "spayc_category_id": 3,
+            "matrix_room_id": "!VIaNrDKuzkBQEVgtNI:127.0.0.1"
+        },
+        {
+            "id": "732",
+            "name": "lane_3",  
+            "spayc_category_id": 3,
+            "matrix_room_id": "!fueGNjtYWCpzMcTbtI:127.0.0.1"
+        }
+    ]
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function getJoinedSpayc() { return; }
+/**
  * @api {put} /update-comment/:matrix_room_id.json Update Comment
  * @apiVersion 0.1.0
  * @apiName putUpdateComment
@@ -1866,3 +1909,37 @@ function putUpdateComment() { return; }
  * @apiUse UserErrorResponse
  */
 function getEventsImage() { return; }
+/**
+ @api {post} /reported-warp.json Report About Warp
+ @apiVersion 0.1.0
+ @apiName postReportsWarp
+ @apiGroup Spayc
+ @apiPermission Private User
+ 
+ @apiDescription Report about a warp.
+  
+ @apiHeader {String} TOKEN  * Token must be in header
+ 
+ @apiParam  {String} matrix_room_id  * Matrix room id (required).
+
+ @apiExample Example usage:
+ 
+    {
+	"matrix_room_id":"!bveMFWvYgJpOzAoZGC:127.0.0.1",
+	"message":"some message"
+    }
+ 
+ @apiSuccess {String} status success.
+ @apiSuccess {String} message You have reported successfully..
+ @apiSuccess {Object} data Null.
+ @apiSuccessExample {json} Success-Response: 
+       HTTP/1.1 200 OK
+        {
+            "status": "success",
+            "message": "You have reported successfully."
+        }
+ 
+ @apiError {String}  You have already reported about this warp.Admin will take care about this reports.
+  @apiUse UserErrorResponse
+*/
+function postReportsWarp() { return; }

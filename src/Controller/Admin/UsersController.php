@@ -454,25 +454,29 @@ class UsersController extends AdminController
     public function searchUser() {
         $this->viewBuilder()->layout('');
         $this->autoRender = false;
-        $result_arr = array();
-          $data = $this->request->getData();
-        $obj = TableRegistry::get("Users")->find('all',
-                ['fields' =>['id'=>'Users.id','text'=>'Users.display_name','image_url'=>'image_url','email']])
-                 ->join([
-                            'table' => 'user_images',
-                            'type' => 'LEFT',
-                            'conditions' => [
-                                'Users.id = user_images.user_id'
-                            ]]);
-          if(!empty($data['q']['term'])){            
-            $obj->where(['OR' => ['LOWER(Users.display_name) LIKE' => "%".$data['q']['term']."%"]]);
+        $users = [];
+        $data = $this->request->getData();
+        $obj = TableRegistry::get('Users')->find()
+                ->select(['Users.id','text'=>'Users.display_name','email'])
+                ->contain([
+                    'UserImages'=>function($q) {
+                        return $q->select(['UserImages.id','UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
+                    },  
+                ])
+                ->order(['Users.display_name'=>'ASC'])
+                ->where(['Users.role_id IS NULL','Users.email !='=>SCRAPER_EMAIL]);
+                    
+        if(!empty($data['q']['term'])){
+            $obj->where(['LOWER(Users.display_name) LIKE' => "%". strtolower($data['q']['term'])."%"]);
         }
-        $obj->order(['Users.display_name'=>'ASC'])->toArray();
-        if(!empty($obj)){
-              $result_arr = ['results' => $obj];
-        }
-           echo json_encode($result_arr);
-            die;
+        
+        $users['results'] = $obj->map(function($row){
+                $row['image_url'] = !empty($row->user_images)?$row->user_images[0]->image_url:null;
+                unset($row->user_images);
+                return $row;
+            })->toArray();
+        
+        echo json_encode($users);die;
         
     }
    

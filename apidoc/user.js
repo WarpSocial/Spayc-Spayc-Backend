@@ -472,6 +472,7 @@ function postForgotPassword() { return; }
         "latitude": 28.535516,
         "ghost_mode_search": 0,
         "ghost_mode_map": 1,
+        "categories": [2,5],
         "matrix_user_id": null,
         "user_images": [
             {
@@ -674,6 +675,32 @@ function putSetProfileImage() { return; }
  * @apiUse UserErrorResponse
  */
 function putGhostMode() { return; }
+/**
+ * @api {post} /user-categories.json Update User Categories
+ * @apiVersion 0.1.0
+ * @apiName postUserCategories
+ * @apiGroup User
+ * @apiPermission Private
+ *
+ * @apiDescription add list of comma separated categories id.
+ *
+ * @apiHeader {String} token Token must be set in header.
+ *
+ * @apiParam {String} categories  List of existing categories id(required).
+ *
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message ser category has been saved successfully.
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "ser category has been saved successfully"
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function postUserCategories() { return; }
 
 /**
  * @api {get} /remove-avatar/:order.json Remove Profile Image
@@ -1029,3 +1056,37 @@ function postReadNotifications() { return; }
   @apiUse UserErrorResponse
 */
 function postSpamReports() { return; }
+/**
+ @api {post} /feedback.json User Feedback
+ @apiVersion 0.1.0
+ @apiName postUserFeedback
+ @apiGroup User
+ @apiPermission private
+
+ @apiDescription User Feedback
+ 
+ @apiHeader {String} TOKEN    * A token send by header as TOKEN
+ 
+    @apiParam {String}      message          message(Required).
+    @apiParam {File}      attachment         Any attached document(Optional).
+
+    @apiExample Example usage:
+    {
+        "message": "Test Test Test ",
+        "attachment": "http://www.xyz.com"
+    }
+
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message Your feedback message has been sent successfully
+ * @apiSuccessExample {json} Success-Response: 
+ *  HTTP/1.1 200 OK
+    {
+        "status": "success",
+        "message": "Advertisement Created Successfully",
+        "data": []
+    }
+ *
+ * @apiUse UserErrorResponse
+ */
+function postUserFeedback() { return; }

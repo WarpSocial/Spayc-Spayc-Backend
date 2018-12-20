@@ -201,8 +201,16 @@ class RedisComponent extends Component {
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      */
     public function deleteSpayc($keyId){
-        $this->_Redis->zRem($this->spaycKey,$keyId);
-        return $this->_Redis->delete($this->spaycKey.'_'.$keyId) > 0;
+        if(is_array($keyId) && !empty($keyId)){
+            foreach($keyId as $key => $spid){
+                $this->_Redis->zRem($this->spaycKey,$spid);
+                $this->_Redis->delete($this->spaycKey.'_'.$spid);
+            }            
+        }else{
+            $this->_Redis->zRem($this->spaycKey,$keyId);
+            $this->_Redis->delete($this->spaycKey.'_'.$keyId) > 0;
+        }
+        
     }
 
     /**
@@ -212,6 +220,16 @@ class RedisComponent extends Component {
         if (empty($this->_config['persistent']) && $this->_Redis instanceof Redis) {
             $this->_Redis->close();
         }
+    }
+    
+    public function addPrefix($key,$values = []){
+        if(empty($values) || empty($key)){
+            return false;
+        }
+        $redisKeys = array_map(function($val)use($key){
+            return $key.$val;
+        }, $values);
+        return $redisKeys;
     }
 
 }

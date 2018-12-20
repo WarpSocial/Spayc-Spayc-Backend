@@ -97,11 +97,13 @@ class EventbriteEventsTable extends Table
     
      /*** common query for union all scraper table ***/
     public function unionCommonQuery(){
-        return "select eventbrite_event_id  as event_id,'eventbrite' as type,name,start_date,latitude,longitude,group_id,location,category from eventbrite_events where latitude IS NOT NULL and longitude IS NOT NULL and spayc_id IS NULL 
+        return "select eventbrite_event_id  as event_id,'eventbrite' as type,name,start_date,latitude,longitude,group_id,location,category from eventbrite_events where latitude IS NOT NULL and longitude IS NOT NULL and spayc_id IS NULL         
         UNION 
+        select ticketmaster_event_id as event_id,'ticketmaster' as type,name,start_date,latitude,longitude,group_id,location,category from ticketmaster_events where latitude IS NOT NULL and longitude IS NOT NULL and spayc_id IS NULL ";
+        /*for stubhub
+         * UNION 
         select stubhub_event_id as event_id,'stubhub' as type,name,start_date,latitude,longitude,group_id,location,category from stubhub_events where latitude IS NOT NULL and longitude IS NOT NULL and spayc_id IS NULL 
-        UNION 
-        select ticketmaster_event_id as event_id,'ticketmaster' as type,name,start_date,latitude,longitude,group_id,location,category from ticketmaster_events where latitude IS NOT NULL and longitude IS NOT NULL and spayc_id IS NULL "; 
+         */
     }
 
     /**
@@ -117,24 +119,31 @@ class EventbriteEventsTable extends Table
         return $rules;
     }
 
-    public function saveNupdateData($events, $eventIds) {
-        $this->deleteAll([['start_date <'=> date('Y-m-d 23:59:59', strtotime(' -1 day'))]]);
+    public function saveNupdateData($events, $eventIds,$page=null) {
+        /* delete previous record from eventbrite table */
+        $this->deleteAll([['end_date <'=> date('Y-m-d 23:59:59', strtotime(' -1 day'))]]);
+        /* pre-existing events in tmp table */
         $getIds = $this->find()->select(['eventbrite_event_id'])->
             where(['eventbrite_event_id IN' => $eventIds])->extract('eventbrite_event_id')->toList();
-        $diffIds=array_diff($eventIds,$getIds);       
+        /* get the is which not existing in temp table - new events received */
+        $diffIds=array_diff($eventIds,$getIds);     
+        //echo "@@$page<=>".count($eventIds)."@@";
         if(count($diffIds)){
             $getuniqueevents =[];           
             foreach ($events as $val) {
                 if (in_array($val['eventbrite_event_id'],$diffIds)){
                     $Entity = $this->newEntity($events[$val['eventbrite_event_id']]);
                     $result = $this->save($Entity);
+                    //echo '**'.$val['eventbrite_event_id'].'**';
                 } else if(in_array($val['eventbrite_event_id'],$getIds)) {
                     $query = $this->query();
                     $query->update()
                     ->set($events[$val['eventbrite_event_id']])
                     ->where(['eventbrite_event_id' => $val['eventbrite_event_id']])
                     ->execute();
-                } else {
+                    //echo '++'.$val['eventbrite_event_id'].'++';
+                }else{
+                   // echo '!!!'.$val['eventbrite_event_id'].'!!!';
                     continue;
                 }
             }
@@ -145,7 +154,49 @@ class EventbriteEventsTable extends Table
                 ->set($events[$id])
                 ->where(['eventbrite_event_id' => $id])
                 ->execute();
+                //echo '=='.$val['eventbrite_event_id'].'==';
             } 
         } 
+    }
+    
+    public function saveNupdateData_new($events, $eventIds,$page=null) {
+        /* delete previous record from eventbrite table */
+        $this->deleteAll([['end_date <'=> date('Y-m-d 23:59:59', strtotime(' -1 day'))]]);
+        /* pre-existing events in tmp table */
+        $getIds = $this->find()->select(['eventbrite_event_id'])->where(['eventbrite_event_id IN' => $eventIds])->extract('eventbrite_event_id')->toList();
+        /* newly created event id on scrapper */
+        $diffIds=array_diff($eventIds,$getIds); 
+//        echo implode(',', $eventIds);
+//        echo '------------------------------';
+//        echo implode(',', $getIds);
+//        echo '------------------------------';
+//        echo implode(',', $diffIds);die;
+        /* get the is which not existing in temp table - new events received */
+        //echo "@@$page<=>".count($eventIds)."@@";
+        $connection = \Cake\Datasource\ConnectionManager::get('default');
+        if(!empty($events)){
+            /*update existing events */
+            if(!empty($getIds)){
+            foreach($getIds as $uEbId){
+                pr($events[$uEbId]);die("klds");
+                $events[$uEbId]['modified'] = date('Y-m-d H:i:s');
+                $connection->update($this->getTable(), $events[$uEbId], ['eventbrite_event_id' => $uEbId]);
+                
+            }
+            }
+            $newObj = [];
+            /* create new events */
+            if(!empty($diffIds)){
+                foreach($diffIds as $nEbId){
+                    if(!empty($events[$nEbId])){
+                        $events[$nEbId]['created'] = date('Y-m-d H:i:s');
+                        $events[$nEbId]['modified'] = date('Y-m-d H:i:s');                
+                        $connection->insert($this->getTable(), $events[$nEbId]);
+                        //$newObj[] = $events[$uEbId];
+                    }
+                } 
+            }
+            //$connection->insert($this->getTable(), $events[$nEbId]);
+        }
     }
 }

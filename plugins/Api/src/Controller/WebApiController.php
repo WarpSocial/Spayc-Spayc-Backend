@@ -6,13 +6,14 @@ use Api\Controller\AppController;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Cake\Core\Configure;
-
+use Cake\Mailer\MailerAwareTrait;
 /**
  * WebApi Controller
  *
  * @property \Api\Model\Table\WebApiTable $WebApi
  */
 class WebApiController extends AppController {
+      use MailerAwareTrait;
 
     /**
      * initialize the controller config
@@ -53,7 +54,34 @@ class WebApiController extends AppController {
             'data' => $images
         ]);
     }
-
+    /**
+     * @userFeedBack to send the feedback message to the admin
+     */
+    public function userFeedBack(){
+        if (!$this->request->is(['post'])) {
+            $this->restException(['status' => 'failed', 'message' => __('Method not allowed.')], 405);
+        }
+        $user = $this->Auth->user();
+        $data = $this->request->getData();
+        $srRegistory = TableRegistry::get('Api.UserFeedbacks');
+        $entity = $srRegistory->newEntity();
+        $items = $srRegistory->patchEntity($entity, $data);
+        if($items->errors()) {
+            $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
+        }
+        $items->user_id = $user['id'];
+        if($srRegistory->save($items)) {
+            $items->action_type = 'userFeedBack';
+            $items->User = $this->Auth->user(); /* user mailer of user data*/            
+            TableRegistry::get('Queue.QueuedJobs')->createJob('Mailer',$items->toArray());
+            $this->restException(['status' => 'success', 'message' => __('Your feed has been sent successfully.'), 'data' => []], 200);
+        } else {
+            $this->restException(['status' => 'failed', 'message' => __('Failed to send feedback message.')], 400);
+        }
+    }
+    /**
+     * spamReport method to report user as spam user
+     */
     public function spamReport() {
         if (!$this->request->is(['post'])) {
             $this->restException(['status' => 'failed', 'message' => __('Method not allowed.')], 405);
@@ -92,6 +120,43 @@ class WebApiController extends AppController {
             $this->restException(['status' => 'success', 'message' => __('You have reported successfully.'), 'data' => []], 200);
         } else {
             $this->restException(['status' => 'failed', 'message' => __('Failed to make user as spam user.')], 400);
+        }
+    }
+    
+    /**
+     * reportedWarp method to report warp if he/she is not interested
+     */
+    public function reportedWarp() {
+        if (!$this->request->is(['post'])) {
+            $this->restException(['status' => 'failed', 'message' => __('Method not allowed.')], 405);
+        }
+        $user = $this->Auth->user();
+        $data = $this->request->getData();
+        $srRegistory = TableRegistry::get('Api.ReportedWarps');
+        $errors = $srRegistory->validateInput($data);
+        if (!empty($errors)) {
+            $this->restException(['status' => 'failed', 'message' => $this->mapErrors($errors)], 400);
+        }
+        $spaycs = TableRegistry::get('Api.Spaycs')->findByMatrixRoomId($data['matrix_room_id'])->first();
+        
+        $joinedCheck = TableRegistry::get('Api.JoinedSpayc')->find()->where(['spayc_id' => $spaycs->id, 'user_id' => $user['id']])->toArray();
+        $loggedUserStatus = Hash::extract($joinedCheck, '{n}[user_id=' . $user['id'] . ']');
+        if (empty($loggedUserStatus)) {
+            $this->restException(['status' => 'failed', 'message' => __('Your are not joined with this warp.')], 400);
+        }
+        
+        if ($srRegistory->exists(['reported_by' => $user['id'], 'matrix_room_id' => $data['matrix_room_id']])) {
+            $this->restException(['status' => 'failed', 'message' => __('You have already reported about this warp.Admin will take care about this reports.')], 400);
+        }
+        $srEntity = $srRegistory->newEntity();
+        $srEntity->spayc_id = $spaycs->id;
+        $srEntity->matrix_room_id = $spaycs->matrix_room_id;
+        $srEntity->reported_by = $user['id'];
+        $srEntity->message = !empty($data['message'])?$data['message']:null;
+        if ($srRegistory->save($srEntity)) {
+            $this->restException(['status' => 'success', 'message' => __('You have reported successfully.'), 'data' => $data], 200);
+        } else {
+            $this->restException(['status' => 'failed', 'message' => __('Failed to send your message.')], 400);
         }
     }
 
@@ -137,7 +202,8 @@ class WebApiController extends AppController {
         TableRegistry::get('Api.Comments')->spaycActivities($matrixRoomId, $data);
         $this->restException(['status' => 'success', 'message' => __('Request proccess successfully.')], 200);
     }
-
+    
+    /* Dummy code to test */
     public function scrapper() {
         //$items = $this->ticketmasterapi();
         $catEntity = \Cake\ORM\TableRegistry::get('Api.SpaycCategories');
@@ -185,7 +251,7 @@ class WebApiController extends AppController {
         echo 'TOTAL = ' . $i;
         pr($items);
     }
-
+    /* Dummy code to test */
     public function ticketmasterapi() {
         $http = (new \Cake\Http\Client())->get('https://app.ticketmaster.com/discovery/v2/classifications.json?apikey=FGCdJbUpn9mAmyE9Rlqdi8CYfdhNQMsa&size=500');
         $result = json_decode($http->body, true);
@@ -212,7 +278,7 @@ class WebApiController extends AppController {
         }
         return $items;
     }
-
+    /* Dummy code to test */
     public function eventbriteapi() {
         $http = (new \Cake\Http\Client())->get('https://www.eventbriteapi.com/v3/subcategories/?token=JRTJ7FHW3TG7F5U535RN&page=5');
         $result = json_decode($http->body, true);

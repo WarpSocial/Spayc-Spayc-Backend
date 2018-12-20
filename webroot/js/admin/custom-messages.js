@@ -31,7 +31,17 @@ jQuery(document).ready(function ($) {
         e.preventDefault();
     });
 
+    $(".message-text").on('keyup',function () {
+        var max = 200;
+        if ($(this).val().length >= max) {
+            $(".cmerror").removeClass('hide');
+            $(this).val($(this).val().substr(0, max));
+        }else{
+            $(".cmerror").addClass('hide');
+        }
+        $(".char-count").html($(this).val().length+" characters");
 
+    });
     
     $(".img-icon").click(function (event) {
         $(".loader").addClass('show-loader');

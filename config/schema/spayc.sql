@@ -35,6 +35,18 @@ CREATE TABLE users (
     unique (username,email,created)
 );
 SELECT create_hypertable('users', 'created');
+
+DROP TABLE IF EXISTS user_category;
+CREATE TABLE user_category (
+    "id" BIGSERIAL NOT NULL,    
+    "user_id" bigint NOT NULL,
+    "category_id" bigint NOT NULL,
+    "created" timestamp NOT NULL,
+    "modified" timestamp,
+    PRIMARY KEY (id,category_id,user_id,created)
+);
+SELECT create_hypertable('user_category', 'created');
+
 DROP TABLE IF EXISTS user_logs;
 CREATE TABLE user_logs (
     id BIGSERIAL NOT NULL,
@@ -568,6 +580,31 @@ CREATE TABLE IF NOT EXISTS spam_reports(
     PRIMARY KEY(id,spayc_id,created)
 );
 SELECT create_hypertable('spam_reports', 'created');
+
+DROP TABLE IF EXISTS reported_warps;
+CREATE TABLE IF NOT EXISTS reported_warps(
+    "id" BIGSERIAL NOT NULL,
+    "spayc_id" bigint NOT NULL,
+    "matrix_room_id" varchar(100) NOT NULL,
+    "reported_by" bigint NOT NULL,
+    "message" text NULL,
+    "created" timestamp NOT NULL,
+    "modified" timestamp,
+    PRIMARY KEY(id,spayc_id,created)
+);
+SELECT create_hypertable('reported_warps', 'created');
+
+DROP TABLE IF EXISTS user_feedbacks;
+CREATE TABLE IF NOT EXISTS user_feedbacks(
+    "id" BIGSERIAL NOT NULL,
+    "user_id" bigint NOT NULL,
+    "message" text NULL,
+    "attachment" character varying(250) NULL,
+    "created" timestamp NOT NULL,
+    "modified" timestamp,
+    PRIMARY KEY(id,created)
+);
+SELECT create_hypertable('user_feedbacks', 'created');
 
 DROP TABLE IF EXISTS scraper_logs;
 CREATE TABLE "scraper_logs" (

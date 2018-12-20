@@ -841,42 +841,70 @@ class SpaycsTable extends Table {
         return $data;
     }
     public function getNearBySpaycsOnMap($request = [], $userId=null) {
-        $now = new Time('now', Configure::read('timezone'));
+        //pr((new Time('1 day ago', Configure::read('timezone')))->getTimestamp());die;
+        $now = new Time('now', Configure::read('timezone'));        
         $endObj = clone $now;
         $now->modify('today');
+        $timeStmap = $now->getTimestamp();        
         $endObj->modify('+15 days');
         $endObj->modify('1 second ago'); 
         $today_date = $now->setTimezone('UTC')->format("Y-m-d H:i");
-        $twoWeek = $endObj->setTimezone('UTC')->format("Y-m-d H:i");          
-        
-        if (empty($request['radius'])) {
-            $radius = $this->distance($request['center_latitude'], $request['center_longitude'], $request['endpoint_latitude'], $request['endpoint_longitude']);
-        } else {
+        $twoWeek = $endObj->setTimezone('UTC')->format("Y-m-d H:i"); 
+        /* if user filter past date event in that case calculate distance manually because radis clean past event */
+        if(isset($request['is_filter']) && ($request['is_filter'] === true) && (isset($request['current_date']) && $request['current_date'] < $timeStmap)){
+            $redisSpaycs = [];
+            $distanceField = $this->geoDistance();
+             $radius = $this->distance($request['center_latitude'], $request['center_longitude'], $request['endpoint_latitude'], $request['endpoint_longitude'],'meter');
+             $spaycs = $this->find()
+                ->select(['distance' => $distanceField,'id', 'name','start_date', 'matrix_room_id', 'image', 'type', 'modified', 'spayc_category_id','latitude','longitude','score'=>'website'])
+                ->where(["$distanceField <=" => $radius, 'Spaycs.status'=>'Active',
+                    'Spaycs.group_type !='=>'trusted_private', 
+                    'Spaycs.parent_id IS'=>null
+                    ])
+                ->bind(':latitude', $request['center_latitude'], 'float')
+                ->bind(':longitude', $request['center_longitude'], 'float');
+             
+        }else {
             $radius = $request['radius'];
-        }
-//        $radius = $this->distance($request['center_latitude'], $request['center_longitude'], $request['endpoint_latitude'], $request['endpoint_longitude']);
-        $redis = new RedisComponent(new ComponentRegistry());
-        $redisSpaycs = $redis->getGeoLocation('Spaycs',$request['center_latitude'], $request['center_longitude'], $radius);
-        if(empty($redisSpaycs)){
-            return ['count'=>0,'records'=>[]];
-        }
-        $requiredSpaycs = array_column($redisSpaycs,'id');
-        $spaycs = $this->find()
-                ->select(['id', 'name', 'matrix_room_id', 'image', 'type', 'modified', 'spayc_category_id','latitude','longitude','score'=>'website'])
+            if (empty($request['radius'])) {
+                $radius = $this->distance($request['center_latitude'], $request['center_longitude'], $request['endpoint_latitude'], $request['endpoint_longitude']);
+            }
+            $redis = new RedisComponent(new ComponentRegistry());
+            $redisSpaycs = $redis->getGeoLocation('Spaycs',$request['center_latitude'], $request['center_longitude'], $radius);
+            if(empty($redisSpaycs)){
+                return ['count'=>0,'records'=>[]];
+            }
+            $requiredSpaycs = array_column($redisSpaycs,'id');
+            $spaycs = $this->find()
+                ->select(['id', 'name','start_date', 'matrix_room_id', 'image', 'type', 'modified', 'spayc_category_id','latitude','longitude','score'=>'website'])
                 ->where(['Spaycs.status'=>'Active','Spaycs.group_type !='=>'trusted_private', 'Spaycs.parent_id IS'=>null,'Spaycs.id IN'=>$requiredSpaycs]);
-        $period = null;
-        if(!empty($request['datetime'])){
-            $period = strtolower($request['time']);
         }
         
         $startDate = "TO_TIMESTAMP(cast(Spaycs.start_date as text),'YYYY-MM-DD HH24:MI')";
         $endDate = "TO_TIMESTAMP(cast(Spaycs.end_date as text),'YYYY-MM-DD HH24:MI')";  
-        $spaycs->where([
+        if(isset($request['is_filter']) && ($request['is_filter'] === true) && isset($request['current_date'])){
+            $filterDate = Time::createFromTimestamp($request['current_date'], Configure::read('timezone'));
+            /* reverse of timezone offset */
+            $zoneOffset = -1 * $filterDate->getOffset();
+            
+            $beginOfDay = Time::createFromTimestamp($request['current_date'],'UTC');            
+            $beginOfDay->modify($zoneOffset.' second');
+           
+            $endOfDay = Time::createFromTimestamp($request['current_date'],'UTC');
+            $endOfDay->modify('tomorrow');            
+            $endOfDay->modify($zoneOffset.' second');           
+            $spaycs->where(function (QueryExpression $exp, Query $q)use($startDate,$beginOfDay,$endOfDay) {
+                return $exp->between($startDate, $beginOfDay->format('Y-m-d H:i'), $endOfDay->format('Y-m-d H:i'));
+            });
+        }else{
+            $spaycs->where([
                 'OR'=>[[$startDate.' >='=>$today_date],[$endDate.' >= '=>$today_date]]
                 ]);
             $spaycs->where([
                 'OR'=>[[$startDate.' <='=>$twoWeek],[$endDate.' <= '=>$twoWeek]]
                 ]);
+        }
+        
         if(isset($request['spayc_type']) && $request['spayc_type']) {
             $spayc_type = explode("|",ucfirst($request['spayc_type']));
             $spaycs->where(["Spaycs.type IN "=>$spayc_type]);
@@ -945,7 +973,10 @@ class SpaycsTable extends Table {
         $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($userId,$redisSpaycs) {
             return $results->map(function ($row) use($userId,$redisSpaycs) {
                 $totalJoined = [];
-                $row->distance = $redisSpaycs[$row->id]['distance'];//Hash::extract($redisSpaycs,'{n}[id='.$row->id.']')[0]['distance'];
+                if(!empty($redisSpaycs)){
+                    $row->distance = $redisSpaycs[$row->id]['distance'];//Hash::extract($redisSpaycs,'{n}[id='.$row->id.']')[0]['distance'];
+                }
+                
                 if(!empty($row['joined_spayc'])) {
                     $totalJoined = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[status=Joined].status');
                     $status = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.'].status');
@@ -1111,7 +1142,7 @@ class SpaycsTable extends Table {
         return $data;
     }
     
-    public function distance($lat1, $lon1, $lat2, $lon2) {
+    public function distance($lat1, $lon1, $lat2, $lon2,$unit='km') {
         $pi80 = M_PI / 180;
         $lat1 *= $pi80;
         $lon1 *= $pi80;
@@ -1126,6 +1157,9 @@ class SpaycsTable extends Table {
         $km = $r * $c;
 
         //echo '<br/>'.$km;
+        if($unit == 'meter'){
+            return ($km * 1000);
+        }
         return $km;
     }
     
@@ -1169,6 +1203,10 @@ class SpaycsTable extends Table {
                 ->where(['user_id IN' => $subQuery,'status'=>'Joined']);
         //pr($query->toArray());die;
         return $query;
+    }
+    
+    public function geoDistance(){
+        return '( 3959 * ACOS( COS( RADIANS(:latitude) ) * COS( RADIANS(  latitude ) ) * COS( RADIANS(  longitude ) - RADIANS(:longitude) ) + SIN( RADIANS(:latitude) ) * SIN( RADIANS(  latitude ) ) ) )';
     }
 
 }

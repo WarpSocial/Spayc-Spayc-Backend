@@ -164,13 +164,18 @@ class PushComponent extends Component {
                      $notificationType->message = str_replace("<WarpName>", ucwords($data['spayc_name']), $notificationType->message);
                      $success =    $this->getMailer('Api.User')->send('eventEndCron', [$mail]);
                     break;
-                
+                case "custom-messages":                        
+                    $notificationType->message = !empty($data['message'])?$data['message']:'';
+                    break;                
             }
             $userImages = TableRegistry::get("Api.UserImages")->findByUserIdAndIsProfile($data['requested_by'], 'Yes');
             if(!$userImages->isEmpty()) {
                 $data['user_image'] = $userImages->first()->image_url;
             }
-            $timezone = Configure::read('timezone');
+            $timezone = TableRegistry::get('Api.PhysicalLocation')->physicalLocation($user['id']);
+            if(empty($timezone)){
+                $timezone = Configure::read('timezone');
+            }
             $userInputTime = new Time('now',$timezone);
             //$userInputTime = new \DateTime("now", new \DateTimeZone('America/New_York') );
             //echo $userInputTime->format('Y-m-d H:i:s');
@@ -179,7 +184,7 @@ class PushComponent extends Component {
             $data['notification_type'] = $notificationType->type;
             //pr($data);die;
             /* Save the record in db*/
-             $data['date_time'] = (new Time($userInputTime, $timezone))->setTimezone('UTC')->format("Y-m-d H:i:s");
+            $data['date_time'] = $userInputTime->format("Y-m-d H:i:s");
             $data['message'] = $notificationType->message;
             $data['status'] = 'Unread';
             $data['created'] = date("Y-m-d H:i:s"); //pr($data);exit;

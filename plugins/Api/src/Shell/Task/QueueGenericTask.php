@@ -77,6 +77,15 @@ class QueueGenericTask extends QueueTask {
         $push = new PushComponent(new ComponentRegistry());
         $phylRepo = TableRegistry::get('Api.PhysicalLocation');
         $users = $phylRepo->userNearSpayc($data['latitude'],$data['longitude']);
+        $userCategories = [] ;
+        if(!$users->isEmpty()){
+            $categories = TableRegistry::get('Api.UserCategory')->userCategories(\Cake\Utility\Hash::extract($users->toArray(), '{n}.user_id'));
+            if(!$categories->isEmpty()){
+                foreach($categories as $cat){
+                    $userCategories[$cat->user_id][] = $cat->category_id;
+                }
+            }
+        }
         $notificationRepo = TableRegistry::get("Api.Notifications");
         $notifyMessage = $notificationRepo->message('new-spayc');
         if(empty($notifyMessage)){
@@ -93,9 +102,12 @@ class QueueGenericTask extends QueueTask {
                 'spayc_id'=>$data['id'],
                 'date_time'=>$data['created_duration']
             ];
-            
-            if($data['user_id'] != $user->user_id){
-                $notify = $notificationRepo->addNotification($notificationItems);
+           
+            if($data['user_id'] != $user->user_id){ /* Event Owner will not get notification */
+                if(!empty($userCategories[$user->user_id]) && in_array($data['spayc_category_id'],$userCategories[$user->user_id])){
+                    /* user specify the categories */
+                    $notify = $notificationRepo->addNotification($notificationItems);
+                }
             }
             $items = [
                 'requested_by'=>$data['user_id'],
@@ -108,17 +120,22 @@ class QueueGenericTask extends QueueTask {
                 'time'=>$data['created_duration']
             ];
             if($data['user_id'] != $user->user_id){
-                $push->sendOnIOS($items);
+                if(!empty($userCategories[$user->user_id]) && in_array($data['spayc_category_id'],$userCategories[$user->user_id])){
+                    /* user specify the categories */
+                    $push->sendOnIOS($items);
+                }
             }
-            
             
         }
     }
     
     public function titleHashTag($spaycs){
-        $hashTags = [];
+        $hashTags = [];        
         if(!empty($spaycs['website'])){
-            $tags = str_word_count($spaycs['title'], 1);
+            $tags = null;
+            if(!empty($spaycs['title'])){
+                $tags = str_word_count($spaycs['title'], 1);
+            }
             if(!empty($tags)){
                 for($i = 0 ; $i < count($tags); $i++ ){
                     if(strlen($tags[$i]) > 3){

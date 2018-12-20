@@ -17,6 +17,7 @@ Router::plugin(
         $routes->connect('/facebook-signup',['controller'=>'Users', 'action'=>'facebookSignup']);
         $routes->connect('/profile-edit',['controller'=>'Users', 'action'=>'edit']);
         $routes->connect('/ghost-mode',['controller'=>'Users', 'action'=>'ghostMode']);
+        $routes->connect('/user-categories',['controller'=>'Users', 'action'=>'updateUserCategories']);
         $routes->connect('/doc',['controller'=>'ApiDoc','action'=>'apiList','ext'=>'html']);
         $routes->connect('/verify/:token/:email', ['controller' => 'Users', 'action' => 'verifyAccount','ext'=>'html'], ['pass' => ['token', 'email']]);
         $routes->connect('/get-friends', ['controller' => 'Users', 'action' => 'getFriends']);
@@ -83,7 +84,10 @@ Router::plugin(
         $routes->connect('/promotion-logic-start', ['controller' => 'Plans', 'action' => 'promotionLogicStart']);
         $routes->connect('/promotion-logic', ['controller' => 'Plans', 'action' => 'promotionLogic']);
         $routes->connect('/subscribed-spaycs',['controller'=>'Spaycs', 'action'=>'userSubscribedSpaycs']);
+        $routes->connect('/joined-spayc',['controller'=>'JoinSpaycs', 'action'=>'joinedSpayc']);
         $routes->connect('/spam-reports',['controller'=>'WebApi', 'action'=>'spamReport']);
+        $routes->connect('/reported-warp',['controller'=>'WebApi', 'action'=>'reportedWarp']);
+        $routes->connect('/feedback',['controller'=>'WebApi', 'action'=>'userFeedBack']);
         $routes->connect('/update-comment/:id',['controller'=>'WebApi', 'action'=>'updateComment'],['pass'=>['id']]);
         $routes->connect('/events-image',['controller'=>'WebApi', 'action'=>'eventsImage']);
         $routes->fallbacks(DashedRoute::class);

@@ -52,10 +52,11 @@ if(isset($this->request->query['sort'])) {
             <div class="head-text flex-basis13 text-left"><span>Address</span></div>
             <div class="head-text flex-basis7"><span>Members</span></div>
             <div class="head-text flex-basis10"><span>Subscribed Members</span></div>
-            <div class="head-text flex-basis12"><span>Physical People Present</span></div>
-            <div class="head-text flex-basis9"><span>Number of Subwarps</span></div>
-            <div class="head-text flex-basis9"><span>Number of Comment </span></div>
-            <div class="head-text flex-basis6"><span class="blank"></span></div>
+            <div class="head-text flex-basis10"><span>Physically Present</span></div>
+            <div class="head-text flex-basis7"><span>No of Subwarps</span></div>
+            <div class="head-text flex-basis7"><span>No of Comment </span></div>
+            <div class="head-text flex-basis7"><span>Reported By</span></div>
+            <div class="head-text flex-basis5"><span class="blank"></span></div>
           </div>
           <?php   if ($spaycsCount) {?>  
             <?php 
@@ -96,17 +97,20 @@ if(isset($this->request->query['sort'])) {
                   <span><?= !empty($spayc->total_subscribed_users)?$this->Html->link($spayc->total_subscribed_users,['controller' => 'Spaycs', 'action' => 'subscribedMembers',$spayc->id], ['class' => 'num-letter-spacing']):BLANK_COUNT ?></span>
                 </div>
 
-                 <div class="table-data flex-basis12">                 
+                 <div class="table-data flex-basis10">                 
                   <span><?= !empty($spayc->total_presents)?$this->Html->link($spayc->total_presents,['controller' => 'Spaycs', 'action' => 'physicalPresents',$spayc->id], ['class' => 'num-letter-spacing']):BLANK_COUNT ?></span>
                 </div>
-                <div class="table-data flex-basis9">
+                <div class="table-data flex-basis7">
                     <span><?= !empty($spayc->total_subspaycs)?$this->Html->link($spayc->total_subspaycs,['controller' => 'Spaycs', 'action' => 'subwarps',$spayc->id], ['class' => 'num-letter-spacing']):BLANK_COUNT ?></span>
                 </div>
-                <div class="table-data flex-basis9">
+                <div class="table-data flex-basis7">
                   <span><?= !empty($spayc->total_comments)?$this->Html->link($spayc->total_comments,['controller' => 'Spaycs', 'action' => 'comments',$spayc->matrix_room_id], ['class' => 'num-letter-spacing']):BLANK_COUNT ?></span>
                 </div>
+                <div class="table-data flex-basis7">
+                  <span><?= !empty($spayc->reported_warps)?$this->Html->link(count($spayc->reported_warps),['controller' => 'Spaycs', 'action' => 'reportedUsers',$spayc->id], ['class' => 'num-letter-spacing']):BLANK_COUNT ?></span>
+                </div>
                 <!--table dropdown-->
-                <div class="table-data flex-basis6">
+                <div class="table-data flex-basis5">
                   <div class="dropdown table-view-dropdown">
                     <div class="table-dropdown"  id="table-data-dropdown_<?= $spayc->id?>" data-toggle="dropdown">
                       <span></span>

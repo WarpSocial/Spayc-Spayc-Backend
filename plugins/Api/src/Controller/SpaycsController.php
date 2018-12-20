@@ -486,6 +486,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
                 'action_type' => 'subspayc',
                 'rule' => 'Unmute'
             ];
+            $data['spayc_id'] = $spayc->id;
             TableRegistry::get('Queue.QueuedJobs')->createJob('MuteUnmute',$data);
             
             $push = [
@@ -560,6 +561,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
                 'action_type' => 'subspayc',
                 'rule' => 'mute'
             ];
+            $data['spayc_id'] = $spayc->id;
             TableRegistry::get('Queue.QueuedJobs')->createJob('MuteUnmute',$data);
             $response = ['status'=>'success','message'=>__('User has been unsubcribed successfully.')];
         }else{
@@ -1327,7 +1329,9 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         $response = ['status'=>'success','message'=>'List of spaycs.','data'=>$result];
         $this->set($response);
     }
-    
+    /**
+     * userSubscribedSpaycs to get the list spaycs to which user has been subscribed
+     */
     public function userSubscribedSpaycs(){
         if (!$this->request->is(['get'])) {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);

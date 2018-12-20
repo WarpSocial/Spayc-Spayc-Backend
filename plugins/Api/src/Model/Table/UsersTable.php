@@ -57,6 +57,14 @@ class UsersTable extends Table {
             'foreignKey' => 'user_id',
             'className' => 'Api.JoinedSpayc'
         ]);
+        $this->belongsToMany('SpaycCategories', [
+            'foreignKey' => 'user_id',
+            'targetForeignKey' => 'category_id',
+            'joinTable' => 'user_category',
+            'className' => 'Api.SpaycCategories',
+            'through'=>'Api.UserCategory'
+        ]);
+        
         $this->hasOne('PhysicalLocation', [
             'foreignKey' => 'user_id',
             'className' => 'Api.PhysicalLocation'
@@ -519,6 +527,36 @@ class UsersTable extends Table {
         $validator
                 ->notEmpty('ghost_mode_search',__('Search is required field.'))
                 ->inList('ghost_mode_search', [0,1],__('Search value must be either 0 or 1.'));
+        return $validator->errors($data);
+    }
+    /**
+     * validCategories rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validCategories($data) {
+        $validator = new Validator();        
+        $validator  
+                ->allowEmpty('categories',__('Category id is required field.'))
+                //->isArray('categories',__('category id must be of an array type.'))
+                ->add('categories','validid',[
+                    'rule'=>function($value,$context){
+                        if(!empty($value)){ 
+                            $ids  = TableRegistry::get('Api.SpaycCategories')->find()->where("id IN ($value)")->count();
+                            if($ids == count(explode(',',$value))){
+                                return true;
+                            }else{
+                                return false;
+                            }
+                        }else{
+                            return false;
+                        }
+                    },
+                    'message'=>__('Please select valid category.')
+                ]);  
+        
+        
         return $validator->errors($data);
     }
     

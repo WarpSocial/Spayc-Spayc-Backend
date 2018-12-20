@@ -41,6 +41,7 @@ define('FRIEND_REQUESTED_STATUS_ARR', serialize($friend_requested_status_arr));
 define('PUSH_NOTIFICATION_ADMIN_SLUG', serialize($push_notification_admin_slug));
 define('PUSH_NOTIFICATION_SPAYC_ADMIN_SLUG', serialize($push_notification_spayc_admin_slug));
 define('CUSTOM_MESSAGES_SLUG', "custom-messages");
+define('ADMIN_DISPLAY_NAME', 'Message from Admin');
 define('SCRAPERSTATES', serialize($scraperStates));
 define('SCRAPERCOUNTRIES', serialize($scraperCountries));
 define('TEXT_MASSAGE', serialize($txt_massage));
@@ -65,6 +66,7 @@ $scraperRootUrl=array('eventbriteurl'=> 'https://www.eventbriteapi.com/v3/',
     'ticketmasterurl'=> 'https://app.ticketmaster.com/discovery/v2/',
     'stubhuburl'=> 'https://api.stubhub.com/search/catalog/events/v3/',
     );
+
 $scraperRootUrlToken = [
     //'eventbritetoken'=> 'JRTJ7FHW3TG7F5U535RN',
     'eventbritetoken'=> \Cake\Core\Configure::read('EVENTBRITE_AUTH_KEY','JRTJ7FHW3TG7F5U535RN'),
@@ -74,6 +76,8 @@ $scraperRootUrlToken = [
     
     'stubhubtoken'=> 'c4ef9246-56c6-3024-a5ba-32f737a1c2b4',
     ];
+
+define('SCRAPPER_PAGE_DELAY_TIME', 10);
 define('EVENTBRITESECONDTOKEN', 'GFPN63QGWCRIURIWT5DN');
 $scraperWebSite = array('eventbrite'=>'1','ticketmaster'=>'2','stubhub'=>'3');
 define('SCRAPER_WEBSITE', serialize($scraperWebSite));
@@ -100,6 +104,7 @@ $config['SITETITLEMESSAGE'] = [
     'MANAGE-WARP-MEMBERS'=>'Warps Members',
     'MANAGE-ADVERTISEMENTS'=>'Manage Advertisements',
     'MANAGE-SPAM-REPORT'=>'Manage Spam Report',    
+    'REPORTWARP'=>'Reported Members',    
     'WARPCREATED'=>'Warps Created',
     'WARPJOINED'=>SITE_TITLE.'s Joined',
     'WARPDETAIL'=>SITE_TITLE.' Detail',

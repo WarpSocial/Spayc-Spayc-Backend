@@ -3302,6 +3302,130 @@
   },
   {
     "type": "get",
+    "url": "/joined-spayc.json?",
+    "title": "User Joined Warp",
+    "version": "0.1.0",
+    "name": "getJoinedSpayc",
+    "group": "Spayc",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>Get the list warp to whom user has been joined the warp.</p> ",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "page",
+            "description": "<p>Page number in query string (Optional).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "limit",
+            "description": "<p>Limit in query string (Optional).</p> "
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p> "
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>List of Joined warp.</p> "
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>List of joined warp.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "     HTTP/1.1 200 OK\n {\n    \"status\": \"success\",\n    \"message\": \"List of subscribed warp.\",\n    \"data\": [\n        {\n            \"id\": \"734\",\n            \"name\": \"lane_3\",  \n            \"spayc_category_id\": 3,\n            \"matrix_room_id\": \"!VIaNrDKuzkBQEVgtNI:127.0.0.1\"\n        },\n        {\n            \"id\": \"732\",\n            \"name\": \"lane_3\",  \n            \"spayc_category_id\": 3,\n            \"matrix_room_id\": \"!fueGNjtYWCpzMcTbtI:127.0.0.1\"\n        }\n    ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/spayc.js",
+    "groupTitle": "Spayc",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/joined-spayc.json?"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p> "
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p> "
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
     "url": "/public-spaycs.json?page=:page&limit=:limit",
     "title": "Advertisement Spayces",
     "version": "0.1.0",
@@ -5336,6 +5460,137 @@
         }
       ]
     }
+  },
+  {
+    "type": "post",
+    "url": "/reported-warp.json",
+    "title": "Report About Warp",
+    "version": "0.1.0",
+    "name": "postReportsWarp",
+    "group": "Spayc",
+    "permission": [
+      {
+        "name": "Private User"
+      }
+    ],
+    "description": "<p>Report about a warp.</p> ",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>Token must be in header</li> </ul> "
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "matrix_room_id",
+            "description": "<ul> <li>Matrix room id (required).</li> </ul> "
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": " \n    {\n\t\"matrix_room_id\":\"!bveMFWvYgJpOzAoZGC:127.0.0.1\",\n\t\"message\":\"some message\"\n    }",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p> "
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>You have reported successfully..</p> "
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "data",
+            "description": "<p>Null.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "HTTP/1.1 200 OK\n {\n     \"status\": \"success\",\n     \"message\": \"You have reported successfully.\"\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "String",
+            "optional": false,
+            "field": "You",
+            "description": "<p>have already reported about this warp.Admin will take care about this reports.</p> "
+          },
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p> "
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p> "
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/spayc.js",
+    "groupTitle": "Spayc",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/reported-warp.json"
+      }
+    ]
   },
   {
     "type": "post",
@@ -8025,6 +8280,240 @@
     ]
   },
   {
+    "type": "post",
+    "url": "/user-categories.json",
+    "title": "Update User Categories",
+    "version": "0.1.0",
+    "name": "postUserCategories",
+    "group": "User",
+    "permission": [
+      {
+        "name": "Private"
+      }
+    ],
+    "description": "<p>add list of comma separated categories id.</p> ",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "token",
+            "description": "<p>Token must be set in header.</p> "
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "categories",
+            "description": "<p>List of existing categories id(required).</p> "
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p> "
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>ser category has been saved successfully.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"ser category has been saved successfully\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/user.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/user-categories.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p> "
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p> "
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "/feedback.json",
+    "title": "User Feedback",
+    "version": "0.1.0",
+    "name": "postUserFeedback",
+    "group": "User",
+    "permission": [
+      {
+        "name": "private"
+      }
+    ],
+    "description": "<p>User Feedback</p> ",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>message(Required).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "File",
+            "optional": false,
+            "field": "attachment",
+            "description": "<p>Any attached document(Optional).</p> "
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "{\n    \"message\": \"Test Test Test \",\n    \"attachment\": \"http://www.xyz.com\"\n}",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>success.</p> "
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Your feedback message has been sent successfully</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response: ",
+          "content": "HTTP/1.1 200 OK\n   {\n       \"status\": \"success\",\n       \"message\": \"Advertisement Created Successfully\",\n       \"data\": []\n   }",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "apidoc/user.js",
+    "groupTitle": "User",
+    "sampleRequest": [
+      {
+        "url": "http://spayc.com/api/feedback.json"
+      }
+    ],
+    "error": {
+      "fields": {
+        "Error 4xx": [
+          {
+            "group": "Error 4xx",
+            "type": "Object",
+            "optional": false,
+            "field": "Error-Response",
+            "description": "<p>Returns a json Object.</p> "
+          }
+        ],
+        "Error-Response Object": [
+          {
+            "group": "Error-Response Object",
+            "type": "Boolean",
+            "optional": false,
+            "field": "status",
+            "description": "<p>failed.</p> "
+          },
+          {
+            "group": "Error-Response Object",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message.</p> "
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Sample Error-Response:",
+          "content": "  \n{\n  \"status\": failed,\n  \"message:\"Method not allowed.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Resource not found.\"\n}\n{\n   \"status\": failed,\n   \"message\": \"Requested Parameter is not correct\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
     "type": "put",
     "url": "/ghost-mode.json",
     "title": "Ghost Mode Settings",
@@ -8672,7 +9161,7 @@
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"User profile.\",\n    \"data\": {\n        \"id\": \"11\",\n        \"username\": \"user\",\n        \"email\": \"test@domain.com\",\n        \"gender\": \"Female\",\n        \"dob\": null,\n        \"country_code\": null,\n        \"phone\": \"\",\n        \"website_url\": null,\n        \"address\": null,\n        \"bio_data\": null,\n        \"longitude\": 77.391026,\n        \"latitude\": 28.535516,\n        \"ghost_mode_search\": 0,\n        \"ghost_mode_map\": 1,\n        \"matrix_user_id\": null,\n        \"user_images\": [\n            {\n                \"id\": \"55\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180223144430.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            },\n            {\n                \"id\": \"56\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073256.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            },\n            {\n                \"id\": \"57\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073525.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            },\n            {\n                \"id\": \"58\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073548.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            }\n        ],\n        \"friend\": {\n            \"id\": \"41\",\n            \"requested_by\": \"10\",\n            \"requested_to\": \"11\",\n            \"requested_status\": \"Requested\",\n            \"total_friends\": 0\n        },\n        \"matrix_room_id\": null,\n        \"created_spaycs\": 0,\n        \"unread_notifications\": 46,\n        \"joined_spaycs\": 0\n    }\n}",
+          "content": "       HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"User profile.\",\n    \"data\": {\n        \"id\": \"11\",\n        \"username\": \"user\",\n        \"email\": \"test@domain.com\",\n        \"gender\": \"Female\",\n        \"dob\": null,\n        \"country_code\": null,\n        \"phone\": \"\",\n        \"website_url\": null,\n        \"address\": null,\n        \"bio_data\": null,\n        \"longitude\": 77.391026,\n        \"latitude\": 28.535516,\n        \"ghost_mode_search\": 0,\n        \"ghost_mode_map\": 1,\n        \"categories\": [2,5],\n        \"matrix_user_id\": null,\n        \"user_images\": [\n            {\n                \"id\": \"55\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180223144430.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            },\n            {\n                \"id\": \"56\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073256.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            },\n            {\n                \"id\": \"57\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073525.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            },\n            {\n                \"id\": \"58\",\n                \"user_id\": 11,\n                \"image_url\": \"https://spayc-qa.s3.amazonaws.com/profile/10394525_777976492246161_2483475814558228669_n_20180226073548.jpg%3Foh%3D5707b76dd66818c461cd37a661184274%26oe%3D5b1e0632\",\n                \"is_profile\": \"No\",\n                \"order_index\": null\n            }\n        ],\n        \"friend\": {\n            \"id\": \"41\",\n            \"requested_by\": \"10\",\n            \"requested_to\": \"11\",\n            \"requested_status\": \"Requested\",\n            \"total_friends\": 0\n        },\n        \"matrix_room_id\": null,\n        \"created_spaycs\": 0,\n        \"unread_notifications\": 46,\n        \"joined_spaycs\": 0\n    }\n}",
           "type": "json"
         }
       ]
