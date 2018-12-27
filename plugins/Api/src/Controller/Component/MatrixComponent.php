@@ -25,7 +25,7 @@ class MatrixComponent extends Component {
     protected $_defaultConfig = [
         'client'=> 'client/r0',
         'media'=> 'media/v1',
-        'clientv1'=> 'client/api/v1'
+        'clientv1'=> 'client/api/v1',
     ];
     
      /**
@@ -66,7 +66,7 @@ class MatrixComponent extends Component {
         $validInput = [
             'type'=>'m.login.password',
             'user'=>$items['username'],
-            'password'=>$items['password'],
+            'password'=>$items['matrix_password'],
             'device_id'=>$items['device_id']
         ]; 
         $url = $this->config('url') .DS.$this->config('client'). DS.'login';
@@ -123,7 +123,7 @@ class MatrixComponent extends Component {
             'bind_email'=>false,
             'initial_device_display_name'=>$items['display_name'],
             'username'=>$items['username'],
-            'password'=>$items['password'],
+            'password'=>$items['matrix_password'],
         ]; 
         $url = $this->config('url') .DS.$this->config('client'). DS.'register';
         $http = new Client();

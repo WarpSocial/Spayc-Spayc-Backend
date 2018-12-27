@@ -161,7 +161,7 @@ class UsersController extends AppController {
         if(empty($user)){
             $this->restException(['status' => "failed", 'message' => __('Sign in credentials ain\'t right, try again buddy.')], 401);
         }
-        $matrix = $this->Matrix->login($data_item+['username'=>$user['username']]); 
+        $matrix = $this->Matrix->login($data_item+['username'=>$user['username'],'matrix_password'=>$user['matrix_password']]); 
         if(empty($matrix)){
             $this->restException(['status'=>'failed','message'=>__('Matrix login failed.')], 401);
         }
@@ -296,8 +296,10 @@ class UsersController extends AppController {
             $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($items->errors())], 400);
         }
         $data['display_name'] = $data['username'];
+        $data['matrix_password'] = md5($data['username']);
         $data['username'] = \Cake\Utility\Inflector::slug($data['username']).'_'.time();
         $items->set('username',$data['username']);
+        $items->set('matrix_password',$data['matrix_password']);
         $items->set('display_name',$data['display_name']);
         $matrix = $this->Matrix->register($data);
         if($matrix['status'] == 'failed') {       
@@ -405,6 +407,7 @@ class UsersController extends AppController {
             $data['password'] = Text::uuid();
             $data['display_name'] = $data['username'];
             $data['username'] = \Cake\Utility\Inflector::slug($data['username']).'_'.time();
+            $data['matrix_password'] = md5($data['username']);
             $entity = $this->Users->newEntity();
         }
         $data['physical_location']['current_latitude'] = Utils::getVar('latitude', $data);
@@ -432,6 +435,7 @@ class UsersController extends AppController {
         $user['id'] = ApiHasher::decrypt($user['id']);
         $mdata['username'] = $data['username'];
         $mdata['password'] = ApiHasher::dehash($items->password);
+        $mdata['matrix_password'] = md5($mdata['username']);
         $mdata['device_id'] = $data['device_id'];
         //$data_item = \Api\Utils\Utils::escape($mdata);pr($data_item);exit;
         $matrix = (array)$this->Matrix->login($mdata);
@@ -537,14 +541,7 @@ class UsersController extends AppController {
                 $user->password = $data['new_password'];
                 $user->forgot_password_token = null;
                 $user->forgot_password_timestamp = null;
-                if ($this->Users->save($user)) {
-                    $matrixData = [
-                        'old_password' => $previousPassword,
-                        'new_password' => $data['new_password'],
-                        'matrix_user_id' => $user->matrix_user_id,
-                        'matrix_access_token' => $user->matrix_access_token,
-                    ];
-                    $this->Matrix->changePassword($matrixData);
+                if ($this->Users->save($user)) {                   
                     $status = 'done';
                     
                     $this->Flash->success(__('Your new password has been reset successfully.'),['status'=>'done']);
@@ -581,14 +578,6 @@ class UsersController extends AppController {
         $errors = $this->Users->validationChangePassword($data_item, $this->Auth->user('id'));
         if($errors) {
             $this->restException(['status'=>'failed', 'message'=>$this->mapErrors($errors)], 400);
-        }
-        if(!empty($this->Auth->user('UserLogs.matrix_user_id')) && !empty($this->Auth->user('UserLogs.matrix_access_token'))) {
-            $data_item['matrix_user_id'] = $this->Auth->user('UserLogs.matrix_user_id');
-            $data_item['matrix_access_token'] = $this->Auth->user('UserLogs.matrix_access_token');
-            $matrix = $this->Matrix->changePassword($data_item);
-            if($matrix === false) {
-                $this->restException(['status'=>'failed', 'message'=>"Unable to change password on matrix"], 400);
-            }
         }
         $this->Users->updateAll(['password'=>ApiHasher::hash($data_item['new_password'])], ['id'=>$this->Auth->user('id')]);
         $response = ['status' => "success", 'message' => __('Password changed successfully.')];

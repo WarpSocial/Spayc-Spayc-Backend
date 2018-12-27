@@ -26,7 +26,7 @@ class WebApiController extends AppController {
     
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
-        $this->Auth->allow(['addCategory', 'apilog', 'addComment', 'notify', 'updateComment', 'scrapper','appVersion']);
+        $this->Auth->allow(['passwordChange','addCategory', 'apilog', 'addComment', 'notify', 'updateComment', 'scrapper','appVersion']);
     }
     
     public function appVersion(){        
@@ -35,6 +35,45 @@ class WebApiController extends AppController {
             'Message'=>'App current version',
             'data'=>['app_version'=>Configure::read('app_version')]];
         $this->set($response);
+    }
+    
+    /* matrixpasswordchange*/
+    public function passwordChange(){
+        $sConn = \Cake\Datasource\ConnectionManager::get('default');
+        $mConn = \Cake\Datasource\ConnectionManager::get('matrix');
+        
+        $apiUsers = $sConn->execute('SELECT id,username,matrix_user_id,matrix_access_token,matrix_password FROM users where role_id is null AND matrix_user_id = ?',['@skill_1545820705:127.0.0.1'])->fetchAll('assoc');
+        
+        $p = [];
+        $lastId = $mConn->execute('SELECT id FROM access_tokens order by id desc limit 1')->fetchAll('assoc');
+        $lastId = $lastId[0]['id'];
+        foreach($apiUsers as $user){ 
+            $matrixPassword = md5($user['username']);
+            /*update matrix password for all users in api users table */
+            if(empty($user['matrix_password'])){                
+                if($sConn->execute('UPDATE users SET matrix_password = ? WHERE id = ?',[$matrixPassword,$user['id']])){
+                    $p['apiupdate'][] = $user['id'];
+                    /*Create matrix hashed value and update matrix password in matrix users table */
+                    $command = '/usr/bin/python '.ROOT.'/hash_password.py -p '.$matrixPassword;
+                    $hashPasswrod = exec($command);
+                    
+                    if($mConn->execute('UPDATE users SET password_hash = ? WHERE name = ?',[$hashPasswrod,$user['matrix_user_id']])){
+                        $p['matrixupdate'][] = $user['id'];
+                    }else{
+                        $p['matrixfailed'][] = $user['id'];
+                    }
+                }else{
+                    $p['apiupdatefailed'][] = $user['id'];
+                }
+            }
+            $preToken = $mConn->execute('SELECT 1 FROM access_tokens where token = ?',[$user['matrix_access_token']])->fetchAll('assoc');
+            if(empty($preToken)){
+                $lastId++;
+                $p['insert'][] = $user['id'];
+                $mConn->insert('access_tokens', ['id'=>$lastId,'user_id' => $user['matrix_user_id'],'device_id' => \Cake\Utility\Text::uuid(),'token'=>$user['matrix_access_token']]);
+            }
+        }
+        pr($p);
     }
     public function eventsImage() {
         if (!$this->request->is(['get'])) {
