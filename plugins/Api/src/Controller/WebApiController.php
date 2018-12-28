@@ -42,7 +42,7 @@ class WebApiController extends AppController {
         $sConn = \Cake\Datasource\ConnectionManager::get('default');
         $mConn = \Cake\Datasource\ConnectionManager::get('matrix');
         
-        $apiUsers = $sConn->execute('SELECT id,username,matrix_user_id,matrix_access_token,matrix_password FROM users where role_id is null AND matrix_user_id = ?',['@skill_1545820705:127.0.0.1'])->fetchAll('assoc');
+        $apiUsers = $sConn->execute('SELECT id,username,matrix_user_id,matrix_access_token,matrix_password FROM users where role_id is null')->fetchAll('assoc');
         
         $p = [];
         $lastId = $mConn->execute('SELECT id FROM access_tokens order by id desc limit 1')->fetchAll('assoc');
