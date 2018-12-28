@@ -58,8 +58,9 @@ class WebApiController extends AppController {
                     $p['apiupdate'][] = $user['id'];
                     /*Create matrix hashed value and update matrix password in matrix users table */
                     $command = '/usr/bin/python '.ROOT.'/hash_password.py -p '.$matrixPassword;
-                    $hashPasswrod = exec($command);
+                    $hashPasswrod = exec($command,$optionss);
                     echo exec('whoami');
+                    pr($optionss);
                     echo $hashPasswrod;die(" = hashvalue");
                     
                     if($mConn->execute('UPDATE users SET password_hash = ? WHERE name = ?',[$hashPasswrod,$user['matrix_user_id']])){
