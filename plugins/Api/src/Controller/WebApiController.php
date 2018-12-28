@@ -39,6 +39,9 @@ class WebApiController extends AppController {
     
     /* matrixpasswordchange*/
     public function passwordChange(){
+        if(!function_exists('exec')) {
+            echo "exec function is disabled";die;
+        }
         $sConn = \Cake\Datasource\ConnectionManager::get('default');
         $mConn = \Cake\Datasource\ConnectionManager::get('matrix');
         
