@@ -1,5 +1,4 @@
 jQuery(document).ready(function ($) { 
- 
     $(document).on('click', '#set_spayc_status_btn', function (e) {                         
       form = $("form#set_spayc_status_form");  
       $(".loader").addClass('show-loader');          
@@ -46,10 +45,7 @@ jQuery(document).ready(function ($) {
    });
   });
     e.preventDefault();
-  });  
-
-
-
+  }); 
 
     $(document).on('click', '#delete_spayc_btn', function (e) {                         
       form = $("form#delete_spayc_form");  
@@ -100,6 +96,20 @@ jQuery(document).ready(function ($) {
   });
     e.preventDefault();
   });  
-
+    
+    $.ajax({
+        url: base_url_admin+'spaycs/scrapper-events',
+        type: 'GET',
+        dataType:'JSON', 
+        success: function(data){
+            if(data.status ==1){
+                $(".scrap-events").html('Today Scrapped Events<span class="eventbrite"><b>EventBrite</b> : '+data['events'][1] +'</span><span class="ticketmaster"><b>TicketMaster</b> : '+data['events'][2] +'</span><span class="total_events"><b>Total</b> : '+ data['events']['total'] +'</span>');
+            }
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            console.log(xhr.message);
+            console.log(thrownError);
+        }
+    });
 
 });

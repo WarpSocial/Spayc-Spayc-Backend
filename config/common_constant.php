@@ -74,13 +74,17 @@ $scraperRootUrlToken = [
     //'ticketmastertoken'=> 'FGCdJbUpn9mAmyE9Rlqdi8CYfdhNQMsa',
     //'ticketmastertoken'=> 'QFCY1Arrv3uOGxw7i2ZpMYnc1b76qsOs',
     
-    'stubhubtoken'=> 'c4ef9246-56c6-3024-a5ba-32f737a1c2b4',
+    'stubhubtoken'=> \Cake\Core\Configure::read('STUBHUB_AUTH_KEY','c4ef9246-56c6-3024-a5ba-32f737a1c2b4'),
     ];
 
 define('SCRAPPER_PAGE_DELAY_TIME', 10);
 define('EVENTBRITESECONDTOKEN', 'GFPN63QGWCRIURIWT5DN');
-$scraperWebSite = array('eventbrite'=>'1','ticketmaster'=>'2','stubhub'=>'3');
+define('EVENT_BRITE',1);
+define('TICKET_MASTER',2);
+define('STUBHUB',3);
+$scraperWebSite = array('eventbrite'=>EVENT_BRITE,'ticketmaster'=>TICKET_MASTER,'stubhub'=>STUBHUB);
 define('SCRAPER_WEBSITE', serialize($scraperWebSite));
+
 define('SCRAPER_ROOT_URL', serialize($scraperRootUrl));
 define('SCRAPER_ROOT_URL_TOKEN', serialize($scraperRootUrlToken));
 define('SCRAPER_EMAIL', 'scraping@spayc.com');

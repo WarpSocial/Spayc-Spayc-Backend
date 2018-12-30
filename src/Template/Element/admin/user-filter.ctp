@@ -94,5 +94,6 @@ $genderArr = unserialize(USER_GENDER);
             <?php } ?>
           </div>
     <?php echo $this->Form->end();?>
+      <div class="scrap-events"></div>
   </div>
 </div>

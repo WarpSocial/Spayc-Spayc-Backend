@@ -453,5 +453,32 @@ class SpaycsController extends AdminController {
         $this->set(compact('comments','totalComments'));
         $this->set('_serialize', ['comments']);
     }
+    /**
+     * scrapperEvents get the all events which scrapped on current date
+     */
+    public function scrapperEvents(){
+        $items = ['status'=>1,'message'=>'Scrapper events'];         
+        $now = new \Cake\I18n\Time('now','America/New_York');
+        $endOfDay = clone $now;
+        $now->modify('today');
+        $endOfDay->modify('tomorrow');  
+        $endOfDay->modify('1 second ago'); 
+        $beginOfDay = $now->setTimezone('UTC')->format('Y-m-d H:i');
+        $endOfDay = $endOfDay->setTimezone('UTC')->format('Y-m-d H:i');
+        $data = $this->Spaycs->find()->select(['id','website'])->where(function (\Cake\Database\Expression\QueryExpression $exp, \Cake\ORM\Query $q)use($beginOfDay,$endOfDay) {
+            $created = "TO_TIMESTAMP(cast(Spaycs.created as text),'YYYY-MM-DD HH24:MI')";
+            return $exp->between($created, $beginOfDay, $endOfDay);
+        })->orWhere(function (\Cake\Database\Expression\QueryExpression $exp, \Cake\ORM\Query $q)use($beginOfDay,$endOfDay) {
+            $modified = "TO_TIMESTAMP(cast(Spaycs.modified as text),'YYYY-MM-DD HH24:MI')"; 
+            return $exp->between($modified, $beginOfDay, $endOfDay);
+        })->where(['status'=>ACTIVE]);
+        $eventBrite = \Cake\Utility\Hash::extract($data->toArray(),'{n}[website='.EVENT_BRITE.']' );
+        $ticketMaster = \Cake\Utility\Hash::extract($data->toArray(),'{n}[website='.TICKET_MASTER.']' );
+        $items['events'][EVENT_BRITE] =  !empty($eventBrite)?count($eventBrite):0;
+        $items['events'][TICKET_MASTER] =  !empty($ticketMaster)?count($ticketMaster):0;
+        $items['events']['total'] =  $items['events'][EVENT_BRITE] + $items['events'][TICKET_MASTER];
+        $response = $this->response->withType('json')->withStringBody(json_encode($items));
+        return $response;
+    }
     
 }

@@ -166,4 +166,9 @@ if(isset($this->request->query['sort'])) {
       </div>
    </div>
 </section>
+<style type="text/css">
+    .scrap-events{float:right;margin: -30px 0px 0px;}
+    .scrap-events span{padding:10px 10px;}
+    .scrap-events span b{font-weight: 600;}
+</style>
 <?php echo $this->Html->script(['admin/spayc','admin/admin-manage-user']); ?>
