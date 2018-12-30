@@ -46,7 +46,7 @@ class ScraperComponent extends Component {
             }
             return json_decode($response->body, true); 
         } catch (\Exception $ex) {
-            $this->updateScraperLog($time,json_encode($ex->getMessage()));
+            $this->updateScraperLog($time,json_encode(['message'=>$ex->getMessage(),'code'=>$ex->getCode()]));
             return '';
         }
     }
@@ -67,9 +67,10 @@ class ScraperComponent extends Component {
            'start_date.range_end' => $endOfDay->format('Y-m-d\TH:i:s'),
            'location.address'=> 'New York,NY',
             'page' => $pageNumber
-        ]);         
-        $resp=$this->curlRequest($url,$time);      
-        if((isset($resp['events']) && !empty($resp['events'])) && count($resp['events'])) {        
+        ]);  
+        
+        $resp=$this->curlRequest($url,$time);
+        if((isset($resp['events']) && !empty($resp['events'])) && count($resp['events'])) {
         $events=$eventIds= array();
         foreach ($resp['events'] as $value) {                      
             $stateExist='';
@@ -79,8 +80,11 @@ class ScraperComponent extends Component {
             $events[$eventId]['ticket_url'] = (isset($value['url']) && !empty($value['url']))?trim($value['url']):null;
             $events[$eventId]['payment_type'] = (isset($value['is_free']) && ($value['is_free']))?FREE:PAID;
             $events[$eventId]['start_date'] = (isset($value['start']['utc']) && !empty($value['start']['utc']))?new time($value['start']['utc']):null;
+            /* check to get only upcoming events */
             if($events[$eventId]['start_date'] > Time::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s', strtotime(SCRAPER_DAYS)))->setTime(23,59))
+            {
                 $stateExist = $eventId;
+            }
             $events[$eventId]['end_date'] =(isset($value['end']['utc']) && !empty($value['end']['utc']))?new time($value['end']['utc']):null;
             $events[$eventId]['description'] = (isset($value['description']['text']) && !empty($value['description']['text']))?html_entity_decode(strip_tags(trim($value['description']['text']))):null;
             $events[$eventId]['image'] = (isset($value['logo']['original']['url']) && !empty($value['logo']['original']['url']))?$value['logo']['original']['url']:null;            
@@ -92,30 +96,39 @@ class ScraperComponent extends Component {
                $events[$eventId]['location'] = $this->createEventLoctaionData($value['venue'], $this->SCRAPER_WEBSITE['eventbrite']);
 
                $events[$eventId]['city'] = (isset($value['venue']['address']['city']) && !empty($value['venue']['address']['city']))?trim($value['venue']['address']['city']):null;
+               /* check NY region events */
                if(isset($value['venue']['address']['region']) && !empty($value['venue']['address']['region'])) {
                  $events[$eventId]['region']= $value['venue']['address']['region'];
-                if (!in_array(strtolower(trim($value['venue']['address']['region'])), $this->STATES))
-                    $stateExist = $eventId;                   
+                    if (!in_array(strtolower(trim($value['venue']['address']['region'])), $this->STATES)){
+                        $stateExist = $eventId;                   
+                    }
                 }
                 $events[$eventId]['postal_code'] = (isset($value['venue']['address']['postal_code']) && !empty($value['venue']['address']['postal_code']))?trim($value['venue']['address']['postal_code']):null;
 
                if(isset($value['venue']['address']['country']) && !empty($value['venue']['address']['country'])){
                  $events[$eventId]['country']= $value['venue']['address']['country'];
-                 if (($stateExist =='') && !in_array(strtolower(trim($value['venue']['address']['country'])), $this->COUNTRIES))
+                 if (($stateExist =='') && !in_array(strtolower(trim($value['venue']['address']['country'])), $this->COUNTRIES)){
                       $stateExist = $eventId;
+                 }
                 }
             }                                 
             $events[$eventId]['category'] = $this->createEventCategoryData($value, $this->SCRAPER_WEBSITE['eventbrite']);
+            
             $events[$eventId]['website'] = $this->SCRAPER_WEBSITE['eventbrite'];
             if(!empty($stateExist)){
-                unset($events[$stateExist]);
-                unset($eventIds[$stateExist]);
+                /* remove events which not belogns  to NY state*/
+                unset($events[$stateExist],$eventIds[$stateExist]);
             }
         } 
+        //echo count($eventIds)." hhhhh ";
+        //echo implode(',',$eventIds);
         if(!empty($eventIds)){
-            $this->EventbriteEvents->saveNupdateData($events, $eventIds);
+            $this->EventbriteEvents->saveNupdateData($events, $eventIds,$pageNumber);
             if($resp['pagination']['has_more_items']){
-                $pageNumber=$pageNumber+1;
+                $pageNumber=$pageNumber+1;               
+                //echo "##$pageNumber##";die('end');
+                /* To avoid consecutive hit on eventbrite website for pagination*/
+                //sleep(SCRAPPER_PAGE_DELAY_TIME);
                 $this->getEventbriteData($pageNumber,$time);
             }          
         }   
@@ -137,9 +150,7 @@ class ScraperComponent extends Component {
             'sort'=>'eventDateUTC',
             'rows' => 500,
             'start'=>$start            
-        ]);  
-        //https://api.stubhub.com/search/catalog/events/v3/?state=%22NY%22%20|%22New%20York%22&country=US&date=2018-11-14T00%3A00TO2018-11-28T23%3A59&sort=eventDateUTC&rows=500&start=0
-       // https://api.stubhub.com/search/catalog/events/v3?date=2018-04-19T00:00 TO 2018-04-30T23:59&State="New York" |"Manhattan" |"Brooklyn" |"Queens" |"The Bronx" |"Staten Island" |"Long Island"&start=0&rows=500&country=US&date asc
+        ]);          
         $resp=$this->curlRequest($url,$time,$this->SCRAPER_ROOT_URL_TOKEN['stubhubtoken']);
         //$eventsCount = count($resp['events']);       
         if((isset($resp['events']) && !empty($resp['events']))){

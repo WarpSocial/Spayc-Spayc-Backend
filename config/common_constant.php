@@ -66,14 +66,18 @@ $scraperRootUrl=array('eventbriteurl'=> 'https://www.eventbriteapi.com/v3/',
     'ticketmasterurl'=> 'https://app.ticketmaster.com/discovery/v2/',
     'stubhuburl'=> 'https://api.stubhub.com/search/catalog/events/v3/',
     );
+
 $scraperRootUrlToken = [
     //'eventbritetoken'=> 'JRTJ7FHW3TG7F5U535RN',
-    'eventbritetoken'=> 'KJWSF5AB23XMV5CDKHKB',
+    'eventbritetoken'=> \Cake\Core\Configure::read('EVENTBRITE_AUTH_KEY','JRTJ7FHW3TG7F5U535RN'),
+    'ticketmastertoken'=> \Cake\Core\Configure::read('TICKETMASTER_AUTH_KEY','QFCY1Arrv3uOGxw7i2ZpMYnc1b76qsOs'),    
     //'ticketmastertoken'=> 'FGCdJbUpn9mAmyE9Rlqdi8CYfdhNQMsa',
     //'ticketmastertoken'=> 'QFCY1Arrv3uOGxw7i2ZpMYnc1b76qsOs',
-    'ticketmastertoken'=> 'RPFWQ9ss8NIuTaLpBjUv7xEDYtHvUgrg',
+    
     'stubhubtoken'=> 'c4ef9246-56c6-3024-a5ba-32f737a1c2b4',
     ];
+
+define('SCRAPPER_PAGE_DELAY_TIME', 10);
 define('EVENTBRITESECONDTOKEN', 'GFPN63QGWCRIURIWT5DN');
 $scraperWebSite = array('eventbrite'=>'1','ticketmaster'=>'2','stubhub'=>'3');
 define('SCRAPER_WEBSITE', serialize($scraperWebSite));
