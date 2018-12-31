@@ -505,8 +505,11 @@ class UsersController extends AppController {
         $user = $this->Users->find()->where(['LOWER(email)'=> strtolower($data['email'])]);
         if(!$user->count()) {
             $this->restException(['status'=>'success', 'message'=>__('Reset password link has been sent to your email address if you are registered with us.')], 200);
-        }
+        }        
         $user = $user->first();
+        if($user->status == INACTIVE) {
+            $this->restException(['status'=>'success', 'message'=>__('Your account has been blocked by the admin,Please contact support team.')], 200);
+        }
         $user->email = strtolower($user->email);
         $user['forgot_password_token'] = $data['forgot_password_token'] = sha1(uniqid(rand(), true));
         $data['forgot_password_timestamp'] = time();
