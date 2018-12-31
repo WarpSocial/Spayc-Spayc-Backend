@@ -457,8 +457,12 @@ class SpaycsController extends AdminController {
      * scrapperEvents get the all events which scrapped on current date
      */
     public function scrapperEvents(){
-        $items = ['status'=>1,'message'=>'Scrapper events'];         
-        $now = new \Cake\I18n\Time('now','America/New_York');
+        $clientTimezone = $this->request->query('timezone',null);
+        $items = ['status'=>1,'message'=>'Scrapper events']; 
+        if(empty($clientTimezone) || !preg_match('/[(.*)\/(.*)]/', $clientTimezone)){
+            $clientTimezone = 'America/New_York';
+        }        
+        $now = new \Cake\I18n\Time('now',$clientTimezone);
         $endOfDay = clone $now;
         $now->modify('today');
         $endOfDay->modify('tomorrow');  

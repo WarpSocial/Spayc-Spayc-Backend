@@ -171,4 +171,4 @@ if(isset($this->request->query['sort'])) {
     .scrap-events span{padding:10px 10px;}
     .scrap-events span b{font-weight: 600;}
 </style>
-<?php echo $this->Html->script(['admin/spayc','admin/admin-manage-user']); ?>
+<?php echo $this->Html->script(['moment.min','admin/spayc','admin/admin-manage-user']); ?>
