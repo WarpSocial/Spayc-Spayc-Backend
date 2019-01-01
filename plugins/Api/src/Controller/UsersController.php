@@ -508,7 +508,7 @@ class UsersController extends AppController {
         }        
         $user = $user->first();
         if($user->status == INACTIVE) {
-            $this->restException(['status'=>'success', 'message'=>__('Your account has been blocked by the admin,Please contact support team.')], 200);
+            $this->restException(['status'=>'failed', 'message'=>__('Your account has been blocked by the admin,Please contact support team.')], 200);
         }
         $user->email = strtolower($user->email);
         $user['forgot_password_token'] = $data['forgot_password_token'] = sha1(uniqid(rand(), true));

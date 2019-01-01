@@ -41,7 +41,7 @@ class ChangePasswordShell extends Shell {
         
         $apiUsers = $sConn->execute('SELECT id,username,matrix_user_id,matrix_access_token,matrix_password FROM users where role_id is null')->fetchAll('assoc');
         
-        $p = [];
+        $p = ['apiupdate'=>[],'matrixupdate'=>[],'insert'=>[]];
         $lastId = $mConn->execute('SELECT id FROM access_tokens order by id desc limit 1')->fetchAll('assoc');
         $lastId = $lastId[0]['id'];
         foreach($apiUsers as $user){ 
@@ -73,7 +73,9 @@ class ChangePasswordShell extends Shell {
                 $mConn->insert('access_tokens', ['id'=>$lastId,'user_id' => $user['matrix_user_id'],'device_id' => \Cake\Utility\Text::uuid(),'token'=>$user['matrix_access_token']]);
             }
         }
-        pr($p);
+        echo 'Inserted In Access Tokens '.implode(',',$p['insert'])."\n";
+        echo 'Updated In Matrix User table '.implode(',',$p['matrixupdate'])."\n";
+        echo 'Updated In Api User table '.implode(',',$p['matrixupdate'])."\n";
     }
 
 }

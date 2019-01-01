@@ -96,9 +96,12 @@ jQuery(document).ready(function ($) {
   });
     e.preventDefault();
   });  
-    
+    var clientZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if((clientZone == null && clientZone == undefined)){
+        clientZone = null;
+    }
     $.ajax({
-        url: base_url_admin+'spaycs/scrapper-events',
+        url: base_url_admin+'spaycs/scrapper-events?timezone='+clientZone,
         type: 'GET',
         dataType:'JSON', 
         success: function(data){
