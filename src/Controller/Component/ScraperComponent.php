@@ -91,6 +91,7 @@ class ScraperComponent extends Component {
             $events[$eventId]['event_status'] = (isset($value['status']) && !empty($value['status']))?trim($value['status']):null;
 
             if(isset($value['venue']) && !empty($value['venue'])) {
+                
                $events[$eventId]['latitude'] = (isset($value['venue']['latitude']) && !empty($value['venue']['latitude']))?trim($value['venue']['latitude']):null;
                $events[$eventId]['longitude'] = (isset($value['venue']['longitude']) && !empty($value['venue']['longitude']))?trim($value['venue']['longitude']):null;
                $events[$eventId]['location'] = $this->createEventLoctaionData($value['venue'], $this->SCRAPER_WEBSITE['eventbrite']);
@@ -102,6 +103,8 @@ class ScraperComponent extends Component {
                     if (!in_array(strtolower(trim($value['venue']['address']['region'])), $this->STATES)){
                         $stateExist = $eventId;                   
                     }
+                } else if(empty($value['venue']['address']['region'])) {
+                    $stateExist = $eventId;                   
                 }
                 $events[$eventId]['postal_code'] = (isset($value['venue']['address']['postal_code']) && !empty($value['venue']['address']['postal_code']))?trim($value['venue']['address']['postal_code']):null;
 
@@ -110,6 +113,8 @@ class ScraperComponent extends Component {
                  if (($stateExist =='') && !in_array(strtolower(trim($value['venue']['address']['country'])), $this->COUNTRIES)){
                       $stateExist = $eventId;
                  }
+                } else if(empty($value['venue']['address']['country'])) {
+                    $stateExist = $eventId;                   
                 }
             }                                 
             $events[$eventId]['category'] = $this->createEventCategoryData($value, $this->SCRAPER_WEBSITE['eventbrite']);

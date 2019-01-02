@@ -850,13 +850,15 @@ class SpaycsTable extends Table {
         $endObj->modify('1 second ago'); 
         $today_date = $now->setTimezone('UTC')->format("Y-m-d H:i");
         $twoWeek = $endObj->setTimezone('UTC')->format("Y-m-d H:i"); 
+        $fields = ['id', 'name','start_date', 'matrix_room_id', 'image', 'type', 'modified', 'spayc_category_id','latitude','longitude','score'=>'website','rank'=>'rank() OVER (PARTITION BY website ORDER BY start_date asc)'];
         /* if user filter past date event in that case calculate distance manually because radis clean past event */
         if(isset($request['is_filter']) && ($request['is_filter'] === true) && (isset($request['current_date']) && $request['current_date'] < $timeStmap)){
             $redisSpaycs = [];
             $distanceField = $this->geoDistance();
              $radius = $this->distance($request['center_latitude'], $request['center_longitude'], $request['endpoint_latitude'], $request['endpoint_longitude'],'meter');
+             $fields['distance'] = $distanceField;
              $spaycs = $this->find()
-                ->select(['distance' => $distanceField,'id', 'name','start_date', 'matrix_room_id', 'image', 'type', 'modified', 'spayc_category_id','latitude','longitude','score'=>'website'])
+                ->select($fields)
                 ->where(["$distanceField <=" => $radius, 'Spaycs.status'=>'Active',
                     'Spaycs.group_type !='=>'trusted_private', 
                     'Spaycs.parent_id IS'=>null
@@ -876,7 +878,7 @@ class SpaycsTable extends Table {
             }
             $requiredSpaycs = array_column($redisSpaycs,'id');
             $spaycs = $this->find()
-                ->select(['id', 'name','start_date', 'matrix_room_id', 'image', 'type', 'modified', 'spayc_category_id','latitude','longitude','score'=>'website'])
+                ->select($fields)
                 ->where(['Spaycs.status'=>'Active','Spaycs.group_type !='=>'trusted_private', 'Spaycs.parent_id IS'=>null,'Spaycs.id IN'=>$requiredSpaycs]);
         }
         
@@ -1000,7 +1002,7 @@ class SpaycsTable extends Table {
         
         $spaycs->limit(MAP_LIMIT);
         //$spaycs->groupBy('spaycs.id');
-        return ['count'=>$spaycs->count(),'records'=>$spaycs];
+        return ['count'=>($spaycs->isEmpty())?0:1,'records'=>$spaycs];
     }
     
     public function mapEvents($request = [], $userId=null) {
