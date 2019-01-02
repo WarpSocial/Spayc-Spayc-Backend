@@ -996,9 +996,8 @@ class SpaycsTable extends Table {
                 return $row;
             });
         });
-        #$spaycs->order(['Spaycs.id'=>'DESC']);
+        $spaycs->order(['Spaycs.start_date'=>'ASC']);
 //        $spaycs->group('distance HAVING distance > 0');
-        $spaycs->order(['score'=>'DESC']);
         
         $spaycs->limit(MAP_LIMIT);
         //$spaycs->groupBy('spaycs.id');

@@ -106,7 +106,7 @@ jQuery(document).ready(function ($) {
         dataType:'JSON', 
         success: function(data){
             if(data.status ==1){
-                $(".scrap-events").html('<div class"scrappeditems">Last Scrapped : '+data['last_scrapped']+'<br>Today Scrapped Events<span class="eventbrite"><b>EventBrite</b> : '+data['events'][1] +'</span><span class="ticketmaster"><b>TicketMaster</b> : '+data['events'][2] +'</span><span class="total_events"><b>Total</b> : '+ data['events']['total'] +'</span></div>');
+                $(".scrap-events").html('<div class"scrappeditems">Last Scrapped : '+data['last_scrapped']+'<br><br>Today Scrapped Events<span class="eventbrite"><b>EventBrite</b> : '+data['events'][1] +'</span><span class="ticketmaster"><b>TicketMaster</b> : '+data['events'][2] +'</span><span class="total_events"><b>Total</b> : '+ data['events']['total'] +'</span></div>');
             }
         },
         error: function (xhr, ajaxOptions, thrownError) {
