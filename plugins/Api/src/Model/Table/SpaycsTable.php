@@ -1001,7 +1001,9 @@ class SpaycsTable extends Table {
         
         //$spaycs->limit(MAP_LIMIT);
         //$spaycs->groupBy('spaycs.id');
-        return ['count'=>($spaycs->isEmpty())?0:1,'records'=>$spaycs];
+        //return ['count'=>($spaycs->isEmpty())?0:1,'records'=>$spaycs];
+        //return ['count'=>($spaycs->isEmpty())?0:1,'records'=>$spaycs];
+        return ['count'=>$spaycs->count(),'records'=>$spaycs];
     }
     
     public function mapEvents($request = [], $userId=null) {
