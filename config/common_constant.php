@@ -15,6 +15,7 @@ define('DISTANCEINMETER','100');
 define('SCRAPERCOMMONDATEFILTER','date');
 define('SCRAPERGROUPFILTER','group');
 define('SCRAPERUNIQUEFILTER','unique');
+define('DAYS_RANGE',7);
 define('DOLLARSIGN','$');
 $friend_requested_status_arr=array('accepted'=>'Accepted','decline'=>'Decline','pending'=>'Pending','blocked'=>'Blocked');
 $user_gender=array('1'=>'All','2'=>'Male','3'=>'Female','4'=>'Other');

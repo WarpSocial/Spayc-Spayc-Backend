@@ -117,9 +117,9 @@ class RedisComponent extends Component {
         }
         if(empty($radius)){
             if(strtolower($unit) == 'mi'){
-                $radius = 3959;
+                //$radius = 3959;
             }elseif(strtolower($unit) == 'km'){
-                $radius = 6371;
+                //$radius = 6371;
             }
         }
         $options = ['WITHCOORD','WITHDIST','ASC'];

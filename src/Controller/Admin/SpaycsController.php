@@ -461,16 +461,17 @@ class SpaycsController extends AdminController {
         $items = ['status'=>1,'message'=>'Scrapper events']; 
         if(empty($clientTimezone) || !preg_match('/[(.*)\/(.*)]/', $clientTimezone)){
             $clientTimezone = 'America/New_York';
-        }        
-        $now = new \Cake\I18n\Time('now',$clientTimezone);
+        }
+        $scrapped = TableRegistry::get('ScraperLogs')->find()->order(['id'=>'desc'])->first();
+        $items['last_scrapped'] = $scrapped->created->setTimezone($clientTimezone)->format('m-d-Y h:i:s a');
+        $now = new \Cake\I18n\Time($scrapped->created->format('Y-m-d H:i:s'),$clientTimezone);
         $endOfDay = clone $now;
         $now->modify('today');
         $endOfDay->modify('tomorrow');  
         $endOfDay->modify('1 second ago'); 
-        $beginOfDay = $now->setTimezone('UTC')->format('Y-m-d H:i');
+        $beginOfDay = $now->setTimezone('UTC')->format('Y-m-d H:i');        
         $endOfDay = $endOfDay->setTimezone('UTC')->format('Y-m-d H:i');
-        $scrapped = TableRegistry::get('ScraperLogs')->find()->order(['id'=>'desc'])->first();
-        $items['last_scrapped'] = $scrapped->created->setTimezone($clientTimezone)->format('m-d-Y h:i:s a');
+        
         $data = $this->Spaycs->find()->select(['id','website'])->where(function (\Cake\Database\Expression\QueryExpression $exp, \Cake\ORM\Query $q)use($beginOfDay,$endOfDay) {
             $created = "TO_TIMESTAMP(cast(Spaycs.created as text),'YYYY-MM-DD HH24:MI')";
             return $exp->between($created, $beginOfDay, $endOfDay);

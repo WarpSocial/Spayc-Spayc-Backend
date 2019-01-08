@@ -841,12 +841,14 @@ class SpaycsTable extends Table {
         return $data;
     }
     public function getNearBySpaycsOnMap($request = [], $userId=null) {
-        //pr((new Time('1 day ago', Configure::read('timezone')))->getTimestamp());die;
+//        $request['center_latitude'] = '40.785091';
+//        $request['center_longitude'] = '-73.968285';
+//        $request['radius'] = '3959';
         $now = new Time('now', Configure::read('timezone'));        
         $endObj = clone $now;
         $now->modify('today');
         $timeStmap = $now->getTimestamp();        
-        $endObj->modify('+15 days');
+        $endObj->modify('+'.DAYS_RANGE.' days');
         $endObj->modify('1 second ago'); 
         $today_date = $now->setTimezone('UTC')->format("Y-m-d H:i");
         $twoWeek = $endObj->setTimezone('UTC')->format("Y-m-d H:i"); 
@@ -872,7 +874,7 @@ class SpaycsTable extends Table {
                 $radius = $this->distance($request['center_latitude'], $request['center_longitude'], $request['endpoint_latitude'], $request['endpoint_longitude']);
             }
             $redis = new RedisComponent(new ComponentRegistry());
-            $redisSpaycs = $redis->getGeoLocation('Spaycs',$request['center_latitude'], $request['center_longitude'], $radius);
+            $redisSpaycs = $redis->getGeoLocation('Spaycs',$request['center_latitude'], $request['center_longitude'], $radius,'mi');
             if(empty($redisSpaycs)){
                 return ['count'=>0,'records'=>[]];
             }
@@ -999,11 +1001,10 @@ class SpaycsTable extends Table {
         $spaycs->order(['Spaycs.start_date'=>'ASC']);
 //        $spaycs->group('distance HAVING distance > 0');
         
-        //$spaycs->limit(MAP_LIMIT);
+       // $spaycs->limit(MAP_LIMIT);
         //$spaycs->groupBy('spaycs.id');
-        //return ['count'=>($spaycs->isEmpty())?0:1,'records'=>$spaycs];
-        //return ['count'=>($spaycs->isEmpty())?0:1,'records'=>$spaycs];
         return ['count'=>$spaycs->count(),'records'=>$spaycs];
+        //return ['count'=>($spaycs->isEmpty())?0:1,'records'=>$spaycs];
     }
     
     public function mapEvents($request = [], $userId=null) {
