@@ -841,9 +841,8 @@ class SpaycsTable extends Table {
         return $data;
     }
     public function getNearBySpaycsOnMap($request = [], $userId=null) {
-//        $request['center_latitude'] = '40.785091';
-//        $request['center_longitude'] = '-73.968285';
-//        $request['radius'] = '3959';
+        //$request['radius'] = '2799';
+        $unit = 'm';
         $now = new Time('now', Configure::read('timezone'));        
         $endObj = clone $now;
         $now->modify('today');
@@ -857,7 +856,7 @@ class SpaycsTable extends Table {
         if(isset($request['is_filter']) && ($request['is_filter'] === true) && (isset($request['current_date']) && $request['current_date'] < $timeStmap)){
             $redisSpaycs = [];
             $distanceField = $this->geoDistance();
-             $radius = $this->distance($request['center_latitude'], $request['center_longitude'], $request['endpoint_latitude'], $request['endpoint_longitude'],'meter');
+             $radius = $this->distance($request['center_latitude'], $request['center_longitude'], $request['endpoint_latitude'], $request['endpoint_longitude'],$unit);
              $fields['distance'] = $distanceField;
              $spaycs = $this->find()
                 ->select($fields)
@@ -874,7 +873,7 @@ class SpaycsTable extends Table {
                 $radius = $this->distance($request['center_latitude'], $request['center_longitude'], $request['endpoint_latitude'], $request['endpoint_longitude']);
             }
             $redis = new RedisComponent(new ComponentRegistry());
-            $redisSpaycs = $redis->getGeoLocation('Spaycs',$request['center_latitude'], $request['center_longitude'], $radius,'mi');
+            $redisSpaycs = $redis->getGeoLocation('Spaycs',$request['center_latitude'], $request['center_longitude'], $radius,$unit);
             if(empty($redisSpaycs)){
                 return ['count'=>0,'records'=>[]];
             }
@@ -998,13 +997,10 @@ class SpaycsTable extends Table {
                 return $row;
             });
         });
+        //$spaycs->limit(100);
         $spaycs->order(['Spaycs.start_date'=>'ASC']);
-//        $spaycs->group('distance HAVING distance > 0');
-        
-       // $spaycs->limit(MAP_LIMIT);
-        //$spaycs->groupBy('spaycs.id');
-        return ['count'=>$spaycs->count(),'records'=>$spaycs];
         //return ['count'=>($spaycs->isEmpty())?0:1,'records'=>$spaycs];
+        return ['count'=>$spaycs->count(),'records'=>$spaycs];
     }
     
     public function mapEvents($request = [], $userId=null) {
@@ -1161,7 +1157,7 @@ class SpaycsTable extends Table {
         $km = $r * $c;
 
         //echo '<br/>'.$km;
-        if($unit == 'meter'){
+        if($unit == 'm'){
             return ($km * 1000);
         }
         return $km;

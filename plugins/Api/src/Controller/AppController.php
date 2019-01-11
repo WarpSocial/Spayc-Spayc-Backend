@@ -73,6 +73,24 @@ class AppController extends BaseController {
         $this->response->send();
         $this->response->stop();
     }
+    /**
+     * getPaging method to set the pagination variable
+     */
+    public function getPaging($subject=null){
+        if(is_null($subject)){
+            return null;
+        }
+        $pageKey = $this->request->getParam('paging')[$subject];
+        return [
+            'page_count'=>$pageKey['pageCount'],
+            'next_page'=>$pageKey['nextPage'],
+            'all_records'=>$pageKey['count'],
+            'prev_page'=>$pageKey['prevPage'],
+            'current_page_size'=>$pageKey['current'],
+            'per_page'=>$pageKey['perPage'],
+            'page'=>$pageKey['page'],
+        ];
+    }
     
 
 }

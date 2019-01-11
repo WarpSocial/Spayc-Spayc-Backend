@@ -22,6 +22,7 @@ use Cake\ORM\Query;
  * @method \Api\Model\Entity\Spayc[] paginate($object = null, array $settings = [])
  */
 class SpaycsController extends AppController {
+   
     
     public function initialize() {
         parent::initialize();
@@ -1120,7 +1121,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
          if (!$this->request->is(['post'])) {
             $this->restException(['status'=>'failed', 'message'=> __('Method not allowed.')], 400);
         }
-        
+        $limit = (int)$this->request->getQuery('limit',100);
          if(empty($this->request->getData('center_latitude'))
                  || empty($this->request->getData('center_longitude'))
                  || empty($this->request->getData('endpoint_latitude'))
@@ -1142,10 +1143,15 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         $spayc=TableRegistry::get('Api.Spaycs')->getNearBySpaycsOnMap($this->request->getData(),$user['id']);
         
         $friends = TableRegistry::get('Api.FriendRequest')->getNearByFriendsOnMap($this->request->getData(), $user['id']);
-//        print_R($friends);die;
         if(!$friends['count'] && !$spayc['count']){
              $this->restException(['status'=>'failed','message'=>'Record not found.'], 404);
         }
+        //$this->loadComponent('Api.ApiPagination');
+        
+        //$spayc['records'] = $this->paginate($spayc['records'],['limit'=>$limit]);        
+        //$result['pagination'] = $this->getPaging('Spaycs');
+        //$spayc['count'] = $result['pagination']['all_records'];
+        $result['a_count']=count($spayc['records']->toArray());
         $result['spaycs']=$spayc;
         $result['friends']=$friends;
         $response = ['status'=>'success','message'=>'List of Data.','data'=>$result];

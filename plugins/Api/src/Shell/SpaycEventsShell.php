@@ -139,9 +139,9 @@ class SpaycEventsShell extends Shell {
       return $success;
     }
     public function cleanPastEvents(){
-        $twoDaysAgo = new Time('2 days ago','America/New_York');
+        $daysAgo = new Time('3 days ago','America/New_York');
         $endDate = "TO_TIMESTAMP(cast(Spaycs.end_date as text),'YYYY-MM-DD')";  
-        $spaycs = TableRegistry::get('Api.Spaycs')->find()->select('id')->where([$endDate.' <= '=>$twoDaysAgo->setTimezone('UTC')->format("Y-m-d")])->extract('id')->toArray();
+        $spaycs = TableRegistry::get('Api.Spaycs')->find()->select('id')->where([$endDate.' <= '=>$daysAgo->setTimezone('UTC')->format("Y-m-d")])->extract('id')->toArray();
         if(!empty($spaycs)){
             $this->redis=new RedisComponent(new ComponentRegistry());
             $this->redis->deleteSpayc($spaycs);
