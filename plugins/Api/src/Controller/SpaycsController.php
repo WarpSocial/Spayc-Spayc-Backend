@@ -1151,7 +1151,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         //$spayc['records'] = $this->paginate($spayc['records'],['limit'=>$limit]);        
         //$result['pagination'] = $this->getPaging('Spaycs');
         //$spayc['count'] = $result['pagination']['all_records'];
-        $result['a_count']=count($spayc['records']->toArray());
+        //$result['a_count']=count($spayc['records']->toArray());
         $result['spaycs']=$spayc;
         $result['friends']=$friends;
         $response = ['status'=>'success','message'=>'List of Data.','data'=>$result];
