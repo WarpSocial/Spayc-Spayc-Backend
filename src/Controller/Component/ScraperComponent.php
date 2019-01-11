@@ -41,12 +41,12 @@ class ScraperComponent extends Component {
         try{
             $response = $http->get($url);
             if(!$response->isOk()){
-                $this->updateScraperLog($time,json_encode($response->getBody()));
+                $this->setScraperLog('failed',$time,$url,json_encode(['message'=>$response->getBody(),'code'=>$response->getStatusCode()]));
                 return '';
             }
             return json_decode($response->body, true); 
         } catch (\Exception $ex) {
-            $this->updateScraperLog($time,json_encode(['message'=>$ex->getMessage(),'code'=>$ex->getCode()]));
+             $this->setScraperLog('failed',$time,$url,json_encode(['message'=>$ex->getMessage(),'code'=>$ex->getCode()]));
             return '';
         }
     }
@@ -67,8 +67,7 @@ class ScraperComponent extends Component {
            'start_date.range_end' => $endOfDay->format('Y-m-d\TH:i:s'),
            'location.address'=> 'New York,NY',
             'page' => $pageNumber
-        ]);  
-        
+        ]); 
         $resp=$this->curlRequest($url,$time);
         if((isset($resp['events']) && !empty($resp['events'])) && count($resp['events'])) {
         $events=$eventIds= array();
@@ -125,14 +124,10 @@ class ScraperComponent extends Component {
                 unset($events[$stateExist],$eventIds[$stateExist]);
             }
         } 
-        //echo count($eventIds)." hhhhh ";
-        //echo implode(',',$eventIds);
         if(!empty($eventIds)){
             $this->EventbriteEvents->saveNupdateData($events, $eventIds,$pageNumber);
             if($resp['pagination']['has_more_items']){
-                $pageNumber=$pageNumber+1;               
-                //echo "##$pageNumber##";die('end');
-                /* To avoid consecutive hit on eventbrite website for pagination*/
+                $pageNumber=$pageNumber+1;  
                 //sleep(SCRAPPER_PAGE_DELAY_TIME);
                 $this->getEventbriteData($pageNumber,$time);
             }          
@@ -555,9 +550,18 @@ class ScraperComponent extends Component {
                     $createSpaceData['is_admin_update'] = 1;
 
                     //cUrl Request for Update Spayc Details
-                    $httpResponse = $http->post($update_url, $createSpaceData);
-                    $response['Update Spayc'][] = json_decode($httpResponse->body, true);
-                    $spayc_id=$value['spayc_id'];
+                    try {
+                        $httpResponse = $http->post($update_url, $createSpaceData);
+                        if(!$httpResponse->isOk()){
+                                $this->setScraperLog('createupdate shell failed to create',$starttime,'createupdate',json_encode(['message'=>$httpResponse->getBody(),'code'=>$httpResponse->getStatusCode()]));
+                            }
+                        $response['Update Spayc'][] = json_decode($httpResponse->body, true);
+                        $spayc_id=$value['spayc_id'];
+                    } catch (\Exception $ex) {
+                         $this->setScraperLog('createupdate shell failed to create',$starttime,'createupdate',json_encode(['message'=>$ex->getMessage(),'code'=>$ex->getCode()]));
+                    }
+                    
+                    
                 } else {
                     $cat =str_replace(" ", "", $value['category']);
                      $category = $this->ScraperCategories->isCatExist($cat,$website);
@@ -567,7 +571,15 @@ class ScraperComponent extends Component {
                         if($category[2]){
                             $createSpaceData['description'].= " #".str_replace(" ", "", $category[2]);
                         }
-                        $httpResponse = $http->post($url, $createSpaceData);
+                        try {
+                            $httpResponse = $http->post($url, $createSpaceData);
+                            if(!$httpResponse->isOk()){
+                                $this->setScraperLog('createupdate shell failed to update',$starttime,'createupdate',json_encode(['message'=>$httpResponse->getBody(),'code'=>$httpResponse->getStatusCode()]));
+                            }
+                        } catch (\Exception $ex) {
+                            $this->setScraperLog('createupdate shell failed to update',$starttime,'createupdate',json_encode(['message'=>$ex->getMessage(),'code'=>$ex->getCode()]));
+                        }
+                        
                         $response['Create New Spayc'][] =$created= json_decode($httpResponse->body, true);
                         //Updating Spayc ID in Related tables
                         if ($created['status'] == 'success') {
@@ -850,10 +862,11 @@ class ScraperComponent extends Component {
     }
 
     /*** set log for scraper to identify all process running smoothly ***/
-    public function setScraperLog($status,$time,$shell=null){
+    public function setScraperLog($status,$time,$shell=null,$response=null){
         if(!empty($status)){
             $data['status'] = trim($status);
             $data['shell'] = $shell;
+            $data['response'] = $response;
             $data['unique_time'] = $time;
             $data['start_time'] = (new Time('now', Configure::read('timezone')))->setTimezone('UTC')->format("Y-m-d H:i:s");
             $data['end_time'] = NULL;

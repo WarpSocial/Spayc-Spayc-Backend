@@ -851,7 +851,7 @@ class SpaycsTable extends Table {
         $endObj->modify('1 second ago'); 
         $today_date = $now->setTimezone('UTC')->format("Y-m-d H:i");
         $twoWeek = $endObj->setTimezone('UTC')->format("Y-m-d H:i"); 
-        $fields = ['id', 'name','start_date', 'matrix_room_id', 'image', 'type', 'modified', 'spayc_category_id','latitude','longitude','score'=>'website','rank'=>'rank() OVER (PARTITION BY website ORDER BY start_date asc)'];
+        $fields = ['id', 'name','start_date', 'matrix_room_id', 'image', 'type', 'modified', 'spayc_category_id','latitude','longitude','score'=>'website'];
         /* if user filter past date event in that case calculate distance manually because radis clean past event */
         if(isset($request['is_filter']) && ($request['is_filter'] === true) && (isset($request['current_date']) && $request['current_date'] < $timeStmap)){
             $redisSpaycs = [];

@@ -166,19 +166,11 @@ class EventbriteEventsTable extends Table
         $getIds = $this->find()->select(['eventbrite_event_id'])->where(['eventbrite_event_id IN' => $eventIds])->extract('eventbrite_event_id')->toList();
         /* newly created event id on scrapper */
         $diffIds=array_diff($eventIds,$getIds); 
-//        echo implode(',', $eventIds);
-//        echo '------------------------------';
-//        echo implode(',', $getIds);
-//        echo '------------------------------';
-//        echo implode(',', $diffIds);die;
-        /* get the is which not existing in temp table - new events received */
-        //echo "@@$page<=>".count($eventIds)."@@";
         $connection = \Cake\Datasource\ConnectionManager::get('default');
         if(!empty($events)){
             /*update existing events */
             if(!empty($getIds)){
             foreach($getIds as $uEbId){
-                pr($events[$uEbId]);die("klds");
                 $events[$uEbId]['modified'] = date('Y-m-d H:i:s');
                 $connection->update($this->getTable(), $events[$uEbId], ['eventbrite_event_id' => $uEbId]);
                 
