@@ -143,8 +143,8 @@ class SpaycEventsShell extends Shell {
         $endDate = "TO_TIMESTAMP(cast(Spaycs.end_date as text),'YYYY-MM-DD')";  
         $spaycs = TableRegistry::get('Api.Spaycs')->find()->select('id')->where([$endDate.' <= '=>$daysAgo->setTimezone('UTC')->format("Y-m-d")])->extract('id')->toArray();
         if(!empty($spaycs)){
-            $this->redis=new RedisComponent(new ComponentRegistry());
-            $this->redis->deleteSpayc($spaycs);
+            $redis=new RedisComponent(new ComponentRegistry());
+            $redis->deleteSpayc($spaycs);
         }
         
     }

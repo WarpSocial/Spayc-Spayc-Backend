@@ -90,6 +90,7 @@ Router::plugin(
         $routes->connect('/feedback',['controller'=>'WebApi', 'action'=>'userFeedBack']);
         $routes->connect('/update-comment/:id',['controller'=>'WebApi', 'action'=>'updateComment'],['pass'=>['id']]);
         $routes->connect('/events-image',['controller'=>'WebApi', 'action'=>'eventsImage']);
+        $routes->connect('/clean-redis',['controller'=>'WebApi', 'action'=>'cleanPastEvents']);
         $routes->fallbacks(DashedRoute::class);
     }
 );

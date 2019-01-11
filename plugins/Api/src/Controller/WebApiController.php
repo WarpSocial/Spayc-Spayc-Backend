@@ -26,7 +26,7 @@ class WebApiController extends AppController {
     
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
-        $this->Auth->allow(['passwordChange','addCategory', 'apilog', 'addComment', 'notify', 'updateComment', 'scrapper','appVersion']);
+        $this->Auth->allow(['passwordChange','addCategory', 'apilog', 'addComment', 'notify', 'updateComment', 'scrapper','appVersion','cleanPastEvents']);
     }
     
     public function appVersion(){        
@@ -332,6 +332,17 @@ class WebApiController extends AppController {
             $items[$cat['parent_category']['name']][] = $cat['name'];
         }
         return $items;
+    }
+    
+    public function cleanPastEvents(){
+        $this->loadComponent('Api.Redis');
+        $daysAgo = new \Cake\I18n\Time('3 days ago','America/New_York');
+        $endDate = "TO_TIMESTAMP(cast(Spaycs.end_date as text),'YYYY-MM-DD')";  
+        $spaycs = TableRegistry::get('Api.Spaycs')->find()->select('id')->where([$endDate.' <= '=>$daysAgo->setTimezone('UTC')->format("Y-m-d")])->extract('id')->toArray();
+        if(!empty($spaycs)){
+           $this->Redis->deleteSpayc($spaycs);
+        }
+        die("Done");
     }
 
 }
