@@ -40,9 +40,14 @@ would have been modified as per your needs, there isn't a way to provide
 automated upgrades, so you have to do any updates manually.
 
 ## Configuration
-
-Read and edit `config/app.php` and setup the `'Datasources'` and any other
+Project Document: https://docs.google.com/document/d/1chAZUspautQ6bUgz0c9pG14RWlT2l22Vj402NIklynM/edit
+Read and edit `config/env.php` and setup the `'Datasources'` and any other
 configuration relevant for your application.
+Database setup:
+Install timescaledb from resource https://docs.timescale.com/v1.1/getting-started/installation/ubuntu/installation-apt-ubuntu
+Execute the sql query which is in config/schema/spayc.sql
+Database Schema link: https://drive.google.com/file/d/1RArdSxajbYS0bxR878IvIxWuicNnER6j/view
+
 
 ## Layout
 
