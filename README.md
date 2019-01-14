@@ -42,7 +42,7 @@ automated upgrades, so you have to do any updates manually.
 ## Configuration
 1. Read the document: https://docs.google.com/document/d/1chAZUspautQ6bUgz0c9pG14RWlT2l22Vj402NIklynM/edit and follow the installation instruction.
 2. Install timescaledb from the resource https://docs.timescale.com/v1.1/getting-started/installation/ubuntu/installation-apt-ubuntu
-3. Create database and execute the sql query which is in config/schema/spayc.sql to create table and schmea.
+3. Create database and execute the sql query which is in config/schema/spayc.sql to create table and schema.
 3. Read and configure the environment variable `config/.env`.
 4. Database Schema link: https://drive.google.com/file/d/1RArdSxajbYS0bxR878IvIxWuicNnER6j/view
 
