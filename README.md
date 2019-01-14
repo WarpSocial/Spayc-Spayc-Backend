@@ -45,6 +45,7 @@ automated upgrades, so you have to do any updates manually.
 3. Create database and execute the sql query which is in config/schema/spayc.sql to create table and schema.
 3. Read and configure the environment variable `config/.env`.
 4. Database Schema link: https://drive.google.com/file/d/1RArdSxajbYS0bxR878IvIxWuicNnER6j/view
+5. Api document link: https://spayc.warp-app.com/apidoc/
 
 
 ## Layout
