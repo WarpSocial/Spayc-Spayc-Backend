@@ -462,7 +462,7 @@ class SpaycsController extends AdminController {
         if(empty($clientTimezone) || !preg_match('/[(.*)\/(.*)]/', $clientTimezone)){
             $clientTimezone = 'America/New_York';
         }
-        $scrapped = TableRegistry::get('ScraperLogs')->find()->order(['id'=>'desc'])->first();
+        $scrapped = TableRegistry::get('ScraperLogs')->find()->where(['shell'=>'CreateUpdateSpayc'])->order(['id'=>'desc'])->first();
         $items['last_scrapped'] = $scrapped->created->setTimezone($clientTimezone)->format('m-d-Y h:i:s a');
         $now = new \Cake\I18n\Time($scrapped->created->format('Y-m-d H:i:s'),$clientTimezone);
         $endOfDay = clone $now;
