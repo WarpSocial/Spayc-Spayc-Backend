@@ -34,7 +34,7 @@ class SettingsTable extends Table
 
         $this->setTable('settings');
         $this->setDisplayField('id');
-        $this->setPrimaryKey(['id', 'created']);
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
     }
