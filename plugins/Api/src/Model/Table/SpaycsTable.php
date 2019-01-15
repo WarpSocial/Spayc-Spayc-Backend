@@ -997,7 +997,7 @@ class SpaycsTable extends Table {
                 return $row;
             });
         });
-        if(isset($request['is_limit']) && $request['is_limit']){
+        if(!isset($request['is_limit']) || (isset($request['is_limit']) && $request['is_limit'])){
             $spaycs->limit(100);
         }
         //$spaycs->order(['Spaycs.start_date'=>'ASC']);
