@@ -29,11 +29,12 @@ class WebApiController extends AppController {
         $this->Auth->allow(['passwordChange','addCategory', 'apilog', 'addComment', 'notify', 'updateComment', 'scrapper','appVersion','cleanPastEvents']);
     }
     
-    public function appVersion(){        
+    public function appVersion(){  
+        $appVersion = TableRegistry::get('Settings')->find()->where(['param'=>'app_version'])->first();
         $response = [
             'status'=>'success',
             'Message'=>'App current version',
-            'data'=>['app_version'=>Configure::read('app_version')]];
+            'data'=>['app_version'=>$appVersion->param_value ]];
         $this->set($response);
     }
     
