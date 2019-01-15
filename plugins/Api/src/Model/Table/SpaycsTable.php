@@ -997,7 +997,9 @@ class SpaycsTable extends Table {
                 return $row;
             });
         });
-        //$spaycs->limit(100);
+        if(isset($request['is_limit']) && $request['is_limit']){
+            $spaycs->limit(100);
+        }
         //$spaycs->order(['Spaycs.start_date'=>'ASC']);
         //return ['count'=>($spaycs->isEmpty())?0:1,'records'=>$spaycs];
         return ['count'=>$spaycs->count(),'records'=>$spaycs];
