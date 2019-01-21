@@ -300,7 +300,7 @@ class UsersController extends AppController {
         $data['username'] = \Cake\Utility\Inflector::slug($data['username']).'_'.time();
         $items->set('username',$data['username']);
         $items->set('matrix_password',$data['matrix_password']);
-        $items->set('display_name',$data['display_name']);
+        //$items->set('display_name',$data['display_name']);
         $matrix = $this->Matrix->register($data);
         if($matrix['status'] == 'failed') {       
             $this->restException(['status' => "failed", 'message' => $matrix['message']], 401);
@@ -314,13 +314,13 @@ class UsersController extends AppController {
             $items['action_type']='signup';
             TableRegistry::get('Queue.QueuedJobs')->createJob('Mailer',$items->toArray());
             /*store the user location to redis*/
-            $this->Redis->addUser($items->toArray());
+            //$this->Redis->addUser($items->toArray());
             //$this->getMailer('Api.User')->send('signup', [$items]);
             $response = ['status' => "success", 'message' => __('Registration done successfully.'), 'data' =>
                 [
                     'id'=>$items->id,
                     'username'=>$data['username'],
-                    'display_name'=>$data['display_name'],
+                    'display_name'=>$items['display_name'],
                     'email'=>$data['email'],
                     'dob'=> Utils::getVar('dob',$data),
                     'gender'=> Utils::getVar('gender',$data),
@@ -612,11 +612,9 @@ class UsersController extends AppController {
         }
         /* At the time of update username will not update and maintain the prev username by swaping the value*/
         $items->set('username',$username);
-        if(!empty($data['username'])){
-            $items->set('display_name',$data['username']);
-        }
+        
         if ($this->Users->save($items)) {
-            $this->Redis->addUser($items->toArray());
+            //$this->Redis->addUser($items->toArray());
             $response = ['status' => "success", 'message' => __('Updated successfully.'), 'data' => $data];
         } else {
             $response = ['status' => "failed", 'message' => $this->mapErrors($items->errors())];
@@ -1593,11 +1591,11 @@ class UsersController extends AppController {
         $user = $this->Auth->user();
         if($this->Users->PhysicalLocation->updateLocation($user,$lat,$long)){
             /* update user current status on redis too */
-            $this->Redis->addUser([
-                'id'=>$user['id'],
-                'latitude'=>$lat,
-                'longitude'=>$long,
-            ]);
+//            $this->Redis->addUser([
+//                'id'=>$user['id'],
+//                'latitude'=>$lat,
+//                'longitude'=>$long,
+//            ]);
             $response = ['status'=>'success', 'message'=>__('Request has been updated successfully.')];
         }else{
             $this->response->statusCode(400);
