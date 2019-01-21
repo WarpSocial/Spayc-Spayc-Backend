@@ -33,6 +33,7 @@
  * @apiHeader {String} TOKEN            * A token send by header as TOKEN
  *
  * @apiParam {String}  username     Username (Required).
+ * @apiParam {String}  display_name   display name (Optional).
  * @apiParam {Date}    dob          Date of birth must in this format MM-DD-YYYY (Optional).
  * @apiParam {String}  gender       Gender of user like any one (Male, Femal, Other) (Required).
  * @apiParam {String}  country_code Country code of user phone number(Optional).
@@ -47,6 +48,7 @@
  *
  *       {
  *          "username":"spayc",
+ *          "display_name":"spayc events",
  *          "dob": "12-11-2001",
  *          "gender": "Male|Female|Other",
  *          "country_code":"+91",
@@ -98,6 +100,7 @@ function putUser() { return; }
  * Register new user with form-data option.
  *
  * @apiParam {String} username Username must be unique and size between 3-30 charecters (Required).
+ * @apiParam {String} display_name display name value (optional).
  * @apiParam {String} email Email of user must be unique (Required).
  * @apiParam {String} password secret password (Required).
  * @apiParam {String} confirm_password secret password (Required).
@@ -112,6 +115,7 @@ function putUser() { return; }
  *
  *       {
  *          "username": "spaycdev",
+ *          "display_name":"spayc events",
  *          "email": "spaycdev@spayc.com",
  *          "password": "XXXXXXXXX",
  *          "confirm_password": "XXXXXXXXX",
@@ -460,6 +464,7 @@ function postForgotPassword() { return; }
     "data": {
         "id": "11",
         "username": "user",
+        "display_name": "user name",
         "email": "test@domain.com",
         "gender": "Female",
         "dob": null,
