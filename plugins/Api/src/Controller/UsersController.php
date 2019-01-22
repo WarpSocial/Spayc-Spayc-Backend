@@ -175,6 +175,7 @@ class UsersController extends AppController {
             'id'=>  ApiHasher::encrypt($user['id']),
             'username'=>$user['username'],
             'display_name'=>$user['display_name'],
+            'full_name'=>$user['full_name'],
             'email'=>$user['email'],
             'gender'=>$user['gender'],
             'dob'=>(new \Cake\I18n\Time($user['dob']))->format("Y-m-d"),
@@ -300,7 +301,7 @@ class UsersController extends AppController {
         $data['username'] = \Cake\Utility\Inflector::slug($data['username']).'_'.time();
         $items->set('username',$data['username']);
         $items->set('matrix_password',$data['matrix_password']);
-        //$items->set('display_name',$data['display_name']);
+        $items->set('display_name',$data['display_name']);
         $matrix = $this->Matrix->register($data);
         if($matrix['status'] == 'failed') {       
             $this->restException(['status' => "failed", 'message' => $matrix['message']], 401);
