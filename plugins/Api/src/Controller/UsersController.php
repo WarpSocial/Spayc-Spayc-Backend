@@ -320,7 +320,8 @@ class UsersController extends AppController {
                 [
                     'id'=>$items->id,
                     'username'=>$data['username'],
-                    'display_name'=>$items['display_name'],
+                    'display_name'=>$data['display_name'],
+                    'full_name'=>$data['full_name'],
                     'email'=>$data['email'],
                     'dob'=> Utils::getVar('dob',$data),
                     'gender'=> Utils::getVar('gender',$data),
@@ -397,6 +398,7 @@ class UsersController extends AppController {
             $data['id'] = ApiHasher::decrypt($alreadyExist['id']);
             $data['fb_id'] = !empty($data['fb_id'])?$data['fb_id']:$alreadyExist['fb_id'];
             $data['display_name'] = $alreadyExist['display_name'];
+            $data['full_name'] = $alreadyExist['display_name'];
             $data['username'] = $alreadyExist['username'];
             $data['email'] = !empty($data['email'])?$data['email']:$alreadyExist['email'];
             $data['password'] = $alreadyExist['password'];
@@ -406,6 +408,7 @@ class UsersController extends AppController {
             $data['token_verification'] = Security::hash($data['email'], 'sha1', true);
             $data['password'] = Text::uuid();
             $data['display_name'] = $data['username'];
+            $data['full_name'] = $data['display_name'];
             $data['username'] = \Cake\Utility\Inflector::slug($data['username']).'_'.time();
             $data['matrix_password'] = md5($data['username']);
             $entity = $this->Users->newEntity();
@@ -461,6 +464,7 @@ class UsersController extends AppController {
             'id'=>$user['id'],
             'username'=>$user['username'],
             'display_name'=>$user['display_name'],
+            'full_name'=>$user['full_name'],
             'email'=>$user['email'],
             'gender'=>$user['gender'],
             'dob'=>(new \Cake\I18n\Time($user['dob']))->format("Y-m-d"),
@@ -612,7 +616,9 @@ class UsersController extends AppController {
         }
         /* At the time of update username will not update and maintain the prev username by swaping the value*/
         $items->set('username',$username);
-        
+        if(!empty($data['username'])){
+            $items->set('display_name',$data['username']);
+        }
         if ($this->Users->save($items)) {
             //$this->Redis->addUser($items->toArray());
             $response = ['status' => "success", 'message' => __('Updated successfully.'), 'data' => $data];
@@ -1379,7 +1385,7 @@ class UsersController extends AppController {
         if(empty($id)) {
             $this->restException(['status'=>'failed', 'message'=>__('User id is required field.')], 400);
         }
-        $user = $this->Users->find('all', ['fields'=>['Users.id', 'Users.username','Users.display_name', 'Users.email', 'Users.gender', 'Users.dob','Users.country_code', 'Users.phone', 'Users.website_url', 'Users.address', 'Users.bio_data', 'Users.longitude', 'Users.latitude', 'Users.matrix_user_id','Users.ghost_mode_map','Users.ghost_mode_search']])->where(['OR'=>['Users.id'=>$id,'Users.matrix_user_id'=>$id]]);
+        $user = $this->Users->find('all', ['fields'=>['Users.id', 'Users.username','Users.display_name','Users.full_name', 'Users.email', 'Users.gender', 'Users.dob','Users.country_code', 'Users.phone', 'Users.website_url', 'Users.address', 'Users.bio_data', 'Users.longitude', 'Users.latitude', 'Users.matrix_user_id','Users.ghost_mode_map','Users.ghost_mode_search']])->where(['OR'=>['Users.id'=>$id,'Users.matrix_user_id'=>$id]]);
 
         $userId = $this->Auth->user('id');
         $user->contain([

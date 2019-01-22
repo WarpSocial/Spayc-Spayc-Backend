@@ -114,6 +114,14 @@ class UsersTable extends Table {
      */
     public function validationDefault(Validator $validator) {
         $validator
+            ->maxLength('full_name', 50,__('Full name cannot exceed to 50 characters.'))
+            ->add("full_name",'custom',[
+                'rule'=>function($value,$context){
+                    return (bool)(preg_match('/^[\w\s\.-]+$/', $value));
+                },
+                'message'=>__('Enter valid full name.'),
+            ]);
+        $validator
                 ->requirePresence('username', 'create',__('Username is required field.'))
                 ->notEmpty('username',__('Please enter a user name'))                
                 ->maxLength('username', 30,__('User name cannot exceed to 30 characters.'))
@@ -305,6 +313,14 @@ class UsersTable extends Table {
      */
     public function validationUpdateUser(Validator $validator) {
         
+        $validator
+            ->maxLength('full_name', 50,__('Full name cannot exceed to 50 characters.'))
+            ->add("full_name",'custom',[
+                'rule'=>function($value,$context){
+                    return (bool)(preg_match('/^[\w\s\.-]+$/', $value));
+                },
+                'message'=>__('Enter valid full name.'),
+            ]);
         $validator
             ->requirePresence('username', 'create',__('Username is required field.'))
             ->notEmpty('username',__('Username is required field.'))                

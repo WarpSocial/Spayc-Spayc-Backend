@@ -689,3 +689,4 @@ ALTER TABLE public.users ADD ghost_mode_search int NULL DEFAULT 0;
 ALTER TABLE public.users ADD ghost_mode_map int NULL DEFAULT 0;
 ALTER TABLE "physical_location" ADD "timezone" varchar(100) NULL;
 ALTER TABLE "users" ADD "matrix_password" text NULL;
+ALTER TABLE "users" ADD "full_name" character varying(100) NULL; COMMENT ON TABLE "users" IS '';
