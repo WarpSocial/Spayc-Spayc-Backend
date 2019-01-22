@@ -114,6 +114,7 @@ class UsersTable extends Table {
      */
     public function validationDefault(Validator $validator) {
         $validator
+            ->allowEmpty('full_name')    
             ->maxLength('full_name', 50,__('Full name cannot exceed to 50 characters.'))
             ->add("full_name",'custom',[
                 'rule'=>function($value,$context){
@@ -314,6 +315,7 @@ class UsersTable extends Table {
     public function validationUpdateUser(Validator $validator) {
         
         $validator
+            ->allowEmpty('full_name')       
             ->maxLength('full_name', 50,__('Full name cannot exceed to 50 characters.'))
             ->add("full_name",'custom',[
                 'rule'=>function($value,$context){
