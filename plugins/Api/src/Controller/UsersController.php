@@ -363,8 +363,7 @@ class UsersController extends AppController {
                     $this->Flash->error(__('Invalid token. Please read email carefully and try again.'));
                 }else{
                      $user->status = 'Active';
-                     //if ($this->Users->save($user)) {
-                     if (1) {
+                     if ($this->Users->save($user)) {
                          $this->Flash->success(__('Your Account has been successfully activated. You can now log in using the email and password you had chosen during the registration.'));
                     } else {
                         $this->Flash->success(__('This link has no longer existing.'));
