@@ -301,7 +301,7 @@ class SpaycsController extends AppController {
                 return $exp->notIn('Spaycs.id', $bannedSpayc);
              });
         }
-         if($lat != null && $long != null){
+         if(($lat != null) && ($long != null)){
             $distance = "ROUND( CAST(".str_replace(':long',$long,str_replace(':lat',$lat,$this->Spaycs->distanceInMiles))." AS numeric), 3)";
             $spaycs->select(['distance'=>$distance]);
             if(!empty($this->request->getQuery('radius'))){
@@ -310,7 +310,11 @@ class SpaycsController extends AppController {
                     return $exp->lte($distance,$radius);
                 });
             }
-            $spaycs->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
+            if($this->request->query('list_by')=='created'){
+                $spaycs->order(['Spaycs.created'=>'DESC']);
+            }else{
+                $spaycs->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
+            }            
         }else if(!empty($this->request->query('hot'))) {
             
         }else{
@@ -610,6 +614,9 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         $spayc->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.parent_id','Spaycs.created','Spaycs.modified','Spaycs.latitude','Spaycs.longitude','Spaycs.spayc_category_id','Spaycs.payment_type','Spaycs.ticket_url'])
                 ->where(['Spaycs.status'=>'Active', 'OR'=>['matrix_room_id'=>$id,'Spaycs.id'=>$id]])
                 ->contain([
+                    'Users'=>function($q){
+                        return $q->select(['Users.id','Users.full_name','Users.display_name','Users.email']);
+                    },
                     'SubSpaycs' => function($q)use($bannedSpayc) {
                         $q->select(['SubSpaycs.id','SubSpaycs.parent_id', 'SubSpaycs.name', 'SubSpaycs.location', 'SubSpaycs.image', 'SubSpaycs.description', 'SubSpaycs.group_type', 'SubSpaycs.type','SubSpaycs.start_date','SubSpaycs.end_date','SubSpaycs.passcode','SubSpaycs.description','SubSpaycs.matrix_room_id','SubSpaycs.latitude','SubSpaycs.longitude']);
                         if(!empty($bannedSpayc)){
@@ -645,11 +652,14 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
             $spayc->select(['distance'=>0])
                     ->order(['Spaycs.created'=>'DESC']);
         }        
-        #pr($spayc->toArray());die;
+        //pr($spayc->toArray());die;
         $spayc->formatResults(function (\Cake\Collection\CollectionInterface $results) use($friend, $userId) {
             return $results->map(function ($row) use($friend, $userId) {  
                 $row->created = Utils::toClient($row->created);
                 $row->modified = Utils::toClient($row->modified);
+                if(!empty($row['user']) && ($row['user']['email'] == SCRAPER_EMAIL)){
+                    $row['user'] = null;
+                }
                 if(!empty($row->ticket_url)){
                     $row->ticket_url = explode(',',$row->ticket_url);
                 }

@@ -11,6 +11,10 @@ use App\Controller\AppController;
  * @property \App\Model\Table\SettingsTable $Settings
  */
 class SettingsController extends AdminController {
+    public function initialize() {
+        parent::initialize();
+        $this->viewBuilder()->setLayout('default');
+    }
 
     /**
      * Index method
@@ -97,6 +101,15 @@ class SettingsController extends AdminController {
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+    
+    public function categories(){
+        
+        $cat = \Cake\ORM\TableRegistry::get('Api.SpaycCategories');
+        
+        $spaycCategories = $cat->find()->contain(['ParentSpaycCategories'])->all();
+       
+        $this->set(compact('spaycCategories'));
     }
 
 }

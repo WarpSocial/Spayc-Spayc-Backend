@@ -201,7 +201,7 @@ input:disabled {
 }
 .forgot-password-web{
   width: 468px;
-  min-height: 468px;
+  min-height: 510px;
   height: auto;
   margin: 0 auto;
   background: #fff;
@@ -229,11 +229,9 @@ input:disabled {
 .forgot-password-web h4{
 font-size: 15px;
 font-weight: 400;
-text-align: center;
-display: block;
-color: #323332;
-margin-top: 70px;
-margin-bottom: 10px;
+display: inline-block;
+color: #fff;
+margin: 30px 0px 0px -75px;
 }
 .forgot-password-box.forgot-password-web p{
   font-size: 14px;
@@ -511,3 +509,9 @@ opacity: .8;
     margin-top: 80px;
 	}
 }
+.logo-wrap.reset-logo {
+    background: #1a4c59;
+    padding: 15px 10px;
+}
+.logo-wrap.reset-logo img{float:left;}
+.logo-wrap.reset-logo h4{margin:12px 0px 0px -75px}

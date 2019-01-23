@@ -1,4 +1,5 @@
 <?php 
+use Cake\Core\Configure;
 $input = $this->request->getData();
 ?>
 <!DOCTYPE html>
@@ -36,8 +37,9 @@ $input = $this->request->getData();
     <section class="forgot-password-wrapper">
         <!--================forgot password=====================-->
         <div class="forgot-password-box forgot-password-web">
-          <div class="logo-wrap">
-            <?php echo $this->Html->image('Api.logo.png', ['alt' => 'Warp']);?>
+          <div class="logo-wrap reset-logo">
+            <?php echo $this->Html->image(Configure::read('App.BASE_URL').'images/logo.png', ['alt' => 'Warp', 'style'=>'text-align: center;display: block;margin: 0 auto;']); ?>
+              <h4>Reset Password</h4>
           </div>
             <?php
             if($status == 'done'){

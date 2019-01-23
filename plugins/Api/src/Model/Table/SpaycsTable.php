@@ -459,9 +459,17 @@ class SpaycsTable extends Table {
                         return $exp->notIn('Spaycs.id', $bannedSpayc);
                      });
                 }
-        
+        $startDate = "TO_TIMESTAMP(cast(Spaycs.start_date as text),'YYYY-MM-DD HH24:MI')";
+        $endDate = "TO_TIMESTAMP(cast(Spaycs.end_date as text),'YYYY-MM-DD HH24:MI')";
+        $dateRange = Utils::dateRangeUtc(Configure::read('timezone'), DAYS_RANGE);
         if(!empty($request['keyword'])) {
             $spaycs->where(["LOWER(Spaycs.name) LIKE"=>"%".strtolower($request['keyword'])."%"]);
+            $spaycs->where([
+                'OR'=>[[$startDate.' >='=>$dateRange['start']],[$endDate.' >= '=>$dateRange['start']]]
+                ]);
+            $spaycs->where([
+                'OR'=>[[$startDate.' <='=>$dateRange['end']],[$endDate.' <= '=>$dateRange['end']]]
+                ]);
         }
         $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
         $spaycs->limit($limit);
@@ -847,7 +855,7 @@ class SpaycsTable extends Table {
         $endObj = clone $now;
         $now->modify('today');
         $timeStmap = $now->getTimestamp();        
-        $endObj->modify('+'.DAYS_RANGE.' days');
+        $endObj->modify('+'.MAP_DAYS_RANGE.' days');
         $endObj->modify('1 second ago'); 
         $today_date = $now->setTimezone('UTC')->format("Y-m-d H:i");
         $twoWeek = $endObj->setTimezone('UTC')->format("Y-m-d H:i"); 

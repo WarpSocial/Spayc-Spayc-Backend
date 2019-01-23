@@ -1,4 +1,6 @@
-<?php ?>
+<?php 
+use Cake\Core\Configure;
+?>
 <!DOCTYPE html>
 <?= $this->Html->charset() ?>
 <html lang="en">
@@ -17,8 +19,8 @@
     <section class="forgot-password-wrapper">
         <!--================forgot password=====================-->
         <div class="forgot-password-box forgot-password-web">
-          <div class="logo-wrap">
-            <?php echo $this->Html->image('logo-gr.png', ['alt' => 'Warp']);?>
+            <div class="logo-wrap" style="background-color:#1a4c59;">
+              <?php echo $this->Html->image(Configure::read('App.BASE_URL').'images/logo.png', ['alt' => 'Warp', 'style'=>'float: left;margin: 15px 15px 15px;']); ?>            
               <h4>Account Verification</h4>
           </div>
             <div class="success-reset-password">                

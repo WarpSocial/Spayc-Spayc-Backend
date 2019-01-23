@@ -357,13 +357,14 @@ class UsersController extends AppController {
         $user = $this->Users->findByEmail($email)->first();
         if (!empty($user)) {
             if ($user->status == 'Active') {
-                $this->Flash->error(__('Your Account has been already activated. You can now log in using the email and password you has chosen during the registration'));
+                $this->Flash->success(__('Your Account has been already activated. You can now log in using the email and password you has chosen during the registration'));
             }else{
                 if ($token != Security::hash($user->email, 'sha1', true)) {
                     $this->Flash->error(__('Invalid token. Please read email carefully and try again.'));
                 }else{
                      $user->status = 'Active';
-                     if ($this->Users->save($user)) {
+                     //if ($this->Users->save($user)) {
+                     if (1) {
                          $this->Flash->success(__('Your Account has been successfully activated. You can now log in using the email and password you had chosen during the registration.'));
                     } else {
                         $this->Flash->success(__('This link has no longer existing.'));

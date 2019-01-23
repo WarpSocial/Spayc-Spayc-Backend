@@ -482,6 +482,12 @@ function postUnSubscribeSpayc() { return; }
                  "spayc_category": {
                     "id": 560,
                     "name": "Softball"
+                },
+                "user": {
+                    "full_name": null,
+                    "id": "1",
+                    "display_name": "Bob",
+                    "email": "bobeasl07@yopmail.com"
                 }
             }
         ],

@@ -436,5 +436,16 @@ class Utils {
         $fileinfo = $finfo->file($file, FILEINFO_MIME);
         return $fileinfo;
     }
+    public static function dateRangeUtc($timezone,$days){
+        $now = new Time('now', $timezone);        
+        $endObj = clone $now;
+        $now->modify('today');
+        $timeStmap = $now->getTimestamp();        
+        $endObj->modify('+'.$days.' days');
+        $endObj->modify('1 second ago'); 
+        $today_date = $now->setTimezone('UTC')->format("Y-m-d H:i");
+        $twoWeek = $endObj->setTimezone('UTC')->format("Y-m-d H:i"); 
+        return ['start'=>$today_date,'end'=>$twoWeek];
+    }
 
 }
