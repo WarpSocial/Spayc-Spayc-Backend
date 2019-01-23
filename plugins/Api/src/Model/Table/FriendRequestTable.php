@@ -283,7 +283,7 @@ class FriendRequestTable extends Table {
             return ['count'=>0,'records'=>[]];
         }
         $friends = TableRegistry::get('Api.Users')->find()
-                ->select(['Users.id', 'Users.display_name', 'Users.email', 'Users.address', 'Users.modified'])
+                ->select(['Users.id', 'Users.display_name','Users.full_name', 'Users.email', 'Users.address', 'Users.modified'])
                 ->contain([
                     'UserImages' => function($q) {
                         return $q->select(['UserImages.user_id', 'UserImages.image_url'])->where(['UserImages.is_profile' => 'Yes']);

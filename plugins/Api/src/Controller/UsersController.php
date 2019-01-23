@@ -1330,7 +1330,7 @@ class UsersController extends AppController {
         if(!$friend){
             $this->restException(["status"=>"success",'message'=>__("Record not found")],204);
         }
-        $friends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username','Users.display_name', 'Users.matrix_user_id', 'Users.matrix_access_token'], 'conditions'=>['Users.id IN'=>$friend, 'Users.id !='=>$userId, 'Users.status IN'=>[ACTIVE,INACTIVE]]]);
+        $friends = $this->Users->find("all", ['fields'=>['Users.id', 'Users.username','Users.display_name','Users.full_name', 'Users.matrix_user_id', 'Users.matrix_access_token'], 'conditions'=>['Users.id IN'=>$friend, 'Users.id !='=>$userId, 'Users.status IN'=>[ACTIVE,INACTIVE]]]);
         $friends->contain([          
             'UserImages'=>function($q) {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);

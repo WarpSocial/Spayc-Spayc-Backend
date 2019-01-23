@@ -710,7 +710,7 @@ class UsersTable extends Table {
         } else {
             $cond['Users.id !='] = $userId;
         }
-        $users = $this->find('all', ['fields'=>['Users.id', 'Users.username','Users.display_name', 'Users.email', 'Users.matrix_user_id']])->where($cond);
+        $users = $this->find('all', ['fields'=>['Users.id', 'Users.username','Users.full_name','Users.display_name', 'Users.email', 'Users.matrix_user_id']])->where($cond);
         $users->contain([
             /*
             'JoinedSpayc'=>function($q) {
@@ -748,7 +748,7 @@ class UsersTable extends Table {
         $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
         $users->order(['Users.username'=>'ASC'])->limit($limit);
         if(!empty($request['keyword'])) {
-            $users->where(['LOWER(Users.username) LIKE'=>"%".strtolower($request['keyword'])."%"]);
+            $users->where(["OR"=>[['LOWER(Users.username) LIKE'=>"%".strtolower($request['keyword'])."%"],['LOWER(Users.full_name) LIKE'=>"%".strtolower($request['keyword'])."%"]]]);
         }
         $page = (!empty($request['page']) && is_numeric($request['page']))?$request['page']:1;
         if($page < 0) {

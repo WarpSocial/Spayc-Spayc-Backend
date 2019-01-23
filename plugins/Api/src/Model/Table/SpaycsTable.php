@@ -519,7 +519,7 @@ class SpaycsTable extends Table {
         }
         $loggedUser = Configure::read('auth');
         $query = $this->Users->find();
-        $query->select(['Users.id', 'Users.username','Users.display_name', 'Users.email','Users.matrix_user_id','JoinedSpayc.status']);
+        $query->select(['Users.id', 'Users.username','Users.display_name','Users.full_name', 'Users.email','Users.matrix_user_id','JoinedSpayc.status']);
         $query->contain([
              'UserImages'=>function($q) {
                 return $q->select(['UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
