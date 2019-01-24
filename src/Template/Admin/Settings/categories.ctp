@@ -2,7 +2,7 @@
 <div class="panel panel-default">
         <div class="panel-heading"><?= __('Spayc Categories') ?> Listing
             <div class="pull-right rtbutton">
-                <?= $this->Html->link(__("<span class='fa fa-plus'></span>&nbsp;&nbsp;New spaycCategory") , ['action' => 'add'],['class'=>'btn btn-primary','escape' => false]) ?>
+                <?= $this->Html->link(__("<span class='fa fa-plus'></span>&nbsp;&nbsp;New spaycCategory") , ['action' => 'create'],['class'=>'btn btn-primary','escape' => false]) ?>
                
            </div>
         </div>
@@ -29,7 +29,18 @@
                 <td><?= h($spaycCategory->name) ?></td>
                 <td><?= h($spaycCategory->slug) ?></td>
                 <td><?= h($spaycCategory->code) ?></td>
-                <td><span style="font-size: 25px;"><?php echo "&#".hexdec($spaycCategory->code); ?></span></td>
+                <td><span style="font-size: 25px;">
+                    <?php 
+                    
+                    if(preg_match('/\{(.*)\}/', $spaycCategory->code)){
+                        preg_match_all('/{(.*?)}/',  $spaycCategory->code, $matches);
+                        if(!empty($matches[1])){
+                            echo "&#".hexdec($matches[1][0])."&#".hexdec($matches[1][1]).";";
+                        }
+                    }else{
+                        echo "&#".hexdec($spaycCategory->code).";";
+                    }
+                    ?></span></td>
             </tr>
             <?php endforeach; ?>
         </tbody>

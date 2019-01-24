@@ -852,13 +852,11 @@ class SpaycsTable extends Table {
         //$request['radius'] = '2799';
         $unit = 'm';
         $now = new Time('now', Configure::read('timezone'));        
-        $endObj = clone $now;
         $now->modify('today');
-        $timeStmap = $now->getTimestamp();        
-        $endObj->modify('+'.MAP_DAYS_RANGE.' days');
-        $endObj->modify('1 second ago'); 
-        $today_date = $now->setTimezone('UTC')->format("Y-m-d H:i");
-        $twoWeek = $endObj->setTimezone('UTC')->format("Y-m-d H:i"); 
+        $timeStmap = $now->getTimestamp();                
+        $dateRange = Utils::dateRangeUtc(Configure::read('timezone'),MAP_DAYS_RANGE);
+        $today_date = $dateRange['start'];
+        $twoWeek = $dateRange['end']; 
         $fields = ['id', 'name','start_date', 'matrix_room_id', 'image', 'type', 'modified', 'spayc_category_id','latitude','longitude','score'=>'website'];
         /* if user filter past date event in that case calculate distance manually because radis clean past event */
         if(isset($request['is_filter']) && ($request['is_filter'] === true) && (isset($request['current_date']) && $request['current_date'] < $timeStmap)){

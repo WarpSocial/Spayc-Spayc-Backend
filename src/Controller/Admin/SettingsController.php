@@ -102,14 +102,64 @@ class SettingsController extends AdminController {
 
         return $this->redirect(['action' => 'index']);
     }
-    
-    public function categories(){
-        
-        $cat = \Cake\ORM\TableRegistry::get('Api.SpaycCategories');
-        
+     /**
+     * categories method
+     *
+     * @return \Cake\Http\Response|void
+     */
+    public function categories(){        
+        $cat = \Cake\ORM\TableRegistry::get('Api.SpaycCategories');        
         $spaycCategories = $cat->find()->contain(['ParentSpaycCategories'])->all();
        
         $this->set(compact('spaycCategories'));
     }
+    /**
+     * create method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function create(){
+        $cat = \Cake\ORM\TableRegistry::get('Api.SpaycCategories');
+        $spaycCategory = $cat->newEntity();
+        if ($this->request->is('post')) {
+            $this->request->data['slug'] = \Cake\Utility\Inflector::slug(strtolower($this->request->getData('name')));
+            $spaycCategory = $cat->patchEntity($spaycCategory, $this->request->getData());
+            if ($cat->save($spaycCategory)) {
+                $this->Flash->success(__('The spayc category has been saved.'));
+
+                return $this->redirect(['action' => 'categories']);
+            }
+            $this->Flash->error(__('The spayc category could not be saved. Please, try again.'));
+        }
+        $parentSpaycCategories = $cat->ParentSpaycCategories->find('list')->where('parent_id is null')->order(['name'=>'ASC']);
+        $this->set(compact('spaycCategory', 'parentSpaycCategories'));
+    }
+    
+    /**
+     * Edit method
+     *
+     * @param string|null $id Spayc Category id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     */
+    public function update($id = null){
+        $cat = \Cake\ORM\TableRegistry::get('Api.SpaycCategories');
+        $spaycCategory = $cat->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $this->request->data['slug'] = \Cake\Utility\Inflector::slug(strtolower($this->request->getData('name')));
+            $spaycCategory =$cat->patchEntity($spaycCategory, $this->request->getData());
+            if ($cat->save($spaycCategory)) {
+                $this->Flash->success(__('The spayc category has been saved.'));
+
+                return $this->redirect(['action' => 'categories']);
+            }
+            $this->Flash->error(__('The spayc category could not be saved. Please, try again.'));
+        }
+        $parentSpaycCategories = $cat->ParentSpaycCategories->find('list')->where('parent_id is null')->order(['name'=>'ASC']);
+        $this->set(compact('spaycCategory', 'parentSpaycCategories'));
+    }
+    
 
 }
