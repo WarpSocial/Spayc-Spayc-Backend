@@ -31,12 +31,9 @@
                 <td><?= h($spaycCategory->code) ?></td>
                 <td><span style="font-size: 25px;">
                     <?php 
-                    
-                    if(preg_match('/\{(.*)\}/', $spaycCategory->code)){
-                        preg_match_all('/{(.*?)}/',  $spaycCategory->code, $matches);
-                        if(!empty($matches[1])){
-                            echo "&#".hexdec($matches[1][0])."&#".hexdec($matches[1][1]).";";
-                        }
+                    $hexCode = explode(',',$spaycCategory->code);
+                    if(count($hexCode) > 1){
+                        echo "&#".hexdec($hexCode[0])."&#".hexdec($hexCode[1]).";";
                     }else{
                         echo "&#".hexdec($spaycCategory->code).";";
                     }
