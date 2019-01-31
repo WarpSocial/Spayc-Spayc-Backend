@@ -7554,7 +7554,7 @@ define({ "api": [
     }
   },
   {
-    "type": "post",
+    "type": "get",
     "url": "/logout.json",
     "title": "Logout",
     "version": "0.1.0",
