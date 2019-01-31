@@ -719,7 +719,7 @@ class UsersController extends AppController {
     }
     
     public function logout() {
-        if (!$this->request->is(['get'])) {
+        if (!$this->request->is(['get','post'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
         $this->loadModel('UserLogs');
