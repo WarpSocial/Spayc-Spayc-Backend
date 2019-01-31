@@ -355,7 +355,7 @@ function getView() { return; }
 function postLogin() { return; }
 
 /**
- @api {post} /logout.json Logout
+ @api {get} /logout.json Logout
   @apiVersion 0.1.0
   @apiName getLogout
   @apiGroup User

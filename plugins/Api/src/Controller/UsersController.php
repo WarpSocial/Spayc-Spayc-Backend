@@ -719,9 +719,9 @@ class UsersController extends AppController {
     }
     
     public function logout() {
-//        if (!$this->request->is(['get','post'])) {
-//            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
-//        }
+        if (!$this->request->is(['get'])) {
+            $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
+        }
         $this->loadModel('UserLogs');
         //$user = $this->Auth->user();
         $token = $this->request->env('HTTP_TOKEN');
