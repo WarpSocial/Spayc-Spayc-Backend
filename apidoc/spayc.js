@@ -29,7 +29,8 @@
 
 @apiDescription Create a new SPAYC.
 
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
 
 @apiParam {String} name             Name title of the spayc (Required).
 @apiParam {String} location         Location must be alphanumeric with space (Required).
@@ -106,8 +107,8 @@ function postSpaycs() { return; }
 
 @apiDescription Update spayc or subspayc.
 
-@apiHeader {String} TOKEN           A token send by header as TOKEN
-@apiHeader {String} timezone        client timezone
+@apiHeader {String} TOKEN Token must be set in header.
+@apiHeader {String}  timezone User current time zone ex: America/New_York.
 
 @apiParam {String} spayc_id         id either spayc id or matrix room id (Required).
 @apiParam {String} name             Name title of the spayc (Required).
@@ -183,7 +184,8 @@ function postEditSpaycs() { return; }
 
 @apiDescription Delete space or subspace with room id.Matrix room also deleted.
 
-@apiHeader {String} TOKEN          A registered token must be in header.
+@apiHeader {String} TOKEN Token must be set in header.
+@apiHeader {String}  timezone User current time zone ex: America/New_York.
 
 @apiParam {String} id        Either spayc id or matrix room id(Required).
 
@@ -210,7 +212,8 @@ function deleteSpace() { return; }
 
 @apiDescription Create a new sub SPAYC.Sub space type,start_date,end_date,longitude,latitude will same as of parent type.
 
-@apiHeader {String} TOKEN          A registered token must be in header.
+@apiHeader {String} TOKEN Token must be set in header.
+@apiHeader {String}  timezone User current time zone ex: America/New_York.
 
 @apiParam {String} parent_matrix_room_id    Matrix parent room id or Spayc parent room id (Required).
 @apiParam {String} name             Title of subspace (Required).
@@ -270,7 +273,8 @@ function postSubspaycs() { return; }
  *
  * @apiDescription Filter spayc all list, created by logged in user and joined by logged in user using list_by parameter, distance param not comes in response if lat long not provided in request.
  * 
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  * 
  *    @apiParam {Number}    page    Page number in query string (Optional).
  *    @apiParam {Number}    limit   Limit in query string (Optional).
@@ -365,7 +369,8 @@ function getSpaycs() { return; }
  
   @apiDescription User has been subscribed a spayc by providing the existing spayc id.
   
- * @apiHeader {String} TOKEN            * A token must be in header
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  
   @apiParam {String} spayc_id Id either spayc id or matrix room id (Required).
  
@@ -399,7 +404,8 @@ function postSubscribeSpayc() { return; }
  
   @apiDescription User has been un-subscribed a spayc by providing the existing spayc id.
   
- * @apiHeader {String} TOKEN            * A token must be in header
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  
   @apiParam {String} spayc_id Id either spayc id or matrix room id (Required).
  
@@ -433,7 +439,8 @@ function postUnSubscribeSpayc() { return; }
  *
  * @apiDescription Spayc details by id and latitude, longitude (distance param not comes in response if lat long not provided in request).
  * 
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  * 
     @apiParam {Number}      id              Spayc matrix id in query string (Required).
     @apiParam {String}      latitude        Latitude is optional in query string(Optional).
@@ -518,7 +525,8 @@ function getView() { return; }
 
 @apiDescription Create a new room for one to one chat.
 
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
 
 @apiParam {String} invite           Matrix user id is optional in query string(Required).
 
@@ -561,13 +569,14 @@ function postChatRoom() { return; }
  *
  * @apiDescription Spayc member to find the list of users associated with the room.Method must be get.In case of invalid spayc id return ivalid request
  * 
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  * 
 
-    @apiParam {String}     room_id      Spayc matrix room id or spayc id in query string (Required).
-    @apiParam {String}      status     Status of user, value must be any one or comma separated from following(Pending|Joined|Banned) (Optional).
-    @apiParam {Digit}      page        Page no(Optional).
-    @apiParam {Digit}      limit       No of record to retrieve(Optional).
+ * @apiParam {String}     room_id      Spayc matrix room id or spayc id in query string (Required).
+ * @apiParam {String}      status     Status of user, value must be any one or comma separated from following(Pending|Joined|Banned) (Optional).
+ * @apiParam {Digit}      page        Page no(Optional).
+ * @apiParam {Digit}      limit       No of record to retrieve(Optional).
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message List of spayc member.
@@ -762,7 +771,8 @@ function postBanSpaycMember() { return; }
  *
  * @apiDescription Get all sub spaycs for spayc.If user_id key is not available then proccess will be mapped with logged user id.Argument will be as query string.
  * 
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  * 
     @apiParam {String}      spayc_id        Parent spayc id either spayc id or matrix room id (Required).
     @apiParam {Number}      page            Page number in query string (Optional).
@@ -820,7 +830,8 @@ function getSubSpaycs() { return; }
 
  @apiDescription Get list of spayces which user has been joined and spayces must be within 1 miles.Spaycs must not be expired.Listing will be ordered on distance and if distance will be same then on created.In absence of latitude and longitude distance will be calculated on stored latitude and longitude.
  
- @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  
  @apiParam {String}      latitude        Latitude of current user (Optional).
  @apiParam {String}      longitude       Longitude of current user (Optional).
@@ -1022,7 +1033,8 @@ function hashTagSpaycs() { return; }
 
  @apiDescription Get list of Map spayces & Friends.Spaycs must not be expired according to the spayc end date.Listing will be ordered on created.
  
- @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
     
     
     @apiParam {String}      center_latitude            Center Screen Latitude (Required).
@@ -1139,7 +1151,8 @@ function mapSpaycs() { return; }
 
  @apiDescription Create Advertisement.
  
- @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  
     @apiParam {String}      name            Advertisement Name (Required).
     @apiParam {Number}      price            Advertisement Price (Required).
@@ -1203,7 +1216,8 @@ function createAdvertisement() { return; }
 
  @apiDescription Edit Advertisement.
  
- @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
 
     @apiExample Example usage:
     {
@@ -1264,7 +1278,8 @@ function editAdvertisement() { return; }
 
  @apiDescription Edit Advertisement.
  
- @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
 
 
     @apiParam {Number}      id            Advertisement ID in query string(Required).
@@ -1339,7 +1354,8 @@ function viewAdvertisement() { return; }
 
  @apiDescription User Advertisement.
  
- @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
 
     @apiParam {Number}      page            Page number in query string (Optional).
     @apiParam {Number}      limit           Limit in query string (Optional).
@@ -1429,8 +1445,10 @@ function userAdvertisement() { return; }
 
  @apiDescription Edit Advertisement.
  
- @apiHeader {String} TOKEN            * A token send by header as TOKEN
-    @apiParam {Number}      id            Advertisement ID in query string(Required).
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
+   
+@apiParam {Number}      id            Advertisement ID in query string(Required).
 
 
  *
@@ -1459,7 +1477,8 @@ function deleteAdvertisement() { return; }
 
  @apiDescription Advertisement Logic.
  
- @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  
     @apiParam {Number}      spayc_id            Spayc Id (Required).
 
@@ -1509,7 +1528,8 @@ function adLogicStart() { return; }
 
  @apiDescription Advertisement Logic.
  
- @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  
     @apiParam {Number}      spayc_id            Spayc Id (Required).
     @apiParam {Number}      cycle               Current Cycle (Required).
@@ -1564,7 +1584,8 @@ function adLogic() { return; }
 
  @apiDescription Promotion Logic.
  
- @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  
     @apiParam {Number}      spayc_id            Spayc Id (Required).
 
@@ -1622,7 +1643,8 @@ function promotionLogicStart() { return; }
 
  @apiDescription Promotion Logic.
  
- @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  
     @apiParam {Number}      spayc_id            Spayc Id (Required).
     @apiParam {Number}      cycle               Current Cycle (Required).
@@ -1686,7 +1708,8 @@ function promotionLogic() { return; }
 
  @apiDescription Edit Advertisement.
  
- @apiHeader {String} TOKEN            * A token send by header as TOKEN
+  * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
 
 
 
@@ -1788,7 +1811,8 @@ function postRemoveFromSpayc() { return; }
  *
  * @apiDescription Get the list warp to whom user has been subscribed but not joined the warp.
  * 
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  * 
  *    @apiParam {Number}      page            Page number in query string (Optional).
  *    @apiParam {Number}      limit           Limit in query string (Optional).
@@ -1827,7 +1851,8 @@ function getSubscribedSpaycs() { return; }
  *
  * @apiDescription Get the list warp to whom user has been joined the warp.
  * 
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  * 
  *    @apiParam {Number}      page            Page number in query string (Optional).
  *    @apiParam {Number}      limit           Limit in query string (Optional).
@@ -1892,7 +1917,8 @@ function putUpdateComment() { return; }
  *
  * @apiDescription Get the list of images of warps.
  * 
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  * 
  * @apiParam {String}   events  *Matrix room id and in case of more than one id value must be comma separated(Required).
  
@@ -1924,7 +1950,8 @@ function getEventsImage() { return; }
  
  @apiDescription Report about a warp.
   
- @apiHeader {String} TOKEN  * Token must be in header
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  
  @apiParam  {String} matrix_room_id  * Matrix room id (required).
 

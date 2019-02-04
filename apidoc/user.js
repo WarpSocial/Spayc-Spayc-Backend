@@ -30,7 +30,8 @@
  * @apiDescription Update profile of existing user.
  * Update user own profile details with form-data option.
  * 
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  *
  * @apiParam {String}  username     Username (Required).
  * @apiParam {String}  fully_name   Full name (Optional).
@@ -165,7 +166,8 @@ function postUser() { return; }
  *
  * @apiDescription Search users|spaycs|hashtags details by requesting parameters Note: distance key not came in spayc list in case of no latitude and longitude.
  *
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  * 
  * @apiParam {Number}      page       * Page number in query string (Optional).
  * @apiParam {Number}      limit      * Records limit in query string (Optional).
@@ -363,7 +365,8 @@ function postLogin() { return; }
  
   @apiDescription User get logout.
   
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  
  
   @apiSuccess {String} status success.
@@ -451,7 +454,8 @@ function postForgotPassword() { return; }
  
   @apiDescription Get user profile.
   
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  * 
   * @apiParam {String} userId use any one either userid or matrix user id as query string in url(required).
  
@@ -542,7 +546,10 @@ function getUserProfile() { return; }
  * @apiParam {String} old_password      User old password (Required).
  * @apiParam {String} new_password      User new password (Required).
  * @apiParam {String} confirm_password  Confirm new password (Required).
- *
+ * 
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
+ * 
  * @apiExample Example usage:
  *
  *       {
@@ -665,7 +672,8 @@ function putSetProfileImage() { return; }
  *
  * @apiDescription add setting for ghost mode.Any one key is required.
  *
- * @apiHeader {String} token Token must be set in header.
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  *
  * @apiParam {Integer} ghost_mode_search  Ghost mode setting for search value must be either 0 or 1 (Optional|required).
  * @apiParam {Integer} ghost_mode_map user Ghost mode setting for map value must be either 0 or 1 (Optional|required).
@@ -692,7 +700,8 @@ function putGhostMode() { return; }
  *
  * @apiDescription add list of comma separated categories id.
  *
- * @apiHeader {String} token Token must be set in header.
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  *
  * @apiParam {String} categories  List of existing categories id(required).
  *
@@ -791,7 +800,8 @@ function getRemoveAvatar() { return; }
  *
  * @apiDescription Update physical presence of user.
  * 
- * @apiHeader {String} token Token must be set in header.
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  *
  * @apiParam {String} latitude  Current user location latitude.(Required).
  * @apiParam {String} longitude Current user location longitude.(Required).
@@ -828,7 +838,8 @@ function postUpdateUserStatus() { return; }
  * @apiParam {Number} page      Page number is optional in query string default value 1.
  * @apiParam {Number} limit     Limit is optional in query string default value 5.
  *
- *
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Notification Lists..
@@ -883,7 +894,8 @@ function postUpdateUserStatus() { return; }
  *
  * @apiDescription Update user device token if push notification turn on and off.
  * 
- * @apiHeader {String} token Token must be set in header.
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  *
  * @apiParam {String} device_token  Device token required field if is_notify is On
  * @apiParam {String} is_notify     Is notify is required field possible values(On, Off)
@@ -918,7 +930,8 @@ function postUpdateUserStatus() { return; }
  
   @apiDescription Add Friend.
   
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  
   @apiParam {String} friend_id Friend id required (friend_id must be an user id)(Required).
   @apiParam {String} friend_status Friend status and status must be either one from following 'Pending', 'Accepted', 'Blocked','is_direct','Decline','Unfriend' (Required).
@@ -962,7 +975,8 @@ function postFriendRequest() { return; }
  
   @apiDescription Set Friend Status.
   
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  
 * @apiParam  {String}   friend_id       Requested friend id (Required).
 * @apiParam  {String}   friend_status   Friend status must any one from following list 'Pending', 'Accepted', 'Blocked','is_direct','Decline','Unfriend' (Required).
@@ -1003,7 +1017,8 @@ function setFriendStatus() { return; }
  
   @apiDescription Mark as read notification.
   
-* @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  
 * @apiParam  {String}   notification_ids     Notification ids comma separated string(Required).
 
@@ -1036,7 +1051,8 @@ function postReadNotifications() { return; }
  
  @apiDescription Mark user as spam user from warp.
   
- @apiHeader {String} TOKEN  * Token must be in header
+  @apiHeader {String} TOKEN Token must be set in header.
+  @apiHeader {String}  timezone User current time zone ex: America/New_York.
  
  @apiParam  {String} matrix_room_id  * Matrix room id (required).
  @apiParam  {String} reported_to  * Matrix user id to whom make spam user(required).
@@ -1073,7 +1089,8 @@ function postSpamReports() { return; }
 
  @apiDescription User Feedback
  
- @apiHeader {String} TOKEN    * A token send by header as TOKEN
+  @apiHeader {String} TOKEN Token must be set in header.
+  @apiHeader {String}  timezone User current time zone ex: America/New_York.
  
     @apiParam {String}      message          message(Required).
     @apiParam {File}      attachment         Any attached document(Optional).

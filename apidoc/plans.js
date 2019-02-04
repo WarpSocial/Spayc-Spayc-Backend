@@ -7,7 +7,8 @@
  *
  * @apiDescription List of categories,sub-categories,plans with details.
  * 
- * @apiHeader {String} TOKEN     token must be in header.
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message List of meta-data details.
@@ -87,7 +88,8 @@ function getView() { return; }
 
 @apiDescription create spayc which you want to promote in communication center.
 
-@apiHeader {String} TOKEN   * A token must be in header.
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
 
 @apiParam {Integer} spayc_promotional_id    * promotional spayc id (Required).
 @apiParam {String} spayc_id     * List of selected spayc ids in comma separated (Required).

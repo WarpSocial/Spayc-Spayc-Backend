@@ -20,7 +20,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -158,7 +165,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -282,7 +296,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -469,7 +490,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -586,7 +614,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -752,7 +787,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -876,7 +918,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -993,7 +1042,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -1131,7 +1187,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -1269,7 +1332,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -1407,7 +1477,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -1545,7 +1622,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -1683,7 +1767,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -1821,7 +1912,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<p>token must be in header.</p> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -1925,7 +2023,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token must be in header.</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -2084,7 +2189,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -2222,7 +2334,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -2346,7 +2465,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -2470,7 +2596,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<p>A registered token must be in header.</p> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -2580,14 +2713,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<p>A token send by header as TOKEN</p> "
+            "description": "<p>Token must be set in header.</p> "
           },
           {
             "group": "Header",
             "type": "String",
             "optional": false,
             "field": "timezone",
-            "description": "<p>client timezone</p> "
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -2816,7 +2949,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -3038,7 +3178,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<p>A registered token must be in header.</p> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -3204,7 +3351,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -3321,7 +3475,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -3583,7 +3744,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -3721,7 +3889,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -3929,7 +4104,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -4081,7 +4263,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -4205,7 +4394,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -4460,7 +4656,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -5482,7 +5685,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>Token must be in header</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -5613,7 +5823,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token must be in header</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -5828,7 +6045,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -5959,7 +6183,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token must be in header</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -6090,7 +6321,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -6298,7 +6536,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -6567,8 +6812,15 @@
             "group": "Header",
             "type": "String",
             "optional": false,
-            "field": "token",
+            "field": "TOKEN",
             "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -6873,7 +7125,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -7186,6 +7445,26 @@
             "optional": false,
             "field": "confirm_password",
             "description": "<p>Confirm new password (Required).</p> "
+          }
+        ]
+      }
+    },
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -7574,7 +7853,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -7690,6 +7976,26 @@
         ]
       }
     },
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "TOKEN",
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
+          }
+        ]
+      }
+    },
     "success": {
       "fields": {
         "Success 200": [
@@ -7782,7 +8088,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -8038,7 +8351,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -8169,7 +8489,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>Token must be in header</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -8313,8 +8640,15 @@
             "group": "Header",
             "type": "String",
             "optional": false,
-            "field": "token",
+            "field": "TOKEN",
             "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -8424,7 +8758,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -8547,8 +8888,15 @@
             "group": "Header",
             "type": "String",
             "optional": false,
-            "field": "token",
+            "field": "TOKEN",
             "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -8769,7 +9117,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -9003,8 +9358,15 @@
             "group": "Header",
             "type": "String",
             "optional": false,
-            "field": "token",
+            "field": "TOKEN",
             "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }
@@ -9128,7 +9490,14 @@
             "type": "String",
             "optional": false,
             "field": "TOKEN",
-            "description": "<ul> <li>A token send by header as TOKEN</li> </ul> "
+            "description": "<p>Token must be set in header.</p> "
+          },
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "timezone",
+            "description": "<p>User current time zone ex: America/New_York.</p> "
           }
         ]
       }

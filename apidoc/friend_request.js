@@ -29,7 +29,8 @@
  
   @apiDescription Add new friend with pending status.
   
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  
   @apiParam {String} friend_id Friend id required (friend_id must be an user id)(Required).
   @apiParam {String} friend_status Friend status and status must be 'Pending' (Required).
@@ -73,7 +74,8 @@ function postFriendRequest() { return; }
  
   @apiDescription Change friend status to accepted or decline, in this case current friend status must be Pending.
   
- * @apiHeader {String} TOKEN     * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  
   @apiParam {String} friend_id Friend id required (friend_id must be an user id)(Required).
   @apiParam {String} friend_status Friend status and status must be either one from following 'Accepted', 'Decline' (Required).
@@ -117,7 +119,8 @@ function postRequestAcceptDeclined() { return; }
  
   @apiDescription Change friend status to blocked, either friend added or not.
   
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  
   @apiParam {String} friend_id Friend id required (friend_id must be an user id)(Required).
   @apiParam {String} friend_status Friend status and status must be 'Blocked' (Required).
@@ -160,7 +163,8 @@ function postBlockFriend() { return; }
  
   @apiDescription Change friend status to Unblock, for unblock user friend request status must be already blocked.
   
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  
   @apiParam {String} friend_id Friend id required (friend_id must be an user id)(Required).
   @apiParam {String} friend_status Friend status and status must be 'Unblock' (Required).
@@ -203,7 +207,8 @@ function postUnblockFriend() { return; }
  
   @apiDescription Change friend status to Unfriend, if already have friend with requested user then unfriend.
   
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  
   @apiParam {String} friend_id Friend id required (friend_id must be an user id)(Required).
   @apiParam {String} friend_status Friend status and status must be 'Unfriend' (Required).
@@ -247,7 +252,8 @@ function postUnfriendRequest() { return; }
  
   @apiDescription Get Friends.
   
- * @apiHeader {String} TOKEN            * A token send by header as TOKEN
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  
 * @apiParam  {Number}   page            Page number in query string (Optional).
 * @apiParam  {Number}   limit           Records limit in query string (Optional).
