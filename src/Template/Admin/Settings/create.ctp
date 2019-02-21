@@ -11,7 +11,7 @@
     <?= $this->Form->create($spaycCategory,['role' => 'form']) ?>
         <?php
             echo '<div class="form-group">';
-            echo $this->Form->input('parent_id', ['options' => $parentSpaycCategories],['empty' => true,'class' => 'form-control', 'placeholder' => 'Parent Id']);
+            echo $this->Form->input('parent_id', ['options' => $parentSpaycCategories,'empty' => 'Select Category','class' => 'form-control', 'placeholder' => 'Parent Id']);
             echo '</div>';
             echo '<div class="form-group">';        
             echo $this->Form->input('name',['class' => 'form-control', 'placeholder' => 'Name']);

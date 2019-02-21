@@ -547,7 +547,7 @@ class SpaycsTable extends Table {
                 if($status != null){
                     $condition['LOWER(JoinedSpayc.status) IN'] = $status;
                 }
-                return $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin','JoinedSpayc.distance','JoinedSpayc.updated_by'])->where($condition)->order(['JoinedSpayc.created'=>'DESC']);;
+                return $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin','JoinedSpayc.distance','JoinedSpayc.updated_by'])->where($condition)->order(['JoinedSpayc.created'=>'DESC']);
         });
        $count = $query->count();
         if($limit != null){

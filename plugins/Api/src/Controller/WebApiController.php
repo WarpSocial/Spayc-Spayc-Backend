@@ -82,6 +82,10 @@ class WebApiController extends AppController {
         }
         pr($p);
     }
+    /**
+     * eventsImage get the image of requested matrix room id 
+     * Version 1
+     */
     public function eventsImage() {
         if (!$this->request->is(['get'])) {
             $this->restException(['status' => 'failed', 'message' => __('Method not allowed.')], 405);
@@ -94,6 +98,32 @@ class WebApiController extends AppController {
                     'keyField' => 'matrix_room_id',
                     'valueField' => 'image'])->where(['matrix_room_id IN' => explode(',', $matrixRoomId), 'image !=' => '']);
 
+        $this->restException([
+            'status' => 'success',
+            'message' => __('List of events image.'),
+            'data' => $images
+        ]);
+    }
+    /**
+     * RoomsImage get the image of joined and subscribed warp 
+     * Version 2
+     */
+    public function RoomsImage() {
+        if (!$this->request->is(['get'])) {
+            $this->restException(['status' => 'failed', 'message' => __('Method not allowed.')], 405);
+        }
+        $page = (int)$this->request->getQuery('page',1);        
+        $limit = (int)$this->request->getQuery('limit',Configure::read('imageLimit'));
+        $user = $this->Auth->user();              
+        $connection = TableRegistry::get("Api.Spaycs")->getConnection();
+        $subscribedSpayces = $connection->newQuery()->select('spayc_id')->from('subscribed_users')->where(['status'=>ACTIVE,'user_id'=>$user['id']]);
+        $joinedSpayces = $connection->newQuery()->select('spayc_id')->from('joined_spayc')->where(['status'=>JOINED,'user_id'=>$user['id']]);
+        $unionQuery = $subscribedSpayces->unionAll($joinedSpayces);
+        $images = TableRegistry::get("Api.Spaycs")->find('list', [
+                    'keyField' => 'matrix_room_id',
+                    'valueField' => 'image'])->where(['id IN'=>$unionQuery]);
+        $images->limit($limit)->page($page);
+        
         $this->restException([
             'status' => 'success',
             'message' => __('List of events image.'),

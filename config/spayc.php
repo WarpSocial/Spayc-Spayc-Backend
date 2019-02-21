@@ -6,6 +6,7 @@ return [
     'grouptype'=>['Public', 'Private'],
     'payment_type'=>['Paid', 'Free','NA'],    
     'pagelimit'=>5,
+    'imageLimit'=>50,
     'miles'=>1,
     'newSpaycDistance'=>5,/* Miles*/
     'friend_requested_status'=>['Pending', 'Accepted', 'Blocked','Unblock','is_direct','Decline','Unfriend', 'Suggested'],

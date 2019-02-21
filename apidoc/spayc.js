@@ -1942,6 +1942,40 @@ function putUpdateComment() { return; }
  */
 function getEventsImage() { return; }
 /**
+ * @api {get} /rooms-image.json?limit=:limit&page=:page Spayc Images
+ * @apiVersion 0.1.0
+ * @apiName getRoomzImage
+ * @apiGroup Spayc
+ * @apiPermission private
+ *
+ * @apiDescription Get list of images of joined and subscribed spayc.
+ * 
+ * @apiHeader {String} TOKEN Token must be set in header.
+ * @apiHeader {String}  timezone User current time zone ex: America/New_York.
+ * 
+ * @apiParam {Integer}  limit *Limit of records if not default will be 50.
+ * @apiParam {Integer}  page *Page number.
+ 
+ *    
+ *
+ * @apiSuccess {String} status success.
+ * @apiSuccess {String} message List of subscribed warp.
+ * @apiSuccess {Object} data List of events image.
+ * @apiSuccessExample {json} Success-Response: 
+ *      HTTP/1.1 200 OK
+{
+    "status": "success",
+    "message": "List of events image.",
+    "data": {
+        "!reXtnytclkKOGDiMdr:127.0.0.1": "http://i.ebayimg.com/images/g/2SMAAOSwstxVQBE7/s-l1600.jpg",
+        "!zQpSDoOyaYMwRYerRS:127.0.0.1": "http://i.ebayimg.com/images/g/TTwAAOSwpDdVXg8t/s-l1600.jpg"
+    }
+}
+ *
+ * @apiUse UserErrorResponse
+ */
+function getRoomsImage() { return; }
+/**
  @api {post} /reported-warp.json Report About Warp
  @apiVersion 0.1.0
  @apiName postReportsWarp
