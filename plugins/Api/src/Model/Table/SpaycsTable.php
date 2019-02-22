@@ -150,17 +150,6 @@ class SpaycsTable extends Table {
                 // ->regex('location','/[\w\s]+$/',__('Location must be alpha numeric only.'));
 
         $validator
-                ->requirePresence('type', 'create',__('Type key is missing.'))
-                ->notEmpty('type',__('Type is required field.'),function($context){
-                    if($context['newRecord']){
-                        return true;
-                    }else{
-                        return false;
-                    }
-                })
-                ->inList('type', Configure::read('spayctype'),__('Type value must be any one '.implode(',',Configure::read('spayctype')).'.')) ; 
-                
-        $validator
                 ->requirePresence('payment_type', 'create',__('Payment type key is missing.'))
                 ->notEmpty('payment_type',__('Payment type is required field.'))
                 ->inList('payment_type', Configure::read('payment_type'),__('Type value must be any one '.implode(',',Configure::read('payment_type')).'.'));
@@ -222,9 +211,7 @@ class SpaycsTable extends Table {
                 
         $validator                
                 ->requirePresence('end_date', 'create',__('End Date key is missing.'))                
-                ->notEmpty('end_date',__('End date is required when type is event.'),function($context){
-                     return (isset($context['data']['type']) && ($context['data']['type'] =='Event'));
-                })
+               ->allowEmpty('end_date')
                 ->add('end_date', [
                     'format' => [
                         'rule' => ['datetime','mdy'],
@@ -858,7 +845,7 @@ class SpaycsTable extends Table {
         $today_date = $dateRange['start'];
         $twoWeek = $dateRange['end']; 
         $fields = ['id', 'name','start_date', 'matrix_room_id', 'image', 'type', 'modified', 'spayc_category_id','latitude','longitude','score'=>'website'];
-        /* if user filter past date event in that case calculate distance manually because radis clean past event */
+        /* if user filter past date event in that case calculate distance manually because redis clean past event */
         if(isset($request['is_filter']) && ($request['is_filter'] === true) && (isset($request['current_date']) && $request['current_date'] < $timeStmap)){
             $redisSpaycs = [];
             $distanceField = $this->geoDistance();
@@ -874,9 +861,10 @@ class SpaycsTable extends Table {
                 ->bind(':longitude', $request['center_longitude'], 'float');
              
         }else {
-            $radius = $request['radius'];
             if (empty($request['radius'])) {
                 $radius = $this->distance($request['center_latitude'], $request['center_longitude'], $request['endpoint_latitude'], $request['endpoint_longitude']);
+            }else{
+                $radius = $request['radius'];
             }
             $redis = new RedisComponent(new ComponentRegistry());
             $redisSpaycs = $redis->getGeoLocation('Spaycs',$request['center_latitude'], $request['center_longitude'], $radius,$unit);
@@ -979,6 +967,7 @@ class SpaycsTable extends Table {
                 return $q->select(['SpaycCategories.id', 'SpaycCategories.name']);
             }        
         ]);
+        dd($spaycs->toArray());
         $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($userId,$redisSpaycs) {
             return $results->map(function ($row) use($userId,$redisSpaycs) {
                 $totalJoined = [];

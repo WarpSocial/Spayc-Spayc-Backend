@@ -56,10 +56,6 @@ class SpaycsController extends AppController {
         if($items->errors()) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
         }
-        if($data['type'] == 'Community'){ /* in community no need to keep start or end date*/
-            $items->start_date = '';
-            $items->end_date = '';            
-        }
         if($data['group_type'] == 'Public'){ /* in community no need to keep start or end date*/
             $items->passcode = '';
         }

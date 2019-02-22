@@ -27,17 +27,16 @@
 @apiGroup Spayc
 @apiPermission private
 
-@apiDescription Create a new SPAYC.
+@apiDescription Create SPAYC.
 
  * @apiHeader {String} TOKEN Token must be set in header.
  * @apiHeader {String}  timezone User current time zone ex: America/New_York.
 
 @apiParam {String} name             Name title of the spayc (Required).
 @apiParam {String} location         Location must be alphanumeric with space (Required).
-@apiParam {String} type             SPAYC type must be any one from the following Event|Community (Required).
 @apiParam {String} group_type       Group type must be any one from the following Public|Private (Required).
 @apiParam {Datetime} start_date     Start date with time in format YYYY-MM-DD H:i:s (Required).
-@apiParam {Datetime} end_date       End date with time in format YYYY-MM-DD H:i:s (Required).
+@apiParam {Datetime} end_date       End date with time in format YYYY-MM-DD H:i:s  (Optional).
 @apiParam {String} passcode         Passcode is required in case of private group type.
 @apiParam {String} description      Description for SPAYC (Optional).
 @apiParam {String} image            Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
@@ -113,7 +112,6 @@ function postSpaycs() { return; }
 @apiParam {String} spayc_id         id either spayc id or matrix room id (Required).
 @apiParam {String} name             Name title of the spayc (Required).
 @apiParam {String} location         Location must be alphanumeric with space (Required).
-@apiParam {String} type             SPAYC type must be any one from the following Event|Community (Required).
 @apiParam {String} group_type       Group type must be any one from the following Public|Private (Required).
 @apiParam {Datetime} start_date     Start date with time in format YYYY-MM-DD H:i:s (Required).
 @apiParam {Datetime} end_date       End date with time in format YYYY-MM-DD H:i:s (Required).
