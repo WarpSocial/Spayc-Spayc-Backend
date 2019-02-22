@@ -967,7 +967,6 @@ class SpaycsTable extends Table {
                 return $q->select(['SpaycCategories.id', 'SpaycCategories.name']);
             }        
         ]);
-        dd($spaycs->toArray());
         $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($userId,$redisSpaycs) {
             return $results->map(function ($row) use($userId,$redisSpaycs) {
                 $totalJoined = [];
