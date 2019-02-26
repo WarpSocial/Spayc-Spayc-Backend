@@ -97,7 +97,7 @@ class SpaycEventsShell extends Shell {
                     return $q->select(['Users.username','Users.display_name']);
                 }
             ]);
-            debug($events);die;
+            #debug($events);die;
                 $success=[];
         if($events){
         foreach($events->toArray() as $k=>$v){

@@ -68,8 +68,13 @@ class SpaycsController extends AppController {
         $items->set('matrix_room_id',$matrix['room_id']);
         $items->set('matrix_room_alias',$matrix['room_alias']);
         $items->set('user_id', $this->Auth->user('id'));
-        debug($items);die;
-        if($this->Spaycs->save($items)) {
+        $connection = $this->Spaycs->getConnection();
+        try{
+            $connection->begin(); 
+            $this->Spaycs->save($items);
+            /* save Category */
+            #pr($items);die;
+            $this->Spaycs->SaveCategories($this->request,$items);
             $this->Redis->addSpayc($items);
             $items->job_type = 'new-spayc';
             $items->created_duration = Utils::toClient($items->created);
@@ -82,22 +87,13 @@ class SpaycsController extends AppController {
             $items->created = Utils::toClient($items->created);
             $items->modified = Utils::toClient($items->modified);
             $this->response->statusCode(201);
-            $response = ['status'=>'success','message'=>__('Your warp '.ucfirst($data['name']).', has been created.'),'data'=>$items];
-            /*Event to bind to update the set upload room image */
-            /*$event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
-                'options' => [
-                    'matrix_token'=>$data['matrix_token'],
-                    'image'=> $items->image,
-                    'matrix_room_id'=> $items->matrix_room_id,
-                    ]
-            ]);
-            EventManager::instance()->dispatch($event);
-             * 
-             */
-        }else{
-            $this->restException(['status'=>'failed', 'message'=>__('The warp could not be saved. Please, try again.')], 400);
+           $connection->commit();
+           $response = ['status'=>'success','message'=>__('Your warp '.ucfirst($data['name']).', has been created.'),'data'=>$items];
+        } catch (\Exception $ex) {
+            Log::error($ex->getMessage());
+            $connection->rollback();
+            $this->restException(['status'=>'failed', 'message'=>$ex->getMessage()], 400);
         }
-        
         $this->set($response);
     }
     /**
@@ -772,11 +768,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
             unset($data['parent_matrix_room_id']);
             $items = $this->Spaycs->patchEntity($entity, $data,['validate'=>false,'associated'=>['JoinedSpayc']]);
         }
-        $items->type = $eventType;
-        if($data['type'] == 'Community'){ /* in community no need to keep start or end date*/
-            $items->start_date = '';
-            $items->end_date = '';
-        }
+        $items->type = $eventType;        
         if($data['group_type'] == 'Public'){ /* in community no need to keep start or end date*/
             $items->passcode = '';
         }

@@ -28,10 +28,8 @@ class WarpCategory extends Entity
      *
      * @var array
      */
-    protected $_accessible = [
-        'is_primary' => true,
-        'modified' => true,
-        'spayc' => true,
-        'spayc_category' => true
+     protected $_accessible = [
+        '*' => true,
+        'id' => false
     ];
 }

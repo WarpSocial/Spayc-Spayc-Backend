@@ -339,10 +339,25 @@ class SpaycsTable extends Table {
                 ]);  
         $validator
                 ->allowEmpty('other_category',__('Please select category.'))
+                ->add('other_category','repeat_category',[
+                    'rule'=>function($value,$context){
+                        if(!empty($value)){
+                            $idVal = explode(',',$value);
+                            $primaryCat = $context['data']['primary_category'];
+                            /* in case of only comma value or not in format like comma separated and alos should not be the value of primary category*/
+                            if(empty(array_filter($idVal)) || in_array($primaryCat, $idVal)){
+                                return false;
+                            }
+                            return true;
+                        }
+                    },
+                    'message'=> __('Primary category should not be in other category')
+                ])
                 ->add('other_category','valid_other_category',[
                     'rule'=>function($value,$context){
                         if(!empty($value)){
                             $idVal = explode(',',$value);
+                            /* in case of only comma value or not in format like comma separated*/
                             if(empty(array_filter($idVal))){
                                 return false;
                             }
@@ -352,8 +367,6 @@ class SpaycsTable extends Table {
                             }else{
                                 return false;
                             }
-                        }else{
-                            return false;
                         }
                     },
                     'message'=>__('Other category is not valid.')
@@ -1234,12 +1247,28 @@ class SpaycsTable extends Table {
         return '( 3959 * ACOS( COS( RADIANS(:latitude) ) * COS( RADIANS(  latitude ) ) * COS( RADIANS(  longitude ) - RADIANS(:longitude) ) + SIN( RADIANS(:latitude) ) * SIN( RADIANS(  latitude ) ) ) )';
     }
     
-    public function buildWarpCategories($request, \Api\Model\Entity\Spayc $spaycEntity){
+    public function SaveCategories($request, \Api\Model\Entity\Spayc $spaycEntity){
+        $warpCatEntity = TableRegistry::get('WarpCategories');
+        $warpCatEntity->deleteAll(['spayc_id' => $spaycEntity->id]);
+        $data = [
+            'spayc_id'=>$spaycEntity->id,
+            'spayc_category_id'=>$request->getData('primary_category'),
+            'is_primary'=>1,
+            ];
+        $entity = $warpCatEntity->newEntity();
+        $items = $warpCatEntity->patchEntity($entity, $data);
+       
+        $warpCatEntity->save($items);
         
-//        $spaycEntity->set('warp_',$request->getData('room_id'));
-//        $spaycEntity->set('matrix_room_id',$request->getData('room_id'));
-        
-        
+//        if(!empty($request->getData('other_category'))){
+//            $otherCategory = explode(',',$request->getData('other_category'));
+//            foreach($otherCategory as $cat){
+//                $warpCatEntity->save($warpCatEntity->newEntity([
+//                    'spayc_id'=>$spaycEntity->id,
+//                    'spayc_category_id'=>$request->getData('primary_category'),
+//                ]));
+//            }            
+//        }
     }
 
 }
