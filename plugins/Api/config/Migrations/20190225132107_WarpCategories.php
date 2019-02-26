@@ -2,7 +2,7 @@
 
 use Migrations\AbstractMigration;
 
-class SpaycCategories extends AbstractMigration {
+class WarpCategories extends AbstractMigration {
 
     /**
      * Change Method.
@@ -12,14 +12,15 @@ class SpaycCategories extends AbstractMigration {
      * @return void
      */
     public function change() {
-        $table = $this->table('spayc_');
-        $table->addColumn('name', 'string', [
+        $table = $this->table('warp_categories');
+        $table->addColumn('spayc_id', 'integer', [
             'default' => null,
-            'limit' => 255,
+            'limit' => 100,
             'null' => false,
         ]);
-        $table->addColumn('description', 'text', [
+        $table->addColumn('spayc_category_id', 'integer', [
             'default' => null,
+            'limit' => 100,
             'null' => false,
         ]);
         $table->addColumn('created', 'datetime', [

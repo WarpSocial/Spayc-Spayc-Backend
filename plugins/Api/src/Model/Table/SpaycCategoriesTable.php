@@ -62,6 +62,14 @@ class SpaycCategoriesTable extends Table {
             'className' => 'Api.Users',
             'through'=>'Api.UserCategory'
         ]);
+        
+        $this->belongsToMany('Spaycs', [
+            'foreignKey' => 'spayc_category_id',
+            'targetForeignKey' => 'spayc_id',
+            'joinTable' => 'warp_categories',
+            'className' => 'Api.Spaycs',
+            'through'=>'Api.WarpCategories'
+        ]);
     }
 
     /**

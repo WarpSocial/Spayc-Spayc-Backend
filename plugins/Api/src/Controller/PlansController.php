@@ -515,16 +515,18 @@ class PlansController extends AppController {
             $data['spayc']['spayc_category'] = $data['sc'];
             unset($data['sc']);
         }
-        if($data->spayc['type']=='Event'){
+        
         $timezone = Configure::read('timezone');
         $sd = new \Cake\I18n\Time($data->spayc['start_date'], 'UTC');
         $data->spayc['start_date'] = $sd->setTimezone(new \DateTimeZone($timezone))->format('Y-m-d H:i:s');
-        $ed = new \Cake\I18n\Time($data->spayc['end_date'], 'UTC');
-        $data->spayc['end_date'] = $ed->setTimezone(new \DateTimeZone($timezone))->format('Y-m-d H:i:s');
+        if(!empty($data->spayc['end_date'])){
+            $ed = new \Cake\I18n\Time($data->spayc['end_date'], 'UTC');
+            $ed = $ed->setTimezone(new \DateTimeZone($timezone))->format('Y-m-d H:i:s');
         }else{
-            unset($data->spayc['start_date']);
-            unset($data->spayc['end_date']);
+            $ed = $data->spayc['end_date'];
         }
+        
+        $data->spayc['end_date'] = $ed;
         $data['frequency']=$frequency;
         $response = ['status' => 'success', 'message' => __('Promotion Find Successfully'), 'data' => $data];
         $this->set($response);

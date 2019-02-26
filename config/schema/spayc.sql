@@ -690,3 +690,15 @@ ALTER TABLE public.users ADD ghost_mode_map int NULL DEFAULT 0;
 ALTER TABLE "physical_location" ADD "timezone" varchar(100) NULL;
 ALTER TABLE "users" ADD "matrix_password" text NULL;
 ALTER TABLE "users" ADD "full_name" character varying(100) NULL; COMMENT ON TABLE "users" IS '';
+# 25-02-2019 deployment still pending
+DROP TABLE IF EXISTS warp_categories;
+CREATE TABLE warp_categories (
+    "id" BIGSERIAL NOT NULL,    
+    "spayc_id" bigint NOT NULL,
+    "spayc_category_id" bigint NOT NULL,
+    "is_primary" boolean DEFAULT false NOT NULL,
+    "created" timestamp NOT NULL,
+    "modified" timestamp,
+    PRIMARY KEY (id,spayc_category_id,spayc_id,created)
+);
+SELECT create_hypertable('warp_categories', 'created');

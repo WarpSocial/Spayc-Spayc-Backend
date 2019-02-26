@@ -110,6 +110,14 @@ class SpaycsTable extends Table {
             'className' => 'Api.Promotions'
         ]);
         
+        $this->belongsToMany('SpaycCategories', [
+            'foreignKey' => 'spayc_id',
+            'targetForeignKey' => 'spayc_category_id',
+            'joinTable' => 'warp_categories',
+            'className' => 'Api.SpaycCategories',
+            'through'=>'Api.WarpCategories'
+        ]);
+        
         /* Earth radius in miles 3959 */
         /* for postgresql cast is required else for mysql not*/
         $this->distanceInMiles = "(3958.756 * ACOS(
@@ -311,10 +319,10 @@ class SpaycsTable extends Table {
                 ->allowEmpty('latitude')
                 ->latitude('latitude',__('Please enter valid latitude.'));  
         $validator
-                ->requirePresence('spayc_category_id', 'create',__('Please select warp category.'))
-                ->notEmpty('spayc_category_id',__('Please select category.'))
-                ->integer('spayc_category_id',__('Please enter valid category.'))
-                ->add('spayc_category_id','validcategoryid',[
+                ->requirePresence('primary_category', 'create',__('Please select warp category.'))
+                ->notEmpty('primary_category',__('Please select category.'))
+                ->integer('primary_category',__('Please enter valid category.'))
+                ->add('primary_category','validcategoryid',[
                     'rule'=>function($value,$context){
                         if(!empty($value)){                            
                             $exist = $this->SpaycCategories->exists(['id'=>$value]);
@@ -328,6 +336,27 @@ class SpaycsTable extends Table {
                         }
                     },
                     'message'=>__('Please enter valid category.')
+                ]);  
+        $validator
+                ->allowEmpty('other_category',__('Please select category.'))
+                ->add('other_category','valid_other_category',[
+                    'rule'=>function($value,$context){
+                        if(!empty($value)){
+                            $idVal = explode(',',$value);
+                            if(empty(array_filter($idVal))){
+                                return false;
+                            }
+                            $ids = $this->SpaycCategories->find()->where(["id IN"=>$idVal])->count();
+                            if(count($idVal) == $ids){
+                                return true;
+                            }else{
+                                return false;
+                            }
+                        }else{
+                            return false;
+                        }
+                    },
+                    'message'=>__('Other category is not valid.')
                 ]);  
         
         return $validator;
@@ -1203,6 +1232,14 @@ class SpaycsTable extends Table {
     
     public function geoDistance(){
         return '( 3959 * ACOS( COS( RADIANS(:latitude) ) * COS( RADIANS(  latitude ) ) * COS( RADIANS(  longitude ) - RADIANS(:longitude) ) + SIN( RADIANS(:latitude) ) * SIN( RADIANS(  latitude ) ) ) )';
+    }
+    
+    public function buildWarpCategories($request, \Api\Model\Entity\Spayc $spaycEntity){
+        
+//        $spaycEntity->set('warp_',$request->getData('room_id'));
+//        $spaycEntity->set('matrix_room_id',$request->getData('room_id'));
+        
+        
     }
 
 }

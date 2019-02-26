@@ -68,38 +68,36 @@ class SpaycsController extends AppController {
         $items->set('matrix_room_id',$matrix['room_id']);
         $items->set('matrix_room_alias',$matrix['room_alias']);
         $items->set('user_id', $this->Auth->user('id'));
-        if (!$items->errors()) {
-            if($this->Spaycs->save($items)) {
-                $this->Redis->addSpayc($items);
-                $items->job_type = 'new-spayc';
-                $items->created_duration = Utils::toClient($items->created);
-                TableRegistry::get('Queue.QueuedJobs')->createJob('Generic',$items->toArray());
-                //Joined the invite to the room//
-                $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
-                if(!empty($items['description'])) {
-                    TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
-                }
-                $items->created = Utils::toClient($items->created);
-                $items->modified = Utils::toClient($items->modified);
-                $this->response->statusCode(201);
-                $response = ['status'=>'success','message'=>__('Your warp '.ucfirst($data['name']).', has been created.'),'data'=>$items];
-                /*Event to bind to update the set upload room image */
-                /*$event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
-                    'options' => [
-                        'matrix_token'=>$data['matrix_token'],
-                        'image'=> $items->image,
-                        'matrix_room_id'=> $items->matrix_room_id,
-                        ]
-                ]);
-                EventManager::instance()->dispatch($event);
-                 * 
-                 */
-            }else{
-                $this->restException(['status'=>'failed', 'message'=>__('The warp could not be saved. Please, try again.')], 400);
+        debug($items);die;
+        if($this->Spaycs->save($items)) {
+            $this->Redis->addSpayc($items);
+            $items->job_type = 'new-spayc';
+            $items->created_duration = Utils::toClient($items->created);
+            TableRegistry::get('Queue.QueuedJobs')->createJob('Generic',$items->toArray());
+            //Joined the invite to the room//
+            $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
+            if(!empty($items['description'])) {
+                TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
             }
-        } else {
+            $items->created = Utils::toClient($items->created);
+            $items->modified = Utils::toClient($items->modified);
+            $this->response->statusCode(201);
+            $response = ['status'=>'success','message'=>__('Your warp '.ucfirst($data['name']).', has been created.'),'data'=>$items];
+            /*Event to bind to update the set upload room image */
+            /*$event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
+                'options' => [
+                    'matrix_token'=>$data['matrix_token'],
+                    'image'=> $items->image,
+                    'matrix_room_id'=> $items->matrix_room_id,
+                    ]
+            ]);
+            EventManager::instance()->dispatch($event);
+             * 
+             */
+        }else{
             $this->restException(['status'=>'failed', 'message'=>__('The warp could not be saved. Please, try again.')], 400);
         }
+        
         $this->set($response);
     }
     /**

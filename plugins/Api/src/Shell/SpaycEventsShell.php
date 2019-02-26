@@ -55,8 +55,8 @@ class SpaycEventsShell extends Shell {
         if($now=='00:00:00'){
             $data['inactive']=$this->sendNotification('inactive');
         }
-        
-        $data['active']=$this->sendNotification('active');
+        $data['inactive']=$this->sendNotification('inactive');
+        //$data['active']=$this->sendNotification('active');
         
         /* delete past events(spayc) from redis storage */
         $this->cleanPastEvents();
@@ -78,7 +78,7 @@ class SpaycEventsShell extends Shell {
               $where = ["TO_CHAR(start_date, 'YYYY-MM-DD HH') = '".$now."'"];
               $notification_type='spayc-start-event';
           }elseif ($type=='inactive') {
-            $where = [" date(end_date) = date(current_date) - interval '2' day"];
+            $where = [" date(end_date) = date(current_date - interval '2' day) AND end_date IS NOT NULL"];
             $notification_type='spayc-end-event';
         }else{
             return false;
@@ -97,7 +97,7 @@ class SpaycEventsShell extends Shell {
                     return $q->select(['Users.username','Users.display_name']);
                 }
             ]);
-            #debug($events);die;
+            debug($events);die;
                 $success=[];
         if($events){
         foreach($events->toArray() as $k=>$v){
