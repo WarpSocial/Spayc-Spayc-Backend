@@ -774,11 +774,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
             unset($data['parent_matrix_room_id']);
             $items = $this->Spaycs->patchEntity($entity, $data,['validate'=>false,'associated'=>['JoinedSpayc']]);
         }
-        $items->type = $eventType;
-        if($data['type'] == 'Community'){ /* in community no need to keep start or end date*/
-            $items->start_date = '';
-            $items->end_date = '';
-        }
+        $items->type = $eventType;        
         if($data['group_type'] == 'Public'){ /* in community no need to keep start or end date*/
             $items->passcode = '';
         }
