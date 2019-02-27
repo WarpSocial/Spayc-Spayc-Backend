@@ -699,6 +699,6 @@ CREATE TABLE warp_categories (
     "is_primary" boolean DEFAULT false NOT NULL,
     "created" timestamp NOT NULL,
     "modified" timestamp,
-    PRIMARY KEY (id,spayc_category_id,spayc_id,created)
+    PRIMARY KEY (id)
 );
 SELECT create_hypertable('warp_categories', 'created');

@@ -6,6 +6,8 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\ORM\TableRegistry;
+use Cake\Utility\Hash;
 
 /**
  * WarpCategories Model
@@ -36,7 +38,7 @@ class WarpCategoriesTable extends Table {
 
         $this->setTable('warp_categories');
         $this->setDisplayField('id');
-        $this->setPrimaryKey(['id']);
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
 
@@ -52,6 +54,44 @@ class WarpCategoriesTable extends Table {
         ]);
     }
     
-
+    public function getWarpCategories($object){
+        $primary = null;$other=[];
+        if(empty($object->warp_categories)){
+            return ['primary'=>'','other'=> ''];
+        } 
+        foreach($object->warp_categories as $cat){
+            if($cat->is_primary){  
+                $primary = $cat->spayc_category_id;
+            }else{
+                $other[] = $cat->spayc_category_id;
+            }
+        }
+        return ['primary'=>$primary,'other'=> implode(',', $other)];
+    }
+    
+    public function SaveCategories($request, $spaycEntity){
+        $warpCat = TableRegistry::get('Api.WarpCategories');
+        /* when edit subwarp return existing category, no need to save the reocrd again in case of edit the subwarp but will save new subwarp category*/
+//        if(!is_null($spaycEntity->parent_id) && !$spaycEntity->isNew()){
+//            return $spaycEntity->warp_categories;
+//        }
+        $warpCat->deleteAll(['spayc_id' => $spaycEntity->id]);
+        $data[] = [
+            'spayc_id'=>$spaycEntity->id,
+            'spayc_category_id'=>$request['primary_category'],
+            'is_primary'=>true,
+            ];
+        if(!empty($request['other_category'])){
+            $otherCategory = explode(',',$request['other_category']);
+            foreach($otherCategory as $cat){
+                $data[] = [
+                    'spayc_id'=>$spaycEntity->id,
+                    'spayc_category_id'=>$cat,
+                    'is_primary'=>false,
+                ];
+            }            
+        }
+        return $warpCat->saveMany($warpCat->newEntities($data));
+    }
 
 }

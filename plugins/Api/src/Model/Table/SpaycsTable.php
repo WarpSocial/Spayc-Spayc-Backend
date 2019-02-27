@@ -60,12 +60,6 @@ class SpaycsTable extends Table {
             'joinType' => 'INNER',
             'className' => 'Api.Users'
         ]);
-        $this->belongsTo('SpaycCategories', [
-            'foreignKey' => 'spayc_category_id',
-            'joinType' => 'LEFT',
-            'className' => 'Api.SpaycCategories'
-        ]);
-        
         $this->belongsTo('ParentSpaycs', [
             'dependent' => true,
             'className' => 'Api.Spaycs',
@@ -98,6 +92,12 @@ class SpaycsTable extends Table {
             'joinType' => 'INNER',
             'className' => 'Api.SpaycHashtags'
         ]);
+        $this->hasMany('SpaycHashtags', [
+            'dependent' => true,
+            'foreignKey' => 'spayc_id',
+            'joinType' => 'INNER',
+            'className' => 'Api.SpaycHashtags'
+        ]);
         
          $this->belongsToMany('Advertisements', [
             'joinTable' => 'spayc_advertisement',            
@@ -109,13 +109,19 @@ class SpaycsTable extends Table {
             'joinTable' => 'spayc_promotion',
             'className' => 'Api.Promotions'
         ]);
-        
+        /* spayc categories via joindata*/
         $this->belongsToMany('SpaycCategories', [
             'foreignKey' => 'spayc_id',
             'targetForeignKey' => 'spayc_category_id',
             'joinTable' => 'warp_categories',
             'className' => 'Api.SpaycCategories',
             'through'=>'Api.WarpCategories'
+        ]);
+        /*spayc categories direct by left join*/
+        $this->hasMany('WarpCategories', [
+            'foreignKey' => 'spayc_id',
+            'joinType' => 'LEFT',
+            'className' => 'Api.WarpCategories'
         ]);
         
         /* Earth radius in miles 3959 */
@@ -319,7 +325,7 @@ class SpaycsTable extends Table {
                 ->allowEmpty('latitude')
                 ->latitude('latitude',__('Please enter valid latitude.'));  
         $validator
-                ->requirePresence('primary_category', 'create',__('Please select warp category.'))
+                ->requirePresence('primary_category', 'update',__('Please select warp category.'))
                 ->notEmpty('primary_category',__('Please select category.'))
                 ->integer('primary_category',__('Please enter valid category.'))
                 ->add('primary_category','validcategoryid',[
@@ -341,7 +347,7 @@ class SpaycsTable extends Table {
                 ->allowEmpty('other_category',__('Please select category.'))
                 ->add('other_category','repeat_category',[
                     'rule'=>function($value,$context){
-                        if(!empty($value)){
+                        if(!empty($value) && !empty( $context['data']['primary_category'])){
                             $idVal = explode(',',$value);
                             $primaryCat = $context['data']['primary_category'];
                             /* in case of only comma value or not in format like comma separated and alos should not be the value of primary category*/
@@ -1245,30 +1251,6 @@ class SpaycsTable extends Table {
     
     public function geoDistance(){
         return '( 3959 * ACOS( COS( RADIANS(:latitude) ) * COS( RADIANS(  latitude ) ) * COS( RADIANS(  longitude ) - RADIANS(:longitude) ) + SIN( RADIANS(:latitude) ) * SIN( RADIANS(  latitude ) ) ) )';
-    }
-    
-    public function SaveCategories($request, \Api\Model\Entity\Spayc $spaycEntity){
-        $warpCatEntity = TableRegistry::get('WarpCategories');
-        $warpCatEntity->deleteAll(['spayc_id' => $spaycEntity->id]);
-        $data = [
-            'spayc_id'=>$spaycEntity->id,
-            'spayc_category_id'=>$request->getData('primary_category'),
-            'is_primary'=>1,
-            ];
-        $entity = $warpCatEntity->newEntity();
-        $items = $warpCatEntity->patchEntity($entity, $data);
-       
-        $warpCatEntity->save($items);
-        
-//        if(!empty($request->getData('other_category'))){
-//            $otherCategory = explode(',',$request->getData('other_category'));
-//            foreach($otherCategory as $cat){
-//                $warpCatEntity->save($warpCatEntity->newEntity([
-//                    'spayc_id'=>$spaycEntity->id,
-//                    'spayc_category_id'=>$request->getData('primary_category'),
-//                ]));
-//            }            
-//        }
     }
 
 }

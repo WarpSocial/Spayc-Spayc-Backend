@@ -27,7 +27,7 @@
 @apiGroup Spayc
 @apiPermission private
 
-@apiDescription Create SPAYC.
+@apiDescription Create SPAYC and data should be post in multipart form data.
 
  * @apiHeader {String} TOKEN Token must be set in header.
  * @apiHeader {String}  timezone User current time zone ex: America/New_York.

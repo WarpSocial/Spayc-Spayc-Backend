@@ -74,7 +74,7 @@ class SpaycsController extends AppController {
             $this->Spaycs->save($items);
             /* save Category */
             #pr($items);die;
-            $this->Spaycs->SaveCategories($this->request,$items);
+            $items['warp_categories'] = TableRegistry::get('Api.WarpCategories')->SaveCategories($this->request,$items);
             $this->Redis->addSpayc($items);
             $items->job_type = 'new-spayc';
             $items->created_duration = Utils::toClient($items->created);
@@ -87,12 +87,12 @@ class SpaycsController extends AppController {
             $items->created = Utils::toClient($items->created);
             $items->modified = Utils::toClient($items->modified);
             $this->response->statusCode(201);
-           $connection->commit();
-           $response = ['status'=>'success','message'=>__('Your warp '.ucfirst($data['name']).', has been created.'),'data'=>$items];
+            $connection->commit();
+            $response = ['status'=>'success','message'=>__('Your warp '.ucfirst($data['name']).', has been created.'),'data'=>$items];
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
             $connection->rollback();
-            $this->restException(['status'=>'failed', 'message'=>$ex->getMessage()], 400);
+            $this->restException(['status'=>'failed', 'message'=>__('Warp could not be saved. Please, try later.')], 400);
         }
         $this->set($response);
     }
@@ -113,9 +113,12 @@ class SpaycsController extends AppController {
         if(!empty($errors)) {
             $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
         }
-        $entity = $this->Spaycs->find()->contain('JoinedSpayc',function($q)use($user){
-            return $q->where(['user_id'=>$user['id'],'status'=>'Joined']);
-        });
+        $entity = $this->Spaycs->find()->contain([
+            'JoinedSpayc'=>function($q)use($user){
+                return $q->where(['user_id'=>$user['id'],'status'=>'Joined']);
+            },
+            'WarpCategories'        
+            ]);
         $entity->where($this->Spaycs->spaycPk($data['parent_matrix_room_id']));
         $entity->where(['group_type !='=>'trusted_private']);        
         if($entity->isEmpty()){
@@ -137,7 +140,10 @@ class SpaycsController extends AppController {
         $data['longitude'] = $parentObj->longitude;
         $data['type'] = $parentObj->type;
         $data['location'] = $parentObj->location;
-        $data['spayc_category_id'] = $parentObj->spayc_category_id;
+        $warpCategoryes =  TableRegistry::get('Api.WarpCategories')->getWarpCategories($parentObj);        
+        $data['primary_category'] = $warpCategoryes['primary'];
+        $data['other_category'] = $warpCategoryes['other'];
+        //$data['spayc_category_id'] = $parentObj->spayc_category_id;
         $items = $this->Spaycs->newEntity($data,['validate'=>false]);
         
         if($data['group_type'] == 'Public'){ /* in community no need to keep start or end date*/
@@ -153,35 +159,28 @@ class SpaycsController extends AppController {
         $items->set('matrix_room_id',$matrix['room_id']);
         $items->set('matrix_room_alias',$matrix['room_alias']);
         $items->set('user_id', $this->Auth->user('id'));
-        if (!$items->errors()) {            
-            if($this->Spaycs->save($items)){
-                $this->Redis->addSpayc($items);
-                $data['image'] = $items->get('image');
-                $data['matrix_room_id'] = $items->get('matrix_room_id');
-                //Joined the invite to the room//
-                $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
-                 if(!empty($items['description'])) {
-                    TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
-                }
-                $this->response->statusCode(201);
-                $data['id'] = $items->id;
-                $response = ['status'=>'success','message'=>__('Subwarp Created Successfully'),'data'=>$data];
-                /*Event to bind to update the set upload room image */
-               /* $event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
-                    'options' => [
-                        'matrix_token'=>$data['matrix_token'],
-                        'image'=> $items->get('image'),
-                        'matrix_room_id'=> $items->matrix_room_id,
-                        ]
-                ]);
-                EventManager::instance()->dispatch($event);
-                * 
-                */
-            }else{
-                $this->restException(['status'=>'failed', 'message'=>__('Subwarp could not be saved. Please, try again.')], 400);
+       
+        $connection = $this->Spaycs->getConnection();
+        try{
+            $connection->begin(); 
+            $this->Spaycs->save($items);            
+            $data['warp_categories'] = TableRegistry::get('Api.WarpCategories')->SaveCategories($data,$items);
+            $this->Redis->addSpayc($items);
+            $data['image'] = $items->get('image');
+            $data['matrix_room_id'] = $items->get('matrix_room_id');
+            //Joined the invite to the room//
+            $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
+             if(!empty($items['description'])) {
+                TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
             }
-        } else {
-            $this->restException(['status'=>'failed', 'message'=>__('Subwarp could not be saved. Please, try again.')], 400);
+            $data['id'] = $items->id;
+            $this->response->statusCode(201);
+            $connection->commit();
+            $response = ['status'=>'success','message'=>__('Subwarp Created Successfully'),'data'=>$data];
+        } catch (\Exception $ex) {
+            Log::error($ex->getMessage());
+            $connection->rollback();
+            $this->restException(['status'=>'failed', 'message'=>__('Subwarp could not be saved. Please, try later.')], 400);
         }
         $this->set($response);
     }
@@ -736,6 +735,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
                     return $q;
             });
         }
+        $entities->contain('WarpCategories');
                 
         // If User Update Spayc once Scraper will not update
         if(isset($data['is_admin_update'])){
@@ -745,29 +745,31 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         $entities->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
         }
         if($entities->isEmpty()){
-            $this->restException(['status'=>'failed','message'=>__('Invalid warp id.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('This spayc is no longer exist.')], 400);
         }
         
         $entity = $entities->first();
         $eventType = $entity->type;
         if($user['id'] != $entity->user_id){
-            $this->restException(['status'=>'failed','message'=>__('Insufficient privileges to edit this space.')], 400);
+            $this->restException(['status'=>'failed','message'=>__('Insufficient privileges to edit this warp.')], 400);
         }        
-        unset($data['spayc_id']);   
+        unset($data['spayc_id']); 
+        /* validate parent spayc*/
         if(is_null($entity->parent_id)){
             $items = $this->Spaycs->patchEntity($entity, $data,['associated'=>['JoinedSpayc']]);
             if(!empty($items->errors())) {
                 $this->restException(['status'=>'failed','message'=>$this->mapErrors($items->errors())], 400);
             }
         }else{
+            /* validate subspayc */
             $data['parent_matrix_room_id'] = $entity->parent_id;
             $errors = $this->Spaycs->validateSubspace($data);
             if(!empty($errors)) {
                 $this->restException(['status'=>'failed','message'=>$this->mapErrors($errors)], 400);
             }
-            unset($data['parent_matrix_room_id']);
+            unset($data['parent_matrix_room_id']);            
             $items = $this->Spaycs->patchEntity($entity, $data,['validate'=>false,'associated'=>['JoinedSpayc']]);
-        }
+        }       
         $items->type = $eventType;        
         if($data['group_type'] == 'Public'){ /* in community no need to keep start or end date*/
             $items->passcode = '';
@@ -781,8 +783,13 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         
         $prevLocation = $entity->getOriginal('location');
         $prevDescription = $entity->getOriginal('description');
-        if($this->Spaycs->save($items)){
-            if($prevDescription != $entity->get('description')) {
+        
+        $connection = $this->Spaycs->getConnection();
+        try{
+            $connection->begin();
+            $this->Spaycs->save($items);
+            $items->warp_categories = TableRegistry::get('Api.WarpCategories')->SaveCategories($data,$items);
+             if($prevDescription != $entity->get('description')) {
                 TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
             }
             if($prevLocation != $entity->get('location')){
@@ -799,18 +806,10 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
             $items['start_date']=  Utils::toClient($items['start_date']);
             $items['end_date'] = Utils::toClient($items['end_date']);
             $response = ['status'=>'success','message'=>__('The warp has been updated successfully.'),'data'=>$items];
-            /*Event to bind to update the set upload room image */
-            /*$event = new Event('Controller.Spayc.matrixMedia', $this->Controller, [
-                'options' => [
-                    'matrix_token'=>$data['matrix_token'],
-                    'image'=> $items['image'],
-                    'matrix_room_id'=> $items['matrix_room_id'],
-                    ]
-            ]);
-            EventManager::instance()->dispatch($event);
-             * 
-             */
-        }else{
+            $connection->commit();
+        } catch (\Exception $ex) {
+            Log::error($ex->getMessage());
+            $connection->rollback();
             $this->restException(['status'=>'failed', 'message'=>__('The warp could not be updated. Please, try again.')], 400);
         }
         $this->set($response);        
