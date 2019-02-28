@@ -201,8 +201,8 @@ class MatrixComponent extends Component {
             //'join_rule'=>'public',
             'invite' => !empty($items['invite'])?explode(',',$items['invite']):""
         ];
-        if(!empty($items['spayc_category_id'])){
-            $category = \Cake\ORM\TableRegistry::get('Api.SpaycCategories')->get($items['spayc_category_id']);
+        if(!empty($items['primary_category'])){
+            $category = \Cake\ORM\TableRegistry::get('Api.SpaycCategories')->get($items['primary_category']);
         }
         if(!empty($items['is_direct'])){
             $validInput['is_direct'] = $items['is_direct'];

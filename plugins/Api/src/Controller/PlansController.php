@@ -324,14 +324,22 @@ class PlansController extends AppController {
                             ]
                         ]
                 )
+               ->join([
+                    'table' => 'warp_categories',
+                    'alias' => 'wc',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'wc.spayc_id = promotions.spayc_id AND wc.is_primary=true',
+                    ]
+                ])
                 ->join([
                     'table' => 'spayc_categories',
                     'alias' => 'sc',
                     'type' => 'LEFT',
                     'conditions' => [
-                        'sc.id = spayc.spayc_category_id',
+                        'sc.id = wc.spayc_category_id',
                     ]
-                ])
+                ]) 
                 ->join([
                     'table' => 'friend_request',
                     'type' => 'LEFT',
@@ -493,13 +501,21 @@ class PlansController extends AppController {
                         ]
                 )
                 ->join([
+                    'table' => 'warp_categories',
+                    'alias' => 'wc',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'wc.spayc_id = promotions.spayc_id AND wc.is_primary=true',
+                    ]
+                ])
+                ->join([
                     'table' => 'spayc_categories',
                     'alias' => 'sc',
                     'type' => 'LEFT',
                     'conditions' => [
-                        'sc.id = spayc.spayc_category_id',
+                        'sc.id = wc.spayc_category_id',
                     ]
-                ])
+                ])                
                 ->where(['SpaycPromotion.spayc_id'=>$data['spayc_id'],"balance > 0",'promotions.status'=>'Active'])
                 ->order(['SpaycPromotion.priority' => 'ASC'])
                 ->limit(1)
@@ -510,7 +526,7 @@ class PlansController extends AppController {
              $this->restException(['status'=>'failed','message'=>'Promotion not found.'], 404);
         }
         
-        $data=$ad->first();
+        $data=$ad->first();        
         if(!empty($data['sc'])){
             $data['spayc']['spayc_category'] = $data['sc'];
             unset($data['sc']);

@@ -474,7 +474,7 @@ class SpaycsTable extends Table {
         
         $spaycs = $this->find()
                 ->select([
-                    'distance' => $distance, 'Spaycs.id', 'Spaycs.name', 'Spaycs.location', 'Spaycs.matrix_room_id', 'Spaycs.start_date', 'Spaycs.end_date', 'Spaycs.image', 'Spaycs.type', 'Spaycs.group_type', 'Spaycs.passcode','Spaycs.spayc_category_id'])
+                    'distance' => $distance, 'Spaycs.id', 'Spaycs.name', 'Spaycs.location', 'Spaycs.matrix_room_id', 'Spaycs.start_date', 'Spaycs.end_date', 'Spaycs.image', 'Spaycs.type', 'Spaycs.group_type', 'Spaycs.passcode'])
                 ->where(['Spaycs.status'=>'Active','Spaycs.group_type !='=>'trusted_private', 'Spaycs.parent_id IS'=>null])
                ->contain([
                     'JoinedSpayc' => function($q) {
@@ -483,9 +483,7 @@ class SpaycsTable extends Table {
                     'SubscribedUsers' => function($q) {
                         return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
                     },
-                    'SpaycCategories' => function($q) {
-                        return $q->select(['SpaycCategories.id', 'SpaycCategories.name']);
-                    }
+                    'WarpCategories.SpaycCategories'
                 ])
                 ->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
                 $bannedSpayc = $this->bannedSpayc($userId);    
@@ -748,153 +746,18 @@ class SpaycsTable extends Table {
             }
             return 0;
     }
-    
-    
-    public function getNearBySpaycsOnMap_back($request = [], $userId=null) {
-        $now = new Time('now', Configure::read('timezone'));
-        $endObj = clone $now;
-        $now->modify('today');
-        $endObj->modify('+15 days');
-        $endObj->modify('1 second ago'); 
-        $today_date = $now->setTimezone('UTC')->format("Y-m-d H:i");
-        $twoWeek = $endObj->setTimezone('UTC')->format("Y-m-d H:i");  
-   
-   
-            //To search by kilometers instead of miles, replace 3959 with 6371.
-              $distanceField = '( 3959 * ACOS( COS( RADIANS(:latitude) ) *
-                COS( RADIANS(  latitude ) ) *
-                COS( RADIANS(  longitude ) - RADIANS(:longitude) ) +
-                SIN( RADIANS(:latitude) ) *
-                SIN( RADIANS(  latitude ) ) ) )';
-            $distance=  $this->distance($request['center_latitude'], $request['center_longitude'], $request['endpoint_latitude'], $request['endpoint_longitude']); 
-    $distance = $request['radius'];
-            $spaycs = $this->find()
-                ->select(['distance' => $distanceField,'id', 'name', 'matrix_room_id', 'image', 'type', 'modified', 'spayc_category_id','latitude','longitude',"score"=>"(case when website = 0 then 1 else 0 end)"])
-                ->where(["$distanceField <=" => $distance, 'Spaycs.status'=>'Active',
-                    'Spaycs.group_type !='=>'trusted_private', 
-                    'Spaycs.parent_id IS'=>null
-                    ])
-                ->bind(':latitude', $request['center_latitude'], 'float')
-                ->bind(':longitude', $request['center_longitude'], 'float');
-        $period = null;
-        if(!empty($request['time'])){
-            $period = strtolower($request['time']);
-        }
-        
-        $startDate = "TO_TIMESTAMP(cast(Spaycs.start_date as text),'YYYY-MM-DD HH24:MI')";
-        $endDate = "TO_TIMESTAMP(cast(Spaycs.end_date as text),'YYYY-MM-DD HH24:MI')";  
-        $spaycs->where([
-                'OR'=>[[$startDate.' >='=>$today_date],[$endDate.' >= '=>$today_date]]
-                ]);
-            $spaycs->where([
-                'OR'=>[[$startDate.' <='=>$twoWeek],[$endDate.' <= '=>$twoWeek]]
-                ]);
-         
-        if(isset($request['spayc_type']) && $request['spayc_type']) {
-            $spayc_type = explode("|",ucfirst($request['spayc_type']));
-            $spaycs->where(["Spaycs.type IN "=>$spayc_type]);
-        }
-       
-        if(isset($request['group_type']) && $request['group_type']) {
-            $group_type = explode("|",ucfirst($request['group_type']));
-            $spaycs->where(["Spaycs.group_type IN "=>$group_type]);
-        }
-        
-        if(isset($request['category_id'])) {
-            $spaycs->where(['Spaycs.spayc_category_id in ('.$request['category_id'].')']);
-        }
-        
-        if(isset($request['wrap_with_friends']) && $request['wrap_with_friends']=="yes") {
-        $child= TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId);
-        
-        if(empty($child)){
-         $child = array(0);
-        }
-       
-         $spaycs->join(
-                [
-                    'table' => 'joined_spayc',
-                    'type' => 'INNER',
-                    'conditions' => [
-                        'Spaycs.id = joined_spayc.spayc_id',
-                        'joined_spayc.user_id in ('.implode(",", $child).')'
-                    ]
-                ]
-            );
-           
-        }
-        if(isset($request['hashtag_id']) && $request['hashtag_id']) {
-            $spaycs->join(
-                [
-                    'table' => 'spayc_hashtags',
-                    'type' => 'INNER',
-                    'conditions' => [
-                         'Spaycs.id = spayc_hashtags.spayc_id',
-                        'spayc_hashtags.hashtag_id IN  ('.$request['hashtag_id'].')',
-                    ]
-                ]
-            );
-        }
-        $subQuery = TableRegistry::get('Api.JoinedSpayc')->bannedSpaycQuery($userId);
-        $spaycs->where(['Spaycs.id NOT IN'=>$subQuery]);
-        $spaycs->contain([
-            'JoinedSpayc' => function($q) {
-                return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status'])
-                        ->where(['JoinedSpayc.status' => "Joined"]);
-            },
-            'SubscribedUsers' => function($q) {
-                return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])
-                        ->where(['SubscribedUsers.status' => "Active"]);;
-            },
-            'SpaycCategories' => function($q) {
-                return $q->select(['SpaycCategories.id', 'SpaycCategories.name']);
-            }        
-        ]);
-        $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($userId) {
-            return $results->map(function ($row) use($userId) {
-                $totalJoined = [];
-                if(!empty($row['joined_spayc'])) {
-                    $totalJoined = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[status=Joined].status');
-                    $status = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.'].status');
-                }
-                $row['is_joined'] = !empty($status[0])?true:false;
-//                $row['spayc_type'] = ($row['parent_id']==NULL || $row['parent_id']=="" )?"Spayc":"SubSpayc";
-//                unset($row['parent_id']);
-                $row['joined_users'] = !empty($row['joined_spayc'])?count($totalJoined):0;
-                unset($row['joined_spayc']);
-                if(!empty($row['subscribed_users'])) {
-                    $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');
-                }
-                unset($row['subscribed_users']);
-                $row['is_subscribed'] = !empty($subUserId[0])?true:false;
-                return $row;
-            });
-        });
-        #$spaycs->order(['Spaycs.id'=>'DESC']);
-//        $spaycs->group('distance HAVING distance > 0');
-        $spaycs->order(['score'=>'DESC','distance'=>'ASC','start_date'=>'ASC']);
-        
-        $spaycs->limit(MAP_LIMIT);
-        $spaycs->groupBy('spaycs.id');
-        
-        $data['count'] = $spaycs->count();
-        $data['records'] = [];
-        //$spaycs->cache('map_warp', 'redis');
-        $data['records'] = $spaycs;
-        return $data;
-    }
     public function getNearBySpaycsOnMap($request = [], $userId=null) {
         //$request['radius'] = '2799';
-        $unit = 'm';
+        $unit = 'm';//meter
         $now = new Time('now', Configure::read('timezone'));        
         $now->modify('today');
         $timeStmap = $now->getTimestamp();                
         $dateRange = Utils::dateRangeUtc(Configure::read('timezone'),MAP_DAYS_RANGE);
         $today_date = $dateRange['start'];
         $twoWeek = $dateRange['end']; 
-        $fields = ['id', 'name','start_date', 'matrix_room_id', 'image', 'type', 'modified', 'spayc_category_id','latitude','longitude','score'=>'website'];
+        $fields = ['id', 'name','start_date', 'matrix_room_id', 'image', 'type', 'modified', 'latitude','longitude','score'=>'website'];
         /* if user filter past date event in that case calculate distance manually because redis clean past event */
-        if(isset($request['is_filter']) && ($request['is_filter'] === true) && (isset($request['current_date']) && $request['current_date'] < $timeStmap)){
+        if(isset($request['is_filter']) && ($request['is_filter'] === true) && (isset($request['current_date']) && $request['current_date'] < $timeStmap)){ 
             $redisSpaycs = [];
             $distanceField = $this->geoDistance();
              $radius = $this->distance($request['center_latitude'], $request['center_longitude'], $request['endpoint_latitude'], $request['endpoint_longitude'],$unit);
@@ -965,10 +828,6 @@ class SpaycsTable extends Table {
             $spaycs->where(["Spaycs.group_type IN "=>$group_type]);
         }
         
-        if(isset($request['category_id'])) {
-            $spaycs->where(['Spaycs.spayc_category_id in ('.$request['category_id'].')']);
-        }
-        
         if(isset($request['wrap_with_friends']) && $request['wrap_with_friends']=="yes") {
         $child= TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId);
         
@@ -1000,6 +859,18 @@ class SpaycsTable extends Table {
                 ]
             );
         }
+        if(isset($request['category_id'])) {
+            $spaycs->join(
+                [
+                    'table' => 'warp_categories',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Spaycs.id = warp_categories.spayc_id',
+                        'warp_categories.spayc_category_id IN  ('.$request['category_id'].')',
+                    ]
+                ]
+            );
+        }
         $subQuery = TableRegistry::get('Api.JoinedSpayc')->bannedSpaycQuery($userId);
         $spaycs->where(['Spaycs.id NOT IN'=>$subQuery]);
         $spaycs->contain([
@@ -1011,9 +882,7 @@ class SpaycsTable extends Table {
                 return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])
                         ->where(['SubscribedUsers.status' => "Active"]);;
             },
-            'SpaycCategories' => function($q) {
-                return $q->select(['SpaycCategories.id', 'SpaycCategories.name']);
-            }        
+            'WarpCategories.SpaycCategories'
         ]);
         $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($userId,$redisSpaycs) {
             return $results->map(function ($row) use($userId,$redisSpaycs) {
@@ -1046,146 +915,6 @@ class SpaycsTable extends Table {
         //return ['count'=>($spaycs->isEmpty())?0:1,'records'=>$spaycs];
         return ['count'=>$spaycs->count(),'records'=>$spaycs];
     }
-    
-    public function mapEvents($request = [], $userId=null) {
-        $now = new Time('now', Configure::read('timezone'));
-        $endObj = clone $now;
-        $endObj->modify('+2 Week');
-        $today_date = $now->setTimezone('UTC')->format("Y-m-d H:i");
-        $twoWeek = $endObj->setTimezone('UTC')->format("Y-m-d H:i");
-        $startDate = "TO_TIMESTAMP(cast(Spaycs.start_date as text),'YYYY-MM-DD HH24:MI')";
-        $endDate = "TO_TIMESTAMP(cast(Spaycs.end_date as text),'YYYY-MM-DD HH24:MI')";  
-        
-        //To search by kilometers instead of miles, replace 3959 with 6371.
-        $distanceField = '( 3959 * ACOS( COS( RADIANS(:latitude) ) *
-            COS( RADIANS(  latitude ) ) *
-            COS( RADIANS(  longitude ) - RADIANS(:longitude) ) +
-            SIN( RADIANS(:latitude) ) *
-            SIN( RADIANS(  latitude ) ) ) )';
-        $distance=  $this->distance($request['center_latitude'], $request['center_longitude'], $request['endpoint_latitude'], $request['endpoint_longitude']); 
-    
-        $spaycs = $this->find()
-                ->select(['id', 'name', 'matrix_room_id', 'image','type','modified','spayc_category_id','latitude','longitude'])
-                ->where(["$distanceField <=" => $distance, 'Spaycs.status'=>'Active','Spaycs.group_type !='=>'trusted_private', 'Spaycs.parent_id IS'=>null])
-                ->bind(':latitude', $request['center_latitude'], 'float')
-                ->bind(':longitude', $request['center_longitude'], 'float');
-        
-        if(!empty($request['current_date'])){
-            $user_date = Time::createFromTimestamp($request['current_date'], Configure::read('timezone'));
-            $endObj = clone $user_date;
-            $user_date->modify('today');
-            $endObj->modify('+15 days');
-            $endObj->modify('1 second ago'); 
-            $today_date = $user_date->setTimezone('UTC')->format("Y-m-d H:i");
-            $twoWeek = $endObj->setTimezone('UTC')->format("Y-m-d H:i");  
-        }
-        $spaycs->where([
-            'OR'=>[[$startDate.' >='=>$today_date],[$endDate.' >= '=>$today_date]]
-           ]);
-        $spaycs->where([
-            'OR'=>[[$startDate.' <='=>$twoWeek],[$endDate.' <= '=>$twoWeek]]
-            ]);
-        if(isset($request['spayc_type']) && $request['spayc_type']) {
-            $spayc_type = explode("|",ucfirst($request['spayc_type']));
-            $spaycs->where(["Spaycs.type IN "=>$spayc_type]);
-        }
-        if(!empty($request['payment_type'])) {
-            if(strtolower($request['payment_type']) == strtolower(FREE)){
-                $spaycs->where(["LOWER(Spaycs.payment_type)"=> strtolower($request['payment_type'])]);
-            }
-        }
-        
-        if(isset($request['spayc_type']) && $request['spayc_type']) {
-            $spayc_type = explode("|",ucfirst($request['spayc_type']));
-            $spaycs->where(["Spaycs.type IN "=>$spayc_type]);
-        }
-        if(isset($request['group_type']) && $request['group_type']) {
-            $group_type = explode("|",ucfirst($request['group_type']));
-            $spaycs->where(["Spaycs.group_type IN "=>$group_type]);
-        }
-        
-        if(isset($request['category_id'])) {
-            $spaycs->where(['Spaycs.spayc_category_id in ('.$request['category_id'].')']);
-        }
-        
-       if(isset($request['wrap_with_friends']) && $request['wrap_with_friends']=="yes") {
-        $child= TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId);
-        
-        if(empty($child)){
-         $child = array(0);
-        }
-       
-         $spaycs->join(
-                [
-                    'table' => 'joined_spayc',
-                    'type' => 'INNER',
-                    'conditions' => [
-                        'Spaycs.id = joined_spayc.spayc_id',
-                        'joined_spayc.user_id in ('.implode(",", $child).')'
-                    ]
-                ]
-            );
-           
-        }
-        if(isset($request['hashtag_id']) && $request['hashtag_id']) {
-            $spaycs->join(
-                [
-                    'table' => 'spayc_hashtags',
-                    'type' => 'INNER',
-                    'conditions' => [
-                         'Spaycs.id = spayc_hashtags.spayc_id',
-                        'spayc_hashtags.hashtag_id IN  ('.$request['hashtag_id'].')',
-                    ]
-                ]
-            );
-        }
-        $subQuery = TableRegistry::get('Api.JoinedSpayc')->bannedSpaycQuery($userId);
-        $spaycs->where(['Spaycs.id NOT IN'=>$subQuery]);
-        $spaycs->contain([
-            'JoinedSpayc' => function($q) {
-                return $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status'])
-                        ->where(['JoinedSpayc.status' => "Joined"]);
-            },
-            'SubscribedUsers' => function($q) {
-                return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])
-                        ->where(['SubscribedUsers.status' => "Active"]);;
-            },
-            'SpaycCategories' => function($q) {
-                return $q->select(['SpaycCategories.id', 'SpaycCategories.name']);
-            }        
-        ]);
-        $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($userId) {
-            return $results->map(function ($row) use($userId) {
-                $totalJoined = [];
-                if(!empty($row['joined_spayc'])) {
-                    $totalJoined = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[status=Joined].status');
-                    $status = \Cake\Utility\Hash::extract($row['joined_spayc'],'{n}[user_id='.$userId.'].status');
-                }
-                $row['is_joined'] = !empty($status[0])?true:false;
-//                $row['spayc_type'] = ($row['parent_id']==NULL || $row['parent_id']=="" )?"Spayc":"SubSpayc";
-//                unset($row['parent_id']);
-                $row['joined_users'] = !empty($row['joined_spayc'])?count($totalJoined):0;
-                unset($row['joined_spayc']);
-                if(!empty($row['subscribed_users'])) {
-                    $subUserId = \Cake\Utility\Hash::extract($row['subscribed_users'],'{n}[user_id='.$userId.']');
-                }
-                unset($row['subscribed_users']);
-                $row['is_subscribed'] = !empty($subUserId[0])?true:false;
-                return $row;
-            });
-        });
-        #$spaycs->order(['Spaycs.id'=>'DESC']);
-        $spaycs->distinct('spaycs.id');
-        
-        $newQuery = clone $spaycs;
-        $data['count'] = $newQuery->count();
-        $data['records'] = [];
-        if($spaycs->count()) {
-            $data['records'] = $spaycs->toArray();
-        }
-        return $data;
-    }
-    
     public function distance($lat1, $lon1, $lat2, $lon2,$unit='km') {
         $pi80 = M_PI / 180;
         $lat1 *= $pi80;

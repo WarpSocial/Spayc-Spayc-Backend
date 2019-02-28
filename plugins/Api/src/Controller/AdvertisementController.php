@@ -214,7 +214,7 @@ class AdvertisementController extends AppController {
             unset($data[0]->user_id);
 
             $entity = TableRegistry::get('Api.Spaycs')->find('all', ['fields' => [
-                            'Spaycs.name', 'Spaycs.id', 'Spaycs.type', 'Spaycs.image','Spaycs.spayc_category_id','Spaycs.parent_id']])->join(
+                            'Spaycs.name', 'Spaycs.id', 'Spaycs.type', 'Spaycs.image','Spaycs.parent_id']])->join(
                             [
                                 'table' => 'spayc_advertisement',
                                 'type' => 'INNER',
@@ -224,11 +224,7 @@ class AdvertisementController extends AppController {
                                 ]
                             ]
                     )
-                    ->contain([
-                        'SpaycCategories' => function($q) {
-                            return $q->select(['SpaycCategories.id', 'SpaycCategories.name']);
-                        }
-                    ])
+                    ->contain(['WarpCategories.SpaycCategories'])
                     ->where(["Spaycs.status != 'Removed'"]);
             $spayc = $entity->toArray();
             $array['advertisement'] = $data[0];

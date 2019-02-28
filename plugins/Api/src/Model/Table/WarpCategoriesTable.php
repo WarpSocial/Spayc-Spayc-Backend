@@ -37,7 +37,7 @@ class WarpCategoriesTable extends Table {
         parent::initialize($config);
 
         $this->setTable('warp_categories');
-        $this->setDisplayField('id');
+        //$this->setDisplayField('id');
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
@@ -69,13 +69,8 @@ class WarpCategoriesTable extends Table {
         return ['primary'=>$primary,'other'=> implode(',', $other)];
     }
     
-    public function SaveCategories($request, $spaycEntity){
-        $warpCat = TableRegistry::get('Api.WarpCategories');
-        /* when edit subwarp return existing category, no need to save the reocrd again in case of edit the subwarp but will save new subwarp category*/
-//        if(!is_null($spaycEntity->parent_id) && !$spaycEntity->isNew()){
-//            return $spaycEntity->warp_categories;
-//        }
-        $warpCat->deleteAll(['spayc_id' => $spaycEntity->id]);
+    public function SaveCategories($request, $spaycEntity){        
+        $this->deleteAll(['spayc_id' => $spaycEntity->id]);
         $data[] = [
             'spayc_id'=>$spaycEntity->id,
             'spayc_category_id'=>$request['primary_category'],
@@ -91,7 +86,7 @@ class WarpCategoriesTable extends Table {
                 ];
             }            
         }
-        return $warpCat->saveMany($warpCat->newEntities($data));
+        return $this->saveMany($this->newEntities($data));
     }
 
 }

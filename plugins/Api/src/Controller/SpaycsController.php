@@ -74,7 +74,7 @@ class SpaycsController extends AppController {
             $this->Spaycs->save($items);
             /* save Category */
             #pr($items);die;
-            $items['warp_categories'] = TableRegistry::get('Api.WarpCategories')->SaveCategories($this->request,$items);
+            $items['warp_categories'] = TableRegistry::get('Api.WarpCategories')->SaveCategories($data,$items);
             $this->Redis->addSpayc($items);
             $items->job_type = 'new-spayc';
             $items->created_duration = Utils::toClient($items->created);
@@ -267,7 +267,7 @@ class SpaycsController extends AppController {
         $lat = $this->request->getQuery('latitude',null);
         $long = $this->request->getQuery('longitude',null);
         $spaycs = $this->Spaycs->find();
-        $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.spayc_category_id','distance'=>0])
+        $spaycs->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','distance'=>0])
             ->where(['Spaycs.status'=>'Active','Spaycs.parent_id IS'=>null,'Spaycs.group_type !='=>'trusted_private'])
             ->contain([                    
                 'JoinedSpayc' => function($q) {
@@ -280,9 +280,7 @@ class SpaycsController extends AppController {
                 'Comments' => function($q) {
                     return $q->select(['Comments.spayc_id', 'Comments.comment']);
                 },
-                'SpaycCategories' => function($q) {
-                    return $q->select(['SpaycCategories.id', 'SpaycCategories.name']);
-                }
+               'WarpCategories.SpaycCategories'
             ]);
         $bannedSpayc = $this->Spaycs->bannedSpayc($loggedUser);    
         if(!empty($bannedSpayc)){
@@ -351,9 +349,17 @@ class SpaycsController extends AppController {
         if(in_array(ucfirst($this->request->query('group_type')), ['Public', 'Private'])) {
             $spaycs->where(["Spaycs.group_type"=>ucfirst($this->request->query('group_type'))]);
         }
-        if(!empty($this->request->query('categories'))) {
-            $cats = explode(',',$this->request->query('categories'));
-            $spaycs->where(["Spaycs.spayc_category_id IN"=>$cats],['spayc_category_id' => 'integer[]']);
+        if(isset($this->request->query('categories'))) {
+            $spaycs->join(
+                [
+                    'table' => 'warp_categories',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Spaycs.id = warp_categories.spayc_id',
+                        'warp_categories.spayc_category_id IN  ('.$this->request->query('categories').')',
+                    ]
+                ]
+            );
         }
         if(!empty($this->request->query('friends')) && $this->request->query('friends') == 'yes') {
             $subQuery = $this->Spaycs->spaycWithFriends($loggedUser);
@@ -364,8 +370,7 @@ class SpaycsController extends AppController {
            $spaycs->leftJoinWith('JoinedSpayc',function($q){
                return $q->where(['JoinedSpayc.status'=>JOINED]);
            });
-           $spaycs->group(['Spaycs.id, Spaycs.name,Spaycs.user_id, Spaycs.location, Spaycs.image, Spaycs.group_type, Spaycs.type,Spaycs.start_date,
-Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,SpaycCategories.id,SpaycCategories.name,Spaycs.created']);
+           $spaycs->group(['Spaycs.id, Spaycs.name,Spaycs.user_id, Spaycs.location, Spaycs.image, Spaycs.group_type, Spaycs.type,Spaycs.start_date,Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.created']);
            $spaycs->order(['joined_user'=>'DESC','distance'=>'ASC','Spaycs.created'=>'DESC'],Query::OVERWRITE);
         }
         if($page < 0){
@@ -600,7 +605,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         
         $bannedSpayc = $this->Spaycs->bannedSpayc($userId);
         $spayc = $this->Spaycs->find();
-        $spayc->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.parent_id','Spaycs.created','Spaycs.modified','Spaycs.latitude','Spaycs.longitude','Spaycs.spayc_category_id','Spaycs.payment_type','Spaycs.ticket_url'])
+        $spayc->select(['Spaycs.id', 'Spaycs.name','Spaycs.user_id', 'Spaycs.location', 'Spaycs.image', 'Spaycs.description', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.passcode','Spaycs.matrix_room_id','Spaycs.parent_id','Spaycs.created','Spaycs.modified','Spaycs.latitude','Spaycs.longitude','Spaycs.payment_type','Spaycs.ticket_url'])
                 ->where(['Spaycs.status'=>'Active', 'OR'=>['matrix_room_id'=>$id,'Spaycs.id'=>$id]])
                 ->contain([
                     'Users'=>function($q){
@@ -615,9 +620,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
                         }
                         return $q;
                     },
-                    'SubSpaycs.SpaycCategories' => function($q) {
-                        return $q->select(['SpaycCategories.id', 'SpaycCategories.name']);
-                    },
+                    'SubSpaycs.WarpCategories.SpaycCategories',
                     'JoinedSpayc' => function($q) {
                         return  $q->select(['JoinedSpayc.id','JoinedSpayc.spayc_id','JoinedSpayc.user_id', 'JoinedSpayc.status', 'JoinedSpayc.is_admin','JoinedSpayc.distance']);
                     },
@@ -627,9 +630,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
                     'SubscribedUsers' => function($q) {
                         return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
                     },
-                    'SpaycCategories' => function($q) {
-                        return $q->select(['SpaycCategories.id', 'SpaycCategories.name']);
-                    }
+                    'WarpCategories.SpaycCategories'
                 ]);
         if($lat != null && $long != null){
             $distance = "ROUND( CAST(".str_replace(':long',$long,str_replace(':lat',$lat,$this->Spaycs->distanceInMiles))." AS numeric), 3)";
@@ -869,6 +870,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
 //        $this->Matrix->deleteRoom($matrixRoomIds);
         if ($this->Spaycs->delete($spayc)) {
             $this->Redis->deleteSpayc($spaycId);
+            TableRegistry::get('Api.WarpCategories')->deleteAll(['spayc_id IN' => $child]);
             TableRegistry::get('Api.JoinedSpayc')->deleteAll(['spayc_id IN' => $child]);
             TableRegistry::get('Api.SubscribedUsers')->deleteAll(['spayc_id IN' => $child]);
             TableRegistry::get('Api.SpaycHashtags')->deleteAll(['spayc_id IN' => $child]);
@@ -962,7 +964,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, 'Accepted');
         $query = $this->Spaycs->find()
-                ->select(['Spaycs.id', 'Spaycs.name', 'Spaycs.location','Spaycs.description', 'Spaycs.matrix_room_id', 'Spaycs.start_date', 'Spaycs.end_date', 'Spaycs.image', 'Spaycs.type', 'Spaycs.group_type', 'Spaycs.passcode','Spaycs.user_id','Spaycs.parent_id','Spaycs.spayc_category_id','Spaycs.payment_type','Spaycs.ticket_url'])
+                ->select(['Spaycs.id', 'Spaycs.name', 'Spaycs.location','Spaycs.description', 'Spaycs.matrix_room_id', 'Spaycs.start_date', 'Spaycs.end_date', 'Spaycs.image', 'Spaycs.type', 'Spaycs.group_type', 'Spaycs.passcode','Spaycs.user_id','Spaycs.parent_id','Spaycs.payment_type','Spaycs.ticket_url'])
                 ->where(['Spaycs.status'=>ACTIVE,'Spaycs.parent_id'=>$subspayc])                
                 ->contain([
                     'JoinedSpayc' => function($q) {
@@ -974,9 +976,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
                     'Comments' => function($q) {
                       return $q->select(['Comments.spayc_id', 'Comments.comment']);                     
                     },
-                    'SpaycCategories' => function($q) {
-                        return $q->select(['SpaycCategories.id', 'SpaycCategories.name']);
-                    }
+                    'WarpCategories.SpaycCategories'
                 ]);
         $bannedSpayc = $this->Spaycs->bannedSpayc($user['id']);    
         if(!empty($bannedSpayc)){
@@ -1069,7 +1069,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         
         $radius =  Configure::read('miles');
         $query = $this->Spaycs->find();
-        $query->select(['Spaycs.id', 'Spaycs.name','Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.matrix_room_id','Spaycs.spayc_category_id']);
+        $query->select(['Spaycs.id', 'Spaycs.name','Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.matrix_room_id']);
         $query->where(['Spaycs.status'=>'Active','Spaycs.parent_id IS'=>null,'Spaycs.group_type !='=>'trusted_private','OR'=>[['Spaycs.end_date >='=>$date],['Spaycs.end_date IS'=>null]]]);
         $bannedSpayc = $this->Spaycs->bannedSpayc($user['id']);    
         if(!empty($bannedSpayc)){
@@ -1081,9 +1081,7 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
             'SubscribedUsers' => function($q)use($user) {
                 return $q->select(['SubscribedUsers.id','SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])->where(['SubscribedUsers.status'=>'Active','SubscribedUsers.user_id'=>$user['id']]);
             },
-            'SpaycCategories' => function($q) {
-                return $q->select(['SpaycCategories.id', 'SpaycCategories.name']);
-            }        
+            'WarpCategories.SpaycCategories'       
             ]);
         $query->innerJoinWith('JoinedSpayc',function($q)use($user,$radius,$lat,$long) {
                 $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin','JoinedSpayc.distance'])->where(['JoinedSpayc.user_id'=>$user['id'],'JoinedSpayc.status'=>'Joined']);
@@ -1183,12 +1181,10 @@ Spaycs.end_date,Spaycs.passcode,Spaycs.matrix_room_id,Spaycs.spayc_category_id,S
         }
         $subQuery = TableRegistry::get('Api.JoinedSpayc')->joinedSpaycQuery($user['id']);
         $query = $this->Spaycs->find();
-        $query->select(['Spaycs.id', 'Spaycs.name','Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.matrix_room_id','Spaycs.spayc_category_id']);
+        $query->select(['Spaycs.id', 'Spaycs.name','Spaycs.image', 'Spaycs.group_type', 'Spaycs.type','Spaycs.start_date','Spaycs.end_date','Spaycs.matrix_room_id']);
         $query->where(['Spaycs.status'=>'Active','Spaycs.parent_id IS'=>null,'OR'=>[['Spaycs.id IN'=>$subQuery],['Spaycs.group_type'=>'Public']]]);
         $query->contain([
-            'SpaycCategories' => function($q) {
-                return $q->select(['SpaycCategories.id', 'SpaycCategories.name']);
-            }        
+            'WarpCategories.SpaycCategories'
             ]);
         $bannedSpayc = $this->Spaycs->bannedSpayc($user['id']);    
         if(!empty($bannedSpayc)){
