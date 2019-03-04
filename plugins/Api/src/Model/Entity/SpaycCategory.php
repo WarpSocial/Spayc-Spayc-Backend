@@ -36,5 +36,5 @@ class SpaycCategory extends Entity
         '*' => true,
         'id' => false
     ];
-    protected $_hidden = ['rght','parent_id','lft','created','modified'];
+    protected $_hidden = ['rght','lft','created','modified'];
 }
