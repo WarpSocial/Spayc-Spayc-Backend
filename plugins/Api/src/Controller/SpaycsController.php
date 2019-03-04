@@ -349,7 +349,7 @@ class SpaycsController extends AppController {
         if(in_array(ucfirst($this->request->query('group_type')), ['Public', 'Private'])) {
             $spaycs->where(["Spaycs.group_type"=>ucfirst($this->request->query('group_type'))]);
         }
-        if(isset($this->request->query('categories'))) {
+        if($this->request->query('categories')) {
             $spaycs->join(
                 [
                     'table' => 'warp_categories',

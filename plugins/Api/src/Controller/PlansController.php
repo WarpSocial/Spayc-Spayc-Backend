@@ -281,7 +281,6 @@ class PlansController extends AppController {
                         'spayc.group_type',
                         'spayc.start_date',
                         'spayc.end_date',
-                        'spayc.spayc_category_id',
                         'sc.id',
                         'sc.name',
                         'joined_spayc_status'=>'joined_spayc.status',
@@ -366,7 +365,7 @@ class PlansController extends AppController {
         }
         $data=$ad->first();
         if(!empty($data['sc'])){
-            $data['spayc']['spayc_category'] = $data['sc'];
+            $data['spayc']['warp_categories'] = $data['sc'];
             unset($data['sc']);
         }
         $timezone = Configure::read('timezone');
@@ -528,7 +527,7 @@ class PlansController extends AppController {
         
         $data=$ad->first();        
         if(!empty($data['sc'])){
-            $data['spayc']['spayc_category'] = $data['sc'];
+            $data['spayc']['warp_categories'] = $data['sc'];
             unset($data['sc']);
         }
         $timezone = Configure::read('timezone');

@@ -77,6 +77,10 @@ class QueueGenericTask extends QueueTask {
         $push = new PushComponent(new ComponentRegistry());
         $phylRepo = TableRegistry::get('Api.PhysicalLocation');
         $users = $phylRepo->userNearSpayc($data['latitude'],$data['longitude']);
+        $warpCategories = [];
+        if(!empty($data['warp_categories'])){
+            $warpCategories = array_column($data['warp_categories'],'spayc_category_id');
+        }
         $userCategories = [] ;
         if(!$users->isEmpty()){
             $categories = TableRegistry::get('Api.UserCategory')->userCategories(\Cake\Utility\Hash::extract($users->toArray(), '{n}.user_id'));
@@ -102,10 +106,11 @@ class QueueGenericTask extends QueueTask {
                 'spayc_id'=>$data['id'],
                 'date_time'=>$data['created_duration']
             ];
-           
-            if($data['user_id'] != $user->user_id){ /* Event Owner will not get notification */
-                if(!empty($userCategories[$user->user_id]) && in_array($data['spayc_category_id'],$userCategories[$user->user_id])){
-                    /* user specify the categories */
+           /* Event Owner will not get notification */
+            if($data['user_id'] != $user->user_id){ 
+                /* Get notification only for selected category */
+                if(!empty($userCategories[$user->user_id]) && !empty(array_intersect($warpCategories,$userCategories[$user->user_id]))){
+                    /* Save the record to notification table */
                     $notify = $notificationRepo->addNotification($notificationItems);
                 }
             }
@@ -120,8 +125,8 @@ class QueueGenericTask extends QueueTask {
                 'time'=>$data['created_duration']
             ];
             if($data['user_id'] != $user->user_id){
-                if(!empty($userCategories[$user->user_id]) && in_array($data['spayc_category_id'],$userCategories[$user->user_id])){
-                    /* user specify the categories */
+                if(!empty($userCategories[$user->user_id]) && !empty(array_intersect($warpCategories,$userCategories[$user->user_id]))){
+                    /* Send notification*/
                     $push->sendOnIOS($items);
                 }
             }
