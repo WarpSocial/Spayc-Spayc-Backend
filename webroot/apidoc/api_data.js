@@ -2809,8 +2809,15 @@ define({ "api": [
             "group": "Parameter",
             "type": "Integer",
             "optional": false,
-            "field": "spayc_category_id",
-            "description": "<p>existing Category id(Required).</p> "
+            "field": "primary_category",
+            "description": "<p>Category id which will be set as default category for a warp(Required).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "other_category",
+            "description": "<p>Other existing category id with comma separated and must be less than or equest to 5(Optional).</p> "
           },
           {
             "group": "Parameter",
@@ -2933,7 +2940,7 @@ define({ "api": [
         "name": "private"
       }
     ],
-    "description": "<p>Create SPAYC.</p> ",
+    "description": "<p>Create SPAYC and data should be post in multipart form data.</p> ",
     "header": {
       "fields": {
         "Header": [
@@ -3031,8 +3038,15 @@ define({ "api": [
             "group": "Parameter",
             "type": "Integer",
             "optional": false,
-            "field": "spayc_category_id",
-            "description": "<p>existing Category id(Required).</p> "
+            "field": "primary_category",
+            "description": "<p>Category id which will be set as default category for a warp(Required).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "other_category",
+            "description": "<p>Other existing category id with comma separated and must be less than or equest to 5(Optional).</p> "
           },
           {
             "group": "Parameter",

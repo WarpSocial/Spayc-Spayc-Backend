@@ -42,7 +42,8 @@
 @apiParam {String} image            Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
 @apiParam {String} longitude        Langitude from google map (Required).
 @apiParam {String} latitude         Latitude from google map (Required).
-@apiParam {Integer} spayc_category_id  existing Category id(Required).
+@apiParam {Integer} primary_category  Category id which will be set as default category for a warp(Required).
+@apiParam {String} other_category  Other existing category id with comma separated and must be less than or equest to 5(Optional).
 @apiParam {String}  payment_type    payment option and value must be Free,Paid or NA(Required).
 @apiParam {String}  ticket_url      Payment ticket url must be comma separated (Optional).
 @apiParam {String} invite           Matrix user id is optional in query string(Optional).
@@ -120,7 +121,8 @@ function postSpaycs() { return; }
 @apiParam {String} image            Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
 @apiParam {String}  payment_type    payment option and value must be Free,Paid or NA(Required).
 @apiParam {String}  ticket_url      Payment ticket url must be comma separated (Optional).
-@apiParam {Integer} spayc_category_id  existing Category id(Required).
+@apiParam {Integer} primary_category  Category id which will be set as default category for a warp(Required).
+@apiParam {String} other_category  Other existing category id with comma separated and must be less than or equest to 5(Optional).
 @apiParam {String} longitude        Langitude from google map (Required).
 @apiParam {String} latitude         Latitude from google map (Required).
 
