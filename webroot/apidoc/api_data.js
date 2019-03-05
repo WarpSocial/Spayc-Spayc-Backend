@@ -104,7 +104,7 @@ define({ "api": [
     "groupTitle": "Advertisement",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/ad-logic.json"
+        "url": "http://spayc-staging.kiwireader.com/api/ad-logic.json"
       }
     ],
     "error": {
@@ -235,7 +235,7 @@ define({ "api": [
     "groupTitle": "Advertisement",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/ad-logic-start.json"
+        "url": "http://spayc-staging.kiwireader.com/api/ad-logic-start.json"
       }
     ],
     "error": {
@@ -429,7 +429,7 @@ define({ "api": [
     "groupTitle": "Advertisement",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/create-advertisement.json"
+        "url": "http://spayc-staging.kiwireader.com/api/create-advertisement.json"
       }
     ],
     "error": {
@@ -553,7 +553,7 @@ define({ "api": [
     "groupTitle": "Advertisement",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/advertisement-delete.json?id=:id"
+        "url": "http://spayc-staging.kiwireader.com/api/advertisement-delete.json?id=:id"
       }
     ],
     "error": {
@@ -726,7 +726,7 @@ define({ "api": [
     "groupTitle": "Advertisement",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/advertisement-edit.json"
+        "url": "http://spayc-staging.kiwireader.com/api/advertisement-edit.json"
       }
     ],
     "error": {
@@ -857,7 +857,7 @@ define({ "api": [
     "groupTitle": "Advertisement",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/user-advertisement.json?page=:page&limit=:limit"
+        "url": "http://spayc-staging.kiwireader.com/api/user-advertisement.json?page=:page&limit=:limit"
       }
     ],
     "error": {
@@ -981,7 +981,7 @@ define({ "api": [
     "groupTitle": "Advertisement",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/advertisement-details.json?id=:id"
+        "url": "http://spayc-staging.kiwireader.com/api/advertisement-details.json?id=:id"
       }
     ],
     "error": {
@@ -1162,7 +1162,7 @@ define({ "api": [
     "groupTitle": "Friend_Request",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/add-friend.json"
+        "url": "http://spayc-staging.kiwireader.com/api/add-friend.json"
       }
     ]
   },
@@ -1307,7 +1307,7 @@ define({ "api": [
     "groupTitle": "Friend_Request",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/block-friend.json"
+        "url": "http://spayc-staging.kiwireader.com/api/block-friend.json"
       }
     ]
   },
@@ -1416,7 +1416,7 @@ define({ "api": [
     "groupTitle": "Friend_Request",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/get-friends.json?page=:page&limit=:page&friend_status=:status"
+        "url": "http://spayc-staging.kiwireader.com/api/get-friends.json?page=:page&limit=:page&friend_status=:status"
       }
     ],
     "error": {
@@ -1597,7 +1597,7 @@ define({ "api": [
     "groupTitle": "Friend_Request",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/request-accept-declined.json"
+        "url": "http://spayc-staging.kiwireader.com/api/request-accept-declined.json"
       }
     ]
   },
@@ -1742,7 +1742,7 @@ define({ "api": [
     "groupTitle": "Friend_Request",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/unblock-friend.json"
+        "url": "http://spayc-staging.kiwireader.com/api/unblock-friend.json"
       }
     ]
   },
@@ -1887,7 +1887,7 @@ define({ "api": [
     "groupTitle": "Friend_Request",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/unfriend-request.json"
+        "url": "http://spayc-staging.kiwireader.com/api/unfriend-request.json"
       }
     ]
   },
@@ -1962,7 +1962,7 @@ define({ "api": [
     "groupTitle": "Plans",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/meta-data.json"
+        "url": "http://spayc-staging.kiwireader.com/api/meta-data.json"
       }
     ],
     "error": {
@@ -2128,7 +2128,7 @@ define({ "api": [
     "groupTitle": "Plans",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/add-promotional-spayc.json"
+        "url": "http://spayc-staging.kiwireader.com/api/add-promotional-spayc.json"
       }
     ],
     "error": {
@@ -2273,7 +2273,7 @@ define({ "api": [
     "groupTitle": "Promotion",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/promotion-logic.json"
+        "url": "http://spayc-staging.kiwireader.com/api/promotion-logic.json"
       }
     ],
     "error": {
@@ -2404,7 +2404,7 @@ define({ "api": [
     "groupTitle": "Promotion",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/promotion-logic-start.json"
+        "url": "http://spayc-staging.kiwireader.com/api/promotion-logic-start.json"
       }
     ],
     "error": {
@@ -2535,7 +2535,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/chat-room.json"
+        "url": "http://spayc-staging.kiwireader.com/api/chat-room.json"
       }
     ],
     "error": {
@@ -2652,7 +2652,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/spaycs/delete.json?id=:room_id"
+        "url": "http://spayc-staging.kiwireader.com/api/spaycs/delete.json?id=:room_id"
       }
     ],
     "error": {
@@ -2917,7 +2917,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/spayc-edit.json"
+        "url": "http://spayc-staging.kiwireader.com/api/spayc-edit.json"
       }
     ]
   },
@@ -3103,7 +3103,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/spaycs.json"
+        "url": "http://spayc-staging.kiwireader.com/api/spaycs.json"
       }
     ],
     "error": {
@@ -3276,7 +3276,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/create-subspace.json"
+        "url": "http://spayc-staging.kiwireader.com/api/create-subspace.json"
       }
     ],
     "error": {
@@ -3400,7 +3400,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/events-image.json?events=:matrix_room_id"
+        "url": "http://spayc-staging.kiwireader.com/api/events-image.json?events=:matrix_room_id"
       }
     ],
     "error": {
@@ -3531,7 +3531,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/joined-spayc.json?"
+        "url": "http://spayc-staging.kiwireader.com/api/joined-spayc.json?"
       }
     ],
     "error": {
@@ -3669,7 +3669,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/public-spaycs.json?page=:page&limit=:limit"
+        "url": "http://spayc-staging.kiwireader.com/api/public-spaycs.json?page=:page&limit=:limit"
       }
     ],
     "error": {
@@ -3800,7 +3800,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/rooms-image.json?limit=:limit&page=:page"
+        "url": "http://spayc-staging.kiwireader.com/api/rooms-image.json?limit=:limit&page=:page"
       }
     ],
     "error": {
@@ -3945,7 +3945,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/spayc-members.json"
+        "url": "http://spayc-staging.kiwireader.com/api/spayc-members.json"
       }
     ],
     "error": {
@@ -4160,7 +4160,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/spaycs.json?page=:page&limit=5&latitude=28.4594965&longitude=77.0266383"
+        "url": "http://spayc-staging.kiwireader.com/api/spaycs.json?page=:page&limit=5&latitude=28.4594965&longitude=77.0266383"
       }
     ],
     "error": {
@@ -4319,7 +4319,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/subspaycs.json?spayc_id=:id&page=:page&limit=:limit&latitude=:latitude&longitude=:longitude"
+        "url": "http://spayc-staging.kiwireader.com/api/subspaycs.json?spayc_id=:id&page=:page&limit=:limit&latitude=:latitude&longitude=:longitude"
       }
     ],
     "error": {
@@ -4450,7 +4450,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/subscribed-spaycs.json?page=:page&limit=:limit"
+        "url": "http://spayc-staging.kiwireader.com/api/subscribed-spaycs.json?page=:page&limit=:limit"
       }
     ],
     "error": {
@@ -4581,7 +4581,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/physical-present-spaycs.json?latitude=:latitude&longitude=:longitude"
+        "url": "http://spayc-staging.kiwireader.com/api/physical-present-spaycs.json?latitude=:latitude&longitude=:longitude"
       }
     ],
     "error": {
@@ -4712,7 +4712,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/hash-tag-spaycs.json?page=:page&limit=:limit&keyword=:keyword"
+        "url": "http://spayc-staging.kiwireader.com/api/hash-tag-spaycs.json?page=:page&limit=:limit&keyword=:keyword"
       }
     ],
     "error": {
@@ -4920,7 +4920,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/map-spaycs.json"
+        "url": "http://spayc-staging.kiwireader.com/api/map-spaycs.json"
       }
     ],
     "error": {
@@ -5058,7 +5058,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/accept-join-request.json"
+        "url": "http://spayc-staging.kiwireader.com/api/accept-join-request.json"
       }
     ],
     "error": {
@@ -5196,7 +5196,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/ban-spayc-member.json"
+        "url": "http://spayc-staging.kiwireader.com/api/ban-spayc-member.json"
       }
     ],
     "error": {
@@ -5334,7 +5334,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/change-role.json"
+        "url": "http://spayc-staging.kiwireader.com/api/change-role.json"
       }
     ],
     "error": {
@@ -5472,7 +5472,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/join-spayc.json"
+        "url": "http://spayc-staging.kiwireader.com/api/join-spayc.json"
       }
     ],
     "error": {
@@ -5610,7 +5610,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/join-sub-spayc.json"
+        "url": "http://spayc-staging.kiwireader.com/api/join-sub-spayc.json"
       }
     ],
     "error": {
@@ -5741,7 +5741,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/remove-spayc-member.json"
+        "url": "http://spayc-staging.kiwireader.com/api/remove-spayc-member.json"
       }
     ],
     "error": {
@@ -5915,7 +5915,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/reported-warp.json"
+        "url": "http://spayc-staging.kiwireader.com/api/reported-warp.json"
       }
     ]
   },
@@ -6053,7 +6053,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/unsubscribe-spayc.json"
+        "url": "http://spayc-staging.kiwireader.com/api/unsubscribe-spayc.json"
       }
     ]
   },
@@ -6101,7 +6101,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/update-comment/:matrix_room_id.json"
+        "url": "http://spayc-staging.kiwireader.com/api/update-comment/:matrix_room_id.json"
       }
     ],
     "error": {
@@ -6239,7 +6239,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/spayc-details.json?id=:id&latitude=:lat&longitude=:long"
+        "url": "http://spayc-staging.kiwireader.com/api/spayc-details.json?id=:id&latitude=:lat&longitude=:long"
       }
     ],
     "error": {
@@ -6413,7 +6413,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/subscribe-spayc.json"
+        "url": "http://spayc-staging.kiwireader.com/api/subscribe-spayc.json"
       }
     ]
   },
@@ -6488,7 +6488,7 @@ define({ "api": [
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/unread-notification.json"
+        "url": "http://spayc-staging.kiwireader.com/api/unread-notification.json"
       }
     ],
     "error": {
@@ -6592,7 +6592,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/facebook-friends.json?page=:page&limit=:limit"
+        "url": "http://spayc-staging.kiwireader.com/api/facebook-friends.json?page=:page&limit=:limit"
       }
     ],
     "error": {
@@ -6773,7 +6773,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/friend-request.json"
+        "url": "http://spayc-staging.kiwireader.com/api/friend-request.json"
       }
     ]
   },
@@ -6905,7 +6905,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/login.json"
+        "url": "http://spayc-staging.kiwireader.com/api/login.json"
       }
     ]
   },
@@ -7000,7 +7000,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/update-user-status.json"
+        "url": "http://spayc-staging.kiwireader.com/api/update-user-status.json"
       }
     ],
     "error": {
@@ -7181,7 +7181,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/users.json"
+        "url": "http://spayc-staging.kiwireader.com/api/users.json"
       }
     ],
     "error": {
@@ -7382,7 +7382,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/profile-edit.json"
+        "url": "http://spayc-staging.kiwireader.com/api/profile-edit.json"
       }
     ],
     "error": {
@@ -7486,7 +7486,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/reverification.json"
+        "url": "http://spayc-staging.kiwireader.com/api/reverification.json"
       }
     ],
     "error": {
@@ -7624,7 +7624,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/change-password.json"
+        "url": "http://spayc-staging.kiwireader.com/api/change-password.json"
       }
     ],
     "error": {
@@ -7841,7 +7841,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/facebook-signup.json"
+        "url": "http://spayc-staging.kiwireader.com/api/facebook-signup.json"
       }
     ]
   },
@@ -7909,7 +7909,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/forgot-password.json"
+        "url": "http://spayc-staging.kiwireader.com/api/forgot-password.json"
       }
     ],
     "error": {
@@ -8020,7 +8020,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/logout.json"
+        "url": "http://spayc-staging.kiwireader.com/api/logout.json"
       }
     ],
     "error": {
@@ -8144,7 +8144,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/get-notifications.json?page=:page&limit=:limit"
+        "url": "http://spayc-staging.kiwireader.com/api/get-notifications.json?page=:page&limit=:limit"
       }
     ],
     "error": {
@@ -8303,7 +8303,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/users.json?page=:page&limit=:limit&keyword=:keyword&latitude=:latitude&longitude=:longitude"
+        "url": "http://spayc-staging.kiwireader.com/api/users.json?page=:page&limit=:limit&keyword=:keyword&latitude=:latitude&longitude=:longitude"
       }
     ],
     "error": {
@@ -8407,7 +8407,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/avatars.json"
+        "url": "http://spayc-staging.kiwireader.com/api/avatars.json"
       }
     ],
     "error": {
@@ -8581,7 +8581,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/read-notifications.json"
+        "url": "http://spayc-staging.kiwireader.com/api/read-notifications.json"
       }
     ]
   },
@@ -8733,7 +8733,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/spam-reports.json"
+        "url": "http://spayc-staging.kiwireader.com/api/spam-reports.json"
       }
     ]
   },
@@ -8778,7 +8778,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "categories",
-            "description": "<p>List of existing categories id(required).</p> "
+            "description": "<p>comma separated category id(required).</p> "
           }
         ]
       }
@@ -8798,14 +8798,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>ser category has been saved successfully.</p> "
+            "description": "<p>user category has been saved successfully.</p> "
           }
         ]
       },
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"ser category has been saved successfully\"\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"user category has been saved successfully\"\n}",
           "type": "json"
         }
       ]
@@ -8814,7 +8814,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/user-categories.json"
+        "url": "http://spayc-staging.kiwireader.com/api/user-categories.json"
       }
     ],
     "error": {
@@ -8945,7 +8945,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/feedback.json"
+        "url": "http://spayc-staging.kiwireader.com/api/feedback.json"
       }
     ],
     "error": {
@@ -9069,7 +9069,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/ghost-mode.json"
+        "url": "http://spayc-staging.kiwireader.com/api/ghost-mode.json"
       }
     ],
     "error": {
@@ -9173,7 +9173,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/remove-avatar/:order.json"
+        "url": "http://spayc-staging.kiwireader.com/api/remove-avatar/:order.json"
       }
     ],
     "error": {
@@ -9354,7 +9354,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/friend-response.json"
+        "url": "http://spayc-staging.kiwireader.com/api/friend-response.json"
       }
     ]
   },
@@ -9415,7 +9415,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/set-profile-image/:order.json"
+        "url": "http://spayc-staging.kiwireader.com/api/set-profile-image/:order.json"
       }
     ],
     "error": {
@@ -9546,7 +9546,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/update-device-token.json"
+        "url": "http://spayc-staging.kiwireader.com/api/update-device-token.json"
       }
     ],
     "error": {
@@ -9670,7 +9670,7 @@ define({ "api": [
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/user-profile/:userId.json"
+        "url": "http://spayc-staging.kiwireader.com/api/user-profile/:userId.json"
       }
     ],
     "error": {

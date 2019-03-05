@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "description": "",
   "title": "SPAYC API",
-  "url" : "http://spayc.com/api",
-  "sampleUrl": "http://spayc.com/api",
+  "url" : "http://spayc-staging.kiwireader.com/api",
+  "sampleUrl": "http://spayc-staging.kiwireader.com/api",
   "template": {
   	"withCompare": false,
   	"withGenerator": false

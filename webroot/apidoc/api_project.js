@@ -3,8 +3,8 @@ define({
   "version": "0.1.0",
   "description": "",
   "title": "SPAYC API",
-  "url": "http://spayc.com/api",
-  "sampleUrl": "http://spayc.com/api",
+  "url": "http://spayc-staging.kiwireader.com/api",
+  "sampleUrl": "http://spayc-staging.kiwireader.com/api",
   "template": {
     "withCompare": false,
     "withGenerator": false
@@ -12,7 +12,7 @@ define({
   "apidoc": "0.2.0",
   "generator": {
     "name": "apidoc",
-    "time": "2019-02-22T11:54:08.906Z",
+    "time": "2019-03-05T11:00:45.482Z",
     "url": "http://apidocjs.com",
     "version": "0.12.3"
   }
