@@ -703,16 +703,16 @@ function putGhostMode() { return; }
  * @apiHeader {String} TOKEN Token must be set in header.
  * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  *
- * @apiParam {String} categories  List of existing categories id(required).
+ * @apiParam {String} categories  comma separated category id(required).
  *
  *
  * @apiSuccess {String} status success.
- * @apiSuccess {String} message ser category has been saved successfully.
+ * @apiSuccess {String} message user category has been saved successfully.
  * @apiSuccessExample {json} Success-Response:
  *      HTTP/1.1 200 OK
 {
     "status": "success",
-    "message": "ser category has been saved successfully"
+    "message": "user category has been saved successfully"
 }
  *
  * @apiUse UserErrorResponse

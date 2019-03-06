@@ -46,6 +46,7 @@ class ScraperComponent extends Component {
             }
             return json_decode($response->body, true); 
         } catch (\Exception $ex) {
+            Log::error($ex->getMessage());
              $this->setScraperLog('failed',$time,$url,json_encode(['message'=>$ex->getMessage(),'code'=>$ex->getCode()]));
             return '';
         }
@@ -234,7 +235,7 @@ class ScraperComponent extends Component {
             'startDateTime'=> $beginOfDay->format('Y-m-d\TH:i:s\Z'),
             'endDateTime'=> $endOfDay->format('Y-m-d\TH:i:s\Z'),
         ]);
-        //$url=$this->SCRAPER_ROOT_URL['ticketmasterurl'].'events.json?apikey='.$this->SCRAPER_ROOT_URL_TOKEN['ticketmastertoken'].'&city=%22New%20York%22&stateCode=NY&countryCode=US&page=0&size=200&sort=date,asc&startDateTime='.$startDate.'T00:00:00Z&endDateTime='.$startDate.'T23:59:00Z';        
+               
         $resp=$this->curlRequest($url,$time);       
         if(isset($resp['_embedded']['events']) && count($resp['_embedded']['events'])){
         $events = $eventIds = array();
@@ -567,7 +568,7 @@ class ScraperComponent extends Component {
                      $category = $this->ScraperCategories->isCatExist($cat,$website);
                     //If Category Exist in Spayc
                     if ($category) {
-                        $createSpaceData['spayc_category_id'] = $category[1];
+                        $createSpaceData['primary_category'] = $category[1];
                         if($category[2]){
                             $createSpaceData['description'].= " #".str_replace(" ", "", $category[2]);
                         }

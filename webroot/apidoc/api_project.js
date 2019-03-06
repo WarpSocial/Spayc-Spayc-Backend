@@ -1,10 +1,13 @@
 define({
-  "name": "SPAYC API",
+  "name": "WARP API",
   "version": "0.1.0",
   "description": "",
-  "title": "SPAYC API",
-  "url": "http://spayc.com/api",
-  "sampleUrl": "http://spayc.com/api",
+  "title": "WARP API",
+  "url": "http://spayc-staging.kiwireader.com/api",
+  "sampleUrl": "http://spayc-staging.kiwireader.com/api",
+  "header": {
+    "title": "Warp API"
+  },
   "template": {
     "withCompare": false,
     "withGenerator": false
@@ -12,7 +15,7 @@ define({
   "apidoc": "0.2.0",
   "generator": {
     "name": "apidoc",
-    "time": "2019-03-04T07:34:17.080Z",
+    "time": "2019-03-05T11:11:05.582Z",
     "url": "http://apidocjs.com",
     "version": "0.12.3"
   }

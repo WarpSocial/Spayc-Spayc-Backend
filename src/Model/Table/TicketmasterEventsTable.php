@@ -122,6 +122,7 @@ class TicketmasterEventsTable extends Table
                     $result = $this->save($Entity);
                 } else if(in_array($val['ticketmaster_event_id'],$getIds)) {
                     $query = $this->query();
+                    $events[$val['ticketmaster_event_id']]['modified'] = date('Y-m-d H:i:s');
                     $query->update()
                     ->set($events[$val['ticketmaster_event_id']])
                     ->where(['ticketmaster_event_id' => $val['ticketmaster_event_id']])
@@ -133,6 +134,7 @@ class TicketmasterEventsTable extends Table
         }  else {
             foreach ($getIds as $id) {
                 $query = $this->query();
+                $events[$id]['modified'] = date('Y-m-d H:i:s');
                 $query->update()
                 ->set($events[$id])
                 ->where(['ticketmaster_event_id' => $id])
