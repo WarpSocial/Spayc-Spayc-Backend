@@ -702,3 +702,30 @@ CREATE TABLE warp_categories (
     PRIMARY KEY (id)
 );
 SELECT create_hypertable('warp_categories', 'created');
+
+-- Drop table
+
+-- DROP TABLE warp_frequency
+DROP TABLE IF EXISTS warp_frequency;
+CREATE TABLE warp_frequency(
+    id bigserial NOT NULL,
+    spayc_id bigint NOT NULL,
+    frequency_type integer NOT NULL DEFAULT 1,
+    start_date timestamp,
+    end_date timestamp,
+    day_of_week integer NULL DEFAULT NULL,
+    day_of_month integer NULL DEFAULT NULL,
+    week_of_month integer NULL DEFAULT NULL,
+    month_of_year integer NULL DEFAULT NULL,
+    custom_year integer NULL DEFAULT NULL,
+    created timestamp NOT NULL,
+    modified timestamp NULL,
+    PRIMARY KEY (id, created)
+);
+COMMENT ON COLUMN "warp_frequency"."frequency_type" IS '1=>Daily,2=>Weekly,3=>Monthly,4=>Yearly,5=>Custom';
+COMMENT ON COLUMN "warp_frequency"."day_of_week" IS 'When frequenty type is weekly';
+COMMENT ON COLUMN "warp_frequency"."day_of_month" IS 'When frequenty type is monthly';
+COMMENT ON COLUMN "warp_frequency"."week_of_month" IS 'When frequenty type is monthly,yearly,custom. But not required';
+COMMENT ON COLUMN "warp_frequency"."month_of_year" IS 'When frequenty type is yearly and custom';
+COMMENT ON COLUMN "warp_frequency"."custom_year" IS 'When frequenty type is custom';
+SELECT create_hypertable('warp_frequency', 'created');

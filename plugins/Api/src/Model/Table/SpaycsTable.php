@@ -11,7 +11,9 @@ use Cake\I18n\Time;
 use Cake\ORM\TableRegistry;
 use Cake\Controller\ComponentRegistry;
 use Api\Utils\Utils;
+use ArrayObject;
 use Cake\Utility\Hash;
+use Cake\Event\Event;
 use Api\Controller\Component\PushComponent;
 use Api\Controller\Component\MatrixComponent;
 use Cake\Database\Expression\QueryExpression;
@@ -143,6 +145,15 @@ class SpaycsTable extends Table {
         }else{ 
             return false;
         }       
+    }
+    
+    public function beforeMarshal(Event $event, ArrayObject $data, ArrayObject $options){
+        if (empty($data['end_date']) && !empty($data['start_date'])) {            
+            $endDate = new DateTime($data['start_date'], Configure::read('timezone'));
+            $endDate->modify('+2 Years');
+            echo $data['start_date']. ' and '.$endDate->format('Y-m-d H:i:s');die;
+                    
+        }
     }
 
     /**
