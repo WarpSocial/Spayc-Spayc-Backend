@@ -863,15 +863,7 @@ class SpaycsTable extends Table {
                 ]
             );
         }
-//        $spaycs->join([
-//            'table' => 'warp_frequency',
-//            'type' => 'LEFT',
-//            'conditions' => [
-//                'Spaycs.id = warp_frequency.spayc_id',
-//            ]
-//        ]);
-        
-        //debug($spaycs->toArray());die;
+
         $subQuery = TableRegistry::get('Api.JoinedSpayc')->bannedSpaycQuery($userId);
         $spaycs->where(['Spaycs.id NOT IN'=>$subQuery]);
         $spaycs->contain([
