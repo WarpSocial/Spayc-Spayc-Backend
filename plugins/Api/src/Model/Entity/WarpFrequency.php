@@ -1,23 +1,28 @@
 <?php
+
 namespace Api\Model\Entity;
 
 use Cake\ORM\Entity;
 
 /**
- * WarpCategory Entity
+ * WarpFrequency Entity
  *
  * @property int $id
  * @property int $spayc_id
- * @property int $spayc_category_id
- * @property bool $is_primary
+ * @property int $frequency_type
+ * @property \Cake\I18n\FrozenTime $start_date
+ * @property \Cake\I18n\FrozenTime $end_date
+ * @property int $day_of_week
+ * @property int $day_of_month
+ * @property int $week_of_month
+ * @property int $month_of_year
+ * @property int $custom_year
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
  *
  * @property \Api\Model\Entity\Spayc $spayc
- * @property \Api\Model\Entity\SpaycCategory $spayc_category
  */
-class WarpCategory extends Entity
-{
+class WarpFrequency extends Entity {
 
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
@@ -32,7 +37,5 @@ class WarpCategory extends Entity
         '*' => true,
         'id' => false
     ];
-      
-    protected $_hidden = ['created','modified'];
-    
+
 }

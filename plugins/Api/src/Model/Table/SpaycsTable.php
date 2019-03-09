@@ -125,6 +125,12 @@ class SpaycsTable extends Table {
             'joinType' => 'LEFT',
             'className' => 'Api.WarpCategories'
         ]);
+        /*Relation for warp repeat*/
+        $this->hasMany('WarpFrequency', [
+            'foreignKey' => 'spayc_id',
+            'joinType' => 'LEFT',
+            'className' => 'Api.WarpFrequency'
+        ]);
         
         /* Earth radius in miles 3959 */
         /* for postgresql cast is required else for mysql not*/
@@ -148,11 +154,12 @@ class SpaycsTable extends Table {
     }
     
     public function beforeMarshal(Event $event, ArrayObject $data, ArrayObject $options){
-        if (empty($data['end_date']) && !empty($data['start_date'])) {            
-            $endDate = new DateTime($data['start_date'], Configure::read('timezone'));
+        /* if enddate not be set then event end date will for 2 years */
+        if (empty($data['end_date']) && !empty($data['start_date'])) {
+            $endDate = Utils::dateTimeFormatter($data['start_date'],null,'Y-m-d H:i:s');
+            $endDate = new Time($endDate, Configure::read('timezone'));
             $endDate->modify('+2 Years');
-            echo $data['start_date']. ' and '.$endDate->format('Y-m-d H:i:s');die;
-                    
+            $data['end_date'] = $endDate->format('m-d-Y H:i:s');
         }
     }
 
@@ -164,9 +171,9 @@ class SpaycsTable extends Table {
      */
     public function validationDefault(Validator $validator) {
         $validator
-                ->requirePresence('name','create', __('Name key is missing.'))
-                ->maxLength('name', 255,'Name text is too long.')
-                ->notEmpty('name',__('Warp name is required.'));
+                ->requirePresence('name','create', __('Warp title is missing.'))
+                ->maxLength('name', 255,'Warp title is too long.')
+                ->notEmpty('name',__('Warp title is required.'));
 
         $validator
                 ->maxLength('location', 255,__('Location test is too long.'))
@@ -404,10 +411,10 @@ class SpaycsTable extends Table {
                 ->notEmpty('parent_matrix_room_id',__('Matrix parent room id is required.'));
         
         $validator
-                ->requirePresence('name','create', __('Name key is missing.'))
-                ->maxLength('name', 255,'Name text is too long.')
-                ->notEmpty('name',__('Warp name is required.'))
-                ->notBlank('name',__('Warp name is required.'));
+                ->requirePresence('name','create', __('Warp title is missing.'))
+                ->maxLength('name', 255,'Warp title is too long.')
+                ->notEmpty('name',__('Warp title is required.'))
+                ->notBlank('name',__('Warp title is required.'));
 
         $validator
                 ->requirePresence('group_type', 'create',__('Group key is missing.'))
@@ -762,10 +769,7 @@ class SpaycsTable extends Table {
         $unit = 'm';//meter
         $now = new Time('now', Configure::read('timezone'));        
         $now->modify('today');
-        $timeStmap = $now->getTimestamp();                
-        $dateRange = Utils::dateRangeUtc(Configure::read('timezone'),MAP_DAYS_RANGE);
-        $today_date = $dateRange['start'];
-        $twoWeek = $dateRange['end']; 
+        $timeStmap = $now->getTimestamp();
         $fields = ['id', 'name','start_date', 'matrix_room_id', 'image', 'type', 'modified', 'latitude','longitude','score'=>'website'];
         /* if user filter past date event in that case calculate distance manually because redis clean past event */
         if(isset($request['is_filter']) && ($request['is_filter'] === true) && (isset($request['current_date']) && $request['current_date'] < $timeStmap)){ 
@@ -798,31 +802,8 @@ class SpaycsTable extends Table {
                 ->select($fields)
                 ->where(['Spaycs.status'=>'Active','Spaycs.group_type !='=>'trusted_private', 'Spaycs.parent_id IS'=>null,'Spaycs.id IN'=>$requiredSpaycs]);
         }
-        
-        $startDate = "TO_TIMESTAMP(cast(Spaycs.start_date as text),'YYYY-MM-DD HH24:MI')";
-        $endDate = "TO_TIMESTAMP(cast(Spaycs.end_date as text),'YYYY-MM-DD HH24:MI')";  
-        if(isset($request['is_filter']) && ($request['is_filter'] === true) && isset($request['current_date'])){
-            $filterDate = Time::createFromTimestamp($request['current_date'], Configure::read('timezone'));
-            /* reverse of timezone offset */
-            $zoneOffset = -1 * $filterDate->getOffset();
-            
-            $beginOfDay = Time::createFromTimestamp($request['current_date'],'UTC');            
-            $beginOfDay->modify($zoneOffset.' second');
-           
-            $endOfDay = Time::createFromTimestamp($request['current_date'],'UTC');
-            $endOfDay->modify('tomorrow');            
-            $endOfDay->modify($zoneOffset.' second');           
-            $spaycs->where(function (QueryExpression $exp, Query $q)use($startDate,$beginOfDay,$endOfDay) {
-                return $exp->between($startDate, $beginOfDay->format('Y-m-d H:i'), $endOfDay->format('Y-m-d H:i'));
-            });
-        }else{
-            $spaycs->where([
-                'OR'=>[[$startDate.' >='=>$today_date],[$endDate.' >= '=>$today_date]]
-                ]);
-            $spaycs->where([
-                'OR'=>[[$startDate.' <='=>$twoWeek],[$endDate.' <= '=>$twoWeek]]
-                ]);
-        }
+        /*Get spayc Query object after adding event start and end date */
+        $spaycs = $this->warpEventDate($request, $spaycs);
         
         if(isset($request['spayc_type']) && $request['spayc_type']) {
             $spayc_type = explode("|",ucfirst($request['spayc_type']));
@@ -882,6 +863,15 @@ class SpaycsTable extends Table {
                 ]
             );
         }
+//        $spaycs->join([
+//            'table' => 'warp_frequency',
+//            'type' => 'LEFT',
+//            'conditions' => [
+//                'Spaycs.id = warp_frequency.spayc_id',
+//            ]
+//        ]);
+        
+        //debug($spaycs->toArray());die;
         $subQuery = TableRegistry::get('Api.JoinedSpayc')->bannedSpaycQuery($userId);
         $spaycs->where(['Spaycs.id NOT IN'=>$subQuery]);
         $spaycs->contain([
@@ -893,8 +883,10 @@ class SpaycsTable extends Table {
                 return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id'])
                         ->where(['SubscribedUsers.status' => "Active"]);;
             },
-            'WarpCategories.SpaycCategories'
+           'WarpCategories.SpaycCategories'
         ]);
+        /*remove duplicate id*/
+        $spaycs->distinct(['Spaycs.id']);    
         $spaycs->formatResults(function (\Cake\Collection\CollectionInterface $results) use($userId,$redisSpaycs) {
             return $results->map(function ($row) use($userId,$redisSpaycs) {
                 $totalJoined = [];
@@ -991,6 +983,48 @@ class SpaycsTable extends Table {
     
     public function geoDistance(){
         return '( 3959 * ACOS( COS( RADIANS(:latitude) ) * COS( RADIANS(  latitude ) ) * COS( RADIANS(  longitude ) - RADIANS(:longitude) ) + SIN( RADIANS(:latitude) ) * SIN( RADIANS(  latitude ) ) ) )';
+    }
+    
+    public function warpEventDate($request,$spaycs){
+        $now = new Time('now', Configure::read('timezone'));        
+        $now->modify('today');
+        $dateRange = Utils::dateRangeUtc(Configure::read('timezone'),MAP_DAYS_RANGE);
+        $warpStartAt = $dateRange['start'];
+        $warpEndAt = $dateRange['end']; 
+        
+        $startDate = "TO_TIMESTAMP(cast(warp_frequency.start_date as text),'YYYY-MM-DD HH24:MI')";
+        $endDate = "TO_TIMESTAMP(cast(warp_frequency.end_date as text),'YYYY-MM-DD HH24:MI')";  
+        /* get warp event of same date only */
+        if(isset($request['is_filter']) && ($request['is_filter'] === true) && isset($request['current_date'])){
+            $filterDate = Time::createFromTimestamp($request['current_date'], Configure::read('timezone'));
+            /* reverse of timezone offset */
+            $zoneOffset = -1 * $filterDate->getOffset();
+            
+            $beginOfDay = Time::createFromTimestamp($request['current_date'],'UTC');            
+            $beginOfDay->modify($zoneOffset.' second');
+           
+            $endOfDay = Time::createFromTimestamp($request['current_date'],'UTC');
+            $endOfDay->modify('tomorrow');            
+            $endOfDay->modify($zoneOffset.' second');
+            $warpStartAt = $beginOfDay->format('Y-m-d H:i');
+            $warpEndAt = $endOfDay->format('Y-m-d H:i');
+//            $spaycs->where(function (QueryExpression $exp, Query $q)use($startDate,$warpStartAt,$warpEndAt) {
+//                return $exp->between($startDate, $warpStartAt, $warpEndAt);
+//            });
+        }
+        $overLaps = "(WarpFrequency.start_date, WarpFrequency.end_date) OVERLAPS ('".$warpStartAt."'::TIMESTAMP, '".$warpEndAt."'::TIMESTAMP)";
+        $interval = Utils::intervalAttribute($warpStartAt,$warpEndAt);
+        $daily = "(repeat_type=1 AND $overLaps)";
+        $weekly = "(repeat_type=2 AND day_of_week IN (".$interval['weekdays'].") AND $overLaps)";
+        $monthly = "(repeat_type=3 AND day_of_month IN (".$interval['monthdays'].") AND $overLaps)";
+        $yearly = "(repeat_type=4 AND day_of_month IN (".$interval['monthdays'].") AND month_of_year IN (".$interval['month'].") AND $overLaps)";
+        $custom = "(repeat_type=5 AND cast (CONCAT (custom_year, '-', month_of_year,'-',day_of_month) as TIMESTAMP) between '$warpStartAt' AND '$warpEndAt' AND $overLaps)";
+        $whereClause = '('.$weekly.' OR '.$monthly.' OR '.$yearly.' OR '.$custom.' OR '.$daily.')';
+        
+        $spaycs->innerJoinWith('WarpFrequency',function($q) use($whereClause){
+            return $q->where($whereClause);
+        });
+       return $spaycs;
     }
 
 }

@@ -387,8 +387,8 @@ class Utils {
         }
     }
 
-    public static function toClient($datetime,$dateTimeformat = 'm-d-Y H:i:s',$utcFormat='Y-m-d H:i:s') {
-        $timezone = Configure::read('timezone');
+    public static function toClient($datetime,$dateTimeformat = 'm-d-Y H:i:s',$utcFormat='Y-m-d H:i:s',$timeZone=null) {
+        $timezone = is_null($timeZone)?Configure::read('timezone'):$timeZone;
         if (!empty($datetime)) {
             if(@strtolower($datetime) == 'now'){
                 $datetime = (new Time('now','UTC'));
@@ -445,6 +445,37 @@ class Utils {
         $today_date = $now->setTimezone('UTC')->format("Y-m-d H:i");
         $twoWeek = $endObj->setTimezone('UTC')->format("Y-m-d H:i"); 
         return ['start'=>$today_date,'end'=>$twoWeek];
+    }
+    
+    public static function dateTimeFormatter($datetimeValue,$inputFormatter=null,$outFormatter=null){
+        if(empty($inputFormatter)){
+            $inputFormatter='m-d-Y H:i:s';
+        }
+        if(empty($outFormatter)){
+            $outFormatter = $inputFormatter;
+        }
+        return \DateTime::createFromFormat($inputFormatter,$datetimeValue)->format($outFormatter);
+    }
+    
+    public static function intervalAttribute($startDate,$endDate){
+        $startDate = new \DateTime($startDate);
+        $endDate = (new \DateTime($endDate))->modify('+1 day');        
+        $period = new \DatePeriod($startDate, (new \DateInterval("P1D")), $endDate);
+        $weekdays = [];
+        $monthdays = [];
+        $month = [];
+        foreach($period as $dt){
+            if(!in_array($dt->format("w"),$weekdays)){
+                $weekdays[] = $dt->format("w");
+            }
+            if(!in_array($dt->format("j"),$monthdays)){
+                $monthdays[] = $dt->format("j");
+            }
+            if(!in_array($dt->format("m"),$month)){
+                $month[] = $dt->format("m");
+            }
+          }
+        return ['weekdays'=>implode(',',$weekdays),'monthdays'=>implode(',',$monthdays),'month'=>implode(',',$month)];
     }
 
 }

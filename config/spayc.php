@@ -52,4 +52,5 @@ return [
     'advertisement_deleted_by_admin'=>'Advertisement Deleted',
     'spayc_deleted_by_admin'=>'Warp Deleted',
     'support_email' =>'support@warp.com',
+    'repeat_type'=>[1=>'daily',2=>'weekly',3=>'monthly',4=>'yerly',5=>'custom']
 ];

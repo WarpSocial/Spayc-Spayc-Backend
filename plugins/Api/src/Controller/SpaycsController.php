@@ -72,6 +72,8 @@ class SpaycsController extends AppController {
         try{
             $connection->begin(); 
             $this->Spaycs->save($items);
+            /* save warp frequency */
+            $this->Spaycs->WarpFrequency->saveWarpFrequency($data,$items);
             /* save Category */
             #pr($items);die;
             $items['warp_categories'] = TableRegistry::get('Api.WarpCategories')->SaveCategories($data,$items);
