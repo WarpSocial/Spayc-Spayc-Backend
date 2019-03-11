@@ -510,17 +510,10 @@ class SpaycsTable extends Table {
                         return $exp->notIn('Spaycs.id', $bannedSpayc);
                      });
                 }
-        $startDate = "TO_TIMESTAMP(cast(Spaycs.start_date as text),'YYYY-MM-DD HH24:MI')";
-        $endDate = "TO_TIMESTAMP(cast(Spaycs.end_date as text),'YYYY-MM-DD HH24:MI')";
-        $dateRange = Utils::dateRangeUtc(Configure::read('timezone'), DAYS_RANGE);
         if(!empty($request['keyword'])) {
+            $dateRange = Utils::dateRangeUtc('now',DAYS_RANGE,Configure::read('timezone'));
             $spaycs->where(["LOWER(Spaycs.name) LIKE"=>"%".strtolower($request['keyword'])."%"]);
-            $spaycs->where([
-                'OR'=>[[$startDate.' >='=>$dateRange['start']],[$endDate.' >= '=>$dateRange['start']]]
-                ]);
-            $spaycs->where([
-                'OR'=>[[$startDate.' <='=>$dateRange['end']],[$endDate.' <= '=>$dateRange['end']]]
-                ]);
+            $spaycs = $this->warpWhereFrequency($dateRange['start'], $dateRange['end'], $spaycs);
         }
         $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
         $spaycs->limit($limit);
@@ -978,14 +971,6 @@ class SpaycsTable extends Table {
     }
     
     public function warpEventDate($request,$spaycs){
-        $now = new Time('now', Configure::read('timezone'));        
-        $now->modify('today');
-        $dateRange = Utils::dateRangeUtc(Configure::read('timezone'),MAP_DAYS_RANGE);
-        $warpStartAt = $dateRange['start'];
-        $warpEndAt = $dateRange['end']; 
-        
-        $startDate = "TO_TIMESTAMP(cast(warp_frequency.start_date as text),'YYYY-MM-DD HH24:MI')";
-        $endDate = "TO_TIMESTAMP(cast(warp_frequency.end_date as text),'YYYY-MM-DD HH24:MI')";  
         /* get warp event of same date only */
         if(isset($request['is_filter']) && ($request['is_filter'] === true) && isset($request['current_date'])){
             $filterDate = Time::createFromTimestamp($request['current_date'], Configure::read('timezone'));
@@ -1003,20 +988,35 @@ class SpaycsTable extends Table {
 //            $spaycs->where(function (QueryExpression $exp, Query $q)use($startDate,$warpStartAt,$warpEndAt) {
 //                return $exp->between($startDate, $warpStartAt, $warpEndAt);
 //            });
+        }else{
+            $dateRange = Utils::dateRangeUtc('now',MAP_DAYS_RANGE,Configure::read('timezone'));
+            $warpStartAt = $dateRange['start'];
+            $warpEndAt = $dateRange['end']; 
         }
-        $overLaps = "(WarpFrequency.start_date, WarpFrequency.end_date) OVERLAPS ('".$warpStartAt."'::TIMESTAMP, '".$warpEndAt."'::TIMESTAMP)";
-        $interval = Utils::intervalAttribute($warpStartAt,$warpEndAt);
+        return $this->warpWhereFrequency($warpStartAt,$warpEndAt,$spaycs);
+    }
+    public function warpWhereFrequency($warpStartAt,$warpEndAt,$spaycs){
+        $overLaps = "(warp_frequency.start_date, warp_frequency.end_date) OVERLAPS ('".$warpStartAt."'::TIMESTAMP, '".$warpEndAt."'::TIMESTAMP)";
+        $interval = Utils::dateIntervalAttribute($warpStartAt,$warpEndAt);
         $daily = "(repeat_type=1 AND $overLaps)";
         $weekly = "(repeat_type=2 AND day_of_week IN (".$interval['weekdays'].") AND $overLaps)";
         $monthly = "(repeat_type=3 AND day_of_month IN (".$interval['monthdays'].") AND $overLaps)";
         $yearly = "(repeat_type=4 AND day_of_month IN (".$interval['monthdays'].") AND month_of_year IN (".$interval['month'].") AND $overLaps)";
         $custom = "(repeat_type=5 AND cast (CONCAT (custom_year, '-', month_of_year,'-',day_of_month) as TIMESTAMP) between '$warpStartAt' AND '$warpEndAt' AND $overLaps)";
         $whereClause = '('.$weekly.' OR '.$monthly.' OR '.$yearly.' OR '.$custom.' OR '.$daily.')';
-        
-        $spaycs->innerJoinWith('WarpFrequency',function($q) use($whereClause){
-            return $q->where($whereClause);
-        });
-       return $spaycs;
+        $spaycs->select(['warp_frequency.start_date','warp_frequency.end_date','warp_frequency.repeat_type','warp_frequency.day_of_week','warp_frequency.day_of_month','warp_frequency.month_of_year','warp_frequency.custom_year']);
+        return $spaycs->join([
+            'table' => 'warp_frequency',
+            'type' => 'INNER',
+            'alias' => 'warp_frequency',
+            'conditions' => [
+                '(Spaycs.id = warp_frequency.spayc_id)',
+                $whereClause,
+                ]
+            ]);
+//        return $spaycs->innerJoinWith('WarpFrequency',function($q) use($whereClause){
+//            return $q->where($whereClause);
+//        });
     }
 
 }

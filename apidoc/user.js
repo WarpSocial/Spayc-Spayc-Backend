@@ -164,17 +164,17 @@ function postUser() { return; }
  * @apiGroup User
  * @apiPermission Private User
  *
- * @apiDescription Search users|spaycs|hashtags details by requesting parameters Note: distance key not came in spayc list in case of no latitude and longitude.
+ * @apiDescription Search users|spaycs|hashtags details by requesting parameters Note: distance key not came in spayc list in case of no latitude and longitude.Daata will filter for next 14 days in case of keywork value available
  *
  * @apiHeader {String} TOKEN Token must be set in header.
  * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  * 
- * @apiParam {Number}      page       * Page number in query string (Optional).
- * @apiParam {Number}      limit      * Records limit in query string (Optional).
- * @apiParam {String}      type       * Type should be in (users|spaycs|hashtags|all) (Optional).
- * @apiParam {String}      keyword    * Username|Spayc name|Hashtag name in query string to be search (Optional).
- * @apiParam {String}      latitude   * Latitude of user address (Optional).
- * @apiParam {String}      longitude  * Longitude of user address (Optional).
+ * @apiParam (query)    {Number}      page       * Page number in query string (Optional).
+ * @apiParam (query)    {Number}      limit      * Records limit in query string (Optional).
+ * @apiParam (query)    {String}      type       * Type should be in (users|spaycs|hashtags|all) (Optional).
+ * @apiParam (query)    {String}      keyword    * Username|Spayc name|Hashtag name in query string to be search (Optional).
+ * @apiParam (query)    {String}      latitude   * Latitude of user address (Optional).
+ * @apiParam (query)    {String}      longitude  * Longitude of user address (Optional).
  * 
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Search Lists.

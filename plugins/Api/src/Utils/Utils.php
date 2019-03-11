@@ -435,16 +435,23 @@ class Utils {
         $fileinfo = $finfo->file($file, FILEINFO_MIME);
         return $fileinfo;
     }
-    public static function dateRangeUtc($timezone,$days){
-        $now = new Time('now', $timezone);        
-        $endObj = clone $now;
-        $now->modify('today');
-        $timeStmap = $now->getTimestamp();        
+    public static function dateRangeUtc($startDate=null,$days,$timezone=null){
+        if(is_null($timezone)){
+            $timezone = Configure::read('timezone');
+        }
+        if(!empty($startDate)){
+            $startObj = new Time($startDate, $timezone);
+        }else{
+            $startObj = new Time('now', $timezone);
+        }
+        
+        $endObj = clone $startObj;
+        $startObj->modify('today');        
         $endObj->modify('+'.$days.' days');
         $endObj->modify('1 second ago'); 
-        $today_date = $now->setTimezone('UTC')->format("Y-m-d H:i");
-        $twoWeek = $endObj->setTimezone('UTC')->format("Y-m-d H:i"); 
-        return ['start'=>$today_date,'end'=>$twoWeek];
+        $startDate = $startObj->setTimezone('UTC')->format("Y-m-d H:i");
+        $endDate = $endObj->setTimezone('UTC')->format("Y-m-d H:i"); 
+        return ['start'=>$startDate,'end'=>$endDate];
     }
     
     public static function dateTimeFormatter($datetimeValue,$inputFormatter=null,$outFormatter=null){
@@ -457,7 +464,7 @@ class Utils {
         return \DateTime::createFromFormat($inputFormatter,$datetimeValue)->format($outFormatter);
     }
     
-    public static function intervalAttribute($startDate,$endDate){
+    public static function dateIntervalAttribute($startDate,$endDate){
         $startDate = new \DateTime($startDate);
         $endDate = (new \DateTime($endDate))->modify('+1 day');        
         $period = new \DatePeriod($startDate, (new \DateInterval("P1D")), $endDate);

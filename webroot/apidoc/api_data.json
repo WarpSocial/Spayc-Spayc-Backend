@@ -4008,7 +4008,7 @@
     "group": "Spayc",
     "permission": [
       {
-        "name": "private"
+        "name": "Private User"
       }
     ],
     "description": "<p>Filter spayc all list, created by logged in user and joined by logged in user using list_by parameter, distance param not comes in response if lat long not provided in request.</p> ",
@@ -4034,104 +4034,97 @@
     },
     "parameter": {
       "fields": {
-        "Parameter": [
+        "query": [
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "Number",
             "optional": false,
             "field": "page",
-            "description": "<p>Page number in query string (Optional).</p> "
+            "description": "<ul> <li>Page number in query string (Optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "Number",
             "optional": false,
             "field": "limit",
-            "description": "<p>Limit in query string (Optional).</p> "
+            "description": "<ul> <li>Limit in query string (Optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "Datetime",
             "optional": false,
             "field": "date",
-            "description": "<p>date format must in timestamp (optional).</p> "
+            "description": "<ul> <li>date format must in timestamp (optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "Integer",
             "optional": false,
             "field": "radius",
-            "description": "<p>distance in Miles(optional).</p> "
+            "description": "<ul> <li>distance in Miles(optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "String",
             "optional": false,
             "field": "payment_type",
-            "description": "<p>value must be toggling between free and paid(Optional).</p> "
+            "description": "<ul> <li>value must be toggling between free and paid(Optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "String",
             "optional": false,
             "field": "group_type",
-            "description": "<p>Group type must be any one from the following (Public|Private) (Optional).</p> "
+            "description": "<ul> <li>Group type must be any one from the following (Public|Private) (Optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "type",
-            "description": "<p>Spayc type must be any one from the following (Event|Community) (Optional).</p> "
-          },
-          {
-            "group": "Parameter",
+            "group": "query",
             "type": "String",
             "optional": false,
             "field": "latitude",
-            "description": "<p>Latitude is required in query string(Optional in case of created, joined).</p> "
+            "description": "<ul> <li>Latitude is required in query string(Optional in case of created, joined).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "String",
             "optional": false,
             "field": "longitude",
-            "description": "<p>Longitude is required in query string(Optional in case of created, joined).</p> "
+            "description": "<ul> <li>Longitude is required in query string(Optional in case of created, joined).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "String",
             "optional": false,
             "field": "list_by",
-            "description": "<p>List by is optional in query string(created|joined|all).</p> "
+            "description": "<ul> <li>List by is optional in query string(created|joined|all).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "Number",
             "optional": false,
             "field": "user_id",
-            "description": "<p>User id  of any user and if id is not available it will get the logged user data(Required).</p> "
+            "description": "<ul> <li>User id  of any user and if id is not available it will get the logged user data(Required).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "String",
             "optional": false,
             "field": "categories",
-            "description": "<p>List of comma separeted categoires (Optional).</p> "
+            "description": "<ul> <li>List of comma separeted categoires (Optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "String",
             "optional": false,
             "field": "friends",
-            "description": "<p>Value must be either yes or no (Optional).</p> "
+            "description": "<ul> <li>Value must be either yes or no (Optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "String",
             "optional": false,
             "field": "hot",
-            "description": "<p>Value must be either yes or no (Optional).</p> "
+            "description": "<ul> <li>Value must be either yes or no (Optional).</li> </ul> "
           }
         ]
       }
@@ -4165,7 +4158,7 @@
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n   \"status\": \"success\",\n   \"message\": \"Spayc lists.\",\n   \"data\": {\n       \"count\": 22,\n       \"spaycs\": [\n           {\n               \"distance\": \"0\",\n               \"id\": \"33\",\n               \"name\": \"spaycdev13\",\n               \"location\": \"Your address\",\n               \"matrix_room_id\": \"!asfLdzLnOdGRkdPZWu:localhost\",\n               \"start_date\": \"01-11-2019 01:02:00\",\n               \"end_date\": \"01-12-2019 01:02:00\",\n               \"image\": \"\",\n               \"type\": \"Community\",\n               \"group_type\": \"Public\",\n               \"passcode\": \"\",\n               \"subscribed_users\": 0,\n               \"spayc_category\": {\n                   \"id\": 560,\n                   \"name\": \"Softball\"\n               },\n               \"friends\": 0,\n               \"joined_spayc_status\": '',\n               \"is_joined\": false,\n               \"joined_users\": 0,\n               \"is_subscribed\": false,\n               \"total_comments\": 0,\n               \"total_presents\": 0\n           },\n           {\n               \"distance\": \"0\",\n               \"id\": \"5\",\n               \"name\": \"spaycdev13\",\n               \"location\": \"Your address\",\n               \"matrix_room_id\": \"!asfLdzLnOdGRkdPZWu:localhost\",\n               \"start_date\": \"01-11-2019 01:02:00\",\n               \"end_date\": \"01-12-2019 01:02:00\",\n               \"image\": \"\",\n               \"spayc_category\": {\n                   \"id\": 560,\n                   \"name\": \"Softball\"\n               },\n               \"type\": \"Event\",\n               \"group_type\": \"Public\",\n               \"passcode\": \"s5d4f87sdf4545\",\n               \"subscribed_users\": 1,\n               \"friends\": 0,\n               \"joined_spayc_status\": \"Pending\",\n               \"is_joined\": false,\n               \"joined_users\": 3,\n               \"is_subscribed\": true,\n               \"total_comments\": 1,\n               \"total_presents\": 0\n           }\n       ]\n   }\n}",
+          "content": "HTTP/1.1 200 OK\n {\n   \"status\": \"success\",\n   \"message\": \"Spayc lists.\",\n   \"data\": {\n       \"count\": 22,\n       \"spaycs\": [\n           {\n               \"distance\": \"0\",\n               \"id\": \"33\",\n               \"name\": \"spaycdev13\",\n               \"location\": \"Your address\",\n               \"matrix_room_id\": \"!asfLdzLnOdGRkdPZWu:localhost\",\n               \"start_date\": \"01-11-2019 01:02:00\",\n               \"end_date\": \"01-12-2019 01:02:00\",\n               \"image\": \"\",\n               \"type\": \"Community\",\n               \"group_type\": \"Public\",\n               \"passcode\": \"\",\n               \"subscribed_users\": 0,\n               \"spayc_category\": {\n                   \"id\": 560,\n                   \"name\": \"Softball\"\n               },\n               \"friends\": 0,\n               \"joined_spayc_status\": '',\n               \"is_joined\": false,\n               \"joined_users\": 0,\n               \"is_subscribed\": false,\n               \"total_comments\": 0,\n               \"total_presents\": 0\n           },\n           {\n               \"distance\": \"0\",\n               \"id\": \"5\",\n               \"name\": \"spaycdev13\",\n               \"location\": \"Your address\",\n               \"matrix_room_id\": \"!asfLdzLnOdGRkdPZWu:localhost\",\n               \"start_date\": \"01-11-2019 01:02:00\",\n               \"end_date\": \"01-12-2019 01:02:00\",\n               \"image\": \"\",\n               \"spayc_category\": {\n                   \"id\": 560,\n                   \"name\": \"Softball\"\n               },\n               \"type\": \"Event\",\n               \"group_type\": \"Public\",\n               \"passcode\": \"s5d4f87sdf4545\",\n               \"subscribed_users\": 1,\n               \"friends\": 0,\n               \"joined_spayc_status\": \"Pending\",\n               \"is_joined\": false,\n               \"joined_users\": 3,\n               \"is_subscribed\": true,\n               \"total_comments\": 1,\n               \"total_presents\": 0\n           }\n       ]\n   }\n }",
           "type": "json"
         }
       ]
@@ -8210,7 +8203,7 @@
         "name": "Private User"
       }
     ],
-    "description": "<p>Search users|spaycs|hashtags details by requesting parameters Note: distance key not came in spayc list in case of no latitude and longitude.</p> ",
+    "description": "<p>Search users|spaycs|hashtags details by requesting parameters Note: distance key not came in spayc list in case of no latitude and longitude.Daata will filter for next 14 days in case of keywork value available</p> ",
     "header": {
       "fields": {
         "Header": [
@@ -8233,44 +8226,44 @@
     },
     "parameter": {
       "fields": {
-        "Parameter": [
+        "query": [
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "Number",
             "optional": false,
             "field": "page",
             "description": "<ul> <li>Page number in query string (Optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "Number",
             "optional": false,
             "field": "limit",
             "description": "<ul> <li>Records limit in query string (Optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "String",
             "optional": false,
             "field": "type",
             "description": "<ul> <li>Type should be in (users|spaycs|hashtags|all) (Optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "String",
             "optional": false,
             "field": "keyword",
             "description": "<ul> <li>Username|Spayc name|Hashtag name in query string to be search (Optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "String",
             "optional": false,
             "field": "latitude",
             "description": "<ul> <li>Latitude of user address (Optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "String",
             "optional": false,
             "field": "longitude",

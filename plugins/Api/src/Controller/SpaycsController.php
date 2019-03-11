@@ -325,17 +325,18 @@ class SpaycsController extends AppController {
             }
  
             $user_date = Time::createFromTimestamp($this->request->query('date'), Configure::read('timezone'));
+            $dateRange = Utils::dateRangeUtc($user_date,1,Configure::read('timezone'));
+            pr($dateRange);
             $endObj = clone $user_date;            
             $endObj->modify('+1 days');
             $endObj->modify('1 second ago'); 
-            $dayStart = $user_date->setTimezone('UTC')->format("Y-m-d H:i");
-            $endDay = $endObj->setTimezone('UTC')->format("Y-m-d H:i");  
-            $spaycs->where([
-                'OR'=>[[$startDate.' >='=>$dayStart],[$endDate.' >= '=>$dayStart]]
-                ]);
-            $spaycs->where([
-                'OR'=>[[$startDate.' <='=>$endDay],[$endDate.' <= '=>$endDay]]
-                ]);
+            $warpStartAt = $user_date->setTimezone('UTC')->format("Y-m-d H:i");
+            $warpEndAt = $endObj->setTimezone('UTC')->format("Y-m-d H:i"); 
+            echo $warpStartAt." and ".$warpEndAt;die;
+            $spaycs->innerJoinWith('WarpFrequency',function($q) use($warpStartAt,$warpEndAt){
+                return $q->where("(WarpFrequency.start_date, WarpFrequency.end_date) OVERLAPS ('".$warpStartAt."'::TIMESTAMP, '".$warpEndAt."'::TIMESTAMP)");
+            });
+
         }
         
         if(in_array(ucfirst($this->request->query('spayc_type')), ['Event', 'Community'])) {
