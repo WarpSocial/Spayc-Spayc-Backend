@@ -281,8 +281,6 @@ class PlansController extends AppController {
                         'spayc.group_type',
                         'spayc.start_date',
                         'spayc.end_date',
-                        'sc.id',
-                        'sc.name',
                         'joined_spayc_status'=>'joined_spayc.status',
                         ]])                
                 ->join(
@@ -323,23 +321,7 @@ class PlansController extends AppController {
                             ]
                         ]
                 )
-               ->join([
-                    'table' => 'warp_categories',
-                    'alias' => 'wc',
-                    'type' => 'LEFT',
-                    'conditions' => [
-                        'wc.spayc_id = promotions.spayc_id AND wc.is_primary=true',
-                    ]
-                ])
-                ->join([
-                    'table' => 'spayc_categories',
-                    'alias' => 'sc',
-                    'type' => 'LEFT',
-                    'conditions' => [
-                        'sc.id = wc.spayc_category_id',
-                    ]
-                ]) 
-                ->join([
+              ->join([
                     'table' => 'friend_request',
                     'type' => 'LEFT',
                     'conditions' => [
@@ -355,19 +337,14 @@ class PlansController extends AppController {
                 ])
                 
                 
-                ->where(['SpaycPromotion.spayc_id'=>$data['spayc_id'],"balance > 0","promotion_status"=>1,'promotions.status'=>'Active'])
-                ->order(['SpaycPromotion.priority' => 'ASC'])
-                ->limit(1)
-                ;
+                ->where(['SpaycPromotion.spayc_id'=>$data['spayc_id'],"balance > 0","promotion_status"=>1,'promotions.status'=>'Active']);
+        $ad->order(['SpaycPromotion.priority' => 'ASC'])->limit(1);
         $data=[];
         if($ad->isEmpty()){
              $this->restException(['status'=>'failed','message'=>'Promotion not found.'], 404);
         }
         $data=$ad->first();
-        if(!empty($data['sc'])){
-            $data['spayc']['warp_categories'] = $data['sc'];
-            unset($data['sc']);
-        }
+        $data['spayc']['warp_categories'] = TableRegistry::get('Api.WarpCategories')->find()->contain(['SpaycCategories'])->where(['spayc_id'=>$data['spayc']['id']]);
         $timezone = Configure::read('timezone');
         $sd = new \Cake\I18n\Time($data->spayc['start_date'], 'UTC');
         $data->spayc['start_date'] = $sd->setTimezone(new \DateTimeZone($timezone))->format('Y-m-d H:i:s');
@@ -456,8 +433,6 @@ class PlansController extends AppController {
                         'spayc.group_type',
                         'spayc.start_date',
                         'spayc.end_date',
-                        'sc.id',
-                        'sc.name',
                         'joined_spayc_status'=>'joined_spayc.status',
                         
                         ]])
@@ -499,22 +474,6 @@ class PlansController extends AppController {
                             ]
                         ]
                 )
-                ->join([
-                    'table' => 'warp_categories',
-                    'alias' => 'wc',
-                    'type' => 'LEFT',
-                    'conditions' => [
-                        'wc.spayc_id = promotions.spayc_id AND wc.is_primary=true',
-                    ]
-                ])
-                ->join([
-                    'table' => 'spayc_categories',
-                    'alias' => 'sc',
-                    'type' => 'LEFT',
-                    'conditions' => [
-                        'sc.id = wc.spayc_category_id',
-                    ]
-                ])                
                 ->where(['SpaycPromotion.spayc_id'=>$data['spayc_id'],"balance > 0",'promotions.status'=>'Active'])
                 ->order(['SpaycPromotion.priority' => 'ASC'])
                 ->limit(1)
@@ -526,10 +485,7 @@ class PlansController extends AppController {
         }
         
         $data=$ad->first();        
-        if(!empty($data['sc'])){
-            $data['spayc']['warp_categories'] = $data['sc'];
-            unset($data['sc']);
-        }
+        $data['spayc']['warp_categories'] = TableRegistry::get('Api.WarpCategories')->find()->contain(['SpaycCategories'])->where(['spayc_id'=>$data['spayc']['id']]);
         $timezone = Configure::read('timezone');
         $sd = new \Cake\I18n\Time($data->spayc['start_date'], 'UTC');
         $data->spayc['start_date'] = $sd->setTimezone(new \DateTimeZone($timezone))->format('Y-m-d H:i:s');
