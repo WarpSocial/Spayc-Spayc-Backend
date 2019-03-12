@@ -720,7 +720,7 @@ function putGhostMode() { return; }
 function postUserCategories() { return; }
 
 /**
- * @api {get} /remove-avatar/:order.json Remove Profile Image
+ * @api {put} /remove-avatar/:order.json Remove Profile Image
  * @apiVersion 0.1.0
  * @apiName removeAvatar
  * @apiGroup User

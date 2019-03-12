@@ -370,8 +370,8 @@ class Utils {
         }
     }
 
-    public static function toUtc($datetime,$dateTimeformat = 'm-d-Y H:i:s',$utcFormat='Y-m-d H:i:s') {
-        $timezone = Configure::read('timezone');
+    public static function toUtc($datetime,$dateTimeformat = 'm-d-Y H:i:s',$utcFormat='Y-m-d H:i:s',$timeZone=null) {
+        $timezone = is_null($timeZone)?Configure::read('timezone'):$timeZone;
         if (!empty($datetime)) {
             if(strtolower($datetime) == 'now'){
                 $datetime = (new Time('now',$timezone));
@@ -484,5 +484,16 @@ class Utils {
           }
         return ['weekdays'=>implode(',',$weekdays),'monthdays'=>implode(',',$monthdays),'month'=>implode(',',$month)];
     }
-
+    public static function explodeArray($array){
+        $string = '';$i=1;$all = count($array);
+        foreach($array as $key=>$value){
+            if($i == $all){
+                $string .= $key.'='.$value;
+            }else{
+                $string .= $key.'='.$value.', ';
+            }
+            $i++;
+        }
+        return $string;
+    }
 }

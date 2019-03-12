@@ -3,7 +3,8 @@
 namespace Api\Model\Entity;
 
 use Cake\ORM\Entity;
-
+use Cake\I18n\Time;
+use Cake\Core\Configure;
 /**
  * WarpFrequency Entity
  *
@@ -37,5 +38,32 @@ class WarpFrequency extends Entity {
         '*' => true,
         'id' => false
     ];
+    protected $_hidden = ['created','modified'];
+    protected function _getStartDate($stardDate) {
+        $request = new \Cake\Http\ServerRequest();
+         if($this->isNew() || strstr($request->getRequestTarget(),'edit')) {
+             return $stardDate;
+         }
+        $timezone = Configure::read('timezone');
+        if (!empty($stardDate)) {
+            $sd = new Time($stardDate,'UTC');
+            return $sd->setTimezone($timezone)->format('m-d-Y H:i:s');
+        } else {
+            return;
+        }
+    }
+    protected function _getEndDate($endDate) {
+        $request = new \Cake\Http\ServerRequest();
+         if($this->isNew() || strstr($request->getRequestTarget(),'edit')) {
+             return $endDate;
+         }
+        $timezone = Configure::read('timezone');
+        if (!empty($endDate)) {
+            $ed = new Time($endDate,'UTC');
+            return $ed->setTimezone($timezone)->format('m-d-Y H:i:s');
+        } else {
+            return;
+        }
+    }
 
 }

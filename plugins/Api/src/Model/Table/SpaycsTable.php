@@ -231,10 +231,10 @@ class SpaycsTable extends Table {
                                 $currentDate = new Time('now',$timezone);
                                 $now = clone $currentDate;
                                 $currentDate->modify('+1 year');
-                                $startDate = strtotime($startDate->format('Y-m-d H:i'));
-                                $now = strtotime($now->format('Y-m-d H:i'));
-                                $currentDate = strtotime($currentDate->format('Y-m-d H:i'));
-                                return (bool) ($startDate <= $currentDate);
+                                $startDate = strtotime($startDate->format('Y-m-d H'));
+                                $now = strtotime($now->format('Y-m-d H'));
+                                $currentDate = strtotime($currentDate->format('Y-m-d H'));
+                                return (bool) ($currentDate >= $startDate) && ($startDate >= $now);
                             }
                         },
                         'message'=>__('Start date can\'t be more than 1 year ahead or any past date.')
@@ -394,7 +394,61 @@ class SpaycsTable extends Table {
                         }
                     },
                     'message'=>__('Other category is not valid.')
-                ]);  
+                ]); 
+        $validator->notEmpty('repeat_type',__('Please select repeat type.'))
+                
+                ->inList('repeat_type', array_keys(Configure::read('repeat_type')),__('Repeat type value must be any one '. Utils::explodeArray(Configure::read('repeat_type')).'.'));
+        
+        $validator
+                ->requirePresence('day_of_week', function($context){
+                    if(!empty($context['data']['repeat_type']) && ($context['data']['repeat_type'] == WEEKLY)){
+                        return true;
+                    }
+                    return false;
+                },__('Please select day of week'))
+                ->add('day_of_week','valid_day', [
+                   'rule' => function($value,$context){
+                        if(!empty($value)){
+                            $repeatDays = explode(',',$value);
+                            foreach($repeatDays as $days){
+                                if(!in_array($days,array_keys(Configure::read('day_of_week')))){
+                                    return false;
+                                }
+                            }
+                        }
+                        return true;
+                        },
+                        'message'=>__('Day of week value must be any one '.Utils::explodeArray(Configure::read('day_of_week')).'.'),
+                    ]
+                );
+        $validator
+                ->requirePresence('repeat_date', function($context){
+                    if(!empty($context['data']['repeat_type']) && ($context['data']['repeat_type'] == CUSTOM)){
+                        return true;
+                    }
+                    return false;
+                },__('Please select date.'))
+                ->notEmpty('repeat_date',__('Please select date.'),function($context){
+                    if(!empty($context['data']['repeat_type']) && ($context['data']['repeat_type'] == CUSTOM)){
+                        return true;
+                    }
+                    return false;
+                })
+               ->add('repeat_date','valid_date', [
+                   'rule' => function($value,$context){
+                        if(!empty($value)){
+                            $repeatDates = explode(',',$value);
+                            foreach($repeatDates as $date){
+                                if(!$this->validateDate($date, $context,'m-d-Y')){
+                                    return false;
+                                }
+                            }
+                        }
+                        return true;
+                        },
+                        'message'=>__('Repeat date must be in comma separated with valid date format(m-d-Y).'),
+                    ]
+                );
         
         return $validator;
     }
@@ -985,9 +1039,6 @@ class SpaycsTable extends Table {
             $endOfDay->modify($zoneOffset.' second');
             $warpStartAt = $beginOfDay->format('Y-m-d H:i');
             $warpEndAt = $endOfDay->format('Y-m-d H:i');
-//            $spaycs->where(function (QueryExpression $exp, Query $q)use($startDate,$warpStartAt,$warpEndAt) {
-//                return $exp->between($startDate, $warpStartAt, $warpEndAt);
-//            });
         }else{
             $dateRange = Utils::dateRangeUtc('now',MAP_DAYS_RANGE,Configure::read('timezone'));
             $warpStartAt = $dateRange['start'];
@@ -996,14 +1047,14 @@ class SpaycsTable extends Table {
         return $this->warpWhereFrequency($warpStartAt,$warpEndAt,$spaycs);
     }
     public function warpWhereFrequency($warpStartAt,$warpEndAt,$spaycs){
-        $overLaps = "(warp_frequency.start_date, warp_frequency.end_date) OVERLAPS ('".$warpStartAt."'::TIMESTAMP, '".$warpEndAt."'::TIMESTAMP)";
-        $interval = Utils::dateIntervalAttribute($warpStartAt,$warpEndAt);
-        $daily = "(repeat_type=1 AND $overLaps)";
-        $weekly = "(repeat_type=2 AND day_of_week IN (".$interval['weekdays'].") AND $overLaps)";
-        $monthly = "(repeat_type=3 AND day_of_month IN (".$interval['monthdays'].") AND $overLaps)";
-        $yearly = "(repeat_type=4 AND day_of_month IN (".$interval['monthdays'].") AND month_of_year IN (".$interval['month'].") AND $overLaps)";
-        $custom = "(repeat_type=5 AND cast (CONCAT (custom_year, '-', month_of_year,'-',day_of_month) as TIMESTAMP) between '$warpStartAt' AND '$warpEndAt' AND $overLaps)";
-        $whereClause = '('.$weekly.' OR '.$monthly.' OR '.$yearly.' OR '.$custom.' OR '.$daily.')';
+        $whereClause = "(warp_frequency.start_date, warp_frequency.end_date) OVERLAPS ('".$warpStartAt."'::TIMESTAMP, '".$warpEndAt."'::TIMESTAMP)";
+        //$interval = Utils::dateIntervalAttribute($warpStartAt,$warpEndAt);
+        //$daily = "(repeat_type=1 AND $overLaps)";
+        //$weekly = "(repeat_type=2 AND day_of_week IN (".$interval['weekdays'].") AND $overLaps)";
+        //$monthly = "(repeat_type=3 AND day_of_month IN (".$interval['monthdays'].") AND $overLaps)";
+        //$yearly = "(repeat_type=4 AND day_of_month IN (".$interval['monthdays'].") AND month_of_year IN (".$interval['month'].") AND $overLaps)";
+        //$custom = "(repeat_type=5 AND cast (CONCAT (custom_year, '-', month_of_year,'-',day_of_month) as TIMESTAMP) between '$warpStartAt' AND '$warpEndAt' AND $overLaps)";
+        //$whereClause = '('.$weekly.' OR '.$monthly.' OR '.$yearly.' OR '.$custom.' OR '.$daily.')';
         $spaycs->select(['warp_frequency.start_date','warp_frequency.end_date','warp_frequency.repeat_type','warp_frequency.day_of_week','warp_frequency.day_of_month','warp_frequency.month_of_year','warp_frequency.custom_year']);
         return $spaycs->join([
             'table' => 'warp_frequency',
@@ -1014,9 +1065,6 @@ class SpaycsTable extends Table {
                 $whereClause,
                 ]
             ]);
-//        return $spaycs->innerJoinWith('WarpFrequency',function($q) use($whereClause){
-//            return $q->where($whereClause);
-//        });
     }
 
 }

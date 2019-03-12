@@ -8,7 +8,7 @@ use Api\Event\SpaycListener;
 
 try {
     Configure::load('Api.api', 'default', false);
-} catch (Exception $e) {
+} catch (\Exception $e) {
     exit($e->getMessage() . "\n");
 }
 Configure::write('Error.exceptionRenderer','Api\Error\ApiExceptionRenderer');

@@ -7,6 +7,8 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Core\Configure;
 use Cake\Validation\Validator;
+use Cake\I18n\Time;
+use Api\Utils\Utils;
 
 /**
  * WarpFrequency Model
@@ -52,50 +54,83 @@ class WarpFrequencyTable extends Table {
      * 
      */
     public function saveWarpFrequency($request,$spayc){
-        $data = [
-            'spayc_id'=>$spayc->id,
-            'start_date'=>$spayc->start_date,
-            'end_date'=>$spayc->end_date,
-            'repeat_type'=> $request['repeat_type']
-        ];
-        switch($request['repeat_type']){
-            case 2://weekly
-                foreach(explode(',',$request['day_of_week']) as $day){
-                    $wpData[] = $data+['day_of_week'=>$day];
-                }
-                break;
-            case 3://monthly
-                foreach(explode(',',$request['repeat_date']) as $date){
-                    list($month,$day,$year) = explode('-',$date);
-                    $wpData[] = $data+['day_of_month'=>$day];
-                }
-                break;
-            case 4://yearly
-                foreach(explode(',',$request['repeat_date']) as $date){
-                    list($month,$day,$year) = explode('-',$date);
-                    $wpData[] = $data+['day_of_month'=>$day,'month_of_year'=>$month];
-                }
-                break;
-            case 5://custom
-                foreach(explode(',',$request['repeat_date']) as $date){
-                    list($month,$day,$year) = explode('-',$date);
-                    $wpData[] = $data+['day_of_month'=>$day,'month_of_year'=>$month,'custom_year'=>$year];
-                }
-                break;
-            case 1://daily
-            default:
-                $wpData[] = $data;
-                break;
+        if(empty($request['repeaty_type'])){
+            return;
         }
+        $wpData = $this->eventRepeat($request, $spayc);
         try{
-            $this->deleteAll(['spayc_id' => $spayc->id]);
+            $this->deleteAll(['spayc_id' => $spayc['id']]);
             return $this->saveMany($this->newEntities($wpData));
         } catch (\Exception $ex) {
             \Cake\Log\Log::error('Repeat warp failed to save',$ex->getMessage());
             return false;
         }
-        //pr($wpData);die;
-        
     }
+    
+    public function eventRepeat($request,$spayc){
+        if(empty($request['timezone'])){
+            $request['timezone'] = 'America/New_York';
+        }
+        $startDate = Utils::toUtc($spayc['start_date'],'m-d-Y H:i:s','Y-m-d H:i:s',$request['timezone']);
+        $endDate = Utils::toUtc($spayc['end_date'],'m-d-Y H:i:s','Y-m-d H:i:s',$request['timezone']);
+        $data = [
+            'spayc_id'=>$spayc['id'],
+            'end_date'=>$endDate,
+            'repeat_type'=> $request['repeat_type']
+        ];
+        switch($request['repeat_type']){
+            case 2://weekly
+                $repeatObj = $this->weeklyRepeat($startDate, $endDate, $data,$request);
+                break;
+            case 3://custom
+                $repeatObj = $this->customRepeat($startDate, $endDate, $data,$request);
+                break;
+            case 1://daily
+            default:
+                $repeatObj = $this->dailyRepeat($startDate, $endDate, $data,$request);
+                break;
+        }
+        return $repeatObj;
+    }
+    public function weeklyRepeat($startDate,$endDate,$data,$request){
+        $startDate = new \DateTime($startDate);
+        $endDate = new \DateTime($endDate);
+        $startTime = $startDate->format('H:i:s');
+        $interval = new \DateInterval("P1D");
+        $period = new \DatePeriod($startDate, $interval, $endDate->modify("+1 days"));
+        $repeatDay = explode(',',$request['day_of_week']);
+        $wpData = [];
+        foreach ($period as $pd) {
+            if (in_array($pd->format('w'), $repeatDay)) { 
+                $wpData[] = $data+['start_date'=>$pd->format('Y-m-d '.$startTime),'day_of_week'=> $request['day_of_week']];
+            }
+        }
+        return $wpData;
+    }
+    public function dailyRepeat($startDate,$endDate,$data){
+        $startDate = new \DateTime($startDate);
+        $endDate = new \DateTime($endDate);
+        $startTime = $startDate->format('H:i:s');
+        $wpData = [];
+        $interval = new \DateInterval("P1D");
+        $period = new \DatePeriod($startDate, $interval, $endDate->modify("+1 days"));
+        foreach ($period as $pd) {
+            $wpData[] = $data+['start_date'=>$pd->format('Y-m-d '.$startTime)];
+        }
+        return $wpData;
+    }   
+    public function customRepeat($startDate,$endDate,$data,$request){
+        $startDate = new \DateTime($startDate);
+        $startTime = $startDate->format('H:i:s');
+        $endDate = new \DateTime($endDate);
+        $wpData[] = $data+['start_date'=>$startDate->format('Y-m-d H:i:s')];
+        foreach(explode(',',$request['repeat_date']) as $date){
+            $repeatStartDate = Utils::toUtc($date,'m-d-Y','Y-m-d',$request['timezone']);
+            list($month,$day,$year) = explode('-',$date);
+            $wpData[] = $data+['start_date'=>$repeatStartDate.' '.$startTime,'day_of_month'=>$day,'month_of_year'=>$month,'custom_year'=>$year];
+        }
+        return $wpData;
+    }
+    
 
 }
