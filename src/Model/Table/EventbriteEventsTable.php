@@ -125,10 +125,10 @@ class EventbriteEventsTable extends Table
         /* pre-existing events in tmp table */
         $getIds = $this->find()->select(['eventbrite_event_id'])->
             where(['eventbrite_event_id IN' => $eventIds])->extract('eventbrite_event_id')->toList();
-        /* get the is which not existing in temp table - new events received */
-        $diffIds=array_diff($eventIds,$getIds);     
+        /* get which not existing in temp table - new events received */
+        $diffIds=array_diff($eventIds,$getIds);
         //echo "@@$page<=>".count($eventIds)."@@";
-        if(count($diffIds)){
+        if(!empty($diffIds)){
             $getuniqueevents =[];           
             foreach ($events as $val) {
                 if (in_array($val['eventbrite_event_id'],$diffIds)){
@@ -137,6 +137,7 @@ class EventbriteEventsTable extends Table
                     //echo '**'.$val['eventbrite_event_id'].'**';
                 } else if(in_array($val['eventbrite_event_id'],$getIds)) {
                     $query = $this->query();
+                    $events[$val['eventbrite_event_id']]['modified'] = date('Y-m-d H:i:s');
                     $query->update()
                     ->set($events[$val['eventbrite_event_id']])
                     ->where(['eventbrite_event_id' => $val['eventbrite_event_id']])
@@ -150,6 +151,7 @@ class EventbriteEventsTable extends Table
         }  else {
             foreach ($getIds as $id) {
                 $query = $this->query();
+                $events[$id]['modified'] = date('Y-m-d H:i:s');
                 $query->update()
                 ->set($events[$id])
                 ->where(['eventbrite_event_id' => $id])

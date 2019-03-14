@@ -28,7 +28,7 @@ class WarpCategory extends Entity
      *
      * @var array
      */
-      protected $_accessible = [
+    protected $_accessible = [
         '*' => true,
         'id' => false
     ];

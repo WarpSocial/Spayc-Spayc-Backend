@@ -262,15 +262,14 @@ class Utils {
     }
 
     public static function cleanInput($input) {
-        return $input;
-
+        $input = preg_replace("/&amp;para/", "", trim($input));
         $search = array(
             '@<script[^>]*?>.*?</script>@si', // Strip out javascript
             '@<[\/\!]*?[^<>]*?>@si', // Strip out HTML tags
             '@<style[^>]*?>.*?</style>@siU', // Strip style tags properly
-            '@<![\s\S]*?--[ \t\n\r]*>@'         // Strip multi-line comments
+            '@<![\s\S]*?--[ \t\n\r]*>@'        // Strip multi-line comments
         );
-
+        
         $output = preg_replace($search, '', $input);
         return $output;
     }
@@ -371,8 +370,8 @@ class Utils {
         }
     }
 
-    public static function toUtc($datetime,$dateTimeformat = 'm-d-Y H:i:s',$utcFormat='Y-m-d H:i:s') {
-        $timezone = Configure::read('timezone');
+    public static function toUtc($datetime,$dateTimeformat = 'm-d-Y H:i:s',$utcFormat='Y-m-d H:i:s',$timeZone=null) {
+        $timezone = is_null($timeZone)?Configure::read('timezone'):$timeZone;
         if (!empty($datetime)) {
             if(strtolower($datetime) == 'now'){
                 $datetime = (new Time('now',$timezone));
@@ -388,8 +387,8 @@ class Utils {
         }
     }
 
-    public static function toClient($datetime,$dateTimeformat = 'm-d-Y H:i:s',$utcFormat='Y-m-d H:i:s') {
-        $timezone = Configure::read('timezone');
+    public static function toClient($datetime,$dateTimeformat = 'm-d-Y H:i:s',$utcFormat='Y-m-d H:i:s',$timeZone=null) {
+        $timezone = is_null($timeZone)?Configure::read('timezone'):$timeZone;
         if (!empty($datetime)) {
             if(@strtolower($datetime) == 'now'){
                 $datetime = (new Time('now','UTC'));
@@ -436,16 +435,65 @@ class Utils {
         $fileinfo = $finfo->file($file, FILEINFO_MIME);
         return $fileinfo;
     }
-    public static function dateRangeUtc($timezone,$days){
-        $now = new Time('now', $timezone);        
-        $endObj = clone $now;
-        $now->modify('today');
-        $timeStmap = $now->getTimestamp();        
+    public static function dateRangeUtc($startDate=null,$days,$timezone=null){
+        if(is_null($timezone)){
+            $timezone = Configure::read('timezone');
+        }
+        if(!empty($startDate)){
+            $startObj = new Time($startDate, $timezone);
+        }else{
+            $startObj = new Time('now', $timezone);
+        }
+        
+        $endObj = clone $startObj;
+        $startObj->modify('today');        
         $endObj->modify('+'.$days.' days');
         $endObj->modify('1 second ago'); 
-        $today_date = $now->setTimezone('UTC')->format("Y-m-d H:i");
-        $twoWeek = $endObj->setTimezone('UTC')->format("Y-m-d H:i"); 
-        return ['start'=>$today_date,'end'=>$twoWeek];
+        $startDate = $startObj->setTimezone('UTC')->format("Y-m-d H:i");
+        $endDate = $endObj->setTimezone('UTC')->format("Y-m-d H:i"); 
+        return ['start'=>$startDate,'end'=>$endDate];
     }
-
+    
+    public static function dateTimeFormatter($datetimeValue,$inputFormatter=null,$outFormatter=null){
+        if(empty($inputFormatter)){
+            $inputFormatter='m-d-Y H:i:s';
+        }
+        if(empty($outFormatter)){
+            $outFormatter = $inputFormatter;
+        }
+        return \DateTime::createFromFormat($inputFormatter,$datetimeValue)->format($outFormatter);
+    }
+    
+    public static function dateIntervalAttribute($startDate,$endDate){
+        $startDate = new \DateTime($startDate);
+        $endDate = (new \DateTime($endDate))->modify('+1 day');        
+        $period = new \DatePeriod($startDate, (new \DateInterval("P1D")), $endDate);
+        $weekdays = [];
+        $monthdays = [];
+        $month = [];
+        foreach($period as $dt){
+            if(!in_array($dt->format("w"),$weekdays)){
+                $weekdays[] = $dt->format("w");
+            }
+            if(!in_array($dt->format("j"),$monthdays)){
+                $monthdays[] = $dt->format("j");
+            }
+            if(!in_array($dt->format("m"),$month)){
+                $month[] = $dt->format("m");
+            }
+          }
+        return ['weekdays'=>implode(',',$weekdays),'monthdays'=>implode(',',$monthdays),'month'=>implode(',',$month)];
+    }
+    public static function explodeArray($array){
+        $string = '';$i=1;$all = count($array);
+        foreach($array as $key=>$value){
+            if($i == $all){
+                $string .= $key.'='.$value;
+            }else{
+                $string .= $key.'='.$value.', ';
+            }
+            $i++;
+        }
+        return $string;
+    }
 }

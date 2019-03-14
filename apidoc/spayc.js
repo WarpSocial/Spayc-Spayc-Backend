@@ -37,6 +37,9 @@
 @apiParam {String} group_type       Group type must be any one from the following Public|Private (Required).
 @apiParam {Datetime} start_date     Start date with time in format YYYY-MM-DD H:i:s (Required).
 @apiParam {Datetime} end_date       End date with time in format YYYY-MM-DD H:i:s  (Optional).
+@apiParam {Integer} repeat_type    Repeat type value must be any one 1=>daily,2=>weekly,3=>custom and default will be daily (Required).
+@apiParam {String} day_of_week      Day of week is required when repeat type will be 2=>weekly and value can be comma separated and value will be 0=>Sun,1=>Mon,2=>Tue,3=>Wed,4=>Thu,5=>Fri,6=>Sat.
+@apiParam {String} repeat_date      Repeate date is required when repeat type will be 3=>custom and value can be comma separated in format MM-DD-YYYY.
 @apiParam {String} passcode         Passcode is required in case of private group type.
 @apiParam {String} description      Description for SPAYC (Optional).
 @apiParam {String} image            Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
@@ -55,6 +58,8 @@
         "type": "Event|Community",
         "group_type": "Public|Private",
         "start_date": "01-11-2019 01:02:20",
+        "repeat_type":"2",
+        "day_of_week":"0,2",
         "end_date": "01-12-2019 01:02:20",
         "passcode": "s5d4f87sdf4545",
         "description":"spayc creating",
@@ -115,7 +120,10 @@ function postSpaycs() { return; }
 @apiParam {String} location         Location must be alphanumeric with space (Required).
 @apiParam {String} group_type       Group type must be any one from the following Public|Private (Required).
 @apiParam {Datetime} start_date     Start date with time in format YYYY-MM-DD H:i:s (Required).
-@apiParam {Datetime} end_date       End date with time in format YYYY-MM-DD H:i:s (Required).
+@apiParam {Datetime} end_date       End date with time in format YYYY-MM-DD H:i:s (Optional).
+@apiParam {Integer} repeat_type    Repeat type value must be any one 1=>daily,2=>weekly,3=>custom and default will be daily (Required).
+@apiParam {String} day_of_week      Day of week is required when repeat type will be 2=>weekly and value can be comma separated and value will be 0=>Sun,1=>Mon,2=>Tue,3=>Wed,4=>Thu,5=>Fri,6=>Sat.
+@apiParam {String} repeat_date      Repeate date is required when repeat type will be 3=>custom and value can be comma separated in format MM-DD-YYYY.
 @apiParam {String} passcode         Passcode is required in case of private group type.
 @apiParam {String} description      Description for SPAYC (Optional).
 @apiParam {String} image            Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
@@ -135,6 +143,8 @@ function postSpaycs() { return; }
         "group_type": "Public|Private",
         "start_date": "01-11-2019 01:02:20",
         "end_date": "01-12-2019 01:02:20",
+        "repeat_type":"2",
+        "day_of_week":"0,2",
         "passcode": "s5d4f87sdf4545",
         "description":"spayc creating",
         "image":"file.png",
@@ -269,35 +279,34 @@ function postSubspaycs() { return; }
  * @apiVersion 0.1.0
  * @apiName getSpaycs
  * @apiGroup Spayc
- * @apiPermission private
+ * @apiPermission Private User
  *
  * @apiDescription Filter spayc all list, created by logged in user and joined by logged in user using list_by parameter, distance param not comes in response if lat long not provided in request.
  * 
  * @apiHeader {String} TOKEN Token must be set in header.
  * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  * 
- *    @apiParam {Number}    page    Page number in query string (Optional).
- *    @apiParam {Number}    limit   Limit in query string (Optional).
- *    @apiParam {Datetime}  date    date format must in timestamp (optional).
- *    @apiParam {Integer}   radius   distance in Miles(optional).
- *    @apiParam {String}    payment_type    value must be toggling between free and paid(Optional).
- *    @apiParam {String}    group_type      Group type must be any one from the following (Public|Private) (Optional).
- *    @apiParam {String}      type            Spayc type must be any one from the following (Event|Community) (Optional).
- *    @apiParam {String}      latitude        Latitude is required in query string(Optional in case of created, joined).
- *    @apiParam {String}      longitude       Longitude is required in query string(Optional in case of created, joined).
- *    @apiParam {String}      list_by         List by is optional in query string(created|joined|all).
- *    @apiParam {Number}      user_id         User id  of any user and if id is not available it will get the logged user data(Required).
- *    @apiParam {String}  categories  List of comma separeted categoires (Optional).
- *    @apiParam {String}   friends   Value must be either yes or no (Optional).
- *    @apiParam {String}   hot   Value must be either yes or no (Optional).
+ *  @apiParam (query)   {Number}    page    * Page number in query string (Optional).
+ *  @apiParam (query)   {Number}    limit   * Limit in query string (Optional).
+ *  @apiParam (query)   {Datetime}  date    * date format must in timestamp (optional).
+ *  @apiParam (query)   {Integer}   radius  * distance in Miles(optional).
+ *  @apiParam (query)   {String}    payment_type    * value must be toggling between free and paid(Optional).
+ *  @apiParam (query)   {String}    group_type  * Group type must be any one from the following (Public|Private) (Optional).
+ *  @apiParam (query)   {String}    latitude    * Latitude is required in query string(Optional in case of created, joined).
+ *  @apiParam (query)   {String}    longitude   * Longitude is required in query string(Optional in case of created, joined).
+ *  @apiParam (query)   {String}    list_by * List by is optional in query string(created|joined|all).
+ *  @apiParam (query)   {Number}    user_id * User id  of any user and if id is not available it will get the logged user data(Required).
+ *  @apiParam (query)   {String}    categories  * List of comma separeted categoires (Optional).
+ *  @apiParam (query)   {String}    friends * Value must be either yes or no (Optional).
+ *  @apiParam (query)   {String}    hot * Value must be either yes or no (Optional).
  *    
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Spayc lists.
  * @apiSuccess {Object} data List of spayc details.
  * @apiSuccessExample {json} Success-Response: 
- *      HTTP/1.1 200 OK
- *{
+ * HTTP/1.1 200 OK
+ *  {
  *    "status": "success",
  *    "message": "Spayc lists.",
  *    "data": {
@@ -355,7 +364,7 @@ function postSubspaycs() { return; }
  *            }
  *        ]
  *    }
- *}
+ *  }
  *
  * @apiUse UserErrorResponse
  */

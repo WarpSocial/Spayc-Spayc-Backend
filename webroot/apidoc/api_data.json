@@ -104,7 +104,7 @@
     "groupTitle": "Advertisement",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/ad-logic.json"
+        "url": "http://spayc-staging.kiwireader.com/api/ad-logic.json"
       }
     ],
     "error": {
@@ -235,7 +235,7 @@
     "groupTitle": "Advertisement",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/ad-logic-start.json"
+        "url": "http://spayc-staging.kiwireader.com/api/ad-logic-start.json"
       }
     ],
     "error": {
@@ -429,7 +429,7 @@
     "groupTitle": "Advertisement",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/create-advertisement.json"
+        "url": "http://spayc-staging.kiwireader.com/api/create-advertisement.json"
       }
     ],
     "error": {
@@ -553,7 +553,7 @@
     "groupTitle": "Advertisement",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/advertisement-delete.json?id=:id"
+        "url": "http://spayc-staging.kiwireader.com/api/advertisement-delete.json?id=:id"
       }
     ],
     "error": {
@@ -726,7 +726,7 @@
     "groupTitle": "Advertisement",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/advertisement-edit.json"
+        "url": "http://spayc-staging.kiwireader.com/api/advertisement-edit.json"
       }
     ],
     "error": {
@@ -857,7 +857,7 @@
     "groupTitle": "Advertisement",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/user-advertisement.json?page=:page&limit=:limit"
+        "url": "http://spayc-staging.kiwireader.com/api/user-advertisement.json?page=:page&limit=:limit"
       }
     ],
     "error": {
@@ -981,7 +981,7 @@
     "groupTitle": "Advertisement",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/advertisement-details.json?id=:id"
+        "url": "http://spayc-staging.kiwireader.com/api/advertisement-details.json?id=:id"
       }
     ],
     "error": {
@@ -1162,7 +1162,7 @@
     "groupTitle": "Friend_Request",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/add-friend.json"
+        "url": "http://spayc-staging.kiwireader.com/api/add-friend.json"
       }
     ]
   },
@@ -1307,7 +1307,7 @@
     "groupTitle": "Friend_Request",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/block-friend.json"
+        "url": "http://spayc-staging.kiwireader.com/api/block-friend.json"
       }
     ]
   },
@@ -1416,7 +1416,7 @@
     "groupTitle": "Friend_Request",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/get-friends.json?page=:page&limit=:page&friend_status=:status"
+        "url": "http://spayc-staging.kiwireader.com/api/get-friends.json?page=:page&limit=:page&friend_status=:status"
       }
     ],
     "error": {
@@ -1597,7 +1597,7 @@
     "groupTitle": "Friend_Request",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/request-accept-declined.json"
+        "url": "http://spayc-staging.kiwireader.com/api/request-accept-declined.json"
       }
     ]
   },
@@ -1742,7 +1742,7 @@
     "groupTitle": "Friend_Request",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/unblock-friend.json"
+        "url": "http://spayc-staging.kiwireader.com/api/unblock-friend.json"
       }
     ]
   },
@@ -1887,7 +1887,7 @@
     "groupTitle": "Friend_Request",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/unfriend-request.json"
+        "url": "http://spayc-staging.kiwireader.com/api/unfriend-request.json"
       }
     ]
   },
@@ -1962,7 +1962,7 @@
     "groupTitle": "Plans",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/meta-data.json"
+        "url": "http://spayc-staging.kiwireader.com/api/meta-data.json"
       }
     ],
     "error": {
@@ -2128,7 +2128,7 @@
     "groupTitle": "Plans",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/add-promotional-spayc.json"
+        "url": "http://spayc-staging.kiwireader.com/api/add-promotional-spayc.json"
       }
     ],
     "error": {
@@ -2273,7 +2273,7 @@
     "groupTitle": "Promotion",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/promotion-logic.json"
+        "url": "http://spayc-staging.kiwireader.com/api/promotion-logic.json"
       }
     ],
     "error": {
@@ -2404,7 +2404,7 @@
     "groupTitle": "Promotion",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/promotion-logic-start.json"
+        "url": "http://spayc-staging.kiwireader.com/api/promotion-logic-start.json"
       }
     ],
     "error": {
@@ -2535,7 +2535,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/chat-room.json"
+        "url": "http://spayc-staging.kiwireader.com/api/chat-room.json"
       }
     ],
     "error": {
@@ -2652,7 +2652,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/spaycs/delete.json?id=:room_id"
+        "url": "http://spayc-staging.kiwireader.com/api/spaycs/delete.json?id=:room_id"
       }
     ],
     "error": {
@@ -2768,7 +2768,28 @@
             "type": "Datetime",
             "optional": false,
             "field": "end_date",
-            "description": "<p>End date with time in format YYYY-MM-DD H:i:s (Required).</p> "
+            "description": "<p>End date with time in format YYYY-MM-DD H:i:s (Optional).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "repeat_type",
+            "description": "<p>Repeat type value must be any one 1=&gt;daily,2=&gt;weekly,3=&gt;custom and default will be daily (Required).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "day_of_week",
+            "description": "<p>Day of week is required when repeat type will be 2=&gt;weekly and value can be comma separated and value will be 0=&gt;Sun,1=&gt;Mon,2=&gt;Tue,3=&gt;Wed,4=&gt;Thu,5=&gt;Fri,6=&gt;Sat.</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "repeat_date",
+            "description": "<p>Repeate date is required when repeat type will be 3=&gt;custom and value can be comma separated in format MM-DD-YYYY.</p> "
           },
           {
             "group": "Parameter",
@@ -2839,7 +2860,7 @@
     "examples": [
       {
         "title": "Example usage:",
-        "content": "{\n    \"spayc_id\": \"XXXXXXX\",\n    \"name\": \"spaycdev\",\n    \"location\": \"Community addrss\",\n    \"type\": \"Event|Community\",\n    \"group_type\": \"Public|Private\",\n    \"start_date\": \"01-11-2019 01:02:20\",\n    \"end_date\": \"01-12-2019 01:02:20\",\n    \"passcode\": \"s5d4f87sdf4545\",\n    \"description\":\"spayc creating\",\n    \"image\":\"file.png\",\n    \"longitude\":\"XX.00.XX\",\n    \"latitude\":\"XX.00.XX\"\n}",
+        "content": "{\n    \"spayc_id\": \"XXXXXXX\",\n    \"name\": \"spaycdev\",\n    \"location\": \"Community addrss\",\n    \"type\": \"Event|Community\",\n    \"group_type\": \"Public|Private\",\n    \"start_date\": \"01-11-2019 01:02:20\",\n    \"end_date\": \"01-12-2019 01:02:20\",\n    \"repeat_type\":\"2\",\n    \"day_of_week\":\"0,2\",\n    \"passcode\": \"s5d4f87sdf4545\",\n    \"description\":\"spayc creating\",\n    \"image\":\"file.png\",\n    \"longitude\":\"XX.00.XX\",\n    \"latitude\":\"XX.00.XX\"\n}",
         "type": "json"
       }
     ],
@@ -2924,7 +2945,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/spayc-edit.json"
+        "url": "http://spayc-staging.kiwireader.com/api/spayc-edit.json"
       }
     ]
   },
@@ -2998,6 +3019,27 @@
             "optional": false,
             "field": "end_date",
             "description": "<p>End date with time in format YYYY-MM-DD H:i:s  (Optional).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "Integer",
+            "optional": false,
+            "field": "repeat_type",
+            "description": "<p>Repeat type value must be any one 1=&gt;daily,2=&gt;weekly,3=&gt;custom and default will be daily (Required).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "day_of_week",
+            "description": "<p>Day of week is required when repeat type will be 2=&gt;weekly and value can be comma separated and value will be 0=&gt;Sun,1=&gt;Mon,2=&gt;Tue,3=&gt;Wed,4=&gt;Thu,5=&gt;Fri,6=&gt;Sat.</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "repeat_date",
+            "description": "<p>Repeate date is required when repeat type will be 3=&gt;custom and value can be comma separated in format MM-DD-YYYY.</p> "
           },
           {
             "group": "Parameter",
@@ -3075,7 +3117,7 @@
     "examples": [
       {
         "title": "Example usage:",
-        "content": "{\n    \"name\": \"spaycdev\",\n    \"location\": \"Community addrss\",\n    \"type\": \"Event|Community\",\n    \"group_type\": \"Public|Private\",\n    \"start_date\": \"01-11-2019 01:02:20\",\n    \"end_date\": \"01-12-2019 01:02:20\",\n    \"passcode\": \"s5d4f87sdf4545\",\n    \"description\":\"spayc creating\",\n    \"image\":\"file.png\",\n    \"longitude\":\"XX.00.XX\",\n    \"latitude\":\"XX.00.XX\",\n    \"invite\":\"@test2:35.168.119.247, @test3:35.168.119.247\"\n}",
+        "content": "{\n    \"name\": \"spaycdev\",\n    \"location\": \"Community addrss\",\n    \"type\": \"Event|Community\",\n    \"group_type\": \"Public|Private\",\n    \"start_date\": \"01-11-2019 01:02:20\",\n    \"repeat_type\":\"2\",\n    \"day_of_week\":\"0,2\",\n    \"end_date\": \"01-12-2019 01:02:20\",\n    \"passcode\": \"s5d4f87sdf4545\",\n    \"description\":\"spayc creating\",\n    \"image\":\"file.png\",\n    \"longitude\":\"XX.00.XX\",\n    \"latitude\":\"XX.00.XX\",\n    \"invite\":\"@test2:35.168.119.247, @test3:35.168.119.247\"\n}",
         "type": "json"
       }
     ],
@@ -3117,7 +3159,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/spaycs.json"
+        "url": "http://spayc-staging.kiwireader.com/api/spaycs.json"
       }
     ],
     "error": {
@@ -3290,7 +3332,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/create-subspace.json"
+        "url": "http://spayc-staging.kiwireader.com/api/create-subspace.json"
       }
     ],
     "error": {
@@ -3414,7 +3456,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/events-image.json?events=:matrix_room_id"
+        "url": "http://spayc-staging.kiwireader.com/api/events-image.json?events=:matrix_room_id"
       }
     ],
     "error": {
@@ -3545,7 +3587,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/joined-spayc.json?"
+        "url": "http://spayc-staging.kiwireader.com/api/joined-spayc.json?"
       }
     ],
     "error": {
@@ -3683,7 +3725,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/public-spaycs.json?page=:page&limit=:limit"
+        "url": "http://spayc-staging.kiwireader.com/api/public-spaycs.json?page=:page&limit=:limit"
       }
     ],
     "error": {
@@ -3814,7 +3856,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/rooms-image.json?limit=:limit&page=:page"
+        "url": "http://spayc-staging.kiwireader.com/api/rooms-image.json?limit=:limit&page=:page"
       }
     ],
     "error": {
@@ -3959,7 +4001,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/spayc-members.json"
+        "url": "http://spayc-staging.kiwireader.com/api/spayc-members.json"
       }
     ],
     "error": {
@@ -4008,7 +4050,7 @@
     "group": "Spayc",
     "permission": [
       {
-        "name": "private"
+        "name": "Private User"
       }
     ],
     "description": "<p>Filter spayc all list, created by logged in user and joined by logged in user using list_by parameter, distance param not comes in response if lat long not provided in request.</p> ",
@@ -4034,104 +4076,97 @@
     },
     "parameter": {
       "fields": {
-        "Parameter": [
+        "query": [
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "Number",
             "optional": false,
             "field": "page",
-            "description": "<p>Page number in query string (Optional).</p> "
+            "description": "<ul> <li>Page number in query string (Optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "Number",
             "optional": false,
             "field": "limit",
-            "description": "<p>Limit in query string (Optional).</p> "
+            "description": "<ul> <li>Limit in query string (Optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "Datetime",
             "optional": false,
             "field": "date",
-            "description": "<p>date format must in timestamp (optional).</p> "
+            "description": "<ul> <li>date format must in timestamp (optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "Integer",
             "optional": false,
             "field": "radius",
-            "description": "<p>distance in Miles(optional).</p> "
+            "description": "<ul> <li>distance in Miles(optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "String",
             "optional": false,
             "field": "payment_type",
-            "description": "<p>value must be toggling between free and paid(Optional).</p> "
+            "description": "<ul> <li>value must be toggling between free and paid(Optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "String",
             "optional": false,
             "field": "group_type",
-            "description": "<p>Group type must be any one from the following (Public|Private) (Optional).</p> "
+            "description": "<ul> <li>Group type must be any one from the following (Public|Private) (Optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "type",
-            "description": "<p>Spayc type must be any one from the following (Event|Community) (Optional).</p> "
-          },
-          {
-            "group": "Parameter",
+            "group": "query",
             "type": "String",
             "optional": false,
             "field": "latitude",
-            "description": "<p>Latitude is required in query string(Optional in case of created, joined).</p> "
+            "description": "<ul> <li>Latitude is required in query string(Optional in case of created, joined).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "String",
             "optional": false,
             "field": "longitude",
-            "description": "<p>Longitude is required in query string(Optional in case of created, joined).</p> "
+            "description": "<ul> <li>Longitude is required in query string(Optional in case of created, joined).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "String",
             "optional": false,
             "field": "list_by",
-            "description": "<p>List by is optional in query string(created|joined|all).</p> "
+            "description": "<ul> <li>List by is optional in query string(created|joined|all).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "Number",
             "optional": false,
             "field": "user_id",
-            "description": "<p>User id  of any user and if id is not available it will get the logged user data(Required).</p> "
+            "description": "<ul> <li>User id  of any user and if id is not available it will get the logged user data(Required).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "String",
             "optional": false,
             "field": "categories",
-            "description": "<p>List of comma separeted categoires (Optional).</p> "
+            "description": "<ul> <li>List of comma separeted categoires (Optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "String",
             "optional": false,
             "field": "friends",
-            "description": "<p>Value must be either yes or no (Optional).</p> "
+            "description": "<ul> <li>Value must be either yes or no (Optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "String",
             "optional": false,
             "field": "hot",
-            "description": "<p>Value must be either yes or no (Optional).</p> "
+            "description": "<ul> <li>Value must be either yes or no (Optional).</li> </ul> "
           }
         ]
       }
@@ -4165,7 +4200,7 @@
       "examples": [
         {
           "title": "Success-Response: ",
-          "content": "     HTTP/1.1 200 OK\n{\n   \"status\": \"success\",\n   \"message\": \"Spayc lists.\",\n   \"data\": {\n       \"count\": 22,\n       \"spaycs\": [\n           {\n               \"distance\": \"0\",\n               \"id\": \"33\",\n               \"name\": \"spaycdev13\",\n               \"location\": \"Your address\",\n               \"matrix_room_id\": \"!asfLdzLnOdGRkdPZWu:localhost\",\n               \"start_date\": \"01-11-2019 01:02:00\",\n               \"end_date\": \"01-12-2019 01:02:00\",\n               \"image\": \"\",\n               \"type\": \"Community\",\n               \"group_type\": \"Public\",\n               \"passcode\": \"\",\n               \"subscribed_users\": 0,\n               \"spayc_category\": {\n                   \"id\": 560,\n                   \"name\": \"Softball\"\n               },\n               \"friends\": 0,\n               \"joined_spayc_status\": '',\n               \"is_joined\": false,\n               \"joined_users\": 0,\n               \"is_subscribed\": false,\n               \"total_comments\": 0,\n               \"total_presents\": 0\n           },\n           {\n               \"distance\": \"0\",\n               \"id\": \"5\",\n               \"name\": \"spaycdev13\",\n               \"location\": \"Your address\",\n               \"matrix_room_id\": \"!asfLdzLnOdGRkdPZWu:localhost\",\n               \"start_date\": \"01-11-2019 01:02:00\",\n               \"end_date\": \"01-12-2019 01:02:00\",\n               \"image\": \"\",\n               \"spayc_category\": {\n                   \"id\": 560,\n                   \"name\": \"Softball\"\n               },\n               \"type\": \"Event\",\n               \"group_type\": \"Public\",\n               \"passcode\": \"s5d4f87sdf4545\",\n               \"subscribed_users\": 1,\n               \"friends\": 0,\n               \"joined_spayc_status\": \"Pending\",\n               \"is_joined\": false,\n               \"joined_users\": 3,\n               \"is_subscribed\": true,\n               \"total_comments\": 1,\n               \"total_presents\": 0\n           }\n       ]\n   }\n}",
+          "content": "HTTP/1.1 200 OK\n {\n   \"status\": \"success\",\n   \"message\": \"Spayc lists.\",\n   \"data\": {\n       \"count\": 22,\n       \"spaycs\": [\n           {\n               \"distance\": \"0\",\n               \"id\": \"33\",\n               \"name\": \"spaycdev13\",\n               \"location\": \"Your address\",\n               \"matrix_room_id\": \"!asfLdzLnOdGRkdPZWu:localhost\",\n               \"start_date\": \"01-11-2019 01:02:00\",\n               \"end_date\": \"01-12-2019 01:02:00\",\n               \"image\": \"\",\n               \"type\": \"Community\",\n               \"group_type\": \"Public\",\n               \"passcode\": \"\",\n               \"subscribed_users\": 0,\n               \"spayc_category\": {\n                   \"id\": 560,\n                   \"name\": \"Softball\"\n               },\n               \"friends\": 0,\n               \"joined_spayc_status\": '',\n               \"is_joined\": false,\n               \"joined_users\": 0,\n               \"is_subscribed\": false,\n               \"total_comments\": 0,\n               \"total_presents\": 0\n           },\n           {\n               \"distance\": \"0\",\n               \"id\": \"5\",\n               \"name\": \"spaycdev13\",\n               \"location\": \"Your address\",\n               \"matrix_room_id\": \"!asfLdzLnOdGRkdPZWu:localhost\",\n               \"start_date\": \"01-11-2019 01:02:00\",\n               \"end_date\": \"01-12-2019 01:02:00\",\n               \"image\": \"\",\n               \"spayc_category\": {\n                   \"id\": 560,\n                   \"name\": \"Softball\"\n               },\n               \"type\": \"Event\",\n               \"group_type\": \"Public\",\n               \"passcode\": \"s5d4f87sdf4545\",\n               \"subscribed_users\": 1,\n               \"friends\": 0,\n               \"joined_spayc_status\": \"Pending\",\n               \"is_joined\": false,\n               \"joined_users\": 3,\n               \"is_subscribed\": true,\n               \"total_comments\": 1,\n               \"total_presents\": 0\n           }\n       ]\n   }\n }",
           "type": "json"
         }
       ]
@@ -4174,7 +4209,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/spaycs.json?page=:page&limit=5&latitude=28.4594965&longitude=77.0266383"
+        "url": "http://spayc-staging.kiwireader.com/api/spaycs.json?page=:page&limit=5&latitude=28.4594965&longitude=77.0266383"
       }
     ],
     "error": {
@@ -4333,7 +4368,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/subspaycs.json?spayc_id=:id&page=:page&limit=:limit&latitude=:latitude&longitude=:longitude"
+        "url": "http://spayc-staging.kiwireader.com/api/subspaycs.json?spayc_id=:id&page=:page&limit=:limit&latitude=:latitude&longitude=:longitude"
       }
     ],
     "error": {
@@ -4464,7 +4499,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/subscribed-spaycs.json?page=:page&limit=:limit"
+        "url": "http://spayc-staging.kiwireader.com/api/subscribed-spaycs.json?page=:page&limit=:limit"
       }
     ],
     "error": {
@@ -4595,7 +4630,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/physical-present-spaycs.json?latitude=:latitude&longitude=:longitude"
+        "url": "http://spayc-staging.kiwireader.com/api/physical-present-spaycs.json?latitude=:latitude&longitude=:longitude"
       }
     ],
     "error": {
@@ -4726,7 +4761,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/hash-tag-spaycs.json?page=:page&limit=:limit&keyword=:keyword"
+        "url": "http://spayc-staging.kiwireader.com/api/hash-tag-spaycs.json?page=:page&limit=:limit&keyword=:keyword"
       }
     ],
     "error": {
@@ -4934,7 +4969,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/map-spaycs.json"
+        "url": "http://spayc-staging.kiwireader.com/api/map-spaycs.json"
       }
     ],
     "error": {
@@ -5072,7 +5107,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/accept-join-request.json"
+        "url": "http://spayc-staging.kiwireader.com/api/accept-join-request.json"
       }
     ],
     "error": {
@@ -5210,7 +5245,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/ban-spayc-member.json"
+        "url": "http://spayc-staging.kiwireader.com/api/ban-spayc-member.json"
       }
     ],
     "error": {
@@ -5348,7 +5383,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/change-role.json"
+        "url": "http://spayc-staging.kiwireader.com/api/change-role.json"
       }
     ],
     "error": {
@@ -5486,7 +5521,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/join-spayc.json"
+        "url": "http://spayc-staging.kiwireader.com/api/join-spayc.json"
       }
     ],
     "error": {
@@ -5624,7 +5659,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/join-sub-spayc.json"
+        "url": "http://spayc-staging.kiwireader.com/api/join-sub-spayc.json"
       }
     ],
     "error": {
@@ -5755,7 +5790,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/remove-spayc-member.json"
+        "url": "http://spayc-staging.kiwireader.com/api/remove-spayc-member.json"
       }
     ],
     "error": {
@@ -5929,7 +5964,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/reported-warp.json"
+        "url": "http://spayc-staging.kiwireader.com/api/reported-warp.json"
       }
     ]
   },
@@ -6067,7 +6102,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/unsubscribe-spayc.json"
+        "url": "http://spayc-staging.kiwireader.com/api/unsubscribe-spayc.json"
       }
     ]
   },
@@ -6115,7 +6150,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/update-comment/:matrix_room_id.json"
+        "url": "http://spayc-staging.kiwireader.com/api/update-comment/:matrix_room_id.json"
       }
     ],
     "error": {
@@ -6253,7 +6288,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/spayc-details.json?id=:id&latitude=:lat&longitude=:long"
+        "url": "http://spayc-staging.kiwireader.com/api/spayc-details.json?id=:id&latitude=:lat&longitude=:long"
       }
     ],
     "error": {
@@ -6427,7 +6462,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/subscribe-spayc.json"
+        "url": "http://spayc-staging.kiwireader.com/api/subscribe-spayc.json"
       }
     ]
   },
@@ -6502,7 +6537,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/unread-notification.json"
+        "url": "http://spayc-staging.kiwireader.com/api/unread-notification.json"
       }
     ],
     "error": {
@@ -6606,7 +6641,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/facebook-friends.json?page=:page&limit=:limit"
+        "url": "http://spayc-staging.kiwireader.com/api/facebook-friends.json?page=:page&limit=:limit"
       }
     ],
     "error": {
@@ -6787,7 +6822,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/friend-request.json"
+        "url": "http://spayc-staging.kiwireader.com/api/friend-request.json"
       }
     ]
   },
@@ -6919,7 +6954,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/login.json"
+        "url": "http://spayc-staging.kiwireader.com/api/login.json"
       }
     ]
   },
@@ -7014,7 +7049,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/update-user-status.json"
+        "url": "http://spayc-staging.kiwireader.com/api/update-user-status.json"
       }
     ],
     "error": {
@@ -7195,7 +7230,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/users.json"
+        "url": "http://spayc-staging.kiwireader.com/api/users.json"
       }
     ],
     "error": {
@@ -7396,7 +7431,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/profile-edit.json"
+        "url": "http://spayc-staging.kiwireader.com/api/profile-edit.json"
       }
     ],
     "error": {
@@ -7500,7 +7535,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/reverification.json"
+        "url": "http://spayc-staging.kiwireader.com/api/reverification.json"
       }
     ],
     "error": {
@@ -7638,7 +7673,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/change-password.json"
+        "url": "http://spayc-staging.kiwireader.com/api/change-password.json"
       }
     ],
     "error": {
@@ -7855,7 +7890,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/facebook-signup.json"
+        "url": "http://spayc-staging.kiwireader.com/api/facebook-signup.json"
       }
     ]
   },
@@ -7923,7 +7958,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/forgot-password.json"
+        "url": "http://spayc-staging.kiwireader.com/api/forgot-password.json"
       }
     ],
     "error": {
@@ -8034,7 +8069,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/logout.json"
+        "url": "http://spayc-staging.kiwireader.com/api/logout.json"
       }
     ],
     "error": {
@@ -8158,7 +8193,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/get-notifications.json?page=:page&limit=:limit"
+        "url": "http://spayc-staging.kiwireader.com/api/get-notifications.json?page=:page&limit=:limit"
       }
     ],
     "error": {
@@ -8210,7 +8245,7 @@
         "name": "Private User"
       }
     ],
-    "description": "<p>Search users|spaycs|hashtags details by requesting parameters Note: distance key not came in spayc list in case of no latitude and longitude.</p> ",
+    "description": "<p>Search users|spaycs|hashtags details by requesting parameters Note: distance key not came in spayc list in case of no latitude and longitude.Daata will filter for next 14 days in case of keywork value available</p> ",
     "header": {
       "fields": {
         "Header": [
@@ -8233,44 +8268,44 @@
     },
     "parameter": {
       "fields": {
-        "Parameter": [
+        "query": [
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "Number",
             "optional": false,
             "field": "page",
             "description": "<ul> <li>Page number in query string (Optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "Number",
             "optional": false,
             "field": "limit",
             "description": "<ul> <li>Records limit in query string (Optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "String",
             "optional": false,
             "field": "type",
             "description": "<ul> <li>Type should be in (users|spaycs|hashtags|all) (Optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "String",
             "optional": false,
             "field": "keyword",
             "description": "<ul> <li>Username|Spayc name|Hashtag name in query string to be search (Optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "String",
             "optional": false,
             "field": "latitude",
             "description": "<ul> <li>Latitude of user address (Optional).</li> </ul> "
           },
           {
-            "group": "Parameter",
+            "group": "query",
             "type": "String",
             "optional": false,
             "field": "longitude",
@@ -8317,7 +8352,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/users.json?page=:page&limit=:limit&keyword=:keyword&latitude=:latitude&longitude=:longitude"
+        "url": "http://spayc-staging.kiwireader.com/api/users.json?page=:page&limit=:limit&keyword=:keyword&latitude=:latitude&longitude=:longitude"
       }
     ],
     "error": {
@@ -8421,7 +8456,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/avatars.json"
+        "url": "http://spayc-staging.kiwireader.com/api/avatars.json"
       }
     ],
     "error": {
@@ -8595,7 +8630,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/read-notifications.json"
+        "url": "http://spayc-staging.kiwireader.com/api/read-notifications.json"
       }
     ]
   },
@@ -8747,7 +8782,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/spam-reports.json"
+        "url": "http://spayc-staging.kiwireader.com/api/spam-reports.json"
       }
     ]
   },
@@ -8792,7 +8827,7 @@
             "type": "String",
             "optional": false,
             "field": "categories",
-            "description": "<p>List of existing categories id(required).</p> "
+            "description": "<p>comma separated category id(required).</p> "
           }
         ]
       }
@@ -8812,14 +8847,14 @@
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>ser category has been saved successfully.</p> "
+            "description": "<p>user category has been saved successfully.</p> "
           }
         ]
       },
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"ser category has been saved successfully\"\n}",
+          "content": "     HTTP/1.1 200 OK\n{\n    \"status\": \"success\",\n    \"message\": \"user category has been saved successfully\"\n}",
           "type": "json"
         }
       ]
@@ -8828,7 +8863,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/user-categories.json"
+        "url": "http://spayc-staging.kiwireader.com/api/user-categories.json"
       }
     ],
     "error": {
@@ -8959,7 +8994,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/feedback.json"
+        "url": "http://spayc-staging.kiwireader.com/api/feedback.json"
       }
     ],
     "error": {
@@ -9083,7 +9118,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/ghost-mode.json"
+        "url": "http://spayc-staging.kiwireader.com/api/ghost-mode.json"
       }
     ],
     "error": {
@@ -9124,7 +9159,7 @@
     }
   },
   {
-    "type": "get",
+    "type": "put",
     "url": "/remove-avatar/:order.json",
     "title": "Remove Profile Image",
     "version": "0.1.0",
@@ -9187,7 +9222,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/remove-avatar/:order.json"
+        "url": "http://spayc-staging.kiwireader.com/api/remove-avatar/:order.json"
       }
     ],
     "error": {
@@ -9368,7 +9403,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/friend-response.json"
+        "url": "http://spayc-staging.kiwireader.com/api/friend-response.json"
       }
     ]
   },
@@ -9429,7 +9464,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/set-profile-image/:order.json"
+        "url": "http://spayc-staging.kiwireader.com/api/set-profile-image/:order.json"
       }
     ],
     "error": {
@@ -9560,7 +9595,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/update-device-token.json"
+        "url": "http://spayc-staging.kiwireader.com/api/update-device-token.json"
       }
     ],
     "error": {
@@ -9684,7 +9719,7 @@
     "groupTitle": "User",
     "sampleRequest": [
       {
-        "url": "http://spayc.com/api/user-profile/:userId.json"
+        "url": "http://spayc-staging.kiwireader.com/api/user-profile/:userId.json"
       }
     ],
     "error": {

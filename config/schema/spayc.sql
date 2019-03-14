@@ -702,3 +702,48 @@ CREATE TABLE warp_categories (
     PRIMARY KEY (id)
 );
 SELECT create_hypertable('warp_categories', 'created');
+
+-- Drop table
+
+-- DROP TABLE warp_frequency
+DROP TABLE IF EXISTS warp_frequency;
+CREATE TABLE warp_frequency(
+    id bigserial NOT NULL,
+    spayc_id bigint NOT NULL,    
+    start_date timestamp,
+    end_date timestamp,
+    repeat_type integer NOT NULL DEFAULT 1,
+    day_of_week integer NULL DEFAULT NULL,
+    day_of_month integer NULL DEFAULT NULL,
+    week_of_month integer NULL DEFAULT NULL,
+    month_of_year integer NULL DEFAULT NULL,
+    custom_year integer NULL DEFAULT NULL,
+    created timestamp NOT NULL,
+    modified timestamp NULL,
+    PRIMARY KEY (id, created)
+);
+COMMENT ON COLUMN "warp_frequency"."repeat_type" IS '1=>Daily,2=>Weekly,3=>Monthly,4=>Yearly,5=>Custom';
+COMMENT ON COLUMN "warp_frequency"."day_of_week" IS 'When frequenty type is weekly';
+COMMENT ON COLUMN "warp_frequency"."day_of_month" IS 'When frequenty type is monthly';
+COMMENT ON COLUMN "warp_frequency"."week_of_month" IS 'When frequenty type is monthly,yearly,custom. But not required';
+COMMENT ON COLUMN "warp_frequency"."month_of_year" IS 'When frequenty type is yearly and custom';
+COMMENT ON COLUMN "warp_frequency"."custom_year" IS 'When frequenty type is custom';
+SELECT create_hypertable('warp_frequency', 'created');
+
+-- function to get no. of week days between two date
+CREATE OR REPLACE FUNCTION week_days( date1 timestamp, date2 timestamp)
+RETURNS setof integer AS 
+$BODY$	
+	SELECT cast(extract(DOW from date (generate_series(date1::date,date2::date,'1 day'))) as Integer)	
+$BODY$
+LANGUAGE sql
+IMMUTABLE;
+
+-- Create function to get days between two date
+CREATE OR REPLACE FUNCTION month_days( date1 timestamp, date2 timestamp)
+RETURNS setof integer AS 
+$BODY$	
+	SELECT cast(extract(DAY from date (generate_series(date1::date,date2::date,'1 day'))) as Integer)	
+$BODY$
+LANGUAGE sql
+IMMUTABLE;

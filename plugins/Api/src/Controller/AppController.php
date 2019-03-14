@@ -32,8 +32,8 @@ class AppController extends BaseController {
          if(!empty($timezone)){
              Configure::write('timezone', $timezone);
          }else{
-             $this->request->env('HTTP_TIMEZONE','UTC');
-             Configure::write('timezone', 'UTC');
+             $this->request->env('HTTP_TIMEZONE',TIMEZONE);
+             Configure::write('timezone', TIMEZONE);
          }
          $user = $this->Auth->identify();
          if(!empty($user['id'])) {
@@ -41,10 +41,6 @@ class AppController extends BaseController {
          }
          \Cake\Core\Configure::write('auth',$user);
          $this->Auth->setUser($user);
-        Configure::write('timezone', 'UTC');
-        if($this->request->header('timezone')) {
-            Configure::write('timezone', $this->request->header('timezone'));
-        }        
     }
     public function beforeRender(Event $event) {
         parent::beforeRender($event);

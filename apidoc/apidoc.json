@@ -1,10 +1,13 @@
 {
-  "name": "SPAYC API",
+  "name": "WARP API",
   "version": "0.1.0",
   "description": "",
-  "title": "SPAYC API",
-  "url" : "http://spayc.com/api",
-  "sampleUrl": "http://spayc.com/api",
+  "title": "WARP API",
+  "url" : "http://spayc-staging.kiwireader.com/api",
+  "sampleUrl": "http://spayc-staging.kiwireader.com/api",
+  "header":{
+        "title":"Warp API"
+    },  
   "template": {
   	"withCompare": false,
   	"withGenerator": false

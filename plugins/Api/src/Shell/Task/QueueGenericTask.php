@@ -36,18 +36,17 @@ class QueueGenericTask extends QueueTask {
         }
         switch ($data['job_type']){
             case "new-spayc":
+                $this->out('Generic Queue running for new spayc and title hashtag');
+                $this->warpFrequency($data);
                 $this->newSpayc($data);
                 $this->titleHashTag($data);
                 break;
             case "communication_center":
+                $this->out('Generic Queue running for communication center');
                 $this->communicationCenter($data);
                 break;
         }
-        $this->out('Proccessing to send pusher notification');
-        $this->hr();
-        $this->out('->Success, Puhser Notification has been sent successfully.');
-        $this->out(' ');
-        $this->out(' ');
+        $this->out('End of generic queue');
         return true;
     }
     
@@ -57,6 +56,7 @@ class QueueGenericTask extends QueueTask {
      * @param Array $data list of pushers data
      */
     public function communicationCenter($data){
+        $notificationRepo = TableRegistry::get("Api.Notifications");
         $notify = $notificationRepo->addNotification([
             'requested_by'=>$data['items']['requested_by'],
             'requested_to'=>$data['items']['requested_to'],
@@ -112,25 +112,19 @@ class QueueGenericTask extends QueueTask {
                 if(!empty($userCategories[$user->user_id]) && !empty(array_intersect($warpCategories,$userCategories[$user->user_id]))){
                     /* Save the record to notification table */
                     $notify = $notificationRepo->addNotification($notificationItems);
-                }
-            }
-            $items = [
-                'requested_by'=>$data['user_id'],
-                'id'=>$notify->id,
-                'device_token'=>$user->_matchingData['UserLogs']->device_token,
-                'message'=>$message,
-                'matrix_room_id'=>$data['matrix_room_id'],
-                'notification_type'=>$notifyMessage->type,
-                'spayc_image'=>empty($data['image'])?null:$data['image'],
-                'time'=>$data['created_duration']
-            ];
-            if($data['user_id'] != $user->user_id){
-                if(!empty($userCategories[$user->user_id]) && !empty(array_intersect($warpCategories,$userCategories[$user->user_id]))){
-                    /* Send notification*/
+                    $items = [
+                        'requested_by'=>$data['user_id'],
+                        'id'=>$notify->id,
+                        'device_token'=>$user->_matchingData['UserLogs']->device_token,
+                        'message'=>$message,
+                        'matrix_room_id'=>$data['matrix_room_id'],
+                        'notification_type'=>$notifyMessage->type,
+                        'spayc_image'=>empty($data['image'])?null:$data['image'],
+                        'time'=>$data['created_duration']
+                    ];
                     $push->sendOnIOS($items);
                 }
             }
-            
         }
     }
     
@@ -153,5 +147,10 @@ class QueueGenericTask extends QueueTask {
         if(!empty($hashTags)){
             $spHashtags->saveTags($spaycs['id'],$hashTags);
         }
+    }
+    public function warpFrequency($data){
+        $request = $data['request'];
+        unset($data['request']);
+        TableRegistry::get('Api.WarpFrequency')->saveWarpFrequency($request,$data);
     }
 }

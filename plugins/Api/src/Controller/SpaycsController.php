@@ -60,7 +60,6 @@ class SpaycsController extends AppController {
             $items->passcode = '';
         }
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
-        
         $matrix = $this->Matrix->createRoom($data);
         if(!empty($matrix['error'])) {
             $this->restException(['status' => "failed", 'message' =>__($matrix['error'])], 400);
@@ -73,12 +72,13 @@ class SpaycsController extends AppController {
             $connection->begin(); 
             $this->Spaycs->save($items);
             /* save Category */
-            #pr($items);die;
             $items['warp_categories'] = TableRegistry::get('Api.WarpCategories')->SaveCategories($data,$items);
             $this->Redis->addSpayc($items);
             $items->job_type = 'new-spayc';
             $items->created_duration = Utils::toClient($items->created);
-            TableRegistry::get('Queue.QueuedJobs')->createJob('Generic',$items->toArray());
+            $queueData = $items->toArray();
+            $queueData['request'] = $data+['timezone'=> Configure::read('timezone')];
+            TableRegistry::get('Queue.QueuedJobs')->createJob('Generic',$queueData);
             //Joined the invite to the room//
             $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
             if(!empty($items['description'])) {
@@ -163,7 +163,9 @@ class SpaycsController extends AppController {
         $connection = $this->Spaycs->getConnection();
         try{
             $connection->begin(); 
-            $this->Spaycs->save($items);            
+            $this->Spaycs->save($items);  
+            /* save warp frequency */
+            $this->Spaycs->WarpFrequency->saveWarpFrequency($data+['timezone'=> Configure::read('timezone')],$items);
             $data['warp_categories'] = TableRegistry::get('Api.WarpCategories')->SaveCategories($data,$items);
             $this->Redis->addSpayc($items);
             $data['image'] = $items->get('image');
@@ -321,25 +323,10 @@ class SpaycsController extends AppController {
             if(!Utils::validTimestamp($this->request->query('date'))){
                  $this->restException(['status'=>'failed','message'=>__('Date format is not valid.')], 400);
             }
- 
             $user_date = Time::createFromTimestamp($this->request->query('date'), Configure::read('timezone'));
-            $endObj = clone $user_date;            
-            $endObj->modify('+1 days');
-            $endObj->modify('1 second ago'); 
-            $dayStart = $user_date->setTimezone('UTC')->format("Y-m-d H:i");
-            $endDay = $endObj->setTimezone('UTC')->format("Y-m-d H:i");  
-            $spaycs->where([
-                'OR'=>[[$startDate.' >='=>$dayStart],[$endDate.' >= '=>$dayStart]]
-                ]);
-            $spaycs->where([
-                'OR'=>[[$startDate.' <='=>$endDay],[$endDate.' <= '=>$endDay]]
-                ]);
+            $dateRange = Utils::dateRangeUtc($user_date->format('Y-m-d H:i:s'),1,Configure::read('timezone'));
+            $spaycs = $this->Spaycs->warpWhereFrequency($dateRange['start'], $dateRange['end'], $spaycs);
         }
-        
-        if(in_array(ucfirst($this->request->query('spayc_type')), ['Event', 'Community'])) {
-            $spaycs->where(["Spaycs.type"=>ucfirst($this->request->query('spayc_type'))]);
-        }
-        
         if(!empty($this->request->query('payment_type'))) {
            if(strtolower($this->request->query('payment_type')) == strtolower(FREE)){
                 $spaycs->where(["LOWER(Spaycs.payment_type)"=> strtolower($this->request->query('payment_type'))]);
@@ -789,8 +776,10 @@ class SpaycsController extends AppController {
         try{
             $connection->begin();
             $this->Spaycs->save($items);
+            /* save warp frequency */
+            $this->Spaycs->WarpFrequency->saveWarpFrequency($data+['timezone'=> Configure::read('timezone')],$items);
             $items->warp_categories = TableRegistry::get('Api.WarpCategories')->SaveCategories($data,$items);
-             if($prevDescription != $entity->get('description')) {
+            if($prevDescription != $entity->get('description')) {
                 TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
             }
             if($prevLocation != $entity->get('location')){

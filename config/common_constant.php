@@ -95,6 +95,10 @@ define('OTHER_CAT_NAME', 'Other');
 define('DUPLICATE', 'duplicate');
 define('UNIQUE', 'unique');
 define('MAX_DESCRIPTION', '235');
+define('TIMEZONE','America/New_York');
+define('DAILY',1);
+define('WEEKLY',2);
+define('CUSTOM',3);
 
 define('THUMBNAIL_IMAGE_MAX_WIDTH', 480);
 define('THUMBNAIL_IMAGE_MAX_HEIGHT', 320);

@@ -164,17 +164,17 @@ function postUser() { return; }
  * @apiGroup User
  * @apiPermission Private User
  *
- * @apiDescription Search users|spaycs|hashtags details by requesting parameters Note: distance key not came in spayc list in case of no latitude and longitude.
+ * @apiDescription Search users|spaycs|hashtags details by requesting parameters Note: distance key not came in spayc list in case of no latitude and longitude.Daata will filter for next 14 days in case of keywork value available
  *
  * @apiHeader {String} TOKEN Token must be set in header.
  * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  * 
- * @apiParam {Number}      page       * Page number in query string (Optional).
- * @apiParam {Number}      limit      * Records limit in query string (Optional).
- * @apiParam {String}      type       * Type should be in (users|spaycs|hashtags|all) (Optional).
- * @apiParam {String}      keyword    * Username|Spayc name|Hashtag name in query string to be search (Optional).
- * @apiParam {String}      latitude   * Latitude of user address (Optional).
- * @apiParam {String}      longitude  * Longitude of user address (Optional).
+ * @apiParam (query)    {Number}      page       * Page number in query string (Optional).
+ * @apiParam (query)    {Number}      limit      * Records limit in query string (Optional).
+ * @apiParam (query)    {String}      type       * Type should be in (users|spaycs|hashtags|all) (Optional).
+ * @apiParam (query)    {String}      keyword    * Username|Spayc name|Hashtag name in query string to be search (Optional).
+ * @apiParam (query)    {String}      latitude   * Latitude of user address (Optional).
+ * @apiParam (query)    {String}      longitude  * Longitude of user address (Optional).
  * 
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Search Lists.
@@ -703,16 +703,16 @@ function putGhostMode() { return; }
  * @apiHeader {String} TOKEN Token must be set in header.
  * @apiHeader {String}  timezone User current time zone ex: America/New_York.
  *
- * @apiParam {String} categories  List of existing categories id(required).
+ * @apiParam {String} categories  comma separated category id(required).
  *
  *
  * @apiSuccess {String} status success.
- * @apiSuccess {String} message ser category has been saved successfully.
+ * @apiSuccess {String} message user category has been saved successfully.
  * @apiSuccessExample {json} Success-Response:
  *      HTTP/1.1 200 OK
 {
     "status": "success",
-    "message": "ser category has been saved successfully"
+    "message": "user category has been saved successfully"
 }
  *
  * @apiUse UserErrorResponse
@@ -720,7 +720,7 @@ function putGhostMode() { return; }
 function postUserCategories() { return; }
 
 /**
- * @api {get} /remove-avatar/:order.json Remove Profile Image
+ * @api {put} /remove-avatar/:order.json Remove Profile Image
  * @apiVersion 0.1.0
  * @apiName removeAvatar
  * @apiGroup User
