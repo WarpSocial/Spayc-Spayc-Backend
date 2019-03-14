@@ -37,6 +37,9 @@
 @apiParam {String} group_type       Group type must be any one from the following Public|Private (Required).
 @apiParam {Datetime} start_date     Start date with time in format YYYY-MM-DD H:i:s (Required).
 @apiParam {Datetime} end_date       End date with time in format YYYY-MM-DD H:i:s  (Optional).
+@apiParam {Integer} repeat_type    Repeat type value must be any one 1=>daily,2=>weekly,3=>custom and default will be daily (Required).
+@apiParam {String} day_of_week      Day of week is required when repeat type will be 2=>weekly and value can be comma separated and value will be 0=>Sun,1=>Mon,2=>Tue,3=>Wed,4=>Thu,5=>Fri,6=>Sat.
+@apiParam {String} repeat_date      Repeate date is required when repeat type will be 3=>custom and value can be comma separated in format MM-DD-YYYY.
 @apiParam {String} passcode         Passcode is required in case of private group type.
 @apiParam {String} description      Description for SPAYC (Optional).
 @apiParam {String} image            Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
@@ -55,6 +58,8 @@
         "type": "Event|Community",
         "group_type": "Public|Private",
         "start_date": "01-11-2019 01:02:20",
+        "repeat_type":"2",
+        "day_of_week":"0,2",
         "end_date": "01-12-2019 01:02:20",
         "passcode": "s5d4f87sdf4545",
         "description":"spayc creating",
@@ -115,7 +120,10 @@ function postSpaycs() { return; }
 @apiParam {String} location         Location must be alphanumeric with space (Required).
 @apiParam {String} group_type       Group type must be any one from the following Public|Private (Required).
 @apiParam {Datetime} start_date     Start date with time in format YYYY-MM-DD H:i:s (Required).
-@apiParam {Datetime} end_date       End date with time in format YYYY-MM-DD H:i:s (Required).
+@apiParam {Datetime} end_date       End date with time in format YYYY-MM-DD H:i:s (Optional).
+@apiParam {Integer} repeat_type    Repeat type value must be any one 1=>daily,2=>weekly,3=>custom and default will be daily (Required).
+@apiParam {String} day_of_week      Day of week is required when repeat type will be 2=>weekly and value can be comma separated and value will be 0=>Sun,1=>Mon,2=>Tue,3=>Wed,4=>Thu,5=>Fri,6=>Sat.
+@apiParam {String} repeat_date      Repeate date is required when repeat type will be 3=>custom and value can be comma separated in format MM-DD-YYYY.
 @apiParam {String} passcode         Passcode is required in case of private group type.
 @apiParam {String} description      Description for SPAYC (Optional).
 @apiParam {String} image            Image size must be less than 5MB with extentions png|jpg|jpeg (Optional).
@@ -135,6 +143,8 @@ function postSpaycs() { return; }
         "group_type": "Public|Private",
         "start_date": "01-11-2019 01:02:20",
         "end_date": "01-12-2019 01:02:20",
+        "repeat_type":"2",
+        "day_of_week":"0,2",
         "passcode": "s5d4f87sdf4545",
         "description":"spayc creating",
         "image":"file.png",
