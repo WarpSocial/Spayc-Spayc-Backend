@@ -14,6 +14,7 @@
 namespace App\View;
 
 use Cake\View\View;
+use Cake\Utility\Hash;
 
 /**
  * Application View
@@ -55,6 +56,53 @@ class AppView extends View
             $date = (new \Cake\I18n\Time($dateTime))->format($format);
         }
         return $date;
+    }
+    
+    public function eventRepeat($warpFrequency){
+        
+    }
+    public function warpCategories($spayc){
+        if(empty($spayc['warp_categories'])){
+            return null;
+        }
+        $categoreis = [];
+        foreach($spayc['warp_categories'] as $categories):
+            if(!empty($categories->spayc_category)){
+                $categoreis[] = $this->emoji($categories->spayc_category->code)." ".$categories->spayc_category->name;
+            }
+        endforeach;
+        return implode(', ',$categoreis);
+    }
+    public function warpImage($spayc){
+        $element = '';$emoji = false;
+        /* if event has image */
+        if(!empty($spayc->image)) {
+            $element =  $this->Html->image($spayc->image, ["alt" => $spayc->name, 'class' =>'warp-img']);
+        }elseif(!empty($spayc['warp_categories'])){
+            /* if event has no image but has emoji */
+            $category = Hash::extract($spayc['warp_categories'], '{n}[is_primary=1]');
+            if(!empty($category['0']->spayc_category)){
+                $emoji = true;
+                $element =  '<span class="emoji d-flex align-items-center justify-content-center w-100 h-100">'.$category['0']->spayc_category->code.'</span>';
+            }
+        }else{
+        /* event has neither image nor emoji then default image will render */
+            $element =  $this->Html->image('no-image-big.png', ["alt" => $spayc->name, 'class' =>'warp-img']);
+        }
+        if($emoji){
+            return '<div class="image-wrap blank-emoji">'.$element.'</div>';
+        }else{
+            return '<div class="image-wrap ">'.$element.'</div>';
+        }
+        
+    }
+    public function emoji($code){
+         $hexCode = explode(',',$code);
+         if(count($hexCode) > 1){
+            return "&#".hexdec($hexCode[0])."&#".hexdec($hexCode[1]).";";
+        }else{
+            return "&#".hexdec($code).";";
+        }
     }
 
 

@@ -6,18 +6,6 @@ $groupTypeArr = unserialize(GROUP_TYPE_ARR);
 $statusArr = unserialize(STATUS_ARR);
 $txtMassage = unserialize(TEXT_MASSAGE); 
 $breadcrumbsTxt= ucfirst($spayc->name);
-
-    $spayEmoji=false;
-    $spaycImg='';
-    if(!empty($spayc->image)) {
-        $spaycImg = $spayc->image; 
-    } else if(!empty($spayc->spayc_category->code)){
-        $spayEmoji=true;
-        $dec = hexdec($spayc->spayc_category->code);
-        $spaycImg ="&#$dec;"; 
-    } else {
-      $spaycImg = 'no-image-big.png';
-    }
 ?>
 <!--=============breadcrumbs==============-->            
   <?php echo $this->element('admin/breadcrumbs', ['action'=> $breadcrumbsTxt]);?>
@@ -28,15 +16,7 @@ $breadcrumbsTxt= ucfirst($spayc->name);
           <div class="event-view-wrapper">
             <!--======event info=====-->
             <div class="event-info d-flex clearfix">
-                <div class="image-wrap <?= !empty($spayEmoji)?'blank-emoji':''?>">
-              <?php 
-                if($spayEmoji){
-                    echo "<span class='emoji d-flex align-items-center justify-content-center w-100 h-100'>".$spaycImg."</span>";
-                } else {
-                    echo $this->Html->image($spaycImg, ["alt" => "", 'class' =>'']);
-                }
-              ?>
-              </div>
+                <?= $this->warpImage($spayc); ?>
               <div class="data-wrap">
                 <h1><?= !empty($spayc->name)?$spayc->name:BLANK ?></h1>
                 <h3><?php
@@ -55,13 +35,14 @@ $breadcrumbsTxt= ucfirst($spayc->name);
                   </span>
                   <?php } ?>
                 </h3>
-                <p><?php echo !empty($spayEmoji)?$spaycImg.'&nbsp;':''; echo !empty($spayc->spayc_category->name)?$spayc->spayc_category->name:'' ?></p>
+                <p>
+                    <?php echo $this->warpCategories($spayc); ?>
+                </p>
                 <p><?= !empty($spayc->description)?$spayc->description:'' ?></p>
                 <div class="event-status">
                   <i class="icon-<?= strtolower($spayc->group_type) ?>-icon"></i>
                   <span><?= $spayc->group_type ?></span>
                 </div>
-                <?php if($spayc->type == $spaycTypeArr['event']) {?>
                 <div class="date-wrapper">
                   <div class="start-date">
                     <span>Start</span>
@@ -76,7 +57,12 @@ $breadcrumbsTxt= ucfirst($spayc->name);
                     </span>
                   </div>
                 </div>
-                <?php } if(!empty($spayc->location)) { ?>
+                <div class="warp-repeat">
+                    <ul>
+                        <li></li>
+                    </ul>
+                </div>
+                <?php if(!empty($spayc->location)) { ?>
                 <div class="address-wrapper">
                   <span>Address</span>
                   <span class="bold-text"><?= !empty($spayc->location)?$spayc->location:BLANK ?></span>

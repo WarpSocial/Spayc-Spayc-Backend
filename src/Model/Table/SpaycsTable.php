@@ -87,11 +87,6 @@ class SpaycsTable extends Table
             'foreignKey' => 'spayc_id',
             'className' => 'SubscribedUsers'
         ]);
-        $this->belongsTo('SpaycCategories', [
-            'foreignKey' => 'spayc_category_id',
-            'joinType' => 'LEFT',
-            'className' => 'Api.SpaycCategories'            
-        ]);
         $this->hasMany('Comments', [
             'dependent' => true,
             'foreignKey' => 'spayc_id',
@@ -107,6 +102,26 @@ class SpaycsTable extends Table
          $this->belongsToMany('Advertisements', [
             'joinTable' => 'spayc_advertisement',            
             'className' => 'Advertisements'
+        ]);
+         /* spayc categories via joindata*/
+        $this->belongsToMany('SpaycCategories', [
+            'foreignKey' => 'spayc_id',
+            'targetForeignKey' => 'spayc_category_id',
+            'joinTable' => 'warp_categories',
+            'className' => 'Api.SpaycCategories',
+            'through'=>'Api.WarpCategories'
+        ]);
+        /*spayc categories direct by left join*/
+        $this->hasMany('WarpCategories', [
+            'foreignKey' => 'spayc_id',
+            'joinType' => 'LEFT',
+            'className' => 'Api.WarpCategories'
+        ]);
+        /*Relation for warp repeat*/
+        $this->hasMany('WarpFrequency', [
+            'foreignKey' => 'spayc_id',
+            'joinType' => 'LEFT',
+            'className' => 'Api.WarpFrequency'
         ]);
         
         /* Earth radius in miles 3959 */
@@ -463,11 +478,9 @@ class SpaycsTable extends Table
                     'SubscribedUsers' => function($q) {
                         return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
                     },
-                    'SpaycCategories' => function($q) {
-                        return $q->select(['SpaycCategories.id', 'SpaycCategories.name','SpaycCategories.code']);
-                    },
-                    'SubSpaycs.SpaycCategories' => function($q) {
-                        return $q->select(['SpaycCategories.id', 'SpaycCategories.name','SpaycCategories.code']);
+                    'WarpCategories.SpaycCategories',
+                    'WarpFrequency'=>function($q){
+                        return $q->select(['WarpFrequency.id','WarpFrequency.spayc_id','WarpFrequency.start_date','WarpFrequency.end_date','WarpFrequency.repeat_type','WarpFrequency.day_of_week','WarpFrequency.repeat_date'])->limit(1);
                     }
                 ]);
         $spayc->order(['Spaycs.created'=>'DESC']); 
