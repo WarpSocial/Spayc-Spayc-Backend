@@ -730,20 +730,5 @@ COMMENT ON COLUMN "warp_frequency"."month_of_year" IS 'When frequenty type is ye
 COMMENT ON COLUMN "warp_frequency"."custom_year" IS 'When frequenty type is custom';
 SELECT create_hypertable('warp_frequency', 'created');
 
--- function to get no. of week days between two date
-CREATE OR REPLACE FUNCTION week_days( date1 timestamp, date2 timestamp)
-RETURNS setof integer AS 
-$BODY$	
-	SELECT cast(extract(DOW from date (generate_series(date1::date,date2::date,'1 day'))) as Integer)	
-$BODY$
-LANGUAGE sql
-IMMUTABLE;
 
--- Create function to get days between two date
-CREATE OR REPLACE FUNCTION month_days( date1 timestamp, date2 timestamp)
-RETURNS setof integer AS 
-$BODY$	
-	SELECT cast(extract(DAY from date (generate_series(date1::date,date2::date,'1 day'))) as Integer)	
-$BODY$
-LANGUAGE sql
-IMMUTABLE;
+

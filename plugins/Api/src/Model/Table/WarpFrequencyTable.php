@@ -54,7 +54,7 @@ class WarpFrequencyTable extends Table {
      * 
      */
     public function saveWarpFrequency($request,$spayc){
-        if(empty($request['repeaty_type'])){
+        if(empty($request['repeat_type'])){
             return;
         }
         $wpData = $this->eventRepeat($request, $spayc);
@@ -127,7 +127,10 @@ class WarpFrequencyTable extends Table {
         foreach(explode(',',$request['repeat_date']) as $date){
             $repeatStartDate = Utils::toUtc($date,'m-d-Y','Y-m-d',$request['timezone']);
             list($month,$day,$year) = explode('-',$date);
-            $wpData[] = $data+['start_date'=>$repeatStartDate.' '.$startTime,'day_of_month'=>$day,'month_of_year'=>$month,'custom_year'=>$year];
+            if($startDate->format('m-d-Y') != $date){
+                $wpData[] = $data+['start_date'=>$repeatStartDate.' '.$startTime,'day_of_month'=>$day,'month_of_year'=>$month,'custom_year'=>$year];
+            }
+            
         }
         return $wpData;
     }

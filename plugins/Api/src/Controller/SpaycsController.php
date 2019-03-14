@@ -617,7 +617,10 @@ class SpaycsController extends AppController {
                     'SubscribedUsers' => function($q) {
                         return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
                     },
-                    'WarpCategories.SpaycCategories'
+                    'WarpCategories.SpaycCategories',
+                    'WarpFrequency'=>function($q){
+                        return $q->select(['WarpFrequency.spayc_id','WarpFrequency.start_date','WarpFrequency.end_date','WarpFrequency.repeat_type','WarpFrequency.day_of_week','WarpFrequency.day_of_month','WarpFrequency.month_of_year','WarpFrequency.custom_year'])->where("start_date::date <='".Utils::toUtc('now',null,'Y-m-d')."'");
+                    }
                 ]);
         if($lat != null && $long != null){
             $distance = "ROUND( CAST(".str_replace(':long',$long,str_replace(':lat',$lat,$this->Spaycs->distanceInMiles))." AS numeric), 3)";

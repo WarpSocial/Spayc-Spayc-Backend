@@ -405,7 +405,13 @@ class SpaycsTable extends Table {
                         return true;
                     }
                     return false;
-                },__('Please select day of week'))
+                },__('Please select day of week.'))
+                ->notEmpty('day_of_week',__('Please select day of week.'),function($context){
+                    if(!empty($context['data']['repeat_type']) && ($context['data']['repeat_type'] == WEEKLY)){
+                        return true;
+                    }
+                    return false;
+                })        
                 ->add('day_of_week','valid_day', [
                    'rule' => function($value,$context){
                         if(!empty($value)){
@@ -953,9 +959,8 @@ class SpaycsTable extends Table {
         if(!isset($request['is_limit']) || (isset($request['is_limit']) && $request['is_limit'])){
             $spaycs->limit(100);
         }
-        //$spaycs->order(['Spaycs.start_date'=>'ASC']);
-        //return ['count'=>($spaycs->isEmpty())?0:1,'records'=>$spaycs];
-        return ['count'=>$spaycs->count(),'records'=>$spaycs];
+        return ['count'=>($spaycs->isEmpty())?0:1,'records'=>$spaycs];
+        //return ['count'=>$spaycs->count(),'records'=>$spaycs];
     }
     public function distance($lat1, $lon1, $lat2, $lon2,$unit='km') {
         $pi80 = M_PI / 180;
