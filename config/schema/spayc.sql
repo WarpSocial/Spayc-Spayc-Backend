@@ -712,22 +712,16 @@ CREATE TABLE warp_frequency(
     spayc_id bigint NOT NULL,    
     start_date timestamp,
     end_date timestamp,
-    repeat_type integer NOT NULL DEFAULT 1,
-    day_of_week integer NULL DEFAULT NULL,
-    day_of_month integer NULL DEFAULT NULL,
-    week_of_month integer NULL DEFAULT NULL,
-    month_of_year integer NULL DEFAULT NULL,
-    custom_year integer NULL DEFAULT NULL,
+    repeat_type character varying(200) NULL DEFAULT NULL,
+    day_of_week character varying(200) NULL DEFAULT NULL,
+    custom_date  character varying(200) NULL DEFAULT NULL,
     created timestamp NOT NULL,
     modified timestamp NULL,
     PRIMARY KEY (id, created)
 );
-COMMENT ON COLUMN "warp_frequency"."repeat_type" IS '1=>Daily,2=>Weekly,3=>Monthly,4=>Yearly,5=>Custom';
+COMMENT ON COLUMN "warp_frequency"."repeat_type" IS '1=>Daily,2=>Weekly,3=>Custom';
 COMMENT ON COLUMN "warp_frequency"."day_of_week" IS 'When frequenty type is weekly';
-COMMENT ON COLUMN "warp_frequency"."day_of_month" IS 'When frequenty type is monthly';
-COMMENT ON COLUMN "warp_frequency"."week_of_month" IS 'When frequenty type is monthly,yearly,custom. But not required';
-COMMENT ON COLUMN "warp_frequency"."month_of_year" IS 'When frequenty type is yearly and custom';
-COMMENT ON COLUMN "warp_frequency"."custom_year" IS 'When frequenty type is custom';
+COMMENT ON COLUMN "warp_frequency"."custom_date" IS 'When frequenty type is custom';
 SELECT create_hypertable('warp_frequency', 'created');
 
 

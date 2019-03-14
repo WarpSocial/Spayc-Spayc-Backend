@@ -8,7 +8,7 @@ return [
     'pagelimit'=>5,
     'imageLimit'=>50,
     'miles'=>1,
-    'newSpaycDistance'=>5,/* Miles*/
+    'newSpaycDistance'=>5,/* Miles to send notification*/
     'friend_requested_status'=>['Pending', 'Accepted', 'Blocked','Unblock','is_direct','Decline','Unfriend', 'Suggested'],
     'add_friend'=>['Pending'],
     'accept_decline_status'=>['Accepted', 'Decline'],

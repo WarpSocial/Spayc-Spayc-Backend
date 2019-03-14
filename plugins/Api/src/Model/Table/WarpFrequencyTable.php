@@ -123,12 +123,12 @@ class WarpFrequencyTable extends Table {
         $startDate = new \DateTime($startDate);
         $startTime = $startDate->format('H:i:s');
         $endDate = new \DateTime($endDate);
-        $wpData[] = $data+['start_date'=>$startDate->format('Y-m-d H:i:s')];
+        $wpData[] = $data+['start_date'=>$startDate->format('Y-m-d H:i:s'),'custom_date'=>$request['repeat_date']];
         foreach(explode(',',$request['repeat_date']) as $date){
             $repeatStartDate = Utils::toUtc($date,'m-d-Y','Y-m-d',$request['timezone']);
             list($month,$day,$year) = explode('-',$date);
             if($startDate->format('m-d-Y') != $date){
-                $wpData[] = $data+['start_date'=>$repeatStartDate.' '.$startTime,'day_of_month'=>$day,'month_of_year'=>$month,'custom_year'=>$year];
+                $wpData[] = $data+['start_date'=>$repeatStartDate.' '.$startTime,'custom_date'=>$request['repeat_date']];
             }
             
         }
