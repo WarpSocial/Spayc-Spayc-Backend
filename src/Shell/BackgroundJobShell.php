@@ -17,7 +17,8 @@ class BackgroundJobShell extends Shell {
     public function main() {
         $this->out('Moving the category in separate table warp_categories table');
         $warpOjb = TableRegistry::get('Api.Spaycs');
-        //$warpCat = $warpOjb->find()->select(['spayc_id'=>'id','spayc_category_id']);
+        $warpCat = $warpOjb->find()->select(['spayc_id'=>'id','start_date','end_date']);
+        
         $conn = $warpOjb->getConnection();
         $conn->transactional(function ($conn) {
            
