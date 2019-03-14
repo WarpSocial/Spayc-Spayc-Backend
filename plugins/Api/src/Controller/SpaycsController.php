@@ -619,7 +619,7 @@ class SpaycsController extends AppController {
                     },
                     'WarpCategories.SpaycCategories',
                     'WarpFrequency'=>function($q){
-                        return $q->select(['WarpFrequency.spayc_id','WarpFrequency.start_date','WarpFrequency.end_date','WarpFrequency.repeat_type','WarpFrequency.day_of_week','WarpFrequency.day_of_month','WarpFrequency.month_of_year','WarpFrequency.custom_year'])->where("start_date::date <='".Utils::toUtc('now',null,'Y-m-d')."'");
+                        return $q->select(['WarpFrequency.id','WarpFrequency.spayc_id','WarpFrequency.start_date','WarpFrequency.end_date','WarpFrequency.repeat_type','WarpFrequency.day_of_week','WarpFrequency.day_of_month','WarpFrequency.month_of_year','WarpFrequency.custom_year'])->where("start_date::date <='".Utils::toUtc('now',null,'Y-m-d')."'")->limit(1);
                     }
                 ]);
         if($lat != null && $long != null){
@@ -643,6 +643,7 @@ class SpaycsController extends AppController {
                 if(!empty($row->ticket_url)){
                     $row->ticket_url = explode(',',$row->ticket_url);
                 }
+                $row['warp_frequency'] = !empty($row->warp_frequency[0])?$row->warp_frequency[0]:null;
                 $spaycId = ApiHasher::decrypt($row->id);
                 $row['friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
                 $present = 0;$totalJoined=[];
