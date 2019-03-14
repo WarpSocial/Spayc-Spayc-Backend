@@ -619,7 +619,7 @@ class SpaycsController extends AppController {
                     },
                     'WarpCategories.SpaycCategories',
                     'WarpFrequency'=>function($q){
-                        return $q->select(['WarpFrequency.id','WarpFrequency.spayc_id','WarpFrequency.start_date','WarpFrequency.end_date','WarpFrequency.repeat_type','WarpFrequency.day_of_week','WarpFrequency.custom_date'])->where("start_date::date <='".Utils::toUtc('now',null,'Y-m-d')."'")->limit(1);
+                        return $q->select(['WarpFrequency.id','WarpFrequency.spayc_id','WarpFrequency.start_date','WarpFrequency.end_date','WarpFrequency.repeat_type','WarpFrequency.day_of_week','WarpFrequency.repeat_date'])->where("start_date::date <='".Utils::toUtc('now',null,'Y-m-d')."'")->limit(1);
                     }
                 ]);
         if($lat != null && $long != null){
