@@ -1060,7 +1060,7 @@ class SpaycsTable extends Table {
         //$yearly = "(repeat_type=4 AND day_of_month IN (".$interval['monthdays'].") AND month_of_year IN (".$interval['month'].") AND $overLaps)";
         //$custom = "(repeat_type=5 AND cast (CONCAT (custom_year, '-', month_of_year,'-',day_of_month) as TIMESTAMP) between '$warpStartAt' AND '$warpEndAt' AND $overLaps)";
         //$whereClause = '('.$weekly.' OR '.$monthly.' OR '.$yearly.' OR '.$custom.' OR '.$daily.')';
-        $spaycs->select(['warp_frequency.start_date','warp_frequency.end_date','warp_frequency.repeat_type','warp_frequency.day_of_week','warp_frequency.day_of_month','warp_frequency.month_of_year','warp_frequency.custom_year']);
+        $spaycs->select(['warp_frequency.start_date','warp_frequency.end_date','warp_frequency.repeat_type','warp_frequency.day_of_week','warp_frequency.custom_date']);
         return $spaycs->join([
             'table' => 'warp_frequency',
             'type' => 'INNER',
