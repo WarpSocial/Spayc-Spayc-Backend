@@ -543,3 +543,13 @@ ul#select2-options-results .select2-results__option {
 .select2-results__option .user-list .user-list-info .user-id {
   color: #333; 
 }
+#category-modal .modal{
+    display: block !important;
+}
+#category-modal .modal-dialog{
+      overflow-y: initial !important
+}
+#category-modal .modal-body{
+  height: 450px;
+  overflow-y: auto;
+}

@@ -61,7 +61,7 @@ class AppView extends View
     public function eventRepeat($warpFrequency){
         
     }
-    public function warpCategories($spayc){
+    public function spycCategories($spayc){
         if(empty($spayc['warp_categories'])){
             return null;
         }
@@ -83,7 +83,7 @@ class AppView extends View
             $category = Hash::extract($spayc['warp_categories'], '{n}[is_primary=1]');
             if(!empty($category['0']->spayc_category)){
                 $emoji = true;
-                $element =  '<span class="emoji d-flex align-items-center justify-content-center w-100 h-100">'.$category['0']->spayc_category->code.'</span>';
+                $element =  '<span class="emoji d-flex align-items-center justify-content-center w-100 h-100">'.$this->emoji($category['0']->spayc_category->code).'</span>';
             }
         }else{
         /* event has neither image nor emoji then default image will render */
@@ -104,6 +104,23 @@ class AppView extends View
             return "&#".hexdec($code).";";
         }
     }
-
+    
+    public function warpCategories($spayc){
+        if(empty($spayc['warp_categories'])){
+            return null;
+        }
+        $primary = null;$other = [];
+        foreach($spayc['warp_categories'] as $categories):
+            if($categories->is_primary){
+                $primary = $categories->spayc_category_id;
+            }else{
+                $other[] = $categories->spayc_category_id;
+            }
+        endforeach;
+       return [
+           'primary' => $primary,
+           'other' => $other,
+        ];
+    }
 
 }

@@ -117,13 +117,20 @@ class SpaycsController extends AdminController {
             return $this->redirect(['Controller' => 'Users', 'action' => 'index']);
 
         $exists = $this->Spaycs->exists(['id' => $id]);
-        if (!$exists)
+        if (!$exists){
             return $this->redirect(['action' => 'index']);
-
+        }
         $user = $this->Users->get($userId);
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, $this->FRIEND_REQUESTED_STATUS_ARR['accepted']);
         $spayc = $this->Spaycs->getWarpsViewBySpaycId($id, $userId, $friend);
-        $this->set(compact('spayc', 'user', 'subspayc'));
+        if ($this->request->is('post')) {
+            $warpData['primary_category'] = $this->request->getData('primary_category');
+            $warpData['other_category'] = implode(',', $this->request->getData('other_category'));
+            TableRegistry::get('Api.WarpCategories')->SaveCategories($warpData,$spayc);
+            return $this->redirect($this->referer());
+        }
+        $categories = TableRegistry::get('Api.SpaycCategories')->allCategories();
+        $this->set(compact('spayc', 'user', 'subspayc','categories'));
         $this->set('_serialize', ['spayc']);
     }
 

@@ -35,9 +35,10 @@ $breadcrumbsTxt= ucfirst($spayc->name);
                   </span>
                   <?php } ?>
                 </h3>
-                <p>
-                    <?php echo $this->warpCategories($spayc); ?>
-                </p>
+                <div class="category-box">
+                    <?php echo $this->spycCategories($spayc); ?>
+                    <a href="<?php echo $this->url->build(['controller'=>'Spaycs','action'=>'categoryUpdate',$spayc->id]); ?>" class="btn btn-info cat-edit"><i class="fas fa-check"></i>Edit</a>
+                </div>
                 <p><?= !empty($spayc->description)?$spayc->description:'' ?></p>
                 <div class="event-status">
                   <i class="icon-<?= strtolower($spayc->group_type) ?>-icon"></i>
@@ -162,4 +163,82 @@ $breadcrumbsTxt= ucfirst($spayc->name);
             </div>
           </div>
     </section>
-    <?php echo $this->Html->script(['admin/spayc','admin/admin-manage-user']); ?>
+<!-- Modal box to update category -->
+<div class="modal fade" id="category-modal" tabindex="-1" role="dialog" aria-labelledby="CategoryUpdate" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content user-list-modal">
+          <div class="modal-header">
+              <h5 class="modal-title">Update Category</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="modal-close"></span></button>
+          </div>
+          <div class="modal-body">
+              <div class="flash-box"></div>
+              <div class="category-box">
+                  <form name="updatecat" id="updatecat" action="" method="post">
+                  <div class="row">
+                  <div class="form-group col-sm-8">
+                      <input id="findcat" class="form-control" type="text" placeholder="Search..">
+                  </div>
+                      <div class="form-group col-sm-4">
+                          <button class="btn btn-primary update-cat">Save</button>
+                      </div>
+                  </div>
+                  <table class="table table-borderless" id="cat-item">
+                      <tr>
+                          <th>Parent Category</th>
+                          <th>Category</th>
+                          <th>Emoji</th>
+                          <th>Primary Category</th>
+                          <th>Other Category</th>
+                      </tr>
+                      <?php $warpCat = $this->warpCategories($spayc); ?>
+                      <?php foreach ($categories as $parentcateory): ?>
+                      <?php foreach ($parentcateory['sub_categories'] as $category): ?>                      
+                        <tr>
+                            <td><?= $parentcateory->name ?></td>
+                            <td><?= h($category->name) ?></td>                            
+                            <td>
+                                <span style="font-size: 25px;">
+                                <?php echo $this->emoji($category->code); ?>
+                                </span>
+                            </td>
+                            <td><input type="checkbox" data-option="primary" class="form-control catopt" name="primary_category" value="<?= $category->id ?>" <?php echo ($category->id == $warpCat['primary'])?'checked="checked"':'' ?> /></td>
+                            <td><input type="checkbox" data-option="other" class="form-control catopt" name="other_category[]" value="<?= $category->id ?>" <?php echo in_array($category->id,$warpCat['other'])?'checked="checked"':'' ?> /></td>
+                        </tr>
+                        <?php endforeach; ?>
+                        <?php endforeach; ?>
+                  </table>
+                  </form>    
+              </div>
+          </div>
+      </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function(){       
+        $("#findcat").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#cat-item tr").filter(function() {
+              $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+        $(document).on('change','.catopt',function(){
+            var attrName = $('input[name="'+$(this).attr('name')+'"]');
+            var selected = attrName.filter(':checked').length;
+            
+            if(($(this).attr('data-option') == 'primary') && (selected > 1)){
+                $(this).prop('checked',false);
+                notification('Only one primary category can select.','error');
+            }
+            if(($(this).attr('data-option') == 'other') && (selected > 5)){
+                $(this).prop('checked',false);
+                notification('Only five other category can select.','error');
+            }
+        });
+        $(document).on('click','.update-cat',function(){
+            $("#updatecat").submit();
+            $(this).addClass('disabled');
+	});
+    });
+</script>
+<?php echo $this->Html->script(['admin/spayc','admin/admin-manage-user']); ?>
