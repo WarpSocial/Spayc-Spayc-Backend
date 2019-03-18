@@ -496,4 +496,22 @@ class Utils {
         }
         return $string;
     }
+    public static function warpCategories($spayc) {
+        if (empty($spayc['warp_categories'])) {
+            return null;
+        }
+        $primary = null;
+        $other = [];
+        foreach ($spayc['warp_categories'] as $categories):
+            if ($categories->is_primary) {
+                $primary = $categories->spayc_category_id;
+            } else {
+                $other[] = $categories->spayc_category_id;
+            }
+        endforeach;
+        return [
+            'primary' => $primary,
+            'other' => $other,
+        ];
+    }
 }

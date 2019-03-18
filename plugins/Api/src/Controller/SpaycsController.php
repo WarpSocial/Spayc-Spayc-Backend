@@ -734,20 +734,20 @@ class SpaycsController extends AppController {
                     return $q;
             });
         }
-        $entities->contain(['WarpCategories','RepeatFrequency']);
+        $entities->contain(['WarpCategories','RepeatFrequency','ParentSpaycs.WarpCategories']);
                 
         // If User Update Spayc once Scraper will not update
         if(isset($data['is_admin_update'])){
-            $entities->where(['OR'=>['Spaycs.id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']],['is_admin_update'=>0]]);
+            $entities->where(['OR'=>['Spaycs.id'=>$data['spayc_id'],'Spaycs.matrix_room_id'=>$data['spayc_id']],['is_admin_update'=>0]]);
             unset($data['is_admin_update']);
         }else{        
-        $entities->where(['OR'=>['Spaycs.id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
+        $entities->where(['OR'=>['Spaycs.id'=>$data['spayc_id'],'Spaycs.matrix_room_id'=>$data['spayc_id']]]);
         }
         if($entities->isEmpty()){
             $this->restException(['status'=>'failed','message'=>__('This spayc is no longer exist.')], 400);
         }
         
-        $entity = $entities->first();
+        $entity = $entities->first();        
         $eventType = $entity->type;
         if($user['id'] != $entity->user_id){
             $this->restException(['status'=>'failed','message'=>__('Insufficient privileges to edit this warp.')], 400);
@@ -768,7 +768,9 @@ class SpaycsController extends AppController {
             }
             unset($data['parent_matrix_room_id']);            
             $items = $this->Spaycs->patchEntity($entity, $data,['validate'=>false,'associated'=>['JoinedSpayc']]);
-            
+            $parentWarpCat = Utils::warpCategories($entity->parent_spayc);
+            $data['primary_category'] = $parentWarpCat['primary'];
+            $data['other_category'] = implode(',',$parentWarpCat['other']);
         }       
         $items->type = $eventType;        
         if($data['group_type'] == 'Public'){ /* in community no need to keep start or end date*/
@@ -793,7 +795,10 @@ class SpaycsController extends AppController {
             $WPItems['end_date'] =  Utils::toClient($items['end_date']);
             /* save warp frequency */
             $this->Spaycs->WarpFrequency->saveWarpFrequency($data+['timezone'=> Configure::read('timezone')],$WPItems);
-            $items->warp_categories = TableRegistry::get('Api.WarpCategories')->SaveCategories($data,$items);
+            /* check for subwarp has primary category */
+            if(!empty($data['primary_category'])){                
+                $items->warp_categories = TableRegistry::get('Api.WarpCategories')->SaveCategories($data,$items);
+            }
             if($prevDescription != $entity->get('description')) {
                 TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
             }
