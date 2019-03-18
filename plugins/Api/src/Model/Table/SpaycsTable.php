@@ -1076,5 +1076,18 @@ class SpaycsTable extends Table {
                 ]
             ]);
     }
+    public function warpRepeatFrequency($warpStartAt,$warpEndAt,$spaycs){
+        $whereClause = "(warp_frequency.start_date, warp_frequency.end_date) OVERLAPS ('".$warpStartAt."'::TIMESTAMP, '".$warpEndAt."'::TIMESTAMP)";
+        $spaycs->select(['warp_frequency.start_date','warp_frequency.end_date','warp_frequency.repeat_type','warp_frequency.day_of_week','warp_frequency.repeat_date']);
+        return $spaycs->join([
+            'table' => 'warp_frequency',
+            'type' => 'INNER',
+            'alias' => 'warp_frequency',
+            'conditions' => [
+                '(Spaycs.id = warp_frequency.spayc_id)',
+                $whereClause,
+                ]
+            ]);
+    }
 
 }
