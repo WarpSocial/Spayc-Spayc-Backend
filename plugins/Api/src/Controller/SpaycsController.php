@@ -309,7 +309,7 @@ class SpaycsController extends AppController {
             if($this->request->query('list_by')=='created'){
                 $spaycs->order(['Spaycs.created'=>'DESC']);
             }else{
-                //$spaycs->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
+                $spaycs->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
             }            
         }else if(!empty($this->request->query('hot'))) {
             
@@ -331,7 +331,6 @@ class SpaycsController extends AppController {
             $user_date = Time::createFromTimestamp($this->request->query('date'), Configure::read('timezone'));
             $dateRange = Utils::dateRangeUtc($user_date->format('Y-m-d H:i:s'),1,Configure::read('timezone'));
             $spaycs = $this->Spaycs->warpRepeatFrequency($dateRange['start'], $dateRange['end'], $spaycs);
-            $spaycs->distinct(['Spaycs.id']);    
         }
         if(!empty($this->request->query('payment_type'))) {
            if(strtolower($this->request->query('payment_type')) == strtolower(FREE)){
@@ -984,7 +983,8 @@ class SpaycsController extends AppController {
                     'Comments' => function($q) {
                       return $q->select(['Comments.spayc_id', 'Comments.comment']);                     
                     },
-                    'WarpCategories.SpaycCategories'
+                    'WarpCategories.SpaycCategories',
+                    'WarpFrequency'
                 ]);
         $bannedSpayc = $this->Spaycs->bannedSpayc($user['id']);    
         if(!empty($bannedSpayc)){
@@ -995,8 +995,6 @@ class SpaycsController extends AppController {
         if($lat != null && $long != null){
             $distance = "ROUND( CAST(".str_replace(':long',$long,str_replace(':lat',$lat,$this->Spaycs->distanceInMiles))." AS numeric), 3)";
             $query->select(['distance'=>$distance])
-                    //->bind(':lat', $lat, 'float')
-                    //->bind(':long', $long, 'float')
                     ->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
         }else{
             $query->select(['distance'=>0])
@@ -1027,6 +1025,7 @@ class SpaycsController extends AppController {
                 if(!empty($row->subscribed_users)) {
                     $subUserId = \Cake\Utility\Hash::extract($row->subscribed_users,'{n}[user_id='.$loggedUser.']');
                 }
+                $row->warp_frequency = !empty($row->warp_frequency[0])?$row->warp_frequency[0]:null;
                 $row->subscribed_users = !empty($row->subscribed_users)?count($row->subscribed_users):0;
                 $row->is_subscribed = !empty($subUserId[0])?true:false;
                 $row->total_comments = !empty($row->comments[0]['comment'])?$row->comments[0]['comment']:0;

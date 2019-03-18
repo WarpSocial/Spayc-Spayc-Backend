@@ -575,10 +575,10 @@ class SpaycsTable extends Table {
                         return $exp->notIn('Spaycs.id', $bannedSpayc);
                      });
                 }
-        if(!empty($request['keyword'])) {
-            $dateRange = Utils::dateRangeUtc('now',DAYS_RANGE,Configure::read('timezone'));
+        if(!empty($request['keyword'])) {            
             $spaycs->where(["LOWER(Spaycs.name) LIKE"=>"%".strtolower($request['keyword'])."%"]);
-            $spaycs = $this->warpWhereFrequency($dateRange['start'], $dateRange['end'], $spaycs);
+            $dateRange = Utils::dateRangeUtc('now',DAYS_RANGE,Configure::read('timezone'));
+            $spaycs = $this->warpRepeatFrequency($dateRange['start'], $dateRange['end'], $spaycs);
         }
         $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
         $spaycs->limit($limit);
@@ -1089,12 +1089,17 @@ class SpaycsTable extends Table {
             return $q;
         });
     }
-    public function warpRepeatFrequency($warpStartAt,$warpEndAt,$spaycs){        
-        return $spaycs->contain('RepeatFrequency',function($q)use($warpStartAt,$warpEndAt){
-            $q->select(['RepeatFrequency.start_date','RepeatFrequency.end_date','RepeatFrequency.repeat_type','RepeatFrequency.day_of_week','RepeatFrequency.repeat_date']);
-            $startDate = "TO_TIMESTAMP(cast(RepeatFrequency.start_date as text),'YYYY-MM-DD HH24:MI')"; 
-            $endDate = "TO_TIMESTAMP(cast(RepeatFrequency.end_date as text),'YYYY-MM-DD HH24:MI')"; 
-            $q->where("RepeatFrequency.start_date BETWEEN '".$warpStartAt."' AND '".$warpEndAt."'");
+    public function warpRepeatFrequency($warpStartAt,$warpEndAt,$spaycs){ 
+        $this->hasOne('WarpFrequency', [
+            'foreignKey' => 'spayc_id',
+            'joinType' => 'INNER',
+            'className' => 'Api.WarpFrequency'
+        ]);
+        return $spaycs->contain('WarpFrequency',function($q)use($warpStartAt,$warpEndAt){
+            $q->select(['WarpFrequency.spayc_id','WarpFrequency.start_date','WarpFrequency.end_date','WarpFrequency.repeat_type','WarpFrequency.day_of_week','WarpFrequency.repeat_date']);
+            //$startDate = "TO_TIMESTAMP(cast(WarpFrequency.start_date as text),'YYYY-MM-DD HH24:MI')"; 
+            //$endDate = "TO_TIMESTAMP(cast(RepeatFrequency.end_date as text),'YYYY-MM-DD HH24:MI')"; 
+            $q->where("WarpFrequency.start_date BETWEEN '".$warpStartAt."'::TIMESTAMP AND '".$warpEndAt."'::TIMESTAMP");
             return $q;
         });
     }
