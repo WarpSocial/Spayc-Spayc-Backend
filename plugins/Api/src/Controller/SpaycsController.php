@@ -738,10 +738,10 @@ class SpaycsController extends AppController {
                 
         // If User Update Spayc once Scraper will not update
         if(isset($data['is_admin_update'])){
-            $entities->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']],['is_admin_update'=>0]]);
+            $entities->where(['OR'=>['Spaycs.id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']],['is_admin_update'=>0]]);
             unset($data['is_admin_update']);
         }else{        
-        $entities->where(['OR'=>['id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
+        $entities->where(['OR'=>['Spaycs.id'=>$data['spayc_id'],'matrix_room_id'=>$data['spayc_id']]]);
         }
         if($entities->isEmpty()){
             $this->restException(['status'=>'failed','message'=>__('This spayc is no longer exist.')], 400);
@@ -788,8 +788,11 @@ class SpaycsController extends AppController {
         try{
             $connection->begin();
             $this->Spaycs->save($items);
+            $WPItems = $items->toArray();
+            $WPItems['start_date'] =  Utils::toClient($items['start_date']);
+            $WPItems['end_date'] =  Utils::toClient($items['end_date']);
             /* save warp frequency */
-            $this->Spaycs->WarpFrequency->saveWarpFrequency($data+['timezone'=> Configure::read('timezone')],$items);
+            $this->Spaycs->WarpFrequency->saveWarpFrequency($data+['timezone'=> Configure::read('timezone')],$WPItems);
             $items->warp_categories = TableRegistry::get('Api.WarpCategories')->SaveCategories($data,$items);
             if($prevDescription != $entity->get('description')) {
                 TableRegistry::get('Api.Hashtags')->saveHashTags($items['description'], $items['id']);
