@@ -131,6 +131,11 @@ class SpaycsTable extends Table {
             'joinType' => 'LEFT',
             'className' => 'Api.WarpFrequency'
         ]);
+        $this->hasOne('RepeatFrequency', [
+            'foreignKey' => 'spayc_id',
+            'joinType' => 'LEFT',
+            'className' => 'Api.WarpFrequency'
+        ]);
         
         /* Earth radius in miles 3959 */
         /* for postgresql cast is required else for mysql not*/
@@ -1001,7 +1006,7 @@ class SpaycsTable extends Table {
         if(preg_match("/[a-z]/i", $spaycId)){
             return ['matrix_room_id'=>$spaycId];        
         }else{
-            return ['id'=>$spaycId];
+            return ['Spaycs.id'=>$spaycId];
         }
     }
     

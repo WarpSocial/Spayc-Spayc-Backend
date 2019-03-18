@@ -37,7 +37,7 @@ $breadcrumbsTxt= ucfirst($spayc->name);
                 </h3>
                 <div class="category-box">
                     <?php echo $this->spycCategories($spayc); ?>
-                    <a href="<?php echo $this->url->build(['controller'=>'Spaycs','action'=>'categoryUpdate',$spayc->id]); ?>" class="btn btn-info cat-edit"><i class="fas fa-check"></i>Edit</a>
+                    <a href="<?php echo $this->url->build(['controller'=>'Spaycs','action'=>'categoryUpdate',$spayc->id]); ?>" class="btn button btn-md cat-edit"><i class="fas fa-check"></i>Edit</a>
                 </div>
                 <p><?= !empty($spayc->description)?$spayc->description:'' ?></p>
                 <div class="event-status">
@@ -58,11 +58,7 @@ $breadcrumbsTxt= ucfirst($spayc->name);
                     </span>
                   </div>
                 </div>
-                <div class="warp-repeat">
-                    <ul>
-                        <li></li>
-                    </ul>
-                </div>
+                <div class="warp-repeat"><?= $this->eventRepeat($spayc->warp_frequency) ?></div>
                 <?php if(!empty($spayc->location)) { ?>
                 <div class="address-wrapper">
                   <span>Address</span>

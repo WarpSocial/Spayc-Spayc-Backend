@@ -117,8 +117,10 @@ class SpaycsController extends AppController {
             'JoinedSpayc'=>function($q)use($user){
                 return $q->where(['user_id'=>$user['id'],'status'=>'Joined']);
             },
-            'WarpCategories'        
+            'WarpCategories',
+            'RepeatFrequency'        
             ]);
+        
         $entity->where($this->Spaycs->spaycPk($data['parent_matrix_room_id']));
         $entity->where(['group_type !='=>'trusted_private']);        
         if($entity->isEmpty()){
@@ -132,7 +134,12 @@ class SpaycsController extends AppController {
         if(empty($parentObj->joined_spayc)){
             $this->restException(['status'=>'failed','message'=>__('You don\'t have sufficient right to create subwarp.')], 400);
         }
-       
+        /* Repeat frequency of parent warp */
+        if(!empty($parentObj->repeat_frequency)){
+            $data['repeat_type'] = $parentObj->repeat_frequency->repeat_type;
+            $data['day_of_week'] = $parentObj->repeat_frequency->day_of_week;
+            $data['repeat_date'] = $parentObj->repeat_frequency->repeat_date;
+        }
         $data['parent_id'] = $parentObj->id;
         $data['start_date'] = $parentObj->start_date;
         $data['end_date'] = $parentObj->end_date;
@@ -727,7 +734,7 @@ class SpaycsController extends AppController {
                     return $q;
             });
         }
-        $entities->contain('WarpCategories');
+        $entities->contain(['WarpCategories','RepeatFrequency']);
                 
         // If User Update Spayc once Scraper will not update
         if(isset($data['is_admin_update'])){
@@ -761,6 +768,7 @@ class SpaycsController extends AppController {
             }
             unset($data['parent_matrix_room_id']);            
             $items = $this->Spaycs->patchEntity($entity, $data,['validate'=>false,'associated'=>['JoinedSpayc']]);
+            
         }       
         $items->type = $eventType;        
         if($data['group_type'] == 'Public'){ /* in community no need to keep start or end date*/
