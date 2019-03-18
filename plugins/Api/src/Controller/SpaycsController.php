@@ -309,7 +309,7 @@ class SpaycsController extends AppController {
             if($this->request->query('list_by')=='created'){
                 $spaycs->order(['Spaycs.created'=>'DESC']);
             }else{
-                $spaycs->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
+                //$spaycs->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
             }            
         }else if(!empty($this->request->query('hot'))) {
             
@@ -324,15 +324,14 @@ class SpaycsController extends AppController {
             $ids = TableRegistry::get("Api.JoinedSpayc")->getJoinedSpaycIds($userId);
             $spaycs->where(['Spaycs.id IN'=>$ids]);
         }
-        $startDate = "TO_TIMESTAMP(cast(Spaycs.start_date as text),'YYYY-MM-DD HH24:MI')"; 
-        $endDate = "TO_TIMESTAMP(cast(Spaycs.end_date as text),'YYYY-MM-DD HH24:MI')"; 
         if(!empty($this->request->query('date'))) {
             if(!Utils::validTimestamp($this->request->query('date'))){
                  $this->restException(['status'=>'failed','message'=>__('Date format is not valid.')], 400);
             }
             $user_date = Time::createFromTimestamp($this->request->query('date'), Configure::read('timezone'));
             $dateRange = Utils::dateRangeUtc($user_date->format('Y-m-d H:i:s'),1,Configure::read('timezone'));
-            $spaycs = $this->Spaycs->warpWhereFrequency($dateRange['start'], $dateRange['end'], $spaycs);
+            $spaycs = $this->Spaycs->warpRepeatFrequency($dateRange['start'], $dateRange['end'], $spaycs);
+            $spaycs->distinct(['Spaycs.id']);    
         }
         if(!empty($this->request->query('payment_type'))) {
            if(strtolower($this->request->query('payment_type')) == strtolower(FREE)){

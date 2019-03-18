@@ -133,7 +133,7 @@ class SpaycsTable extends Table {
         ]);
         $this->hasOne('RepeatFrequency', [
             'foreignKey' => 'spayc_id',
-            'joinType' => 'LEFT',
+            'joinType' => 'INNER',
             'className' => 'Api.WarpFrequency'
         ]);
         
@@ -1076,18 +1076,27 @@ class SpaycsTable extends Table {
                 ]
             ]);
     }
-    public function warpRepeatFrequency($warpStartAt,$warpEndAt,$spaycs){
-        $whereClause = "(warp_frequency.start_date, warp_frequency.end_date) OVERLAPS ('".$warpStartAt."'::TIMESTAMP, '".$warpEndAt."'::TIMESTAMP)";
-        $spaycs->select(['warp_frequency.start_date','warp_frequency.end_date','warp_frequency.repeat_type','warp_frequency.day_of_week','warp_frequency.repeat_date']);
-        return $spaycs->join([
-            'table' => 'warp_frequency',
-            'type' => 'INNER',
-            'alias' => 'warp_frequency',
-            'conditions' => [
-                '(Spaycs.id = warp_frequency.spayc_id)',
-                $whereClause,
-                ]
-            ]);
+    public function warpRepeatFrequency_ol($warpStartAt,$warpEndAt,$spaycs){        
+        return $spaycs->contain('RepeatFrequency',function($q)use($warpStartAt,$warpEndAt){
+            $startDate = "TO_TIMESTAMP(cast(RepeatFrequency.start_date as text),'YYYY-MM-DD HH24:MI')"; 
+            $endDate = "TO_TIMESTAMP(cast(RepeatFrequency.end_date as text),'YYYY-MM-DD HH24:MI')"; 
+            $q->where([
+                'OR'=>[[$startDate.' >='=>$warpStartAt],[$endDate.' >= '=>$warpStartAt]]
+                ]);
+            $q->where([
+                'OR'=>[[$startDate.' <='=>$warpEndAt],[$endDate.' <= '=>$warpEndAt]]
+                ]);
+            return $q;
+        });
+    }
+    public function warpRepeatFrequency($warpStartAt,$warpEndAt,$spaycs){        
+        return $spaycs->contain('RepeatFrequency',function($q)use($warpStartAt,$warpEndAt){
+            $q->select(['RepeatFrequency.start_date','RepeatFrequency.end_date','RepeatFrequency.repeat_type','RepeatFrequency.day_of_week','RepeatFrequency.repeat_date']);
+            $startDate = "TO_TIMESTAMP(cast(RepeatFrequency.start_date as text),'YYYY-MM-DD HH24:MI')"; 
+            $endDate = "TO_TIMESTAMP(cast(RepeatFrequency.end_date as text),'YYYY-MM-DD HH24:MI')"; 
+            $q->where("RepeatFrequency.start_date BETWEEN '".$warpStartAt."' AND '".$warpEndAt."'");
+            return $q;
+        });
     }
 
 }

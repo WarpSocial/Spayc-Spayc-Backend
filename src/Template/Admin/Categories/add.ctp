@@ -9,33 +9,29 @@ $this->Form->setTemplates($catTemplates);
 <section class="content-wrapper content-filter">
     <div class="container">
         <div class="row">
-            <div class="col-sm-12">
-                <div class="col-sm-7">
+            <div class="col-sm-8">
                     <h4><?= __('Add Category') ?> </h4>
                 </div>
-                <div class="col-sm-4"><?= $this->Html->link('Go Back', ['action' => 'index'],['class'=>'btn button btn-md','escape' => false]) ?>                        
-                </div>
-            </div>    
+                <div class="col-sm-4 text-right"><?= $this->Html->link('Go Back', ['action' => 'index'],['class'=>'btn button btn-md','escape' => false]) ?>                        
+                </div>   
         </div>
         <div class="row">
-            <div class="col-md-12">
-            <?= $this->Form->create($spaycCategory,['role' => 'form','novalidate']) ?>
+        <?= $this->Form->create($spaycCategory,['role' => 'form','novalidate']) ?>
                 <?php
-                    echo '<div class="col-sm-6">';
+                    echo '<div class="col-sm-6 category-dropdown">';
                     echo $this->Form->input('parent_id', ['options' => $parentSpaycCategories,'empty' => 'Select once category','class' => 'form-control']);
                     echo '</div>';
                     echo '<div class="col-sm-6">';        
                     echo $this->Form->input('name',['class' => 'form-control', 'placeholder' => 'Name']);
                     echo '</div>';
-                    echo '<div class="col-sm-6 lead emoji-picker-container">';        
+                    echo '<div class="col-sm-6 emoji-picker-container">';        
                     echo $this->Form->input('code',['class' => 'form-control','label'=>'Emoji', 'placeholder' => 'Emoji']);
                     echo '</div>';
                 ?>
-           <?php echo  '<div class="col-sm-6">'; ?>
-            <?= $this->Form->button(__('Submit'),['class' => 'btn btn-info']) ?>
+            <?php echo  '<div class="col-sm-6 cat-btn">'; ?>
+            <?= $this->Form->button(__('Submit'),['class' => 'btn button btn-md']) ?>
             <?= $this->Form->end() ?>
             <?php echo '</div>'; ?>
-        </div>
         </div>        
     </div>
 </section>
@@ -49,7 +45,6 @@ $this->Form->setTemplates($catTemplates);
             enableCaseInsensitiveFiltering: true,
             enableFiltering: true,
             filterBehavior: 'text',
-            buttonWidth: '400px'
         });
         $('#code').emojiPicker({
             width: '300px',

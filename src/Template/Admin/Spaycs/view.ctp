@@ -37,7 +37,7 @@ $breadcrumbsTxt= ucfirst($spayc->name);
                 </h3>
                 <div class="category-box">
                     <?php echo $this->spycCategories($spayc); ?>
-                    <a href="<?php echo $this->url->build(['controller'=>'Spaycs','action'=>'categoryUpdate',$spayc->id]); ?>" class="btn button btn-md cat-edit"><i class="fas fa-check"></i>Edit</a>
+                    <a href="<?php echo $this->url->build(['controller'=>'Spaycs','action'=>'categoryUpdate',$spayc->id]); ?>" class="btn button btn-md cat-edit cat-btn"><span>Edit</span></a>
                 </div>
                 <p><?= !empty($spayc->description)?$spayc->description:'' ?></p>
                 <div class="event-status">
@@ -198,7 +198,7 @@ $breadcrumbsTxt= ucfirst($spayc->name);
                                 <?php echo $this->emoji($category->code); ?>
                                 </span>
                             </td>
-                            <td><input type="checkbox" data-option="primary" class="form-control catopt" name="primary_category" value="<?= $category->id ?>" <?php echo ($category->id == $warpCat['primary'])?'checked="checked"':'' ?> /></td>
+                            <td><span class="cat-option"><input type="radio" data-option="primary" class="form-control cat-radio catopt" name="primary_category" id="primary_category_<?= $category->id ?>" value="<?= $category->id ?>" <?php echo ($category->id == $warpCat['primary'])?'checked="checked"':'' ?> /></span></td>
                             <td><input type="checkbox" data-option="other" class="form-control catopt" name="other_category[]" value="<?= $category->id ?>" <?php echo in_array($category->id,$warpCat['other'])?'checked="checked"':'' ?> /></td>
                         </tr>
                         <?php endforeach; ?>

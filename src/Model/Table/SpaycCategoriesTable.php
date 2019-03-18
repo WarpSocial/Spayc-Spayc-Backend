@@ -62,8 +62,6 @@ class SpaycCategoriesTable extends Table {
                 ->notEmpty('name');
 
         $validator
-                ->notEmpty('parent_id');
-        $validator
                 ->notEmpty('code');
 
 

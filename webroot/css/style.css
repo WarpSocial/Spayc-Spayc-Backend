@@ -1130,7 +1130,7 @@ input:disabled {
   position: relative;
 }
 .filters .filter-wrapper .search input {
-  padding-right: 30px;
+  padding-right: 30px;d
 }
 .filters .filter-wrapper .search .clear-search {
   position: absolute;
@@ -1934,6 +1934,21 @@ input:disabled {
   padding: 50px !important;
   position: relative;
 }
+
+.modal-body .category-box .form-group input{
+    margin: 25px;
+}
+.modal-body .category-box .form-group button{
+    margin-top: 18px;
+    background-image: linear-gradient(89deg, #136f86, #231f20);
+    color: #49ff00;
+    border: none;
+    float: right;
+    margin-right: 15px;
+}
+.modal-body .category-box .form-group input.form-control{
+    width: 300px;
+}
 .forgot-password-modal .modal-body h1 {
   font-size: 1.125rem;
   font-weight: 700;
@@ -1954,6 +1969,9 @@ input:disabled {
 }
 .forgot-password-modal .modal-body a:hover {
   color: #49ff00;
+}
+.category-box a:focus, .category-box a:hover{
+    color:#49ff00;
 }
 .forgot-password-modal .modal-body .forgot-password-text,
 .forgot-password-modal .modal-body .cancel-text {
@@ -2155,6 +2173,23 @@ input:disabled {
   float: left;
   padding-right: 50px;
   letter-spacing: 1px;
+}
+.event-view-wrapper .data-wrap .category-box .cat-btn{
+    width: 75px;
+    height: 30px;
+    float: right;
+    display: -webkit-box;
+display: -ms-flexbox;
+display: flex;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+}
+.ml-auto a:focus, .ml-auto a:hover{
+    color: #49ff00;
 }
 .event-view-wrapper .data-wrap h3 {
   font-size: 1.25rem;
@@ -3081,4 +3116,38 @@ margin-bottom: 0px;
   background: #ffffff;
   opacity: .5;
   z-index: 2;
+}
+
+.category-dropdown .btn-group {
+    display: block;
+    width: 100%;
+}
+.category-dropdown .btn-group .btn {
+    width: 100%;
+    border: 1px solid rgba(0,0,0,.15);
+    text-align: left;
+    color: #464a4c;
+    padding: .5rem .75rem;
+    background-color: #ffffff;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+}
+.category-dropdown .btn-group .multiselect-container {
+    width: 100%;
+}
+.cat-btn button{
+    margin: 22px;
+}
+.cat-option .cat-radio{
+    margin: 11px 40px;
+    padding: 27px 31px;
+    opacity: inherit !important;
+    display: block !important;
 }

@@ -446,7 +446,7 @@ class Utils {
         }
         
         $endObj = clone $startObj;
-        $startObj->modify('today');        
+        //$startObj->modify('today');        
         $endObj->modify('+'.$days.' days');
         $endObj->modify('1 second ago'); 
         $startDate = $startObj->setTimezone('UTC')->format("Y-m-d H:i");

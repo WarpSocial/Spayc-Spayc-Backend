@@ -51,7 +51,7 @@ class CategoriesController extends AdminController {
             }
             $this->Flash->error(__('The category could not be saved. Please, try again.'));
         }
-        $parentSpaycCategories = $this->SpaycCategories->ParentSpaycCategories->find('list', ['limit' => 200]);
+        $parentSpaycCategories = $this->SpaycCategories->ParentSpaycCategories->find('list')->where('parent_id IS NULL');
         $this->set(compact('spaycCategory', 'parentSpaycCategories'));
     }
 
@@ -75,7 +75,8 @@ class CategoriesController extends AdminController {
             }
             $this->Flash->error(__('The spayc category could not be saved. Please, try again.'));
         }
-        $parentSpaycCategories = $this->SpaycCategories->ParentSpaycCategories->find('list', ['limit' => 200]);
+         $parentSpaycCategories = $this->SpaycCategories->ParentSpaycCategories->find('list')->where('parent_id IS NULL');
+         //pj($spaycCategory);pj($parentSpaycCategories);die;
         $this->set(compact('spaycCategory', 'parentSpaycCategories'));
     }
 
