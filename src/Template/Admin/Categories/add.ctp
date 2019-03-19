@@ -19,7 +19,7 @@ $this->Form->setTemplates($catTemplates);
         <?= $this->Form->create($spaycCategory,['role' => 'form','novalidate']) ?>
                 <?php
                     echo '<div class="col-sm-6 category-dropdown">';
-                    echo $this->Form->input('parent_id', ['options' => $parentSpaycCategories,'empty' => 'Select once category','class' => 'form-control']);
+                    echo $this->Form->input('parent_id', ['options' => $parentSpaycCategories,'empty' => 'Select one category','class' => 'form-control']);
                     echo '</div>';
                     echo '<div class="col-sm-6">';        
                     echo $this->Form->input('name',['class' => 'form-control', 'placeholder' => 'Name']);

@@ -45,6 +45,7 @@ class CategoriesController extends AdminController {
         if ($this->request->is('post')) {
             $spaycCategory = $this->SpaycCategories->patchEntity($spaycCategory, $this->request->getData());
             if ($this->SpaycCategories->save($spaycCategory)) {
+                \Cake\Cache\Cache::delete('spayc_categories', 'long'); 
                 $this->Flash->success(__('The category has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
@@ -63,12 +64,14 @@ class CategoriesController extends AdminController {
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
     public function edit($id = null) {
+        $this->set('title', __('Edit categories.'));
         $spaycCategory = $this->SpaycCategories->get($id, [
             'contain' => []
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $spaycCategory = $this->SpaycCategories->patchEntity($spaycCategory, $this->request->getData());
             if ($this->SpaycCategories->save($spaycCategory)) {
+                \Cake\Cache\Cache::delete('spayc_categories', 'long'); 
                 $this->Flash->success(__('The spayc category has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
