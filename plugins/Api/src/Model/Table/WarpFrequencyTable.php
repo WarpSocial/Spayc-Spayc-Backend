@@ -50,7 +50,7 @@ class WarpFrequencyTable extends Table {
     }
     
     /**
-     * saveWarpFrequency method to create new freaquency for a warp 
+     * saveWarpFrequency method to create new frequency for a warp 
      * 
      */
     public function saveWarpFrequency($request,$spayc){
@@ -135,5 +135,8 @@ class WarpFrequencyTable extends Table {
         return $wpData;
     }
     
+    public function nearestEvent($spaycId,$date){
+        return $this->find()->where("spayc_id='$spaycId' AND start_date::Date >= '$date'::Date")->orderAsc('start_date')->first();
+    }
 
 }

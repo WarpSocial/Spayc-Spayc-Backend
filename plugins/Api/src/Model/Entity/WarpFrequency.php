@@ -40,10 +40,6 @@ class WarpFrequency extends Entity {
     ];
     protected $_hidden = ['created','modified'];
     protected function _getStartDate($stardDate) {
-        $request = new \Cake\Http\ServerRequest();
-         if($this->isNew() || strstr($request->getRequestTarget(),'edit')) {
-             return $stardDate;
-         }
         $timezone = Configure::read('timezone');
         if (!empty($stardDate)) {
             $sd = new Time($stardDate,'UTC');
@@ -53,10 +49,6 @@ class WarpFrequency extends Entity {
         }
     }
     protected function _getEndDate($endDate) {
-        $request = new \Cake\Http\ServerRequest();
-         if($this->isNew() || strstr($request->getRequestTarget(),'edit')) {
-             return $endDate;
-         }
         $timezone = Configure::read('timezone');
         if (!empty($endDate)) {
             $ed = new Time($endDate,'UTC');

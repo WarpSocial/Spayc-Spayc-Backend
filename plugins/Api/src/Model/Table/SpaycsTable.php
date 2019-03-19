@@ -236,10 +236,7 @@ class SpaycsTable extends Table {
                                 $currentDate = new Time('now',$timezone);
                                 $now = clone $currentDate;
                                 $currentDate->modify('+1 year');
-                                $startDate = strtotime($startDate->format('Y-m-d H'));
-                                $now = strtotime($now->format('Y-m-d H'));
-                                $currentDate = strtotime($currentDate->format('Y-m-d H'));
-                                return (bool) ($currentDate >= $startDate) && ($startDate >= $now);
+                                return (bool) ($startDate < $currentDate) && ($startDate > $now);
                             }
                         },
                         'message'=>__('Start date can\'t be more than 1 year ahead or any past date.')
@@ -268,8 +265,6 @@ class SpaycsTable extends Table {
                             if($endDate->format('H') == '00'){
                                 $endDate->setTime(23,55);
                             }
-                            $startDate = strtotime($startDate->format("Y-m-d H:i"));
-                            $endDate = strtotime($endDate->format("Y-m-d H:i"));
                             return (bool)($startDate <= $endDate );
                         }
                         return true;

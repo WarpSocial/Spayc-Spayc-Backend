@@ -574,6 +574,11 @@ class SpaycsController extends AppController {
         if(!$this->request->is(['get'])) {
             $this->restException(['status'=>'failed', 'message'=>__('Method not allowed.')], 405);
         }
+        if(!empty($this->request->query('date'))){
+            $timestamp = Time::createFromTimestamp($this->request->query('date'), Configure::read('timezone'));
+        }else{
+            $timestamp = new Time('now', Configure::read('timezone'));
+        }
         if(empty($this->request->query('id'))) {
             $this->restException(['status'=>'failed', 'message'=>__('Warp id is required field.')], 400);
         }
@@ -623,8 +628,8 @@ class SpaycsController extends AppController {
                         return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
                     },
                     'WarpCategories.SpaycCategories',
-                    'WarpFrequency'=>function($q){
-                        return $q->select(['WarpFrequency.id','WarpFrequency.spayc_id','WarpFrequency.start_date','WarpFrequency.end_date','WarpFrequency.repeat_type','WarpFrequency.day_of_week','WarpFrequency.repeat_date'])->where("start_date::date >='".Utils::toUtc('now',null,'Y-m-d')."'")->limit(1);
+                    'WarpFrequency'=>function($q)use($timestamp){
+                        return $q->select(['WarpFrequency.id','WarpFrequency.spayc_id','WarpFrequency.start_date','WarpFrequency.end_date','WarpFrequency.repeat_type','WarpFrequency.day_of_week','WarpFrequency.repeat_date'])->where("start_date::date >='".Utils::toUtc($timestamp,null,'Y-m-d')."'")->orderAsc('WarpFrequency.start_date')->limit(1);
                     }
                 ]);
         if($lat != null && $long != null){
@@ -732,7 +737,7 @@ class SpaycsController extends AppController {
                     return $q;
             });
         }
-        $entities->contain(['WarpCategories','RepeatFrequency','ParentSpaycs.WarpCategories']);
+        $entities->contain(['WarpCategories','ParentSpaycs.WarpCategories']);
                 
         // If User Update Spayc once Scraper will not update
         if(isset($data['is_admin_update'])){
@@ -778,7 +783,7 @@ class SpaycsController extends AppController {
         $data['matrix_token'] = $this->Auth->user('UserLogs.matrix_access_token');
         $matrix = $this->Matrix->updateRoom($entity->matrix_room_id,$data);
         if(!$matrix) {
-            $this->restException(['status' => "failed", 'message' =>__('Third party updation failed.')], 400);
+            $this->restException(['status' => "failed", 'message' =>__('Failed to update in chat system.')], 400);
         }
         
         $prevLocation = $entity->getOriginal('location');
@@ -813,6 +818,8 @@ class SpaycsController extends AppController {
             $items['modified'] = Utils::toClient($items['modified']);
             $items['start_date']=  Utils::toClient($items['start_date']);
             $items['end_date'] = Utils::toClient($items['end_date']);
+            $items['user'] = TableRegistry::get('Users')->get($items['id'],['fields'=>['Users.id','Users.full_name','Users.display_name','Users.email']]);
+            $items['warp_frequency'] = $this->Spaycs->WarpFrequency->nearestEvent($items['id'],$items['start_date']);
             $response = ['status'=>'success','message'=>__('The warp has been updated successfully.'),'data'=>$items];
             $connection->commit();
         } catch (\Exception $ex) {

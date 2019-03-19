@@ -82,24 +82,4 @@ class CategoriesController extends AdminController {
          //pj($spaycCategory);pj($parentSpaycCategories);die;
         $this->set(compact('spaycCategory', 'parentSpaycCategories'));
     }
-
-    /**
-     * Delete method
-     *
-     * @param string|null $id Spayc Category id.
-     * @return \Cake\Http\Response|null Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function delete($id = null) {
-        $this->request->allowMethod(['post', 'delete']);
-        $spaycCategory = $this->SpaycCategories->get($id);
-        if ($this->SpaycCategories->delete($spaycCategory)) {
-            $this->Flash->success(__('The spayc category has been deleted.'));
-        } else {
-            $this->Flash->error(__('The spayc category could not be deleted. Please, try again.'));
-        }
-
-        return $this->redirect(['action' => 'index']);
-    }
-
 }

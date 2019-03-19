@@ -28,6 +28,9 @@ echo "#####".$activeUrl;
                   <a class="nav-link <?= ('Categoriesindex' == $activeUrl)? ' active' : '' ?>" href="<?php echo Router::url(['action' => 'index','controller' =>'Categories']);?>">Manage Catogory</a>
                 </div>
               </li>
+              <li class="nav-item <?= ('UserFeedbacksindex' == $activeUrl)? ' active' : '' ?>">
+                <a class="nav-link" href="<?php echo Router::url(['action' => 'index','controller' =>'UserFeedbacks']);?>">User Feedback</a>
+              </li>
               <li class="nav-item <?php echo (($controller_name=='CustomMessages') && ($controller_action=='index')) ? 'active' : '';?>">
                 <a class="nav-link" href="<?php echo Router::url(['action' => 'index','controller' =>'CustomMessages']);?>">Custom Messages</a>
               </li>
