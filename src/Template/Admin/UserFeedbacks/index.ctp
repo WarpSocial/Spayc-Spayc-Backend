@@ -19,13 +19,17 @@
                             <?php foreach ($userFeedbacks as $userFeedback): ?>
                                 <tr>
                                     <td><?= $this->Number->format($userFeedback->id) ?></td>
-                                    <td><?= $userFeedback->has('user') ? $this->Html->link($userFeedback->user->id, ['controller' => 'Users', 'action' => 'view', $userFeedback->user->id]) : '' ?></td>
-                                    <td><?= h($userFeedback->attachment) ?></td>
+                                    <td><?= $userFeedback->has('user') ? $userFeedback->user->display_name : '' ?></td>
+                                    <td><?php 
+                                    if(!empty($userFeedback->attachment)):
+                                        echo $this->Html->link('Download', ['controller' => 'UserFeedbacks', 'action' => 'download', $userFeedback->id]);
+                                    else:
+                                        echo '--';
+                                    endif;
+                                    ?></td>
                                     <td><?= h($userFeedback->created) ?></td>
                                     <td class="actions">
-                                        <?= $this->Html->link('<span class="fa fa-folder-open"></span>', ['action' => 'view', $userFeedback->id], ['title' => 'View', 'escape' => false]) ?>
-                                        <?= $this->Html->link('<span class="fa fa-edit"></span>', ['action' => 'edit', $userFeedback->id], ['title' => 'Edit', 'escape' => false]) ?>
-                                        <?= $this->Form->postLink('<span class="fa fa-times"></span>', ['action' => 'delete', $userFeedback->id], ['title' => 'Delete', 'escape' => false, 'confirm' => __('Are you sure you want to delete # {0}?', $userFeedback->id)]) ?>
+                                        <?= $this->Html->link('<span class="replyon">Reply</span>', ['action' => 'reply', $userFeedback->id], ['title' => 'Reply', 'escape' => false]) ?>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -44,3 +48,39 @@
         </div>
     </div>
 </section>
+<div class="modal fade" id="category-modal" tabindex="-1" role="dialog" aria-labelledby="CategoryUpdate" aria-hidden="true">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content user-list-modal">
+            <div class="modal-header">
+                <h5 class="modal-title">Reply<?php echo $userFeedback->has('user') ? ' to '.ucfirst($userFeedback->user->display_name) : '' ?></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="modal-close"></span></    button>
+            </div>
+            <div class="modal-body">                
+                <div class="row row-modal">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label>Reply To</label>
+                            <input id="reply_to" class="form-control" type="text" readonly="readonly" value="<?= $userFeedback->user->email ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>Message</label>
+                            <textarea name="reply_message" id="reply_message" class="form-control" rows="10"></textarea>
+                        </div>                  
+                        <div class="form-group">
+                            <button class="btn button btn-md">Reply</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+      </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function(){       
+        $(document).on('click','.replyon',function(ev){
+            ev.preventDefault();
+            $("#category-modal").modal("show");
+        });
+    });
+</script>

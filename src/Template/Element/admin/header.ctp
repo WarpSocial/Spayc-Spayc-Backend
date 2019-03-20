@@ -3,7 +3,6 @@ use Cake\Routing\Router;
 $controller_name = $this->request->param('controller');
 $controller_action = $this->request->param('action');
 $activeUrl = $controller_name.$controller_action;
-echo "#####".$activeUrl;
 ?>
  <header class="fixed-header">
       <!--============navigation===============-->

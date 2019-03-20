@@ -9,16 +9,19 @@ use App\Controller\AdminController;
  *
  * @property \App\Model\Table\UserFeedbacksTable $UserFeedbacks
  */
-class UserFeedbacksController extends AdminController {
+class UserFeedbacksController extends AdminController
+{
 
     /**
      * Index method
      *
      * @return \Cake\Http\Response|void
      */
-    public function index() {
+    public function index()
+    {
+        $this->set('title', __('User Feedbacks'));
         $this->paginate = [
-            'contain' => ['Users']
+            'contain' => ['Users'],
         ];
         $userFeedbacks = $this->paginate($this->UserFeedbacks);
 
@@ -30,7 +33,8 @@ class UserFeedbacksController extends AdminController {
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
-    public function add() {
+    public function reply()
+    {
         $userFeedback = $this->UserFeedbacks->newEntity();
         if ($this->request->is('post')) {
             $userFeedback = $this->UserFeedbacks->patchEntity($userFeedback, $this->request->getData());
@@ -45,16 +49,17 @@ class UserFeedbacksController extends AdminController {
         $this->set(compact('userFeedback', 'users'));
     }
 
-    /**
+    /*
      * Edit method
      *
-     * @param string|null $id User Feedback id.
-     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     * @ param string|null $id User Feedback id.
+     * @ return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @ throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function edit($id = null) {
+    public function edit($id = null)
+    {
         $userFeedback = $this->UserFeedbacks->get($id, [
-            'contain' => []
+            'contain' => [],
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $userFeedback = $this->UserFeedbacks->patchEntity($userFeedback, $this->request->getData());
@@ -67,6 +72,26 @@ class UserFeedbacksController extends AdminController {
         }
         $users = $this->UserFeedbacks->Users->find('list', ['limit' => 200]);
         $this->set(compact('userFeedback', 'users'));
+    }
+    /*
+     * Download method to download the attached file
+     * @ param Integer $userFeedBackId User feedback id
+     * @ reuturn object
+     */
+
+    public function download($userFeedBackId = null)
+    {
+        $feedback = $this->UserFeedbacks->get($userFeedBackId);
+        if (empty($feedback->attachment)) {
+            return;
+        }
+        $fileInfo = pathinfo($feedback->attachment);
+        $response = $this->response;        
+       
+        $response = $response->withStringBody(file_get_contents($feedback->attachment))
+        ->withType($fileInfo['extension'])
+        ->withDownload($fileInfo['basename']);
+        return $response;
     }
 
 }

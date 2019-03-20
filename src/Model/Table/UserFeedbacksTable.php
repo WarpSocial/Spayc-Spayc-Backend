@@ -36,9 +36,14 @@ class UserFeedbacksTable extends Table
 
         $this->setTable('user_feedbacks');
         $this->setDisplayField('id');
-        $this->setPrimaryKey(['id', 'created']);
+        $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+        $this->addBehavior('ImgUpload', [
+            'field' => 'attachment',
+            'uploadPath' => 'feedback/',
+            'where' => 's3', /* local and s3 */
+        ]);
 
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id',

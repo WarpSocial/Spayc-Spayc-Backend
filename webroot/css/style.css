@@ -3151,3 +3151,5 @@ margin-bottom: 0px;
     opacity: inherit !important;
     display: block !important;
 }
+.row-modal{padding:10px;}
+.row-modal input.form-control{padding:5px;}
