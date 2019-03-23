@@ -116,12 +116,3 @@ jQuery(document).ready(function ($) {
     });
 
 });
-function notification (message,type){
-    
-    if(type == 'success'){
-        var html = $('<div id="notification" class="flash-msg alert alert-success">'+message+'<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a></div>');
-    }else if(type == 'error'){
-        var html = $('<div id="notification" class="flash-msg alert alert-danger">'+message+'<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a></div>');        
-    }
-    html.appendTo('.flash-box').delay(2000000).queue(function() { $(this).remove(); });
-};

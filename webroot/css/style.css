@@ -3153,3 +3153,9 @@ margin-bottom: 0px;
 }
 .row-modal{padding:10px;}
 .row-modal input.form-control{padding:5px;}
+.flash-box {
+    margin: -52px 0px 0px 17px;
+    position: fixed;
+    z-index: 99;
+    width: 95%;
+}

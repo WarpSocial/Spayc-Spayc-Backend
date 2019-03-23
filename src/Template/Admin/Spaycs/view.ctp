@@ -180,6 +180,7 @@ $breadcrumbsTxt= ucfirst($spayc->name);
                       </div>
                   </div>
                   <table class="table table-borderless" id="cat-item">
+                      <thead>
                       <tr>
                           <th>Parent Category</th>
                           <th>Category</th>
@@ -187,22 +188,10 @@ $breadcrumbsTxt= ucfirst($spayc->name);
                           <th>Primary Category</th>
                           <th>Other Category</th>
                       </tr>
-                      <?php $warpCat = $this->warpCategories($spayc); ?>
-                      <?php foreach ($categories as $parentcateory): ?>
-                      <?php foreach ($parentcateory['sub_categories'] as $category): ?>                      
-                        <tr>
-                            <td><?= $parentcateory->name ?></td>
-                            <td><?= h($category->name) ?></td>                            
-                            <td>
-                                <span style="font-size: 25px;">
-                                <?php echo $this->emoji($category->code); ?>
-                                </span>
-                            </td>
-                            <td><span class="cat-option"><input type="radio" data-option="primary" class="form-control cat-radio catopt" name="primary_category" id="primary_category_<?= $category->id ?>" value="<?= $category->id ?>" <?php echo ($category->id == $warpCat['primary'])?'checked="checked"':'' ?> /></span></td>
-                            <td><input type="checkbox" data-option="other" class="form-control catopt" name="other_category[]" value="<?= $category->id ?>" <?php echo in_array($category->id,$warpCat['other'])?'checked="checked"':'' ?> /></td>
-                        </tr>
-                        <?php endforeach; ?>
-                        <?php endforeach; ?>
+                      </thead>
+                      <tbody id="cat-body">
+                          
+                      </tbody>
                   </table>
                   </form>    
               </div>
@@ -211,30 +200,77 @@ $breadcrumbsTxt= ucfirst($spayc->name);
     </div>
 </div>
 <script type="text/javascript">
-    $(document).ready(function(){       
+    var warpCat = <?php echo json_encode($this->warpCategories($spayc)); ?>;
+    $(document).ready(function(){
         $("#findcat").on("keyup", function() {
             var value = $(this).val().toLowerCase();
-            $("#cat-item tr").filter(function() {
+            $("#cat-item > tbody > tr").filter(function() {
               $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
             });
         });
         $(document).on('change','.catopt',function(){
             var attrName = $('input[name="'+$(this).attr('name')+'"]');
+            var SelectedVal = $(this).val();var iflag = true,other=[];
+            $('.catopt:checked').each(function (ind,obj) {
+                /* remove selected value from checked category and remove only one value if repeate more than one */
+                if(SelectedVal === obj.value){
+                    if(!iflag){
+                        other.push(obj.value);
+                    }
+                    iflag = false;                    
+                }else{
+                    other.push(obj.value);
+                }
+            });
+            for(var i=0;i < other.length;i++){
+                if(other[i] == SelectedVal){
+                    $(this).prop('checked',false);
+                    WARPJS.notification('Primary and other could not be same.','error','.flash-box');
+                    return false;
+                }
+            }
             var selected = attrName.filter(':checked').length;
             
             if(($(this).attr('data-option') == 'primary') && (selected > 1)){
                 $(this).prop('checked',false);
-                notification('Only one primary category can select.','error');
+                WARPJS.notification('Only one primary category can select.','error','.flash-box');
             }
             if(($(this).attr('data-option') == 'other') && (selected > 5)){
                 $(this).prop('checked',false);
-                notification('Only five other category can select.','error');
+                WARPJS.notification('Only five other category can select.','error','.flash-box');
             }
         });
         $(document).on('click','.update-cat',function(){
+            if(!$(".cat-radio").is(':checked')){
+                WARPJS.notification('Select primary category at least.','error','.flash-box');
+                return false;
+            }
             $("#updatecat").submit();
             $(this).addClass('disabled');
 	});
+        $(document).on('click','.cat-edit',function(ev){
+            ev.preventDefault();
+            $("#category-modal").modal("show");
+            $.getJSON( base_url+"api/meta-data.json", function( data ) {                
+                var htmls = '';$("#cat-body").html('');$("#findcat").val('');
+                $.each( data['data']['categories'], function( key, val ) {
+                    $.each( val['sub_categories'], function( skey, sval ) {
+                        var primarywc='',otherwc='';
+                        if(warpCat){
+                            if(sval['id'] == warpCat['primary']){
+                                primarywc = 'checked="checked"';
+                            }
+                            if($.inArray(sval['id'],warpCat['other']) != -1){
+                                otherwc = 'checked="checked"';
+                            }
+                        }    
+                        htmls +='<tr><td>'+val['name']+'</td><td>'+sval['name']+'</td><td><span class="emoji-code">'+sval['code']+'</span></td><td><span class="cat-option"><input type="radio" data-option="primary" class="form-control cat-radio catopt" name="primary_category" id="primary_category_'+sval['id']+'" value="'+sval['id']+'" '+primarywc+' /></span></td><td><input type="checkbox" data-option="other" class="form-control catopt" name="other_category[]" value="'+sval['id']+'" '+ otherwc +' /></td></tr>';
+                    });
+                });
+                $("#cat-body").html(htmls);
+                //$(items.join('')).appendTo($("#cat-item"));
+              });
+        });
     });
 </script>
 <?php echo $this->Html->script(['admin/spayc','admin/admin-manage-user']); ?>

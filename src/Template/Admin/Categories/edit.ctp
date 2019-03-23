@@ -5,9 +5,9 @@ $catTemplates = [
 ];
 $this->Form->setTemplates($catTemplates);
 ?>
-<?= $this->Flash->render() ?>
 <section class="content-wrapper content-filter">
     <div class="container">
+        <?= $this->Flash->render() ?>
         <div class="row">
             <div class="col-sm-8">
                     <h4><?= __('Add Category') ?> </h4>

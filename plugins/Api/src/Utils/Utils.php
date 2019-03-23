@@ -387,8 +387,8 @@ class Utils {
         }
     }
 
-    public static function toClient($datetime,$dateTimeformat = 'm-d-Y H:i:s',$utcFormat='Y-m-d H:i:s',$timeZone=null) {
-        $timezone = is_null($timeZone)?Configure::read('timezone'):$timeZone;
+    public static function toClient($datetime,$dateTimeformat = 'm-d-Y H:i:s',$utcFormat='Y-m-d H:i:s',$timeZone=null) {        
+        $timezone = is_null($timeZone)?Configure::read('timezone','UTC'):$timeZone;
         if (!empty($datetime)) {
             if(@strtolower($datetime) == 'now'){
                 $datetime = (new Time('now','UTC'));

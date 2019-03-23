@@ -90,5 +90,13 @@ class UserMailer extends Mailer {
             ->emailFormat('html')
             ->template('warpdelete');
     }
+    public function feedbackReply($data) {
+        $this->viewVars($data)
+            ->to($data['email'])
+            ->subject('Warp Feedback Reply')
+            ->from(Configure::read('admin_email'))    
+            ->emailFormat('html')                
+            ->template('feedback_reply');
+    }
 
 }

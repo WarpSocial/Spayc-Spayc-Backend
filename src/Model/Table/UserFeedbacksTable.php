@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Model\Table;
 
 use Cake\ORM\Query;
@@ -21,8 +22,7 @@ use Cake\Validation\Validator;
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class UserFeedbacksTable extends Table
-{
+class UserFeedbacksTable extends Table {
 
     /**
      * Initialize method
@@ -30,8 +30,7 @@ class UserFeedbacksTable extends Table
      * @param array $config The configuration for the Table.
      * @return void
      */
-    public function initialize(array $config)
-    {
+    public function initialize(array $config) {
         parent::initialize($config);
 
         $this->setTable('user_feedbacks');
@@ -44,7 +43,15 @@ class UserFeedbacksTable extends Table
             'uploadPath' => 'feedback/',
             'where' => 's3', /* local and s3 */
         ]);
-
+        $this->belongsTo('ParentUserFeedbacks', [
+            'className' => 'UserFeedbacks',
+            'foreignKey' => 'parent_id'
+        ]);
+        $this->hasMany('FeedbackReply', [
+            'foreignKey' => 'parent_id',
+            'joinType' => 'Left',
+            'className' => 'UserFeedbacks',
+        ]);
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id',
             'joinType' => 'INNER'
@@ -57,20 +64,11 @@ class UserFeedbacksTable extends Table
      * @param \Cake\Validation\Validator $validator Validator instance.
      * @return \Cake\Validation\Validator
      */
-    public function validationDefault(Validator $validator)
-    {
+    public function validationDefault(Validator $validator) {
         $validator
-            ->allowEmpty('id', 'create');
-
-        $validator
-            ->scalar('message')
-            ->allowEmpty('message');
-
-        $validator
-            ->scalar('attachment')
-            ->maxLength('attachment', 250)
-            ->allowEmpty('attachment');
-
+                ->requirePresence('message', 'create', __('Message key is missing.'))
+                ->maxLength('message', 1000, 'Message must not be greater than 500 characters.')
+                ->notEmpty('name', __('Message is required.'));
         return $validator;
     }
 
@@ -81,10 +79,10 @@ class UserFeedbacksTable extends Table
      * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
      * @return \Cake\ORM\RulesChecker
      */
-    public function buildRules(RulesChecker $rules)
-    {
+    public function buildRules(RulesChecker $rules) {
         $rules->add($rules->existsIn(['user_id'], 'Users'));
 
         return $rules;
     }
+
 }

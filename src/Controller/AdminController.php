@@ -88,6 +88,23 @@ class AdminController extends AppController
             'created' => 'desc'
         ]
     ];
-   
+    public function mapErrors($errors) {
+        foreach ($errors as $ekey => $row) {
+            foreach ($row as $ikey => $ival) {
+                return $ival;
+            }
+        }
+    }
+     /**
+     * restException to deal the custom exception (To avoid much more nesting)
+     * $data
+     */
+    public function ajaxResponse($data=[],$type='json'){        
+        $this->response->type($type);
+        $this->response->statusCode(200);
+        $this->response->body(json_encode($data)); 
+        $this->response->send();
+        $this->response->stop();
+    }
     
 }

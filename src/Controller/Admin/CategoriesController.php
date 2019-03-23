@@ -72,7 +72,7 @@ class CategoriesController extends AdminController {
             $spaycCategory = $this->SpaycCategories->patchEntity($spaycCategory, $this->request->getData());
             if ($this->SpaycCategories->save($spaycCategory)) {
                 \Cake\Cache\Cache::delete('spayc_categories', 'long'); 
-                $this->Flash->success(__('The spayc category has been saved.'));
+                $this->Flash->success(__('The spayc category has been updated.'));
 
                 return $this->redirect(['action' => 'index']);
             }

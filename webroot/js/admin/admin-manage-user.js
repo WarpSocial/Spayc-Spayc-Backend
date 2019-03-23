@@ -1,8 +1,4 @@
- $(document).ready(function() {
-    $(document).on('click','.cat-edit',function(ev){
-        ev.preventDefault();
-        $("#category-modal").modal("show");
-    });
+ $(document).ready(function() {    
 	if($('#keyword').val() != ''){
 		$('#clear-search').removeClass('hide');
 	} else {

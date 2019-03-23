@@ -1,10 +1,29 @@
-$(function () {      
+var WARPJS = {
+  notification:function (message,type,appendClass='body'){    
+    if(type == 'success'){
+        var html = $('<div id="notification" class="alert alert-success">'+message+'<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a></div>');
+    }else if(type == 'error'){
+        var html = $('<div id="notification" class="alert alert-danger">'+message+'<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a></div>');        
+    }
+    $('#notification').remove();
+    html.appendTo(appendClass).delay(2000).queue(function() { $(this).remove(); });    
+  }
+};
+$(function () {        
     $('input').bind("keypress click", function () {
       if($(this).hasClass('incorrect-alert')){
         $(this).removeClass('incorrect-alert');  
         $(this).parent().parent().find('.input-alert').text('')
       }
-    });    
+    });
+    /* auto hide the alert notification */
+    if($("#notification").length){
+        window.setTimeout(function() {
+            $("#notification").fadeTo(500, 0).slideUp(500, function(){
+                $(this).remove(); 
+            });
+        }, 4000);
+    }
     if(!$('.error-alert').hasClass('hide') && ($('.error-alert').text().length > 0)){
         $('.error-alert').delay(5000).fadeOut('slow', function () {
         $('.error-alert').text('');

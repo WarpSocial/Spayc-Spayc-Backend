@@ -133,7 +133,7 @@ class SpaycsController extends AdminController {
         $this->set(compact('spayc', 'user', 'subspayc','categories'));
         $this->set('_serialize', ['spayc']);
     }
-
+    
     /**
      * Add method
      *

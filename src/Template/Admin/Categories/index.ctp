@@ -1,6 +1,7 @@
 <?php echo $this->element('admin/breadcrumbs', ['action'=> $breadcrumbsTxt]);?>
-<?= $this->Flash->render() ?>
 <section class="content-wrapper content-filter">
+    <div class="container">
+    <?= $this->Flash->render() ?>
        <!--===========filter================-->
     <div class="filters">
         <div class="container">
@@ -20,8 +21,7 @@
             </div>
         </div>
     </div>
-    <!--============= table head ===================-->
-    <div class="container">
+    <!--============= table head ===================-->    
         <div class="table-wrapper">
             <div class="table-head">
             <div class="head-text flex-basis30 text-left">

@@ -3,4 +3,4 @@ if (!isset($params['escape']) || $params['escape'] !== false) {
     $message = h($message);
 }
 ?>
-<span class="error-alert" ><?= $message ?></span>
+<div id="notification" class="alert alert-error flash-msg"><?= $message ?><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a></div>

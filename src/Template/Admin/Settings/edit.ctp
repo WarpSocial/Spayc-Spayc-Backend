@@ -1,3 +1,5 @@
+<section class="content-wrapper content-filter">
+    <div class="container">
 <div class="settings form">
     <div class="panel panel-default">
         <div class="panel-heading"><?= __('Edit Setting') ?>
@@ -26,3 +28,5 @@
         </div>
     </div>
 </div>
+    </div>
+</section>

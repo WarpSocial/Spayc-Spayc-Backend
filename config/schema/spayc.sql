@@ -598,6 +598,7 @@ DROP TABLE IF EXISTS user_feedbacks;
 CREATE TABLE IF NOT EXISTS user_feedbacks(
     "id" BIGSERIAL NOT NULL,
     "user_id" bigint NOT NULL,
+    "parent_id" bigint,
     "message" text NULL,
     "attachment" character varying(250) NULL,
     "created" timestamp NOT NULL,
@@ -723,6 +724,8 @@ COMMENT ON COLUMN "warp_frequency"."repeat_type" IS '1=>Daily,2=>Weekly,3=>Custo
 COMMENT ON COLUMN "warp_frequency"."day_of_week" IS 'When frequenty type is weekly';
 COMMENT ON COLUMN "warp_frequency"."repeat_date" IS 'When frequenty type is custom';
 SELECT create_hypertable('warp_frequency', 'created');
+
+ALTER TABLE "user_feedbacks" ADD "parent_id" bigint NULL;
 
 
 
