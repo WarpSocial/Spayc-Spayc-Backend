@@ -1752,11 +1752,11 @@ input:disabled {
 *    modal align center
 ==============================*/
 .modal-open .modal-center {
-  display: flex!important;
+  /*display: flex!important;*/
   align-items: center!important;
 }
 .modal-open .modal-center .modal-dialog {
-  flex-grow: 1;
+  /*flex-grow: 1;*/
 }
 /*==============================
 *   modal base css

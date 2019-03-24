@@ -117,7 +117,14 @@ function showAdmin(id, totalAdmin){
     $("#cmnPoupUp .modal-content").html("<div class='modal-header'><h5 class='modal-title'>Admin ("+totalAdmin+")</h5><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true' class='modal-close'></span></button></div><div>"+$('#admin_'+id).html()+"</div>");
     $("#cmnPoupUp").modal('show');
 }
-
+//function showModel(description, heading){    
+//    $modalBox = $('<div class="modal modal-center hide fade modal-dialog-lg" id="cmnPoupUp" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-dialog" role="document"><div class="modal-content"></div></div></div>');
+//    $modalBox.find('.modal-content').addClass('user-list-modal');
+//    $modalBox.find('.modal-content').html("<div class='modal-header'><h5 class='modal-title'>"+heading+"</h5><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true' class='modal-close'></span></button></div><div class='advertisement-desc'>"+description+"</div>");
+//    $modalBox.appendTo('body');
+//    $modalBox.modal('show');
+//    //$("#cmnPoupUp").modal('show');
+//}
 function setStatus(value) {
    $("#set_status").val(value);
 }

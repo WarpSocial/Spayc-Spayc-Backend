@@ -4,14 +4,20 @@ function openPopup(page,className){
   if($('#cmnPoupUp').hasClass('show')){
     $("#cmnPoupUp").modal('hide');
   }
-  setTimeout(function(){
-    $("#cmnPoupUp").removeClass("modal-dialog-lg modal-dialog-sm modal-dialog-xs");
+  
+    $("#cmnPoupUp").removeClass("modal-dialog-lg fade modal-dialog-sm modal-dialog-xs");
     $("#cmnPoupUp").addClass(className);
     $("#cmnPoupUp .modal-content").html('');
-    $("#cmnPoupUp .modal-content").load(page);
-    $("#cmnPoupUp").modal({show: true});
-  },500);
+    $("#cmnPoupUp .modal-content").load(page,function(){
+        $("#cmnPoupUp").modal({show:true});
+    });
+    
+  
 }
+$(document).on('hidden.bs.modal','#cmnPoupUp', function () {
+    //$("#cmnPoupUp").modal('hide');
+  $(this).data('bs.modal', null);
+});
 var messageFadeOut = function (containerClass, message) {    
     if($('.' + containerClass).hasClass('hide')){
       $('.' + containerClass).removeClass('hide');

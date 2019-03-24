@@ -83,6 +83,7 @@ class CustomMessagesController extends AdminController {
             echo json_encode($result_arr);
             die;
         }
+        //return $this->render('custom_message');
     }
 
     public function sendCustomMessages($id) {
@@ -96,6 +97,39 @@ class CustomMessagesController extends AdminController {
         $pushNotificationAdminSlug = unserialize(PUSH_NOTIFICATION_ADMIN_SLUG);
         $txtMassage = unserialize(TEXT_MASSAGE);
         $this->set(compact('user'));
+    }
+    
+    public function userList() {
+        $this->viewBuilder()->layout('');
+        $this->autoRender = false;
+        $data = $this->request->getData();
+        $obj = TableRegistry::get('Users')->find()->select(['Users.id','Users.display_name','email'])
+                ->contain([
+                    'UserImages'=>function($q) {
+                        return $q->select(['UserImages.id','UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
+                    },  
+                ])
+                ->order(['Users.display_name'=>'ASC'])
+                ->where(['Users.role_id IS NULL','Users.email !='=>SCRAPER_EMAIL]);
+                    
+        if(!empty($data['q']['term'])){
+            $obj->orWhere(['OR' => [
+                'LOWER(Users.display_name) LIKE' => "%". strtolower($data['q'])."%",
+                'LOWER(Users.email) LIKE' => '%'.strtolower($data['q']).'%',
+                'LOWER(Users.full_name) LIKE' => '%'.strtolower($data['q']).'%',
+                ]]);
+        }
+        
+        $users = $obj->map(function($row){
+            return [
+                'id'=>$row->id,
+                'text'=> ucwords($row->display_name),
+                'avatar_url' => !empty($row->user_images)?$row->user_images[0]->image_url:''
+                ];
+            });
+        
+        echo json_encode($users);die;
+        
     }
 
 }

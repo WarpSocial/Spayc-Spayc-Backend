@@ -21,8 +21,7 @@ if(strtolower($controller_name) == 'spaycs'){
 	  if($controller_name=='CustomMessages'){
 //              echo '<button class="button message-creation btn-lg-lg" data-toggle="modal" data-target="#customMessage">Custom Messages</button>';
                 ?>
-          <button type="button" rel="modal-dialog-lg confirm-message" class="pop button message-creation btn-lg-lg" page="<?php echo $this->Url->build(["controller" => "CustomMessages","action" => "getCustomMessage"]);?>">
-                      Custom Messages</button> 
+          <button type="button" rel="modal-dialog-lg confirm-message" class="pop button message-creation btn-lg-lg" page="<?php echo $this->Url->build(["controller" => "CustomMessages","action" => "getCustomMessage"]);?>">Custom Messages</button> 
           <?php } ?>
           
 	</div>

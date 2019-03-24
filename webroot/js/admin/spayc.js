@@ -96,23 +96,25 @@ jQuery(document).ready(function ($) {
   });
     e.preventDefault();
   });  
-    var clientZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    if((clientZone == null && clientZone == undefined)){
-        clientZone = null;
-    }
-    $.ajax({
-        url: base_url_admin+'spaycs/scrapper-events?timezone='+clientZone,
-        type: 'GET',
-        dataType:'JSON', 
-        success: function(data){
-            if(data.status ==1){
-                $(".scrap-events").html('<div class"scrappeditems">Last Scrapped : '+data['last_scrapped']+'<br><br>Today Scrapped Events<span class="eventbrite"><b>EventBrite</b> : '+data['events'][1] +'</span><span class="ticketmaster"><b>TicketMaster</b> : '+data['events'][2] +'</span><span class="total_events"><b>Total</b> : '+ data['events']['total'] +'</span></div>');
-            }
-        },
-        error: function (xhr, ajaxOptions, thrownError) {
-            console.log(xhr.message);
-            console.log(thrownError);
+    if($(".scrap-events").length){
+        var clientZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        if((clientZone == null && clientZone == undefined)){
+            clientZone = null;
         }
-    });
+        $.ajax({
+            url: base_url_admin+'spaycs/scrapper-events?timezone='+clientZone,
+            type: 'GET',
+            dataType:'JSON', 
+            success: function(data){
+                if(data.status ==1){
+                    $(".scrap-events").html('<div class"scrappeditems">Last Scrapped : '+data['last_scrapped']+'<br><br>Today Scrapped Events<span class="eventbrite"><b>EventBrite</b> : '+data['events'][1] +'</span><span class="ticketmaster"><b>TicketMaster</b> : '+data['events'][2] +'</span><span class="total_events"><b>Total</b> : '+ data['events']['total'] +'</span></div>');
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.message);
+                console.log(thrownError);
+            }
+        });
+    }
 
 });
