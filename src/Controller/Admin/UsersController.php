@@ -457,7 +457,7 @@ class UsersController extends AdminController
         $users = [];
         $data = $this->request->getData();
         $obj = TableRegistry::get('Users')->find()
-                ->select(['Users.id','text'=>'Users.display_name','email'])
+                ->select(['Users.id','text'=>'Users.display_name','Users.full_name','email'])
                 ->contain([
                     'UserImages'=>function($q) {
                         return $q->select(['UserImages.id','UserImages.user_id', 'UserImages.image_url', 'UserImages.is_profile'])->where(['UserImages.is_profile'=>'Yes']);
@@ -467,13 +467,23 @@ class UsersController extends AdminController
                 ->where(['Users.role_id IS NULL','Users.email !='=>SCRAPER_EMAIL]);
                     
         if(!empty($data['q']['term'])){
-            $obj->where(['LOWER(Users.display_name) LIKE' => "%". strtolower($data['q']['term'])."%"]);
+            $obj->where(['OR' => [
+                'LOWER(Users.display_name) LIKE' => "%". strtolower($data['q']['term'])."%",
+                'LOWER(Users.email) LIKE' => '%'.strtolower($data['q']['term']).'%',
+                'LOWER(Users.full_name) LIKE' => '%'.strtolower($data['q']['term']).'%',
+                ]]);
         }
         
         $users['results'] = $obj->map(function($row){
                 $row['image_url'] = !empty($row->user_images)?$row->user_images[0]->image_url:null;
                 unset($row->user_images);
-                return $row;
+
+                return [
+                    'id' => $row->id,
+                    'email' => $row->email,
+                    'image_url' => !empty($row->user_images)?$row->user_images[0]->image_url:null,
+                    'text' => !empty($row->full_name)?ucwords($row->full_name):ucwords($row->text)
+                ];
             })->toArray();
         
         echo json_encode($users);die;

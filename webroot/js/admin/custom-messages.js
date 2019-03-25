@@ -48,15 +48,9 @@ jQuery(document).ready(function ($) {
           event.stopPropagation();
 //        $(".contact-list-box").toggle("fast");
         
-        $('.contact-list-box').show(); 
-        
-        
-        setTimeout(function(){
-        $(".select2-search__field").trigger('click');
+        $('.contact-list-box').fadeIn(); 
+        //$(".select2-search__field").trigger('click');
         $(".loader").removeClass('show-loader');
-        },200);
-        
-
     })
     
     $(".showup").on("click", function (event) {
@@ -128,22 +122,18 @@ $(function () {
         },
         templateResult: template,
         escapeMarkup: function (m) {
-
             return m;
         }
-    })
-            .on("select2:select", function (e) {
-                e.preventDefault();
-                updateSelect();
-            })
-            .on("select2:unselect", function (e) {
-                e.preventDefault();
-                updateSelect();
-            })
-            .on("select2:change", function (e) {
-                e.preventDefault();
-                updateSelect();
-            });
+    }).on("select2:select", function (e) {
+        e.preventDefault();
+        updateSelect();
+    }).on("select2:unselect", function (e) {
+        e.preventDefault();
+        updateSelect();
+    }).on("select2:change", function (e) {
+        e.preventDefault();
+        updateSelect();
+    });
 
 
     $(document).on('click', '.close-keyword', function () {
@@ -186,10 +176,13 @@ function updateCheck(check) {
     })
     }
     $(".select2-search__field").trigger('click');
-    $(".select2-search__field").trigger('click');
+    //$(".select2-search__field").trigger('click');
     $(".loader").removeClass('show-loader');
 }
 function template(data) {
+    if (data.loading) {
+        return data.text;
+    }
     options_arr.push(data);
     var array = $("#options").val();
     if (jQuery.inArray(data.id, array) !== -1) {
@@ -198,7 +191,7 @@ function template(data) {
         var checked = "<input class='list-checkbox' type='checkbox' id='chk_" + data.id + "'>";
     }
       setTimeout(function(){
-         $( ".select2-results" ).prepend( $( ".check-all-div" ) );
+         $( ".select2-results" ).prepend( $( ".check-all-div" ).removeClass('hide') );
         },100);
         if(!data.image_url){
             data.image_url=$("#default_img").attr('src');

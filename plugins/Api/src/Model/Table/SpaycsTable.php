@@ -343,7 +343,7 @@ class SpaycsTable extends Table {
                 ->allowEmpty('latitude')
                 ->latitude('latitude',__('Please enter valid latitude.'));  
         $validator
-                ->requirePresence('primary_category', 'update',__('Please select warp category.'))
+                ->requirePresence('primary_category', true,__('Please select warp category.'))
                 ->notEmpty('primary_category',__('Please select category.'))
                 ->integer('primary_category',__('Please enter valid category.'))
                 ->add('primary_category','validcategoryid',[

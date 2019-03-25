@@ -16,9 +16,10 @@
                     
                         <?=$this->Html->image('address-book-contacts.png', ['alt' => 'img','class' => 'img-icon']);?>
                     <div class="contact-list-box showup">
-                         <label class="check-all-div"><input class="check-all" type="checkbox"> Select All</label>
                         <div class="contact-list-box-wrapper">
-                           
+                        <label class="check-all-div hide">
+                             <input class="check-all" type="checkbox"> Select All
+                        </label>
                          <select id="options" multiple="multiple" name="users[]" required="">
                          </select>
                         </div>
