@@ -229,6 +229,9 @@ class SpaycsTable extends Table {
                     ],
                     'daterange' => [
                         'rule' => function($value,$context){
+                            if(!empty($context['data']['id'])){
+                                return true;
+                            }
                             if(!empty($value)){
                                 /* Doesn't exceed 1 year ahead */
                                 $timezone = Configure::read('timezone');

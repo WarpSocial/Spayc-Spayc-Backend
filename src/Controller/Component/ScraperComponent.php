@@ -543,78 +543,75 @@ class ScraperComponent extends Component {
             $createSpaceData['longitude'] = $value['longitude'];
             $createSpaceData['latitude'] = $value['latitude'];
             $createSpaceData['website'] = $website;
-            $http = new Client(['headers' => ['token' => $plain_token]]);
+            $createSpaceData['repeat_type'] = DAILY;
+            $http = new Client(['headers' => ['token' => $plain_token]]);            
             
-            
-                if ($value['spayc_id']) {
-                    $createSpaceData['spayc_id'] = $value['spayc_id'];
-                    $createSpaceData['is_admin_update'] = 1;
-
-                    //cUrl Request for Update Spayc Details
-                    try {
-                        $httpResponse = $http->post($update_url, $createSpaceData);
-                        if(!$httpResponse->isOk()){
-                                $this->setScraperLog('createupdate shell failed to create',$starttime,'createupdate',json_encode(['message'=>$httpResponse->getBody(),'code'=>$httpResponse->getStatusCode()]));
-                            }
-                        $response['Update Spayc'][] = json_decode($httpResponse->body, true);
-                        $spayc_id=$value['spayc_id'];
-                    } catch (\Exception $ex) {
-                         $this->setScraperLog('createupdate shell failed to create',$starttime,'createupdate',json_encode(['message'=>$ex->getMessage(),'code'=>$ex->getCode()]));
-                    }
-                    
-                    
-                } else {
-                    $cat =str_replace(" ", "", $value['category']);
-                     $category = $this->ScraperCategories->isCatExist($cat,$website);
-                    //If Category Exist in Spayc
-                    if ($category) {
-                        $createSpaceData['primary_category'] = $category[1];
-                        if($category[2]){
-                            $createSpaceData['description'].= " #".str_replace(" ", "", $category[2]);
+            if ($value['spayc_id']) {
+                $createSpaceData['spayc_id'] = $value['spayc_id'];
+                $createSpaceData['is_admin_update'] = 1;
+                //cUrl Request for Update Spayc Details
+                try {
+                    $httpResponse = $http->post($update_url, $createSpaceData);
+                    if(!$httpResponse->isOk()){
+                        $this->setScraperLog('createupdate shell failed to create',$starttime,'createupdate',json_encode(['message'=>$httpResponse->getBody(),'code'=>$httpResponse->getStatusCode()]));
                         }
-                        try {
-                            $httpResponse = $http->post($url, $createSpaceData);
-                            if(!$httpResponse->isOk()){
-                                $this->setScraperLog('createupdate shell failed to update',$starttime,'createupdate',json_encode(['message'=>$httpResponse->getBody(),'code'=>$httpResponse->getStatusCode()]));
-                            }
-                        } catch (\Exception $ex) {
-                            $this->setScraperLog('createupdate shell failed to update',$starttime,'createupdate',json_encode(['message'=>$ex->getMessage(),'code'=>$ex->getCode()]));
-                        }
-                        
-                        $response['Create New Spayc'][] =$created= json_decode($httpResponse->body, true);
-                        //Updating Spayc ID in Related tables
-                        if ($created['status'] == 'success') {
-                            $update['spayc_id'] = $created['data']['id'];
-                            $condition['id'] = $value['id'];
-                            $response['Update 3 Scrap Tables Spayc_id'] = $obj->UpdateAll($update, $condition);
-                            
-                        //Saving All Categories with Spayc
-                                if(!empty($category[0])){
-                                $scrapModel = TableRegistry::get('scraper_spayc_categories');
-                                    foreach ($category[0] as $val){
-                                        $entity = $scrapModel->newEntity();
-                                        $entity->category_id = $val->spayc_category_id;
-                                        $entity->spayc_id = $update['spayc_id'];
-                                        $entity->modified = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
-                                        $entity->created = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
-                                        $created = $scrapModel->save($entity);
-                                    }
-                                }
-                                 $spayc_id=$update['spayc_id'];
-                        }else{
-                            //Saving logs
-                            $pushData['post_value'] = json_encode($created);
-                            $pushData['created'] = date("Y-m-d H:i:s");
-                            //Log::info(json_encode($pushData,JSON_PRETTY_PRINT));
-                            $pusher = TableRegistry::get("Api.PusherData");
-                            $push = $pusher->newEntity();
-                            $entity = $pusher->patchEntity($push, $pushData,['validate'=>false]);
-                            $pusher->save($entity);
-                        }
-                    } else {
-                        $response['Category'][] = $value['category'] . " - Category Not Exist";
-                    }
+                    $response['Update Spayc'][] = json_decode($httpResponse->body, true);
+                    $spayc_id=$value['spayc_id'];
+                } catch (\Exception $ex) {
+                    $this->setScraperLog('createupdate shell failed to create',$starttime,'createupdate',json_encode(['message'=>$ex->getMessage(),'code'=>$ex->getCode()]));
                 }
+            } else {
+                $cat =str_replace(" ", "", $value['category']);
+                    $category = $this->ScraperCategories->isCatExist($cat,$website);
+                //If Category Exist in Spayc
+                if ($category) {
+                    $createSpaceData['primary_category'] = $category[1];
+                    if($category[2]){
+                        $createSpaceData['description'].= " #".str_replace(" ", "", $category[2]);
+                    }
+                    try {
+                        $httpResponse = $http->post($url, $createSpaceData);
+                        if(!$httpResponse->isOk()){
+                            $this->setScraperLog('createupdate shell failed to update',$starttime,'createupdate',json_encode(['message'=>$httpResponse->getBody(),'code'=>$httpResponse->getStatusCode()]));
+                        }
+                    } catch (\Exception $ex) {
+                        $this->setScraperLog('createupdate shell failed to update',$starttime,'createupdate',json_encode(['message'=>$ex->getMessage(),'code'=>$ex->getCode()]));
+                    }
+                    
+                    $response['Create New Spayc'][] =$created= json_decode($httpResponse->body, true);
+                    //Updating Spayc ID in Related tables
+                    if ($created['status'] == 'success') {
+                        $update['spayc_id'] = $created['data']['id'];
+                        $condition['id'] = $value['id'];
+                        $response['Update 3 Scrap Tables Spayc_id'] = $obj->UpdateAll($update, $condition);
+                        
+                    //Saving All Categories with Spayc
+                            if(!empty($category[0])){
+                            $scrapModel = TableRegistry::get('scraper_spayc_categories');
+                                foreach ($category[0] as $val){
+                                    $entity = $scrapModel->newEntity();
+                                    $entity->category_id = $val->spayc_category_id;
+                                    $entity->spayc_id = $update['spayc_id'];
+                                    $entity->modified = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
+                                    $entity->created = (new \Cake\I18n\Time())->format("Y-m-d H:i:s");
+                                    $created = $scrapModel->save($entity);
+                                }
+                            }
+                                $spayc_id=$update['spayc_id'];
+                    }else{
+                        //Saving logs
+                        $pushData['post_value'] = json_encode($created);
+                        $pushData['created'] = date("Y-m-d H:i:s");
+                        //Log::info(json_encode($pushData,JSON_PRETTY_PRINT));
+                        $pusher = TableRegistry::get("Api.PusherData");
+                        $push = $pusher->newEntity();
+                        $entity = $pusher->patchEntity($push, $pushData,['validate'=>false]);
+                        $pusher->save($entity);
+                    }
+                } else {
+                    $response['Category'][] = $value['category'] . " - Category Not Exist";
+                }
+            }
             
                 //Updating Group ID in 3 tables
                 if($spayc_id && $duplicate==DUPLICATE){
@@ -623,7 +620,7 @@ class ScraperComponent extends Component {
                     $condition_duplicate['start_date'] = $value['start_date'];
                     $this->EventbriteEvents->UpdateAll($update_duplicate, $condition_duplicate);
                     $this->TicketmasterEvents->UpdateAll($update_duplicate, $condition_duplicate);
-                    $this->StubhubEvents->UpdateAll($update_duplicate, $condition_duplicate);
+                    //$this->StubhubEvents->UpdateAll($update_duplicate, $condition_duplicate);
                 }
                 $endtime = microtime(true);       //Checking time
                 $response['Time Taken']=$endtime - $starttime;

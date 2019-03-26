@@ -818,7 +818,7 @@ class SpaycsController extends AppController {
             $items['modified'] = Utils::toClient($items['modified']);
             $items['start_date']=  Utils::toClient($items['start_date']);
             $items['end_date'] = Utils::toClient($items['end_date']);
-            $items['user'] = TableRegistry::get('Users')->get($items['id'],['fields'=>['Users.id','Users.full_name','Users.display_name','Users.email']]);
+            $items['user'] = TableRegistry::get('Users')->get($items['user_id'],['fields'=>['Users.id','Users.full_name','Users.display_name','Users.email']]);
             $items['warp_frequency'] = $this->Spaycs->WarpFrequency->nearestEvent($items['id'],$items['start_date']);
             $response = ['status'=>'success','message'=>__('The warp has been updated successfully.'),'data'=>$items];
             $connection->commit();
