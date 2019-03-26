@@ -58,6 +58,7 @@ class WarpFrequencyTable extends Table {
             return;
         }
         $wpData = $this->eventRepeat($request, $spayc);
+        //pr($wpData);die;
         try{
             $this->deleteAll(['spayc_id' => $spayc['id']]);
             return $this->saveMany($this->newEntities($wpData));
