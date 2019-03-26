@@ -565,8 +565,8 @@ class SpaycsTable extends Table {
                         return $q->select(['SubscribedUsers.spayc_id', 'SubscribedUsers.user_id']);
                     },
                     'WarpCategories.SpaycCategories'
-                ])
-                ->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
+                ]);
+                
                 $bannedSpayc = $this->bannedSpayc($userId);    
                 if(!empty($bannedSpayc)){
                     $spaycs->where(function (QueryExpression $exp, Query $q)use($bannedSpayc) {
@@ -577,6 +577,9 @@ class SpaycsTable extends Table {
             $spaycs->where(["LOWER(Spaycs.name) LIKE"=>"%".strtolower($request['keyword'])."%"]);
             $dateRange = Utils::dateRangeUtc('now',DAYS_RANGE,Configure::read('timezone'));
             $spaycs = $this->warpRepeatFrequency($dateRange['start'], $dateRange['end'], $spaycs);
+            $spaycs->distinct(['Spaycs.id']); 
+        }else{
+            $spaycs->order(['distance'=>'ASC','Spaycs.created'=>'DESC']);
         }
         $limit = (!empty($request['limit']) && is_numeric($request['limit']))?$request['limit']:5;
         $spaycs->limit($limit);

@@ -440,7 +440,7 @@ function postSubscribeSpayc() { return; }
 */
 function postUnSubscribeSpayc() { return; }
 /**
- * @api {get} /spayc-details.json?id=:id&latitude=:lat&longitude=:long About Spayc
+ * @api {get} /spayc-details.json?id=:id&latitude=:lat&longitude=:long&date=:timestamp About Spayc
  * @apiVersion 0.1.0
  * @apiName spaycDetails
  * @apiGroup Spayc
@@ -454,6 +454,7 @@ function postUnSubscribeSpayc() { return; }
     @apiParam {Number}      id              Spayc matrix id in query string (Required).
     @apiParam {String}      latitude        Latitude is optional in query string(Optional).
     @apiParam {String}      longitude       Longitude is optional in query string(Optional).
+    @apiParam {Number}      date            Timestamp value for which date you want to show the details (Optional).
  *
  * @apiSuccess {String} status success.
  * @apiSuccess {String} message Spayc Details.

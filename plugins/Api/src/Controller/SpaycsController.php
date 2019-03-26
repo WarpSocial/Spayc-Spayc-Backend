@@ -78,6 +78,7 @@ class SpaycsController extends AppController {
             $items->created_duration = Utils::toClient($items->created);
             $queueData = $items->toArray();
             $queueData['request'] = $data+['timezone'=> Configure::read('timezone')];
+            //$items['warp_frequency'] = TableRegistry::get('Api.WarpFrequency')->saveWarpFrequency($queueData,$items);
             TableRegistry::get('Queue.QueuedJobs')->createJob('Generic',$queueData);
             //Joined the invite to the room//
             $this->Spaycs->joinedInvite($items,$items->id,$this->Auth->user('id'));
@@ -629,7 +630,7 @@ class SpaycsController extends AppController {
                     },
                     'WarpCategories.SpaycCategories',
                     'WarpFrequency'=>function($q)use($timestamp){
-                        return $q->select(['WarpFrequency.id','WarpFrequency.spayc_id','WarpFrequency.start_date','WarpFrequency.end_date','WarpFrequency.repeat_type','WarpFrequency.day_of_week','WarpFrequency.repeat_date'])->where("start_date::date >='".Utils::toUtc($timestamp,null,'Y-m-d')."'")->orderAsc('WarpFrequency.start_date')->limit(1);
+                        return $q->select(['WarpFrequency.id','WarpFrequency.spayc_id','WarpFrequency.start_date','WarpFrequency.end_date','WarpFrequency.repeat_type','WarpFrequency.day_of_week','WarpFrequency.repeat_date'])->where("start_date::Timestamp >='".Utils::toUtc($timestamp->format('m-d-Y H:i'),'m-d-Y H:i','Y-m-d H:i')."'")->orderAsc('WarpFrequency.start_date')->limit(1);
                     }
                 ]);
         if($lat != null && $long != null){

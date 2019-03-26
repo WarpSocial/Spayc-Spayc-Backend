@@ -113,7 +113,7 @@ class WarpFrequencyTable extends Table {
         $startTime = $startDate->format('H:i:s');
         $wpData = [];
         $interval = new \DateInterval("P1D");
-        $period = new \DatePeriod($startDate, $interval, $endDate->modify("+1 days"));
+        $period = new \DatePeriod($startDate, $interval, $endDate);
         foreach ($period as $pd) {
             $wpData[] = $data+['start_date'=>$pd->format('Y-m-d '.$startTime)];
         }

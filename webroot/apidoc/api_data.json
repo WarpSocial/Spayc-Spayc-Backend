@@ -6192,7 +6192,7 @@
   },
   {
     "type": "get",
-    "url": "/spayc-details.json?id=:id&latitude=:lat&longitude=:long",
+    "url": "/spayc-details.json?id=:id&latitude=:lat&longitude=:long&date=:timestamp",
     "title": "About Spayc",
     "version": "0.1.0",
     "name": "spaycDetails",
@@ -6246,6 +6246,13 @@
             "optional": false,
             "field": "longitude",
             "description": "<p>Longitude is optional in query string(Optional).</p> "
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "date",
+            "description": "<p>Timestamp value for which date you want to show the details (Optional).</p> "
           }
         ]
       }
@@ -6288,7 +6295,7 @@
     "groupTitle": "Spayc",
     "sampleRequest": [
       {
-        "url": "http://spayc-staging.kiwireader.com/api/spayc-details.json?id=:id&latitude=:lat&longitude=:long"
+        "url": "http://spayc-staging.kiwireader.com/api/spayc-details.json?id=:id&latitude=:lat&longitude=:long&date=:timestamp"
       }
     ],
     "error": {
