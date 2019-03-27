@@ -1,58 +1,93 @@
-<?php //echo $this->element('admin/breadcrumbs', ['action' => $breadcrumbsTxt]); ?>
+<?php echo $this->element('admin/breadcrumbs', ['action' => $breadcrumbsTxt]); ?>
 <?= $this->Flash->render() ?>
 <section class="content-wrapper content-filter">
     <div class="container">
+    <div class="filters">        
+            <div class="filter-wrapper">
+              <!--============search dropdown========-->
+                <div class="search">
+                    <div class="form-group">
+                        <form name="filter-form" id="filter-form" method="get" action="">
+                        <?= $this->Form->input('keyword',['type'=>'text', 'class'=>'form-control','label'=>false, 'placeholder'=>'Search', 'value'=> $this->request->query('keyword')]); ?>
+                        <span class="clear-search hide" id="clear-search"></span>
+                        </form>
+                    </div>
+                </div>
+            </div>
+    </div>
         <div class="userFeedbacks index">
             <div class="panel panel-default">
                 <div class="panel-body">
                     <div class="body-msg"></div>
-                    <table class="table table-striped table-bordered table-hover">
-                        <thead>
-                            <tr>
-                                <th><?= $this->Paginator->sort('id') ?></th>
-                                <th><?= $this->Paginator->sort('user_id') ?></th>
-                                <th><?= $this->Paginator->sort('message') ?></th>
-                                <th><?= $this->Paginator->sort('attachment') ?></th>
-                                <th><?= $this->Paginator->sort('created') ?></th>
-                                <th class="actions"><?= __('Actions') ?></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($userFeedbacks as $userFeedback): ?>
-                                <tr>
-                                    <td><?= $this->Number->format($userFeedback->id) ?></td>
-                                    <td><?php
-                                     if($userFeedback->has('user')){
-                                        echo $this->Form->hidden('user_email',['value'=>$userFeedback->user->email,'class'=>'useremail']);
-                                        echo $userFeedback->user->display_name;
-                                     }else{
-                                        echo '--';
-                                     }
-                                     ?></td>
-                                     <td><?= $userFeedback->message ?></td>
-                                    <td><?php 
-                                    if(!empty($userFeedback->attachment)):
-                                        echo $this->Html->link('Download', ['controller' => 'UserFeedbacks', 'action' => 'download', $userFeedback->id]);
-                                    else:
-                                        echo '--';
-                                    endif;
-                                    ?></td>
-                                    <td><?= h($userFeedback->created) ?></td>
-                                    <td class="actions">
-                                        <?= $this->Html->link('<span class="replyon">Reply</span>', ['action' => 'reply', $userFeedback->id], ['title' => 'Reply', 'escape' => false]) ?>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-
-                    <?php if($this->Paginator->params()['pageCount'] > 1) { ?>
-                    <ul class="pagination table-pagination">
-                      <?= $this->Paginator->prev('',['escape' => false]) ?>
-                      <?= $this->Paginator->numbers(array('modulus' => 4)) ?>
-                      <?= $this->Paginator->next('',['escape' => false]) ?>
-                    </ul>
-                <?php } ?>
+                    <div class="table-wrapper">
+            <div class="table-head">
+            <div class="head-text flex-basis20 text-left">
+                <span>User Name</span>
+            </div>
+            <div class="head-text flex-basis40 text-left">
+                <span>Message</span>
+            </div>
+            <div class="head-text flex-basis15 text-left">
+                <span>Attachment</span>
+            </div>
+            <div class="head-text flex-basis15 text-center">
+                <span>Created</span>
+            </div>
+            <div class="head-text flex-basis10 text-center">
+                <span>Action</span>
+            </div>
+          </div>
+          <!--==============table data====================-->
+          <?php if(empty($userFeedbacks)): ?>
+          <div class="table-row">
+            <div class="table-data flex-basis30 text-left"></div>
+          </div>
+          <?php endif; ?>
+          <?php foreach ($userFeedbacks as $userFeedback): ?>
+          <div class="table-row">
+            <div class="table-data flex-basis30 text-left">
+              <span>
+              <?php
+                if($userFeedback->has('user')){
+                echo $this->Form->hidden('user_email',['value'=>$userFeedback->user->email,'class'=>'useremail']);
+                echo $userFeedback->user->display_name;
+                }else{
+                echo '--';
+                }
+                ?>
+              </span>
+            </div>
+            <div class="table-data flex-basis30 text-left">
+              <span><?= $userFeedback->message ?></span>
+            </div>
+            <div class="table-data flex-basis20 text-center">
+                <span>
+                <?php 
+                if(!empty($userFeedback->attachment)):
+                    echo $this->Html->link('Download', ['controller' => 'UserFeedbacks', 'action' => 'download', $userFeedback->id]);
+                else:
+                    echo '--';
+                endif;
+                ?>
+                </span>
+            </div>
+            <div class="table-data flex-basis20 text-center">
+                <span><?= $userFeedback->created ?></span>
+            </div>
+            <div class="table-data flex-basis20 text-center">
+                <span><?= $this->Html->link('<span class="replyon">Reply</span>', ['action' => 'reply', $userFeedback->id,'?'=>['keyword'=>$this->request->query('keyword')]], ['title' => 'Reply', 'escape' => false]) ?></span>
+            </div>
+          </div>
+          <?php endforeach; ?>
+        <!--===========pagination========-->
+        <?php if($this->Paginator->params()['pageCount'] > 1) { ?>
+            <ul class="pagination table-pagination">
+              <?= $this->Paginator->prev('',['escape' => false]) ?>
+              <?= $this->Paginator->numbers(array('modulus' => 4)) ?>
+              <?= $this->Paginator->next('',['escape' => false]) ?>
+            </ul>
+        <?php } ?>
+        </div>
                 </div><!-- end panel body -->
             </div>
         </div>
@@ -98,7 +133,7 @@
             $("#reply-form").attr('action','');
             $("#reply_message").val('');
             $(".input-alert").addClass('hide');
-            $("#reply_to").val($(this).closest('tr').find('.useremail').val());
+            $("#reply_to").val($(this).closest('.table-row').find('.useremail').val());
             $("#reply-form").attr('action',$(this).closest('a').attr('href'));
             $("#category-modal").modal("show");
         });

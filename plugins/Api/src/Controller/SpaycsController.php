@@ -654,8 +654,9 @@ class SpaycsController extends AppController {
                 if(!empty($row->ticket_url)){
                     $row->ticket_url = explode(',',$row->ticket_url);
                 }
-                $row['warp_frequency'] = !empty($row->warp_frequency[0])?$row->warp_frequency[0]:null;
                 $spaycId = ApiHasher::decrypt($row->id);
+                $row['warp_frequency'] = !empty($row->warp_frequency[0])?$row->warp_frequency[0]:TableRegistry::get('Api.WarpFrequency')->lastEvent($spaycId);
+                
                 $row['friends'] = TableRegistry::get('Api.JoinedSpayc')->getTotalJoinedFriends($spaycId, $friend);
                 $present = 0;$totalJoined=[];
                 if(!empty($row['joined_spayc'])) {

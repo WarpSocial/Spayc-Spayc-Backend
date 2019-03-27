@@ -139,5 +139,8 @@ class WarpFrequencyTable extends Table {
     public function nearestEvent($spaycId,$date){
         return $this->find()->where("spayc_id='$spaycId' AND start_date::Date >= '$date'::Date")->orderAsc('start_date')->first();
     }
+    public function lastEvent($spaycId){
+        return $this->find()->where(["spayc_id" => $spaycId])->orderDesc('start_date')->first();
+    }
 
 }

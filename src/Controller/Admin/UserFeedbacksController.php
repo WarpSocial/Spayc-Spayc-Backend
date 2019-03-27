@@ -19,8 +19,17 @@ class UserFeedbacksController extends AdminController {
      * @return \Cake\Http\Response|void
      */
     public function index() {
-
-        $query = $this->UserFeedbacks->find()->contain(['Users', 'FeedbackReply'])->where('UserFeedbacks.parent_id IS NULL');
+        $inputQuery = $keyword = $this->request->getQuery('keyword',null);
+        $query = $this->UserFeedbacks->find()->contain(['Users'=>function($q)use($inputQuery){
+            if(!empty($inputQuery)){
+                $inputQuery = strtolower($inputQuery);
+                $q->where(["OR"=>[
+                ['Lower(display_name) LIKE' => '%'.$inputQuery.'%'],
+                ['Lower(full_name) LIKE' => '%'.$inputQuery.'%'],
+                ['Lower(email) LIKE' => '%'.$inputQuery.'%']]]);
+            }
+            return $q;
+        }, 'FeedbackReply'])->where('UserFeedbacks.parent_id IS NULL');
 
         $userFeedbacks = $this->paginate($query);
         $this->set('title', __('User Feedbacks'));
