@@ -32,7 +32,7 @@ use Cake\Core\Configure;
                     Dear <strong><?= $display_name ?></strong>,
                     <br><br>
                     </p>
-                        <div style="display: block; font-size: 16px;">Warp support team has replied of your query: </div>
+                        <div style="display: block; font-size: 16px;">Warp support team has replied to your query: </div>
                         <div style="color:#333333; margin-top:10px; font-size: 13px;">
                           <p><?= $feedback_reply ?></p>
                       </div>
@@ -42,7 +42,7 @@ use Cake\Core\Configure;
                     <td>
                         <p style="font-weight: 500;">
                             Thanks <br />
-                            <p style="font-weight: 500;">- Thanks (Warp Team)</p>
+                            <p style="font-weight: 500;">Warp Team</p>
                         </p>
                     </td>
                   </tr>
