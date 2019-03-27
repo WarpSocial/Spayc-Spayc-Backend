@@ -203,7 +203,7 @@ class UsersTable extends Table
             $query->where(['Users.id IN'=> $subscribedUserIds]);
 
         }
-        $query->where(['Users.role_id IS'=> null,'Users.status'=>ACTIVE])
+        $query->where(['Users.role_id IS'=> null,'Users.status !='=>REMOVED])
             ->contain([                                       
                 'JoinedSpayc'=>function($q) {
                     $q->select(['JoinedSpayc.user_id','JoinedSpayc.spayc_id','JoinedSpayc.status','JoinedSpayc.is_admin','JoinedSpayc.distance'])->where(['JoinedSpayc.status'=>JOINED]);                  

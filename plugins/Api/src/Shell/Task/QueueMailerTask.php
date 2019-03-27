@@ -44,7 +44,7 @@ class QueueMailerTask extends QueueTask {
             case 'userfeedback':
                 $this->getMailer('Api.User')->send($data['action_type'], [$data]);
                 break;
-            case 'feedbackReply':
+            case 'feedbackreply':
                 $this->getMailer('User')->send($data['action_type'], [$data]);
                 break;    
         }

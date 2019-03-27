@@ -56,14 +56,13 @@ class UserFeedbacksController extends AdminController {
         $items['user_id'] = $this->Auth->user('id');
         try {
             if ($this->UserFeedbacks->save($items)) {
-
-                TableRegistry::get('Queue.QueuedJobs')->createJob('Mailer', [[
+                TableRegistry::get('Queue.QueuedJobs')->createJob('Mailer', [
                 'email' => $userFeedback->user->email,
                 'display_name' => $userFeedback->user->display_name,
                 'feedback_reply' => $this->request->getData('message'),
                 'action_type' => 'feedbackReply'
-                ]]);
-                $this->ajaxResponse(['status' => true, 'message' => __('Mail has been sent successfull.')]);
+                ]);
+                $this->ajaxResponse(['status' => true, 'message' => __('Mail has been sent successfully.')]);
             }
             $this->ajaxResponse(['status' => true, 'message' => __('Fail to send feedback because of system problem.')]);
         } catch (\Exception $e) {

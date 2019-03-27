@@ -124,8 +124,12 @@ class SpaycsController extends AdminController {
         $friend = TableRegistry::get('Api.FriendRequest')->getFriendIdsByUserId($userId, $this->FRIEND_REQUESTED_STATUS_ARR['accepted']);
         $spayc = $this->Spaycs->getWarpsViewBySpaycId($id, $userId, $friend);
         if ($this->request->is('post')) {
+            $otherCategory = null;
+            if(!empty($this->request->getData('other_category'))){
+                $otherCategory = $this->request->getData('other_category');
+            }
             $warpData['primary_category'] = $this->request->getData('primary_category');
-            $warpData['other_category'] = implode(',', $this->request->getData('other_category'));
+            $warpData['other_category'] = $otherCategory;
             TableRegistry::get('Api.WarpCategories')->SaveCategories($warpData,$spayc);
             return $this->redirect($this->referer());
         }
