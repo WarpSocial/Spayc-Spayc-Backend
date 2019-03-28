@@ -35,10 +35,10 @@ $this->Form->setTemplates($catTemplates);
         </div>        
     </div>
 </section>
-<?php echo $this->Html->css(['/emoji/css/jquery.emojipicker']); ?>
-<?php echo $this->Html->script(['/emoji/js/jquery.emojipicker']); ?>
-<?php echo $this->Html->css(['/emoji/css/jquery.emojipicker.a']); ?>
-<?php echo $this->Html->script(['/emoji/js/jquery.emojipicker.a']); ?>
+<?php echo $this->Html->css(['/emojiv2/css/jquery.emojipicker']); ?>
+<?php echo $this->Html->script(['/emojiv2/js/jquery.emojipicker']); ?>
+<?php echo $this->Html->css(['/emojiv2/css/jquery.emojipicker.a']); ?>
+<?php echo $this->Html->script(['/emojiv2/js/jquery.emojis']); ?>
 <script type="text/javascript">
     $(document).ready(function(){
         $('#parent-id').multiselect({
