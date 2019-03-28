@@ -25,7 +25,7 @@ $this->Form->setTemplates($catTemplates);
                     echo $this->Form->input('name',['class' => 'form-control', 'placeholder' => 'Name']);
                     echo '</div>';
                     echo '<div class="col-sm-6 emoji-picker-container">';        
-                    echo $this->Form->input('code',['class' => 'form-control','label'=>'Emoji', 'placeholder' => 'Emoji']);
+                    echo $this->Form->input('code',['class' => 'form-control','label'=>'Emoji', 'placeholder' => 'Emoji','readonly']);
                     echo '</div>';
                 ?>
            <?php echo  '<div class="col-sm-6 cat-btn">'; ?>

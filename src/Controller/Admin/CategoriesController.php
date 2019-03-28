@@ -40,6 +40,7 @@ class CategoriesController extends AdminController {
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
     public function add() {
+        
         $this->set('title', __('Create new categories.'));
         $spaycCategory = $this->SpaycCategories->newEntity();
         if ($this->request->is('post')) {
