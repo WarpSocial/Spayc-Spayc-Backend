@@ -24,7 +24,7 @@ $activeUrl = $controller_name.$controller_action;
                     <a class="nav-link <?= ('Usersindex' == $activeUrl)? ' active' : '' ?>" href="<?php echo Router::url(['action' => 'index','controller' =>'Users']);?>">Manage Users</a>
                  <a class="nav-link <?= (('Spaycsindex' == $activeUrl) || ('Spaycsview' == $activeUrl))? ' active' : '' ?>" href="<?php echo Router::url(['action' => 'index','controller' =>'Spaycs']);?>">Manage Warps</a>
                   <a class="nav-link <?= ('Advertisementindex' == $activeUrl)? ' active' : '' ?>" href="<?php echo Router::url(['action' => 'index','controller' =>'Advertisement']);?>">Manage Advertisements</a>
-                  <a class="nav-link <?= ('Categoriesindex' == $activeUrl)? ' active' : '' ?>" href="<?php echo Router::url(['action' => 'index','controller' =>'Categories']);?>">Manage Catogory</a>
+                  <a class="nav-link <?= ('Categoriesindex' == $activeUrl)? ' active' : '' ?>" href="<?php echo Router::url(['action' => 'index','controller' =>'Categories']);?>">Manage Category</a>
                 </div>
               </li>
               <li class="nav-item <?= ('UserFeedbacksindex' == $activeUrl)? ' active' : '' ?>">
